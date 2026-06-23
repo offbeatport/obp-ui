@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+.output/
+.vinxi/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+src/db/migrations/
+
+# Drizzle
+drizzle/
+
+# TanStack generated
+src/routeTree.gen.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# TanStack
+.tanstack/

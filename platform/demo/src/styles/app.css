@@ -1,0 +1,7 @@
+/* Core design theme (CSS variables, base reset, animations).
+ * MUST precede @tailwind directives - CSS spec requires @import first. */
+@import "@offbeatport/core/theme/css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

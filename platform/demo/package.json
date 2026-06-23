@@ -1,0 +1,42 @@
+{
+  "name": "demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "routes:gen": "tsr generate",
+    "typecheck": "tsr generate --silent || true && tsc --noEmit"
+  },
+  "dependencies": {
+    "@offbeatport/core": "workspace:*",
+    "@offbeatport/ui": "workspace:*",
+    "@offbeatport/auth": "workspace:*",
+    "@offbeatport/db": "workspace:*",
+    "@offbeatport/ops": "workspace:*",
+    "@openrouter/ai-sdk-provider": "^0.4.0",
+    "@tanstack/react-router": "^1.168.22",
+    "@tanstack/react-start": "^1.167.41",
+    "ai": "^4.3.0",
+    "lucide-react": "^0.469.0",
+    "nanoid": "^5.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^4.0.4",
+    "@offbeatport/blocks": "workspace:*"
+  },
+  "devDependencies": {
+    "@tanstack/router-cli": "1.166.41",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^7.3.2"
+  }
+}
