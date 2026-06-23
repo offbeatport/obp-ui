@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.production
+!.env.example
+
+# IDE
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# PocketBase
+pb/pb_data/
+pb/pocketbase
+pb/pb_public/
+pb/pocketbase.exe
+
+# Vite
+app/.vite/
+app/dist/

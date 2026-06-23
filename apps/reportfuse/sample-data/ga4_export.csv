@@ -1,0 +1,19 @@
+Date,Campaign,Source,Medium,Sessions,New users,Bounce rate,Avg. session duration,Conversions,Revenue
+2026-05-01,Brand - Exact,google,cpc,4218,1687,38.20%,00:02:41,84,$4284.00
+2026-05-01,Non-Brand - Analytics,google,cpc,2841,2556,51.40%,00:01:48,34,$1734.00
+2026-05-01,(organic),google,organic,8412,3368,42.10%,00:03:12,124,$6324.00
+2026-05-01,Email - May Newsletter,mailchimp,email,1842,184,28.90%,00:04:01,62,$3162.00
+2026-05-01,(direct),(none),(none),3241,648,44.80%,00:02:58,48,$2448.00
+2026-05-02,Brand - Exact,google,cpc,4018,1607,38.40%,00:02:38,79,$4029.00
+2026-05-02,Non-Brand - Analytics,google,cpc,2614,2352,51.80%,00:01:44,31,$1581.00
+2026-05-02,(organic),google,organic,7892,3157,42.40%,00:03:08,116,$5916.00
+2026-05-02,Email - May Newsletter,mailchimp,email,984,98,29.20%,00:03:54,33,$1683.00
+2026-05-02,(direct),(none),(none),2984,597,45.10%,00:02:52,44,$2244.00
+2026-05-03,Brand - Exact,google,cpc,4512,1805,38.00%,00:02:44,88,$4488.00
+2026-05-03,Non-Brand - Analytics,google,cpc,3012,2711,51.20%,00:01:52,38,$1938.00
+2026-05-03,(organic),google,organic,9124,3650,41.80%,00:03:18,134,$6834.00
+2026-05-03,Social - LinkedIn,linkedin,social,1284,1156,54.20%,00:01:22,14,$714.00
+2026-05-03,(direct),(none),(none),3512,702,44.60%,00:03:02,52,$2652.00
+2026-05-04,Brand - Exact,google,cpc,3848,1539,38.60%,00:02:36,74,$3774.00
+2026-05-04,Non-Brand - Analytics,google,cpc,2412,2171,52.10%,00:01:41,28,$1428.00
+2026-05-04,(organic),google,organic,7412,2965,42.70%,00:03:05,108,$5508.00

@@ -1,0 +1,530 @@
+@import "tailwindcss";
+@source "../**/*.{tsx,ts}";
+@source not "../builds/**";
+@source not "../scripts/**";
+
+:root {
+    --bg: #010407;
+    --bg-elevated: #060d1c;
+    --fg: #ffffff;
+    --fg-muted: rgba(239, 245, 255, 0.95);
+    --fg-subtle: rgba(192, 208, 229, 0.82);
+    --muted: rgba(165, 182, 214, 0.85);
+    --border: rgba(100, 130, 180, 0.14);
+    --border-strong: rgba(100, 130, 180, 0.26);
+    --accent: #60a5fa;
+    --accent-dim: #3b82f6;
+    --subtle: rgba(96, 165, 250, 0.05);
+    --radius: 6px;
+
+    --status-new: rgba(165, 182, 214, 0.55);
+    --status-interesting: #60a5fa;
+    --status-building: #a78bfa;
+    --status-pass: rgba(239, 68, 68, 0.65);
+
+    --fg-dim: rgba(165, 182, 214, 0.4);
+    --fg-faint: rgba(165, 182, 214, 0.25);
+    --accent-muted: rgba(96, 165, 250, 0.5);
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --purple: #a78bfa;
+}
+
+@theme {
+    --font-space: "Space Grotesk", sans-serif;
+    --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+@theme inline {
+    --font-family-mono: var(--font-mono);
+    --font-family-sans: var(--font-space);
+    --color-bg: var(--bg);
+    --color-bg-elevated: var(--bg-elevated);
+    --color-fg: var(--fg);
+    --color-fg-muted: var(--fg-muted);
+    --color-fg-subtle: var(--fg-subtle);
+    --color-muted: var(--muted);
+    --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
+    --color-accent: var(--accent);
+    --color-accent-dim: var(--accent-dim);
+    --color-subtle: var(--subtle);
+    --color-fg-dim: var(--fg-dim);
+    --color-fg-faint: var(--fg-faint);
+    --color-accent-muted: var(--accent-muted);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
+    --color-purple: var(--purple);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings:
+        "liga" 1,
+        "calt" 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-space);
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+}
+h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+a {
+    color: inherit;
+}
+
+::selection {
+    background: #60a5fa;
+    color: #050d1e;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.2);
+    border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 165, 250, 0.4);
+}
+
+/* Brief markdown */
+.brief-content h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 2rem 0 0.75rem;
+}
+.brief-content p {
+    color: rgba(238, 242, 255, 0.88);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+.brief-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+}
+.brief-content ul li::before {
+    content: "\2014";
+    color: var(--accent);
+    margin-right: 0.5rem;
+}
+.brief-content li {
+    color: rgba(238, 242, 255, 0.88);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0.25rem;
+}
+.brief-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+.brief-content th {
+    text-align: left;
+    padding: 0.5rem 0;
+    color: var(--muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+}
+.brief-content td {
+    padding: 0.5rem 0;
+    color: rgba(238, 242, 255, 0.88);
+    border-bottom: 1px solid var(--border);
+}
+.brief-content strong {
+    color: var(--fg);
+    font-weight: 500;
+}
+
+/* Brief sections in section grid - h2 is stripped (rendered as section label externally) */
+.brief-section p {
+    color: rgba(238, 242, 255, 0.85);
+    line-height: 1.75;
+    margin-bottom: 0.8rem;
+    font-size: 0.92rem;
+}
+.brief-section p:last-child {
+    margin-bottom: 0;
+}
+.brief-section ul,
+.brief-section ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.brief-section ul li::before {
+    content: "\2014";
+    color: var(--accent);
+    margin-right: 0.55rem;
+    opacity: 0.7;
+}
+.brief-section ol {
+    counter-reset: li;
+}
+.brief-section ol li {
+    counter-increment: li;
+}
+.brief-section ol li::before {
+    content: counter(li) ".";
+    color: var(--accent);
+    margin-right: 0.55rem;
+    font-weight: 600;
+    font-size: 0.82rem;
+    opacity: 0.8;
+}
+.brief-section li {
+    color: rgba(238, 242, 255, 0.85);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+.brief-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+}
+.brief-section th {
+    text-align: left;
+    padding: 0.55rem 1rem 0.55rem 0;
+    color: rgba(250, 250, 250, 0.38);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.brief-section td {
+    padding: 0.55rem 1rem 0.55rem 0;
+    color: rgba(238, 242, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: top;
+    line-height: 1.6;
+}
+.brief-section strong {
+    color: rgba(250, 250, 250, 0.95);
+    font-weight: 600;
+}
+.brief-section h3 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(250, 250, 250, 0.38);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 1.4rem 0 0.6rem;
+}
+.brief-section h3:first-child {
+    margin-top: 0;
+}
+
+/* Checkbox */
+.cb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 3px;
+}
+.cb:hover {
+    border-color: var(--accent);
+}
+.cb.cb--checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.cb.cb--checked::after {
+    content: "";
+    display: block;
+    width: 7px;
+    height: 4px;
+    border-left: 1.5px solid #050d1e;
+    border-bottom: 1.5px solid #050d1e;
+    transform: rotate(-45deg) translateY(-1px);
+}
+.cb.cb--indeterminate {
+    border-color: rgba(96, 165, 250, 0.4);
+}
+.cb.cb--indeterminate::after {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 1.5px;
+    background: var(--accent);
+}
+
+@keyframes pipeline-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+.pipeline-pulse {
+    animation: pipeline-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.nav-item:hover {
+    background: rgba(165, 182, 214, 0.05);
+}
+
+.project-nav-item:hover {
+    background: rgba(165, 182, 214, 0.04);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+    100% {
+        background-position: 400px 0;
+    }
+}
+.sk {
+    background: linear-gradient(
+        90deg,
+        rgba(165, 182, 214, 0.06) 25%,
+        rgba(165, 182, 214, 0.12) 50%,
+        rgba(165, 182, 214, 0.06) 75%
+    );
+    background-size: 800px 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+    border-radius: 3px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── CSS-only hover replacements ─────────────────────────────────────────── */
+
+/* Dropdown trigger border brightens on hover */
+.dropdown-trigger:not([data-open]):hover {
+    border-color: var(--muted) !important;
+}
+
+/* Dropdown menu item hover */
+.dropdown-item:not([data-active]):hover {
+    background: rgba(165, 182, 214, 0.06) !important;
+}
+
+/* FilterPanel reset button */
+.fp-reset:hover {
+    color: rgba(239, 68, 68, 0.8) !important;
+}
+
+/* Modal close button */
+.modal-close:hover {
+    color: var(--fg) !important;
+}
+
+/* ProjectConfigModal close button */
+.pcm-close:hover {
+    color: var(--fg) !important;
+    background: rgba(165, 182, 214, 0.06) !important;
+}
+
+/* ProjectConfigModal / ProjectConfigSummary links */
+.pcm-link:hover {
+    color: var(--accent) !important;
+}
+
+/* ProjectConfigSummary configure button */
+.pcm-configure-btn:hover {
+    color: var(--accent) !important;
+}
+
+/* Tooltip component - CSS-only hover reveal */
+.tooltip-wrapper:hover .tooltip-bubble {
+    opacity: 1 !important;
+}
+
+/* ProjectItem - pure CSS descendant hover, zero JS in the path */
+.sidebar-item .sidebar-menu-btn {
+    opacity: 0;
+}
+.sidebar-item:hover .sidebar-menu-btn {
+    opacity: 1;
+}
+.sidebar-menu-btn.sidebar-menu-open {
+    opacity: 1;
+}
+.sidebar-item:hover .sidebar-badge {
+    display: none;
+}
+
+/* Inbox Btn component */
+.inbox-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+.inbox-btn-primary:hover {
+    /* color-specific background set via CSS custom property on element */
+    filter: brightness(1.15);
+}
+
+/* index.tsx project row */
+.project-row:hover {
+    opacity: 0.75 !important;
+}
+
+/* index.tsx opportunity row */
+.opp-row-home:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* market.tsx product row */
+.market-product-row:hover {
+    background: rgba(96, 165, 250, 0.03) !important;
+}
+.market-product-row:hover .market-ext-icon {
+    color: var(--accent) !important;
+}
+
+/* opportunity/$id.tsx headline link */
+.headline-link:hover {
+    text-decoration: underline !important;
+}
+.headline-link:hover .headline-ext-icon {
+    opacity: 0.6 !important;
+}
+
+/* projects.tsx - pencil shows on title hover */
+.project-title-wrapper:hover .edit-pencil-btn {
+    opacity: 1 !important;
+}
+
+/* signals.tsx row */
+.signal-row:hover {
+    background: rgba(165, 182, 214, 0.04) !important;
+}
+
+/* channels.tsx channel row */
+.channel-row:hover {
+    background: rgba(165, 182, 214, 0.025) !important;
+}
+.channel-row:hover .channel-row-actions {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* channels.tsx StepChip and RateLimitBadge: CSS tooltip on :hover */
+.step-chip-label:hover .step-chip-tip {
+    display: block !important;
+}
+.rate-limit-label:hover .rate-limit-tip {
+    display: block !important;
+}
+
+/* init-wizard color swatches */
+.color-swatch:not([data-active]):hover {
+    transform: scale(1.15) !important;
+}
+
+/* opportunities row (global + per-project) */
+.opp-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.015) !important;
+}
+.opp-table tbody tr:hover td[data-sticky] {
+    background: #030a10 !important;
+}
+.opp-table tbody tr:hover td:first-child {
+    border-left-color: var(--accent) !important;
+}
+
+/* seo.tsx InfoTooltip and SourceCheckbox */
+.seo-info-trigger:hover + .seo-info-tip,
+.seo-source-row:hover {
+    background: rgba(96, 165, 250, 0.06) !important;
+}
+
+/* seo.tsx run list item */
+.seo-run-item:hover {
+    background: rgba(100, 130, 180, 0.04) !important;
+}
+.seo-run-item:hover .seo-run-delete {
+    display: flex !important;
+}
+.seo-run-item .seo-run-delete {
+    display: none;
+}
+
+/* seo.tsx run item padding-right expansion on hover */
+.seo-run-btn:hover {
+    padding-right: 36px !important;
+}
+
+/* Build wizard column resize handles */
+.resize-handle:hover {
+    background: var(--accent) !important;
+}

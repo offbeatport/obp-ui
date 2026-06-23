@@ -1,0 +1,19 @@
+node_modules
+.output
+.vinxi
+.turbo
+dist
+*.log
+.DS_Store
+
+# Local DB + secrets
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.env
+.env.local
+
+# Generated
+src/routeTree.gen.ts
+drizzle

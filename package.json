@@ -1,0 +1,25 @@
+{
+  "name": "microsaas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offbeatport's micro-SaaS factory monorepo: shared core + scaffolded apps.",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "studio": "pnpm --filter studio dev",
+    "demo": "pnpm --filter demo dev",
+    "playground": "pnpm --filter playground dev",
+    "preventreturn": "pnpm --filter preventreturn dev",
+    "typecheck": "pnpm -r --parallel typecheck",
+    "build": "pnpm -r --parallel build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "better-sqlite3", "esbuild"]
+  }
+}
