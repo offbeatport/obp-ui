@@ -1,8 +1,0 @@
-node_modules
-.output
-dist
-.env
-*.db
-*.db-shm
-*.db-wal
-drizzle

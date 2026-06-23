@@ -1,5 +1,0 @@
-packages:
-  - "packages/*"
-  - "platform/*"
-  - "platform/templates/*"
-  - "apps/*"
