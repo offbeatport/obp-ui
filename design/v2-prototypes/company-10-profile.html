@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift — C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e2d6; --accent-deep:#b0532f;
+    --green:#4f8a52; --green-soft:#e2eede;
+    --blue:#4a72b0; --violet:#7a5ea8;
+    --amber:#c08a2e; --amber-soft:#f4e9d3; --red:#b6483f;
+    --shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 24px 50px -34px rgba(70,54,32,.55);
+    --shadow-sm:0 1px 0 rgba(255,255,255,.6) inset, 0 10px 26px -20px rgba(70,54,32,.5);
+    --shadow-btn:0 1px 0 rgba(255,255,255,.3) inset, 0 8px 18px -10px rgba(176,83,47,.55);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 620px at 80% -10%, rgba(200,100,60,.06), transparent 60%),
+      var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  ::selection{background:var(--accent-soft);color:var(--ink)}
+  button{font-family:inherit;cursor:pointer;color:inherit}
+  a{color:inherit;text-decoration:none}
+
+  .shell{max-width:920px;margin:0 auto;padding:0 30px 110px}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:26px 0 22px;position:sticky;top:0;z-index:30;
+    background:linear-gradient(var(--cream) 62%, rgba(247,243,236,0));
+  }
+  .topbar-l{display:flex;align-items:center;gap:16px}
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    background:none;border:none;color:var(--ink-faint);
+    font-size:13.5px;font-weight:500;letter-spacing:.01em;
+    padding:7px 11px 7px 8px;border-radius:10px;
+    transition:color .16s ease, background .16s ease;
+  }
+  .back:hover{color:var(--ink);background:var(--cream-2)}
+  .back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9}
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:13px;letter-spacing:.02em;
+    color:var(--ink-faint);
+  }
+  .brand b{color:var(--accent);font-weight:700}
+
+  /* ---------- switcher ---------- */
+  .switch{position:relative}
+  .switch-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:12px;padding:6px 12px 6px 7px;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .16s ease, transform .16s ease;
+  }
+  .switch-btn:hover{border-color:#dccdb4;transform:translateY(-1px)}
+  .switch-btn .chip{
+    width:24px;height:24px;border-radius:8px;color:#fff;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12.5px;
+    display:grid;place-items:center;
+  }
+  .switch-btn .nm{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .switch-btn .caret{width:13px;height:13px;stroke:var(--ink-faint);fill:none;stroke-width:2;transition:transform .2s ease}
+  .switch.open .switch-btn .caret{transform:rotate(180deg)}
+  .menu{
+    position:absolute;top:calc(100% + 9px);right:0;z-index:40;
+    width:270px;background:var(--paper);border:1px solid var(--line);
+    border-radius:15px;padding:7px;box-shadow:var(--shadow);
+    opacity:0;visibility:hidden;transform:translateY(-6px) scale(.99);
+    transform-origin:top right;
+    transition:opacity .16s ease, transform .16s ease, visibility .16s;
+  }
+  .switch.open .menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+  .menu-lbl{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-faint);padding:8px 10px 6px;
+  }
+  .m-item{
+    display:flex;align-items:center;gap:11px;width:100%;
+    background:none;border:none;text-align:left;
+    padding:8px 9px;border-radius:11px;
+    transition:background .13s ease;
+  }
+  .m-item:hover{background:var(--cream-2)}
+  .m-item .chip{
+    width:26px;height:26px;border-radius:8px;color:#fff;flex:none;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;
+    display:grid;place-items:center;
+  }
+  .m-item .mi-nm{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.2}
+  .m-item .mi-sub{font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace}
+  .m-item .mi-txt{flex:1;min-width:0}
+  .m-item .tick{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:2.4;opacity:0}
+  .m-item.cur{background:var(--accent-soft)}
+  .m-item.cur .tick{opacity:1}
+  .m-item.cur:hover{background:var(--accent-soft)}
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:calc(var(--radius) + 4px);box-shadow:var(--shadow);
+    padding:30px 32px 8px;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:70px;
+    background:linear-gradient(180deg, var(--band) 0%, transparent 100%);
+    opacity:.14;pointer-events:none;
+  }
+  .hero-top{display:flex;align-items:flex-start;gap:20px;position:relative}
+  .mono{
+    width:74px;height:74px;border-radius:20px;flex:none;
+    color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:36px;display:grid;place-items:center;
+    box-shadow:0 1px 0 rgba(255,255,255,.4) inset, 0 14px 30px -14px var(--band-shadow);
+    letter-spacing:-.01em;
+  }
+  .id{flex:1;min-width:0;padding-top:3px}
+  .id-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .id h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:27px;letter-spacing:-.01em;color:var(--ink);line-height:1.1;
+  }
+  .id .dom{
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-faint);
+    margin-top:5px;display:inline-flex;align-items:center;gap:6px;
+  }
+  .id .dom svg{width:12px;height:12px;stroke:var(--ink-faint);fill:none;stroke-width:1.8}
+  .status{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;font-weight:600;letter-spacing:.01em;
+    padding:5px 11px 5px 9px;border-radius:100px;
+    border:1px solid var(--st-line);background:var(--st-bg);color:var(--st-ink);
+  }
+  .status .dot{width:7px;height:7px;border-radius:50%;background:var(--st-ink);
+    box-shadow:0 0 0 3px var(--st-glow);animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .thesis{
+    font-size:15.5px;color:var(--ink-soft);margin:18px 0 0;
+    max-width:60ch;line-height:1.5;position:relative;
+  }
+  .thesis .q{color:var(--accent);font-weight:600}
+
+  .autonomy{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 24px}
+  .au{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--cream);border:1px solid var(--line-soft);
+    padding:6px 12px 6px 10px;border-radius:100px;font-size:12.5px;
+  }
+  .au .au-k{color:var(--ink-faint);font-weight:500}
+  .au .au-v{font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+  .au .au-d{width:7px;height:7px;border-radius:50%}
+  .au .au-d.auto{background:var(--green)}
+  .au .au-d.you{background:var(--accent)}
+
+  /* ---------- stats strip ---------- */
+  .stats{
+    display:flex;align-items:stretch;gap:0;
+    border-top:1px solid var(--line-soft);
+    margin:0 -32px;padding:0;
+  }
+  .stat{
+    flex:1;padding:20px 22px 22px;position:relative;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .stat + .stat::before{content:"";position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--line-soft)}
+  .stat.mrr{flex:1.9;display:flex;flex-direction:row;align-items:center;gap:16px}
+  .stat .s-lbl{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px;
+  }
+  .stat .s-val{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:23px;color:var(--ink);letter-spacing:-.01em;line-height:1}
+  .stat .s-sub{font-size:12px;margin-top:6px;color:var(--ink-faint)}
+  .stat .s-sub.up{color:var(--green);font-weight:600}
+  .stat .s-sub.down{color:var(--red);font-weight:600}
+  .mrr .mrr-l{min-width:0}
+  .mrr .spark{flex:none;width:132px;height:46px;display:block}
+  .trend{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;margin-top:6px}
+  .trend.up{color:var(--green)} .trend.down{color:var(--red)} .trend.flat{color:var(--ink-faint);font-weight:500}
+  .trend svg{width:11px;height:11px;fill:currentColor}
+
+  /* ---------- decision ---------- */
+  .decision{
+    margin-top:22px;background:linear-gradient(180deg, #fff8f2, var(--paper));
+    border:1.5px solid var(--accent-soft);border-radius:var(--radius);
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 22px 48px -30px rgba(200,100,60,.4);
+    padding:22px 24px;position:relative;overflow:hidden;
+  }
+  .decision::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .dec-tag{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--accent-deep);
+    margin-bottom:12px;
+  }
+  .dec-tag .pd{width:8px;height:8px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 4px rgba(200,100,60,.16);animation:pulse 2s ease-in-out infinite}
+  .dec-tag .glyph{
+    font-family:'Space Grotesk',sans-serif;color:var(--ink-faint);font-weight:600;
+    border-left:1px solid var(--line);padding-left:9px;
+  }
+  .dec-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;color:var(--ink);letter-spacing:-.01em;line-height:1.25}
+  .dec-sub{font-size:14px;color:var(--ink-soft);margin-top:7px;max-width:64ch}
+  .dec-detail{margin:15px 0 4px;display:flex;flex-direction:column;gap:9px}
+  .url-chip{
+    display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
+    background:var(--cream);border:1px solid var(--line);border-radius:9px;
+    padding:7px 12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);
+    transition:border-color .15s ease,color .15s ease;
+  }
+  .url-chip:hover{border-color:var(--accent);color:var(--accent-deep)}
+  .url-chip svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .done-when{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--green);font-weight:500}
+  .done-when svg{width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2.2}
+  .evi{font-size:13px;color:var(--ink-faint);display:inline-flex;align-items:center;gap:8px}
+  .evi b{color:var(--ink-soft);font-weight:600}
+  .draft-box{
+    background:var(--cream);border:1px solid var(--line-soft);border-left:3px solid var(--line);
+    border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink-soft);
+    white-space:pre-wrap;line-height:1.5;max-width:70ch;
+  }
+  .actions{display:flex;align-items:center;gap:11px;margin-top:18px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13.5px;font-weight:600;border-radius:11px;padding:11px 17px;
+    border:1px solid transparent;transition:transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:var(--shadow-btn)}
+  .btn-primary:hover{background:var(--accent-deep);transform:translateY(-1px)}
+  .btn-secondary{background:var(--paper);border-color:var(--line);color:var(--ink)}
+  .btn-secondary:hover{border-color:#d8c9b0;background:var(--cream)}
+  .btn-quiet{background:none;color:var(--ink-faint);padding:11px 12px}
+  .btn-quiet:hover{color:var(--red);background:rgba(182,72,63,.06)}
+
+  /* resolved / feedback */
+  .resolved{display:flex;align-items:flex-start;gap:14px;padding:4px 0}
+  .resolved .rc{
+    width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+    background:var(--green-soft);border:1px solid #cbe0c4;
+  }
+  .resolved .rc svg{width:19px;height:19px;stroke:var(--green);fill:none;stroke-width:2.4}
+  .resolved h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:var(--ink)}
+  .resolved p{font-size:13.5px;color:var(--ink-soft);margin-top:3px}
+  .resolved .undo{font-size:12.5px;color:var(--ink-faint);font-weight:600;background:none;border:none;margin-top:9px;padding:0}
+  .resolved .undo:hover{color:var(--accent)}
+  .feedback{margin-top:16px}
+  .feedback textarea{
+    width:100%;min-height:82px;resize:vertical;font-family:inherit;font-size:13.5px;
+    color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:11px;
+    padding:12px 14px;line-height:1.5;
+  }
+  .feedback textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,100,60,.12)}
+
+  /* ---------- cards grid ---------- */
+  .section-lbl{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-faint);
+    margin:34px 4px 14px;display:flex;align-items:center;gap:10px;
+  }
+  .section-lbl::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);padding:20px 22px;
+  }
+  .card.wide{grid-column:1 / -1}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+  .card-head h2{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;color:var(--ink);
+    display:flex;align-items:center;gap:9px;letter-spacing:-.005em;
+  }
+  .card-head h2 .hi{width:17px;height:17px;stroke:var(--ink-faint);fill:none;stroke-width:1.8}
+  .card-head .meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint)}
+
+  /* build card */
+  .build-row{display:flex;align-items:center;gap:13px;padding:11px 0;border-top:1px solid var(--line-soft)}
+  .build-row:first-of-type{border-top:none}
+  .b-ic{width:28px;height:28px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:14px}
+  .b-ic.ok{background:var(--green-soft);color:var(--green)}
+  .b-ic.wait{background:var(--accent-soft);color:var(--accent-deep)}
+  .b-ic.stuck{background:#f3ddd9;color:var(--red)}
+  .b-ic.next{background:var(--cream-2);color:var(--ink-faint)}
+  .b-ic svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+  .b-txt{flex:1;min-width:0}
+  .b-txt .bt{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .b-txt .bs{font-size:12px;color:var(--ink-faint);margin-top:2px}
+  .b-tag{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;padding:4px 9px;border-radius:100px;white-space:nowrap}
+  .b-tag.ok{background:var(--green-soft);color:var(--green)}
+  .b-tag.wait{background:var(--accent-soft);color:var(--accent-deep)}
+  .b-tag.stuck{background:#f3ddd9;color:var(--red)}
+  .b-tag.next{background:var(--cream-2);color:var(--ink-faint)}
+
+  /* stat list (growth / health) */
+  .slist{display:flex;flex-direction:column;gap:0}
+  .sl{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:1px solid var(--line-soft)}
+  .sl:first-child{border-top:none;padding-top:2px}
+  .sl .sk{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none;background:var(--ink-faint);opacity:.5}
+  .sl .sk.g{background:var(--green);opacity:1} .sl .sk.b{background:var(--blue);opacity:1}
+  .sl .sk.a{background:var(--amber);opacity:1} .sl .sk.r{background:var(--red);opacity:1}
+  .sl .sx{flex:1;min-width:0}
+  .sl .st1{font-size:13.5px;color:var(--ink);font-weight:500}
+  .sl .st1 b{font-weight:700}
+  .sl .sv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--ink-soft);white-space:nowrap}
+
+  /* money */
+  .money-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .money-top .mm{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:30px;color:var(--ink);letter-spacing:-.01em}
+  .money-top .mn{font-size:14px;color:var(--green);font-weight:600}
+  .money-top .mn.neg{color:var(--red)}
+  .money-top .mc{font-size:13px;color:var(--ink-faint);margin-left:auto}
+  .costbar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--cream-2);margin:6px 0 14px}
+  .costbar span{height:100%}
+  .costs{display:grid;grid-template-columns:1fr 1fr;gap:9px 24px}
+  .cost{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft)}
+  .cost .cd{width:9px;height:9px;border-radius:3px;flex:none}
+  .cost .ca{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink)}
+
+  /* connected chips */
+  .conn{display:flex;flex-wrap:wrap;gap:9px}
+  .conn-chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 13px;border-radius:100px;font-size:13px;font-weight:500;
+    border:1px solid var(--line);background:var(--cream);color:var(--ink);
+  }
+  .conn-chip.ok{border-color:#cbe0c4;background:var(--green-soft)}
+  .conn-chip.ok .ci{color:var(--green)}
+  .conn-chip.no{border-color:#e6cfa0;background:var(--amber-soft);color:var(--ink-soft)}
+  .conn-chip.no .ci{color:var(--amber)}
+  .conn-chip .ci{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;flex:none}
+  .conn-chip .note{font-size:11.5px;color:var(--ink-faint);font-weight:400;border-left:1px solid #e6cfa0;padding-left:8px}
+
+  /* activity */
+  .act{display:flex;flex-direction:column;position:relative}
+  .act::before{content:"";position:absolute;left:5px;top:8px;bottom:16px;width:1px;background:var(--line-soft)}
+  .act-row{display:flex;align-items:flex-start;gap:14px;padding:9px 0;position:relative}
+  .act-row .ad{width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--line);margin-top:3px;flex:none;z-index:1}
+  .act-row:first-child .ad{border-color:var(--green);background:var(--green-soft)}
+  .act-row .atxt{flex:1;font-size:13px;color:var(--ink-soft)}
+  .act-row .atxt .mono{font-family:'JetBrains Mono',monospace;color:var(--ink);font-size:12.5px}
+  .act-row .at{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint);white-space:nowrap}
+
+  .caught{
+    margin-top:22px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);padding:24px;display:flex;align-items:center;gap:16px;
+  }
+  .caught .cc{width:44px;height:44px;border-radius:13px;background:var(--green-soft);border:1px solid #cbe0c4;display:grid;place-items:center;flex:none}
+  .caught .cc svg{width:22px;height:22px;stroke:var(--green);fill:none;stroke-width:2.2}
+  .caught h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:var(--ink)}
+  .caught p{font-size:13.5px;color:var(--ink-soft);margin-top:3px}
+
+  /* footer badge */
+  .badge{
+    position:fixed;right:20px;bottom:18px;z-index:50;
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--ink);color:var(--cream);
+    padding:8px 13px;border-radius:100px;font-size:12px;font-weight:600;
+    box-shadow:0 12px 30px -12px rgba(44,41,38,.6);letter-spacing:.01em;
+  }
+  .badge .bn{
+    width:19px;height:19px;border-radius:6px;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;
+  }
+  .badge span{font-family:'JetBrains Mono',monospace;color:#bfb6a6;font-weight:500}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);
+    background:var(--ink);color:var(--cream);padding:12px 18px;border-radius:12px;
+    font-size:13px;font-weight:500;box-shadow:0 18px 40px -16px rgba(44,41,38,.7);
+    display:flex;align-items:center;gap:10px;opacity:0;visibility:hidden;
+    transition:opacity .2s ease, transform .2s ease, visibility .2s;z-index:60;max-width:88vw;
+  }
+  .toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+  .toast svg{width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:2.4;flex:none}
+
+  @media (max-width:760px){
+    .shell{padding:0 18px 110px}
+    .grid{grid-template-columns:1fr}
+    .stats{flex-wrap:wrap;margin:0 -18px}
+    .stat{flex:1 1 40%;min-width:150px}
+    .stat.mrr{flex:1 1 100%}
+    .stat + .stat::before{display:none}
+    .hero{padding:24px 20px 4px}
+    .stats{padding:0}
+    .costs{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <!-- top bar -->
+    <div class="topbar">
+      <div class="topbar-l">
+        <button class="back" onclick="pulseBack()">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          Portfolio
+        </button>
+        <div class="brand">C <b>Slop</b> Slop</div>
+      </div>
+      <div class="switch" id="switch">
+        <button class="switch-btn" onclick="toggleMenu(event)">
+          <span class="chip" id="swChip">L</span>
+          <span class="nm" id="swName">LeadSift</span>
+          <svg class="caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="menu" id="menu">
+          <div class="menu-lbl">Your companies · 5</div>
+          <div id="menuList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- dynamic company view -->
+    <div id="view"></div>
+  </div>
+
+  <div class="badge"><span class="bn">10</span> Profile <span>· company</span></div>
+  <div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg"></span></div>
+
+<script>
+/* ============================ DATA ============================ */
+const COMPANIES = {
+  leadsift: {
+    mono:'L', name:'LeadSift', domain:'leadsift.app', band:'#c8643c', bandShadow:'rgba(200,100,60,.5)',
+    status:{label:'Live & growing', tone:'green'},
+    thesis:['Scrape + score inbound leads from any webform.'],
+    metrics:{
+      mrr:'$180', trendDir:'up', trendPct:'29%', trendAbs:'+$40 this month',
+      users:'12', usersDelta:'+3 this week', net:'+$158', churn:'0%', uptime:'99.9%',
+      series:[60,90,120,140,160,180]
+    },
+    decision:{
+      kind:'Ship feature', glyph:'⚡',
+      title:"Ship “Daily digest of top leads”?",
+      sub:'Feature 5 is built, deployed to staging, and its automated check passed. Preview is live and waiting for you.',
+      doneWhen:'doneWhen green · digest renders the top leads and returns 200',
+      previewUrl:'localhost:4019/digest/preview',
+      primary:'Approve & ship', secondary:'Review preview', quiet:'Reject with feedback',
+      confirm:{ h:'Shipped “Daily digest of top leads”', p:'Now live for all 12 users. The agent moved on to the next item automatically.' }
+    },
+    build:[
+      {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'4 features shipped', s:'scoring, dedupe, Slack alerts, weekly recap'},
+      {ic:'wait', icsvg:'bolt', tag:'awaiting you', tagcls:'wait', t:'Daily digest of top leads', s:'built · deployed to staging · check passed'},
+      {ic:'stuck', icsvg:'alert', tag:'failed ×3', tagcls:'stuck', t:'Inbound webhook', s:'stuck — agent needs a fix or a nudge'},
+      {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Export leads to CSV', s:'queued on autopilot'}
+    ],
+    growth:[
+      {k:'g', t:'Launched on <b>Product Hunt</b>', s:'3 weeks ago', v:'+8 signups'},
+      {k:'b', t:'<b>4 SEO articles</b> ranking', s:'organic search', v:'~320 visits/mo'},
+      {k:'g', t:'Funnel visitor → trial → paid', s:'converting well', v:'18%'}
+    ],
+    money:{ mrr:'$180', net:'+$158', netNeg:false, costTotal:'$22',
+      costs:[{l:'Infra',a:'$9',c:'#4a72b0'},{l:'Email',a:'$5',c:'#7a5ea8'},{l:'APIs',a:'$7',c:'#c8643c'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
+    health:[
+      {k:'a', t:'<b>2 open</b> support tickets', s:'~4h avg reply', v:'2'},
+      {k:'g', t:'Uptime', s:'last 30 days', v:'99.9%'},
+      {k:'r', t:'Refunds', s:'this month', v:'1'}
+    ],
+    connected:[
+      {n:'Stripe',ok:true},{n:'Domain',ok:true},{n:'Email',ok:true},{n:'Product Hunt',ok:true},
+      {n:'X / Twitter',ok:false,note:'needed for social posts'}
+    ],
+    activity:[
+      {t:'check passed · <span class="mono">/digest/preview → 200</span>', a:'2m'},
+      {t:'deployed feature 5 to staging', a:'4m'},
+      {t:'sent 3 onboarding emails', a:'1h'},
+      {t:'scored 41 new leads', a:'3h'}
+    ]
+  },
+
+  quietinbox: {
+    mono:'Q', name:'QuietInbox', domain:'quietinbox.app', band:'#4f8a52', bandShadow:'rgba(79,138,82,.5)',
+    status:{label:'Live & growing', tone:'green'},
+    thesis:['Snooze and batch your inbox by label — not one thread at a time.'],
+    metrics:{ mrr:'$420', trendDir:'up', trendPct:'12%', trendAbs:'+$45 this month',
+      users:'31', usersDelta:'+2 this week', net:'+$392', churn:'2%', uptime:'99.8%',
+      series:[210,260,300,350,390,420] },
+    decision:{
+      kind:'Support reply', glyph:'❝',
+      title:'Reply to Maria: “snooze a whole label?”',
+      sub:'3rd request this week — this is a candidate feature. Draft is ready to send.',
+      evidence:'feature request ×3 → keep-signal',
+      draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.',
+      primary:'Approve & send', secondary:'Open thread', quiet:'Edit draft',
+      confirm:{ h:'Reply sent to maria@acme.co', p:'Logged as evidence. The request is now attached to a candidate feature.' }
+    },
+    build:[
+      {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'7 features shipped', s:'labels, batch view, snooze, rules'},
+      {ic:'wait', icsvg:'bolt', tag:'in review', tagcls:'wait', t:'Per-label snooze', s:'built · in review'},
+      {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Bulk archive rules', s:'queued on autopilot'}
+    ],
+    growth:[
+      {k:'g', t:'Featured in <b>2 newsletters</b>', s:'last month', v:'+40 signups'},
+      {k:'b', t:'<b>r/productivity</b> thread', s:'organic', v:'~180 visits/mo'},
+      {k:'g', t:'Funnel visitor → trial → paid', s:'strong', v:'22%'}
+    ],
+    money:{ mrr:'$420', net:'+$392', netNeg:false, costTotal:'$28',
+      costs:[{l:'Infra',a:'$12',c:'#4a72b0'},{l:'APIs',a:'$9',c:'#c8643c'},{l:'Email',a:'$6',c:'#7a5ea8'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
+    health:[
+      {k:'a', t:'<b>3 open</b> support tickets', s:'~3h avg reply', v:'3'},
+      {k:'g', t:'Uptime', s:'last 30 days', v:'99.8%'},
+      {k:'g', t:'Refunds', s:'this month', v:'0'}
+    ],
+    connected:[
+      {n:'Stripe',ok:true},{n:'Domain',ok:true},{n:'Email',ok:true},{n:'Product Hunt',ok:true},{n:'X / Twitter',ok:true}
+    ],
+    activity:[
+      {t:'drafted reply · <span class="mono">ticket #t1</span>', a:'6m'},
+      {t:'batched 220 threads for 8 users', a:'40m'},
+      {t:'new subscriber → <span class="mono">$14/mo</span>', a:'2h'},
+      {t:'nightly label sync complete', a:'5h'}
+    ]
+  },
+
+  translatorbill: {
+    mono:'T', name:'TranslatorBill', domain:'translatorbill.app', band:'#c08a2e', bandShadow:'rgba(192,138,46,.5)',
+    status:{label:'Finding fit', tone:'amber'},
+    thesis:['Auto-translate + reformat invoices to local norms in ~5s.'],
+    metrics:{ mrr:'$60', trendDir:'up', trendPct:'50%', trendAbs:'+$20 this month',
+      users:'4', usersDelta:'+1 this week', net:'+$44', churn:'0%', uptime:'99.9%',
+      series:[0,10,20,30,45,60] },
+    decision:{
+      kind:'Cold outreach', glyph:'✉',
+      title:'Send cold email — 25 cross-border freelancers',
+      sub:'Batch 2 of 3 to freelancers who invoice in 3+ currencies. Copy is drafted.',
+      evidence:'batch 1: 25 sent → 36% open · 8% reply',
+      draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V',
+      primary:'Approve & send', secondary:'Preview batch', quiet:'Edit copy',
+      confirm:{ h:'Batch queued — 25 emails sending', p:'Replies come back as evidence. Batch 3 unlocks once this one pays off.' }
+    },
+    build:[
+      {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'3 features shipped', s:'upload, translate, reformat'},
+      {ic:'wait', icsvg:'bolt', tag:'testing', tagcls:'wait', t:'Multi-currency detection', s:'built · in testing'},
+      {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'PDF export', s:'queued on autopilot'}
+    ],
+    growth:[
+      {k:'a', t:'<b>Cold batch 1</b> sent', s:'25 recipients', v:'8% reply'},
+      {k:'b', t:'Landing page live', s:'organic', v:'~40 visits/mo'},
+      {k:'a', t:'Funnel', s:'still forming', v:'—'}
+    ],
+    money:{ mrr:'$60', net:'+$44', netNeg:false, costTotal:'$16',
+      costs:[{l:'Infra',a:'$6',c:'#4a72b0'},{l:'APIs',a:'$5',c:'#c8643c'},{l:'Email',a:'$4',c:'#7a5ea8'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
+    health:[
+      {k:'g', t:'<b>1 open</b> support ticket', s:'~6h avg reply', v:'1'},
+      {k:'g', t:'Uptime', s:'last 30 days', v:'99.9%'},
+      {k:'g', t:'Refunds', s:'this month', v:'0'}
+    ],
+    connected:[
+      {n:'Stripe',ok:true},{n:'Domain',ok:true},{n:'Email',ok:true},
+      {n:'Product Hunt',ok:false,note:'not launched yet'},{n:'X / Twitter',ok:false,note:'needed for social posts'}
+    ],
+    activity:[
+      {t:'drafted cold batch 2 · <span class="mono">25 recipients</span>', a:'12m'},
+      {t:'batch 1 reply → demo booked', a:'3h'},
+      {t:'translated 18 invoices', a:'6h'},
+      {t:'new trial started', a:'1d'}
+    ]
+  },
+
+  datadrop: {
+    mono:'D', name:'DataDrop', domain:'datadrop.app', band:'#4a72b0', bandShadow:'rgba(74,114,176,.5)',
+    status:{label:'Validating', tone:'blue'},
+    thesis:['Turn any CSV into a shareable dashboard in one drop.'],
+    metrics:{ mrr:'$0', trendDir:'flat', trendPct:'pre-revenue', trendAbs:'2 active trials',
+      users:'2', usersDelta:'trials', net:'−$15', churn:'—', uptime:'99.9%',
+      series:[0,0,0,0,0,0] },
+    decision:{
+      kind:'Authorize spend', glyph:'$',
+      title:'Authorize $50 Google Ads test — “csv to dashboard”',
+      sub:'The organic SEO page converts 3.1%. A small paid test would tell us if it scales.',
+      evidence:'organic page converts 3.1% → worth a $50 test',
+      primary:'Approve $50 test', secondary:'See SEO page', quiet:'Not now',
+      confirm:{ h:'$50 ad test authorized', p:'Ads go live within the hour. Spend is capped at $50 — you’ll see conversions as evidence.' }
+    },
+    build:[
+      {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'5 features shipped', s:'upload, auto-charts, share links'},
+      {ic:'wait', icsvg:'bolt', tag:'building', tagcls:'wait', t:'Saved chart views', s:'in progress'},
+      {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Team sharing', s:'queued on autopilot'}
+    ],
+    growth:[
+      {k:'g', t:'<b>Organic SEO page</b>', s:'converting', v:'3.1%'},
+      {k:'b', t:'Blog posts ranking', s:'organic', v:'~90 visits/mo'},
+      {k:'a', t:'Funnel', s:'forming', v:'—'}
+    ],
+    money:{ mrr:'$0', net:'−$15', netNeg:true, costTotal:'$15',
+      costs:[{l:'Infra',a:'$7',c:'#4a72b0'},{l:'APIs',a:'$4',c:'#c8643c'},{l:'Email',a:'$3',c:'#7a5ea8'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
+    health:[
+      {k:'g', t:'<b>0 open</b> support tickets', s:'inbox clear', v:'0'},
+      {k:'g', t:'Uptime', s:'last 30 days', v:'99.9%'},
+      {k:'g', t:'Refunds', s:'this month', v:'0'}
+    ],
+    connected:[
+      {n:'Stripe',ok:true},{n:'Domain',ok:true},{n:'Email',ok:true},
+      {n:'Product Hunt',ok:false,note:'planned'},{n:'X / Twitter',ok:false,note:'needed for social posts'}
+    ],
+    activity:[
+      {t:'SEO page → <span class="mono">3.1% conversion</span>', a:'20m'},
+      {t:'generated dashboard from 4k-row CSV', a:'2h'},
+      {t:'new trial started', a:'8h'},
+      {t:'published blog post', a:'1d'}
+    ]
+  },
+
+  redditpainbot: {
+    mono:'R', name:'RedditPainBot', domain:'redditpainbot.app', band:'#7a5ea8', bandShadow:'rgba(122,94,168,.5)',
+    status:{label:'Building', tone:'violet'},
+    thesis:['Mine Reddit for painful problems worth building next.'],
+    metrics:{ mrr:'$0', trendDir:'flat', trendPct:'pre-revenue', trendAbs:'skeleton',
+      users:'0', usersDelta:'not launched', net:'−$8', churn:'—', uptime:'—',
+      series:[0,0,0,0,0,0] },
+    decision:null,
+    build:[
+      {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'1 feature shipped', s:'app skeleton + auth'},
+      {ic:'wait', icsvg:'bolt', tag:'building', tagcls:'wait', t:'Pain-post scraper', s:'in progress on autopilot'},
+      {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Score & rank pains', s:'queued'}
+    ],
+    growth:[
+      {k:'a', t:'Not launched yet', s:'building the core', v:'—'}
+    ],
+    money:{ mrr:'$0', net:'−$8', netNeg:true, costTotal:'$8',
+      costs:[{l:'Infra',a:'$5',c:'#4a72b0'},{l:'APIs',a:'$2',c:'#c8643c'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
+    health:[
+      {k:'g', t:'<b>0 open</b> support tickets', s:'not live', v:'0'},
+      {k:'a', t:'Uptime', s:'not deployed', v:'—'},
+      {k:'g', t:'Refunds', s:'this month', v:'0'}
+    ],
+    connected:[
+      {n:'Domain',ok:true},{n:'Stripe',ok:false,note:'connect before revenue'},
+      {n:'Email',ok:false,note:'not set up'},{n:'X / Twitter',ok:false,note:'needed for social posts'}
+    ],
+    activity:[
+      {t:'scaffolded <span class="mono">/scraper</span> module', a:'30m'},
+      {t:'crawled 3 subreddits for pain posts', a:'2h'},
+      {t:'set up domain + DNS', a:'1d'},
+      {t:'company created from opportunity', a:'2d'}
+    ]
+  }
+};
+
+const ORDER = ['leadsift','quietinbox','translatorbill','datadrop','redditpainbot'];
+const TONE = {
+  green:{line:'#cbe0c4',bg:'var(--green-soft)',ink:'#3f7a43',glow:'rgba(79,138,82,.18)'},
+  amber:{line:'#e6cfa0',bg:'var(--amber-soft)',ink:'#9a6d1c',glow:'rgba(192,138,46,.18)'},
+  blue:{line:'#c3d1e6',bg:'#e4ecf5',ink:'#3d629b',glow:'rgba(74,114,176,.18)'},
+  violet:{line:'#d6cae6',bg:'#efe9f5',ink:'#67519a',glow:'rgba(122,94,168,.18)'}
+};
+
+/* svg icon set */
+const IC = {
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  alert:'<path d="M12 9v4m0 4h.01M10.3 4l-8 14a2 2 0 001.7 3h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z"/>',
+  dots:'<path d="M5 12h.01M12 12h.01M19 12h.01"/>'
+};
+
+/* ============================ RENDER ============================ */
+function spark(series, w, h){
+  const pad = 5;
+  const min = Math.min(...series), max = Math.max(...series);
+  const range = (max - min) || 1;
+  const n = series.length;
+  const xs = i => pad + (i/(n-1))*(w - 2*pad);
+  const ys = v => (h - pad) - ((v - min)/range)*(h - 2*pad);
+  const pts = series.map((v,i)=>[xs(i), ys(v)]);
+  const line = pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area = 'M'+pts[0][0].toFixed(1)+','+(h-pad).toFixed(1)+' '
+    + pts.map(p=>'L'+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')
+    + ' L'+pts[n-1][0].toFixed(1)+','+(h-pad).toFixed(1)+' Z';
+  return {line, area, dot:pts[n-1]};
+}
+
+function metricStrip(m, band){
+  const s = spark(m.series, 132, 46);
+  const trendCls = m.trendDir;
+  const arrow = m.trendDir==='up'
+    ? '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>'
+    : (m.trendDir==='down'
+      ? '<svg viewBox="0 0 24 24"><path d="M7 7l10 10M9 17h8V9" stroke="currentColor" stroke-width="2.4" fill="none"/></svg>'
+      : '');
+  const netCls = m.net.trim().charAt(0)==='−' ? 'down' : (m.net.trim().charAt(0)==='+' ? 'up' : '');
+  return `
+  <div class="stats">
+    <div class="stat mrr">
+      <div class="mrr-l">
+        <div class="s-lbl">MRR</div>
+        <div class="s-val">${m.mrr}</div>
+        <div class="trend ${trendCls}">${arrow}${m.trendPct}${m.trendDir!=='flat' ? ' · '+m.trendAbs : ''}</div>
+      </div>
+      <svg class="spark" viewBox="0 0 132 46" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="sf" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="${band}" stop-opacity=".22"/>
+            <stop offset="1" stop-color="${band}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="${s.area}" fill="url(#sf)"/>
+        <polyline points="${s.line}" fill="none" stroke="${band}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${s.dot[0].toFixed(1)}" cy="${s.dot[1].toFixed(1)}" r="3.2" fill="${band}" stroke="#fffdf8" stroke-width="1.6"/>
+      </svg>
+    </div>
+    <div class="stat">
+      <div class="s-lbl">Users</div>
+      <div class="s-val">${m.users}</div>
+      <div class="s-sub">${m.usersDelta}</div>
+    </div>
+    <div class="stat">
+      <div class="s-lbl">Net / mo</div>
+      <div class="s-val">${m.net}</div>
+      <div class="s-sub ${netCls}">after costs</div>
+    </div>
+    <div class="stat">
+      <div class="s-lbl">Uptime</div>
+      <div class="s-val">${m.uptime}</div>
+      <div class="s-sub">churn ${m.churn}</div>
+    </div>
+  </div>`;
+}
+
+function decisionCard(d){
+  if(!d){
+    return `<div class="caught">
+      <div class="cc"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div><h3>You’re all caught up</h3><p>On autopilot — building the core. Nothing needs your approval right now.</p></div>
+    </div>`;
+  }
+  let detail = '<div class="dec-detail">';
+  if(d.previewUrl){
+    detail += `<a class="url-chip" onclick="reviewPreview(event)">
+      <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      ${d.previewUrl}</a>`;
+  }
+  if(d.doneWhen){
+    detail += `<span class="done-when"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>${d.doneWhen}</span>`;
+  }
+  if(d.evidence){
+    detail += `<span class="evi"><b>Evidence</b> · ${d.evidence}</span>`;
+  }
+  if(d.draft){
+    detail += `<div class="draft-box">${escapeHtml(d.draft)}</div>`;
+  }
+  detail += '</div>';
+
+  return `<div class="decision" id="decisionCard">
+    <div class="dec-tag"><span class="pd"></span>Needs your approval<span class="glyph">${d.glyph}&nbsp; ${d.kind}</span></div>
+    <div class="dec-title">${d.title}</div>
+    <div class="dec-sub">${d.sub}</div>
+    ${detail}
+    <div class="actions">
+      <button class="btn btn-primary" onclick="approve()">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>${d.primary}</button>
+      <button class="btn btn-secondary" onclick="secondary()">${d.secondary}</button>
+      <button class="btn btn-quiet" onclick="openFeedback()">${d.quiet}</button>
+    </div>
+  </div>`;
+}
+
+function render(key){
+  const c = COMPANIES[key];
+  currentKey = key;
+  const t = TONE[c.status.tone];
+
+  // build rows
+  const buildRows = c.build.map(b=>`
+    <div class="build-row">
+      <div class="b-ic ${b.ic}"><svg viewBox="0 0 24 24">${IC[b.icsvg]}</svg></div>
+      <div class="b-txt"><div class="bt">${b.t}</div><div class="bs">${b.s}</div></div>
+      <div class="b-tag ${b.tagcls}">${b.tag}</div>
+    </div>`).join('');
+
+  const growthRows = c.growth.map(g=>`
+    <div class="sl"><span class="sk ${g.k}"></span>
+      <div class="sx"><div class="st1">${g.t}</div><div class="bs" style="font-size:12px;color:var(--ink-faint);margin-top:2px">${g.s}</div></div>
+      <div class="sv">${g.v}</div></div>`).join('');
+
+  const healthRows = c.health.map(h=>`
+    <div class="sl"><span class="sk ${h.k}"></span>
+      <div class="sx"><div class="st1">${h.t}</div><div class="bs" style="font-size:12px;color:var(--ink-faint);margin-top:2px">${h.s}</div></div>
+      <div class="sv">${h.v}</div></div>`).join('');
+
+  const costBar = c.money.costs.map(x=>`<span style="flex:${parseInt(x.a.replace('$',''))};background:${x.c}"></span>`).join('');
+  const costList = c.money.costs.map(x=>`<div class="cost"><span class="cd" style="background:${x.c}"></span>${x.l}<span class="ca">${x.a}</span></div>`).join('');
+
+  const conn = c.connected.map(x=>{
+    if(x.ok){
+      return `<span class="conn-chip ok"><svg class="ci" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>${x.n}</span>`;
+    }
+    return `<span class="conn-chip no"><svg class="ci" viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01M10.3 4l-8 14a2 2 0 001.7 3h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z"/></svg>${x.n}${x.note?`<span class="note">${x.note}</span>`:''}</span>`;
+  }).join('');
+
+  const acts = c.activity.map(a=>`
+    <div class="act-row"><span class="ad"></span><div class="atxt">${a.t}</div><div class="at">${a.a}</div></div>`).join('');
+
+  const html = `
+    <section class="hero" style="--band:${c.band};--band-shadow:${c.bandShadow};--st-line:${t.line};--st-bg:${t.bg};--st-ink:${t.ink};--st-glow:${t.glow}">
+      <div class="hero-top">
+        <div class="mono" style="background:${c.band}">${c.mono}</div>
+        <div class="id">
+          <div class="id-row">
+            <h1>${c.name}</h1>
+            <span class="status"><span class="dot"></span>${c.status.label}</span>
+          </div>
+          <div class="dom"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18"/></svg>${c.domain}</div>
+          <p class="thesis"><span class="q">“</span>${c.thesis[0]}<span class="q">”</span></p>
+          <div class="autonomy">
+            <span class="au"><span class="au-k">Building</span><span class="au-v"><span class="au-d auto"></span>autopilot</span></span>
+            <span class="au"><span class="au-k">Growth</span><span class="au-v"><span class="au-d you"></span>you approve</span></span>
+            <span class="au"><span class="au-k">Running</span><span class="au-v"><span class="au-d auto"></span>autopilot</span></span>
+          </div>
+        </div>
+      </div>
+      ${metricStrip(c.metrics, c.band)}
+    </section>
+
+    ${decisionCard(c.decision)}
+
+    <div class="section-lbl">Build</div>
+    <div class="card wide">
+      <div class="card-head">
+        <h2><svg class="hi" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>What the agent is making</h2>
+        <span class="meta">on autopilot</span>
+      </div>
+      ${buildRows}
+    </div>
+
+    <div class="section-lbl">Operate</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-head"><h2><svg class="hi" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M21 7v5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Growth</h2><span class="meta">you approve</span></div>
+        <div class="slist">${growthRows}</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2><svg class="hi" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Health</h2><span class="meta">autopilot</span></div>
+        <div class="slist">${healthRows}</div>
+      </div>
+    </div>
+
+    <div class="section-lbl">Money</div>
+    <div class="card wide">
+      <div class="money-top">
+        <span class="mm">${c.money.mrr}</span>
+        <span class="mn ${c.money.netNeg?'neg':''}">${c.money.net}/mo net</span>
+        <span class="mc">costs ${c.money.costTotal}/mo</span>
+      </div>
+      <div class="costbar">${costBar}</div>
+      <div class="costs">${costList}</div>
+    </div>
+
+    <div class="section-lbl">Connected accounts</div>
+    <div class="card wide">
+      <div class="conn">${conn}</div>
+    </div>
+
+    <div class="section-lbl">Recent activity</div>
+    <div class="card wide">
+      <div class="act">${acts}</div>
+    </div>
+  `;
+
+  document.getElementById('view').innerHTML = html;
+
+  // top switcher chip
+  document.getElementById('swChip').textContent = c.mono;
+  document.getElementById('swChip').style.background = c.band;
+  document.getElementById('swName').textContent = c.name;
+  buildMenu();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================ MENU ============================ */
+function buildMenu(){
+  const list = document.getElementById('menuList');
+  list.innerHTML = ORDER.map(k=>{
+    const c = COMPANIES[k];
+    const cur = k===currentKey ? 'cur':'';
+    return `<button class="m-item ${cur}" onclick="pick('${k}')">
+      <span class="chip" style="background:${c.band}">${c.mono}</span>
+      <span class="mi-txt"><span class="mi-nm">${c.name}</span><span class="mi-sub"> ${c.metrics.mrr}/mo · ${c.status.label}</span></span>
+      <svg class="tick" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    </button>`;
+  }).join('');
+}
+function toggleMenu(e){ e.stopPropagation(); document.getElementById('switch').classList.toggle('open'); }
+function pick(k){ document.getElementById('switch').classList.remove('open'); render(k); }
+document.addEventListener('click', ()=> document.getElementById('switch').classList.remove('open'));
+
+/* ============================ DECISION ACTIONS ============================ */
+function approve(){
+  const c = COMPANIES[currentKey], d = c.decision;
+  const card = document.getElementById('decisionCard');
+  card.querySelector('.dec-tag').innerHTML = '<span class="pd" style="background:var(--green);box-shadow:0 0 0 4px rgba(79,138,82,.16)"></span><span style="color:var(--green)">Approved</span>';
+  const body = card.querySelector('.dec-detail') || card.querySelector('.dec-sub');
+  // remove sub, detail, actions
+  card.querySelector('.dec-title').style.display='none';
+  card.querySelector('.dec-sub').style.display='none';
+  const det = card.querySelector('.dec-detail'); if(det) det.style.display='none';
+  card.querySelector('.actions').outerHTML = `
+    <div class="resolved">
+      <div class="rc"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <div>
+        <h3>${d.confirm.h}</h3>
+        <p>${d.confirm.p}</p>
+        <button class="undo" onclick="render(currentKey)">Undo</button>
+      </div>
+    </div>`;
+  card.style.borderColor = '#cbe0c4';
+  card.style.background = 'linear-gradient(180deg,#f4faf1,var(--paper))';
+  card.querySelector('.dec-tag').style.marginBottom = '14px';
+  toast('Approved — '+d.confirm.h);
+}
+function secondary(){
+  const d = COMPANIES[currentKey].decision;
+  if(d.previewUrl){ toast('Opening preview · '+d.previewUrl); }
+  else { toast(d.secondary+' — opened'); }
+}
+function reviewPreview(e){ e.stopPropagation(); const d=COMPANIES[currentKey].decision; toast('Opening preview · '+d.previewUrl); }
+function openFeedback(){
+  const card = document.getElementById('decisionCard');
+  if(card.querySelector('.feedback')) return;
+  const actions = card.querySelector('.actions');
+  const fb = document.createElement('div');
+  fb.className = 'feedback';
+  fb.innerHTML = `
+    <textarea placeholder="What should change? The agent will revise and re-submit for your approval…" autofocus></textarea>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-primary" onclick="sendFeedback()">Send feedback</button>
+      <button class="btn btn-quiet" onclick="this.closest('.feedback').remove()">Cancel</button>
+    </div>`;
+  actions.style.display='none';
+  card.appendChild(fb);
+  fb.querySelector('textarea').focus();
+}
+function sendFeedback(){
+  const card = document.getElementById('decisionCard');
+  card.querySelector('.dec-tag').innerHTML = '<span class="pd" style="background:var(--amber);box-shadow:0 0 0 4px rgba(192,138,46,.16)"></span><span style="color:var(--amber)">Sent back</span>';
+  card.querySelector('.dec-title').style.display='none';
+  card.querySelector('.dec-sub').style.display='none';
+  const det = card.querySelector('.dec-detail'); if(det) det.style.display='none';
+  const fb = card.querySelector('.feedback');
+  fb.outerHTML = `
+    <div class="resolved" style="margin-top:6px">
+      <div class="rc" style="background:var(--amber-soft);border-color:#e6cfa0"><svg viewBox="0 0 24 24" style="stroke:var(--amber)"><path d="M4 12h13M11 6l6 6-6 6"/></svg></div>
+      <div>
+        <h3>Feedback sent</h3>
+        <p>The agent will revise and re-submit this for your approval.</p>
+        <button class="undo" onclick="render(currentKey)">Undo</button>
+      </div>
+    </div>`;
+  card.style.borderColor = '#e6cfa0';
+  card.style.background = 'linear-gradient(180deg,#fbf6ec,var(--paper))';
+  toast('Feedback sent — agent will revise');
+}
+
+/* ============================ UTIL ============================ */
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function pulseBack(){ toast('← Back to portfolio'); }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ============================ INIT ============================ */
+let currentKey = 'leadsift';
+render('leadsift');
+</script>
+</body>
+</html>

@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C Slop Slop · Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f7f6f3;
+    --paper:#fffefb;
+    --ink:#1d1c1a;
+    --ink-2:#56524c;
+    --ink-3:#8a847b;
+    --line:#eae7e0;
+    --line-2:#ded9d0;
+    --accent:#5f7d5a;        /* one muted sage accent */
+    --accent-soft:#eef2ea;
+    --accent-ink:#41583d;
+    --slate:#94908a;
+    --blue:#4f74c9;
+    --violet:#7a6ad0;
+    --amber:#c08a2e;
+    --green:#5f8a4f;
+    --red:#c25a4f;
+    --shadow:0 1px 2px rgba(28,26,22,.04), 0 8px 24px rgba(28,26,22,.06);
+    --shadow-lg:0 12px 40px rgba(28,26,22,.14);
+    --r:12px;
+    --r-sm:8px;
+    --ease:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,system-ui,-apple-system,sans-serif;
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+    letter-spacing:-.01em;
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  ::selection{background:var(--accent-soft)}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    height:56px;display:flex;align-items:center;gap:16px;
+    padding:0 22px;border-bottom:1px solid var(--line);
+    background:rgba(255,254,251,.78);backdrop-filter:blur(12px);
+    position:sticky;top:0;z-index:40;
+  }
+  .brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:-.02em}
+  .brand .dot{width:10px;height:10px;border-radius:3px;background:var(--accent)}
+  .brand small{color:var(--ink-3);font-weight:450;letter-spacing:0}
+  .nav{display:flex;gap:2px;margin-left:6px}
+  .nav button{
+    padding:6px 12px;border-radius:8px;color:var(--ink-2);font-weight:500;font-size:13px;
+    transition:background .15s var(--ease),color .15s var(--ease);
+  }
+  .nav button:hover{background:var(--line)}
+  .nav button.on{background:var(--ink);color:var(--paper)}
+  .grow{flex:1}
+  .cmd{
+    display:flex;align-items:center;gap:8px;height:34px;padding:0 12px;min-width:300px;
+    border:1px solid var(--line-2);border-radius:9px;background:var(--paper);color:var(--ink-3);
+    font-size:13px;transition:border-color .15s var(--ease),box-shadow .15s var(--ease);
+  }
+  .cmd:hover{border-color:var(--ink-3)}
+  .cmd:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .cmd input{flex:1;border:none;outline:none;background:none;font-family:inherit;font-size:13px;color:var(--ink)}
+  .cmd input::placeholder{color:var(--ink-3)}
+  .kbd{
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-3);
+    border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--bg);
+  }
+  .needs{
+    display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;
+    background:#f4eefb;color:var(--violet);font-weight:550;font-size:12.5px;cursor:pointer;
+    border:1px solid #e6dcfa;transition:background .15s;
+  }
+  .needs:hover{background:#ede2fb}
+  .needs .pip{width:7px;height:7px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 4px #efe5fc}
+
+  /* ---------- planner shell ---------- */
+  .shell{display:flex;align-items:flex-start;overflow-x:auto;scroll-behavior:smooth}
+  .shell::-webkit-scrollbar{height:10px}
+  .shell::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px;border:3px solid var(--bg)}
+
+  .col{flex:0 0 auto;padding:26px 22px 80px;min-height:calc(100vh - 56px)}
+  .col-today{width:560px}
+  .col-up{width:340px;border-left:1px solid var(--line);background:#fbfaf7}
+  .col-day{width:300px;border-left:1px solid var(--line);background:#fbfaf7;opacity:.92}
+
+  .col-head{margin-bottom:20px}
+  .col-head h1{margin:0;font-size:25px;font-weight:600;letter-spacing:-.03em}
+  .col-head .sub{margin-top:4px;color:var(--ink-3);font-size:13.5px}
+  .col-head .sub b{color:var(--accent-ink);font-weight:600}
+  .col-up h2,.col-day h2{margin:0 0 3px;font-size:15px;font-weight:600;letter-spacing:-.02em}
+  .col-up .sub,.col-day .sub{color:var(--ink-3);font-size:12.5px;margin-bottom:16px}
+
+  /* progress bar */
+  .prog{height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:14px}
+  .prog>i{display:block;height:100%;background:var(--accent);border-radius:4px;transition:width .5s var(--ease)}
+
+  /* ---------- company group ---------- */
+  .group{margin-bottom:22px}
+  .group-h{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:0 4px}
+  .group-h .ava{
+    width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
+    font-size:10.5px;font-weight:700;color:#fff;letter-spacing:-.02em;
+  }
+  .group-h .nm{font-weight:600;font-size:13px;letter-spacing:-.01em}
+  .group-h .st{font-size:11px;color:var(--ink-3);font-weight:500}
+  .group-h .open{margin-left:auto;font-size:11.5px;color:var(--ink-3);opacity:0;transition:opacity .15s}
+  .group:hover .group-h .open{opacity:1}
+  .group-h .open:hover{color:var(--accent-ink)}
+
+  /* ---------- move row ---------- */
+  .move{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);margin-bottom:8px;overflow:hidden;
+    transition:border-color .15s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease),opacity .35s var(--ease);
+  }
+  .move:hover{border-color:var(--line-2);box-shadow:0 1px 2px rgba(28,26,22,.05),0 10px 30px rgba(28,26,22,.08)}
+  .move.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
+  .move-top{display:flex;align-items:center;gap:13px;padding:13px 15px}
+  .check{
+    flex:0 0 auto;width:21px;height:21px;border-radius:50%;border:1.8px solid var(--line-2);
+    background:var(--paper);position:relative;transition:border-color .18s var(--ease),background .18s var(--ease),transform .18s var(--ease);
+  }
+  .check:hover{border-color:var(--accent)}
+  .check svg{position:absolute;inset:0;width:100%;height:100%;stroke:#fff;stroke-width:3.2;
+    stroke-linecap:round;stroke-linejoin:round;fill:none;
+    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .28s var(--ease) .04s}
+  .move-mid{flex:1;min-width:0}
+  .move-title{font-weight:500;font-size:14px;letter-spacing:-.01em;transition:color .25s var(--ease)}
+  .move-meta{display:flex;align-items:center;gap:8px;margin-top:3px;font-size:11.5px;color:var(--ink-3)}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;
+    padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+  .pill .d{width:6px;height:6px;border-radius:50%}
+  .pill.await{background:#f4eefb;color:var(--violet)}
+  .pill.await .d{background:var(--violet)}
+  .pill.building{background:#eaf0fb;color:var(--blue)}
+  .pill.building .d{background:var(--blue);animation:pulse 1.4s var(--ease) infinite}
+  .pill.todo{background:#f1f0ed;color:var(--slate)}
+  .pill.todo .d{background:var(--slate)}
+  .pill.blocked{background:#fbecea;color:var(--red)}
+  .pill.blocked .d{background:var(--red)}
+  .pill.shipped{background:#ecf3e9;color:var(--green)}
+  .pill.shipped .d{background:var(--green)}
+  .score{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-2);font-weight:500}
+  .expander{margin-left:6px;color:var(--ink-3);font-size:11px;transition:transform .2s var(--ease)}
+  .move.open .expander{transform:rotate(180deg)}
+
+  /* completed */
+  .move.done{opacity:.55}
+  .move.done .check{background:var(--accent);border-color:var(--accent);transform:scale(1)}
+  .move.done .check svg{stroke-dashoffset:0}
+  .move.done .move-title{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--line-2)}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+  .check.popping{animation:pop .32s var(--ease)}
+
+  /* ---------- inline action body ---------- */
+  .body{max-height:0;overflow:hidden;transition:max-height .3s var(--ease)}
+  .move.open .body{max-height:760px}
+  .body-in{padding:2px 15px 16px;border-top:1px solid var(--line)}
+  .body-in .lede{font-size:12.5px;color:var(--ink-2);margin:12px 0 10px;line-height:1.55}
+
+  /* approval gate */
+  .gate{border:1px solid var(--line);border-radius:10px;background:#fcfbf8;overflow:hidden}
+  .gate-row{display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:12.5px;border-bottom:1px solid var(--line)}
+  .gate-row .lbl{color:var(--ink-3);width:74px;flex:0 0 auto;font-size:11.5px;font-weight:500}
+  .gate-row a{color:var(--blue);text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:11.5px}
+  .gate-row a:hover{text-decoration:underline}
+  .gate-row .ok{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:600;font-size:11.5px}
+  .gate-row .ok .d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #e2efdc}
+  .gate-row .donewhen{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-2)}
+  .diff{margin:0;font-family:"JetBrains Mono",monospace;font-size:11.5px;line-height:1.7;
+    background:#fbfaf7;padding:11px 14px;overflow-x:auto;white-space:pre;color:var(--ink-2)}
+  .diff .add{color:var(--accent-ink);background:#edf3ea;display:block;margin:0 -14px;padding:0 14px}
+  .diff .ctx{color:var(--ink-3);display:block}
+
+  .gate-acts{display:flex;gap:9px;padding:12px 13px;align-items:center}
+  .btn{height:34px;padding:0 16px;border-radius:9px;font-weight:600;font-size:13px;letter-spacing:-.01em;
+    transition:transform .12s var(--ease),background .15s var(--ease),box-shadow .15s var(--ease)}
+  .btn:active{transform:translateY(1px)}
+  .btn-approve{background:var(--accent);color:#fff;box-shadow:0 1px 2px rgba(65,88,61,.3)}
+  .btn-approve:hover{background:var(--accent-ink)}
+  .btn-reject{background:var(--paper);color:var(--ink-2);border:1px solid var(--line-2)}
+  .btn-reject:hover{border-color:var(--red);color:var(--red)}
+  .gate-acts .conf{margin-left:auto;font-size:12.5px;font-weight:600;opacity:0;transform:translateX(6px);
+    transition:opacity .25s var(--ease),transform .25s var(--ease)}
+  .gate-acts .conf.show{opacity:1;transform:none}
+  .conf.green{color:var(--green)}
+  .conf.amber{color:var(--amber)}
+
+  .reject-box{margin-top:10px;display:none}
+  .reject-box.show{display:block}
+  .reject-box textarea{width:100%;min-height:60px;border:1px solid var(--line-2);border-radius:9px;
+    padding:9px 11px;font-family:inherit;font-size:12.5px;resize:vertical;outline:none;color:var(--ink);background:var(--paper)}
+  .reject-box textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .reject-box .ra{display:flex;gap:8px;margin-top:8px}
+  .reject-box .ra .btn{height:30px;font-size:12px}
+
+  /* simple action body */
+  .simple-acts{display:flex;gap:8px;margin-top:4px}
+  .btn-ghost{height:31px;padding:0 13px;border-radius:8px;background:var(--paper);border:1px solid var(--line-2);
+    color:var(--ink-2);font-weight:550;font-size:12.5px;transition:border-color .15s,color .15s}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent-ink)}
+  .btn-ghost.warn:hover{border-color:var(--red);color:var(--red)}
+
+  /* company chat side note */
+  .note{margin-top:12px;border:1px dashed var(--line-2);border-radius:9px;padding:10px 12px;background:#fbfaf7}
+  .note .nh{font-size:11px;color:var(--ink-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px}
+  .note .msg{font-size:12.5px;margin-bottom:6px;line-height:1.5}
+  .note .msg.a{color:var(--ink)}
+  .note .msg.u{color:var(--ink-3)}
+  .note .msg b{color:var(--accent-ink);font-weight:600}
+
+  /* ---------- upcoming cards ---------- */
+  .up-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;
+    box-shadow:var(--shadow);transition:border-color .15s,box-shadow .2s,transform .2s}
+  .up-card:hover{border-color:var(--line-2);transform:translateY(-1px);box-shadow:0 10px 26px rgba(28,26,22,.08)}
+  .up-card .uh{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+  .up-card .nm{font-size:12px;font-weight:600}
+  .up-card .ttl{font-size:13px;font-weight:500;letter-spacing:-.01em}
+  .up-card .step{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+  .up-mini-ava{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff}
+
+  .up-sec{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin:22px 0 10px;padding-left:2px}
+
+  /* opportunity card */
+  .opp{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:8px;box-shadow:var(--shadow)}
+  .opp .oh{display:flex;align-items:center;gap:8px}
+  .opp .ttl{font-weight:600;font-size:13px}
+  .opp .sc{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;color:var(--accent-ink)}
+  .opp .th{font-size:11.5px;color:var(--ink-3);margin:5px 0 9px;line-height:1.45}
+  .opp .promote{height:28px;width:100%;border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);
+    font-weight:600;font-size:12px;transition:background .15s,transform .12s}
+  .opp .promote:hover{background:#e2eadd}
+  .opp .promote:active{transform:translateY(1px)}
+  .opp.killed{opacity:.5}
+
+  /* add a day hint */
+  .day-add{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--ink-3);font-size:12.5px;
+    border:1.5px dashed var(--line-2);border-radius:10px;padding:13px;cursor:pointer;transition:border-color .15s,color .15s}
+  .day-add:hover{border-color:var(--accent);color:var(--accent-ink)}
+
+  /* ---------- live activity strip ---------- */
+  .activity{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;width:min(640px,calc(100vw - 40px))}
+  .act-bar{display:flex;align-items:center;gap:11px;height:46px;padding:0 8px 0 15px;
+    background:rgba(29,28,26,.94);color:#f2efe9;border-radius:13px;box-shadow:var(--shadow-lg);
+    backdrop-filter:blur(10px);cursor:pointer;transition:transform .18s var(--ease)}
+  .act-bar:hover{transform:translateY(-1px)}
+  .act-bar .live{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:#a9d39a;flex:0 0 auto}
+  .act-bar .live .d{width:7px;height:7px;border-radius:50%;background:#7fc06a;animation:pulse 1.4s var(--ease) infinite}
+  .act-bar .latest{flex:1;min-width:0;font-size:12.5px;color:#e6e2da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .act-bar .latest .co{color:#fff;font-weight:600}
+  .act-bar .toggle{flex:0 0 auto;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#bdb8af;transition:background .15s}
+  .act-bar .toggle:hover{background:rgba(255,255,255,.08)}
+  .act-bar .toggle svg{transition:transform .25s var(--ease)}
+  .activity.open .act-bar .toggle svg{transform:rotate(180deg)}
+
+  .act-panel{max-height:0;overflow:hidden;background:rgba(29,28,26,.96);border-radius:13px;margin-bottom:9px;
+    box-shadow:var(--shadow-lg);backdrop-filter:blur(10px);transition:max-height .32s var(--ease),opacity .25s var(--ease);opacity:0}
+  .activity.open .act-panel{max-height:380px;opacity:1}
+  .act-panel-in{padding:13px 8px 6px;overflow-y:auto;max-height:380px}
+  .act-panel-in::-webkit-scrollbar{width:8px}
+  .act-panel-in::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}
+  .act-grp{margin:0 8px 12px}
+  .act-grp .agh{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#8c877e;margin-bottom:5px;padding-left:6px}
+  .act-item{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:8px;font-size:12px;color:#d8d3ca}
+  .act-item:hover{background:rgba(255,255,255,.05)}
+  .act-item .d{width:6px;height:6px;border-radius:50%;flex:0 0 auto;background:#6c675f}
+  .act-item.running .d{background:#7fc06a;animation:pulse 1.4s var(--ease) infinite}
+  .act-item.await .d{background:#9d8fe0}
+  .act-item.blocked .d{background:#d6796d}
+  .act-item .tx{flex:1;min-width:0}
+  .act-item .t{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:#8c877e;flex:0 0 auto}
+
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(127,192,106,.5);opacity:1}50%{box-shadow:0 0 0 5px rgba(127,192,106,0);opacity:.75}}
+
+  /* ---------- overview ---------- */
+  .overview{display:none;padding:30px 36px 110px;max-width:1280px}
+  body.view-overview .shell{display:none}
+  body.view-overview .overview{display:block}
+  .ov-head{display:flex;align-items:flex-end;gap:18px;margin-bottom:24px}
+  .ov-head h1{margin:0;font-size:26px;font-weight:600;letter-spacing:-.03em}
+  .ov-head p{margin:3px 0 0;color:var(--ink-3);font-size:13.5px}
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:30px}
+  .metric{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:15px 17px;box-shadow:var(--shadow)}
+  .metric .k{font-size:11.5px;color:var(--ink-3);font-weight:500;letter-spacing:.01em}
+  .metric .v{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:600;margin-top:5px;letter-spacing:-.02em}
+  .metric .v small{font-size:14px;color:var(--ink-3);font-weight:500}
+  .metric.flag .v{color:var(--violet)}
+  .ov-sec-h{font-size:13px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+  .ov-cols{display:grid;grid-template-columns:1fr 360px;gap:30px;align-items:start}
+  .co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:13px}
+  .co-card{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow);
+    cursor:pointer;transition:border-color .15s,transform .2s,box-shadow .2s;text-align:left;display:block;width:100%}
+  .co-card:hover{transform:translateY(-2px);border-color:var(--line-2);box-shadow:0 14px 36px rgba(28,26,22,.1)}
+  .co-card .ch{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .co-card .nm{font-weight:600;font-size:15px;letter-spacing:-.01em}
+  .co-card .stp{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink-3)}
+  .co-card .stp .d{width:7px;height:7px;border-radius:50%}
+  .co-card .th{font-size:12.5px;color:var(--ink-3);line-height:1.5;min-height:38px}
+  .co-card .row{display:flex;gap:16px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+  .co-card .row div{font-size:11.5px;color:var(--ink-3)}
+  .co-card .row b{font-family:"JetBrains Mono",monospace;color:var(--ink);font-weight:600;font-size:13px;display:block;letter-spacing:-.02em}
+  .co-card.needs{border-color:#e6dcfa;box-shadow:0 0 0 2px #f4eefb}
+  .needs-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--violet);
+    background:#f4eefb;padding:2px 8px;border-radius:20px;letter-spacing:.02em}
+
+  .corner{position:fixed;right:16px;bottom:16px;z-index:60;font-family:"JetBrains Mono",monospace;font-size:11px;
+    font-weight:500;color:var(--ink-2);background:var(--paper);border:1px solid var(--line-2);border-radius:8px;
+    padding:5px 10px;box-shadow:var(--shadow);letter-spacing:-.01em}
+
+  /* toast */
+  .toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-12px);z-index:70;
+    background:var(--ink);color:#f2efe9;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:500;
+    box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast .ck{color:#9dd48a;margin-right:6px;font-weight:700}
+</style>
+</head>
+<body class="view-today">
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span>C Slop Slop <small>· from thought to bag</small></div>
+  <div class="nav">
+    <button class="on" data-view="today">Today</button>
+    <button data-view="overview">Portfolio</button>
+  </div>
+  <div class="grow"></div>
+  <label class="cmd">
+    <span class="kbd">⌘K</span>
+    <input id="cmd" placeholder="Direct a company, or ask anything…" />
+  </label>
+  <button class="needs" data-jump="leadsift"><span class="pip"></span>1 needs you</button>
+</div>
+
+<!-- ============ TODAY (planner) ============ -->
+<div class="shell" id="shell">
+
+  <!-- TODAY column -->
+  <section class="col col-today">
+    <div class="col-head">
+      <h1>Today</h1>
+      <div class="sub">Tuesday, Jun 24 · <b id="progText">1 of 3 done</b> · 3 moves across your portfolio</div>
+      <div class="prog"><i id="progBar" style="width:33%"></i></div>
+    </div>
+    <div id="moves"></div>
+  </section>
+
+  <!-- UPCOMING column -->
+  <section class="col col-up" id="upcol">
+    <h2>Upcoming</h2>
+    <div class="sub">Queued &amp; building slices — agents pull the top one next.</div>
+    <div id="upcoming"></div>
+
+    <div class="up-sec">Opportunities</div>
+    <div id="opps"></div>
+  </section>
+
+  <!-- next DAY column (infinite-grow to the right) -->
+  <section class="col col-day">
+    <h2>Tomorrow</h2>
+    <div class="sub">Wednesday, Jun 25 · planned</div>
+    <div id="tomorrow"></div>
+    <div class="day-add" id="addDay">+ Add a day →</div>
+  </section>
+</div>
+
+<!-- ============ OVERVIEW / PORTFOLIO ============ -->
+<div class="overview">
+  <div class="ov-head">
+    <div>
+      <h1>Portfolio</h1>
+      <p>5 active bets · the loop never stops — thought → opportunity → company → bag.</p>
+    </div>
+  </div>
+  <div class="metrics" id="metrics"></div>
+
+  <div class="ov-cols">
+    <div>
+      <h3 class="ov-sec-h">Companies</h3>
+      <div class="co-grid" id="coGrid"></div>
+    </div>
+    <div>
+      <h3 class="ov-sec-h">Opportunities</h3>
+      <div id="oppsOv"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LIVE ACTIVITY ============ -->
+<div class="activity" id="activity">
+  <div class="act-panel"><div class="act-panel-in" id="actPanel"></div></div>
+  <div class="act-bar" id="actBar">
+    <span class="live"><span class="d"></span>Live</span>
+    <span class="latest" id="actLatest"></span>
+    <button class="toggle" id="actToggle" aria-label="toggle activity">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+  </div>
+</div>
+
+<div class="corner">14 · Today</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const co = id => DATA.companies.find(c=>c.id===id);
+const AVA = {leadsift:'#5f7d5a', quietinbox:'#4f74c9', translatorbill:'#c08a2e', datadrop:'#7a6ad0', redditpainbot:'#94908a'};
+const STC = {active:'#5f8a4f', paused:'#c08a2e', archived:'#94908a'};
+const initials = n => n.replace(/([a-z])([A-Z])/g,'$1 $2').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function toast(msg, ok=true){
+  const t=$('#toast');
+  t.innerHTML=(ok?'<span class="ck">✓</span>':'')+msg;
+  t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- TODAY moves ---------- */
+const MOVES = [
+  {id:'m-leadsift', coId:'leadsift', kind:'approve',
+   title:'Approve LeadSift daily digest', slice:5,
+   pill:'awaiting_approval', pillText:'awaiting you'},
+  {id:'m-redditpainbot', coId:'redditpainbot', kind:'unblock',
+   title:'Unblock RedditPainBot slice 8', slice:8,
+   pill:'blocked', pillText:'blocked'},
+  {id:'m-payout', coId:null, kind:'promote',
+   title:'Promote “PayoutReconciler” to a company', opp:'o1',
+   pill:'todo', pillText:'opportunity · 82'},
+];
+
+function pillHtml(cls, txt, score){
+  return `<span class="pill ${cls}"><span class="d"></span>${txt}</span>`;
+}
+
+function moveTopHtml(m){
+  const company = m.coId ? co(m.coId) : null;
+  let meta = '';
+  if(company){
+    meta = `<span class="up-mini-ava" style="background:${AVA[company.id]}">${initials(company.name)}</span>
+            <span style="color:var(--ink-2);font-weight:500">${company.name}</span>
+            ${m.slice?`<span>· slice ${m.slice}</span>`:''}`;
+  } else {
+    meta = `<span style="color:var(--ink-2);font-weight:500">New company bet</span>`;
+  }
+  return `
+    <div class="move-top">
+      <button class="check" aria-label="complete move"><svg viewBox="0 0 24 24"><polyline points="5 13 10 18 19 6"></polyline></svg></button>
+      <div class="move-mid">
+        <div class="move-title">${m.title}</div>
+        <div class="move-meta">${meta} · ${pillHtml(m.pill,m.pillText)}</div>
+      </div>
+      <span class="expander">▾</span>
+    </div>`;
+}
+
+/* body builders */
+function approvalBody(){
+  const c = co('leadsift'); const a = c.approval;
+  const diff = a.diff.split('\n').map(l=>{
+    if(l.startsWith('+')) return `<span class="add">${esc(l)}</span>`;
+    return `<span class="ctx">${esc(l)}</span>`;
+  }).join('');
+  return `
+    <div class="lede">LeadSift shipped slice ${a.slice} — <b>${esc(a.title)}</b>. It’s live and the check is green. Review &amp; approve to ship it to users.</div>
+    <div class="gate">
+      <div class="gate-row"><span class="lbl">Preview</span><a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a></div>
+      <div class="gate-row"><span class="lbl">doneWhen</span><span class="donewhen">${esc(a.doneWhen)}</span></div>
+      <div class="gate-row"><span class="lbl">Result</span><span class="ok"><span class="d"></span>passed · attempt ${a.attempt}</span></div>
+      <pre class="diff">${diff}</pre>
+      <div class="gate-acts">
+        <button class="btn btn-approve" data-approve>Approve</button>
+        <button class="btn btn-reject" data-reject-toggle>Reject with feedback</button>
+        <span class="conf" data-conf></span>
+      </div>
+      <div class="reject-box" data-reject-box style="padding:0 13px 13px">
+        <textarea placeholder="What should change? Agents will re-run this slice with your note…"></textarea>
+        <div class="ra">
+          <button class="btn btn-reject" data-reject-send style="background:var(--accent);color:#fff;border:none">Send back</button>
+          <button class="btn-ghost" data-reject-cancel>Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="nh">LeadSift · chat</div>
+      ${DATA.chat.map(m=>`<div class="msg ${m.role==='assistant'?'a':'u'}">${m.role==='assistant'?'<b>LeadSift</b> ':'<b>You</b> '}${esc(m.text)}</div>`).join('')}
+    </div>`;
+}
+function unblockBody(){
+  const c = co('redditpainbot');
+  return `
+    <div class="lede">Slice 8 — <b>Dedupe near-identical pains</b> — has been stuck. Same failure ×3, no progress. Decide the move.</div>
+    <div class="gate" style="padding:11px 13px">
+      <div style="font-size:12px;color:var(--ink-2);line-height:1.6">
+        <span class="pill blocked"><span class="d"></span>blocked</span> stopped — no progress.
+        Preview unavailable. The agent can’t get past the dedupe check.
+      </div>
+    </div>
+    <div class="simple-acts">
+      <button class="btn-ghost" data-act="Retry queued — agents will re-attempt slice 8">Retry slice</button>
+      <button class="btn-ghost" data-act="Skipped — slice 8 moved to backlog">Skip &amp; reprioritize</button>
+      <button class="btn-ghost warn" data-act="RedditPainBot paused">Pause company</button>
+    </div>`;
+}
+function promoteBody(){
+  const o = DATA.opportunities.find(x=>x.id==='o1');
+  return `
+    <div class="lede">Thought: <i>“${esc(o.thought)}”</i> → scored <b class="mono">${o.score}</b>. Promote it to a committed company and agents start shipping slice #1 (a walking skeleton).</div>
+    <div class="gate" style="padding:11px 13px">
+      <div style="font-weight:600;font-size:13px">${esc(o.title)}</div>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:3px">${esc(o.thesis)}</div>
+    </div>
+    <div class="simple-acts">
+      <button class="btn btn-approve" data-act="“PayoutReconciler” promoted to a company — slice 1 queued">Promote to company</button>
+      <button class="btn-ghost warn" data-act="Opportunity kept in inbox">Keep in inbox</button>
+    </div>`;
+}
+
+function moveBodyHtml(m){
+  let inner = '';
+  if(m.kind==='approve') inner = approvalBody();
+  else if(m.kind==='unblock') inner = unblockBody();
+  else inner = promoteBody();
+  return `<div class="body"><div class="body-in">${inner}</div></div>`;
+}
+
+function renderMoves(){
+  const grouped = {};
+  MOVES.forEach(m=>{ const k=m.coId||'__opp'; (grouped[k]=grouped[k]||[]).push(m); });
+  // keep order: leadsift, redditpainbot, opp
+  const order = ['leadsift','redditpainbot','__opp'];
+  const wrap = $('#moves'); wrap.innerHTML='';
+  order.forEach(k=>{
+    const company = k!=='__opp'?co(k):null;
+    const g = document.createElement('div'); g.className='group';
+    const head = company
+      ? `<div class="group-h">
+           <span class="ava" style="background:${AVA[company.id]}">${initials(company.name)}</span>
+           <span class="nm">${company.name}</span>
+           <span class="st">· ${company.status}</span>
+           ${k!=='__opp'?`<button class="open" data-jump="${company.id}">Open company →</button>`:''}
+         </div>`
+      : `<div class="group-h">
+           <span class="ava" style="background:var(--accent)">✦</span>
+           <span class="nm">Opportunities</span>
+           <span class="st">· inbox</span>
+         </div>`;
+    g.innerHTML = head;
+    grouped[k].forEach(m=>{
+      const el = document.createElement('div');
+      el.className='move'; el.id=m.id; el.dataset.move=m.id;
+      el.innerHTML = moveTopHtml(m)+moveBodyHtml(m);
+      g.appendChild(el);
+    });
+    wrap.appendChild(g);
+  });
+  wireMoves();
+}
+
+let doneCount = 0;
+function updateProgress(){
+  const pct = Math.round((doneCount/MOVES.length)*100);
+  $('#progBar').style.width = pct+'%';
+  $('#progText').textContent = `${doneCount} of ${MOVES.length} done`;
+}
+
+function wireMoves(){
+  $$('.move').forEach(el=>{
+    const top = $('.move-top', el);
+    const check = $('.check', el);
+    // expand on row click (not the checkbox)
+    top.addEventListener('click', e=>{
+      if(e.target.closest('.check')) return;
+      const wasOpen = el.classList.contains('open');
+      $$('.move.open').forEach(o=>{if(o!==el)o.classList.remove('open','sel')});
+      el.classList.toggle('open', !wasOpen);
+      el.classList.toggle('sel', !wasOpen);
+    });
+    // complete
+    check.addEventListener('click', e=>{
+      e.stopPropagation();
+      const now = !el.classList.contains('done');
+      check.classList.remove('popping'); void check.offsetWidth; check.classList.add('popping');
+      el.classList.toggle('done', now);
+      doneCount += now?1:-1; doneCount=Math.max(0,doneCount);
+      updateProgress();
+      if(now){ el.classList.remove('open','sel'); toast('Move done'); }
+    });
+    // approval actions
+    const approve = $('[data-approve]', el);
+    if(approve){
+      const conf = $('[data-conf]', el);
+      const rbox = $('[data-reject-box]', el);
+      approve.addEventListener('click', e=>{
+        e.stopPropagation();
+        conf.textContent='Approved ✓ shipping to users'; conf.className='conf green show';
+        rbox.classList.remove('show');
+        toast('LeadSift slice 5 approved — shipped ✓');
+        const pill = $('.pill', el);
+        pill.className='pill shipped'; pill.innerHTML='<span class="d"></span>shipped';
+        setTimeout(()=>{ check.click(); }, 650);
+      });
+      $('[data-reject-toggle]', el).addEventListener('click', e=>{
+        e.stopPropagation(); rbox.classList.toggle('show');
+        if(rbox.classList.contains('show')) $('textarea',rbox).focus();
+      });
+      $('[data-reject-cancel]', el).addEventListener('click', e=>{ e.stopPropagation(); rbox.classList.remove('show'); });
+      $('[data-reject-send]', el).addEventListener('click', e=>{
+        e.stopPropagation();
+        const fb=$('textarea',rbox).value.trim();
+        conf.textContent='Sent back ↩ agents re-running'; conf.className='conf amber show';
+        rbox.classList.remove('show');
+        toast(fb?'Feedback sent — slice 5 re-running':'Sent back for changes', false);
+      });
+    }
+    // simple actions
+    $$('[data-act]', el).forEach(b=>{
+      b.addEventListener('click', e=>{
+        e.stopPropagation();
+        toast(b.dataset.act);
+        setTimeout(()=>{ if(!el.classList.contains('done')) check.click(); }, 400);
+      });
+    });
+  });
+}
+
+/* ---------- UPCOMING ---------- */
+function renderUpcoming(){
+  const building = DATA.companies.filter(c=>c.currentSlice).sort((a,b)=>{
+    const o={building:0,todo:1,blocked:2}; return o[a.currentSlice.status]-o[b.currentSlice.status];
+  });
+  $('#upcoming').innerHTML = building.map(c=>{
+    const s=c.currentSlice; const cls = s.status==='awaiting_approval'?'await':s.status;
+    return `<div class="up-card" data-jump="${c.id}">
+      <div class="uh">
+        <span class="up-mini-ava" style="background:${AVA[c.id]}">${initials(c.name)}</span>
+        <span class="nm">${c.name}</span>
+        <span class="pill ${cls}" style="margin-left:auto"><span class="d"></span>${s.status.replace('_',' ')}</span>
+      </div>
+      <div class="ttl">${s.title}</div>
+      <div class="step">slice ${s.n} · ${s.step}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderOpps(targetId, withPromote){
+  const html = DATA.opportunities.map(o=>{
+    const killed = o.status==='killed';
+    return `<div class="opp ${killed?'killed':''}">
+      <div class="oh"><span class="ttl">${o.title}</span><span class="sc">${o.score}</span></div>
+      <div class="th">${o.thesis}</div>
+      ${killed?'<div style="font-size:11.5px;color:var(--red);font-weight:600">killed</div>'
+        :(withPromote?`<button class="promote" data-promote="${o.id}">Promote to company →</button>`:'')}
+    </div>`;
+  }).join('');
+  $(targetId).innerHTML = html;
+  $$('[data-promote]', $(targetId)).forEach(b=>b.addEventListener('click',()=>{
+    const o=DATA.opportunities.find(x=>x.id===b.dataset.promote);
+    toast(`“${o.title}” promoted — slice 1 queued`);
+    b.textContent='Promoted ✓'; b.style.background='var(--accent)'; b.style.color='#fff';
+    b.disabled=true;
+  }));
+}
+
+function renderTomorrow(){
+  const items = [
+    {co:'leadsift', t:'Export leads to CSV', s:'slice 6 · queued'},
+    {co:'datadrop', t:'Saved chart views', s:'slice 6 · top of backlog'},
+    {co:'quietinbox', t:'Review snooze slice', s:'slice 9 · likely awaits you'},
+  ];
+  $('#tomorrow').innerHTML = items.map(i=>{
+    const c=co(i.co);
+    return `<div class="up-card" data-jump="${i.co}">
+      <div class="uh"><span class="up-mini-ava" style="background:${AVA[i.co]}">${initials(c.name)}</span>
+      <span class="nm">${c.name}</span></div>
+      <div class="ttl">${i.t}</div><div class="step">${i.s}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- OVERVIEW ---------- */
+function renderOverview(){
+  const p=DATA.portfolio;
+  $('#metrics').innerHTML = [
+    ['MRR', `$${p.mrr}`, ''],
+    ['Users', p.users, ''],
+    ['Active companies', p.activeCompanies, ''],
+    ['Slices shipped', p.slicesShipped, ''],
+    ['Needs you', p.needsYou, 'flag'],
+  ].map(([k,v,c])=>`<div class="metric ${c}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  $('#coGrid').innerHTML = DATA.companies.map(c=>{
+    const cur = c.currentSlice;
+    const sShipped = c.slicesShipped ?? (c.slices?c.slices.filter(s=>s.status==='shipped').length:0);
+    return `<button class="co-card ${c.needsYou?'needs':''}" data-jump="${c.id}">
+      <div class="ch">
+        <span class="ava" style="width:24px;height:24px;border-radius:7px;background:${AVA[c.id]};display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff">${initials(c.name)}</span>
+        <span class="nm">${c.name}</span>
+        <span class="stp"><span class="d" style="background:${STC[c.status]}"></span>${c.status}</span>
+      </div>
+      <div class="th">${c.thesis}</div>
+      ${c.needsYou?'<div style="margin-top:9px"><span class="needs-tag">● slice 5 needs you</span></div>':''}
+      <div class="row">
+        <div>MRR<b>$${c.mrr}</b></div>
+        <div>Users<b>${c.users}</b></div>
+        <div>Shipped<b>${sShipped}</b></div>
+      </div>
+    </button>`;
+  }).join('');
+
+  renderOpps('#oppsOv', true);
+}
+
+/* ---------- LIVE ACTIVITY ---------- */
+function renderActivity(){
+  const latest = DATA.activity[0];
+  $('#actLatest').innerHTML = `<span class="co">${latest.co}</span> ${esc(latest.text)}`;
+  // group by company
+  const byCo={};
+  DATA.activity.forEach(a=>{(byCo[a.co]=byCo[a.co]||[]).push(a)});
+  $('#actPanel').innerHTML = Object.keys(byCo).map(c=>`
+    <div class="act-grp">
+      <div class="agh">${c}</div>
+      ${byCo[c].map(a=>{
+        let cls=a.running?'running':a.kind==='await'?'await':a.kind==='blocked'?'blocked':'';
+        return `<div class="act-item ${cls}"><span class="d"></span><span class="tx">${esc(a.text)}</span><span class="t">${a.t}</span></div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+/* ---------- navigation / zoom ---------- */
+function jumpToLeadSift(){
+  setView('today');
+  const el=$('#m-leadsift');
+  $$('.move.open').forEach(o=>o.classList.remove('open','sel'));
+  el.classList.add('open','sel');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  toast('LeadSift · approval gate open');
+}
+function jumpToCompany(id){
+  if(id==='leadsift'){ jumpToLeadSift(); return; }
+  setView('today');
+  toast(`${co(id).name} — building activity opening…`);
+  $('#activity').classList.add('open');
+  setTimeout(()=>$('#activity').classList.remove('open'),2600);
+  const card=$$('.up-card').find(x=>x.dataset.jump===id);
+  if(card){ card.scrollIntoView({behavior:'smooth',inline:'center'}); }
+}
+
+function setView(v){
+  document.body.className = 'view-'+v;
+  $$('.nav button').forEach(b=>b.classList.toggle('on', b.dataset.view===v));
+}
+
+/* ---------- wire global ---------- */
+function init(){
+  renderMoves(); renderUpcoming(); renderOpps('#opps', true); renderTomorrow();
+  renderOverview(); renderActivity(); updateProgress();
+
+  $$('.nav button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+
+  // activity toggle
+  $('#actBar').addEventListener('click', e=>{
+    if(e.target.closest('a')) return;
+    $('#activity').classList.toggle('open');
+  });
+
+  // delegate any [data-jump]
+  document.addEventListener('click', e=>{
+    const j=e.target.closest('[data-jump]');
+    if(j){ e.preventDefault(); jumpToCompany(j.dataset.jump); }
+  });
+
+  // add a day
+  $('#addDay').addEventListener('click', ()=>{
+    toast('Day added — planner grows right →');
+    $('#shell').scrollTo({left:$('#shell').scrollWidth, behavior:'smooth'});
+  });
+
+  // command bar
+  const cmd=$('#cmd');
+  cmd.addEventListener('keydown', e=>{
+    if(e.key==='Enter' && cmd.value.trim()){ toast('Sent to agents: “'+cmd.value.trim().slice(0,40)+'”'); cmd.value=''; }
+    if(e.key==='Escape'){ cmd.blur(); }
+  });
+
+  // keyboard: ⌘K focus, Esc close, j/k navigate moves
+  document.addEventListener('keydown', e=>{
+    if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); cmd.focus(); return; }
+    if(e.target===cmd) return;
+    if(e.key==='Escape'){
+      if(document.body.className==='view-overview'){ setView('today'); return; }
+      $$('.move.open').forEach(o=>o.classList.remove('open','sel'));
+      $('#activity').classList.remove('open');
+    }
+    const moves=$$('.move');
+    if(e.key==='j'||e.key==='k'){
+      let i=moves.findIndex(m=>m.classList.contains('sel'));
+      if(e.key==='j') i=Math.min(moves.length-1, i+1); else i=Math.max(0, i-1);
+      moves.forEach(m=>m.classList.remove('sel'));
+      moves[i]?.classList.add('sel'); moves[i]?.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    if(e.key==='Enter'){
+      const sel=moves.find(m=>m.classList.contains('sel'));
+      if(sel) $('.move-top',sel).click();
+    }
+    if(e.key==='x'||e.key===' '){
+      const sel=moves.find(m=>m.classList.contains('sel'));
+      if(sel){ e.preventDefault(); $('.check',sel).click(); }
+    }
+  });
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · 02 Portfolio Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d0e12;
+    --panel: #14151b;
+    --panel-2: #181a21;
+    --row: #131419;
+    --row-alt: #16171e;
+    --row-hover: #1c1e27;
+    --line: #24262f;
+    --line-soft: #1d1f27;
+    --txt: #e7e9ee;
+    --txt-2: #9aa0ad;
+    --txt-3: #61656f;
+    --indigo: #6366f1;
+    --indigo-soft: #3b3d6b;
+    --indigo-glow: rgba(99,102,241,.18);
+    --green: #34d399;
+    --green-bg: rgba(52,211,153,.12);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,.12);
+    --violet: #a78bfa;
+    --violet-bg: rgba(167,139,250,.14);
+    --blue: #60a5fa;
+    --blue-bg: rgba(96,165,250,.14);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,.12);
+    --slate: #94a3b8;
+    --slate-bg: rgba(148,163,184,.10);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+    --rowh: 34px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--txt);
+    font-family: var(--sans);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  ::selection { background: var(--indigo); color: #fff; }
+
+  /* ---------- shell ---------- */
+  .app { display: flex; flex-direction: column; height: 100vh; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 16px; height: 48px; flex: 0 0 48px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    z-index: 40;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; letter-spacing: -.2px; }
+  .brand .logo {
+    width: 20px; height: 20px; border-radius: 5px;
+    background: linear-gradient(140deg, var(--indigo), #8b5cf6);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 4px 12px var(--indigo-glow);
+    display: grid; place-items: center; font-size: 11px; color: #fff;
+  }
+  .brand .sub { color: var(--txt-3); font-weight: 500; font-size: 11px; margin-left: 2px; }
+  .crumbs { display: flex; align-items: center; gap: 7px; color: var(--txt-2); font-size: 12px; }
+  .crumbs .sep { color: var(--txt-3); }
+  .crumbs .cur { color: var(--txt); font-weight: 600; }
+  .crumbs .back {
+    cursor: pointer; color: var(--txt-2); display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid transparent;
+  }
+  .crumbs .back:hover { background: var(--panel-2); border-color: var(--line); color: var(--txt); }
+  .topbar .spacer { flex: 1; }
+  .pmetrics { display: flex; gap: 0; align-items: stretch; }
+  .pmetric { padding: 0 14px; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--line-soft); }
+  .pmetric .v { font-family: var(--mono); font-weight: 600; font-size: 13px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pmetric .k { color: var(--txt-3); font-size: 10px; text-transform: uppercase; letter-spacing: .6px; margin-top: 3px; }
+  .pmetric.alert .v { color: var(--amber); }
+
+  /* ---------- main split ---------- */
+  .main { flex: 1; display: flex; min-height: 0; }
+  .gridwrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+  /* ---------- the grid ---------- */
+  .scroller { flex: 1; overflow: auto; position: relative; }
+  table.grid {
+    border-collapse: separate; border-spacing: 0;
+    min-width: 1500px; width: max-content;
+    font-size: 12px;
+  }
+  table.grid th, table.grid td {
+    border-bottom: 1px solid var(--line-soft);
+    border-right: 1px solid var(--line-soft);
+    padding: 0 12px; height: var(--rowh);
+    white-space: nowrap; text-align: left; vertical-align: middle;
+  }
+  /* sticky header */
+  table.grid thead th {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--panel-2);
+    color: var(--txt-3); font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .7px;
+    border-bottom: 1px solid var(--line);
+    height: 32px;
+    user-select: none;
+  }
+  /* sticky first column */
+  table.grid th.c-co, table.grid td.c-co {
+    position: sticky; left: 0; z-index: 15;
+    background: var(--row);
+    border-right: 1px solid var(--line);
+    min-width: 210px; max-width: 210px;
+  }
+  table.grid thead th.c-co { z-index: 30; background: var(--panel-2); }
+  tbody tr:nth-child(even) td { background: var(--row-alt); }
+  tbody tr:nth-child(even) td.c-co { background: var(--row-alt); }
+  tbody tr.co-row { cursor: pointer; }
+  tbody tr.co-row:hover td { background: var(--row-hover); }
+  tbody tr.co-row:hover td.c-co { background: var(--row-hover); }
+  tbody tr.co-row.open td { background: var(--indigo-glow); }
+  tbody tr.co-row.open td.c-co { background: var(--indigo-glow); box-shadow: inset 2px 0 0 var(--indigo); }
+
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+  td.num, th.num { text-align: right; }
+
+  .co-cell { display: flex; align-items: center; gap: 9px; }
+  .disclosure {
+    width: 14px; height: 14px; display: grid; place-items: center;
+    color: var(--txt-3); transition: transform .15s ease; flex: 0 0 14px; font-size: 9px;
+  }
+  tr.co-row.open .disclosure { transform: rotate(90deg); color: var(--indigo); }
+  .co-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 7px; }
+  .co-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green-bg); }
+  .co-dot.paused { background: var(--amber); }
+  .co-dot.archived { background: var(--txt-3); }
+  .co-name { font-weight: 600; color: var(--txt); }
+
+  /* pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    padding: 2px 7px; border-radius: 5px; line-height: 1.4;
+    border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill .pd { width: 5px; height: 5px; border-radius: 50%; }
+  .pill.shipped { color: var(--green); background: var(--green-bg); border-color: rgba(52,211,153,.2); }
+  .pill.shipped .pd { background: var(--green); }
+  .pill.building { color: var(--blue); background: var(--blue-bg); border-color: rgba(96,165,250,.22); }
+  .pill.building .pd { background: var(--blue); animation: pulse 1.3s infinite; }
+  .pill.awaiting_approval, .pill.await { color: var(--violet); background: var(--violet-bg); border-color: rgba(167,139,250,.28); }
+  .pill.awaiting_approval .pd, .pill.await .pd { background: var(--violet); animation: pulse 1.3s infinite; }
+  .pill.todo { color: var(--slate); background: var(--slate-bg); border-color: rgba(148,163,184,.16); }
+  .pill.todo .pd { background: var(--slate); }
+  .pill.blocked { color: var(--red); background: var(--red-bg); border-color: rgba(248,113,113,.22); }
+  .pill.blocked .pd { background: var(--red); }
+  .pill.active { color: var(--green); background: var(--green-bg); border-color: rgba(52,211,153,.2); }
+  .pill.active .pd { background: var(--green); }
+  .pill.paused { color: var(--amber); background: var(--amber-bg); border-color: rgba(251,191,36,.2); }
+  .pill.paused .pd { background: var(--amber); }
+  .pill.archived { color: var(--txt-2); background: var(--slate-bg); }
+  .pill.archived .pd { background: var(--txt-3); }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+  .needs-yes { color: var(--violet); font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+  .needs-yes::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--violet); animation: pulse 1.3s infinite; }
+  .needs-no { color: var(--txt-3); }
+
+  .stagebar { display: inline-flex; gap: 2px; align-items: center; }
+  .stagebar i { width: 12px; height: 5px; border-radius: 1px; background: var(--line); display: inline-block; }
+  .stagebar i.done { background: var(--green); }
+  .stagebar i.now { background: var(--blue); animation: pulse 1.3s infinite; }
+  .stagebar i.wait { background: var(--violet); }
+  .stagebar i.blk { background: var(--red); }
+  .stage-lbl { font-family: var(--mono); color: var(--txt-2); font-size: 11px; margin-left: 7px; }
+
+  .domain { font-family: var(--mono); color: var(--txt-2); font-size: 11px; }
+  .domain.none { color: var(--txt-3); font-style: italic; }
+  .preview-link { font-family: var(--mono); font-size: 11px; color: var(--indigo); text-decoration: none; }
+  .preview-link:hover { text-decoration: underline; }
+  .preview-link.none { color: var(--txt-3); font-style: normal; }
+  .when { font-family: var(--mono); color: var(--txt-3); font-size: 11px; }
+  .currentslice { color: var(--txt-2); }
+  .currentslice b { color: var(--txt); font-weight: 500; }
+
+  /* + ghost column */
+  th.c-add, td.c-add {
+    color: var(--txt-3); text-align: center; min-width: 46px; cursor: pointer;
+    border-right: none; background: repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(255,255,255,.012) 6px, rgba(255,255,255,.012) 12px);
+  }
+  th.c-add:hover, td.c-add:hover { color: var(--indigo); }
+  th.c-add { font-size: 14px; }
+
+  /* group header rows */
+  tr.grouphdr td {
+    background: var(--bg); color: var(--txt-3);
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    height: 30px; border-bottom: 1px solid var(--line); border-right: none;
+    position: sticky; left: 0;
+  }
+  tr.grouphdr td .gh { display: flex; align-items: center; gap: 9px; }
+  tr.grouphdr td .gh .ct { font-family: var(--mono); color: var(--txt-2); background: var(--panel); padding: 1px 6px; border-radius: 4px; font-weight: 600; letter-spacing: 0; }
+
+  /* opportunity rows */
+  tr.opp-row td.c-co { font-weight: 500; }
+  .opp-name { display: flex; align-items: center; gap: 9px; padding-left: 23px; }
+  .opp-name .od { width: 6px; height: 6px; border-radius: 1px; background: var(--indigo-soft); transform: rotate(45deg); flex: 0 0 6px; }
+  .score-wrap { display: inline-flex; align-items: center; gap: 8px; }
+  .score-bar { width: 54px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .score-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--indigo), #8b5cf6); }
+  .score-bar.killed i { background: var(--red); opacity: .5; }
+  .score-v { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+  .thesis { color: var(--txt-2); font-size: 11px; max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+  .btn-promote {
+    font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--indigo);
+    background: var(--indigo-glow); border: 1px solid var(--indigo-soft);
+    padding: 3px 10px; border-radius: 6px; cursor: pointer;
+  }
+  .btn-promote:hover { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+  .btn-promote:disabled { color: var(--txt-3); background: transparent; border-color: var(--line); cursor: default; }
+
+  /* ---------- inline expansion (nested sub-grid) ---------- */
+  tr.expander td { padding: 0; border-right: none; }
+  .nest {
+    background: #101117; border-bottom: 1px solid var(--line);
+    box-shadow: inset 0 6px 14px -10px rgba(0,0,0,.7);
+  }
+  .nest-head {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px 9px 30px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .nest-head .nh-title { font-weight: 600; }
+  .nest-head .nh-sub { color: var(--txt-2); font-size: 11px; }
+  .nest-head .spacer { flex: 1; }
+  .nest-head .chip {
+    font-family: var(--mono); font-size: 10px; color: var(--txt-2);
+    border: 1px solid var(--line); padding: 2px 8px; border-radius: 5px;
+  }
+  .nest-head .chip a { color: var(--indigo); text-decoration: none; }
+
+  table.subgrid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+  table.subgrid th, table.subgrid td {
+    border-bottom: 1px solid var(--line-soft); padding: 0 12px; height: 32px;
+    text-align: left; white-space: nowrap;
+  }
+  table.subgrid th {
+    color: var(--txt-3); font-size: 9px; text-transform: uppercase; letter-spacing: .7px;
+    font-weight: 600; background: #0d0e13;
+  }
+  table.subgrid td.s-n { font-family: var(--mono); color: var(--txt-3); width: 44px; text-align: right; }
+  table.subgrid td.s-title { color: var(--txt); width: 100%; }
+  table.subgrid td.s-title.muted { color: var(--txt-2); }
+  table.subgrid tr.slice-row.gate { cursor: pointer; }
+  table.subgrid tr.slice-row.gate:hover td { background: var(--violet-bg); }
+  table.subgrid tr.slice-row.gate.open td { background: var(--violet-bg); }
+  .check-ok { color: var(--green); font-family: var(--mono); font-size: 11px; }
+  .check-na { color: var(--txt-3); }
+  .pri { font-family: var(--mono); font-size: 11px; color: var(--amber); }
+  .pri.lo { color: var(--txt-2); }
+  .deps { font-family: var(--mono); font-size: 10px; color: var(--txt-3); }
+  .blknote { color: var(--red); font-size: 11px; }
+  .disc2 { display: inline-block; width: 12px; color: var(--violet); font-size: 9px; transition: transform .15s; }
+  tr.slice-row.gate.open .disc2 { transform: rotate(90deg); }
+
+  /* ---------- approval gate ---------- */
+  tr.gate-detail td { padding: 0; }
+  .gate {
+    margin: 0; padding: 0;
+    background: linear-gradient(180deg, rgba(167,139,250,.05), transparent 60%);
+    border-top: 1px solid var(--violet-bg);
+    border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 0;
+  }
+  .gate-col { padding: 14px 18px; }
+  .gate-col.left { border-right: 1px solid var(--line-soft); }
+  .gate-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--txt-3);
+    font-weight: 700; margin-bottom: 9px; display: flex; align-items: center; gap: 8px;
+  }
+  .gate-label .tagviolet { color: var(--violet); }
+  .diff {
+    font-family: var(--mono); font-size: 11px; line-height: 1.65;
+    background: #0b0c10; border: 1px solid var(--line); border-radius: 8px;
+    padding: 11px 13px; overflow-x: auto; white-space: pre;
+  }
+  .diff .add { color: var(--green); display: block; }
+  .diff .ctx { color: var(--txt-2); display: block; }
+  .diff .add::before { content: ''; }
+
+  .preview-card {
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel);
+  }
+  .preview-bar {
+    display: flex; align-items: center; gap: 8px; padding: 7px 11px;
+    background: var(--panel-2); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11px;
+  }
+  .preview-bar .dots { display: flex; gap: 5px; }
+  .preview-bar .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+  .preview-bar .url { color: var(--indigo); flex: 1; overflow: hidden; text-overflow: ellipsis; }
+  .preview-bar .live { color: var(--green); display: inline-flex; align-items: center; gap: 5px; font-size: 10px; }
+  .preview-bar .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 1.6s infinite; }
+  .preview-body { padding: 13px 14px; font-size: 11px; }
+  .preview-body .ph-h { font-weight: 700; font-size: 13px; margin-bottom: 8px; font-family: var(--sans); }
+  .preview-body .ph-lead {
+    display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line-soft);
+    font-family: var(--mono); color: var(--txt-2);
+  }
+  .preview-body .ph-lead b { color: var(--txt); }
+  .preview-body .ph-lead .sc { color: var(--green); }
+
+  .donewhen {
+    margin-top: 12px; display: flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 11px;
+    background: var(--green-bg); border: 1px solid rgba(52,211,153,.25);
+    border-radius: 7px; padding: 9px 12px; color: var(--green);
+  }
+  .donewhen .tick { font-weight: 700; }
+  .donewhen .code { color: var(--txt); }
+  .donewhen .meta { margin-left: auto; color: var(--txt-3); }
+
+  .gate-actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
+  .btn {
+    font-family: var(--sans); font-weight: 600; font-size: 12px;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; border: 1px solid transparent;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .btn.approve { background: var(--green); color: #06281d; }
+  .btn.approve:hover { box-shadow: 0 0 0 3px var(--green-bg); }
+  .btn.reject { background: transparent; color: var(--red); border-color: rgba(248,113,113,.4); }
+  .btn.reject:hover { background: var(--red-bg); }
+  .gate-confirm {
+    font-family: var(--mono); font-size: 11px; font-weight: 600; opacity: 0; transition: opacity .2s;
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 7px;
+  }
+  .gate-confirm.show { opacity: 1; }
+  .gate-confirm.ok { color: var(--green); background: var(--green-bg); }
+  .gate-confirm.rej { color: var(--amber); background: var(--amber-bg); }
+  .reject-fb {
+    margin-top: 11px; display: none; gap: 8px;
+  }
+  .reject-fb.show { display: flex; }
+  .reject-fb input {
+    flex: 1; background: var(--panel-2); border: 1px solid var(--line); border-radius: 7px;
+    color: var(--txt); padding: 8px 11px; font-family: var(--sans); font-size: 12px; outline: none;
+  }
+  .reject-fb input:focus { border-color: var(--red); }
+  .reject-fb button {
+    background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,.35);
+    border-radius: 7px; padding: 0 14px; font-weight: 600; cursor: pointer; font-family: var(--sans); font-size: 12px;
+  }
+
+  /* ---------- right rail (overview) ---------- */
+  .rail {
+    flex: 0 0 320px; border-left: 1px solid var(--line); background: var(--panel);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .rail-section { border-bottom: 1px solid var(--line); }
+  .rail-h {
+    padding: 11px 16px 9px; font-size: 10px; text-transform: uppercase; letter-spacing: .9px;
+    color: var(--txt-3); font-weight: 700; display: flex; align-items: center; gap: 8px;
+  }
+  .rail-h .ct { font-family: var(--mono); color: var(--txt-2); background: var(--panel-2); padding: 1px 6px; border-radius: 4px; }
+  .nextmove {
+    display: flex; gap: 10px; padding: 9px 16px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--txt-2);
+    align-items: flex-start;
+  }
+  .nextmove:first-of-type { border-top: none; }
+  .nextmove .nm-n { font-family: var(--mono); color: var(--indigo); font-weight: 600; flex: 0 0 auto; }
+  .nextmove b { color: var(--txt); font-weight: 600; }
+
+  /* ---------- chat spine ---------- */
+  .chat-rail { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .chat-stream { flex: 1; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { font-size: 12px; line-height: 1.5; max-width: 92%; }
+  .msg.assistant { color: var(--txt); }
+  .msg.assistant .who { color: var(--indigo); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 3px; }
+  .msg.user { align-self: flex-end; background: var(--indigo); color: #fff; padding: 7px 11px; border-radius: 10px 10px 2px 10px; }
+  .cmdbar {
+    display: flex; align-items: center; gap: 9px; padding: 11px 14px; border-top: 1px solid var(--line);
+    background: var(--panel-2);
+  }
+  .cmdbar .prompt { color: var(--indigo); font-family: var(--mono); font-weight: 600; }
+  .cmdbar input {
+    flex: 1; background: transparent; border: none; color: var(--txt); outline: none;
+    font-family: var(--sans); font-size: 13px;
+  }
+  .cmdbar .kbd { font-family: var(--mono); font-size: 10px; color: var(--txt-3); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+
+  /* ---------- live activity strip ---------- */
+  .activity {
+    flex: 0 0 auto; border-top: 1px solid var(--line); background: var(--panel-2); z-index: 30;
+  }
+  .act-head {
+    display: flex; align-items: center; gap: 11px; padding: 0 16px; height: 38px; cursor: pointer; user-select: none;
+  }
+  .act-head:hover { background: var(--panel); }
+  .act-head .caret { color: var(--txt-3); font-size: 10px; transition: transform .15s; }
+  .activity.open .act-head .caret { transform: rotate(180deg); }
+  .act-head .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .9px; color: var(--txt-3); font-weight: 700; }
+  .act-head .livedot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.4s infinite; }
+  .act-collapsed { flex: 1; overflow: hidden; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--txt-2); }
+  .act-collapsed .co { color: var(--indigo); font-weight: 600; }
+  .act-collapsed .running { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 1.1s infinite; flex: 0 0 6px; }
+  .act-collapsed .more { color: var(--txt-3); font-family: var(--mono); font-size: 11px; }
+  .activity.open .act-collapsed { display: none; }
+  .act-body { display: none; max-height: 0; overflow: auto; }
+  .activity.open .act-body { display: block; max-height: 220px; border-top: 1px solid var(--line-soft); }
+  .act-group { padding: 8px 16px; border-bottom: 1px solid var(--line-soft); }
+  .act-group .agh { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--txt-3); font-weight: 700; margin-bottom: 6px; }
+  .act-line { display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 3px 0; color: var(--txt-2); }
+  .act-line .t { font-family: var(--mono); color: var(--txt-3); font-size: 10px; width: 34px; text-align: right; flex: 0 0 34px; }
+  .act-line .k { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 6px; }
+  .act-line.running .k { animation: pulse 1.1s infinite; }
+  .act-line .k.building { background: var(--blue); }
+  .act-line .k.deploy { background: var(--blue); }
+  .act-line .k.await { background: var(--violet); }
+  .act-line .k.check { background: var(--green); }
+  .act-line .k.reprioritize { background: var(--indigo); }
+  .act-line .k.blocked { background: var(--red); }
+  .act-line .txt { color: var(--txt); }
+
+  /* corner badge */
+  .badge {
+    position: fixed; right: 14px; bottom: 14px; z-index: 100;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--txt-2);
+    background: rgba(20,21,27,.85); backdrop-filter: blur(6px);
+    border: 1px solid var(--line); border-radius: 7px; padding: 6px 11px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.4);
+  }
+  .badge .n { color: var(--indigo); }
+
+  /* toast for promote / generic */
+  #toast {
+    position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%) translateY(20px);
+    background: var(--panel-2); border: 1px solid var(--indigo-soft); color: var(--txt);
+    padding: 9px 16px; border-radius: 9px; font-size: 12px; font-weight: 500;
+    opacity: 0; pointer-events: none; transition: all .25s; z-index: 200;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast .tick { color: var(--green); font-weight: 700; }
+
+  .hint { color: var(--txt-3); font-size: 11px; }
+  /* hide zoom rail content when in overview etc handled by JS via display */
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo">C</span> C Slop Slop <span class="sub">/ from thought to bag</span>
+    </div>
+    <div class="crumbs" id="crumbs">
+      <span class="cur">Portfolio</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="pmetrics" id="pmetrics"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="gridwrap">
+      <div class="scroller" id="scroller">
+        <table class="grid">
+          <thead>
+            <tr id="head-row"></tr>
+          </thead>
+          <tbody id="grid-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT RAIL -->
+    <div class="rail" id="rail"></div>
+  </div>
+
+  <!-- LIVE ACTIVITY STRIP -->
+  <div class="activity" id="activity">
+    <div class="act-head" id="act-head">
+      <span class="caret">▲</span>
+      <span class="lbl">Live activity</span>
+      <span class="livedot"></span>
+      <div class="act-collapsed" id="act-collapsed"></div>
+    </div>
+    <div class="act-body" id="act-body"></div>
+  </div>
+</div>
+
+<div class="badge"><span class="n">02</span> · Portfolio Grid</div>
+<div id="toast"></div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+// ---------- helpers ----------
+const $ = (s, r=document) => r.querySelector(s);
+const el = (t, c, h) => { const e = document.createElement(t); if(c) e.className=c; if(h!=null) e.innerHTML=h; return e; };
+function statusLabel(s){ return s.replace('_',' '); }
+
+function sliceCounts(co){
+  if(co.slices){
+    const c = { shipped:0, building:0, awaiting_approval:0, todo:0, blocked:0 };
+    co.slices.forEach(s=>c[s.status]++);
+    return c;
+  }
+  const c = { shipped: co.slicesShipped||0, building:0, awaiting_approval:0, todo:0, blocked:0 };
+  if(co.currentSlice) c[co.currentSlice.status] = (c[co.currentSlice.status]||0)+1;
+  return c;
+}
+function shippedCount(co){ return co.slices ? co.slices.filter(s=>s.status==='shipped').length : (co.slicesShipped||0); }
+function currentSliceOf(co){
+  if(co.currentSlice) return co.currentSlice;
+  if(co.slices){
+    return co.slices.find(s=>s.status==='awaiting_approval') || co.slices.find(s=>s.status==='building')
+        || co.slices.find(s=>s.status==='blocked') || co.slices.find(s=>s.status==='todo');
+  }
+  return null;
+}
+function stageBar(co){
+  const total = (co.slices ? co.slices.length : (co.slicesShipped||0) + 1);
+  const shipped = shippedCount(co);
+  const cur = currentSliceOf(co);
+  let bars = '';
+  const seg = Math.min(total, 8);
+  for(let i=0;i<seg;i++){
+    let cls = '';
+    if(i < shipped) cls='done';
+    else if(i === shipped && cur){
+      if(cur.status==='building') cls='now';
+      else if(cur.status==='awaiting_approval') cls='wait';
+      else if(cur.status==='blocked') cls='blk';
+    }
+    bars += '<i class="'+cls+'"></i>';
+  }
+  const lbl = total ? (shipped+'/'+ (co.slices? total : '∞')) : '—';
+  return '<span class="stagebar">'+bars+'</span>';
+}
+
+// ---------- columns ----------
+const COLS = [
+  {key:'co', label:'Company', cls:'c-co'},
+  {key:'status', label:'Status'},
+  {key:'mrr', label:'MRR', cls:'num'},
+  {key:'users', label:'Users', cls:'num'},
+  {key:'current', label:'Current slice'},
+  {key:'stage', label:'Stage'},
+  {key:'shipped', label:'Slices', cls:'num'},
+  {key:'needs', label:'Needs you'},
+  {key:'last', label:'Last activity'},
+  {key:'domain', label:'Domain'},
+  {key:'preview', label:'Preview'},
+];
+
+// ---------- portfolio metrics in topbar ----------
+function renderMetrics(){
+  const p = DATA.portfolio;
+  const items = [
+    {k:'MRR', v:'$'+p.mrr},
+    {k:'Users', v:p.users},
+    {k:'Active', v:p.activeCompanies},
+    {k:'Shipped', v:p.slicesShipped},
+    {k:'Needs you', v:p.needsYou, alert:true},
+  ];
+  const wrap = $('#pmetrics'); wrap.innerHTML='';
+  items.forEach(it=>{
+    const m = el('div', 'pmetric'+(it.alert?' alert':''));
+    m.innerHTML = '<span class="v">'+it.v+'</span><span class="k">'+it.k+'</span>';
+    wrap.appendChild(m);
+  });
+}
+
+// ---------- grid header ----------
+function renderHead(){
+  const tr = $('#head-row'); tr.innerHTML='';
+  COLS.forEach(c=>{
+    const th = el('th', (c.cls||'')+(c.cls==='num'?' num':''), c.label);
+    tr.appendChild(th);
+  });
+  tr.appendChild(el('th','c-add','+'));
+}
+
+let openCompany = null;       // id of inline-expanded company
+let openGate = false;         // approval gate row open within nest
+let promoted = {};
+
+// ---------- grid body ----------
+function renderGrid(){
+  const body = $('#grid-body'); body.innerHTML='';
+
+  // group header: COMPANIES
+  body.appendChild(groupRow('Companies', DATA.companies.length));
+
+  DATA.companies.forEach(co=>{
+    body.appendChild(companyRow(co));
+    if(openCompany === co.id){
+      body.appendChild(expanderRow(co));
+    }
+  });
+
+  // group header: OPPORTUNITIES
+  body.appendChild(groupRow('Opportunities', DATA.opportunities.length));
+  DATA.opportunities.forEach(o=> body.appendChild(oppRow(o)));
+
+  // ghost trailing row implying more companies below
+  const ghost = el('tr','ghost-row');
+  const gtd = el('td','c-co','<span class="hint" style="padding-left:23px;">+ thought → opportunity → company …</span>');
+  ghost.appendChild(gtd);
+  for(let i=1;i<COLS.length;i++) ghost.appendChild(el('td','',''));
+  ghost.appendChild(el('td','c-add',''));
+  body.appendChild(ghost);
+}
+
+function groupRow(label, count){
+  const tr = el('tr','grouphdr');
+  const td = el('td');
+  td.colSpan = COLS.length + 1;
+  td.innerHTML = '<span class="gh">'+label+' <span class="ct">'+count+'</span></span>';
+  tr.appendChild(td);
+  return tr;
+}
+
+function companyRow(co){
+  const tr = el('tr','co-row'+(openCompany===co.id?' open':''));
+  tr.dataset.co = co.id;
+  const cur = currentSliceOf(co);
+
+  // company (sticky)
+  const cCo = el('td','c-co');
+  cCo.innerHTML = '<div class="co-cell">'
+    + '<span class="disclosure">▶</span>'
+    + '<span class="co-dot '+co.status+'"></span>'
+    + '<span class="co-name">'+co.name+'</span></div>';
+  tr.appendChild(cCo);
+
+  // status
+  tr.appendChild(td('', '<span class="pill '+co.status+'"><span class="pd"></span>'+co.status+'</span>'));
+  // mrr
+  tr.appendChild(td('num', co.mrr ? '$'+co.mrr : '<span style="color:var(--txt-3)">—</span>'));
+  // users
+  tr.appendChild(td('num', co.users ? co.users : '<span style="color:var(--txt-3)">—</span>'));
+  // current slice
+  let curHtml = '<span style="color:var(--txt-3)">—</span>';
+  if(cur){
+    curHtml = '<span class="currentslice">#'+cur.n+' <b>'+cur.title+'</b></span>';
+  }
+  tr.appendChild(td('', curHtml));
+  // stage
+  tr.appendChild(td('', stageBar(co) + '<span class="stage-lbl">'+shippedCount(co)+' shipped</span>'));
+  // slices count
+  tr.appendChild(td('num', shippedCount(co)));
+  // needs you
+  tr.appendChild(td('', co.needsYou ? '<span class="needs-yes">approve</span>' : '<span class="needs-no">—</span>'));
+  // last activity
+  const act = DATA.activity.find(a=>a.co===co.name);
+  tr.appendChild(td('', act ? '<span class="when">'+act.t+'</span> <span style="color:var(--txt-2)">'+act.kind+'</span>' : '<span class="when">—</span>'));
+  // domain
+  tr.appendChild(td('', co.domain ? '<span class="domain">'+co.domain+'</span>' : '<span class="domain none">no domain</span>'));
+  // preview
+  if(co.previewUrl){
+    tr.appendChild(td('', '<a class="preview-link" href="'+co.previewUrl+'" onclick="event.stopPropagation()" target="_blank">'+co.previewUrl.replace('http://','')+'</a>'));
+  } else {
+    tr.appendChild(td('', '<span class="preview-link none">offline</span>'));
+  }
+  // add ghost
+  tr.appendChild(el('td','c-add',''));
+
+  tr.addEventListener('click', ()=> toggleCompany(co.id));
+  return tr;
+}
+
+function td(cls, html){ return el('td', cls + (cls.includes('num')?' num':''), html); }
+
+function oppRow(o){
+  const killed = o.status==='killed';
+  const isPromoted = promoted[o.id];
+  const tr = el('tr','opp-row');
+  const cCo = el('td','c-co');
+  cCo.innerHTML = '<div class="opp-name"><span class="od"></span><span class="co-name">'+o.title+'</span></div>';
+  tr.appendChild(cCo);
+  // status -> candidate/killed/promoted
+  let st = killed ? '<span class="pill blocked"><span class="pd"></span>killed</span>'
+        : isPromoted ? '<span class="pill active"><span class="pd"></span>promoted</span>'
+        : '<span class="pill todo"><span class="pd"></span>candidate</span>';
+  tr.appendChild(td('', st));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
+  // thought as current
+  tr.appendChild(td('', '<span class="thesis">“'+o.thought+'”</span>'));
+  // score in "stage" column
+  const pct = Math.round(o.score);
+  tr.appendChild(td('', '<span class="score-wrap"><span class="score-bar'+(killed?' killed':'')+'"><i style="width:'+pct+'%"></i></span><span class="score-v" style="color:'+(killed?'var(--red)':'var(--indigo)')+'">'+o.score+'</span></span>'));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
+  // needs you -> promote affordance
+  let promoCell;
+  if(killed) promoCell = '<span class="needs-no">—</span>';
+  else if(isPromoted) promoCell = '<span class="needs-yes" style="color:var(--green)">✓ company</span>';
+  else promoCell = '<button class="btn-promote" data-opp="'+o.id+'">↑ Promote</button>';
+  tr.appendChild(td('', promoCell));
+  tr.appendChild(td('', '<span class="thesis">'+o.thesis+'</span>'));
+  tr.appendChild(td('', '<span class="domain none">—</span>'));
+  tr.appendChild(td('', '<span class="preview-link none">—</span>'));
+  tr.appendChild(el('td','c-add',''));
+
+  const pb = tr.querySelector('.btn-promote');
+  if(pb) pb.addEventListener('click', (e)=>{ e.stopPropagation(); promote(o.id); });
+  return tr;
+}
+
+// ---------- inline expander (nested sub-grid of slices) ----------
+function expanderRow(co){
+  const tr = el('tr','expander');
+  const td0 = el('td'); td0.colSpan = COLS.length + 1;
+  const nest = el('div','nest');
+
+  // nest head
+  const head = el('div','nest-head');
+  head.innerHTML =
+    '<span class="nh-title">'+co.name+' · slices</span>'
+    + '<span class="nh-sub">'+co.thesis+'</span>'
+    + '<span class="spacer"></span>'
+    + (co.previewUrl ? '<span class="chip">live → <a href="'+co.previewUrl+'" target="_blank">'+co.previewUrl.replace('http://','')+'</a></span>' : '<span class="chip">offline</span>')
+    + '<span class="chip">'+shippedCount(co)+' shipped</span>';
+  nest.appendChild(head);
+
+  // sub-grid
+  const sub = el('table','subgrid');
+  sub.innerHTML = '<thead><tr>'
+    + '<th class="s-n">#</th><th>Slice — user can…</th><th>Status</th><th>Check</th><th>Priority</th><th>Depends</th>'
+    + '</tr></thead>';
+  const tb = el('tbody');
+
+  const slices = co.slices || (co.currentSlice ? buildSlices(co) : []);
+  slices.forEach(s=>{
+    const isGate = (co.id==='leadsift' && s.status==='awaiting_approval');
+    const row = el('tr','slice-row'+(isGate?' gate':'')+(isGate&&openGate?' open':''));
+    const muted = (s.status==='todo'||s.status==='blocked') ? ' muted' : '';
+    let title = (isGate ? '<span class="disc2">▶</span>' : '') + s.title;
+    if(s.note) title += ' <span class="blknote">— '+s.note+'</span>';
+    row.innerHTML =
+      '<td class="s-n">'+s.n+'</td>'
+      + '<td class="s-title'+muted+'">'+title+'</td>'
+      + '<td><span class="pill '+s.status+'"><span class="pd"></span>'+statusLabel(s.status)+'</span></td>'
+      + '<td>'+(s.check==='green' ? '<span class="check-ok">✓ green</span>' : '<span class="check-na">—</span>')+'</td>'
+      + '<td>'+(s.priority ? '<span class="pri'+(s.priority<70?' lo':'')+'">'+s.priority+'</span>' : '<span class="check-na">—</span>')+'</td>'
+      + '<td>'+(s.dependsOn ? '<span class="deps">→ #'+s.dependsOn.join(', #')+'</span>' : '<span class="check-na">—</span>')+'</td>';
+    tb.appendChild(row);
+    if(isGate){
+      row.addEventListener('click', ()=>{ openGate=!openGate; renderGrid(); });
+      if(openGate) tb.appendChild(gateRow(co));
+    }
+  });
+  sub.appendChild(tb);
+  nest.appendChild(sub);
+  td0.appendChild(nest);
+  tr.appendChild(td0);
+  return tr;
+}
+
+function buildSlices(co){
+  // synth a slice list for companies w/o explicit slices
+  const arr = [];
+  const shipped = shippedCount(co);
+  for(let i=1;i<=shipped;i++) arr.push({n:i, title:'shipped capability #'+i, status:'shipped', check:'green'});
+  if(co.currentSlice) arr.push({n:co.currentSlice.n, title:co.currentSlice.title, status:co.currentSlice.status, note: co.currentSlice.status==='blocked'? co.currentSlice.step : null});
+  return arr;
+}
+
+// ---------- the APPROVAL GATE row ----------
+function gateRow(co){
+  const a = co.approval;
+  const tr = el('tr','gate-detail');
+  const cell = el('td'); cell.colSpan = 6;
+
+  // diff html
+  const diffHtml = a.diff.split('\n').map(line=>{
+    const esc = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if(line.trim().startsWith('+')) return '<span class="add">'+esc+'</span>';
+    return '<span class="ctx">'+esc+'</span>';
+  }).join('');
+
+  cell.innerHTML =
+    '<div class="gate">'
+      + '<div class="gate-col left">'
+        + '<div class="gate-label"><span class="tagviolet">⚑ NEEDS YOU</span> · slice '+a.slice+' · diff (attempt '+a.attempt+')</div>'
+        + '<div class="diff">'+diffHtml+'</div>'
+        + '<div class="donewhen"><span class="tick">✓</span><span>doneWhen <span class="code">'+escapeHtml(a.doneWhen)+'</span></span><span class="meta">'+a.checkResult+'</span></div>'
+        + '<div class="gate-actions">'
+          + '<button class="btn approve" id="approveBtn">✓ Approve & ship</button>'
+          + '<button class="btn reject" id="rejectBtn">Reject with feedback</button>'
+          + '<span class="gate-confirm" id="gateConfirm"></span>'
+        + '</div>'
+        + '<div class="reject-fb" id="rejectFb">'
+          + '<input id="rejectInput" placeholder="What should change? (sent to the build loop)" />'
+          + '<button id="rejectSend">Send</button>'
+        + '</div>'
+      + '</div>'
+      + '<div class="gate-col">'
+        + '<div class="gate-label">Live preview</div>'
+        + '<div class="preview-card">'
+          + '<div class="preview-bar"><span class="dots"><i></i><i></i><i></i></span>'
+            + '<span class="url">'+a.previewUrl+'</span><span class="live">live</span></div>'
+          + '<div class="preview-body">'
+            + '<div class="ph-h">Your top leads today</div>'
+            + '<div class="ph-lead"><span><b>Acme Corp</b> · contact form</span><span class="sc">94</span></div>'
+            + '<div class="ph-lead"><span><b>Globex</b> · pricing page</span><span class="sc">88</span></div>'
+            + '<div class="ph-lead"><span><b>Initech</b> · demo request</span><span class="sc">81</span></div>'
+            + '<div class="ph-lead"><span><b>Soylent</b> · newsletter</span><span class="sc">72</span></div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="hint" style="margin-top:9px;">Approving ships this slice live and re-prioritizes the loop.</div>'
+      + '</div>'
+    + '</div>';
+
+  tr.appendChild(cell);
+
+  // wire after insert via microtask
+  setTimeout(()=>{
+    const ap = $('#approveBtn'), rj = $('#rejectBtn'), conf = $('#gateConfirm'),
+          fb = $('#rejectFb'), send = $('#rejectSend'), inp = $('#rejectInput');
+    if(!ap) return;
+    ap.addEventListener('click', (e)=>{ e.stopPropagation();
+      conf.className='gate-confirm ok show'; conf.textContent='✓ Approved — shipping slice 5';
+      ap.disabled=true; rj.disabled=true; fb.classList.remove('show');
+      toast('<span class="tick">✓</span> LeadSift slice 5 approved & shipped');
+    });
+    rj.addEventListener('click', (e)=>{ e.stopPropagation();
+      fb.classList.toggle('show'); if(fb.classList.contains('show')) inp.focus();
+    });
+    send.addEventListener('click', (e)=>{ e.stopPropagation();
+      conf.className='gate-confirm rej show'; conf.textContent='↩ Sent back to build loop';
+      fb.classList.remove('show');
+      toast('Feedback sent — LeadSift will rebuild slice 5');
+    });
+    inp && inp.addEventListener('click', e=>e.stopPropagation());
+  });
+  return tr;
+}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ---------- toggle company (zoom-in inline + rail switch) ----------
+function toggleCompany(id){
+  if(openCompany === id){ openCompany=null; openGate=false; }
+  else { openCompany=id; openGate = (id==='leadsift'); }
+  renderGrid();
+  renderRail();
+  renderCrumbs();
+  // auto-scroll the opened company gate into view if leadsift
+  if(openCompany==='leadsift'){
+    setTimeout(()=>{ const g=$('.gate'); if(g) g.scrollIntoView({behavior:'smooth', block:'center'}); }, 60);
+  }
+}
+
+function renderCrumbs(){
+  const c = $('#crumbs');
+  if(openCompany){
+    const co = DATA.companies.find(x=>x.id===openCompany);
+    c.innerHTML = '<span class="back" id="backBtn">← Portfolio</span><span class="sep">/</span><span class="cur">'+co.name+'</span>';
+    $('#backBtn').addEventListener('click', ()=> toggleCompany(openCompany));
+  } else {
+    c.innerHTML = '<span class="cur">Portfolio</span>';
+  }
+}
+
+// ---------- right rail ----------
+function renderRail(){
+  const rail = $('#rail');
+  rail.innerHTML='';
+  if(openCompany){
+    rail.appendChild(companyChatRail(DATA.companies.find(x=>x.id===openCompany)));
+  } else {
+    rail.appendChild(overviewRail());
+  }
+}
+
+function overviewRail(){
+  const wrap = el('div'); wrap.style.cssText='display:flex;flex-direction:column;min-height:0;height:100%;';
+
+  // next moves
+  const nm = el('div','rail-section');
+  nm.innerHTML = '<div class="rail-h">Next moves <span class="ct">'+DATA.nextMoves.length+'</span></div>';
+  DATA.nextMoves.forEach((m,i)=>{
+    const mv = el('div','nextmove');
+    mv.innerHTML = '<span class="nm-n">'+(i+1)+'</span><span>'+m.replace(/“([^”]+)”/g,'<b>“$1”</b>')+'</span>';
+    nm.appendChild(mv);
+  });
+  wrap.appendChild(nm);
+
+  // global command chat
+  const chat = el('div','chat-rail');
+  chat.innerHTML = '<div class="rail-h" style="border-bottom:1px solid var(--line-soft)">Command bar — the spine</div>';
+  const stream = el('div','chat-stream');
+  DATA.chat.forEach(m=>{
+    const msg = el('div','msg '+m.role);
+    msg.innerHTML = (m.role==='assistant'? '<span class="who">C Slop Slop</span>':'') + m.text;
+    stream.appendChild(msg);
+  });
+  chat.appendChild(stream);
+  chat.appendChild(cmdbar('Ask, direct, or promote — e.g. “approve LeadSift slice 5”'));
+  wrap.appendChild(chat);
+  return wrap;
+}
+
+function companyChatRail(co){
+  const wrap = el('div'); wrap.style.cssText='display:flex;flex-direction:column;min-height:0;height:100%;';
+  const head = el('div','rail-section');
+  const cur = currentSliceOf(co);
+  head.innerHTML = '<div class="rail-h">'+co.name+' <span class="ct">'+co.status+'</span></div>'
+    + '<div style="padding:0 16px 12px;color:var(--txt-2);font-size:12px;line-height:1.5;">'+co.thesis+'</div>'
+    + '<div style="padding:0 16px 12px;display:flex;gap:14px;">'
+      + '<div><div class="pmetric" style="padding:0;border:none;"><span class="v" style="font-family:var(--mono)">$'+co.mrr+'</span><span class="k">MRR</span></div></div>'
+      + '<div><div class="pmetric" style="padding:0;border:none;"><span class="v" style="font-family:var(--mono)">'+co.users+'</span><span class="k">Users</span></div></div>'
+      + '<div><div class="pmetric" style="padding:0;border:none;"><span class="v" style="font-family:var(--mono)">'+shippedCount(co)+'</span><span class="k">Shipped</span></div></div>'
+    + '</div>';
+  wrap.appendChild(head);
+
+  const chat = el('div','chat-rail');
+  chat.innerHTML = '<div class="rail-h" style="border-bottom:1px solid var(--line-soft)">'+co.name+' chat</div>';
+  const stream = el('div','chat-stream');
+  const msgs = (co.id==='leadsift') ? DATA.chat : [
+    {role:'assistant', text:co.name+' is '+(cur?('on slice #'+cur.n+' — '+cur.title):'idle')+'. '+(co.previewUrl?'Live at '+co.previewUrl.replace('http://','')+'.':'Currently offline.')}
+  ];
+  msgs.forEach(m=>{
+    const msg = el('div','msg '+m.role);
+    msg.innerHTML = (m.role==='assistant'? '<span class="who">'+co.name+'</span>':'') + m.text;
+    stream.appendChild(msg);
+  });
+  chat.appendChild(stream);
+  chat.appendChild(cmdbar('Direct '+co.name+'…'));
+  wrap.appendChild(chat);
+  return wrap;
+}
+
+function cmdbar(ph){
+  const bar = el('div','cmdbar');
+  bar.innerHTML = '<span class="prompt">›</span><input placeholder="'+ph+'" /><span class="kbd">⏎</span>';
+  const inp = bar.querySelector('input');
+  inp.addEventListener('keydown', e=>{
+    if(e.key==='Enter' && inp.value.trim()){ toast('Sent to the loop: “'+inp.value.trim()+'”'); inp.value=''; }
+  });
+  return bar;
+}
+
+// ---------- promote ----------
+function promote(id){
+  promoted[id]=true;
+  const o = DATA.opportunities.find(x=>x.id===id);
+  renderGrid();
+  toast('<span class="tick">✓</span> Promoted “'+o.title+'” to a company');
+}
+
+// ---------- activity strip ----------
+function renderActivity(){
+  // collapsed: one line per actively-building company (running:true)
+  const running = DATA.activity.filter(a=>a.running);
+  const collapsed = $('#act-collapsed');
+  const primary = running[0] || DATA.activity[0];
+  collapsed.innerHTML = '';
+  const line = el('span','');
+  line.style.cssText='display:flex;align-items:center;gap:8px;';
+  line.innerHTML = '<span class="running"></span><span class="co">'+primary.co+'</span> '+primary.text;
+  collapsed.appendChild(line);
+  if(running.length>1){
+    collapsed.appendChild(el('span','more', '+'+(running.length-1)+' more building · '+(DATA.activity.length)+' events'));
+  } else {
+    collapsed.appendChild(el('span','more', DATA.activity.length+' events — expand'));
+  }
+
+  // expanded: grouped by company
+  const body = $('#act-body'); body.innerHTML='';
+  const groups = {};
+  DATA.activity.forEach(a=>{ (groups[a.co] = groups[a.co]||[]).push(a); });
+  Object.keys(groups).forEach(co=>{
+    const g = el('div','act-group');
+    g.appendChild(el('div','agh', co));
+    groups[co].forEach(a=>{
+      const ln = el('div','act-line'+(a.running?' running':''));
+      ln.innerHTML = '<span class="t">'+a.t+'</span><span class="k '+a.kind+'"></span><span class="txt">'+a.text+'</span>';
+      g.appendChild(ln);
+    });
+    body.appendChild(g);
+  });
+}
+
+// ---------- toast ----------
+let toastTimer;
+function toast(html){
+  const t = $('#toast'); t.innerHTML=html; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ---------- init ----------
+function init(){
+  renderMetrics();
+  renderHead();
+  renderGrid();
+  renderRail();
+  renderActivity();
+  renderCrumbs();
+
+  $('#act-head').addEventListener('click', ()=> $('#activity').classList.toggle('open'));
+
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && openCompany){ toggleCompany(openCompany); }
+  });
+}
+init();
+</script>
+</body>
+</html>

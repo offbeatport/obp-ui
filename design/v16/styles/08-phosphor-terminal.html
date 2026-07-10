@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C SLOP SLOP // portfolio.term</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#020a05;
+    --bg2:#03110a;
+    --green:#33ff77;
+    --green-dim:#1f9e4c;
+    --green-fade:#11622f;
+    --green-ghost:#0c3b1d;
+    --amber:#f59e0b;
+    --rose:#fb7185;
+    --violet:#a78bfa;
+    --mint:#34d399;
+    --sky:#38bdf8;
+    --line:rgba(51,255,119,.28);
+    --line-soft:rgba(51,255,119,.14);
+    --shadow:0 0 .35em rgba(51,255,119,.45);
+    --sp:18px;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--green);
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.5;
+    letter-spacing:.02em;
+    text-shadow:var(--shadow);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* CRT overlays */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:9998;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,.18) 3px,
+        rgba(0,0,0,.18) 4px);
+    mix-blend-mode:multiply;
+  }
+  body::after{
+    content:"";
+    position:fixed;inset:0;z-index:9999;pointer-events:none;
+    background:radial-gradient(120% 120% at 50% 50%,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,.55) 100%);
+    box-shadow:inset 0 0 8em rgba(0,30,12,.7);
+  }
+  @keyframes flicker{
+    0%,100%{opacity:1}
+    92%{opacity:1}
+    93%{opacity:.86}
+    94%{opacity:1}
+    97%{opacity:.92}
+  }
+  .scan{animation:flicker 7s infinite steps(1)}
+
+  a{color:var(--green);text-decoration:none}
+  ::selection{background:var(--green);color:#021006;text-shadow:none}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:18px 20px 60px;position:relative;z-index:1}
+
+  /* ASCII frame helper */
+  .frame{
+    border:1px solid var(--line);
+    background:
+      linear-gradient(180deg,rgba(51,255,119,.04),rgba(51,255,119,0));
+    position:relative;
+  }
+  .frame::before{
+    content:attr(data-tab);
+    position:absolute;top:-1px;left:14px;transform:translateY(-50%);
+    background:var(--bg);
+    padding:0 8px;
+    font-size:11px;font-weight:700;letter-spacing:.18em;
+    color:var(--green-dim);
+  }
+
+  /* ---- top bar ---- */
+  .topbar{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    border:1px solid var(--line);
+    padding:12px 16px;
+    margin-bottom:14px;
+    background:linear-gradient(180deg,rgba(51,255,119,.05),transparent);
+  }
+  .wordmark{font-weight:800;font-size:16px;letter-spacing:.14em;white-space:nowrap}
+  .wordmark .blk{background:var(--green);color:#021006;padding:0 5px;text-shadow:none}
+  .prompt-line{font-size:11px;color:var(--green-dim);flex:1;min-width:160px}
+  .cursor{display:inline-block;width:.6em;height:1.05em;background:var(--green);
+    vertical-align:-.18em;margin-left:2px;animation:blink 1.05s steps(1) infinite;box-shadow:var(--shadow)}
+  @keyframes blink{50%{opacity:0}}
+  .account{display:flex;gap:8px}
+  .btn{
+    border:1px solid var(--line);background:transparent;color:var(--green);
+    font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;
+    padding:6px 11px;cursor:pointer;text-shadow:var(--shadow);
+    transition:background .12s,color .12s;
+  }
+  .btn:hover{background:var(--green);color:#021006;text-shadow:none}
+  .btn.solid{background:var(--green-ghost)}
+
+  /* ---- tabs ---- */
+  .tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--line-soft)}
+  .tab{
+    font-size:12px;font-weight:700;letter-spacing:.14em;
+    padding:10px 18px;border:1px solid transparent;border-bottom:none;cursor:pointer;
+    color:var(--green-dim);position:relative;top:1px;background:none;font-family:var(--mono);text-shadow:var(--shadow);
+  }
+  .tab[aria-selected="true"]{
+    color:var(--green);border-color:var(--line);
+    background:linear-gradient(180deg,rgba(51,255,119,.08),transparent);
+  }
+  .tab[aria-selected="true"]::before{content:"> "}
+  .tab:not([aria-selected="true"]):hover{color:var(--green)}
+
+  /* ---- stat bar ---- */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    border:1px solid var(--line);margin-bottom:16px;
+  }
+  .stat{padding:14px 18px;border-right:1px solid var(--line-soft)}
+  .stat:last-child{border-right:none}
+  .stat .k{font-size:10.5px;color:var(--green-dim);letter-spacing:.2em}
+  .stat .v{font-size:26px;font-weight:800;letter-spacing:.02em;margin-top:4px;line-height:1}
+  .stat .v small{font-size:13px;font-weight:500;color:var(--green-dim)}
+
+  /* ---- layout grid ---- */
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+
+  h2.sec{
+    font-size:12px;font-weight:800;letter-spacing:.22em;color:var(--green);
+    margin:0 0 10px;display:flex;align-items:center;gap:8px;
+  }
+  h2.sec::before{content:"╾╾";color:var(--green-fade)}
+
+  /* ---- company card ---- */
+  .companies{display:flex;flex-direction:column;gap:14px}
+  .co{padding:14px 16px}
+  .co-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .co-id{display:flex;align-items:center;gap:10px}
+  .swatch{width:11px;height:11px;border:1px solid currentColor;box-shadow:0 0 .5em currentColor;flex:none}
+  .co-name{font-size:15px;font-weight:800;letter-spacing:.06em}
+  .ver{font-size:10.5px;color:var(--green-dim);border:1px solid var(--line-soft);padding:1px 6px}
+  .mission{font-size:12px;color:var(--green-dim);margin:8px 0 12px;max-width:60ch}
+
+  .co-metrics{display:flex;gap:22px;flex-wrap:wrap;font-size:11px;margin-bottom:12px}
+  .co-metrics b{font-size:14px;font-weight:800;color:var(--green);display:block;letter-spacing:.02em}
+  .co-metrics span{color:var(--green-dim);letter-spacing:.12em;font-size:10px}
+
+  /* pipeline stepper */
+  .pipe{display:flex;align-items:center;gap:0;font-size:9.5px;letter-spacing:.1em;flex-wrap:wrap}
+  .node{display:flex;align-items:center;gap:5px;color:var(--green-fade)}
+  .node .dot{width:9px;height:9px;border:1px solid var(--green-fade);background:transparent;flex:none}
+  .node.done{color:var(--green-dim)}
+  .node.done .dot{background:var(--green-dim);border-color:var(--green-dim)}
+  .node.cur{color:var(--green)}
+  .node.cur .dot{background:var(--green);border-color:var(--green);box-shadow:0 0 .6em var(--green);animation:pulse 1.4s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .rail{width:26px;height:1px;background:var(--green-fade);margin:0 2px}
+  .rail.on{background:var(--green-dim)}
+
+  /* status tag */
+  .status{
+    font-size:10px;font-weight:700;letter-spacing:.12em;
+    padding:3px 9px;border:1px solid currentColor;white-space:nowrap;
+  }
+  .st-live{color:var(--mint)}
+  .st-build{color:var(--sky)}
+  .st-wait{color:var(--amber);background:rgba(245,158,11,.08)}
+  .st-block{color:var(--rose);background:rgba(251,113,133,.08);animation:blinkrow 1.6s steps(1) infinite}
+  @keyframes blinkrow{50%{opacity:.45}}
+  .co-foot{margin-top:11px;font-size:10.5px;color:var(--green-dim);border-top:1px dashed var(--line-soft);padding-top:9px}
+  .co-foot .lbl{color:var(--green-fade)}
+
+  /* ---- right column ---- */
+  .rail-col{display:flex;flex-direction:column;gap:16px;position:sticky;top:18px}
+
+  .queue{display:flex;flex-direction:column}
+  .qi{padding:11px 14px;border-bottom:1px solid var(--line-soft);display:flex;gap:10px;align-items:flex-start}
+  .qi:last-child{border-bottom:none}
+  .qi .tk{color:var(--green-fade);font-size:11px;flex:none;padding-top:1px}
+  .qi .body{flex:1}
+  .qi .t{font-size:11.5px;font-weight:700;letter-spacing:.04em}
+  .qi .s{font-size:10.5px;color:var(--green-dim);margin-top:3px}
+  .qi .act{margin-top:7px;display:flex;gap:6px}
+  .mini{font-size:9.5px;padding:3px 8px;letter-spacing:.08em}
+  .tag-pill{font-size:9px;border:1px solid currentColor;padding:1px 5px;letter-spacing:.1em}
+
+  /* agent console */
+  .console{padding:0;display:flex;flex-direction:column;height:100%}
+  .feed{padding:12px 14px;max-height:230px;overflow:auto;font-size:10.5px;line-height:1.65}
+  .feed::-webkit-scrollbar{width:8px}
+  .feed::-webkit-scrollbar-thumb{background:var(--green-ghost)}
+  .log{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--green-dim)}
+  .log .ts{color:var(--green-fade)}
+  .log .ag{color:var(--green);font-weight:700}
+  .log.ok .ev{color:var(--mint)}
+  .log.warn .ev{color:var(--amber)}
+  .log.err .ev{color:var(--rose)}
+  .log .ev{font-weight:700}
+
+  .chat{border-top:1px solid var(--line);padding:12px 14px}
+  .chat .lab{font-size:10px;letter-spacing:.2em;color:var(--green-dim);margin-bottom:8px}
+  .chatbar{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 10px;background:rgba(51,255,119,.03)}
+  .chatbar .ps{color:var(--green);font-weight:800}
+  .chatbar input{
+    flex:1;background:transparent;border:none;outline:none;color:var(--green);
+    font-family:var(--mono);font-size:11.5px;text-shadow:var(--shadow);
+  }
+  .chatbar input::placeholder{color:var(--green-fade)}
+
+  /* GTM full-width */
+  .gtm{margin-top:16px;padding:14px 16px}
+  .gtm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .gtm-item{border:1px solid var(--line-soft);padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+  .gtm-item .tk{color:var(--green-fade);flex:none}
+  .gtm-item .t{font-size:11.5px;font-weight:700}
+  .gtm-item .s{font-size:10.5px;color:var(--green-dim);margin-top:2px}
+
+  footer{margin-top:26px;font-size:10px;color:var(--green-fade);letter-spacing:.1em;border-top:1px solid var(--line-soft);padding-top:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  /* responsive */
+  @media (max-width:1024px){
+    .layout{grid-template-columns:1fr}
+    .rail-col{position:static}
+  }
+  @media (max-width:768px){
+    .stats{grid-template-columns:1fr;}
+    .stat{border-right:none;border-bottom:1px solid var(--line-soft)}
+    .stat:last-child{border-bottom:none}
+    .gtm-grid{grid-template-columns:1fr}
+    .co-metrics{gap:16px}
+  }
+</style>
+</head>
+<body class="scan">
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="wordmark">C<span class="blk">SLOP</span>SLOP<span style="color:var(--green-fade);font-weight:400">.term</span></div>
+    <div class="prompt-line">root@studio:~$ ./operate --portfolio --watch<span class="cursor"></span></div>
+    <div class="account">
+      <button class="btn">SIGN IN</button>
+      <button class="btn solid">REGISTER</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true">PORTFOLIO</button>
+    <button class="tab" role="tab" aria-selected="false">OPPORTUNITIES</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="k">TOTAL_USERS</div><div class="v">2,418</div></div>
+    <div class="stat"><div class="k">TOTAL_MRR</div><div class="v"><small>$</small>9,210<small>/mo</small></div></div>
+    <div class="stat"><div class="k">COMPANIES</div><div class="v">5</div></div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="layout">
+
+    <!-- LEFT: companies -->
+    <div>
+      <h2 class="sec">PORTFOLIO // 5 PROCESSES</h2>
+      <div class="companies">
+
+        <!-- TranslatorBill -->
+        <div class="co frame" data-tab="proc 01">
+          <div class="co-head">
+            <div class="co-id">
+              <span class="swatch" style="color:#f59e0b"></span>
+              <span class="co-name">TranslatorBill</span>
+              <span class="ver">v0.6</span>
+            </div>
+            <span class="status st-wait">AWAITING APPROVAL</span>
+          </div>
+          <p class="mission">Translate invoices line-by-line for cross-border sellers.</p>
+          <div class="co-metrics">
+            <div><b>1,240</b><span>USERS</span></div>
+            <div><b>$0</b><span>MRR · PRE-REV</span></div>
+          </div>
+          <div class="pipe">
+            <div class="node done"><span class="dot"></span>BUILD</div><div class="rail on"></div>
+            <div class="node cur"><span class="dot"></span>FEATURES</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>DEPLOY</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>ADS</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>LIVE</div>
+            <span style="margin-left:auto;color:var(--green-fade)">[2/5]</span>
+          </div>
+          <div class="co-foot"><span class="lbl">// </span>feature 6/10 ready on staging — needs your sign-off</div>
+        </div>
+
+        <!-- RedditPainBot -->
+        <div class="co frame" data-tab="proc 02">
+          <div class="co-head">
+            <div class="co-id">
+              <span class="swatch" style="color:#fb7185"></span>
+              <span class="co-name">RedditPainBot</span>
+              <span class="ver">v0.3</span>
+            </div>
+            <span class="status st-block">!! BLOCKED</span>
+          </div>
+          <p class="mission">Surface real product pain from Reddit threads daily.</p>
+          <div class="co-metrics">
+            <div><b>320</b><span>USERS</span></div>
+            <div><b>$0</b><span>MRR</span></div>
+          </div>
+          <div class="pipe">
+            <div class="node cur"><span class="dot"></span>BUILD</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>FEATURES</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>DEPLOY</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>ADS</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>LIVE</div>
+            <span style="margin-left:auto;color:var(--green-fade)">[1/5]</span>
+          </div>
+          <div class="co-foot"><span class="lbl">// </span>Reddit API key expired — agent halted, awaiting credential</div>
+        </div>
+
+        <!-- QuietInbox -->
+        <div class="co frame" data-tab="proc 03">
+          <div class="co-head">
+            <div class="co-id">
+              <span class="swatch" style="color:#a78bfa"></span>
+              <span class="co-name">QuietInbox</span>
+              <span class="ver">v0.4</span>
+            </div>
+            <span class="status st-build">BUILDING</span>
+          </div>
+          <p class="mission">Auto-triage and summarize your support inbox.</p>
+          <div class="co-metrics">
+            <div><b>880</b><span>USERS</span></div>
+            <div><b>$0</b><span>MRR</span></div>
+          </div>
+          <div class="pipe">
+            <div class="node done"><span class="dot"></span>BUILD</div><div class="rail on"></div>
+            <div class="node cur"><span class="dot"></span>FEATURES</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>DEPLOY</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>ADS</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>LIVE</div>
+            <span style="margin-left:auto;color:var(--green-fade)">[2/5]</span>
+          </div>
+          <div class="co-foot"><span class="lbl">// </span>agent assembling triage rules — no action required</div>
+        </div>
+
+        <!-- LeadSift -->
+        <div class="co frame" data-tab="proc 04">
+          <div class="co-head">
+            <div class="co-id">
+              <span class="swatch" style="color:#34d399"></span>
+              <span class="co-name">LeadSift</span>
+              <span class="ver">v1.2</span>
+            </div>
+            <span class="status st-live">● LIVE</span>
+          </div>
+          <p class="mission">Score and route inbound leads automatically.</p>
+          <div class="co-metrics">
+            <div><b>2,100</b><span>USERS</span></div>
+            <div><b>$312</b><span>MRR</span></div>
+          </div>
+          <div class="pipe">
+            <div class="node done"><span class="dot"></span>BUILD</div><div class="rail on"></div>
+            <div class="node done"><span class="dot"></span>FEATURES</div><div class="rail on"></div>
+            <div class="node done"><span class="dot"></span>DEPLOY</div><div class="rail on"></div>
+            <div class="node done"><span class="dot"></span>ADS</div><div class="rail on"></div>
+            <div class="node cur"><span class="dot"></span>LIVE</div>
+            <span style="margin-left:auto;color:var(--green-fade)">[5/5]</span>
+          </div>
+          <div class="co-foot"><span class="lbl">// </span>pricing change pending: $29 → $39/mo (confirm in queue)</div>
+        </div>
+
+        <!-- DocHound -->
+        <div class="co frame" data-tab="proc 05">
+          <div class="co-head">
+            <div class="co-id">
+              <span class="swatch" style="color:#38bdf8"></span>
+              <span class="co-name">DocHound</span>
+              <span class="ver">v1.0</span>
+            </div>
+            <span class="status st-live">● LIVE</span>
+          </div>
+          <p class="mission">Answer questions over your internal docs instantly.</p>
+          <div class="co-metrics">
+            <div><b>1,460</b><span>USERS</span></div>
+            <div><b>$148</b><span>MRR</span></div>
+          </div>
+          <div class="pipe">
+            <div class="node done"><span class="dot"></span>BUILD</div><div class="rail on"></div>
+            <div class="node done"><span class="dot"></span>FEATURES</div><div class="rail on"></div>
+            <div class="node done"><span class="dot"></span>DEPLOY</div><div class="rail on"></div>
+            <div class="node cur"><span class="dot"></span>ADS</div><div class="rail"></div>
+            <div class="node"><span class="dot"></span>LIVE</div>
+            <span style="margin-left:auto;color:var(--green-fade)">[4/5]</span>
+          </div>
+          <div class="co-foot"><span class="lbl">// </span>ad campaign running — LinkedIn update posted (1.2k impressions)</div>
+        </div>
+
+      </div>
+
+      <!-- GO TO MARKET -->
+      <div class="gtm frame" data-tab="gtm queue">
+        <h2 class="sec" style="margin-top:2px">GO TO MARKET // 4 ITEMS</h2>
+        <div class="gtm-grid">
+          <div class="gtm-item">
+            <span class="tk">[ ]</span>
+            <div><div class="t">Approve launch tweet</div><div class="s">TranslatorBill · draft ready to post</div></div>
+          </div>
+          <div class="gtm-item">
+            <span class="tk">[ ]</span>
+            <div><div class="t">3 support messages</div><div class="s">QuietInbox · awaiting reply</div></div>
+          </div>
+          <div class="gtm-item">
+            <span class="tk">[ ]</span>
+            <div><div class="t">Reply to investor email</div><div class="s">LeadSift · flagged important</div></div>
+          </div>
+          <div class="gtm-item">
+            <span class="tk">[x]</span>
+            <div><div class="t">Posted LinkedIn update</div><div class="s">DocHound · 1.2k impressions</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: needs-you + agent -->
+    <div class="rail-col">
+
+      <!-- NEEDS YOU -->
+      <div class="frame" data-tab="needs you">
+        <h2 class="sec" style="margin:12px 14px 8px">!! NEEDS YOU // 3</h2>
+        <div class="queue">
+          <div class="qi">
+            <span class="tk st-wait" style="padding:0;border:none">▸</span>
+            <div class="body">
+              <div class="t">Approve feature 6 — TranslatorBill</div>
+              <div class="s">Per-line invoice translation, ready to ship.</div>
+              <div class="act">
+                <button class="btn mini solid">APPROVE</button>
+                <button class="btn mini">DIFF</button>
+              </div>
+            </div>
+          </div>
+          <div class="qi">
+            <span class="tk st-block" style="padding:0;border:none">▸</span>
+            <div class="body">
+              <div class="t">RedditPainBot blocked</div>
+              <div class="s">Reddit API key expired.</div>
+              <div class="act">
+                <button class="btn mini solid">ADD KEY</button>
+                <button class="btn mini">LOGS</button>
+              </div>
+            </div>
+          </div>
+          <div class="qi">
+            <span class="tk st-live" style="padding:0;border:none">▸</span>
+            <div class="body">
+              <div class="t">Confirm pricing change — LeadSift</div>
+              <div class="s">$29 → $39 / mo.</div>
+              <div class="act">
+                <button class="btn mini solid">CONFIRM</button>
+                <button class="btn mini">REJECT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT CONSOLE -->
+      <div class="frame console" data-tab="agent.log">
+        <h2 class="sec" style="margin:12px 14px 6px">AGENT ACTIVITY <span style="margin-left:auto;font-size:9px;color:var(--mint);letter-spacing:.1em">● STREAMING</span></h2>
+        <div class="feed" id="feed">
+          <div class="log ok"><span class="ts">12:04:51</span> <span class="ag">[builder]</span> <span class="ev">BUILD</span> QuietInbox triage-ruleset compiled</div>
+          <div class="log warn"><span class="ts">12:04:33</span> <span class="ag">[guard]</span> <span class="ev">WARN</span> RedditPainBot auth 401 — key expired</div>
+          <div class="log ok"><span class="ts">12:03:58</span> <span class="ag">[deployer]</span> <span class="ev">DEPLOY</span> TranslatorBill → staging.f6 green</div>
+          <div class="log"><span class="ts">12:03:12</span> <span class="ag">[gtm]</span> <span class="ev">SCAN</span> DocHound LinkedIn reach +1.2k</div>
+          <div class="log ok"><span class="ts">12:02:40</span> <span class="ag">[gtm]</span> <span class="ev">DRAFT</span> TranslatorBill launch tweet queued</div>
+          <div class="log err"><span class="ts">12:01:09</span> <span class="ag">[guard]</span> <span class="ev">HALT</span> RedditPainBot pipeline paused</div>
+          <div class="log"><span class="ts">12:00:02</span> <span class="ag">[scout]</span> <span class="ev">PRICE</span> LeadSift elasticity → suggest $39</div>
+        </div>
+        <div class="chat">
+          <div class="lab">AGENT_CHAT // build &amp; edit companies</div>
+          <div class="chatbar">
+            <span class="ps">&gt;</span>
+            <input type="text" placeholder="ask the agent to build, fix, or ship…" aria-label="agent chat input">
+            <span class="cursor" style="height:.9em"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>C SLOP SLOP // autonomous micro-saas studio</span>
+    <span>conn: secure · agents: 5 active · uptime 41d 06:12<span class="cursor" style="height:.85em"></span></span>
+  </footer>
+
+</div>
+
+<script>
+  // tab toggle (optional)
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected','false')});
+      t.setAttribute('aria-selected','true');
+    });
+  });
+
+  // live-ish agent feed ticker
+  (function(){
+    var feed=document.getElementById('feed');
+    if(!feed)return;
+    var samples=[
+      ['ok','[builder]','BUILD','QuietInbox summarizer pass 3/4'],
+      ['ok','[deployer]','DEPLOY','DocHound edge cache warmed'],
+      ['','[scout]','SCAN','market: invoice-tools demand steady'],
+      ['ok','[gtm]','POST','DocHound metrics synced'],
+      ['warn','[guard]','RETRY','RedditPainBot backoff 30s'],
+      ['ok','[builder]','TEST','TranslatorBill f6 suite 18/18']
+    ];
+    function pad(n){return n<10?'0'+n:''+n}
+    function tick(){
+      var d=new Date();
+      var s=samples[Math.floor(Math.random()*samples.length)];
+      var row=document.createElement('div');
+      row.className='log '+s[0];
+      row.innerHTML='<span class="ts">'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+
+        '</span> <span class="ag">'+s[1]+'</span> <span class="ev">'+s[2]+'</span> '+s[3];
+      feed.insertBefore(row,feed.firstChild);
+      while(feed.children.length>14)feed.removeChild(feed.lastChild);
+    }
+    setInterval(tick,3200);
+  })();
+</script>
+</body>
+</html>

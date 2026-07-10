@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Slop Slop · 07 Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#010407;
+    --bg2:#03070d;
+    --panel:#05090f;
+    --panel2:#070d16;
+    --line:#0e1a2b;
+    --line2:#142436;
+    --accent:#60a5fa;
+    --accent-dim:#2b4a72;
+    --txt:#aebfd6;
+    --txt-dim:#5a6f8c;
+    --txt-faint:#3a4a61;
+    --green:#34d399;
+    --amber:#fbbf24;
+    --violet:#a78bfa;
+    --red:#f87171;
+    --slate:#64748b;
+    --blue:#60a5fa;
+    --gray:#475569;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    line-height:1.5;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* subtle scanline texture, scanline-clean */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+    background:repeating-linear-gradient(to bottom,rgba(96,165,250,0.018) 0,rgba(96,165,250,0.018) 1px,transparent 1px,transparent 3px);
+    mix-blend-mode:screen;opacity:.5;
+  }
+  ::selection{background:var(--accent);color:#010407}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--line2);border:2px solid var(--bg)}
+  ::-webkit-scrollbar-thumb:hover{background:var(--accent-dim)}
+
+  a{color:var(--accent);text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+
+  .app{display:flex;flex-direction:column;height:100vh}
+
+  /* ============ COMMAND BAR ============ */
+  .cmdbar{
+    flex:0 0 auto;display:flex;align-items:center;gap:0;
+    border-bottom:1px solid var(--line2);background:linear-gradient(180deg,#040810,#02050a);
+    height:40px;position:relative;z-index:50;
+  }
+  .brand{
+    display:flex;align-items:center;gap:8px;padding:0 14px;height:100%;
+    border-right:1px solid var(--line2);color:var(--accent);font-weight:700;letter-spacing:.5px;
+    white-space:nowrap;
+  }
+  .brand .dot{width:7px;height:7px;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  .cmd-wrap{flex:1;position:relative;height:100%;display:flex;align-items:center}
+  .cmd-prompt{color:var(--accent);padding-left:14px;user-select:none;font-weight:700}
+  .cmd-input{
+    flex:1;background:transparent;border:0;outline:0;color:var(--txt);
+    font-family:inherit;font-size:12.5px;padding:0 8px;height:100%;caret-color:var(--accent);
+  }
+  .cmd-input::placeholder{color:var(--txt-faint)}
+  .cmd-hint-chips{display:flex;gap:6px;padding-right:12px;align-items:center}
+  .chip{
+    border:1px solid var(--line2);background:var(--panel2);color:var(--txt-dim);
+    padding:2px 7px;font-size:10.5px;letter-spacing:.3px;white-space:nowrap;
+  }
+  .chip b{color:var(--accent);font-weight:500}
+  /* autocomplete dropdown */
+  .autocomplete{
+    position:absolute;top:40px;left:0;right:0;background:var(--panel);
+    border:1px solid var(--line2);border-top:0;z-index:60;max-height:300px;overflow:auto;
+    display:none;box-shadow:0 18px 40px rgba(0,0,0,.6);
+  }
+  .autocomplete.show{display:block}
+  .ac-item{
+    display:flex;align-items:baseline;gap:10px;padding:7px 16px;cursor:pointer;border-bottom:1px solid var(--line);
+  }
+  .ac-item:hover,.ac-item.sel{background:var(--panel2)}
+  .ac-cmd{color:var(--accent);font-weight:500;min-width:170px}
+  .ac-desc{color:var(--txt-dim);font-size:11px}
+
+  /* ============ BODY GRID ============ */
+  .body{flex:1;display:flex;min-height:0;overflow:hidden}
+
+  /* ---- LEFT company rail ---- */
+  .rail{
+    flex:0 0 232px;border-right:1px solid var(--line2);background:var(--bg2);
+    display:flex;flex-direction:column;min-height:0;
+  }
+  .rail-head{
+    padding:8px 12px;border-bottom:1px solid var(--line);color:var(--txt-dim);
+    font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;display:flex;justify-content:space-between;
+  }
+  .rail-head .cnt{color:var(--accent)}
+  .rail-list{overflow-y:auto;flex:1}
+  .co-row{
+    display:grid;grid-template-columns:16px 1fr auto;gap:8px;align-items:center;
+    padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;position:relative;
+  }
+  .co-row:hover{background:var(--panel2)}
+  .co-row.focused{background:linear-gradient(90deg,rgba(96,165,250,.10),transparent);}
+  .co-row.focused::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  .glyph{font-size:12px;text-align:center;line-height:1}
+  .co-name{font-weight:500;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .co-row.focused .co-name{color:#dce8fa}
+  .co-sub{grid-column:2/4;color:var(--txt-faint);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-2px}
+  .co-meta{font-size:10px;color:var(--txt-dim);text-align:right;white-space:nowrap}
+  .needs-flag{color:var(--violet);font-size:9px;letter-spacing:.5px}
+  .rail-foot{border-top:1px solid var(--line);padding:8px 12px;font-size:10px;color:var(--txt-faint)}
+  .rail-foot .kx{color:var(--txt-dim)}
+
+  /* glyph status colors */
+  .g-active{color:var(--green)}
+  .g-paused{color:var(--amber)}
+  .g-archived{color:var(--gray)}
+  .s-todo{color:var(--slate)}
+  .s-building{color:var(--blue)}
+  .s-awaiting_approval{color:var(--violet)}
+  .s-shipped{color:var(--green)}
+  .s-blocked{color:var(--red)}
+
+  .pulse{animation:pulse 1.3s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .blink{animation:blink 1.05s steps(2,start) infinite}
+  @keyframes blink{to{opacity:0}}
+
+  /* ---- MAIN tiling area ---- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+  .crumbs{
+    flex:0 0 auto;height:30px;display:flex;align-items:center;gap:8px;padding:0 14px;
+    border-bottom:1px solid var(--line);background:var(--panel);font-size:10.5px;color:var(--txt-dim);
+  }
+  .crumbs .seg{color:var(--txt-dim)}
+  .crumbs .seg.cur{color:var(--accent)}
+  .crumbs .sep{color:var(--txt-faint)}
+  .crumbs .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .back-btn{
+    border:1px solid var(--line2);background:var(--panel2);color:var(--txt-dim);
+    padding:2px 9px;font-size:10px;letter-spacing:.5px;display:none;
+  }
+  .back-btn:hover{color:var(--accent);border-color:var(--accent-dim)}
+
+  /* tile container — grows RIGHT (horizontal scroll) */
+  .tiles{
+    flex:1;display:flex;overflow-x:auto;overflow-y:hidden;min-height:0;
+    scroll-behavior:smooth;
+  }
+  .pane{
+    flex:0 0 auto;width:380px;border-right:1px solid var(--line2);
+    display:flex;flex-direction:column;min-height:0;background:var(--panel);
+  }
+  .pane.wide{width:480px}
+  .pane.narrow{width:300px}
+  .pane.flex{flex:1 1 auto;min-width:360px}
+  .pane-head{
+    flex:0 0 auto;height:26px;display:flex;align-items:center;gap:8px;padding:0 12px;
+    border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));
+    font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt-dim);white-space:nowrap;
+  }
+  .pane-head .tag{color:var(--accent)}
+  .pane-head .rcount{margin-left:auto;color:var(--txt-faint);font-size:10px}
+  .pane-body{flex:1;overflow-y:auto;min-height:0;padding:0}
+  .pane-body.pad{padding:10px 12px}
+
+  /* metrics pane */
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin:10px 12px}
+  .kpi{background:var(--panel);padding:9px 11px}
+  .kpi .v{font-size:20px;font-weight:700;color:#dce8fa;line-height:1}
+  .kpi .v.accent{color:var(--accent)}
+  .kpi .v.violet{color:var(--violet)}
+  .kpi .l{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-dim);margin-top:4px}
+  .section-label{padding:10px 12px 4px;font-size:9.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt-faint)}
+
+  /* next moves */
+  .move{display:flex;gap:8px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .move .n{color:var(--accent);font-weight:700}
+  .move .t{color:var(--txt);font-size:11.5px}
+
+  /* opportunities */
+  .opp{padding:9px 12px;border-bottom:1px solid var(--line)}
+  .opp-top{display:flex;align-items:center;gap:8px}
+  .opp .score{
+    font-weight:700;font-size:13px;min-width:30px;text-align:right;
+  }
+  .opp .oname{color:#cfe0f7;font-weight:500;flex:1}
+  .opp .thesis{color:var(--txt-dim);font-size:10.5px;margin:3px 0 6px;padding-left:38px}
+  .opp .thought{color:var(--txt-faint);font-size:10px;font-style:italic;padding-left:38px;margin-bottom:6px}
+  .bar{height:3px;background:var(--line2);margin:5px 0 0;position:relative;overflow:hidden}
+  .bar>i{position:absolute;left:0;top:0;bottom:0;display:block}
+  .promote-btn{
+    border:1px solid var(--accent-dim);background:rgba(96,165,250,.08);color:var(--accent);
+    padding:3px 10px;font-size:10px;letter-spacing:.5px;margin-left:38px;margin-top:6px;
+  }
+  .promote-btn:hover{background:rgba(96,165,250,.18)}
+  .opp.killed{opacity:.5}
+  .opp.killed .promote-btn{border-color:var(--line2);color:var(--gray);background:transparent;cursor:not-allowed}
+  .killed-tag{color:var(--red);font-size:9px;letter-spacing:1px;margin-left:auto}
+
+  /* company list pane (overview center) */
+  .colist-row{
+    padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;
+  }
+  .colist-row:hover{background:var(--panel2)}
+  .colist-top{display:flex;align-items:center;gap:8px}
+  .colist-top .nm{font-weight:500;color:#cfe0f7;font-size:13px}
+  .colist-top .dom{color:var(--txt-faint);font-size:10px}
+  .colist-th{color:var(--txt-dim);font-size:10.5px;margin:4px 0 6px}
+  .colist-stats{display:flex;gap:14px;font-size:10px;color:var(--txt-dim)}
+  .colist-stats b{color:var(--txt)}
+  .colist-cur{
+    font-size:10px;color:var(--txt-dim);margin-top:6px;display:flex;gap:6px;align-items:center;
+    border-left:2px solid var(--line2);padding-left:8px;
+  }
+  .needs-pill{
+    margin-left:auto;color:var(--violet);font-size:9px;letter-spacing:.5px;border:1px solid var(--violet);
+    padding:1px 6px;
+  }
+
+  /* ===== COMPANY ZOOM panes ===== */
+  /* backlog pane */
+  .slice{
+    display:grid;grid-template-columns:16px 18px 1fr;gap:8px;padding:8px 12px;
+    border-bottom:1px solid var(--line);align-items:start;cursor:default;
+  }
+  .slice:hover{background:var(--panel2)}
+  .slice.gate{background:linear-gradient(90deg,rgba(167,139,250,.10),transparent)}
+  .slice .sn{color:var(--txt-faint);font-size:10px;text-align:right}
+  .slice .st{font-size:11.5px;color:var(--txt)}
+  .slice .stat{font-size:9px;letter-spacing:.8px;text-transform:uppercase;margin-top:3px;display:inline-block}
+  .slice .meta{color:var(--txt-faint);font-size:9.5px;margin-top:2px}
+  .slice .prio{color:var(--amber);font-size:9.5px}
+  .stat.todo{color:var(--slate)}
+  .stat.building{color:var(--blue)}
+  .stat.awaiting_approval{color:var(--violet)}
+  .stat.shipped{color:var(--green)}
+  .stat.blocked{color:var(--red)}
+
+  /* diff pane */
+  .diff{font-size:11.5px;line-height:1.65;padding:8px 0}
+  .diff .ln{display:flex;padding:0 12px;white-space:pre}
+  .diff .ln .gut{width:26px;color:var(--txt-faint);text-align:right;padding-right:10px;user-select:none;font-size:10px;flex:0 0 auto}
+  .diff .add{background:rgba(52,211,153,.06)}
+  .diff .add .code{color:var(--green)}
+  .diff .ctx .code{color:var(--txt-dim)}
+  .diff .add .sign{color:var(--green)}
+
+  /* preview / check pane */
+  .field{padding:10px 12px;border-bottom:1px solid var(--line)}
+  .field .lbl{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:5px}
+  .urlbox{display:flex;align-items:center;gap:8px;border:1px solid var(--line2);background:#020509;padding:6px 9px}
+  .urlbox .u{color:var(--accent);font-size:11.5px;flex:1;overflow:hidden;text-overflow:ellipsis}
+  .urlbox .live{font-size:8.5px;color:var(--green);border:1px solid var(--green);padding:1px 5px;letter-spacing:.5px}
+  .donewhen{border:1px solid var(--line2);background:#020509;padding:8px 9px;font-size:10.5px;color:var(--txt-dim)}
+  .check-result{
+    display:flex;align-items:center;gap:9px;border:1px solid var(--green);
+    background:rgba(52,211,153,.08);padding:9px 11px;color:var(--green);font-size:12px;margin-top:5px;
+  }
+  .check-result .big{font-size:16px}
+  .check-result .sub{color:var(--txt-dim);font-size:10px;margin-left:auto}
+
+  /* fake browser preview frame */
+  .pvframe{margin:10px 12px;border:1px solid var(--line2);background:#04080e}
+  .pvframe .bar{display:flex;align-items:center;gap:6px;padding:5px 8px;border-bottom:1px solid var(--line);height:auto;background:var(--panel2)}
+  .pvframe .bar i{width:7px;height:7px;border-radius:50%;background:var(--line2);display:block}
+  .pvframe .bar .addr{flex:1;color:var(--txt-faint);font-size:9.5px;margin-left:6px}
+  .pvframe .scr{padding:12px}
+  .pvframe .scr h4{color:#cfe0f7;font-size:13px;margin-bottom:8px}
+  .digest-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:11px}
+  .digest-row .sc{color:var(--green);font-weight:700}
+  .digest-row .nm{color:var(--txt)}
+
+  /* approval action bar */
+  .approve-gate{border-top:1px solid var(--violet);background:rgba(167,139,250,.05)}
+  .gate-head{padding:8px 12px;color:var(--violet);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .gate-actions{display:flex;gap:8px;padding:0 12px 12px}
+  .btn-approve{flex:1;border:1px solid var(--green);background:rgba(52,211,153,.12);color:var(--green);padding:9px;font-weight:700;letter-spacing:.5px;font-size:12px}
+  .btn-approve:hover{background:rgba(52,211,153,.25)}
+  .btn-reject{flex:1;border:1px solid var(--red);background:rgba(248,113,113,.08);color:var(--red);padding:9px;font-weight:500;letter-spacing:.5px;font-size:12px}
+  .btn-reject:hover{background:rgba(248,113,113,.2)}
+  .reject-form{padding:0 12px 12px;display:none}
+  .reject-form.show{display:block}
+  .reject-form textarea{
+    width:100%;background:#020509;border:1px solid var(--line2);color:var(--txt);font-family:inherit;
+    font-size:11px;padding:7px;resize:vertical;min-height:48px;outline:none;
+  }
+  .reject-form textarea:focus{border-color:var(--red)}
+  .reject-form .send{margin-top:6px;border:1px solid var(--red);background:rgba(248,113,113,.12);color:var(--red);padding:5px 12px;font-size:11px}
+  .gate-confirm{
+    display:none;padding:11px 12px;font-size:13px;font-weight:700;letter-spacing:.5px;text-align:center;
+  }
+  .gate-confirm.show{display:block}
+  .gate-confirm.ok{color:var(--green);background:rgba(52,211,153,.14);border-top:1px solid var(--green)}
+  .gate-confirm.rej{color:var(--red);background:rgba(248,113,113,.12);border-top:1px solid var(--red)}
+
+  /* chat pane */
+  .chat-body{display:flex;flex-direction:column;gap:8px;padding:10px 12px}
+  .msg{max-width:92%;font-size:11.5px;line-height:1.55;padding:7px 10px;border:1px solid var(--line2)}
+  .msg.assistant{align-self:flex-start;background:var(--panel2);color:var(--txt)}
+  .msg.user{align-self:flex-end;background:rgba(96,165,250,.10);border-color:var(--accent-dim);color:#cfe0f7}
+  .msg .who{font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:3px}
+  .chat-input-wrap{flex:0 0 auto;border-top:1px solid var(--line);display:flex;align-items:center;background:var(--panel2)}
+  .chat-input-wrap .pr{color:var(--accent);padding-left:12px;font-weight:700}
+  .chat-input{flex:1;background:transparent;border:0;outline:0;color:var(--txt);font-family:inherit;font-size:11.5px;padding:9px 10px;caret-color:var(--accent)}
+  .chat-input::placeholder{color:var(--txt-faint)}
+
+  /* end-of-tiles add affordance (infinite grow right) */
+  .tile-end{
+    flex:0 0 auto;width:54px;display:flex;align-items:center;justify-content:center;
+    color:var(--txt-faint);writing-mode:vertical-rl;font-size:10px;letter-spacing:2px;
+    border-right:1px solid var(--line);user-select:none;
+  }
+
+  /* ============ LIVE ACTIVITY STRIP ============ */
+  .activity{
+    flex:0 0 auto;border-top:1px solid var(--line2);background:var(--bg2);
+    display:flex;flex-direction:column;max-height:46vh;
+  }
+  .act-head{
+    height:28px;display:flex;align-items:center;gap:10px;padding:0 12px;cursor:pointer;
+    border-bottom:1px solid transparent;user-select:none;
+  }
+  .activity.open .act-head{border-bottom:1px solid var(--line)}
+  .act-head .label{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:7px}
+  .act-head .label .liveglyph{color:var(--green);font-size:9px}
+  .act-collapsed-line{
+    flex:1;color:var(--txt-dim);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px;
+  }
+  .act-toggle{color:var(--txt-dim);font-size:10px;letter-spacing:1px;margin-left:auto}
+  .act-toggle .caret{display:inline-block;transition:transform .15s}
+  .activity.open .act-toggle .caret{transform:rotate(180deg)}
+  .act-stream{flex:1;overflow-y:auto;display:none;padding:4px 0 6px}
+  .activity.open .act-stream{display:block}
+  .act-group{border-bottom:1px solid var(--line)}
+  .act-group-h{padding:5px 12px;font-size:9.5px;letter-spacing:1px;color:var(--txt-faint);display:flex;align-items:center;gap:7px;text-transform:uppercase}
+  .logline{display:flex;gap:10px;padding:3px 12px 3px 26px;font-size:11px;align-items:baseline;white-space:nowrap}
+  .logline:hover{background:var(--panel2)}
+  .logline .ts{color:var(--txt-faint);font-size:10px;min-width:34px}
+  .logline .cog{color:var(--accent-dim);min-width:96px;font-size:10px}
+  .logline .lg{min-width:12px;text-align:center}
+  .logline .tx{color:var(--txt-dim);overflow:hidden;text-overflow:ellipsis}
+  .logline.running .tx{color:var(--txt)}
+
+  /* ============ STATUS LINE ============ */
+  .statusline{
+    flex:0 0 auto;height:22px;background:var(--accent);color:#021024;display:flex;align-items:center;
+    font-size:10.5px;letter-spacing:.3px;font-weight:500;
+  }
+  .statusline .seg{padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;border-right:1px solid rgba(2,16,36,.25)}
+  .statusline .seg.mode{background:#021024;color:var(--accent);font-weight:700;letter-spacing:1px}
+  .statusline .seg.right{margin-left:auto;border-right:0;border-left:1px solid rgba(2,16,36,.25)}
+  .statusline .seg .dim{opacity:.7}
+  .statusline .blip{width:6px;height:6px;background:#021024;border-radius:50%;display:inline-block}
+
+  /* corner badge */
+  .badge{
+    position:fixed;right:10px;bottom:30px;z-index:200;
+    background:var(--panel);border:1px solid var(--accent-dim);color:var(--accent);
+    font-size:10px;letter-spacing:1px;padding:4px 10px;box-shadow:0 0 18px rgba(96,165,250,.15);
+  }
+  .badge b{color:#dce8fa}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;top:54px;transform:translateX(-50%) translateY(-12px);
+    background:var(--panel);border:1px solid var(--accent-dim);color:var(--accent);
+    padding:7px 16px;font-size:11.5px;z-index:300;opacity:0;transition:.2s;letter-spacing:.5px;
+    box-shadow:0 12px 30px rgba(0,0,0,.6);pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.ok{border-color:var(--green);color:var(--green)}
+  .toast.warn{border-color:var(--amber);color:var(--amber)}
+
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ COMMAND BAR ============ -->
+  <div class="cmdbar">
+    <div class="brand"><span class="dot"></span>C&nbsp;SLOP&nbsp;SLOP</div>
+    <div class="cmd-wrap">
+      <span class="cmd-prompt">&gt;</span>
+      <input class="cmd-input" id="cmd" autocomplete="off" spellcheck="false"
+             placeholder="type a command…  /focus leadsift   /promote PayoutReconciler   /approve   /back">
+      <div class="cmd-hint-chips">
+        <span class="chip"><b>/focus</b> &lt;co&gt;</span>
+        <span class="chip"><b>/promote</b> &lt;opp&gt;</span>
+        <span class="chip"><b>esc</b> back</span>
+      </div>
+      <div class="autocomplete" id="ac"></div>
+    </div>
+  </div>
+
+  <!-- ============ BODY ============ -->
+  <div class="body">
+
+    <!-- LEFT RAIL -->
+    <aside class="rail">
+      <div class="rail-head"><span>companies</span><span class="cnt" id="railCnt"></span></div>
+      <div class="rail-list" id="railList"></div>
+      <div class="rail-foot">
+        <div><span class="kx">click</span> a company or <span class="kx">/focus &lt;name&gt;</span></div>
+        <div style="margin-top:3px"><span class="kx">esc</span> return to overview</div>
+      </div>
+    </aside>
+
+    <!-- MAIN tiling area -->
+    <main class="main">
+      <div class="crumbs">
+        <span class="seg cur" id="cb0">portfolio</span>
+        <span class="sep hidden" id="cbSep">/</span>
+        <span class="seg" id="cb1"></span>
+        <button class="back-btn" id="backBtn">‹ esc · overview</button>
+        <div class="right">
+          <span id="crumbHint">5 companies · 1 needs you</span>
+        </div>
+      </div>
+      <div class="tiles" id="tiles"><!-- panes injected --></div>
+    </main>
+  </div>
+
+  <!-- ============ LIVE ACTIVITY ============ -->
+  <div class="activity" id="activity">
+    <div class="act-head" id="actHead">
+      <span class="label"><span class="liveglyph pulse">●</span>LIVE ACTIVITY</span>
+      <span class="act-collapsed-line" id="actCollapsed"></span>
+      <span class="act-toggle"><span id="actToggleTxt">expand stream</span> <span class="caret">▴</span></span>
+    </div>
+    <div class="act-stream" id="actStream"></div>
+  </div>
+
+  <!-- ============ STATUS LINE ============ -->
+  <div class="statusline">
+    <span class="seg mode" id="slMode">OVERVIEW</span>
+    <span class="seg"><span class="blip"></span><span id="slMrr"></span></span>
+    <span class="seg"><span id="slUsers"></span></span>
+    <span class="seg"><span id="slShipped"></span></span>
+    <span class="seg" id="slNeeds"></span>
+    <span class="seg right"><span class="dim">building:</span><span id="slBuilding"></span></span>
+    <span class="seg"><span class="dim" id="slClock"></span></span>
+  </div>
+</div>
+
+<div class="badge">07 · <b>Command Center</b></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== DATA (verbatim from brief) ===== */
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ===== glyph helpers ===== */
+const COGLYPH = { active:'●', paused:'⏸', archived:'○' };
+const SLICEGLYPH = { todo:'○', building:'◐', awaiting_approval:'◆', shipped:'✓', blocked:'✕' };
+const KINDGLYPH = { building:'◐', deploy:'▸', await:'◆', check:'✓', reprioritize:'↻', blocked:'✕' };
+const KINDCLASS = { building:'s-building', deploy:'s-building', await:'s-awaiting_approval', check:'s-shipped', reprioritize:'s-todo', blocked:'s-blocked' };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let state = { mode:'overview', focus:null };
+
+/* ===== TOAST ===== */
+let toastTimer;
+function toast(msg, cls){
+  const t = $('#toast');
+  t.className = 'toast show' + (cls? ' '+cls : '');
+  t.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.className='toast'; }, 2200);
+}
+
+/* ===== RAIL ===== */
+function renderRail(){
+  const list = $('#railList');
+  $('#railCnt').textContent = DATA.companies.length;
+  list.innerHTML = DATA.companies.map(c=>{
+    const focused = state.focus===c.id ? ' focused':'';
+    let sub, glyphCls='g-'+c.status, glyph=COGLYPH[c.status];
+    let metaGlyph='';
+    if(c.id==='leadsift'){
+      sub = 'slice 5 · awaiting approval';
+      metaGlyph = `<span class="needs-flag blink">NEEDS YOU</span>`;
+    } else if(c.currentSlice){
+      const cs=c.currentSlice;
+      sub = `slice ${cs.n} · ${cs.status.replace('_',' ')}`;
+      metaGlyph = `<span class="${'s-'+cs.status} ${cs.status==='building'?'pulse':''}">${SLICEGLYPH[cs.status]}</span>`;
+    }
+    return `<div class="co-row${focused}" data-co="${c.id}">
+      <span class="glyph ${glyphCls} ${c.status==='active'?'':''}">${glyph}</span>
+      <span class="co-name">${esc(c.name)}</span>
+      <span class="co-meta">${metaGlyph}</span>
+      <span class="co-sub">${esc(sub||'')}</span>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.co-row').forEach(r=>{
+    r.addEventListener('click', ()=> focusCompany(r.dataset.co));
+  });
+}
+
+/* ===== STATUS LINE ===== */
+function renderStatusLine(){
+  $('#slMode').textContent = state.mode==='overview' ? 'OVERVIEW' : 'ZOOM · '+companyById(state.focus).name.toUpperCase();
+  $('#slMrr').innerHTML = '$'+DATA.portfolio.mrr+'<span class="dim"> mrr</span>';
+  $('#slUsers').innerHTML = DATA.portfolio.users+'<span class="dim"> users</span>';
+  $('#slShipped').innerHTML = DATA.portfolio.slicesShipped+'<span class="dim"> slices shipped</span>';
+  $('#slNeeds').innerHTML = '<span class="blip"></span>'+DATA.portfolio.needsYou+' NEEDS YOU';
+  const building = DATA.companies.filter(c=>c.currentSlice && c.currentSlice.status==='building').map(c=>c.name);
+  $('#slBuilding').textContent = building.join(', ') || 'none';
+}
+function tickClock(){
+  const d=new Date();
+  $('#slClock').textContent = d.toTimeString().slice(0,8);
+}
+
+/* ===== ACTIVITY ===== */
+function renderActivity(){
+  // collapsed line: latest running line
+  const running = DATA.activity.filter(a=>a.running);
+  const lead = running[0] || DATA.activity[0];
+  $('#actCollapsed').innerHTML =
+    `<span class="${KINDCLASS[lead.kind]} ${lead.running?'pulse':''}">${KINDGLYPH[lead.kind]}</span>`+
+    `<span style="color:var(--accent-dim)">${esc(lead.co)}</span>`+
+    `<span style="color:var(--txt)">${esc(lead.text)}</span>`+
+    `<span style="color:var(--txt-faint)">· ${esc(lead.t)}</span>`+
+    (running.length>1?`<span style="color:var(--txt-faint)"> · +${running.length-1} building</span>`:'');
+
+  // expanded: grouped by company
+  const groups = {};
+  DATA.activity.forEach(a=>{ (groups[a.co] ||= []).push(a); });
+  $('#actStream').innerHTML = Object.entries(groups).map(([co, items])=>{
+    const anyRun = items.some(i=>i.running);
+    return `<div class="act-group">
+      <div class="act-group-h">
+        <span class="${anyRun?'s-building pulse':'s-todo'}">${anyRun?'◐':'·'}</span>${esc(co)}
+        <span style="color:var(--txt-faint);margin-left:6px">${items.length} event${items.length>1?'s':''}</span>
+      </div>
+      ${items.map(i=>`
+        <div class="logline ${i.running?'running':''}">
+          <span class="ts">${esc(i.t)}</span>
+          <span class="cog">${esc(i.co)}</span>
+          <span class="lg ${KINDCLASS[i.kind]} ${i.running?'pulse':''}">${KINDGLYPH[i.kind]}</span>
+          <span class="tx">${esc(i.text)}</span>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function toggleActivity(force){
+  const a = $('#activity');
+  const open = force!==undefined ? force : !a.classList.contains('open');
+  a.classList.toggle('open', open);
+  $('#actToggleTxt').textContent = open ? 'collapse' : 'expand stream';
+}
+
+/* ===== utilities ===== */
+function companyById(id){ return DATA.companies.find(c=>c.id===id); }
+function scoreColor(s){ return s>=70?'var(--green)':s>=50?'var(--amber)':'var(--red)'; }
+
+/* ===== OVERVIEW TILES ===== */
+function renderOverview(){
+  state.mode='overview'; state.focus=null;
+  $('#slMode').textContent='OVERVIEW';
+  $('#cb0').className='seg cur'; $('#cbSep').classList.add('hidden');
+  $('#cb1').textContent=''; $('#cb1').className='seg';
+  $('#backBtn').style.display='none';
+  $('#crumbHint').textContent = DATA.companies.length+' companies · '+DATA.portfolio.needsYou+' needs you';
+
+  const p = DATA.portfolio;
+  const portfolioPane = `
+    <div class="pane narrow">
+      <div class="pane-head"><span class="tag">▸</span> PORTFOLIO <span class="rcount">live</span></div>
+      <div class="pane-body">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="v accent">$${p.mrr}</div><div class="l">mrr / mo</div></div>
+          <div class="kpi"><div class="v">${p.users}</div><div class="l">users</div></div>
+          <div class="kpi"><div class="v">${p.activeCompanies}</div><div class="l">active cos</div></div>
+          <div class="kpi"><div class="v">${p.slicesShipped}</div><div class="l">slices shipped</div></div>
+        </div>
+        <div class="section-label">needs you</div>
+        <div class="move"><span class="n violet" style="color:var(--violet)">◆</span><span class="t">${p.needsYou} slice awaiting approval — <a href="#" data-focus="leadsift">LeadSift s5</a></span></div>
+        <div class="section-label">next moves</div>
+        ${DATA.nextMoves.map((m,i)=>`<div class="move"><span class="n">${i+1}.</span><span class="t">${esc(m)}</span></div>`).join('')}
+      </div>
+    </div>`;
+
+  const companiesPane = `
+    <div class="pane flex">
+      <div class="pane-head"><span class="tag">▸</span> COMPANIES <span class="rcount">click to /focus →</span></div>
+      <div class="pane-body">
+        ${DATA.companies.map(c=>{
+          const cs=c.currentSlice;
+          let curLine='';
+          if(c.id==='leadsift'){
+            curLine=`<div class="colist-cur"><span class="s-awaiting_approval">◆</span> slice 5 awaiting approval · check green</div>`;
+          } else if(cs){
+            curLine=`<div class="colist-cur"><span class="${'s-'+cs.status} ${cs.status==='building'?'pulse':''}">${SLICEGLYPH[cs.status]}</span> slice ${cs.n} ${esc(cs.title)} — ${esc(cs.step)}</div>`;
+          }
+          const shipped = c.slices ? c.slices.filter(s=>s.status==='shipped').length : (c.slicesShipped||0);
+          return `<div class="colist-row" data-co="${c.id}">
+            <div class="colist-top">
+              <span class="glyph g-${c.status}">${COGLYPH[c.status]}</span>
+              <span class="nm">${esc(c.name)}</span>
+              <span class="dom">${c.domain? esc(c.domain) : 'no domain yet'}</span>
+              ${c.needsYou?'<span class="needs-pill blink">NEEDS YOU</span>':''}
+            </div>
+            <div class="colist-th">${esc(c.thesis)}</div>
+            <div class="colist-stats"><span>$<b>${c.mrr}</b> mrr</span><span><b>${c.users}</b> users</span><span><b>${shipped}</b> shipped</span><span style="color:var(--txt-faint)">${c.status}</span></div>
+            ${curLine}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  const oppsPane = `
+    <div class="pane">
+      <div class="pane-head"><span class="tag">▸</span> OPPORTUNITIES <span class="rcount">score → promote</span></div>
+      <div class="pane-body">
+        ${DATA.opportunities.map(o=>{
+          const killed = o.status==='killed';
+          return `<div class="opp ${killed?'killed':''}">
+            <div class="opp-top">
+              <span class="score" style="color:${scoreColor(o.score)}">${o.score}</span>
+              <span class="oname">${esc(o.title)}</span>
+              ${killed?'<span class="killed-tag">KILLED</span>':''}
+            </div>
+            <div class="thesis">${esc(o.thesis)}</div>
+            <div class="thought">“${esc(o.thought)}”</div>
+            <div class="bar"><i style="width:${o.score}%;background:${scoreColor(o.score)}"></i></div>
+            <button class="promote-btn" data-promote="${esc(o.title)}" ${killed?'disabled':''}>${killed?'killed':'/promote →'}</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  $('#tiles').innerHTML = portfolioPane + companiesPane + oppsPane +
+    `<div class="tile-end">↦ MORE PANES ON /FOCUS</div>`;
+
+  // wire
+  $('#tiles').querySelectorAll('[data-co]').forEach(el=>el.addEventListener('click',()=>focusCompany(el.dataset.co)));
+  $('#tiles').querySelectorAll('[data-focus]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();focusCompany(el.dataset.focus);}));
+  $('#tiles').querySelectorAll('[data-promote]').forEach(el=>el.addEventListener('click',e=>{
+    if(el.disabled) return;
+    promote(el.dataset.promote);
+  }));
+  renderStatusLine(); renderRail();
+}
+
+function promote(name){
+  toast('▸ Promoted "'+name+'" to a company · backlog seeded', 'ok');
+}
+
+/* ===== COMPANY ZOOM TILES ===== */
+function focusCompany(id){
+  const c = companyById(id);
+  if(!c) return;
+  state.mode='company'; state.focus=id;
+  $('#cb0').className='seg'; $('#cbSep').classList.remove('hidden');
+  $('#cb1').textContent=c.name; $('#cb1').className='seg cur';
+  $('#backBtn').style.display='inline-block';
+  $('#crumbHint').textContent = c.status+' · '+(c.domain||'no domain')+(c.previewUrl?' · '+c.previewUrl.replace('http://',''):'');
+  renderRail();
+  if(id==='leadsift') renderLeadSiftZoom(c);
+  else renderGenericZoom(c);
+  renderStatusLine();
+  $('#tiles').scrollLeft=0;
+}
+
+function renderLeadSiftZoom(c){
+  const ap = c.approval;
+  // backlog pane
+  const backlog = `
+    <div class="pane narrow">
+      <div class="pane-head"><span class="tag">▸</span> BACKLOG <span class="rcount">${c.slices.length} slices</span></div>
+      <div class="pane-body">
+        ${c.slices.map(s=>{
+          const gate = s.status==='awaiting_approval';
+          return `<div class="slice ${gate?'gate':''}">
+            <span class="glyph s-${s.status} ${s.status==='building'?'pulse':''}">${SLICEGLYPH[s.status]}</span>
+            <span class="sn">${s.n}</span>
+            <span>
+              <span class="st">${esc(s.title)}</span><br>
+              <span class="stat ${s.status}">${s.status.replace('_',' ')}</span>
+              ${s.check?` <span class="s-shipped" style="font-size:9px">✓ check</span>`:''}
+              ${s.priority?`<span class="prio"> · P${s.priority}</span>`:''}
+              ${s.dependsOn?`<span class="meta"> · needs s${s.dependsOn.join(',')}</span>`:''}
+              ${s.note?`<div class="meta s-blocked">${esc(s.note)}</div>`:''}
+            </span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // diff pane
+  const diffLines = ap.diff.split('\n').map((ln,i)=>{
+    const add = ln.startsWith('+');
+    const cls = add?'add':'ctx';
+    return `<div class="ln ${cls}"><span class="gut">${i+1}</span><span class="code">${esc(ln)}</span></div>`;
+  }).join('');
+  const diffPane = `
+    <div class="pane wide">
+      <div class="pane-head"><span class="tag">▸</span> DIFF · slice ${ap.slice} <span class="rcount">DailyDigest.tsx · +5 −0</span></div>
+      <div class="pane-body">
+        <div class="diff">${diffLines}</div>
+      </div>
+    </div>`;
+
+  // preview / check pane
+  const previewPane = `
+    <div class="pane">
+      <div class="pane-head"><span class="tag">▸</span> PREVIEW &amp; CHECK <span class="rcount">attempt ${ap.attempt}</span></div>
+      <div class="pane-body">
+        <div class="field">
+          <div class="lbl">live preview url</div>
+          <div class="urlbox"><span class="u">${esc(ap.previewUrl)}</span><span class="live pulse">● LIVE</span></div>
+        </div>
+        <div class="field">
+          <div class="lbl">donewhen check</div>
+          <div class="donewhen">${esc(ap.doneWhen)}</div>
+          <div class="check-result"><span class="big">✓</span> doneWhen ${esc(ap.checkResult)}<span class="sub">200 OK · 41ms</span></div>
+        </div>
+        <div class="field" style="border-bottom:0">
+          <div class="lbl">rendered preview</div>
+          <div class="pvframe">
+            <div class="bar"><i></i><i></i><i></i><span class="addr">${esc(ap.previewUrl)}</span></div>
+            <div class="scr">
+              <h4>Your top leads today</h4>
+              <div class="digest-row"><span class="nm">Acme Corp — contact form</span><span class="sc">94</span></div>
+              <div class="digest-row"><span class="nm">Globex — pricing inquiry</span><span class="sc">88</span></div>
+              <div class="digest-row"><span class="nm">Initech — demo request</span><span class="sc">81</span></div>
+              <div class="digest-row"><span class="nm">Hooli — partnership</span><span class="sc">73</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- APPROVAL GATE -->
+      <div class="approve-gate">
+        <div class="gate-head"><span class="pulse">◆</span> APPROVAL GATE · slice ${ap.slice} · ${esc(ap.title)}</div>
+        <div class="gate-actions" id="gateActions">
+          <button class="btn-approve" id="approveBtn">✓ APPROVE &amp; SHIP</button>
+          <button class="btn-reject" id="rejectBtn">✕ REJECT</button>
+        </div>
+        <div class="reject-form" id="rejectForm">
+          <textarea id="rejectText" placeholder="what should change? (feedback goes back to the build loop)"></textarea>
+          <button class="send" id="rejectSend">send feedback ↩</button>
+        </div>
+        <div class="gate-confirm" id="gateConfirm"></div>
+      </div>
+    </div>`;
+
+  // chat / log pane
+  const chatPane = `
+    <div class="pane flex">
+      <div class="pane-head"><span class="tag">▸</span> ${esc(c.name).toUpperCase()} CHAT <span class="rcount">company log</span></div>
+      <div class="pane-body chat-body" id="chatBody">
+        ${DATA.chat.map(m=>`<div class="msg ${m.role}"><div class="who">${m.role}</div>${esc(m.text)}</div>`).join('')}
+      </div>
+      <div class="chat-input-wrap">
+        <span class="pr">›</span>
+        <input class="chat-input" id="chatInput" placeholder="message LeadSift…  try /approve or /reject" autocomplete="off">
+      </div>
+    </div>`;
+
+  $('#tiles').innerHTML = backlog + diffPane + previewPane + chatPane +
+    `<div class="tile-end">↦ PANES TILE RIGHT — SCROLL →</div>`;
+
+  wireGate();
+  wireChat(c);
+}
+
+function renderGenericZoom(c){
+  const cs = c.currentSlice;
+  const backlog = `
+    <div class="pane narrow">
+      <div class="pane-head"><span class="tag">▸</span> BACKLOG <span class="rcount">${c.slicesShipped} shipped</span></div>
+      <div class="pane-body">
+        ${Array.from({length:c.slicesShipped}).map((_,i)=>`
+          <div class="slice"><span class="glyph s-shipped">✓</span><span class="sn">${i+1}</span>
+          <span><span class="st">shipped slice ${i+1}</span><br><span class="stat shipped">shipped</span></span></div>`).join('')}
+        ${cs?`<div class="slice gate" style="background:linear-gradient(90deg,${cs.status==='building'?'rgba(96,165,250,.10)':cs.status==='blocked'?'rgba(248,113,113,.10)':'transparent'},transparent)">
+          <span class="glyph s-${cs.status} ${cs.status==='building'?'pulse':''}">${SLICEGLYPH[cs.status]}</span><span class="sn">${cs.n}</span>
+          <span><span class="st">${esc(cs.title)}</span><br><span class="stat ${cs.status}">${cs.status.replace('_',' ')}</span>
+          <div class="meta">${esc(cs.step)}</div></span></div>`:''}
+      </div>
+    </div>`;
+
+  const status = `
+    <div class="pane">
+      <div class="pane-head"><span class="tag">▸</span> STATUS &amp; PREVIEW</div>
+      <div class="pane-body">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="v accent">$${c.mrr}</div><div class="l">mrr</div></div>
+          <div class="kpi"><div class="v">${c.users}</div><div class="l">users</div></div>
+          <div class="kpi"><div class="v">${c.slicesShipped}</div><div class="l">shipped</div></div>
+          <div class="kpi"><div class="v ${c.status==='active'?'':''}" style="color:var(--${c.status==='active'?'green':c.status==='paused'?'amber':'gray'})">${COGLYPH[c.status]}</div><div class="l">${c.status}</div></div>
+        </div>
+        <div class="field"><div class="lbl">thesis</div><div style="color:var(--txt);font-size:11.5px">${esc(c.thesis)}</div></div>
+        <div class="field" style="border-bottom:0"><div class="lbl">live preview url</div>
+          ${c.previewUrl?`<div class="urlbox"><span class="u">${esc(c.previewUrl)}</span><span class="live ${c.status==='active'?'pulse':''}">${c.status==='active'?'● LIVE':'○ DOWN'}</span></div>`:`<div class="donewhen">not deployed yet — no preview</div>`}
+        </div>
+        ${cs&&cs.status==='building'?`<div class="field" style="border-top:1px solid var(--line)"><div class="lbl">current build step</div><div class="donewhen"><span class="s-building pulse">◐</span> ${esc(cs.step)}</div></div>`:''}
+        ${cs&&cs.status==='blocked'?`<div class="field" style="border-top:1px solid var(--line)"><div class="lbl s-blocked">blocked</div><div class="donewhen s-blocked">${esc(cs.step)}</div></div>`:''}
+      </div>
+    </div>`;
+
+  const chatPane = `
+    <div class="pane flex">
+      <div class="pane-head"><span class="tag">▸</span> ${esc(c.name).toUpperCase()} CHAT <span class="rcount">company log</span></div>
+      <div class="pane-body chat-body" id="chatBody">
+        <div class="msg assistant"><div class="who">assistant</div>${esc(c.name)} is ${cs?cs.status.replace('_',' '):'idle'}${cs?` on slice ${cs.n}: ${esc(cs.title)}.`:'.'} ${cs&&cs.status==='blocked'?'No progress — recommend you unblock or pause the company.':'I’ll ping you the moment a slice needs approval.'}</div>
+      </div>
+      <div class="chat-input-wrap"><span class="pr">›</span>
+        <input class="chat-input" id="chatInput" placeholder="message ${esc(c.name)}…" autocomplete="off"></div>
+    </div>`;
+
+  $('#tiles').innerHTML = backlog + status + chatPane + `<div class="tile-end">↦ NO GATE — FOCUS LEADSIFT FOR APPROVAL</div>`;
+  wireChat(c);
+}
+
+/* ===== GATE WIRING ===== */
+function wireGate(){
+  const confirm = $('#gateConfirm');
+  $('#approveBtn').addEventListener('click', ()=>{
+    $('#gateActions').style.display='none';
+    $('#rejectForm').classList.remove('show');
+    confirm.className='gate-confirm show ok';
+    confirm.textContent='✓ Approved — slice 5 marked shipped & live';
+    toast('✓ Approved — LeadSift slice 5 shipped', 'ok');
+    // reflect in rail glyph
+    const c=companyById('leadsift');
+    const s=c.slices.find(x=>x.n===5); if(s) s.status='shipped';
+    appendChat('assistant','Approved ✓ — slice 5 is now shipped and live at localhost:4019. Pulling next top-priority slice across the portfolio.');
+  });
+  $('#rejectBtn').addEventListener('click', ()=>{
+    $('#rejectForm').classList.toggle('show');
+    if($('#rejectForm').classList.contains('show')) $('#rejectText').focus();
+  });
+  $('#rejectSend').addEventListener('click', ()=>{
+    const fb = $('#rejectText').value.trim() || 'needs changes';
+    $('#gateActions').style.display='none';
+    $('#rejectForm').classList.remove('show');
+    confirm.className='gate-confirm show rej';
+    confirm.textContent='✕ Rejected — sent back to build loop';
+    toast('✕ Rejected with feedback — back to build loop', 'warn');
+    appendChat('user','reject: '+fb);
+    appendChat('assistant','Got it — reverting slice 5 and re-queuing with your feedback. I’ll re-run the doneWhen check and ping you again.');
+  });
+}
+
+/* ===== CHAT WIRING ===== */
+function appendChat(role,text){
+  const body=$('#chatBody'); if(!body) return;
+  const div=document.createElement('div');
+  div.className='msg '+role;
+  div.innerHTML='<div class="who">'+role+'</div>'+esc(text);
+  body.appendChild(div);
+  body.scrollTop=body.scrollHeight;
+}
+function wireChat(c){
+  const inp=$('#chatInput'); if(!inp) return;
+  inp.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    const v=inp.value.trim(); if(!v) return;
+    inp.value='';
+    if(v==='/approve' && c.id==='leadsift' && $('#approveBtn')){ $('#approveBtn').click(); return; }
+    if(v==='/reject' && c.id==='leadsift' && $('#rejectBtn')){ $('#rejectBtn').click(); return; }
+    if(v==='/back'||v==='/exit'){ renderOverview(); return; }
+    appendChat('user',v);
+    setTimeout(()=>appendChat('assistant','Noted. '+(c.id==='leadsift'?'Slice 5 is live and the check is green — approve when ready.':'Tracking against '+c.name+'’s backlog.')),350);
+  });
+}
+
+/* ===== COMMAND BAR ===== */
+const COMMANDS = [
+  { cmd:'/focus leadsift',          desc:'zoom into LeadSift — approval gate is waiting' },
+  { cmd:'/focus quietinbox',        desc:'zoom into QuietInbox (building slice 9)' },
+  { cmd:'/focus translatorbill',    desc:'zoom into TranslatorBill (building slice 6)' },
+  { cmd:'/focus datadrop',          desc:'zoom into DataDrop' },
+  { cmd:'/focus redditpainbot',     desc:'zoom into RedditPainBot (blocked)' },
+  { cmd:'/approve',                 desc:'approve the focused slice (LeadSift s5)' },
+  { cmd:'/reject',                  desc:'reject focused slice with feedback' },
+  { cmd:'/promote PayoutReconciler',desc:'promote opportunity (82) → company' },
+  { cmd:'/promote ChapterForge',    desc:'promote opportunity (71) → company' },
+  { cmd:'/back',                    desc:'return to portfolio overview' },
+];
+let acIndex=-1, acItems=[];
+const cmdInput=$('#cmd'), ac=$('#ac');
+
+function renderAutocomplete(q){
+  const term=q.replace(/^\//,'').toLowerCase();
+  acItems = COMMANDS.filter(c=>c.cmd.toLowerCase().includes(term) || c.desc.toLowerCase().includes(term));
+  if(!q.startsWith('/') || acItems.length===0){ ac.classList.remove('show'); acItems=[]; return; }
+  ac.innerHTML = acItems.map((c,i)=>`<div class="ac-item ${i===acIndex?'sel':''}" data-i="${i}">
+    <span class="ac-cmd">${esc(c.cmd)}</span><span class="ac-desc">${esc(c.desc)}</span></div>`).join('');
+  ac.classList.add('show');
+  ac.querySelectorAll('.ac-item').forEach(el=>{
+    el.addEventListener('mousedown',e=>{ e.preventDefault(); runCommand(acItems[+el.dataset.i].cmd); });
+  });
+}
+cmdInput.addEventListener('input',()=>{ acIndex=-1; renderAutocomplete(cmdInput.value); });
+cmdInput.addEventListener('focus',()=>{ if(cmdInput.value.startsWith('/')) renderAutocomplete(cmdInput.value); });
+cmdInput.addEventListener('blur',()=> setTimeout(()=>ac.classList.remove('show'),120));
+cmdInput.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(acItems.length){acIndex=(acIndex+1)%acItems.length; renderAutocomplete(cmdInput.value);} }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); if(acItems.length){acIndex=(acIndex-1+acItems.length)%acItems.length; renderAutocomplete(cmdInput.value);} }
+  else if(e.key==='Enter'){
+    e.preventDefault();
+    const v = (acIndex>=0 && acItems[acIndex]) ? acItems[acIndex].cmd : cmdInput.value.trim();
+    runCommand(v);
+  } else if(e.key==='Escape'){ cmdInput.blur(); ac.classList.remove('show'); }
+});
+
+function runCommand(raw){
+  const v=raw.trim(); if(!v){ return; }
+  ac.classList.remove('show'); cmdInput.value=''; acIndex=-1;
+  const parts=v.replace(/^\//,'').split(/\s+/);
+  const cmd=(parts[0]||'').toLowerCase(); const arg=parts.slice(1).join(' ');
+  if(cmd==='focus'){
+    const c=DATA.companies.find(x=>x.id===arg.toLowerCase()||x.name.toLowerCase()===arg.toLowerCase());
+    if(c){ focusCompany(c.id); toast('▸ focused '+c.name); }
+    else toast('no company "'+arg+'"','warn');
+  } else if(cmd==='back'||cmd==='exit'||cmd==='overview'){
+    renderOverview(); toast('▸ overview');
+  } else if(cmd==='approve'){
+    if(state.focus==='leadsift' && $('#approveBtn')) $('#approveBtn').click();
+    else { focusCompany('leadsift'); setTimeout(()=>$('#approveBtn')&&$('#approveBtn').click(),50); }
+  } else if(cmd==='reject'){
+    if(state.focus!=='leadsift') focusCompany('leadsift');
+    setTimeout(()=>$('#rejectBtn')&&$('#rejectBtn').click(),50);
+  } else if(cmd==='promote'){
+    const o=DATA.opportunities.find(x=>x.title.toLowerCase()===arg.toLowerCase());
+    if(o && o.status!=='killed') promote(o.title);
+    else if(o) toast(o.title+' was killed — cannot promote','warn');
+    else if(arg) promote(arg);
+    else toast('usage: /promote <opportunity>','warn');
+  } else {
+    toast('unknown command: /'+cmd,'warn');
+  }
+}
+
+/* ===== GLOBAL KEYS ===== */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && state.mode==='company' && document.activeElement!==cmdInput){
+    renderOverview();
+  }
+  // "/" focuses command bar
+  if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault(); cmdInput.focus(); cmdInput.value='/'; renderAutocomplete('/');
+  }
+});
+$('#backBtn').addEventListener('click',()=>renderOverview());
+$('#actHead').addEventListener('click',()=>toggleActivity());
+
+/* ===== BOOT ===== */
+renderActivity();
+renderOverview();
+toggleActivity(false);
+tickClock(); setInterval(tickClock,1000);
+</script>
+</body>
+</html>

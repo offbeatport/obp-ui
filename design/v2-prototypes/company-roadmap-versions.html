@@ -1,0 +1,2598 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Company roadmap — 10 versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --cream:#faf6f0; --cream-2:#f3ebe0; --paper:#ffffff; --ink:#2b2320; --ink-soft:#6a5f55; --ink-faint:#9c8f81;
+  --accent:#c2683f; --accent-ink:#a8542f; --accent-soft:#f4e2d6;
+  --green:#4f8a52; --green-soft:#e2efdf; --amber:#c08a2c; --amber-soft:#f6ecd6; --blue:#3f6fb0; --blue-soft:#e2ecf6; --gray:#b9ada0;
+  --line:#e7ddd0; --line-soft:#efe7db;
+  --shadow:0 1px 2px rgba(44,41,38,.05), 0 8px 24px rgba(44,41,38,.06);
+  --shadow-lg:0 2px 6px rgba(44,41,38,.08), 0 18px 46px rgba(44,41,38,.12);
+  --radius:16px; --radius-sm:12px;
+}
+[data-theme="dark"]{
+  --cream:#12100e; --cream-2:#1c1813; --paper:#191512; --ink:#f0e8dd; --ink-soft:#bcae9f; --ink-faint:#8a7d6f;
+  --accent:#e0894f; --accent-ink:#e8a06a; --accent-soft:#3a2a1e;
+  --green:#66b06a; --green-soft:#22301f; --amber:#d6a54b; --amber-soft:#332a17; --blue:#5a94d6; --blue-soft:#1b2733; --gray:#6a5f52;
+  --line:#2c261f; --line-soft:#241f19;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.5);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.5), 0 22px 54px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1180px;margin:0 auto;padding:34px 26px 120px;}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:300;font-size:34px;letter-spacing:-.02em;margin:0;}
+.sub{font-size:14px;color:var(--ink-soft);margin:9px 0 0;max-width:80ch;line-height:1.55;}
+.theme-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;}
+.vpanel{margin-top:34px;}
+.vhead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.vnum{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:#fff;background:var(--accent);border-radius:7px;padding:3px 9px;}
+.vtitle{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;}
+.vblurb{font-size:12.5px;color:var(--ink-faint);flex:1;min-width:200px;}
+.vstage{background:var(--cream-2);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;justify-content:center;}
+.vstage > *{width:100%;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Company roadmap — 10 versions</h1><p class="sub">Ten roadmap-focused company-page designs (LeadSift) that make Build / Grow / Run status + current & next tasks clear. Same data across all. Toggle dark, then tell me a number.</p></div>
+    <button class="theme-btn" id="themeBtn" type="button">☾ Dark</button>
+  </div>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V1</span><span class="vtitle">Three-lane board</span><span class="vblurb">A calm kanban-style board where Build, Grow and Run stand side by side as three columns, each topped by its loop color and a clear state badge — green &quot;Running&quot;, amber &quot;Needs you&quot;, or muted &quot;Idle&quot;. Every lane shows the task it&#x27;s on now plus a small numbered &quot;next up&quot; queue: Build spells out the user story and its done-when, Grow surfaces work waiting on your approval, and Run tracks what&#x27;s keeping the product live — so one glance answers what the AI is doing and what&#x27;s next.</span></div><div class="vstage"><div class="rm-panel rm-v1">
+  <header class="rm-top">
+    <div class="rm-brand">
+      <span class="rm-logo">LeadSift</span>
+      <span class="rm-stage">Live · early access</span>
+    </div>
+    <p class="rm-q">What the AI is building, growing &amp; running right now — and what's next.</p>
+  </header>
+
+  <div class="rm-board">
+
+    <section class="rm-lane rm-lane--build">
+      <div class="rm-lane-head">
+        <span class="rm-loop">Build</span>
+        <span class="rm-state rm-state--run">Running</span>
+      </div>
+      <article class="rm-card">
+        <span class="rm-now">Now building</span>
+        <h3 class="rm-task">Daily email digest of top leads</h3>
+        <div class="rm-story">
+          <span class="rm-story-k">User story</span>
+          <p>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+        </div>
+        <div class="rm-done">
+          <span class="rm-done-k">Done when</span>
+          <p>A scheduled 8am email lists the day's top 10 leads.</p>
+        </div>
+      </article>
+      <div class="rm-queue">
+        <span class="rm-queue-h">Next up</span>
+        <ul>
+          <li>Lead-source breakdown</li>
+          <li>Slack alert on hot leads</li>
+          <li>One-click CSV export</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="rm-lane rm-lane--grow">
+      <div class="rm-lane-head">
+        <span class="rm-loop">Grow</span>
+        <span class="rm-state rm-state--need">Needs you</span>
+      </div>
+      <article class="rm-card rm-card--action">
+        <span class="rm-now">Awaiting your OK</span>
+        <h3 class="rm-task">Publish SEO article — "How to score inbound leads"</h3>
+        <p class="rm-sub">Drafted and ready. It won't go live until you approve it.</p>
+        <div class="rm-actions">
+          <button class="rm-btn rm-btn--go" type="button">Review &amp; approve</button>
+          <button class="rm-btn rm-btn--ghost" type="button">View draft</button>
+        </div>
+      </article>
+      <div class="rm-queue">
+        <span class="rm-queue-h">Next up</span>
+        <ul>
+          <li>Reddit r/sales AMA</li>
+          <li>Product Hunt launch</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="rm-lane rm-lane--run">
+      <div class="rm-lane-head">
+        <span class="rm-loop">Run</span>
+        <span class="rm-state rm-state--run">Running</span>
+      </div>
+      <article class="rm-card">
+        <span class="rm-now">Keeping it live</span>
+        <h3 class="rm-task">Onboarding emails + uptime</h3>
+        <ul class="rm-recent">
+          <li><span class="rm-dot"></span>Sent 12 onboarding emails</li>
+          <li><span class="rm-dot"></span>Uptime healthy · 0 incidents</li>
+        </ul>
+      </article>
+      <div class="rm-queue">
+        <span class="rm-queue-h">Next up</span>
+        <ul>
+          <li>Weekly "who to call" digest email</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V2</span><span class="vtitle">Loop status cards</span><span class="vblurb">Three big stacked cards — Build, Grow, Run — each led by a bold Running / Needs-you badge and color-coded to its loop. Every card shows its current task (Build carries the user story + done-when, Grow reads as an action you must approve, Run shows healthy recent activity) plus a compact numbered next-up queue. A tiny LeadSift identity line and a state legend up top keep the whole thing calm, warm and answerable at a glance: what&#x27;s the AI doing now, and what&#x27;s next.</span></div><div class="vstage"><div class="rm-panel rm-v2">
+  <header class="rm-head">
+    <div class="rm-id">
+      <span class="rm-logo">LS</span>
+      <div class="rm-id-txt">
+        <span class="rm-co">LeadSift</span>
+        <span class="rm-stage">Live &middot; finding product-market fit</span>
+      </div>
+    </div>
+    <div class="rm-legend">
+      <span class="rm-legend-item"><i class="rm-dot rm-dot-run"></i>Running</span>
+      <span class="rm-legend-item"><i class="rm-dot rm-dot-need"></i>Needs you</span>
+      <span class="rm-legend-item"><i class="rm-dot rm-dot-idle"></i>Idle</span>
+    </div>
+  </header>
+
+  <div class="rm-stack">
+
+    <!-- BUILD -->
+    <section class="rm-loop rm-build">
+      <div class="rm-loop-head">
+        <div class="rm-loop-name">
+          <span class="rm-loop-icon">&#9874;</span>
+          <div>
+            <span class="rm-loop-title">Build</span>
+            <span class="rm-loop-sub">Ships the product</span>
+          </div>
+        </div>
+        <span class="rm-state is-running">Running</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-label">Now building</span>
+        <h3 class="rm-task">Daily email digest of top leads</h3>
+        <p class="rm-story">&ldquo;As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.&rdquo;</p>
+        <div class="rm-done">
+          <span class="rm-done-tick">&#10003;</span>
+          <span><b>Done when</b> a scheduled 8am email lists the day&rsquo;s top 10 leads.</span>
+        </div>
+      </div>
+      <div class="rm-next">
+        <div class="rm-next-head">
+          <span class="rm-next-label">Next up</span>
+          <span class="rm-next-count">3 queued</span>
+        </div>
+        <ol class="rm-queue">
+          <li>Lead-source breakdown</li>
+          <li>Slack alert on hot leads</li>
+          <li>One-click CSV export</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- GROW -->
+    <section class="rm-loop rm-grow">
+      <div class="rm-loop-head">
+        <div class="rm-loop-name">
+          <span class="rm-loop-icon">&#8599;</span>
+          <div>
+            <span class="rm-loop-title">Grow</span>
+            <span class="rm-loop-sub">Finds users</span>
+          </div>
+        </div>
+        <span class="rm-state is-need">Needs you</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-label">Waiting on you</span>
+        <h3 class="rm-task">Publish an SEO article &mdash; &ldquo;How to score inbound leads&rdquo;</h3>
+        <div class="rm-action">
+          <span class="rm-action-txt">
+            <span class="rm-action-bang">!</span>
+            Drafted &amp; ready &mdash; needs your OK to post.
+          </span>
+          <span class="rm-action-btns">
+            <button type="button" class="rm-btn rm-btn-ghost">Read draft</button>
+            <button type="button" class="rm-btn rm-btn-go">Approve &amp; publish</button>
+          </span>
+        </div>
+      </div>
+      <div class="rm-next">
+        <div class="rm-next-head">
+          <span class="rm-next-label">Next up</span>
+          <span class="rm-next-count">2 queued</span>
+        </div>
+        <ol class="rm-queue">
+          <li>Reddit r/sales AMA</li>
+          <li>Product Hunt launch</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- RUN -->
+    <section class="rm-loop rm-run">
+      <div class="rm-loop-head">
+        <div class="rm-loop-name">
+          <span class="rm-loop-icon">&#10227;</span>
+          <div>
+            <span class="rm-loop-title">Run</span>
+            <span class="rm-loop-sub">Keeps it live</span>
+          </div>
+        </div>
+        <span class="rm-state is-running">Running &middot; healthy</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-label">Keeping it live</span>
+        <h3 class="rm-task">Onboarding emails &amp; uptime &mdash; all healthy</h3>
+        <ul class="rm-recent">
+          <li><span class="rm-r-dot"></span><span>Sent <b>12</b> onboarding emails</span></li>
+          <li><span class="rm-r-dot"></span><span><b>99.6%</b> uptime &middot; 0 incidents</span></li>
+        </ul>
+      </div>
+      <div class="rm-next">
+        <div class="rm-next-head">
+          <span class="rm-next-label">Next up</span>
+          <span class="rm-next-count">1 queued</span>
+        </div>
+        <ol class="rm-queue">
+          <li>Weekly &ldquo;who to call&rdquo; digest email</li>
+        </ol>
+      </div>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V3</span><span class="vtitle">Now / Next / Later — LeadSift Kanban Roadmap</span><span class="vblurb">A warm Now / Next / Later Kanban that answers one question at a glance: what is the AI building, growing and running right now — and what&#x27;s queued next. The top rail keeps all three loops (Build, Grow, Run) always visible, each carrying an unmistakable state — Running, Needs you, or Idle. Live work sits in Now, where every loop&#x27;s card shows its current task plus a co-located &quot;Next up&quot; pointer into its queue: Build spells out the user story and its done-when, Run shows what it&#x27;s quietly keeping alive, and Grow is flagged Needs you with a clear approve-to-publish action. Queued work fades back through Next and Later, and the footer shows how a silent loop reads as Idle.</span></div><div class="vstage"><div class="rm-panel rm-v3">
+  <header class="rm-head">
+    <div class="rm-id">
+      <span class="rm-id-mark">LS</span>
+      <span class="rm-id-name">LeadSift</span>
+      <span class="rm-id-tag">lead scoring for founders</span>
+      <span class="rm-id-stage">Live</span>
+    </div>
+    <div class="rm-loops" role="list" aria-label="Loop status">
+      <div class="rm-loop is-build" role="listitem">
+        <span class="rm-loop-dot"></span>
+        <span class="rm-loop-name">Build</span>
+        <span class="rm-state is-running">Running</span>
+      </div>
+      <div class="rm-loop is-grow" role="listitem">
+        <span class="rm-loop-dot"></span>
+        <span class="rm-loop-name">Grow</span>
+        <span class="rm-state is-needs">Needs you</span>
+      </div>
+      <div class="rm-loop is-run" role="listitem">
+        <span class="rm-loop-dot"></span>
+        <span class="rm-loop-name">Run</span>
+        <span class="rm-state is-running">Running</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="rm-board">
+    <section class="rm-col is-now" aria-label="Now">
+      <div class="rm-col-head">
+        <span class="rm-live"></span>
+        <span class="rm-col-label">Now</span>
+        <span class="rm-col-count">3</span>
+      </div>
+
+      <article class="rm-card is-detail is-build">
+        <div class="rm-card-top">
+          <span class="rm-tag"><span class="rm-tag-dot"></span>Build</span>
+          <span class="rm-state is-running">Running</span>
+        </div>
+        <h3 class="rm-card-title">Daily email digest of top leads</h3>
+        <p class="rm-story">"As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first."</p>
+        <div class="rm-done"><span class="rm-done-label">Done when</span>A scheduled 8am email lists the day's top 10 leads.</div>
+        <p class="rm-nextup"><span class="rm-nextup-label">Next up</span><span class="rm-nextup-text">Lead-source breakdown</span></p>
+      </article>
+
+      <article class="rm-card is-detail is-grow is-attn">
+        <div class="rm-card-top">
+          <span class="rm-tag"><span class="rm-tag-dot"></span>Grow</span>
+          <span class="rm-state is-needs">Needs you</span>
+        </div>
+        <h3 class="rm-card-title">Publish SEO article — "How to score inbound leads"</h3>
+        <p class="rm-note">Drafted and waiting for your OK to post. It won't go live until you approve.</p>
+        <p class="rm-nextup"><span class="rm-nextup-label">Next up</span><span class="rm-nextup-text">Reddit r/sales AMA</span></p>
+        <button class="rm-cta" type="button">Review draft &amp; approve to publish →</button>
+      </article>
+
+      <article class="rm-card is-detail is-run">
+        <div class="rm-card-top">
+          <span class="rm-tag"><span class="rm-tag-dot"></span>Run</span>
+          <span class="rm-state is-running">Running</span>
+        </div>
+        <h3 class="rm-card-title">Keeping it live — onboarding &amp; uptime</h3>
+        <ul class="rm-recent">
+          <li>Sent 12 onboarding emails</li>
+          <li>99.6% uptime · 0 incidents</li>
+        </ul>
+        <p class="rm-nextup"><span class="rm-nextup-label">Next up</span><span class="rm-nextup-text">Weekly "who to call" digest email</span></p>
+      </article>
+    </section>
+
+    <section class="rm-col is-next" aria-label="Next">
+      <div class="rm-col-head">
+        <span class="rm-col-label">Next</span>
+        <span class="rm-col-count">3</span>
+      </div>
+      <article class="rm-card is-mini is-build">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Build</span>
+        <span class="rm-mini-title">Lead-source breakdown</span>
+      </article>
+      <article class="rm-card is-mini is-grow">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Grow</span>
+        <span class="rm-mini-title">Reddit r/sales AMA</span>
+      </article>
+      <article class="rm-card is-mini is-run">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Run</span>
+        <span class="rm-mini-title">Weekly "who to call" digest email</span>
+      </article>
+    </section>
+
+    <section class="rm-col is-later" aria-label="Later">
+      <div class="rm-col-head">
+        <span class="rm-col-label">Later</span>
+        <span class="rm-col-count">3</span>
+      </div>
+      <article class="rm-card is-mini is-build">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Build</span>
+        <span class="rm-mini-title">Slack alert on hot leads</span>
+      </article>
+      <article class="rm-card is-mini is-build">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Build</span>
+        <span class="rm-mini-title">One-click CSV export</span>
+      </article>
+      <article class="rm-card is-mini is-grow">
+        <span class="rm-tag"><span class="rm-tag-dot"></span>Grow</span>
+        <span class="rm-mini-title">Product Hunt launch</span>
+      </article>
+    </section>
+  </div>
+
+  <footer class="rm-foot">
+    <span class="rm-foot-legend"><span class="rm-dot-build"></span>Build<span class="rm-dot-grow"></span>Grow<span class="rm-dot-run"></span>Run</span>
+    <span class="rm-foot-note">A quiet loop shows <span class="rm-state is-idle">Idle</span> — nothing running, nothing queued.</span>
+  </footer>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V4</span><span class="vtitle">Roadmap Spine</span><span class="vblurb">A single vertical timeline runs the length of the page. Each loop — Build, Grow, Run — anchors to the spine with a square node, a plain-language state badge, its current task highlighted in a card (with the build&#x27;s user-story and done-when), and its upcoming work as lighter dots below. The Grow loop&#x27;s &quot;Needs you&quot; state surfaces the drafted article with a clear approve action. Idle loops dim to a muted node. Calm vertical rhythm, warm palette, nothing but the roadmap.</span></div><div class="vstage"><div class="rm-panel rm-v4">
+  <div class="rm-head">
+    <div class="rm-brand">
+      <span class="rm-logo">LS</span>
+      <div class="rm-brand-txt">
+        <div class="rm-name">LeadSift</div>
+        <div class="rm-stage">Lead scoring for founders &middot; Early access</div>
+      </div>
+    </div>
+    <div class="rm-flag"><span class="rm-flag-dot"></span>1 needs you</div>
+  </div>
+
+  <div class="rm-spine">
+
+    <div class="rm-loop" data-loop="build">
+      <div class="rm-loophead">
+        <span class="rm-node-loop">B</span>
+        <div class="rm-looptop">
+          <span class="rm-loopname">Build</span>
+          <span class="rm-state rm-state-run"><span class="rm-state-dot"></span>Running</span>
+          <span class="rm-count">3 next</span>
+        </div>
+        <div class="rm-loopdesc">Shipping the next feature from your backlog.</div>
+      </div>
+
+      <div class="rm-current">
+        <span class="rm-node-cur"></span>
+        <div class="rm-card">
+          <div class="rm-card-eyebrow"><span class="rm-eb-dot"></span>Now building</div>
+          <div class="rm-card-title">Daily email digest of top leads</div>
+          <div class="rm-meta">
+            <div class="rm-story">&ldquo;As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.&rdquo;</div>
+            <div class="rm-done"><svg class="rm-ic" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.4l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="rm-done-lbl">Done when</span>a scheduled 8am email lists the day&rsquo;s top 10 leads.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-queue-lbl">Next up</div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">Lead-source breakdown</span></div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">Slack alert on hot leads</span></div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">One-click CSV export</span></div>
+    </div>
+
+    <div class="rm-loop" data-loop="grow">
+      <div class="rm-loophead">
+        <span class="rm-node-loop">G</span>
+        <div class="rm-looptop">
+          <span class="rm-loopname">Grow</span>
+          <span class="rm-state rm-state-need"><span class="rm-state-dot"></span>Needs you</span>
+          <span class="rm-count">2 next</span>
+        </div>
+        <div class="rm-loopdesc">One item is ready &mdash; it needs your go-ahead.</div>
+      </div>
+
+      <div class="rm-current is-need">
+        <span class="rm-node-cur"></span>
+        <div class="rm-card">
+          <div class="rm-card-eyebrow"><span class="rm-eb-dot"></span>Awaiting your OK</div>
+          <div class="rm-card-title">Publish SEO article &mdash; &ldquo;How to score inbound leads&rdquo;<span class="rm-chip">Draft</span></div>
+          <div class="rm-note">The draft is written and ready to go. Approve it to publish to the LeadSift blog.</div>
+          <div class="rm-actions">
+            <button class="rm-btn rm-btn-primary" type="button">Review &amp; publish</button>
+            <button class="rm-btn rm-btn-ghost" type="button">Edit draft</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-queue-lbl">Next up</div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">Reddit r/sales AMA</span></div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">Product Hunt launch</span></div>
+    </div>
+
+    <div class="rm-loop" data-loop="run">
+      <div class="rm-loophead">
+        <span class="rm-node-loop">R</span>
+        <div class="rm-looptop">
+          <span class="rm-loopname">Run</span>
+          <span class="rm-state rm-state-run"><span class="rm-state-dot"></span>Running</span>
+          <span class="rm-count">1 next</span>
+        </div>
+        <div class="rm-loopdesc">Keeping LeadSift live and users onboarded.</div>
+      </div>
+
+      <div class="rm-current">
+        <span class="rm-node-cur"></span>
+        <div class="rm-card">
+          <div class="rm-card-eyebrow"><span class="rm-eb-dot"></span>Running now</div>
+          <div class="rm-card-title">Keeping it live &mdash; onboarding &amp; uptime</div>
+          <div class="rm-recent">
+            <div class="rm-recent-item"><svg class="rm-tick" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.4l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Sent 12 onboarding emails</div>
+            <div class="rm-recent-item"><svg class="rm-tick" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.4l3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>99.6% uptime &middot; 0 incidents</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-queue-lbl">Next up</div>
+      <div class="rm-qrow"><span class="rm-node-q"></span><span class="rm-qtxt">Weekly &ldquo;who to call&rdquo; digest email</span></div>
+    </div>
+
+    <div class="rm-end"><span class="rm-node-end"></span>End of roadmap</div>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V5</span><span class="vtitle">Status header + list</span><span class="vblurb">A top strip of three loop status pills (Build running / Grow needs you / Run running) sits above one calm task list grouped by loop. Each loop shows its live STATE, its current task — with the build&#x27;s user story and done-when — and its numbered next-up queue, so the Grow &quot;needs you&quot; state reads as a clear action to take.</span></div><div class="vstage"><div class="rm-panel rm-v5">
+  <header class="rm-head">
+    <div class="rm-head-l">
+      <span class="rm-logo">LeadSift</span>
+      <span class="rm-stage"><i></i>Live</span>
+      <span class="rm-desc">Lead scoring for busy founders</span>
+    </div>
+    <span class="rm-head-r">Roadmap</span>
+  </header>
+  <p class="rm-sub">What the AI is building, growing &amp; running right now &mdash; and what&rsquo;s next.</p>
+
+  <div class="rm-strip">
+    <div class="rm-pill rm-pill--build">
+      <div class="rm-pill-top">
+        <span class="rm-pill-name rm-c-build">Build</span>
+        <span class="rm-state rm-state--run"><i class="rm-sdot"></i>Running</span>
+      </div>
+      <span class="rm-pill-note">Building 1 &middot; 3 queued</span>
+    </div>
+    <div class="rm-pill rm-pill--grow rm-pill--alert">
+      <div class="rm-pill-top">
+        <span class="rm-pill-name rm-c-grow">Grow</span>
+        <span class="rm-state rm-state--needs"><i class="rm-sdot"></i>Needs you</span>
+      </div>
+      <span class="rm-pill-note">Awaiting your OK to post</span>
+    </div>
+    <div class="rm-pill rm-pill--run">
+      <div class="rm-pill-top">
+        <span class="rm-pill-name rm-c-run">Run</span>
+        <span class="rm-state rm-state--run"><i class="rm-sdot"></i>Running</span>
+      </div>
+      <span class="rm-pill-note">Healthy &middot; 0 incidents</span>
+    </div>
+  </div>
+
+  <div class="rm-list">
+
+    <section class="rm-group rm-group--build">
+      <div class="rm-ghead">
+        <span class="rm-chip rm-chip--build">Build</span>
+        <span class="rm-state rm-state--run"><i class="rm-sdot"></i>Running</span>
+        <span class="rm-ghead-note">1 of 4 tasks</span>
+      </div>
+      <article class="rm-current">
+        <span class="rm-nowtag rm-nowtag--run">Now building</span>
+        <h3 class="rm-task">Daily email digest of top leads</h3>
+        <p class="rm-story">&ldquo;As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.&rdquo;</p>
+        <div class="rm-done">
+          <span class="rm-done-k">Done when</span>
+          <span class="rm-done-v">A scheduled 8am email lists the day&rsquo;s top 10 leads.</span>
+        </div>
+      </article>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up</span>
+        <ul class="rm-queue">
+          <li><span class="rm-qn">1</span>Lead-source breakdown</li>
+          <li><span class="rm-qn">2</span>Slack alert on hot leads</li>
+          <li><span class="rm-qn">3</span>One-click CSV export</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="rm-group rm-group--grow">
+      <div class="rm-ghead">
+        <span class="rm-chip rm-chip--grow">Grow</span>
+        <span class="rm-state rm-state--needs"><i class="rm-sdot"></i>Needs you</span>
+        <span class="rm-ghead-note">1 of 3 tasks</span>
+      </div>
+      <article class="rm-current rm-current--needs">
+        <span class="rm-nowtag rm-nowtag--needs">Needs your OK</span>
+        <h3 class="rm-task">Publish an SEO article &mdash; &ldquo;How to score inbound leads&rdquo;</h3>
+        <p class="rm-story">The draft is written and ready. Approve it to publish to the LeadSift blog &mdash; the AI handles the rest.</p>
+        <div class="rm-actions">
+          <button type="button" class="rm-btn rm-btn--primary">Review &amp; publish</button>
+          <button type="button" class="rm-btn rm-btn--ghost">View draft</button>
+        </div>
+      </article>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up</span>
+        <ul class="rm-queue">
+          <li><span class="rm-qn">1</span>Reddit r/sales AMA</li>
+          <li><span class="rm-qn">2</span>Product Hunt launch</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="rm-group rm-group--run">
+      <div class="rm-ghead">
+        <span class="rm-chip rm-chip--run">Run</span>
+        <span class="rm-state rm-state--run"><i class="rm-sdot"></i>Running</span>
+        <span class="rm-ghead-note">Healthy</span>
+      </div>
+      <article class="rm-current">
+        <span class="rm-nowtag rm-nowtag--run">Now running</span>
+        <h3 class="rm-task">Keeping LeadSift live</h3>
+        <p class="rm-story">Sending onboarding emails and watching uptime &mdash; all automatic, no action needed from you.</p>
+        <ul class="rm-recent">
+          <li>Sent 12 onboarding emails</li>
+          <li>Uptime healthy &middot; no incidents</li>
+        </ul>
+      </article>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up</span>
+        <ul class="rm-queue">
+          <li><span class="rm-qn">1</span>Weekly &ldquo;who to call&rdquo; digest email</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V6</span><span class="vtitle">Progress bars</span><span class="vblurb">Each of the three always-on loops is a single horizontal progress row: loop name + what it does, a state badge (Running / Needs you / Idle), the current task with a subtle loop-colored progress bar, and its queued work as small chips. Motion encodes state — Build shimmers as it moves, Run streams as it maintains, Grow&#x27;s bar sits static-striped and hands you an amber action to publish. Warm, calm, scannable, ~800px.</span></div><div class="vstage"><div class="rm-panel rm-v6">
+  <div class="rm-top">
+    <div class="rm-brand">
+      <span class="rm-brand__mark">LS</span>
+      <span class="rm-brand__name">LeadSift</span>
+      <span class="rm-brand__stage">Live &middot; lead scoring for founders</span>
+    </div>
+    <span class="rm-top__hint">3 always-on loops</span>
+  </div>
+
+  <p class="rm-heading">Right now</p>
+  <p class="rm-sub">What the AI is building, growing and running for you &mdash; and what&rsquo;s queued next.</p>
+
+  <div class="rm-loops">
+
+    <article class="rm-loop rm-loop--build">
+      <header class="rm-loop__head">
+        <span class="rm-loop__dot"></span>
+        <span class="rm-loop__name">Build</span>
+        <span class="rm-loop__what">ships features</span>
+        <span class="rm-state rm-state--run"><span class="rm-state__dot"></span>Running</span>
+      </header>
+      <p class="rm-now">Building now</p>
+      <h3 class="rm-task">Daily email digest of top leads</h3>
+      <p class="rm-story">&ldquo;As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.&rdquo;</p>
+      <p class="rm-done"><span class="rm-done__k">&#10003; Done when</span>a scheduled 8am email lists the day&rsquo;s top 10 leads.</p>
+      <div class="rm-bar">
+        <div class="rm-bar__track"><div class="rm-bar__fill"></div></div>
+        <span class="rm-bar__pct">62%</span>
+      </div>
+      <div class="rm-next">
+        <span class="rm-next__label">Next up</span>
+        <span class="rm-chip">Lead-source breakdown</span>
+        <span class="rm-chip">Slack alert on hot leads</span>
+        <span class="rm-chip">One-click CSV export</span>
+      </div>
+    </article>
+
+    <article class="rm-loop rm-loop--grow">
+      <header class="rm-loop__head">
+        <span class="rm-loop__dot"></span>
+        <span class="rm-loop__name">Grow</span>
+        <span class="rm-loop__what">finds users</span>
+        <span class="rm-state rm-state--need"><span class="rm-state__dot"></span>Needs you</span>
+      </header>
+      <p class="rm-now">Awaiting your OK</p>
+      <h3 class="rm-task">Publish an SEO article &mdash; &ldquo;How to score inbound leads&rdquo;</h3>
+      <p class="rm-story rm-story--grow">The draft is written and ready. One click and it goes live.</p>
+      <div class="rm-bar">
+        <div class="rm-bar__track"><div class="rm-bar__fill"></div></div>
+        <span class="rm-bar__pct rm-bar__pct--ready">Ready</span>
+      </div>
+      <button class="rm-btn" type="button">Review &amp; post the article &rarr;</button>
+      <div class="rm-next">
+        <span class="rm-next__label">Next up</span>
+        <span class="rm-chip">Reddit r/sales AMA</span>
+        <span class="rm-chip">Product Hunt launch</span>
+      </div>
+    </article>
+
+    <article class="rm-loop rm-loop--run">
+      <header class="rm-loop__head">
+        <span class="rm-loop__dot"></span>
+        <span class="rm-loop__name">Run</span>
+        <span class="rm-loop__what">keeps it live</span>
+        <span class="rm-state rm-state--run"><span class="rm-state__dot"></span>Running</span>
+      </header>
+      <p class="rm-now">Keeping it live &middot; healthy</p>
+      <h3 class="rm-task">Onboarding new users &amp; watching uptime</h3>
+      <div class="rm-recent">
+        <span class="rm-recent__item"><span class="rm-recent__tick">&#10003;</span>Sent 12 onboarding emails</span>
+        <span class="rm-recent__item"><span class="rm-recent__tick">&#10003;</span>99.6% uptime &middot; 0 incidents</span>
+      </div>
+      <div class="rm-bar">
+        <div class="rm-bar__track"><div class="rm-bar__fill"></div></div>
+        <span class="rm-bar__pct rm-bar__pct--live">Live</span>
+      </div>
+      <div class="rm-next">
+        <span class="rm-next__label">Next up</span>
+        <span class="rm-chip">Weekly &ldquo;who to call&rdquo; digest email</span>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="rm-legend">
+    <span class="rm-legend__item"><span class="rm-legend__sw rm-legend__sw--run"></span>Running</span>
+    <span class="rm-legend__item"><span class="rm-legend__sw rm-legend__sw--need"></span>Needs you</span>
+    <span class="rm-legend__item"><span class="rm-legend__sw rm-legend__sw--idle"></span>Idle</span>
+    <span class="rm-legend__note">A loop with nothing running or queued shows Idle.</span>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V7</span><span class="vtitle">Bento loops</span><span class="vblurb">A warm bento grid for LeadSift&#x27;s roadmap: three loop tiles (Build, Grow, Run) each showing an unmistakable state badge and its current task, with a tall Next-up rail that groups every queued task under its loop using color-coded dots. Build shows the live user story + done-when, Grow is ringed amber with a clear approve-to-publish action, Run stays calm-green with recent health.</span></div><div class="vstage"><div class="rm-panel rm-v7">
+  <header class="rm-head">
+    <div class="rm-id">
+      <span class="rm-mark"></span>
+      <span class="rm-logo">LeadSift</span>
+      <span class="rm-stage">Live · solo micro-SaaS</span>
+    </div>
+    <div class="rm-legend">
+      <span class="rm-lg rm-lg-build"><i></i>Build</span>
+      <span class="rm-lg rm-lg-grow"><i></i>Grow</span>
+      <span class="rm-lg rm-lg-run"><i></i>Run</span>
+    </div>
+  </header>
+
+  <div class="rm-bento">
+    <article class="rm-tile rm-build">
+      <div class="rm-tile-h">
+        <span class="rm-loop"><span class="rm-dot"></span>Build</span>
+        <span class="rm-state rm-run">Running</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-k">Building now</span>
+        <h3 class="rm-task">Daily email digest of top leads</h3>
+      </div>
+      <div class="rm-progress">
+        <span class="rm-bar"></span>
+        <span class="rm-work">Working</span>
+      </div>
+      <div class="rm-story">
+        <p class="rm-story-line"><span>Story</span>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+        <p class="rm-done"><span>Done when</span>a scheduled 8am email lists the day&rsquo;s top 10 leads.</p>
+      </div>
+    </article>
+
+    <aside class="rm-tile rm-next">
+      <div class="rm-tile-h">
+        <span class="rm-loop rm-loop-plain">Next up</span>
+        <span class="rm-count">6 queued</span>
+      </div>
+      <div class="rm-queue">
+        <div class="rm-qsec">
+          <span class="rm-qhead"><i class="rm-qdot rm-d-build"></i>Build</span>
+          <ul class="rm-qlist rm-ql-build">
+            <li>Lead-source breakdown</li>
+            <li>Slack alert on hot leads</li>
+            <li>One-click CSV export</li>
+          </ul>
+        </div>
+        <div class="rm-qsec">
+          <span class="rm-qhead"><i class="rm-qdot rm-d-grow"></i>Grow</span>
+          <ul class="rm-qlist rm-ql-grow">
+            <li>Reddit r/sales AMA</li>
+            <li>Product Hunt launch</li>
+          </ul>
+        </div>
+        <div class="rm-qsec">
+          <span class="rm-qhead"><i class="rm-qdot rm-d-run"></i>Run</span>
+          <ul class="rm-qlist rm-ql-run">
+            <li>Weekly &ldquo;who to call&rdquo; digest email</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <article class="rm-tile rm-grow">
+      <div class="rm-tile-h">
+        <span class="rm-loop"><span class="rm-dot"></span>Grow</span>
+        <span class="rm-state rm-need">Needs you</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-k">Waiting on you</span>
+        <h3 class="rm-task">Publish SEO article &mdash; &ldquo;How to score inbound leads&rdquo;</h3>
+        <p class="rm-sub">Drafted and ready. It won&rsquo;t go live until you approve.</p>
+      </div>
+      <button class="rm-cta" type="button">Review &amp; publish<span class="rm-cta-ar">&rarr;</span></button>
+    </article>
+
+    <article class="rm-tile rm-run-tile">
+      <div class="rm-tile-h">
+        <span class="rm-loop"><span class="rm-dot"></span>Run</span>
+        <span class="rm-state rm-run">Running</span>
+      </div>
+      <div class="rm-now">
+        <span class="rm-now-k">Keeping it live &middot; healthy</span>
+        <h3 class="rm-task">Onboarding emails + uptime</h3>
+      </div>
+      <ul class="rm-recent">
+        <li><span class="rm-ok">&#10003;</span>Sent 12 onboarding emails</li>
+        <li><span class="rm-ok">&#10003;</span>99.6% uptime &middot; 0 incidents</li>
+      </ul>
+    </article>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V8</span><span class="vtitle">Minimal grouped</span><span class="vblurb">A very restrained roadmap: three quiet loop sections (Build / Grow / Run) split by hairlines and lots of whitespace. Each loop is grouped by a mono label in its own color with a small square marker, and the STATE reads instantly from a hairline chip — green pill for Running, amber pill for Needs you, grey for Idle. The current task sits in plain display type; Build carries its user-story + done-when on a faint blue rule, Grow surfaces the operator action (Review &amp; publish) as its whole reason to exist, and Run shows recent health notes. Next-up work is a light numbered list. No cards, no metrics, no chart — just what the AI is doing right now and what&#x27;s queued.</span></div><div class="vstage"><div class="rm-panel rm-v8">
+  <header class="rm-top">
+    <div class="rm-top-l">
+      <span class="rm-name">LeadSift</span>
+      <span class="rm-stage">Live · first paying customers</span>
+    </div>
+    <span class="rm-eyebrow">Roadmap · 3 loops</span>
+  </header>
+  <p class="rm-lede">A quiet look at what LeadSift is building, growing and running right now — and what's queued next.</p>
+
+  <section class="rm-loop rm-build">
+    <div class="rm-loop-id">
+      <span class="rm-loop-tag"><span class="rm-dot"></span><span class="rm-loop-name">Build</span></span>
+      <span class="rm-state rm-state-running"><span class="rm-state-dot"></span>Running</span>
+    </div>
+    <div class="rm-loop-body">
+      <div class="rm-now">
+        <span class="rm-now-label">Now building</span>
+        <p class="rm-now-title">Daily email digest of top leads</p>
+        <div class="rm-story">
+          <div class="rm-story-row"><span class="rm-story-tag">Story</span><span class="rm-story-text">As a busy founder, I want a daily email of my <em>top-scored leads</em> so I act on the hottest ones first.</span></div>
+          <div class="rm-story-row"><span class="rm-story-tag">Done when</span><span class="rm-story-text">A scheduled <em>8am email</em> lists the day's top 10 leads.</span></div>
+        </div>
+      </div>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up · 3 queued</span>
+        <ul class="rm-queue">
+          <li><span class="rm-q-idx">01</span>Lead-source breakdown</li>
+          <li><span class="rm-q-idx">02</span>Slack alert on hot leads</li>
+          <li><span class="rm-q-idx">03</span>One-click CSV export</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-loop rm-grow">
+    <div class="rm-loop-id">
+      <span class="rm-loop-tag"><span class="rm-dot"></span><span class="rm-loop-name">Grow</span></span>
+      <span class="rm-state rm-state-needs"><span class="rm-state-dot"></span>Needs you</span>
+    </div>
+    <div class="rm-loop-body">
+      <div class="rm-now">
+        <span class="rm-now-label">Awaiting your OK</span>
+        <p class="rm-now-title">Publish an SEO article — “How to score inbound leads”</p>
+        <p class="rm-now-sub">The draft is written and ready. It goes live the moment you approve — nothing posts without you.</p>
+        <div class="rm-cta">
+          <button class="rm-action" type="button">Review &amp; publish</button>
+          <button class="rm-draft-link" type="button">Read the draft</button>
+        </div>
+      </div>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up · 2 queued</span>
+        <ul class="rm-queue">
+          <li><span class="rm-q-idx">01</span>Reddit r/sales AMA</li>
+          <li><span class="rm-q-idx">02</span>Product Hunt launch</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-loop rm-run">
+    <div class="rm-loop-id">
+      <span class="rm-loop-tag"><span class="rm-dot"></span><span class="rm-loop-name">Run</span></span>
+      <span class="rm-state rm-state-running"><span class="rm-state-dot"></span>Running</span>
+    </div>
+    <div class="rm-loop-body">
+      <div class="rm-now">
+        <span class="rm-now-label">Keeping it live</span>
+        <p class="rm-now-title">Onboarding new signups &amp; watching uptime</p>
+        <span class="rm-next-label rm-recent-label">Recent</span>
+        <div class="rm-recent">
+          <span class="rm-recent-item">Sent 12 onboarding emails</span>
+          <span class="rm-recent-item">99.6% uptime · 0 incidents</span>
+        </div>
+      </div>
+      <div class="rm-next">
+        <span class="rm-next-label">Next up · 1 queued</span>
+        <ul class="rm-queue">
+          <li><span class="rm-q-idx">01</span>Weekly “who to call” digest email</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V9</span><span class="vtitle">Action-first</span><span class="vblurb">Leads with the one thing that needs the operator — the Grow post awaiting approval as a warm amber action card — then shows Build and Run as calm, running status cards. Every loop carries an unmistakable state badge (Running / Needs you / Idle), its current task, and its queued next-up chips, so one glance answers &quot;what&#x27;s the AI doing right now, and what&#x27;s next?&quot;</span></div><div class="vstage"><div class="rm-panel rm-v9">
+  <header class="rm-v9-top">
+    <div class="rm-v9-brand">
+      <span class="rm-v9-mark">LS</span>
+      <span class="rm-v9-brandtext">
+        <span class="rm-v9-name">LeadSift</span>
+        <span class="rm-v9-stage">Live · early traction</span>
+      </span>
+    </div>
+    <div class="rm-v9-glance" aria-label="Loop status at a glance">
+      <span class="rm-v9-gitem"><i class="rm-v9-gdot build"></i>Build<b class="rm-v9-gstate run">running</b></span>
+      <span class="rm-v9-gitem"><i class="rm-v9-gdot grow"></i>Grow<b class="rm-v9-gstate need">needs you</b></span>
+      <span class="rm-v9-gitem"><i class="rm-v9-gdot run"></i>Run<b class="rm-v9-gstate run">running</b></span>
+    </div>
+  </header>
+
+  <p class="rm-v9-lead"><b>One thing needs you.</b> The other two loops are running on their own.</p>
+
+  <section class="rm-v9-card action grow">
+    <div class="rm-v9-rail"></div>
+    <div class="rm-v9-body">
+      <div class="rm-v9-cardhead">
+        <span class="rm-v9-loop grow"><i></i>Grow</span>
+        <span class="rm-v9-badge need">Needs you</span>
+      </div>
+      <h3 class="rm-v9-title">Approve an SEO article to publish</h3>
+      <p class="rm-v9-desc">“How to score inbound leads” is drafted and ready — it just needs your OK to go live.</p>
+      <div class="rm-v9-actions">
+        <button type="button" class="rm-v9-btn primary">Approve &amp; publish</button>
+        <button type="button" class="rm-v9-btn ghost">Review draft</button>
+      </div>
+      <div class="rm-v9-next">
+        <span class="rm-v9-nlabel">Next up</span>
+        <span class="rm-v9-chip">Reddit r/sales AMA</span>
+        <span class="rm-v9-chip">Product Hunt launch</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-v9-card build">
+    <div class="rm-v9-rail"></div>
+    <div class="rm-v9-body">
+      <div class="rm-v9-cardhead">
+        <span class="rm-v9-loop build"><i></i>Build</span>
+        <span class="rm-v9-badge run"><i class="rm-v9-pulse"></i>Running</span>
+      </div>
+      <div class="rm-v9-curr">
+        <span class="rm-v9-eyebrow">Currently building</span>
+        <h3 class="rm-v9-title">Daily email digest of top leads</h3>
+      </div>
+      <div class="rm-v9-story">
+        <p class="rm-v9-storyline"><b>As a busy founder,</b> I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+      </div>
+      <div class="rm-v9-done">
+        <span class="rm-v9-donelabel">Done when</span>
+        <span class="rm-v9-donetext">a scheduled 8am email lists the day's top 10 leads.</span>
+      </div>
+      <div class="rm-v9-next">
+        <span class="rm-v9-nlabel">Next up</span>
+        <span class="rm-v9-chip">Lead-source breakdown</span>
+        <span class="rm-v9-chip">Slack alert on hot leads</span>
+        <span class="rm-v9-chip">One-click CSV export</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="rm-v9-card run">
+    <div class="rm-v9-rail"></div>
+    <div class="rm-v9-body">
+      <div class="rm-v9-cardhead">
+        <span class="rm-v9-loop run"><i></i>Run</span>
+        <span class="rm-v9-badge run"><i class="rm-v9-pulse"></i>Running</span>
+        <span class="rm-v9-health">healthy</span>
+      </div>
+      <div class="rm-v9-curr">
+        <span class="rm-v9-eyebrow">Currently</span>
+        <h3 class="rm-v9-title">Keeping it live — onboarding emails &amp; uptime</h3>
+      </div>
+      <ul class="rm-v9-recent">
+        <li><span class="rm-v9-rtick"></span>Sent 12 onboarding emails</li>
+        <li><span class="rm-v9-rtick"></span>99.6% uptime, 0 incidents</li>
+      </ul>
+      <div class="rm-v9-next">
+        <span class="rm-v9-nlabel">Next up</span>
+        <span class="rm-v9-chip">Weekly ‘who to call’ digest email</span>
+      </div>
+    </div>
+  </section>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V10</span><span class="vtitle">Compact ops board</span><span class="vblurb">A dense-but-calm operator board for LeadSift. One scannable status line answers &quot;what&#x27;s happening on each loop right now&quot; — Build running, Grow needs you, Run healthy — then a tight two-column grid (Current | Next up) color-codes every task by loop: Build blue, Grow terracotta, Run green. The Grow &quot;needs you&quot; row lights up amber with a real approve/read action so the operator can&#x27;t miss it. Idle/off is a first-class state (gray rail, muted badge) the same layout can show.</span></div><div class="vstage"><div class="rm-panel rm-v10">
+  <header class="rm-head">
+    <div class="rm-id">
+      <span class="rm-mark">LeadSift</span>
+      <span class="rm-stage">Live · lead-scoring micro-SaaS</span>
+    </div>
+    <span class="rm-kicker">Ops board</span>
+  </header>
+
+  <div class="rm-status">
+    <span class="rm-status-label">Loops</span>
+    <ul class="rm-status-list">
+      <li class="rm-si rm-build"><span class="rm-si-loop">Build</span><span class="rm-badge rm-badge-run"><i></i>Running</span></li>
+      <li class="rm-si rm-grow"><span class="rm-si-loop">Grow</span><span class="rm-badge rm-badge-need"><i></i>Needs you</span></li>
+      <li class="rm-si rm-run"><span class="rm-si-loop">Run</span><span class="rm-badge rm-badge-run"><i></i>Running</span></li>
+    </ul>
+    <span class="rm-status-note"><b>1</b> needs you <em>· 2 running</em></span>
+  </div>
+
+  <div class="rm-grid">
+    <div class="rm-colhead">
+      <span class="rm-colhead-loop">Loop</span>
+      <span class="rm-colhead-cur">Current</span>
+      <span class="rm-colhead-next">Next up</span>
+    </div>
+
+    <div class="rm-row rm-build">
+      <div class="rm-loop">
+        <span class="rm-loop-name">Build</span>
+        <span class="rm-badge rm-badge-run"><i></i>Running</span>
+        <span class="rm-loop-sub">Ships features</span>
+      </div>
+      <div class="rm-cur">
+        <span class="rm-task-flag">Building now</span>
+        <h4 class="rm-task-title">Daily email digest of top leads</h4>
+        <p class="rm-story">"As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first."</p>
+        <p class="rm-done"><span>Done when</span>a scheduled 8am email lists the day's top 10 leads.</p>
+      </div>
+      <div class="rm-next">
+        <ol class="rm-queue">
+          <li>Lead-source breakdown</li>
+          <li>Slack alert on hot leads</li>
+          <li>One-click CSV export</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="rm-row rm-grow rm-needs">
+      <div class="rm-loop">
+        <span class="rm-loop-name">Grow</span>
+        <span class="rm-badge rm-badge-need"><i></i>Needs you</span>
+        <span class="rm-loop-sub">Finds users</span>
+      </div>
+      <div class="rm-cur">
+        <span class="rm-task-flag rm-flag-need">Awaiting your OK</span>
+        <h4 class="rm-task-title">Publish an SEO article — "How to score inbound leads"</h4>
+        <p class="rm-sub">The draft is written and ready. It won't post until you approve it.</p>
+        <div class="rm-action">
+          <button class="rm-btn rm-btn-primary" type="button">Approve &amp; publish</button>
+          <button class="rm-btn rm-btn-ghost" type="button">Read draft</button>
+        </div>
+      </div>
+      <div class="rm-next">
+        <ol class="rm-queue">
+          <li>Reddit r/sales AMA</li>
+          <li>Product Hunt launch</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="rm-row rm-run">
+      <div class="rm-loop">
+        <span class="rm-loop-name">Run</span>
+        <span class="rm-badge rm-badge-run"><i></i>Running</span>
+        <span class="rm-loop-sub">Keeps it live</span>
+      </div>
+      <div class="rm-cur">
+        <span class="rm-task-flag">Healthy</span>
+        <h4 class="rm-task-title">Keeping it live — onboarding &amp; uptime</h4>
+        <ul class="rm-recent">
+          <li>Sent 12 onboarding emails</li>
+          <li>99.6% uptime · 0 incidents</li>
+        </ul>
+      </div>
+      <div class="rm-next">
+        <ol class="rm-queue">
+          <li>Weekly "who to call" digest email</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+</div>
+<style>
+.rm-v1 {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 22px;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  border-radius: 18px;
+  border: 1px solid var(--line-soft);
+  box-sizing: border-box;
+}
+.rm-v1 *, .rm-v1 *::before, .rm-v1 *::after { box-sizing: border-box; }
+
+.rm-v1 .rm-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.rm-v1 .rm-brand { display: flex; align-items: baseline; gap: 10px; }
+.rm-v1 .rm-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.rm-v1 .rm-stage {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rm-v1 .rm-stage::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.rm-v1 .rm-q {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.rm-v1 .rm-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.rm-v1 .rm-lane {
+  --loop: var(--gray);
+  --loop-soft: var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-top: 3px solid var(--loop);
+  border-radius: 14px;
+  padding: 14px;
+}
+.rm-v1 .rm-lane--build { --loop: var(--blue); --loop-soft: var(--blue-soft); }
+.rm-v1 .rm-lane--grow { --loop: var(--accent); --loop-soft: var(--accent-soft); }
+.rm-v1 .rm-lane--run { --loop: var(--green); --loop-soft: var(--green-soft); }
+
+.rm-v1 .rm-lane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.rm-v1 .rm-loop {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--loop);
+  letter-spacing: -0.01em;
+}
+
+.rm-v1 .rm-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px 4px 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.rm-v1 .rm-state::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.rm-v1 .rm-state--run {
+  background: var(--green-soft);
+  color: var(--green);
+}
+.rm-v1 .rm-state--need {
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-weight: 600;
+  box-shadow: 0 0 0 1px var(--amber) inset;
+}
+.rm-v1 .rm-state--idle {
+  background: var(--cream-2);
+  color: var(--ink-faint);
+}
+
+.rm-v1 .rm-card {
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--loop);
+  background: var(--cream-2);
+  border-radius: 10px;
+  padding: 12px;
+}
+.rm-v1 .rm-card--action {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.rm-v1 .rm-now {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--loop);
+  font-weight: 500;
+}
+.rm-v1 .rm-card--action .rm-now { color: var(--accent-ink); }
+
+.rm-v1 .rm-task {
+  margin: 6px 0 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.28;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.rm-v1 .rm-story,
+.rm-v1 .rm-done {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--line-soft);
+}
+.rm-v1 .rm-story-k,
+.rm-v1 .rm-done-k {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 3px;
+}
+.rm-v1 .rm-story-k { color: var(--ink-faint); }
+.rm-v1 .rm-done-k { color: var(--green); }
+.rm-v1 .rm-story p,
+.rm-v1 .rm-done p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.rm-v1 .rm-done p::before {
+  content: "\2713  ";
+  color: var(--green);
+  font-weight: 700;
+}
+
+.rm-v1 .rm-sub {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--accent-ink);
+}
+
+.rm-v1 .rm-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 11px;
+  flex-wrap: wrap;
+}
+.rm-v1 .rm-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 7px 11px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: filter .15s ease, background .15s ease;
+}
+.rm-v1 .rm-btn--go {
+  background: var(--accent);
+  color: #fff;
+}
+.rm-v1 .rm-btn--go:hover { filter: brightness(1.06); }
+.rm-v1 .rm-btn--ghost {
+  background: transparent;
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.rm-v1 .rm-btn--ghost:hover { background: var(--paper); }
+
+.rm-v1 .rm-recent {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 9px 0 0;
+  border-top: 1px dashed var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rm-v1 .rm-recent li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.rm-v1 .rm-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex: none;
+}
+
+.rm-v1 .rm-queue { margin-top: auto; }
+.rm-v1 .rm-queue-h {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-faint);
+}
+.rm-v1 .rm-queue ul {
+  counter-reset: q;
+  list-style: none;
+  margin: 7px 0 0;
+  padding: 0;
+}
+.rm-v1 .rm-queue li {
+  counter-increment: q;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  padding: 7px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.rm-v1 .rm-queue li:first-child { border-top: none; }
+.rm-v1 .rm-queue li::before {
+  content: counter(q);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--loop);
+  background: var(--loop-soft);
+  min-width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.rm-v1 .rm-empty {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 620px) {
+  .rm-v1 .rm-board { grid-template-columns: 1fr; }
+}
+
+.rm-v2 {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 26px;
+  border-radius: 22px;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.rm-v2 *, .rm-v2 *::before, .rm-v2 *::after { box-sizing: border-box; }
+
+/* ---------- header / identity ---------- */
+.rm-v2 .rm-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.rm-v2 .rm-id { display: flex; align-items: center; gap: 12px; }
+.rm-v2 .rm-logo {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--accent); color: #fff;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; letter-spacing: .02em;
+}
+.rm-v2 .rm-id-txt { display: flex; flex-direction: column; line-height: 1.25; }
+.rm-v2 .rm-co { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 19px; }
+.rm-v2 .rm-stage { font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
+.rm-v2 .rm-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+.rm-v2 .rm-legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint);
+}
+.rm-v2 .rm-dot { width: 8px; height: 8px; border-radius: 50%; }
+.rm-v2 .rm-dot-run { background: var(--green); }
+.rm-v2 .rm-dot-need { background: var(--amber); }
+.rm-v2 .rm-dot-idle { background: var(--slate); }
+
+/* ---------- stack + card ---------- */
+.rm-v2 .rm-stack { display: flex; flex-direction: column; gap: 16px; }
+.rm-v2 .rm-loop {
+  position: relative; overflow: hidden;
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 18px; padding: 20px 22px 20px 27px;
+  box-shadow: var(--shadow);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.rm-v2 .rm-loop::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+}
+.rm-v2 .rm-loop:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+.rm-v2 .rm-build::before { background: var(--blue); }
+.rm-v2 .rm-grow::before  { background: var(--accent); }
+.rm-v2 .rm-run::before   { background: var(--green); }
+
+/* ---------- loop header ---------- */
+.rm-v2 .rm-loop-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rm-v2 .rm-loop-name { display: flex; align-items: center; gap: 12px; }
+.rm-v2 .rm-loop-icon {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-family: 'Space Grotesk', sans-serif;
+}
+.rm-v2 .rm-build .rm-loop-icon { background: var(--blue-soft);   color: var(--blue); }
+.rm-v2 .rm-grow  .rm-loop-icon { background: var(--accent-soft); color: var(--accent); }
+.rm-v2 .rm-run   .rm-loop-icon { background: var(--green-soft);  color: var(--green); }
+.rm-v2 .rm-loop-title {
+  display: block; font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600; font-size: 17px; letter-spacing: .01em;
+}
+.rm-v2 .rm-loop-sub {
+  display: block; margin-top: 3px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+  letter-spacing: .13em; text-transform: uppercase; color: var(--ink-faint);
+}
+
+/* ---------- state badge ---------- */
+.rm-v2 .rm-state {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  letter-spacing: .05em; text-transform: uppercase;
+  padding: 6px 13px 6px 11px; border-radius: 999px;
+}
+.rm-v2 .rm-state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.rm-v2 .rm-state.is-running { background: var(--green-soft); color: var(--green); }
+.rm-v2 .rm-state.is-running::before { background: var(--green); animation: rm-v2-pulse 1.8s ease-in-out infinite; }
+.rm-v2 .rm-state.is-need { background: var(--amber-soft); color: var(--amber); }
+.rm-v2 .rm-state.is-need::before { background: var(--amber); animation: rm-v2-pulse 1.8s ease-in-out infinite; }
+.rm-v2 .rm-state.is-idle { background: var(--line-soft); color: var(--ink-faint); }
+.rm-v2 .rm-state.is-idle::before { background: var(--slate); }
+@keyframes rm-v2-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.65); } }
+
+/* ---------- current task block ---------- */
+.rm-v2 .rm-now { margin-top: 17px; }
+.rm-v2 .rm-now-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint);
+}
+.rm-v2 .rm-grow .rm-now-label { color: var(--amber); }
+.rm-v2 .rm-task {
+  margin: 7px 0 0; font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500; font-size: 18px; line-height: 1.35; color: var(--ink);
+}
+
+/* build: story + done-when */
+.rm-v2 .rm-story {
+  margin: 11px 0 0; padding-left: 13px; border-left: 2px solid var(--blue-soft);
+  font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); font-style: italic;
+}
+.rm-v2 .rm-done {
+  margin-top: 13px; display: flex; align-items: flex-start; gap: 9px;
+  font-size: 13.5px; line-height: 1.45; color: var(--ink-soft);
+}
+.rm-v2 .rm-done b { color: var(--ink); font-weight: 600; }
+.rm-v2 .rm-done-tick {
+  flex: none; width: 19px; height: 19px; border-radius: 50%; margin-top: 1px;
+  background: var(--green-soft); color: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+}
+
+/* grow: needs-you action banner */
+.rm-v2 .rm-action {
+  margin-top: 13px; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; background: var(--amber-soft); border-radius: 12px; padding: 12px 14px;
+}
+.rm-v2 .rm-action-txt { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink); font-weight: 500; }
+.rm-v2 .rm-action-bang {
+  flex: none; width: 21px; height: 21px; border-radius: 50%;
+  background: var(--amber); color: #fff;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rm-v2 .rm-action-btns { display: flex; gap: 8px; }
+.rm-v2 .rm-btn {
+  font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600;
+  border-radius: 9px; padding: 8px 14px; border: 1px solid transparent; cursor: pointer;
+  transition: filter .15s ease, border-color .15s ease, color .15s ease;
+}
+.rm-v2 .rm-btn-ghost { background: var(--paper); border-color: var(--line); color: var(--ink-soft); }
+.rm-v2 .rm-btn-ghost:hover { color: var(--ink); border-color: var(--ink-faint); }
+.rm-v2 .rm-btn-go { background: var(--accent); color: #fff; }
+.rm-v2 .rm-btn-go:hover { filter: brightness(1.07); }
+
+/* run: recent activity */
+.rm-v2 .rm-recent { list-style: none; margin: 13px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rm-v2 .rm-recent li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink-soft); }
+.rm-v2 .rm-recent li b { color: var(--ink); font-weight: 600; }
+.rm-v2 .rm-r-dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+
+/* ---------- next-up queue ---------- */
+.rm-v2 .rm-next { margin-top: 17px; padding-top: 15px; border-top: 1px dashed var(--line); }
+.rm-v2 .rm-next-head { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+.rm-v2 .rm-next-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint);
+}
+.rm-v2 .rm-next-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-faint);
+  background: var(--cream-2); border-radius: 6px; padding: 2px 7px;
+}
+.rm-v2 .rm-queue { list-style: none; margin: 0; padding: 0; counter-reset: q; display: flex; flex-wrap: wrap; gap: 8px; }
+.rm-v2 .rm-queue li {
+  counter-increment: q; display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--ink-soft);
+  background: var(--cream); border: 1px solid var(--line-soft); border-radius: 10px;
+  padding: 7px 13px 7px 8px; transition: border-color .15s ease, color .15s ease;
+}
+.rm-v2 .rm-queue li::before {
+  content: counter(q); flex: none;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+  width: 18px; height: 18px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rm-v2 .rm-build .rm-queue li::before { background: var(--blue-soft);   color: var(--blue); }
+.rm-v2 .rm-grow  .rm-queue li::before { background: var(--accent-soft); color: var(--accent); }
+.rm-v2 .rm-run   .rm-queue li::before { background: var(--green-soft);  color: var(--green); }
+.rm-v2 .rm-queue li:hover { color: var(--ink); }
+.rm-v2 .rm-build .rm-queue li:hover { border-color: var(--blue); }
+.rm-v2 .rm-grow  .rm-queue li:hover { border-color: var(--accent); }
+.rm-v2 .rm-run   .rm-queue li:hover { border-color: var(--green); }
+.rm-v2 .rm-queue-empty { font-size: 13px; color: var(--ink-faint); font-style: italic; }
+
+/* ---------- idle loop support (all three active here, styling ready) ---------- */
+.rm-v2 .rm-loop.is-idle { opacity: .82; }
+.rm-v2 .rm-loop.is-idle::before { background: var(--slate); }
+.rm-v2 .rm-loop.is-idle .rm-loop-icon { background: var(--line-soft); color: var(--ink-faint); }
+.rm-v2 .rm-idle-note { margin-top: 16px; font-size: 13.5px; color: var(--ink-faint); font-style: italic; }
+
+@media (max-width: 560px) {
+  .rm-v2 { padding: 18px; }
+  .rm-v2 .rm-loop-head { flex-wrap: wrap; }
+}
+
+.rm-v3{max-width:800px;margin:0 auto;padding:24px;box-sizing:border-box;background:var(--cream);border:1px solid var(--line);border-radius:22px;font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.45;}
+.rm-v3 *{box-sizing:border-box;}
+
+.rm-v3 .is-build{--loop:var(--blue);--loop-soft:var(--blue-soft);}
+.rm-v3 .is-grow{--loop:var(--accent);--loop-soft:var(--accent-soft);}
+.rm-v3 .is-run{--loop:var(--green);--loop-soft:var(--green-soft);}
+
+.rm-v3 .rm-head{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+.rm-v3 .rm-id{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.rm-v3 .rm-id-mark{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--accent-ink);background:var(--accent-soft);width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;}
+.rm-v3 .rm-id-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;letter-spacing:-.01em;}
+.rm-v3 .rm-id-tag{font-size:13px;color:var(--ink-soft);}
+.rm-v3 .rm-id-tag::before{content:'·';margin-right:9px;color:var(--ink-faint);}
+.rm-v3 .rm-id-stage{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--green);background:var(--green-soft);padding:4px 9px;border-radius:999px;}
+
+.rm-v3 .rm-loops{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.rm-v3 .rm-loop{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line-soft);border-left:3px solid var(--loop);}
+.rm-v3 .rm-loop-dot{width:8px;height:8px;border-radius:50%;background:var(--loop);flex:none;}
+.rm-v3 .rm-loop-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--loop);}
+.rm-v3 .rm-loop .rm-state{margin-left:auto;}
+
+.rm-v3 .rm-state{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;}
+.rm-v3 .rm-state.is-running{color:var(--green);background:var(--green-soft);}
+.rm-v3 .rm-state.is-running::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:rm-v3-pulse 2s ease-in-out infinite;}
+.rm-v3 .rm-state.is-needs{color:#fff;background:var(--amber);}
+.rm-v3 .rm-state.is-idle{color:var(--ink-faint);background:var(--cream-2);border:1px solid var(--line-soft);}
+
+.rm-v3 .rm-board{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:14px;align-items:start;}
+.rm-v3 .rm-col{display:flex;flex-direction:column;gap:10px;}
+.rm-v3 .rm-col-head{display:flex;align-items:center;gap:8px;padding:0 2px 2px;}
+.rm-v3 .rm-col-label{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);}
+.rm-v3 .rm-col.is-now .rm-col-label{color:var(--ink);}
+.rm-v3 .rm-col-count{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--ink-faint);background:var(--cream-2);border:1px solid var(--line-soft);border-radius:999px;min-width:20px;height:20px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;margin-left:auto;}
+.rm-v3 .rm-live{width:8px;height:8px;border-radius:50%;background:var(--green);animation:rm-v3-pulse 2s ease-in-out infinite;flex:none;}
+
+.rm-v3 .rm-card{background:var(--paper);border:1px solid var(--line-soft);border-left:3px solid var(--loop);border-radius:12px;padding:13px 14px;transition:transform .16s ease,box-shadow .16s ease;}
+.rm-v3 .rm-col.is-now .rm-card{box-shadow:0 2px 12px -9px var(--ink);}
+.rm-v3 .rm-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px -14px var(--ink);}
+.rm-v3 .rm-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;}
+.rm-v3 .rm-tag{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--loop);}
+.rm-v3 .rm-tag-dot{width:7px;height:7px;border-radius:50%;background:var(--loop);flex:none;}
+.rm-v3 .rm-card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;line-height:1.3;margin:0;letter-spacing:-.005em;}
+
+.rm-v3 .rm-story{margin:9px 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-soft);padding-left:10px;border-left:2px solid var(--line-soft);}
+.rm-v3 .rm-done{margin-top:10px;font-size:12.5px;line-height:1.45;color:var(--ink);background:var(--green-soft);border-radius:8px;padding:8px 10px;}
+.rm-v3 .rm-done-label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:2px;}
+.rm-v3 .rm-note{margin:9px 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-soft);}
+.rm-v3 .rm-recent{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;}
+.rm-v3 .rm-recent li{font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:7px;}
+.rm-v3 .rm-recent li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex:none;}
+.rm-v3 .rm-nextup{margin:11px 0 0;padding-top:10px;border-top:1px dashed var(--line-soft);display:flex;align-items:baseline;gap:8px;font-size:12.5px;line-height:1.4;}
+.rm-v3 .rm-nextup-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);flex:none;}
+.rm-v3 .rm-nextup-text{color:var(--ink);font-weight:500;}
+
+.rm-v3 .rm-card.is-attn{background:var(--amber-soft);}
+.rm-v3 .rm-cta{margin-top:11px;width:100%;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#fff;background:var(--amber);border:none;border-radius:9px;padding:9px 12px;text-align:center;transition:box-shadow .16s ease,transform .16s ease;}
+.rm-v3 .rm-cta:hover{box-shadow:0 0 0 3px var(--amber-soft);transform:translateY(-1px);}
+
+.rm-v3 .rm-card.is-mini{display:flex;flex-direction:column;gap:6px;padding:11px 12px;}
+.rm-v3 .rm-mini-title{font-size:13px;line-height:1.35;color:var(--ink);font-weight:500;}
+.rm-v3 .rm-col.is-later .rm-card{background:var(--cream-2);}
+.rm-v3 .rm-col.is-later .rm-mini-title{color:var(--ink-soft);}
+
+.rm-v3 .rm-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--ink-soft);}
+.rm-v3 .rm-foot-legend{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--ink-soft);}
+.rm-v3 .rm-foot-legend span{width:8px;height:8px;border-radius:50%;margin:0 6px 0 12px;}
+.rm-v3 .rm-foot-legend span:first-child{margin-left:0;}
+.rm-v3 .rm-dot-build{background:var(--blue);}
+.rm-v3 .rm-dot-grow{background:var(--accent);}
+.rm-v3 .rm-dot-run{background:var(--green);}
+.rm-v3 .rm-foot-note{display:inline-flex;align-items:center;gap:7px;}
+
+@keyframes rm-v3-pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+.rm-v4{max-width:800px;margin:0 auto;padding:26px 28px 30px;background:var(--cream);color:var(--ink);border:1px solid var(--line);border-radius:20px;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.rm-v4 *{box-sizing:border-box}
+
+.rm-v4 .rm-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid var(--line-soft)}
+.rm-v4 .rm-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.rm-v4 .rm-logo{flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:.02em;box-shadow:0 4px 10px var(--accent-soft)}
+.rm-v4 .rm-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.01em}
+.rm-v4 .rm-stage{margin-top:2px;font-size:12.5px;color:var(--ink-faint)}
+.rm-v4 .rm-flag{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);padding:6px 11px;border-radius:20px}
+.rm-v4 .rm-flag-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:rm-v4-pulse 2.4s ease-in-out infinite}
+
+.rm-v4 .rm-spine{position:relative}
+.rm-v4 .rm-spine::before{content:"";position:absolute;left:26px;top:16px;bottom:16px;width:2px;background:var(--line);border-radius:2px}
+
+.rm-v4 .rm-loop{position:relative}
+.rm-v4 .rm-loop+.rm-loop{margin-top:28px}
+.rm-v4 .rm-loop[data-loop="build"]{--lc:var(--blue);--lc-soft:var(--blue-soft)}
+.rm-v4 .rm-loop[data-loop="grow"]{--lc:var(--accent);--lc-soft:var(--accent-soft)}
+.rm-v4 .rm-loop[data-loop="run"]{--lc:var(--green);--lc-soft:var(--green-soft)}
+
+.rm-v4 .rm-loophead{position:relative;padding-left:64px;display:flex;flex-direction:column;gap:5px;min-height:38px;justify-content:center}
+.rm-v4 .rm-node-loop{position:absolute;left:8px;top:0;width:36px;height:36px;border-radius:11px;background:var(--lc-soft);color:var(--lc);border:1.5px solid var(--lc);display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;z-index:2}
+.rm-v4 .rm-looptop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rm-v4 .rm-loopname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink)}
+.rm-v4 .rm-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:var(--ink-faint)}
+.rm-v4 .rm-loopdesc{font-size:13px;color:var(--ink-soft)}
+
+.rm-v4 .rm-state{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px 4px 8px;border-radius:20px}
+.rm-v4 .rm-state-dot{width:6px;height:6px;border-radius:50%}
+.rm-v4 .rm-state-run{color:var(--green);background:var(--green-soft)}
+.rm-v4 .rm-state-run .rm-state-dot{background:var(--green);animation:rm-v4-pulse 2.4s ease-in-out infinite}
+.rm-v4 .rm-state-need{color:var(--amber);background:var(--amber-soft)}
+.rm-v4 .rm-state-need .rm-state-dot{background:var(--amber)}
+.rm-v4 .rm-state-idle{color:var(--ink-faint);background:var(--cream-2)}
+.rm-v4 .rm-state-idle .rm-state-dot{background:var(--gray)}
+
+.rm-v4 .rm-current{position:relative;padding-left:64px;margin-top:14px}
+.rm-v4 .rm-node-cur{position:absolute;left:18px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--lc);border:3px solid var(--cream);box-shadow:0 0 0 3px var(--lc-soft);z-index:2}
+.rm-v4 .rm-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px 17px;box-shadow:0 2px 12px var(--line-soft);transition:border-color .16s}
+.rm-v4 .rm-card:hover{border-color:var(--lc)}
+.rm-v4 .rm-card-eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--lc);margin-bottom:8px}
+.rm-v4 .rm-eb-dot{width:6px;height:6px;border-radius:50%;background:var(--lc)}
+.rm-v4 .rm-card-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16.5px;line-height:1.3;color:var(--ink)}
+.rm-v4 .rm-chip{display:inline-block;vertical-align:middle;margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);padding:2px 6px;border-radius:6px}
+.rm-v4 .rm-meta{margin-top:12px;display:flex;flex-direction:column;gap:9px}
+.rm-v4 .rm-story{padding-left:12px;border-left:2px solid var(--lc-soft);font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.rm-v4 .rm-done{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.45;color:var(--ink-soft);background:var(--cream);border:1px solid var(--line-soft);border-radius:9px;padding:8px 10px}
+.rm-v4 .rm-done-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);margin-right:5px}
+.rm-v4 .rm-ic{width:14px;height:14px;flex:0 0 auto;margin-top:1px;color:var(--lc)}
+
+.rm-v4 .rm-current.is-need .rm-card{border-color:var(--amber-soft);box-shadow:0 0 0 1px var(--amber-soft),0 3px 14px var(--line-soft)}
+.rm-v4 .rm-current.is-need .rm-card:hover{border-color:var(--amber)}
+.rm-v4 .rm-current.is-need .rm-card-eyebrow{color:var(--amber)}
+.rm-v4 .rm-current.is-need .rm-eb-dot{background:var(--amber)}
+.rm-v4 .rm-note{margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.rm-v4 .rm-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.rm-v4 .rm-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:.16s}
+.rm-v4 .rm-btn-primary{background:var(--accent);color:#fff}
+.rm-v4 .rm-btn-primary:hover{background:var(--accent-ink)}
+.rm-v4 .rm-btn-ghost{background:var(--paper);color:var(--ink-soft);border-color:var(--line)}
+.rm-v4 .rm-btn-ghost:hover{background:var(--cream-2);color:var(--ink)}
+
+.rm-v4 .rm-recent{margin-top:11px;display:flex;flex-direction:column;gap:7px}
+.rm-v4 .rm-recent-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft)}
+.rm-v4 .rm-tick{width:14px;height:14px;flex:0 0 auto;color:var(--green)}
+
+.rm-v4 .rm-queue-lbl{padding-left:64px;margin-top:14px;margin-bottom:2px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.rm-v4 .rm-qrow{position:relative;padding:9px 0 9px 64px;display:flex;align-items:center;gap:10px}
+.rm-v4 .rm-node-q{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--lc);z-index:2;transition:background .16s}
+.rm-v4 .rm-qtxt{font-size:13.5px;color:var(--ink-soft);transition:color .16s}
+.rm-v4 .rm-qrow:hover .rm-node-q{background:var(--lc)}
+.rm-v4 .rm-qrow:hover .rm-qtxt{color:var(--ink)}
+
+.rm-v4 .rm-end{position:relative;padding-left:64px;margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
+.rm-v4 .rm-node-end{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid var(--line);z-index:2}
+
+.rm-v4 .rm-loop.is-idle{opacity:.72}
+.rm-v4 .rm-loop.is-idle .rm-node-loop{background:var(--cream-2);color:var(--ink-faint);border-color:var(--line)}
+
+.rm-v4 .rm-loop[data-loop="run"] .rm-eb-dot{animation:rm-v4-pulse 2.4s ease-in-out infinite}
+
+@keyframes rm-v4-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.rm-v5{max-width:800px;margin:0 auto;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:22px 22px 24px;line-height:1.5;}
+.rm-v5 *{box-sizing:border-box;}
+
+/* header */
+.rm-v5 .rm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.rm-v5 .rm-head-l{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.rm-v5 .rm-logo{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;letter-spacing:-.01em;}
+.rm-v5 .rm-stage{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--green);background:var(--green-soft);border-radius:999px;padding:3px 9px;}
+.rm-v5 .rm-stage i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:rm-v5-pulse 2.6s ease-in-out infinite;}
+.rm-v5 .rm-desc{font-size:12.5px;color:var(--ink-faint);}
+.rm-v5 .rm-head-r{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-faint);}
+.rm-v5 .rm-sub{margin:10px 0 0;font-size:13px;color:var(--ink-soft);}
+
+/* status strip */
+.rm-v5 .rm-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 20px;}
+.rm-v5 .rm-pill{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:12px;padding:11px 13px 12px;display:flex;flex-direction:column;gap:9px;}
+.rm-v5 .rm-pill--build{border-top-color:var(--blue);}
+.rm-v5 .rm-pill--grow{border-top-color:var(--accent);}
+.rm-v5 .rm-pill--run{border-top-color:var(--green);}
+.rm-v5 .rm-pill--alert{border-right-color:var(--amber);border-bottom-color:var(--amber);border-left-color:var(--amber);background:var(--amber-soft);}
+.rm-v5 .rm-pill-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.rm-v5 .rm-pill-name{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.11em;}
+.rm-v5 .rm-pill-note{font-size:11.5px;color:var(--ink-faint);}
+
+/* loop identity colors */
+.rm-v5 .rm-c-build{color:var(--blue);}
+.rm-v5 .rm-c-grow{color:var(--accent);}
+.rm-v5 .rm-c-run{color:var(--green);}
+
+/* state badge */
+.rm-v5 .rm-state{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.07em;border-radius:999px;padding:3px 9px 3px 8px;white-space:nowrap;}
+.rm-v5 .rm-sdot{width:6px;height:6px;border-radius:50%;flex:none;}
+.rm-v5 .rm-state--run{background:var(--green-soft);color:var(--green);}
+.rm-v5 .rm-state--run .rm-sdot{background:var(--green);animation:rm-v5-pulse 2.6s ease-in-out infinite;}
+.rm-v5 .rm-state--needs{background:var(--amber-soft);color:var(--amber);}
+.rm-v5 .rm-state--needs .rm-sdot{background:var(--amber);animation:rm-v5-pulse 1.4s ease-in-out infinite;}
+.rm-v5 .rm-state--idle{background:var(--cream-2);color:var(--ink-faint);}
+.rm-v5 .rm-state--idle .rm-sdot{background:var(--gray);}
+
+/* list */
+.rm-v5 .rm-list{display:flex;flex-direction:column;gap:14px;}
+.rm-v5 .rm-group{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px 18px;overflow:hidden;}
+.rm-v5 .rm-group::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+.rm-v5 .rm-group--build::before{background:var(--blue);}
+.rm-v5 .rm-group--grow::before{background:var(--accent);}
+.rm-v5 .rm-group--run::before{background:var(--green);}
+
+.rm-v5 .rm-ghead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.rm-v5 .rm-chip{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.11em;border-radius:7px;padding:4px 9px;}
+.rm-v5 .rm-chip--build{background:var(--blue-soft);color:var(--blue);}
+.rm-v5 .rm-chip--grow{background:var(--accent-soft);color:var(--accent-ink);}
+.rm-v5 .rm-chip--run{background:var(--green-soft);color:var(--green);}
+.rm-v5 .rm-ghead-note{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);}
+
+/* current task */
+.rm-v5 .rm-current{border:1px solid var(--line-soft);background:var(--cream);border-radius:12px;padding:14px 15px;}
+.rm-v5 .rm-current--needs{background:var(--amber-soft);border-color:var(--amber);}
+.rm-v5 .rm-nowtag{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;border-radius:6px;padding:3px 8px;}
+.rm-v5 .rm-nowtag--run{background:var(--green-soft);color:var(--green);}
+.rm-v5 .rm-nowtag--needs{background:var(--amber);color:#fff;}
+.rm-v5 .rm-task{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16.5px;letter-spacing:-.01em;margin:10px 0 0;}
+.rm-v5 .rm-story{margin:7px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.55;}
+.rm-v5 .rm-done{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;}
+.rm-v5 .rm-done-k{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);flex:none;}
+.rm-v5 .rm-done-v{font-size:12.5px;color:var(--ink-soft);}
+
+/* recent activity (run) */
+.rm-v5 .rm-recent{list-style:none;margin:12px 0 0;padding:11px 0 0;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px;}
+.rm-v5 .rm-recent li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-soft);}
+.rm-v5 .rm-recent li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green);flex:none;}
+
+/* action (grow needs you) */
+.rm-v5 .rm-actions{display:flex;gap:9px;margin-top:13px;flex-wrap:wrap;}
+.rm-v5 .rm-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:12.5px;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);transition:background .15s ease,border-color .15s ease,color .15s ease;}
+.rm-v5 .rm-btn--primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.rm-v5 .rm-btn--primary:hover{background:var(--accent-ink);border-color:var(--accent-ink);}
+.rm-v5 .rm-btn--ghost{background:var(--paper);color:var(--ink-soft);}
+.rm-v5 .rm-btn--ghost:hover{color:var(--ink);border-color:var(--gray);}
+
+/* next up queue */
+.rm-v5 .rm-next{margin-top:15px;}
+.rm-v5 .rm-next-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);}
+.rm-v5 .rm-queue{list-style:none;margin:8px 0 0;padding:0;}
+.rm-v5 .rm-queue li{display:flex;align-items:center;gap:11px;padding:9px 2px;border-top:1px solid var(--line-soft);font-size:13.5px;color:var(--ink);}
+.rm-v5 .rm-queue li:first-child{border-top:none;}
+.rm-v5 .rm-qn{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--ink-faint);background:var(--cream-2);border-radius:6px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex:none;}
+.rm-v5 .rm-queue--empty{font-size:12.5px;color:var(--ink-faint);font-style:italic;margin-top:8px;}
+
+@keyframes rm-v5-pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+@media (max-width:560px){
+  .rm-v5 .rm-strip{grid-template-columns:1fr;}
+}
+
+.rm-v6{
+  max-width:800px;margin:0 auto;
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);background:var(--cream);
+  border:1px solid var(--line);border-radius:22px;
+  padding:26px 26px 22px;box-sizing:border-box;
+}
+.rm-v6 *{box-sizing:border-box;}
+
+/* ---- top identity ---- */
+.rm-v6 .rm-top{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--line-soft);
+}
+.rm-v6 .rm-brand{display:flex;align-items:center;gap:11px;min-width:0;}
+.rm-v6 .rm-brand__mark{
+  flex:none;width:34px;height:34px;border-radius:10px;
+  background:var(--accent);color:#fff;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;
+}
+.rm-v6 .rm-brand__name{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;letter-spacing:-.2px;
+}
+.rm-v6 .rm-brand__stage{
+  font-size:12.5px;color:var(--ink-soft);
+  border-left:1px solid var(--line);padding-left:11px;
+}
+.rm-v6 .rm-top__hint{
+  flex:none;font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);
+}
+
+.rm-v6 .rm-heading{
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+  margin:0 0 3px;letter-spacing:-.2px;
+}
+.rm-v6 .rm-sub{font-size:12.5px;line-height:1.5;color:var(--ink-soft);margin:0 0 18px;}
+
+/* ---- loop rows ---- */
+.rm-v6 .rm-loops{display:flex;flex-direction:column;gap:14px;}
+.rm-v6 .rm-loop{
+  position:relative;overflow:hidden;
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:16px;padding:16px 20px 16px 22px;
+}
+.rm-v6 .rm-loop::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gray);
+}
+.rm-v6 .rm-loop--build::before{background:var(--blue);}
+.rm-v6 .rm-loop--grow::before{background:var(--accent);}
+.rm-v6 .rm-loop--run::before{background:var(--green);}
+
+/* head */
+.rm-v6 .rm-loop__head{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.rm-v6 .rm-loop__dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gray);}
+.rm-v6 .rm-loop--build .rm-loop__dot{background:var(--blue);}
+.rm-v6 .rm-loop--grow .rm-loop__dot{background:var(--accent);}
+.rm-v6 .rm-loop--run .rm-loop__dot{background:var(--green);}
+.rm-v6 .rm-loop__name{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+}
+.rm-v6 .rm-loop__what{font-size:11.5px;color:var(--ink-faint);}
+
+/* state badge */
+.rm-v6 .rm-state{
+  margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 10px;border-radius:999px;
+}
+.rm-v6 .rm-state__dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.rm-v6 .rm-state--run{background:var(--green-soft);color:var(--green);}
+.rm-v6 .rm-state--need{background:var(--amber-soft);color:var(--amber);}
+.rm-v6 .rm-state--idle{background:var(--cream-2);color:var(--ink-faint);}
+.rm-v6 .rm-state--run .rm-state__dot{animation:rm6-pulse 1.8s ease-in-out infinite;}
+
+/* body copy */
+.rm-v6 .rm-now{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint);margin:0 0 4px;
+}
+.rm-v6 .rm-task{
+  font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;
+  line-height:1.3;letter-spacing:-.2px;margin:0 0 8px;
+}
+.rm-v6 .rm-story{
+  font-size:12.5px;line-height:1.5;color:var(--ink-soft);
+  margin:0 0 8px;padding-left:11px;border-left:2px solid var(--blue-soft);font-style:italic;
+}
+.rm-v6 .rm-story--grow{border-left-color:var(--accent-soft);font-style:normal;}
+.rm-v6 .rm-done{font-size:12.5px;line-height:1.45;color:var(--ink-soft);margin:0 0 13px;}
+.rm-v6 .rm-done__k{color:var(--green);font-weight:600;margin-right:4px;}
+
+.rm-v6 .rm-recent{display:flex;flex-direction:column;gap:5px;margin:2px 0 13px;}
+.rm-v6 .rm-recent__item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+.rm-v6 .rm-recent__tick{color:var(--green);font-weight:700;font-size:11px;}
+
+/* progress bar */
+.rm-v6 .rm-bar{display:flex;align-items:center;gap:12px;margin:2px 0 14px;}
+.rm-v6 .rm-bar__track{
+  position:relative;flex:1;height:9px;border-radius:999px;
+  background:var(--line-soft);overflow:hidden;
+}
+.rm-v6 .rm-bar__fill{
+  position:absolute;left:0;top:0;bottom:0;overflow:hidden;
+  border-radius:999px;background:var(--gray);
+}
+.rm-v6 .rm-loop--build .rm-bar__fill{width:62%;background:var(--blue);}
+.rm-v6 .rm-loop--build .rm-bar__fill::after{
+  content:"";position:absolute;inset:0;opacity:.4;
+  background:linear-gradient(90deg,transparent,var(--paper),transparent);
+  animation:rm6-shimmer 1.9s linear infinite;
+}
+.rm-v6 .rm-loop--grow .rm-bar__fill{
+  width:90%;
+  background:repeating-linear-gradient(-45deg,var(--accent) 0 7px,var(--accent-ink) 7px 14px);
+}
+.rm-v6 .rm-loop--run .rm-bar__fill{
+  width:100%;background-color:var(--green);
+  background-image:repeating-linear-gradient(-45deg,var(--green) 0 8px,var(--green-soft) 8px 16px);
+  background-size:32px 100%;
+  animation:rm6-stream 1.4s linear infinite;
+}
+.rm-v6 .rm-bar__pct{
+  flex:none;min-width:38px;text-align:right;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--ink-soft);
+}
+.rm-v6 .rm-bar__pct--ready{color:var(--accent-ink);}
+.rm-v6 .rm-bar__pct--live{color:var(--green);}
+
+/* grow action */
+.rm-v6 .rm-btn{
+  display:inline-block;margin:0 0 15px;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;
+  color:#fff;background:var(--amber);border:none;border-radius:10px;
+  padding:9px 16px;cursor:pointer;
+  transition:filter .12s ease,transform .12s ease;
+}
+.rm-v6 .rm-btn:hover{filter:brightness(1.06);transform:translateY(-1px);}
+
+/* next-up chips */
+.rm-v6 .rm-next{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+.rm-v6 .rm-next__label{
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint);margin-right:2px;
+}
+.rm-v6 .rm-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--ink-soft);
+  background:var(--cream-2);border:1px solid var(--line-soft);
+  border-radius:999px;padding:5px 11px;
+  transition:border-color .12s ease,color .12s ease;
+}
+.rm-v6 .rm-chip::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gray);opacity:.55;}
+.rm-v6 .rm-loop--build .rm-chip::before{background:var(--blue);}
+.rm-v6 .rm-loop--grow .rm-chip::before{background:var(--accent);}
+.rm-v6 .rm-loop--run .rm-chip::before{background:var(--green);}
+.rm-v6 .rm-chip:hover{border-color:var(--line);color:var(--ink);}
+
+/* legend / idle affordance */
+.rm-v6 .rm-legend{
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px;
+  margin-top:18px;padding-top:15px;border-top:1px solid var(--line-soft);
+  font-size:11.5px;color:var(--ink-faint);
+}
+.rm-v6 .rm-legend__item{display:inline-flex;align-items:center;gap:6px;}
+.rm-v6 .rm-legend__sw{width:8px;height:8px;border-radius:50%;}
+.rm-v6 .rm-legend__sw--run{background:var(--green);}
+.rm-v6 .rm-legend__sw--need{background:var(--amber);}
+.rm-v6 .rm-legend__sw--idle{background:var(--gray);}
+.rm-v6 .rm-legend__note{margin-left:auto;font-style:italic;}
+
+@keyframes rm6-pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+@keyframes rm6-shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+@keyframes rm6-stream{to{background-position:32px 0;}}
+
+@media (prefers-reduced-motion:reduce){
+  .rm-v6 .rm-state--run .rm-state__dot,
+  .rm-v6 .rm-loop--build .rm-bar__fill::after,
+  .rm-v6 .rm-loop--run .rm-bar__fill{animation:none;}
+}
+
+.rm-v7 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--cream);
+  color: var(--ink);
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-sizing: border-box;
+}
+.rm-v7 *, .rm-v7 *::before, .rm-v7 *::after { box-sizing: border-box; }
+.rm-v7 h3, .rm-v7 p, .rm-v7 ul, .rm-v7 ol { margin: 0; padding: 0; }
+
+/* header / identity */
+.rm-v7 .rm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 4px 18px;
+}
+.rm-v7 .rm-id { display: flex; align-items: center; gap: 9px; }
+.rm-v7 .rm-mark {
+  width: 15px; height: 15px; border-radius: 5px; flex: none;
+  background: linear-gradient(135deg, var(--blue) 0 34%, var(--accent) 34% 67%, var(--green) 67% 100%);
+}
+.rm-v7 .rm-logo {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 600; font-size: 18px; letter-spacing: -0.02em; color: var(--ink);
+}
+.rm-v7 .rm-stage {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-faint);
+  padding-left: 9px; margin-left: 3px; border-left: 1px solid var(--line);
+}
+.rm-v7 .rm-legend { display: flex; gap: 13px; }
+.rm-v7 .rm-lg {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint);
+}
+.rm-v7 .rm-lg i { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.rm-v7 .rm-lg-build i { background: var(--blue); }
+.rm-v7 .rm-lg-grow i { background: var(--accent); }
+.rm-v7 .rm-lg-run i { background: var(--green); }
+
+/* bento grid */
+.rm-v7 .rm-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.rm-v7 .rm-build   { grid-column: 1 / 3; grid-row: 1; }
+.rm-v7 .rm-next    { grid-column: 3;     grid-row: 1 / 3; }
+.rm-v7 .rm-grow    { grid-column: 1;     grid-row: 2; }
+.rm-v7 .rm-run-tile{ grid-column: 2;     grid-row: 2; }
+
+/* tile base */
+.rm-v7 .rm-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 15px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.rm-v7 .rm-tile::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.rm-v7 .rm-build::before    { background: var(--blue); }
+.rm-v7 .rm-grow::before     { background: var(--accent); }
+.rm-v7 .rm-run-tile::before { background: var(--green); }
+.rm-v7 .rm-next::before     { background: var(--slate); }
+.rm-v7 .rm-tile:hover { box-shadow: 0 10px 26px -18px var(--ink); transform: translateY(-1px); }
+
+/* tile header */
+.rm-v7 .rm-tile-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rm-v7 .rm-loop {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.11em;
+  color: var(--ink);
+}
+.rm-v7 .rm-loop .rm-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.rm-v7 .rm-build .rm-loop    { color: var(--blue); }
+.rm-v7 .rm-build .rm-dot     { background: var(--blue); }
+.rm-v7 .rm-grow .rm-loop     { color: var(--accent); }
+.rm-v7 .rm-grow .rm-dot      { background: var(--accent); }
+.rm-v7 .rm-run-tile .rm-loop { color: var(--green); }
+.rm-v7 .rm-run-tile .rm-dot  { background: var(--green); }
+
+/* state badge (Running=green, Needs you=amber, Idle=slate) */
+.rm-v7 .rm-state {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.rm-v7 .rm-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.rm-v7 .rm-run  { background: var(--green-soft); color: var(--green); border-color: var(--green-soft); }
+.rm-v7 .rm-run::before  { background: var(--green); animation: rm-v7-pulse 2s ease-in-out infinite; }
+.rm-v7 .rm-need { background: var(--amber-soft); color: var(--amber); border-color: var(--amber); }
+.rm-v7 .rm-need::before { background: var(--amber); }
+.rm-v7 .rm-idle { background: var(--cream-2); color: var(--slate); border-color: var(--line); }
+.rm-v7 .rm-idle::before { background: var(--slate); }
+
+/* current task block */
+.rm-v7 .rm-now { display: flex; flex-direction: column; gap: 4px; }
+.rm-v7 .rm-now-k {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-faint);
+}
+.rm-v7 .rm-task {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 16px; font-weight: 600; line-height: 1.28; letter-spacing: -0.01em; color: var(--ink);
+}
+.rm-v7 .rm-sub { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+
+/* build: working indicator */
+.rm-v7 .rm-progress { display: flex; align-items: center; gap: 10px; }
+.rm-v7 .rm-bar {
+  flex: 1; height: 4px; border-radius: 999px; background: var(--blue-soft);
+  position: relative; overflow: hidden;
+}
+.rm-v7 .rm-bar::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 42%;
+  border-radius: 999px; background: var(--blue);
+  animation: rm-v7-slide 1.9s ease-in-out infinite;
+}
+.rm-v7 .rm-work {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--blue); flex: none;
+}
+
+/* build: story + done-when */
+.rm-v7 .rm-story {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--cream-2); border: 1px solid var(--line-soft);
+  border-radius: 11px; padding: 11px 12px;
+}
+.rm-v7 .rm-story-line, .rm-v7 .rm-done {
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.rm-v7 .rm-story-line > span, .rm-v7 .rm-done > span {
+  display: inline-block; margin-right: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 2px 6px; border-radius: 5px;
+  background: var(--paper); border: 1px solid var(--line-soft); color: var(--ink-faint);
+  vertical-align: 1px;
+}
+.rm-v7 .rm-done > span { color: var(--green); border-color: var(--green-soft); background: var(--green-soft); }
+
+/* grow: needs-you emphasis + action */
+.rm-v7 .rm-grow {
+  border-color: var(--amber-soft);
+  box-shadow: inset 0 0 0 2px var(--amber-soft);
+}
+.rm-v7 .rm-grow .rm-now-k { color: var(--amber); }
+.rm-v7 .rm-cta {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 13.5px; font-weight: 600;
+  color: #fff; background: var(--accent);
+  border: none; border-radius: 10px; padding: 11px 14px;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: filter .15s ease, transform .15s ease;
+}
+.rm-v7 .rm-cta:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.rm-v7 .rm-cta-ar { font-size: 15px; line-height: 1; opacity: .9; }
+
+/* run: recent health */
+.rm-v7 .rm-recent { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
+.rm-v7 .rm-recent li {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12.5px; color: var(--ink-soft); line-height: 1.35;
+}
+.rm-v7 .rm-ok {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--green-soft); color: var(--green); font-size: 10px; font-weight: 700;
+}
+
+/* next up rail */
+.rm-v7 .rm-next .rm-loop-plain {
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 600; font-size: 13px; text-transform: none; letter-spacing: -0.01em;
+}
+.rm-v7 .rm-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint);
+  background: var(--cream-2); border: 1px solid var(--line-soft);
+  border-radius: 999px; padding: 3px 9px;
+}
+.rm-v7 .rm-queue { display: flex; flex-direction: column; gap: 15px; }
+.rm-v7 .rm-qsec { display: flex; flex-direction: column; gap: 7px; }
+.rm-v7 .rm-qhead {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-faint);
+}
+.rm-v7 .rm-qdot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.rm-v7 .rm-d-build { background: var(--blue); }
+.rm-v7 .rm-d-grow  { background: var(--accent); }
+.rm-v7 .rm-d-run   { background: var(--green); }
+.rm-v7 .rm-qlist {
+  list-style: none; display: flex; flex-direction: column; gap: 6px;
+  margin-left: 3px; padding-left: 13px; border-left: 1px solid var(--line-soft);
+}
+.rm-v7 .rm-ql-build { border-color: var(--blue-soft); }
+.rm-v7 .rm-ql-grow  { border-color: var(--accent-soft); }
+.rm-v7 .rm-ql-run   { border-color: var(--green-soft); }
+.rm-v7 .rm-qlist li {
+  position: relative; padding-left: 13px;
+  font-size: 12.5px; line-height: 1.35; color: var(--ink-soft);
+}
+.rm-v7 .rm-qlist li::before {
+  content: ""; position: absolute; left: 0; top: 7px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--line);
+}
+
+/* idle capability (any loop with nothing running) */
+.rm-v7 .rm-tile.is-idle { background: var(--cream-2); }
+.rm-v7 .rm-tile.is-idle::before { background: var(--slate); }
+.rm-v7 .is-idle .rm-loop, .rm-v7 .is-idle .rm-dot { color: var(--ink-faint); }
+.rm-v7 .is-idle .rm-dot { background: var(--slate); }
+.rm-v7 .is-idle .rm-task { color: var(--ink-faint); }
+.rm-v7 .rm-idle-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+@keyframes rm-v7-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+@keyframes rm-v7-slide { 0% { left: -42%; } 100% { left: 100%; } }
+
+@media (max-width: 680px) {
+  .rm-v7 .rm-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .rm-v7 .rm-bento { grid-template-columns: 1fr; }
+  .rm-v7 .rm-build, .rm-v7 .rm-next, .rm-v7 .rm-grow, .rm-v7 .rm-run-tile {
+    grid-column: 1; grid-row: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-v7 .rm-run::before, .rm-v7 .rm-bar::after { animation: none; }
+}
+
+.rm-v8{
+  font-family:'Inter',system-ui,sans-serif;
+  max-width:760px;margin:0 auto;width:100%;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:38px 44px 40px;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- top identity ---- */
+.rm-v8 .rm-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.rm-v8 .rm-top-l{display:flex;flex-direction:column;gap:5px}
+.rm-v8 .rm-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.01em;color:var(--ink)}
+.rm-v8 .rm-stage{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--ink-faint)}
+.rm-v8 .rm-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);padding-top:6px}
+.rm-v8 .rm-lede{margin-top:16px;font-size:14px;line-height:1.55;color:var(--ink-soft);max-width:54ch}
+
+/* ---- loop section ---- */
+.rm-v8 .rm-loop{display:grid;grid-template-columns:158px 1fr;gap:32px;padding:30px 0;border-top:1px solid var(--line-soft)}
+.rm-v8 .rm-loop:first-of-type{margin-top:22px}
+
+.rm-v8 .rm-loop-id{display:flex;flex-direction:column;gap:13px}
+.rm-v8 .rm-loop-tag{display:inline-flex;align-items:center;gap:10px}
+.rm-v8 .rm-dot{width:9px;height:9px;border-radius:3px;flex:none;background:var(--gray)}
+.rm-v8 .rm-loop-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+
+/* ---- state chip (hairline) ---- */
+.rm-v8 .rm-state{display:inline-flex;align-items:center;gap:7px;width:fit-content;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:4px 11px 4px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.rm-v8 .rm-state-dot{width:5px;height:5px;border-radius:999px;background:var(--gray);flex:none}
+.rm-v8 .rm-state-running{color:var(--green);border-color:var(--green-soft);background:var(--green-soft)}
+.rm-v8 .rm-state-needs{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.rm-v8 .rm-state-idle{color:var(--gray);border-color:var(--line)}
+.rm-v8 .rm-state-running .rm-state-dot{background:var(--green);animation:rm8pulse 2.4s ease-in-out infinite}
+.rm-v8 .rm-state-needs .rm-state-dot{background:var(--amber)}
+.rm-v8 .rm-state-idle .rm-state-dot{background:var(--gray)}
+
+/* ---- body ---- */
+.rm-v8 .rm-loop-body{display:flex;flex-direction:column;gap:24px;min-width:0}
+.rm-v8 .rm-now-label,.rm-v8 .rm-next-label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;margin-bottom:9px}
+.rm-v8 .rm-now-label{color:var(--ink-faint)}
+.rm-v8 .rm-next-label{color:var(--ink-faint)}
+.rm-v8 .rm-recent-label{margin-top:20px}
+.rm-v8 .rm-now-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:500;line-height:1.4;color:var(--ink);letter-spacing:-.005em}
+.rm-v8 .rm-now-sub{margin-top:11px;font-size:13.5px;line-height:1.6;color:var(--ink-soft);max-width:50ch}
+
+/* ---- build story ---- */
+.rm-v8 .rm-story{margin-top:16px;display:flex;flex-direction:column;gap:9px;padding-left:16px;border-left:2px solid var(--line)}
+.rm-v8 .rm-story-row{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:baseline}
+.rm-v8 .rm-story-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
+.rm-v8 .rm-story-text{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
+.rm-v8 .rm-story-text em{font-style:normal;color:var(--ink);font-weight:500}
+
+/* ---- grow action ---- */
+.rm-v8 .rm-cta{display:flex;align-items:center;gap:18px;margin-top:18px;flex-wrap:wrap}
+.rm-v8 .rm-action{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.01em;color:#fff;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:background .18s ease,transform .18s ease}
+.rm-v8 .rm-action:hover{background:var(--accent-ink);transform:translateY(-1px)}
+.rm-v8 .rm-action:active{transform:translateY(0)}
+.rm-v8 .rm-draft-link{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--accent);background:none;border:none;border-bottom:1px solid var(--accent-soft);padding:0 0 2px;cursor:pointer;transition:border-color .18s ease}
+.rm-v8 .rm-draft-link:hover{border-bottom-color:var(--accent)}
+
+/* ---- run recent ---- */
+.rm-v8 .rm-recent{display:flex;flex-direction:column;gap:10px}
+.rm-v8 .rm-recent-item{display:flex;align-items:center;gap:11px;font-size:13.5px;line-height:1.4;color:var(--ink-soft)}
+.rm-v8 .rm-recent-item::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--green);flex:none}
+
+/* ---- next-up queue ---- */
+.rm-v8 .rm-queue{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.rm-v8 .rm-queue li{display:flex;align-items:baseline;gap:14px;padding:10px 0;font-size:14px;line-height:1.4;color:var(--ink-soft);border-top:1px solid var(--line-soft);transition:color .15s ease}
+.rm-v8 .rm-queue li:first-child{border-top:none}
+.rm-v8 .rm-queue li:hover{color:var(--ink)}
+.rm-v8 .rm-q-idx{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--ink-faint);flex:none;min-width:18px}
+
+/* ---- per-loop color (grouping) ---- */
+.rm-v8 .rm-build .rm-dot{background:var(--blue)}
+.rm-v8 .rm-build .rm-loop-name{color:var(--blue)}
+.rm-v8 .rm-build .rm-now-label{color:var(--blue)}
+.rm-v8 .rm-build .rm-q-idx{color:var(--blue)}
+.rm-v8 .rm-build .rm-story{border-left-color:var(--blue-soft)}
+
+.rm-v8 .rm-grow .rm-dot{background:var(--accent)}
+.rm-v8 .rm-grow .rm-loop-name{color:var(--accent)}
+.rm-v8 .rm-grow .rm-now-label{color:var(--accent)}
+.rm-v8 .rm-grow .rm-q-idx{color:var(--accent)}
+
+.rm-v8 .rm-run .rm-dot{background:var(--green)}
+.rm-v8 .rm-run .rm-loop-name{color:var(--green)}
+.rm-v8 .rm-run .rm-now-label{color:var(--green)}
+.rm-v8 .rm-run .rm-q-idx{color:var(--green)}
+
+@keyframes rm8pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+@media (prefers-reduced-motion:reduce){
+  .rm-v8 .rm-state-running .rm-state-dot{animation:none}
+  .rm-v8 .rm-action:hover{transform:none}
+}
+
+@media (max-width:600px){
+  .rm-v8{padding:28px 22px 30px}
+  .rm-v8 .rm-loop{grid-template-columns:1fr;gap:18px;padding:26px 0}
+  .rm-v8 .rm-loop:first-of-type{margin-top:18px}
+  .rm-v8 .rm-loop-id{flex-direction:row;align-items:center;justify-content:space-between}
+  .rm-v8 .rm-story-row{grid-template-columns:1fr;gap:3px}
+}
+
+.rm-v9{
+  --rm-radius:16px;
+  max-width:800px;
+  margin:0 auto;
+  padding:22px;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  border-radius:22px;
+  border:1px solid var(--line-soft);
+  box-sizing:border-box;
+}
+.rm-v9 *{box-sizing:border-box;}
+
+.rm-v9-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  padding-bottom:14px;
+  margin-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.rm-v9-brand{display:flex;align-items:center;gap:10px;}
+.rm-v9-mark{
+  width:30px;height:30px;border-radius:9px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--accent);color:#fff;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.02em;
+}
+.rm-v9-brandtext{display:flex;flex-direction:column;line-height:1.1;}
+.rm-v9-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:var(--ink);}
+.rm-v9-stage{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:3px;
+}
+
+.rm-v9-glance{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.rm-v9-gitem{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 9px;border-radius:999px;
+  background:var(--paper);border:1px solid var(--line);
+  font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--ink-soft);
+}
+.rm-v9-gdot{width:7px;height:7px;border-radius:50%;flex:none;}
+.rm-v9-gdot.build{background:var(--blue);}
+.rm-v9-gdot.grow{background:var(--accent);}
+.rm-v9-gdot.run{background:var(--green);}
+.rm-v9-gstate{font-weight:600;}
+.rm-v9-gstate.run{color:var(--green);}
+.rm-v9-gstate.need{color:var(--amber);}
+.rm-v9-gstate.idle{color:var(--slate);}
+
+.rm-v9-lead{
+  margin:0 0 16px;
+  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;color:var(--ink-soft);
+}
+.rm-v9-lead b{color:var(--ink);}
+
+.rm-v9-card{
+  position:relative;
+  display:flex;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:var(--rm-radius);
+  overflow:hidden;
+  margin-bottom:14px;
+  transition:box-shadow .18s ease;
+}
+.rm-v9-card:last-child{margin-bottom:0;}
+.rm-v9-rail{width:5px;flex:none;}
+.rm-v9-card.build .rm-v9-rail{background:var(--blue);}
+.rm-v9-card.grow .rm-v9-rail{background:var(--accent);}
+.rm-v9-card.run  .rm-v9-rail{background:var(--green);}
+.rm-v9-card.idle .rm-v9-rail{background:var(--slate);}
+.rm-v9-body{flex:1;padding:16px 18px;min-width:0;}
+
+.rm-v9-card.action{
+  background:var(--amber-soft);
+  border-color:var(--amber);
+  box-shadow:0 1px 0 var(--amber), 0 14px 34px -18px var(--amber);
+}
+.rm-v9-card.action:hover{box-shadow:0 1px 0 var(--amber), 0 16px 42px -16px var(--amber);}
+
+.rm-v9-cardhead{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.rm-v9-loop{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.rm-v9-loop i{width:8px;height:8px;border-radius:2px;flex:none;}
+.rm-v9-loop.build{color:var(--blue);}
+.rm-v9-loop.build i{background:var(--blue);}
+.rm-v9-loop.grow{color:var(--accent);}
+.rm-v9-loop.grow i{background:var(--accent);}
+.rm-v9-loop.run{color:var(--green);}
+.rm-v9-loop.run i{background:var(--green);}
+
+.rm-v9-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:999px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.rm-v9-badge.run{background:var(--green-soft);color:var(--green);}
+.rm-v9-badge.need{background:var(--amber);color:#fff;}
+.rm-v9-badge.idle{background:var(--line-soft);color:var(--slate);}
+.rm-v9-pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--green);flex:none;
+  animation:rm-v9-pulse 1.6s ease-in-out infinite;
+}
+@keyframes rm-v9-pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:.4;}
+}
+.rm-v9-health{
+  margin-left:auto;
+  font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--green);
+}
+
+.rm-v9-eyebrow{
+  display:block;
+  font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--ink-faint);margin-bottom:3px;
+}
+.rm-v9-title{
+  margin:0;
+  font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;
+  color:var(--ink);line-height:1.25;
+}
+.rm-v9-card.action .rm-v9-title{font-size:18px;}
+.rm-v9-desc{margin:8px 0 0;color:var(--ink-soft);font-size:13.5px;}
+
+.rm-v9-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.rm-v9-btn{
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  padding:8px 15px;border-radius:9px;cursor:pointer;
+  border:1px solid transparent;transition:filter .15s ease, background .15s ease;
+}
+.rm-v9-btn.primary{background:var(--accent);color:#fff;}
+.rm-v9-btn.primary:hover{filter:brightness(1.06);}
+.rm-v9-btn.ghost{background:var(--paper);color:var(--ink);border-color:var(--line);}
+.rm-v9-btn.ghost:hover{background:var(--cream);}
+
+.rm-v9-curr{margin-bottom:12px;}
+.rm-v9-story{border-left:2px solid var(--blue-soft);padding:2px 0 2px 12px;margin:0 0 12px;}
+.rm-v9-storyline{margin:0;color:var(--ink-soft);font-size:13.5px;font-style:italic;}
+.rm-v9-storyline b{color:var(--ink);font-style:normal;font-weight:600;}
+.rm-v9-done{
+  display:flex;align-items:baseline;gap:9px;
+  background:var(--blue-soft);border-radius:9px;padding:9px 11px;margin-bottom:14px;
+}
+.rm-v9-donelabel{
+  font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--blue);flex:none;font-weight:600;padding-top:1px;
+}
+.rm-v9-donetext{color:var(--ink);font-size:13px;}
+
+.rm-v9-recent{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px;}
+.rm-v9-recent li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);}
+.rm-v9-rtick{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none;}
+
+.rm-v9-next{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  padding-top:12px;border-top:1px dashed var(--line);
+}
+.rm-v9-card.action .rm-v9-next{border-top-color:var(--amber);}
+.rm-v9-nlabel{
+  font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--ink-faint);font-weight:600;
+}
+.rm-v9-chip{
+  padding:4px 10px;border-radius:999px;font-size:12px;
+  background:var(--cream-2);border:1px solid var(--line-soft);color:var(--ink-soft);
+}
+.rm-v9-card.action .rm-v9-chip{background:var(--paper);border-color:var(--amber);color:var(--ink);}
+
+.rm-v10{width:100%;max-width:800px;margin:0 auto;font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;background:var(--cream);border:1px solid var(--line);border-radius:20px;padding:22px 24px 26px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.rm-v10 *{box-sizing:border-box}
+
+/* per-loop color tokens */
+.rm-v10 .rm-build{--lc:var(--blue);--lcs:var(--blue-soft)}
+.rm-v10 .rm-grow{--lc:var(--accent);--lcs:var(--accent-soft)}
+.rm-v10 .rm-run{--lc:var(--green);--lcs:var(--green-soft)}
+.rm-v10 .rm-idle{--lc:var(--ink-faint);--lcs:var(--cream-2)}
+
+/* identity header */
+.rm-v10 .rm-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:15px;padding:0 2px}
+.rm-v10 .rm-id{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;min-width:0}
+.rm-v10 .rm-mark{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.02em}
+.rm-v10 .rm-stage{font-size:12px;color:var(--ink-soft)}
+.rm-v10 .rm-kicker{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+
+/* one-line loop-status header */
+.rm-v10 .rm-status{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:9px 13px;margin-bottom:14px;flex-wrap:wrap}
+.rm-v10 .rm-status-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+.rm-v10 .rm-status-list{display:flex;align-items:center;gap:7px;list-style:none;margin:0;padding:0;flex-wrap:wrap;flex:1}
+.rm-v10 .rm-si{display:inline-flex;align-items:center;gap:8px;padding:4px 9px 4px 11px;border-radius:999px;background:var(--cream-2);border:1px solid var(--line-soft)}
+.rm-v10 .rm-si-loop{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--lc)}
+.rm-v10 .rm-status-note{font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+.rm-v10 .rm-status-note b{color:var(--amber);font-weight:700}
+.rm-v10 .rm-status-note em{color:var(--ink-faint);font-style:normal}
+
+/* state badge */
+.rm-v10 .rm-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px 3px 7px;border-radius:999px;white-space:nowrap}
+.rm-v10 .rm-badge i{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.rm-v10 .rm-badge-run{color:var(--green);background:var(--green-soft)}
+.rm-v10 .rm-badge-need{color:var(--amber);background:var(--amber-soft)}
+.rm-v10 .rm-badge-idle{color:var(--ink-faint);background:var(--cream-2)}
+
+/* grid shell */
+.rm-v10 .rm-grid{background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.rm-v10 .rm-colhead{display:grid;grid-template-columns:134px 1.42fr 1fr;padding:9px 0;border-bottom:1px solid var(--line);border-left:3px solid transparent;background:var(--cream-2)}
+.rm-v10 .rm-colhead span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding-left:18px}
+
+/* loop rows */
+.rm-v10 .rm-row{display:grid;grid-template-columns:134px 1.42fr 1fr;border-top:1px solid var(--line-soft);border-left:3px solid var(--lc)}
+.rm-v10 .rm-colhead + .rm-row{border-top:none}
+.rm-v10 .rm-loop{padding:14px 13px 14px 15px;background:var(--lcs);display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.rm-v10 .rm-loop-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;color:var(--lc);letter-spacing:-.01em}
+.rm-v10 .rm-loop-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+
+/* current + next cells */
+.rm-v10 .rm-cur{padding:14px 18px;border-left:1px solid var(--line-soft)}
+.rm-v10 .rm-next{padding:14px 18px;border-left:1px solid var(--line-soft)}
+.rm-v10 .rm-needs .rm-cur{background:var(--amber-soft)}
+
+/* task body */
+.rm-v10 .rm-task-flag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--lc);margin-bottom:5px;font-weight:600}
+.rm-v10 .rm-flag-need{color:var(--amber)}
+.rm-v10 .rm-task-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;line-height:1.3;margin:0 0 7px;letter-spacing:-.01em;color:var(--ink)}
+.rm-v10 .rm-story{font-size:12px;font-style:italic;color:var(--ink-soft);margin:0 0 8px;padding-left:9px;border-left:2px solid var(--lc);line-height:1.45}
+.rm-v10 .rm-done{font-size:11.5px;color:var(--ink-soft);margin:0;line-height:1.45}
+.rm-v10 .rm-done span{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--green);font-weight:600;margin-right:6px}
+.rm-v10 .rm-sub{font-size:12px;color:var(--ink-soft);margin:0 0 11px;line-height:1.45}
+
+/* run recent activity */
+.rm-v10 .rm-recent{list-style:none;margin:5px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.rm-v10 .rm-recent li{font-size:11.5px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;line-height:1.35}
+.rm-v10 .rm-recent li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green);flex:none}
+
+/* grow needs-you action */
+.rm-v10 .rm-action{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.rm-v10 .rm-btn{font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;padding:7px 13px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:background .18s ease,border-color .18s ease,color .18s ease,filter .18s ease}
+.rm-v10 .rm-btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.rm-v10 .rm-btn-primary:hover{filter:brightness(.94)}
+.rm-v10 .rm-btn-ghost{background:var(--paper);color:var(--ink-soft);border-color:var(--line)}
+.rm-v10 .rm-btn-ghost:hover{color:var(--ink);border-color:var(--ink-faint)}
+
+/* next-up queue */
+.rm-v10 .rm-queue{list-style:none;margin:0;padding:0;counter-reset:q;display:flex;flex-direction:column;gap:9px}
+.rm-v10 .rm-queue li{position:relative;counter-increment:q;font-size:12.5px;color:var(--ink);line-height:1.35;padding-left:25px}
+.rm-v10 .rm-queue li::before{content:counter(q);position:absolute;left:0;top:-1px;width:18px;height:18px;border-radius:6px;background:var(--lcs);color:var(--lc);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.rm-v10 .rm-queue-empty{font-size:12px;color:var(--ink-faint);font-style:italic}
+
+@media (max-width:680px){
+.rm-v10 .rm-colhead{display:none}
+.rm-v10 .rm-row{grid-template-columns:1fr}
+.rm-v10 .rm-loop{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}
+.rm-v10 .rm-cur,.rm-v10 .rm-next{border-left:none;border-top:1px solid var(--line-soft)}
+}
+</style>
+<script>
+var tb=document.getElementById('themeBtn');
+tb.addEventListener('click',function(){var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');tb.textContent=d?'☾ Dark':'☀ Light';});
+</script>
+</body>
+</html>

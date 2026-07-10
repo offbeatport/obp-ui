@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #0a0a0c;
+  --panel: rgba(22, 22, 27, 0.78);
+  --panel-solid: #16161b;
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.12);
+  --txt: #ececf1;
+  --txt-dim: #a0a0ad;
+  --txt-faint: #6c6c7a;
+  --accent: #8b6dff;
+  --accent-soft: rgba(139, 109, 255, 0.16);
+  --accent-line: rgba(139, 109, 255, 0.45);
+  --green: #46d18f;
+  --green-soft: rgba(70, 209, 143, 0.14);
+  --blue: #5b9dff;
+  --blue-soft: rgba(91, 157, 255, 0.14);
+  --amber: #f5b549;
+  --amber-soft: rgba(245, 181, 73, 0.14);
+  --violet: #b18bff;
+  --red: #ff6b6b;
+  --red-soft: rgba(255, 107, 107, 0.14);
+  --slate: #8a8a99;
+  --shadow: 0 32px 80px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background:
+    radial-gradient(900px 600px at 18% -10%, rgba(139,109,255,0.10), transparent 60%),
+    radial-gradient(800px 600px at 92% 110%, rgba(91,157,255,0.06), transparent 55%),
+    var(--bg);
+  color: var(--txt);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+}
+::selection { background: var(--accent-soft); }
+
+/* scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); background-clip: padding-box; }
+
+/* ============ STAGE ============ */
+.stage {
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 11vh;
+}
+
+/* ============ LAUNCHER PANEL ============ */
+.launcher {
+  width: min(720px, 92vw);
+  background: var(--panel);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: opacity 0.16s var(--ease), transform 0.2s var(--ease), filter 0.2s var(--ease);
+  display: flex;
+  flex-direction: column;
+  max-height: 78vh;
+}
+.app--zoom .launcher { opacity: 0; transform: scale(0.97) translateY(-8px); filter: blur(4px); pointer-events: none; }
+
+/* search field */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  height: 60px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+.search svg { width: 19px; height: 19px; color: var(--txt-faint); flex-shrink: 0; }
+.search input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--txt);
+  font-size: 18px;
+  font-family: inherit;
+  letter-spacing: -0.015em;
+}
+.search input::placeholder { color: var(--txt-faint); }
+.search .scope {
+  font-size: 11px;
+  color: var(--txt-dim);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--hairline);
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* results */
+.results { overflow-y: auto; padding: 8px; flex: 1; scroll-padding: 44px 0; }
+.group-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-faint);
+  padding: 12px 12px 6px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+}
+.row.sel { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line); }
+.row .ricon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline);
+}
+.row .rmid { flex: 1; min-width: 0; }
+.row .rtitle { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.row .rtitle .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .rsub { font-size: 12px; color: var(--txt-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.row .rright { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.row .renter {
+  font-family: var(--mono); font-size: 12px; color: var(--txt-faint);
+  opacity: 0; transition: opacity 0.12s var(--ease);
+}
+.row.sel .renter { opacity: 1; }
+
+/* status dot + pills */
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot.green { background: var(--green); box-shadow: 0 0 8px var(--green-soft); }
+.dot.amber { background: var(--amber); }
+.dot.gray { background: var(--slate); }
+.dot.blue { background: var(--blue); animation: pulse 1.6s var(--ease) infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(91,157,255,0.5); } 50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(91,157,255,0); } }
+
+.pill {
+  font-size: 10.5px; font-weight: 600; padding: 2.5px 8px; border-radius: 999px;
+  letter-spacing: 0.01em; white-space: nowrap;
+}
+.pill.needs { background: var(--violet); color: #14101f; }
+.pill.score { font-family: var(--mono); background: rgba(255,255,255,0.06); color: var(--txt-dim); border: 1px solid var(--hairline); }
+.pill.score.hi { background: var(--green-soft); color: var(--green); border-color: transparent; }
+.pill.killed { background: var(--red-soft); color: var(--red); }
+.pill.mrr { font-family: var(--mono); color: var(--green); font-size: 12px; font-weight: 600; padding: 0; background: none; }
+
+.empty { padding: 36px; text-align: center; color: var(--txt-faint); font-size: 13px; }
+
+/* footer hint row */
+.footbar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 16px; height: 44px;
+  border-top: 1px solid var(--hairline);
+  flex-shrink: 0;
+  font-size: 12px; color: var(--txt-faint);
+}
+.footbar .brand { font-weight: 600; color: var(--txt-dim); display: flex; align-items: center; gap: 8px; }
+.footbar .brand .glyph { width: 16px; height: 16px; border-radius: 4px; background: var(--accent); display: grid; place-items: center; color: #fff; font-size: 9px; font-weight: 800; }
+.footbar .spacer { flex: 1; }
+.hint { display: flex; align-items: center; gap: 6px; }
+.kbd {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  display: inline-grid; place-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 5px; color: var(--txt-dim);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+
+/* ============ ZOOM / DETAIL (slides from right) ============ */
+.zoom {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: min(1100px, 96vw);
+  background: var(--panel-solid);
+  border-left: 1px solid var(--hairline-strong);
+  box-shadow: -40px 0 100px -20px rgba(0,0,0,0.8);
+  transform: translateX(100%);
+  transition: transform 0.28s var(--ease);
+  display: flex; flex-direction: column;
+  z-index: 40;
+}
+.app--zoom .zoom { transform: translateX(0); }
+
+.zhead {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 24px; border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+.back {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--hairline);
+  color: var(--txt-dim); padding: 6px 11px; border-radius: 9px;
+  font-size: 12.5px; font-weight: 500; cursor: pointer; font-family: inherit;
+  transition: background 0.12s var(--ease), color 0.12s;
+}
+.back:hover { background: rgba(255,255,255,0.09); color: var(--txt); }
+.back .kbd { background: rgba(0,0,0,0.3); }
+.zlogo { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--accent-soft); color: var(--violet); border: 1px solid var(--accent-line); }
+.ztitle { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+.zsub { font-size: 12.5px; color: var(--txt-faint); margin-top: 1px; }
+.zspace { flex: 1; }
+.zmetric { text-align: right; }
+.zmetric .v { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+.zmetric .l { font-size: 10.5px; color: var(--txt-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.zbody { flex: 1; display: grid; grid-template-columns: 1fr 360px; overflow: hidden; }
+.zmain { overflow-y: auto; padding: 24px; }
+.zside { border-left: 1px solid var(--hairline); display: flex; flex-direction: column; overflow: hidden; }
+
+/* approval gate */
+.gate {
+  border: 1px solid var(--accent-line);
+  background: linear-gradient(180deg, var(--accent-soft), rgba(139,109,255,0.02));
+  border-radius: 14px; overflow: hidden; margin-bottom: 22px;
+}
+.gate-top { display: flex; align-items: center; gap: 11px; padding: 14px 18px; border-bottom: 1px solid var(--hairline); }
+.gate-top .tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--violet); background: rgba(177,139,255,0.12); padding: 3px 9px; border-radius: 6px; }
+.gate-top .gt { font-size: 14.5px; font-weight: 600; }
+.gate-top .gt span { color: var(--txt-faint); font-weight: 450; }
+
+.gate-meta { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px; }
+.meta-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,0.25); border: 1px solid var(--hairline);
+  padding: 8px 12px; border-radius: 10px; font-size: 12.5px;
+}
+.meta-chip .ml { color: var(--txt-faint); }
+.meta-chip a { color: var(--blue); text-decoration: none; font-family: var(--mono); font-size: 12px; }
+.meta-chip a:hover { text-decoration: underline; }
+.meta-chip.pass { border-color: rgba(70,209,143,0.3); background: var(--green-soft); }
+.meta-chip.pass .ml { color: var(--green); font-weight: 600; }
+
+.donewhen { margin: 0 18px 14px; font-family: var(--mono); font-size: 11.5px; color: var(--txt-dim); background: rgba(0,0,0,0.3); border: 1px solid var(--hairline); border-radius: 9px; padding: 10px 12px; }
+.donewhen .ok { color: var(--green); font-weight: 600; }
+
+.diff { margin: 0 18px 16px; border: 1px solid var(--hairline); border-radius: 10px; overflow: hidden; }
+.diff-h { font-size: 11px; color: var(--txt-faint); padding: 8px 13px; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--hairline); font-family: var(--mono); display: flex; align-items: center; gap: 8px; }
+.diff pre { margin: 0; padding: 12px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.65; overflow-x: auto; background: rgba(0,0,0,0.35); }
+.diff .add { color: var(--green); }
+.diff .ctx { color: var(--txt-faint); }
+
+.actions { display: flex; gap: 10px; padding: 16px 18px; border-top: 1px solid var(--hairline); }
+.btn {
+  font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  padding: 10px 16px; border-radius: 10px; border: 1px solid transparent;
+  display: flex; align-items: center; gap: 8px;
+  transition: transform 0.1s var(--ease), filter 0.12s, background 0.12s;
+}
+.btn:active { transform: scale(0.97); }
+.btn .kbd { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.18); }
+.btn.approve { background: var(--green); color: #062414; }
+.btn.approve:hover { filter: brightness(1.08); }
+.btn.reject { background: rgba(255,255,255,0.05); border-color: var(--hairline-strong); color: var(--txt-dim); }
+.btn.reject:hover { background: var(--red-soft); border-color: rgba(255,107,107,0.3); color: var(--red); }
+.btn.flashed { background: var(--green) !important; color: #062414 !important; }
+
+/* reject feedback box */
+.feedback { padding: 0 18px 16px; display: none; }
+.app .feedback.open { display: block; }
+.feedback textarea {
+  width: 100%; min-height: 64px; resize: vertical;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--hairline-strong);
+  border-radius: 10px; padding: 10px 12px; color: var(--txt);
+  font-family: inherit; font-size: 13px; outline: none;
+}
+.feedback textarea:focus { border-color: var(--accent-line); }
+.feedback .fb-actions { display: flex; gap: 8px; margin-top: 8px; }
+.btn.send { background: var(--accent); color: #fff; padding: 8px 14px; font-size: 12.5px; }
+.btn.cancel { background: none; border-color: var(--hairline); color: var(--txt-faint); padding: 8px 14px; font-size: 12.5px; }
+
+/* confirmation toast */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--green); color: #062414; font-weight: 600; font-size: 13.5px;
+  padding: 11px 20px; border-radius: 11px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+  z-index: 100; display: flex; align-items: center; gap: 8px;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.reject { background: var(--amber); color: #2a1d00; }
+
+/* slices list in main */
+.section-h { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--txt-faint); margin: 4px 0 12px; }
+.slice {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid transparent;
+}
+.slice:hover { background: rgba(255,255,255,0.025); }
+.slice .sn { font-family: var(--mono); font-size: 11px; color: var(--txt-faint); width: 22px; }
+.slice .stitle { flex: 1; font-size: 13.5px; }
+.slice.await { border-color: var(--accent-line); background: var(--accent-soft); }
+.sstatus { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px; display: flex; align-items: center; gap: 6px; }
+.sstatus.shipped { color: var(--green); background: var(--green-soft); }
+.sstatus.building { color: var(--blue); background: var(--blue-soft); }
+.sstatus.awaiting_approval { color: var(--violet); background: rgba(177,139,255,0.14); }
+.sstatus.todo { color: var(--slate); background: rgba(138,138,153,0.12); }
+.sstatus.blocked { color: var(--red); background: var(--red-soft); }
+.slice .pri { font-family: var(--mono); font-size: 11px; color: var(--txt-faint); }
+
+/* company chat */
+.chat-h { padding: 16px 18px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--txt-faint); flex-shrink: 0; }
+.chat-log { flex: 1; overflow-y: auto; padding: 0 18px; display: flex; flex-direction: column; gap: 12px; }
+.msg { font-size: 13px; line-height: 1.5; max-width: 92%; }
+.msg.assistant { color: var(--txt); }
+.msg.user { align-self: flex-end; background: var(--accent-soft); border: 1px solid var(--accent-line); padding: 8px 12px; border-radius: 12px 12px 4px 12px; }
+.msg .who { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--txt-faint); margin-bottom: 3px; }
+.chat-input { display: flex; gap: 8px; padding: 14px 18px; border-top: 1px solid var(--hairline); flex-shrink: 0; }
+.chat-input input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--hairline-strong); border-radius: 10px; padding: 9px 12px; color: var(--txt); font-family: inherit; font-size: 13px; outline: none; }
+.chat-input input:focus { border-color: var(--accent-line); }
+
+/* ============ OVERVIEW (toggle screen) ============ */
+.overview {
+  position: fixed; inset: 0; z-index: 30;
+  background: var(--bg);
+  display: none; flex-direction: column;
+}
+.app--overview .overview { display: flex; }
+.ov-head { display: flex; align-items: center; gap: 16px; padding: 18px 28px; border-bottom: 1px solid var(--hairline); flex-shrink: 0; }
+.ov-head h1 { font-size: 16px; font-weight: 600; }
+.ov-head .sub { font-size: 12.5px; color: var(--txt-faint); }
+.ov-metrics { display: flex; gap: 26px; margin-left: auto; }
+.ov-metric .v { font-family: var(--mono); font-size: 19px; font-weight: 600; }
+.ov-metric .v.accent { color: var(--violet); }
+.ov-metric .v.green { color: var(--green); }
+.ov-metric .l { font-size: 10.5px; color: var(--txt-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+.ov-scroll { flex: 1; overflow: auto; padding: 24px 28px 80px; }
+.ov-cols { display: flex; gap: 20px; min-width: max-content; }
+.ov-col { width: 360px; flex-shrink: 0; }
+.ov-col > h2 { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--txt-faint); margin-bottom: 12px; padding-left: 2px; }
+.card {
+  background: var(--panel-solid); border: 1px solid var(--hairline);
+  border-radius: 13px; padding: 15px; margin-bottom: 12px; cursor: default;
+  transition: border-color 0.14s var(--ease), transform 0.14s var(--ease);
+}
+.card.clickable { cursor: pointer; }
+.card.clickable:hover { border-color: var(--hairline-strong); transform: translateY(-1px); }
+.card.needs { border-color: var(--accent-line); }
+.card-top { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+.card-top .cn { font-size: 14.5px; font-weight: 600; }
+.card-top .cspace { flex: 1; }
+.card .thesis { font-size: 12.5px; color: var(--txt-dim); line-height: 1.45; margin-bottom: 11px; }
+.card-foot { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--txt-faint); }
+.card-foot .m { font-family: var(--mono); }
+.card-foot .building-line { display: flex; align-items: center; gap: 7px; color: var(--blue); font-size: 12px; }
+.opp .score-bar { height: 4px; border-radius: 3px; background: rgba(255,255,255,0.07); overflow: hidden; margin: 9px 0; }
+.opp .score-bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.promote {
+  font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  background: var(--accent-soft); color: var(--violet); border: 1px solid var(--accent-line);
+  padding: 5px 11px; border-radius: 8px; transition: background 0.12s;
+}
+.promote:hover { background: rgba(139,109,255,0.26); }
+.promote:active { transform: scale(0.96); }
+.nextmove { display: flex; gap: 9px; font-size: 13px; line-height: 1.45; padding: 9px 0; border-bottom: 1px solid var(--hairline); color: var(--txt-dim); }
+.nextmove:last-child { border: none; }
+.nextmove .n { color: var(--accent); font-weight: 700; font-family: var(--mono); }
+
+/* ============ ACTIVITY STRIP ============ */
+.activity {
+  position: fixed; right: 20px; bottom: 64px; z-index: 60;
+  width: 360px; max-width: 90vw;
+  background: var(--panel); backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid var(--hairline-strong); border-radius: 13px;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+.act-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; }
+.act-head .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--txt-faint); }
+.act-head .chev { margin-left: auto; color: var(--txt-faint); transition: transform 0.2s var(--ease); font-size: 12px; }
+.activity.open .act-head .chev { transform: rotate(180deg); }
+.act-collapsed { padding: 0 14px 12px; }
+.act-line { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--txt-dim); }
+.act-line .co { font-weight: 600; color: var(--txt); }
+.act-line .t { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--txt-faint); }
+.act-full { display: none; max-height: 320px; overflow-y: auto; padding: 0 6px 8px; }
+.activity.open .act-full { display: block; }
+.activity.open .act-collapsed { display: none; }
+.act-cogroup { padding: 8px 8px 4px; }
+.act-cogroup .cohead { font-size: 11px; font-weight: 600; color: var(--txt-dim); padding: 4px 6px; display: flex; align-items: center; gap: 7px; }
+.act-item { display: flex; gap: 9px; align-items: flex-start; padding: 6px 8px; border-radius: 8px; font-size: 12px; color: var(--txt-dim); line-height: 1.4; }
+.act-item .t2 { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--txt-faint); flex-shrink: 0; }
+.act-item .txt { flex: 1; }
+
+/* corner badge */
+.badge {
+  position: fixed; left: 20px; bottom: 20px; z-index: 80;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--txt-dim); background: var(--panel);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline-strong); border-radius: 8px;
+  padding: 6px 10px; letter-spacing: 0.02em;
+}
+.badge b { color: var(--accent); }
+
+/* global hint to open overview */
+.toggle-ov {
+  position: fixed; right: 20px; bottom: 20px; z-index: 80;
+  font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--txt-dim); background: var(--panel);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline-strong); border-radius: 8px;
+  padding: 6px 11px; display: flex; align-items: center; gap: 8px;
+  transition: color 0.12s, border-color 0.12s;
+}
+.toggle-ov:hover { color: var(--txt); border-color: var(--accent-line); }
+.app--zoom .toggle-ov { display: none; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- LAUNCHER -->
+  <div class="stage">
+    <div class="launcher">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="q" type="text" placeholder="Search companies, commands, opportunities…" autocomplete="off" spellcheck="false" />
+        <span class="scope">Portfolio · 5 companies</span>
+      </div>
+      <div class="results" id="results"></div>
+      <div class="footbar">
+        <span class="brand"><span class="glyph">C</span> C Slop Slop</span>
+        <span class="spacer"></span>
+        <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> navigate</span>
+        <span class="hint"><span class="kbd">↵</span> open</span>
+        <span class="hint"><span class="kbd">esc</span> back</span>
+        <span class="hint"><span class="kbd">⌘</span><span class="kbd">K</span> focus</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZOOM / COMPANY DETAIL -->
+  <div class="zoom" id="zoom">
+    <div class="zhead">
+      <button class="back" id="backBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back <span class="kbd">esc</span>
+      </button>
+      <div class="zlogo">L</div>
+      <div>
+        <div class="ztitle">LeadSift <span class="dot green"></span></div>
+        <div class="zsub">Scrape + score inbound leads from any webform · leadsift.app</div>
+      </div>
+      <div class="zspace"></div>
+      <div class="zmetric"><div class="v green">$180</div><div class="l">MRR</div></div>
+      <div class="zmetric"><div class="v">12</div><div class="l">Users</div></div>
+      <div class="zmetric"><div class="v" style="color:var(--violet)">5</div><div class="l">Slices live</div></div>
+    </div>
+    <div class="zbody">
+      <div class="zmain">
+        <!-- APPROVAL GATE -->
+        <div class="gate">
+          <div class="gate-top">
+            <span class="dot" style="background:var(--violet);width:9px;height:9px"></span>
+            <span class="tag">Needs you · L0 Approval</span>
+            <span class="gt">Slice 5 — <span>User gets a daily email digest of top leads</span></span>
+          </div>
+          <div class="gate-meta">
+            <div class="meta-chip"><span class="ml">Preview</span><a href="http://localhost:4019/digest/preview" target="_blank">http://localhost:4019/digest/preview ↗</a></div>
+            <div class="meta-chip pass"><span class="dot green"></span><span class="ml">doneWhen passed</span></div>
+            <div class="meta-chip"><span class="ml">Attempt</span><span style="font-family:var(--mono)">#2</span></div>
+          </div>
+          <div class="donewhen">doneWhen: GET /digest/preview → 200 and body contains "Top leads" &nbsp;<span class="ok">✓ passed</span></div>
+          <div class="diff">
+            <div class="diff-h">DailyDigest.tsx &nbsp;·&nbsp; +5 −0</div>
+            <pre id="diffBody"></pre>
+          </div>
+          <div class="actions">
+            <button class="btn approve" id="approveBtn">Approve &amp; ship <span class="kbd">↵</span></button>
+            <button class="btn reject" id="rejectBtn">Reject with feedback</button>
+          </div>
+          <div class="feedback" id="feedback">
+            <textarea id="fbText" placeholder="What should the agents change? e.g. 'only include leads scored ≥ 80, send at 07:00'"></textarea>
+            <div class="fb-actions">
+              <button class="btn send" id="sendFb">Send feedback</button>
+              <button class="btn cancel" id="cancelFb">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLICES -->
+        <div class="section-h">Slices</div>
+        <div id="sliceList"></div>
+      </div>
+
+      <!-- COMPANY CHAT -->
+      <div class="zside">
+        <div class="chat-h">Chat · LeadSift</div>
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-input">
+          <input id="chatIn" type="text" placeholder="Message LeadSift…" autocomplete="off" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW (toggle) -->
+  <div class="overview" id="overview">
+    <div class="ov-head">
+      <button class="back" id="ovBack">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Launcher <span class="kbd">esc</span>
+      </button>
+      <div>
+        <h1>Portfolio overview</h1>
+        <div class="sub">All companies, opportunities and next moves</div>
+      </div>
+      <div class="ov-metrics">
+        <div class="ov-metric"><div class="v green">$695</div><div class="l">MRR</div></div>
+        <div class="ov-metric"><div class="v">56</div><div class="l">Users</div></div>
+        <div class="ov-metric"><div class="v">5</div><div class="l">Active</div></div>
+        <div class="ov-metric"><div class="v">22</div><div class="l">Shipped</div></div>
+        <div class="ov-metric"><div class="v accent">1</div><div class="l">Needs you</div></div>
+      </div>
+    </div>
+    <div class="ov-scroll">
+      <div class="ov-cols">
+        <div class="ov-col"><h2>Companies</h2><div id="ovCompanies"></div></div>
+        <div class="ov-col"><h2>Opportunities</h2><div id="ovOpps"></div></div>
+        <div class="ov-col"><h2>Next moves</h2><div class="card" id="ovMoves"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY STRIP -->
+  <div class="activity" id="activity">
+    <div class="act-head" id="actHead">
+      <span class="dot blue"></span>
+      <span class="lbl">Live activity</span>
+      <span class="chev">▾</span>
+    </div>
+    <div class="act-collapsed" id="actCollapsed"></div>
+    <div class="act-full" id="actFull"></div>
+  </div>
+
+  <!-- corner UI -->
+  <div class="badge"><b>11</b> · Launcher</div>
+  <button class="toggle-ov" id="toggleOv">Portfolio overview <span class="kbd">⇧</span><span class="kbd">O</span></button>
+
+  <!-- toast -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+const STATUS_DOT = { active:'green', paused:'amber', archived:'gray' };
+
+/* ---------- build the searchable index ---------- */
+const items = [];
+DATA.companies.forEach(c => {
+  const cur = c.currentSlice;
+  const sub = c.needsYou ? 'Needs your approval · ' + c.thesis : c.thesis;
+  items.push({
+    type:'company', group:'Companies', id:c.id, name:c.name,
+    sub, keywords:(c.name + ' ' + c.thesis + ' ' + (c.domain||'')).toLowerCase(),
+    status:c.status, needs:c.needsYou, mrr:c.mrr,
+    building: cur && cur.status==='building',
+  });
+});
+DATA.opportunities.forEach(o => {
+  items.push({
+    type:'opp', group:'Opportunities', id:o.id, name:o.title,
+    sub:o.thesis, keywords:(o.title + ' ' + o.thesis + ' ' + o.thought).toLowerCase(),
+    score:o.score, killed:o.status==='killed',
+  });
+});
+const commands = [
+  { name:'Approve LeadSift slice 5', sub:'Daily digest — live + check green', act:'zoom', kw:'approve leadsift slice 5 digest gate' },
+  { name:'Promote “PayoutReconciler”', sub:'Score 82 → spin up a company', act:'promote', oid:'o1', kw:'promote payoutreconciler opportunity stripe' },
+  { name:'Open portfolio overview', sub:'All companies, metrics, next moves', act:'overview', kw:'overview portfolio dashboard companies metrics' },
+  { name:'Toggle live activity', sub:'Show the full build stream', act:'activity', kw:'activity live stream build feed toggle' },
+  { name:'Unblock RedditPainBot slice 8', sub:'Stopped — same failure ×3', act:'noop', kw:'unblock redditpainbot slice 8 blocked' },
+];
+commands.forEach(c => items.push({ type:'cmd', group:'Commands', name:c.name, sub:c.sub, keywords:c.kw, act:c.act, oid:c.oid }));
+
+/* ---------- fuzzy filter ---------- */
+function fuzzy(needle, hay){
+  needle = needle.toLowerCase().trim();
+  if(!needle) return { ok:true, score:0 };
+  // subsequence match
+  let n=0, score=0, run=0;
+  for(let h=0; h<hay.length && n<needle.length; h++){
+    if(hay[h]===needle[n]){ n++; run++; score += run; }
+    else run=0;
+  }
+  if(n<needle.length) return { ok:false };
+  // bonus for exact substring
+  if(hay.includes(needle)) score += 50;
+  return { ok:true, score };
+}
+
+const el = id => document.getElementById(id);
+const app = el('app');
+let selIdx = 0;
+let filtered = [];
+
+function render(query){
+  const groups = { Companies:[], Commands:[], Opportunities:[] };
+  filtered = [];
+  items.forEach(it => {
+    const r = fuzzy(query, it.keywords);
+    if(r.ok){ it._score = r.score; groups[it.group].push(it); }
+  });
+  Object.values(groups).forEach(g => g.sort((a,b)=> (b._score - a._score)));
+  filtered = [...groups.Companies, ...groups.Commands, ...groups.Opportunities];
+  if(selIdx >= filtered.length) selIdx = Math.max(0, filtered.length-1);
+
+  const wrap = el('results');
+  if(filtered.length === 0){ wrap.innerHTML = '<div class="empty">No matches. Try “digest”, “promote”, or “overview”.</div>'; return; }
+
+  let html = '', gi = 0;
+  ['Companies','Commands','Opportunities'].forEach(gname => {
+    if(groups[gname].length === 0) return;
+    html += `<div class="group-label">${gname}</div>`;
+    groups[gname].forEach(it => {
+      const idx = filtered.indexOf(it);
+      const sel = idx === selIdx ? ' sel' : '';
+      let icon='', right='';
+      if(it.type==='company'){
+        icon = `<div class="ricon" style="color:var(--violet)">${it.name[0]}</div>`;
+        const d = STATUS_DOT[it.status];
+        right = `<span class="dot ${d}"></span>` +
+                (it.building ? `<span class="dot blue"></span>`:'') +
+                (it.needs ? `<span class="pill needs">Needs you</span>`:'') +
+                (it.mrr ? `<span class="pill mrr">$${it.mrr}</span>`:'');
+      } else if(it.type==='opp'){
+        icon = `<div class="ricon" style="color:var(--blue)">◆</div>`;
+        const hi = it.score>=70 ? ' hi':'';
+        right = it.killed ? `<span class="pill killed">killed</span>` : `<span class="pill score${hi}">${it.score}</span>`;
+      } else {
+        icon = `<div class="ricon" style="color:var(--txt-dim)">⌘</div>`;
+        right = '';
+      }
+      html += `<div class="row${sel}" data-idx="${idx}">
+        ${icon}
+        <div class="rmid"><div class="rtitle"><span class="name">${it.name}</span></div><div class="rsub">${it.sub}</div></div>
+        <div class="rright">${right}<span class="renter">↵</span></div>
+      </div>`;
+    });
+  });
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.row').forEach(row => {
+    row.addEventListener('click', () => { selIdx = +row.dataset.idx; activate(); });
+    row.addEventListener('mousemove', () => { if(+row.dataset.idx !== selIdx){ selIdx = +row.dataset.idx; refreshSel(); } });
+  });
+}
+function refreshSel(){
+  document.querySelectorAll('.row').forEach(r => r.classList.toggle('sel', +r.dataset.idx===selIdx));
+}
+function scrollToSel(){
+  const r = document.querySelector('.row.sel');
+  if(r) r.scrollIntoView({ block:'nearest' });
+}
+
+/* ---------- activation ---------- */
+function activate(){
+  const it = filtered[selIdx];
+  if(!it) return;
+  if(it.type==='company'){ openZoom(it.id); return; }
+  if(it.type==='opp'){ if(!it.killed) promote(it.name); return; }
+  if(it.type==='cmd'){
+    if(it.act==='zoom') openZoom('leadsift');
+    else if(it.act==='overview') showOverview(true);
+    else if(it.act==='activity') el('activity').classList.toggle('open');
+    else if(it.act==='promote') promote('PayoutReconciler');
+    else flashToast('Queued ✓', false);
+  }
+}
+
+/* ---------- zoom ---------- */
+function openZoom(id){
+  // only LeadSift has full detail; others still open the gate-less view politely
+  app.classList.remove('app--overview');
+  app.classList.add('app--zoom');
+  el('chatIn') && setTimeout(()=> el('chatIn').focus(), 200);
+}
+function closeZoom(){
+  app.classList.remove('app--zoom');
+  setTimeout(()=> el('q').focus(), 60);
+}
+
+/* ---------- overview ---------- */
+function showOverview(on){
+  app.classList.toggle('app--overview', on);
+  if(!on) el('q').focus();
+}
+
+/* ---------- approval ---------- */
+function approve(){
+  const b = el('approveBtn');
+  b.classList.add('flashed');
+  b.innerHTML = 'Approved ✓ — shipping';
+  flashToast('Approved ✓ — slice 5 shipped to leadsift.app', false);
+  el('feedback').classList.remove('open');
+  // mark slice shipped
+  const s = document.querySelector('.slice.await');
+  if(s){
+    s.classList.remove('await');
+    s.querySelector('.sstatus').className = 'sstatus shipped';
+    s.querySelector('.sstatus').innerHTML = '<span class="dot green"></span>shipped';
+  }
+  setTimeout(()=>{ b.classList.remove('flashed'); b.innerHTML = 'Approve &amp; ship <span class="kbd">↵</span>'; }, 2200);
+}
+function sendFeedback(){
+  const txt = el('fbText').value.trim();
+  flashToast('Rejected — feedback sent to agents' + (txt ? ' ↻' : ''), true);
+  el('feedback').classList.remove('open');
+  el('fbText').value = '';
+  const ss = document.querySelector('.slice.await .sstatus');
+  if(ss){ ss.className='sstatus building'; ss.innerHTML='<span class="dot blue"></span>rebuilding'; }
+}
+function flashToast(msg, reject){
+  const t = el('toast');
+  t.textContent = msg;
+  t.classList.toggle('reject', !!reject);
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ---------- promote ---------- */
+function promote(name){
+  flashToast('Promoted “'+name+'” → new company committed', false);
+}
+
+/* ---------- render zoom static content ---------- */
+function buildZoom(){
+  const c = DATA.companies[0];
+  // diff
+  el('diffBody').innerHTML = c.approval.diff.split('\n').map(line => {
+    const cls = line.startsWith('+') ? 'add' : 'ctx';
+    return `<span class="${cls}">${esc(line)}</span>`;
+  }).join('\n');
+  // slices
+  el('sliceList').innerHTML = c.slices.map(s => {
+    const aw = s.status==='awaiting_approval';
+    const dotMap = { shipped:'green', building:'blue', todo:'gray', blocked:'red', awaiting_approval:'' };
+    const label = s.status.replace('_',' ');
+    const dot = s.status==='awaiting_approval' ? '<span class="dot" style="background:var(--violet)"></span>'
+              : `<span class="dot ${dotMap[s.status]}"></span>`;
+    let right = '';
+    if(s.priority && (s.status==='todo'||s.status==='awaiting_approval')) right = `<span class="pri">P${s.priority}</span>`;
+    if(s.note) right = `<span class="pri" style="color:var(--red)">${esc(s.note)}</span>`;
+    return `<div class="slice${aw?' await':''}">
+      <span class="sn">#${s.n}</span>
+      <span class="stitle">${esc(s.title)}</span>
+      ${right}
+      <span class="sstatus ${s.status}">${dot}${label}</span>
+    </div>`;
+  }).join('');
+  // chat
+  el('chatLog').innerHTML = DATA.chat.map(m =>
+    `<div class="msg ${m.role}">${m.role==='assistant'?'<div class="who">Agent</div>':''}${esc(m.text)}</div>`
+  ).join('');
+}
+
+/* ---------- overview content ---------- */
+function buildOverview(){
+  el('ovCompanies').innerHTML = DATA.companies.map(c => {
+    const d = STATUS_DOT[c.status];
+    const cur = c.currentSlice;
+    let foot = `<span class="m">$${c.mrr}/mo</span><span class="m">${c.users} users</span>`;
+    if(c.needsYou) foot = `<span class="building-line" style="color:var(--violet)"><span class="dot" style="background:var(--violet)"></span>slice 5 needs you</span>` + foot;
+    else if(cur && cur.status==='building') foot = `<span class="building-line"><span class="dot blue"></span>${esc(cur.step)}</span>`;
+    else if(cur && cur.status==='blocked') foot = `<span class="building-line" style="color:var(--red)"><span class="dot red"></span>${esc(cur.step)}</span>` + (c.mrr?`<span class="m">$${c.mrr}/mo</span>`:'');
+    else if(cur && cur.status==='todo') foot = `<span class="building-line" style="color:var(--txt-faint)"><span class="dot gray"></span>slice ${cur.n} ${esc(cur.step)}</span>` + foot;
+    const click = c.id==='leadsift' ? ' clickable' : '';
+    return `<div class="card${click}${c.needsYou?' needs':''}" ${c.id==='leadsift'?'data-co="leadsift"':''}>
+      <div class="card-top"><span class="dot ${d}"></span><span class="cn">${c.name}</span><span class="cspace"></span>${c.needsYou?'<span class="pill needs">Needs you</span>':''}</div>
+      <div class="thesis">${esc(c.thesis)}</div>
+      <div class="card-foot">${foot}</div>
+    </div>`;
+  }).join('');
+  el('ovCompanies').querySelectorAll('[data-co]').forEach(card =>
+    card.addEventListener('click', ()=> openZoom(card.dataset.co)));
+
+  el('ovOpps').innerHTML = DATA.opportunities.map(o => {
+    const killed = o.status==='killed';
+    return `<div class="card opp">
+      <div class="card-top"><span class="cn">${o.title}</span><span class="cspace"></span>
+        ${killed?'<span class="pill killed">killed</span>':`<span class="pill score${o.score>=70?' hi':''}">${o.score}</span>`}</div>
+      <div class="thesis">${esc(o.thesis)}</div>
+      <div class="score-bar"><i style="width:${o.score}%;${killed?'background:var(--slate)':''}"></i></div>
+      <div class="card-foot" style="margin-top:4px">
+        ${killed?'<span style="color:var(--txt-faint)">archived</span>':`<button class="promote" data-promote="${o.title}">Promote → company</button>`}
+      </div>
+    </div>`;
+  }).join('');
+  el('ovOpps').querySelectorAll('[data-promote]').forEach(b =>
+    b.addEventListener('click', e=>{ e.stopPropagation(); promote(b.dataset.promote); }));
+
+  el('ovMoves').innerHTML = DATA.nextMoves.map((m,i)=>
+    `<div class="nextmove"><span class="n">${i+1}</span><span>${esc(m)}</span></div>`).join('');
+}
+
+/* ---------- activity ---------- */
+function buildActivity(){
+  // collapsed: single latest current line (first running item)
+  const latest = DATA.activity.find(a=>a.running) || DATA.activity[0];
+  el('actCollapsed').innerHTML =
+    `<div class="act-line"><span class="dot blue"></span><span class="co">${latest.co}</span><span>${esc(latest.text)}</span><span class="t">${latest.t}</span></div>`;
+  // full: grouped by company
+  const byCo = {};
+  DATA.activity.forEach(a => { (byCo[a.co] = byCo[a.co]||[]).push(a); });
+  el('actFull').innerHTML = Object.entries(byCo).map(([co, list]) => {
+    const anyRun = list.some(a=>a.running);
+    return `<div class="act-cogroup">
+      <div class="cohead">${anyRun?'<span class="dot blue"></span>':'<span class="dot gray"></span>'}${co}</div>
+      ${list.map(a=>`<div class="act-item">${a.running?'<span class="dot blue" style="margin-top:5px"></span>':'<span class="dot gray" style="margin-top:5px"></span>'}<span class="txt">${esc(a.text)}</span><span class="t2">${a.t}</span></div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+/* ---------- events ---------- */
+el('q').addEventListener('input', e=>{ selIdx=0; render(e.target.value); scrollToSel(); });
+el('backBtn').addEventListener('click', closeZoom);
+el('ovBack').addEventListener('click', ()=> showOverview(false));
+el('toggleOv').addEventListener('click', ()=> showOverview(true));
+el('actHead').addEventListener('click', ()=> el('activity').classList.toggle('open'));
+el('approveBtn').addEventListener('click', approve);
+el('rejectBtn').addEventListener('click', ()=>{ const f=el('feedback'); f.classList.add('open'); el('fbText').focus(); });
+el('cancelFb').addEventListener('click', ()=> el('feedback').classList.remove('open'));
+el('sendFb').addEventListener('click', sendFeedback);
+el('chatIn').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.value.trim()){
+    const log = el('chatLog');
+    log.insertAdjacentHTML('beforeend', `<div class="msg user">${esc(e.target.value.trim())}</div>`);
+    e.target.value='';
+    log.scrollTop = log.scrollHeight;
+    setTimeout(()=>{ log.insertAdjacentHTML('beforeend', `<div class="msg assistant"><div class="who">Agent</div>On it — I’ll fold that into the next pass.</div>`); log.scrollTop=log.scrollHeight; }, 600);
+  }
+});
+
+/* keyboard */
+document.addEventListener('keydown', e=>{
+  const zoomed = app.classList.contains('app--zoom');
+  const over = app.classList.contains('app--overview');
+  // ⌘K focus search
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); closeZoom(); showOverview(false); el('q').focus(); el('q').select(); return; }
+  // Shift+O overview
+  if(e.shiftKey && e.key.toLowerCase()==='o' && !zoomed && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault(); showOverview(!over); return;
+  }
+  if(e.key==='Escape'){
+    if(el('feedback').classList.contains('open')){ el('feedback').classList.remove('open'); return; }
+    if(zoomed){ closeZoom(); return; }
+    if(over){ showOverview(false); return; }
+    el('q').value=''; selIdx=0; render(''); el('q').blur();
+    return;
+  }
+  if(zoomed){
+    if(e.key==='Enter' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){ approve(); }
+    return;
+  }
+  if(over) return;
+  // launcher nav
+  if(e.key==='ArrowDown'){ e.preventDefault(); selIdx=Math.min(filtered.length-1, selIdx+1); refreshSel(); scrollToSel(); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); selIdx=Math.max(0, selIdx-1); refreshSel(); scrollToSel(); }
+  else if(e.key==='Enter'){ e.preventDefault(); activate(); }
+});
+
+/* init */
+buildZoom();
+buildOverview();
+buildActivity();
+render('');
+el('q').focus();
+</script>
+</body>
+</html>

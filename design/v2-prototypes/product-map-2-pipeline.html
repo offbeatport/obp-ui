@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Product Map 02 — The Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   C SLOP SLOP — PRODUCT MAP 02 · "THE PIPELINE"
+   Left→right systems-flow / matrix poster. Static, self-contained.
+   ============================================================ */
+:root{
+  --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+  --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+  --line:#e6ddce; --line-soft:#efe8da;
+  --make:#4f8a52; --make-rgb:79,138,82;
+  --grow:#c8643c; --grow-rgb:200,100,60;
+  --run:#4a72b0;  --run-rgb:74,114,176;
+  --gate:#7a5ea8; --gate-rgb:122,94,168;
+  --amber:#c08a2e; --amber-rgb:192,138,46;
+  --red:#b6483f;  --red-rgb:182,72,63;
+  --soft:#8f8676; --soft-rgb:143,134,118;
+  --shadow:0 1px 2px rgba(60,50,38,.04), 0 8px 28px rgba(60,50,38,.07);
+  --radius:18px; --radius-sm:12px;
+  --gutter:212px;
+  --disp:'Space Grotesk', system-ui, sans-serif;
+  --body:'Inter', system-ui, sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:14px; line-height:1.45;
+  background-image:
+    radial-gradient(1200px 700px at 12% -8%, rgba(var(--grow-rgb),.05), transparent 60%),
+    radial-gradient(1100px 700px at 96% 4%, rgba(var(--run-rgb),.045), transparent 60%);
+  padding:38px 30px 54px;
+}
+.poster{ max-width:1520px; margin:0 auto; }
+.mono{ font-family:var(--mono); }
+b{ font-weight:600; }
+
+/* ---------- shared atoms ---------- */
+.kicker{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--ink-faint);
+}
+.card{
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+}
+
+/* ======================================================
+   HEADER
+   ====================================================== */
+.head{
+  display:grid; grid-template-columns:1fr 360px; gap:22px;
+  align-items:stretch; margin-bottom:18px;
+}
+.head-left{ padding:6px 2px; }
+.brand-row{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+.brand-mark{
+  font-family:var(--mono); font-weight:700; font-size:12px;
+  letter-spacing:.06em; color:var(--paper);
+  background:var(--ink); padding:5px 10px; border-radius:7px;
+}
+.brand-mark .s{ color:var(--grow); }
+.head h1{
+  font-family:var(--disp); font-weight:700; font-size:46px;
+  letter-spacing:-.02em; line-height:1; margin:14px 0 0;
+}
+.head h1 .t{ color:var(--grow); }
+.lede{
+  font-size:15px; color:var(--ink-soft); max-width:680px; margin-top:11px;
+}
+.lede b{ color:var(--ink); }
+.flowtag{
+  display:inline-flex; align-items:center; gap:8px; margin-top:13px;
+  font-family:var(--mono); font-size:12px; font-weight:600; color:var(--ink-soft);
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:999px; padding:6px 13px; box-shadow:var(--shadow);
+}
+.flowtag .pp{ color:var(--make); } .flowtag .gg{ color:var(--grow); }
+.flowtag .rr{ color:var(--run); } .flowtag .arr{ color:var(--ink-faint); }
+
+/* north star */
+.northstar{
+  background:linear-gradient(180deg, rgba(var(--grow-rgb),.10), rgba(var(--grow-rgb),.04));
+  border:1px solid rgba(var(--grow-rgb),.32);
+  border-radius:var(--radius); padding:18px 20px;
+  display:flex; flex-direction:column; justify-content:center;
+  box-shadow:var(--shadow);
+}
+.northstar .ns-k{
+  font-family:var(--mono); font-size:10.5px; font-weight:700;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--grow); margin-bottom:9px;
+}
+.northstar .ns-q{
+  font-family:var(--disp); font-size:18px; font-weight:500;
+  line-height:1.32; color:var(--ink); letter-spacing:-.01em;
+}
+.northstar .ns-q b{ color:var(--grow); font-weight:700; }
+
+/* ======================================================
+   LEGEND BAND
+   ====================================================== */
+.legend{
+  display:grid; grid-template-columns:1.35fr 1fr; gap:14px; margin-bottom:16px;
+}
+.leg{ padding:15px 18px; }
+.leg-title{
+  font-family:var(--mono); font-size:10.5px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+  margin-bottom:12px;
+}
+.auth-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px 22px; }
+.auth-item{ display:flex; align-items:flex-start; gap:9px; font-size:12.5px; color:var(--ink-soft); }
+.auth-item .num{
+  font-family:var(--mono); font-weight:700; font-size:11px; color:var(--ink-faint);
+}
+.auth-item b{ color:var(--ink); }
+.dot{
+  width:11px; height:11px; border-radius:50%; flex:none; margin-top:3px;
+  box-shadow:0 0 0 3px rgba(255,253,248,.9);
+}
+.cls1{ background:var(--soft); }  .cls2{ background:var(--run); }
+.cls3{ background:var(--amber); } .cls4{ background:var(--red); }
+.cls5{ background:var(--gate); }
+
+/* ladder */
+.ladder{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.lvl{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  border-radius:8px; padding:6px 9px; line-height:1.25; flex:1; min-width:0;
+}
+.lvl b{ display:block; font-size:12px; }
+.lvl small{ display:block; color:var(--ink-faint); font-weight:400; font-size:10px; margin-top:2px; }
+.l0{ background:rgba(var(--gate-rgb),.12); color:var(--gate); border:1px solid rgba(var(--gate-rgb),.28); }
+.l1{ background:rgba(var(--amber-rgb),.12); color:var(--amber); border:1px solid rgba(var(--amber-rgb),.30); }
+.l2{ background:rgba(var(--make-rgb),.12); color:var(--make); border:1px solid rgba(var(--make-rgb),.30); }
+.ladder .arr{ color:var(--ink-faint); font-family:var(--mono); }
+.testmode{
+  margin-top:11px; font-family:var(--mono); font-size:11px; color:var(--ink-soft);
+  background:var(--cream-2); border:1px dashed var(--line);
+  border-radius:8px; padding:7px 10px;
+}
+.testmode b{ color:var(--ink); }
+.testmode .chev{ color:var(--grow); }
+
+/* ======================================================
+   MATRIX
+   ====================================================== */
+.matrix{ padding:0; overflow:hidden; }
+.grow-grid{ display:grid; grid-template-columns:var(--gutter) repeat(5,1fr); }
+
+/* --- stage header --- */
+.stage-head{
+  background:var(--cream-2);
+  border-bottom:1px solid var(--line);
+}
+.stage-corner{
+  padding:14px 16px; display:flex; flex-direction:column; justify-content:center;
+  border-right:1px solid var(--line);
+}
+.stage-corner .sc-k{ font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-faint); }
+.stage-corner .sc-s{ font-size:11.5px; color:var(--ink-soft); margin-top:4px; }
+.stage{
+  position:relative; padding:14px 16px 12px;
+  border-right:1px solid var(--line-soft);
+  display:flex; flex-direction:column; gap:5px;
+}
+.stage:last-child{ border-right:none; }
+.stage .st-n{ font-family:var(--disp); font-weight:700; font-size:17px; letter-spacing:-.01em; }
+.stage .st-d{ font-size:11px; color:var(--ink-faint); line-height:1.3; }
+.stage .st-i{
+  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-faint); margin-top:1px;
+}
+.stage .flow-arrow{
+  position:absolute; right:-12px; top:24px; z-index:6;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--paper); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:12px; font-weight:700; color:var(--grow);
+  box-shadow:var(--shadow);
+}
+/* difficulty track */
+.difftrack{
+  grid-column:2 / 7; height:6px; margin:0;
+  background:linear-gradient(90deg, rgba(var(--make-rgb),.30), rgba(var(--amber-rgb),.34) 55%, rgba(var(--red-rgb),.40));
+}
+.difflabels{
+  grid-column:2 / 7; display:flex; justify-content:space-between;
+  padding:5px 16px 9px; font-family:var(--mono); font-size:9.5px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+  background:var(--cream-2); border-bottom:1px solid var(--line);
+}
+.diffspacer{ grid-column:1; grid-row:1 / 3; background:var(--cream-2); border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+
+/* --- ring rows --- */
+.ring-row{ border-bottom:1px solid var(--line); }
+.ring-row:last-of-type{ border-bottom:none; }
+.ring-label{
+  padding:16px 16px; border-right:1px solid var(--line);
+  display:flex; flex-direction:column; gap:7px;
+}
+.ring-row.make .ring-label{ background:rgba(var(--make-rgb),.085); }
+.ring-row.grow .ring-label{ background:rgba(var(--grow-rgb),.085); }
+.ring-row.run  .ring-label{ background:rgba(var(--run-rgb),.085); }
+.ring-name{ display:flex; align-items:center; gap:9px; }
+.ring-name .badge{
+  font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:.04em;
+  color:var(--paper); padding:4px 10px; border-radius:7px;
+}
+.make .badge{ background:var(--make); } .grow .badge{ background:var(--grow); } .run .badge{ background:var(--run); }
+.ring-auto{
+  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.06em;
+  padding:3px 8px; border-radius:999px;
+}
+.make .ring-auto{ color:var(--make); background:rgba(var(--make-rgb),.14); }
+.grow .ring-auto{ color:var(--grow); background:rgba(var(--grow-rgb),.14); }
+.run  .ring-auto{ color:var(--run);  background:rgba(var(--run-rgb),.14); }
+.ring-desc{ font-size:11.5px; color:var(--ink-soft); line-height:1.4; }
+.ring-gate{
+  font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); margin-top:1px;
+}
+.ring-gate b{ color:var(--gate); }
+
+/* --- stage cells in a ring row --- */
+.rcell{
+  padding:13px 12px; border-right:1px solid var(--line-soft);
+  display:flex; flex-direction:column; gap:9px; min-width:0;
+}
+.rcell:last-child{ border-right:none; }
+.ring-row.make .rcell{ background:rgba(var(--make-rgb),.025); }
+.ring-row.grow .rcell{ background:rgba(var(--grow-rgb),.025); }
+.ring-row.run  .rcell{ background:rgba(var(--run-rgb),.028); }
+.rcell.empty{
+  background-image:radial-gradient(rgba(var(--soft-rgb),.18) 1px, transparent 1.4px);
+  background-size:13px 13px; background-position:center;
+}
+
+/* --- function card --- */
+.fn{
+  background:var(--paper); border:1px solid var(--line);
+  border-left:3px solid var(--line); border-radius:11px;
+  padding:9px 11px 10px; box-shadow:0 1px 2px rgba(60,50,38,.04);
+}
+.make .fn{ border-left-color:var(--make); }
+.grow .fn{ border-left-color:var(--grow); }
+.run  .fn{ border-left-color:var(--run); }
+.fn .fn-n{
+  font-family:var(--disp); font-weight:600; font-size:13px;
+  letter-spacing:-.005em; line-height:1.2; display:flex; align-items:center; gap:6px;
+}
+.fn .fn-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+.fn-meta{ display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.chip{
+  font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.04em;
+  padding:2.5px 7px; border-radius:6px; line-height:1.1;
+}
+.chip.L0{ background:rgba(var(--gate-rgb),.13); color:var(--gate); border:1px solid rgba(var(--gate-rgb),.26); }
+.chip.L1{ background:rgba(var(--amber-rgb),.13); color:var(--amber); border:1px solid rgba(var(--amber-rgb),.28); }
+.chip.L2{ background:rgba(var(--make-rgb),.13); color:var(--make); border:1px solid rgba(var(--make-rgb),.28); }
+.tag-test{
+  font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.04em;
+  color:var(--red); background:rgba(var(--red-rgb),.10);
+  border:1px dashed rgba(var(--red-rgb),.40); border-radius:6px; padding:2px 6px;
+}
+
+/* ======================================================
+   GATE LANE
+   ====================================================== */
+.gatewrap{ margin-top:16px; }
+.gate-lane{
+  background:linear-gradient(180deg, rgba(var(--gate-rgb),.10), rgba(var(--gate-rgb),.05));
+  border:1px solid rgba(var(--gate-rgb),.30);
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+}
+.gate-grid{ display:grid; grid-template-columns:var(--gutter) repeat(5,1fr); }
+.gate-gutter{
+  padding:15px 16px; border-right:1px solid rgba(var(--gate-rgb),.22);
+  display:flex; flex-direction:column; justify-content:center;
+}
+.gate-gutter .gg-k{ font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--gate); }
+.gate-gutter .gg-n{ font-family:var(--disp); font-weight:700; font-size:16px; color:var(--ink); margin-top:3px; }
+.gate-gutter .gg-s{ font-size:10.5px; color:var(--ink-soft); margin-top:4px; line-height:1.35; }
+.gate-col{
+  padding:15px 10px; border-right:1px solid rgba(var(--gate-rgb),.14);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  gap:12px; min-height:104px;
+}
+.gate-col:last-child{ border-right:none; }
+.gate{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; }
+.diamond{
+  width:26px; height:26px; background:var(--gate);
+  transform:rotate(45deg); border-radius:5px;
+  box-shadow:0 4px 12px rgba(var(--gate-rgb),.40), inset 0 0 0 2px rgba(255,255,255,.18);
+}
+.diamond.hollow{ background:rgba(var(--gate-rgb),.12); border:1.5px dashed var(--gate); box-shadow:none; }
+.gate .g-n{ font-family:var(--disp); font-weight:700; font-size:13px; color:var(--gate); }
+.gate .g-d{ font-size:10.5px; color:var(--ink-soft); line-height:1.3; max-width:155px; }
+
+/* unblock span */
+.unblock{
+  display:grid; grid-template-columns:var(--gutter) 1fr;
+  border-top:1px solid rgba(var(--gate-rgb),.22);
+}
+.unblock .ub-pad{ border-right:1px solid rgba(var(--gate-rgb),.22); }
+.unblock .ub-bar{
+  display:flex; align-items:center; gap:14px; padding:11px 18px;
+  background:repeating-linear-gradient(90deg, rgba(var(--gate-rgb),.07) 0 18px, transparent 18px 34px);
+}
+.unblock .ub-dia{
+  width:18px; height:18px; background:var(--gate); transform:rotate(45deg);
+  border-radius:4px; flex:none; box-shadow:0 3px 8px rgba(var(--gate-rgb),.35);
+}
+.unblock .ub-txt{ font-size:12px; color:var(--ink-soft); }
+.unblock .ub-txt b{ font-family:var(--disp); color:var(--gate); font-size:13px; }
+.unblock .ub-span{
+  margin-left:auto; font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--gate);
+  border:1px solid rgba(var(--gate-rgb),.30); border-radius:999px; padding:4px 11px;
+}
+
+/* feedback loop note */
+.feedback{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin-top:14px; font-family:var(--mono); font-size:11.5px; color:var(--ink-soft);
+  background:var(--paper); border:1px solid var(--line); border-radius:999px;
+  padding:8px 18px; box-shadow:var(--shadow); width:fit-content; margin-left:auto; margin-right:auto;
+}
+.feedback .loop{ color:var(--make); font-weight:700; font-size:14px; }
+.feedback b{ color:var(--ink); }
+
+/* ======================================================
+   FOUNDATION BAR
+   ====================================================== */
+.foundation{
+  margin-top:18px; padding:18px 22px;
+  background:linear-gradient(180deg, var(--paper), var(--cream-2));
+  border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+}
+.foundation .f-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+.foundation .f-k{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.20em; text-transform:uppercase; color:var(--ink-faint); }
+.foundation .f-t{ font-family:var(--disp); font-weight:700; font-size:18px; }
+.foundation .f-s{ font-size:12px; color:var(--ink-soft); }
+.rails{ display:flex; align-items:stretch; gap:0; flex-wrap:nowrap; }
+.rail{
+  flex:1; background:var(--cream); border:1px solid var(--line);
+  border-radius:12px; padding:11px 13px; position:relative; min-width:0;
+}
+.rail + .rail{ margin-left:26px; }
+.rail + .rail::before{
+  content:"·"; position:absolute; left:-19px; top:50%; transform:translateY(-50%);
+  font-family:var(--mono); font-weight:700; color:var(--ink-faint); font-size:18px;
+}
+.rail .r-n{ font-family:var(--disp); font-weight:600; font-size:13px; letter-spacing:-.005em; }
+.rail .r-s{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); margin-top:4px; }
+.rail .r-bar{ height:3px; border-radius:3px; margin-top:9px; background:linear-gradient(90deg, var(--make), var(--grow), var(--run)); opacity:.55; }
+
+/* ======================================================
+   FOOTER — surface coverage
+   ====================================================== */
+.coverage{
+  margin-top:16px; padding:16px 20px;
+}
+.cov-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:13px; flex-wrap:wrap; }
+.cov-k{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-faint); }
+.cov-t{ font-family:var(--disp); font-weight:700; font-size:16px; }
+.cov-legend{ margin-left:auto; display:flex; gap:14px; font-family:var(--mono); font-size:10.5px; color:var(--ink-soft); }
+.cov-legend span{ display:inline-flex; align-items:center; gap:6px; }
+.sdot{ width:9px; height:9px; border-radius:50%; }
+.sd-built{ background:var(--make); } .sd-partial{ background:var(--amber); }
+.sd-missing{ background:transparent; border:1.5px solid var(--red); }
+.cov-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px 16px; }
+.cov-item{
+  display:flex; align-items:center; gap:10px; font-size:12.5px;
+  padding:8px 12px; background:var(--paper); border:1px solid var(--line); border-radius:10px;
+}
+.cov-item .ci-n{ font-weight:600; color:var(--ink); }
+.cov-item .ci-p{ font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); margin-left:auto; }
+.cov-item.built{ border-left:3px solid var(--make); }
+.cov-item.partial{ border-left:3px solid var(--amber); }
+.cov-item.missing{ border-left:3px solid var(--red); background:rgba(var(--red-rgb),.03); }
+
+.foot{
+  margin-top:22px; display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:10.5px; color:var(--ink-faint);
+  letter-spacing:.06em; border-top:1px solid var(--line); padding-top:14px; flex-wrap:wrap; gap:10px;
+}
+.foot .acc{ color:var(--grow); }
+
+@media (max-width:1180px){
+  .auth-grid{ grid-template-columns:1fr; }
+  .cov-grid{ grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- ============ HEADER ============ -->
+  <header class="head">
+    <div class="head-left">
+      <div class="brand-row">
+        <span class="brand-mark">C&nbsp;SLOP&nbsp;<span class="s">SLOP</span></span>
+        <span class="kicker">Product Map 02 — The Pipeline · system flow</span>
+      </div>
+      <h1>The company is a <span class="t">pipeline</span>, not a team.</h1>
+      <p class="lede">An AI autonomously spins up and builds tiny software companies from a thought. You're the <b>operator</b> — you oversee and approve. Trace control left→right and you can see every gate. <b>Discover → ship → grow → keep alive.</b></p>
+      <div class="flowtag">
+        <span>One continuous loop</span><span class="arr">·</span>
+        <span class="pp">MAKE</span><span class="arr">→</span>
+        <span class="gg">GROW</span><span class="arr">→</span>
+        <span class="rr">RUN</span><span class="arr">→</span>
+        <span>analytics</span><span class="loop" style="color:var(--make);font-weight:700;">↻</span>
+        <span class="pp">MAKE</span>
+      </div>
+    </div>
+    <aside class="northstar">
+      <div class="ns-k">★ North star</div>
+      <div class="ns-q">Can <b>one operator</b> run <b>5–20 companies</b> by touching only the <b>gate queue</b>?</div>
+    </aside>
+  </header>
+
+  <!-- ============ LEGEND BAND ============ -->
+  <section class="legend">
+    <div class="leg card">
+      <div class="leg-title">Authorization boundary — why a function can or can't run itself</div>
+      <div class="auth-grid">
+        <div class="auth-item"><span class="dot cls1"></span><span><span class="num">1</span> <b>Pure software</b> — runs silently, fully autonomous</span></div>
+        <div class="auth-item"><span class="dot cls4"></span><span><span class="num">4</span> <b>Acts under an identity</b> — reputation / ban risk → test-mode</span></div>
+        <div class="auth-item"><span class="dot cls2"></span><span><span class="num">2</span> <b>Acts on a connected account</b> — your OAuth'd services</span></div>
+        <div class="auth-item"><span class="dot cls5"></span><span><span class="num">5</span> <b>Needs a signature</b> — human / legal authority</span></div>
+        <div class="auth-item"><span class="dot cls3"></span><span><span class="num">3</span> <b>Spends money</b> — needs budget guardrail + a gate</span></div>
+        <div class="auth-item" style="color:var(--ink-faint)"><span style="width:11px;flex:none"></span><span style="font-size:11px">Every function card below carries a <b>dot</b> for its highest class.</span></div>
+      </div>
+    </div>
+    <div class="leg card">
+      <div class="leg-title">Autonomy ladder — each function climbs it as trust grows</div>
+      <div class="ladder">
+        <span class="lvl l0"><b>L0</b><small>propose · you approve</small></span>
+        <span class="arr">→</span>
+        <span class="lvl l1"><b>L1</b><small>autopilot · spot-check</small></span>
+        <span class="arr">→</span>
+        <span class="lvl l2"><b>L2</b><small>autonomous · see results</small></span>
+      </div>
+      <div class="testmode">Before any real-world action: <b>test-mode</b> <span class="chev">→</span> <b>record-intent</b> <span class="chev">→</span> <b>real</b></div>
+    </div>
+  </section>
+
+  <!-- ============ MATRIX ============ -->
+  <section class="matrix card">
+    <!-- stage header -->
+    <div class="grow-grid stage-head">
+      <div class="stage-corner">
+        <div class="sc-k">Lifecycle →</div>
+        <div class="sc-s">5 stages · rings flow across them</div>
+      </div>
+      <div class="stage">
+        <div class="st-n">Discover</div>
+        <div class="st-i">Stage 01</div>
+        <div class="st-d">Find a thesis worth a company; validate the pain.</div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="st-n">Build</div>
+        <div class="st-i">Stage 02</div>
+        <div class="st-d">Brand, engineer & deploy a working product.</div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="st-n">Launch</div>
+        <div class="st-i">Stage 03</div>
+        <div class="st-d">Go public, price it, take the first real users.</div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="st-n">Operate</div>
+        <div class="st-i">Stage 04</div>
+        <div class="st-d">Keep it alive, paid, supported & legal.</div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="st-n">Grow</div>
+        <div class="st-i">Stage 05</div>
+        <div class="st-d">Compound distribution & revenue; feed it back.</div>
+      </div>
+    </div>
+    <!-- difficulty track -->
+    <div class="grow-grid">
+      <div class="diffspacer"></div>
+      <div class="difftrack"></div>
+      <div class="difflabels"><span>← easier · fully autonomous</span><span>difficulty rises →</span><span>harder · more gates</span></div>
+    </div>
+
+    <!-- MAKE row -->
+    <div class="grow-grid ring-row make">
+      <div class="ring-label">
+        <div class="ring-name"><span class="badge">MAKE</span><span class="ring-auto">autonomy: L2 default</span></div>
+        <div class="ring-desc">Turn a thesis into a working, branded, deployed product. <b>Fully autonomous.</b></div>
+        <div class="ring-gate">one gate · <b>Ship this?</b></div>
+      </div>
+      <!-- Discover -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls1"></span>Discover / validate</div><div class="fn-meta"><span class="chip L2">L2</span></div></div>
+      </div>
+      <!-- Build -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls1"></span>Design / brand</div><div class="fn-meta"><span class="chip L2">L2</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls1"></span>Build / engineering</div><div class="fn-meta"><span class="chip L2">L2</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls2"></span>Infra / devops</div><div class="fn-meta"><span class="chip L1">L1</span></div></div>
+      </div>
+      <!-- Launch -->
+      <div class="rcell empty"></div>
+      <!-- Operate -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls1"></span>Analytics</div><div class="fn-meta"><span class="chip L2">L2</span><span class="tag-test" style="color:var(--make);border-color:rgba(var(--make-rgb),.4);background:rgba(var(--make-rgb),.08)">feeds ↻ Discover</span></div></div>
+      </div>
+      <!-- Grow -->
+      <div class="rcell empty"></div>
+    </div>
+
+    <!-- GROW row -->
+    <div class="grow-grid ring-row grow">
+      <div class="ring-label">
+        <div class="ring-name"><span class="badge">GROW</span><span class="ring-auto">autonomy: L0→L1</span></div>
+        <div class="ring-desc">Get it in front of people & turn them into paying users. <b>Autonomous behind connected accounts.</b></div>
+        <div class="ring-gate">gates · <b>Spend</b> + <b>Post</b></div>
+      </div>
+      <div class="rcell empty"></div>
+      <div class="rcell empty"></div>
+      <!-- Launch -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Distribution / GTM</div><div class="fn-meta"><span class="chip L1">L1</span><span class="tag-test">test→real</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Social</div><div class="fn-meta"><span class="chip L0">L0</span><span class="tag-test">test→real</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls2"></span>Pricing</div><div class="fn-meta"><span class="chip L1">L1</span></div></div>
+      </div>
+      <div class="rcell empty"></div>
+      <!-- Grow -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Content &amp; SEO</div><div class="fn-meta"><span class="chip L1">L1</span><span class="tag-test">test→real</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Lifecycle email</div><div class="fn-meta"><span class="chip L1">L1</span><span class="tag-test">test→real</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Sales</div><div class="fn-meta"><span class="chip L0">L0</span><span class="tag-test">test→real</span></div></div>
+      </div>
+    </div>
+
+    <!-- RUN row -->
+    <div class="grow-grid ring-row run">
+      <div class="ring-label">
+        <div class="ring-name"><span class="badge">RUN</span><span class="ring-auto">autonomy: L1–L2</span></div>
+        <div class="ring-desc">Keep it alive, paid, supported, legal. <b>Autonomous monitoring.</b></div>
+        <div class="ring-gate">gates · <b>money-out</b> + <b>Sign</b></div>
+      </div>
+      <div class="rcell empty"></div>
+      <div class="rcell empty"></div>
+      <!-- Launch -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls5"></span>Legal / compliance</div><div class="fn-meta"><span class="chip L0">L0</span></div></div>
+      </div>
+      <!-- Operate -->
+      <div class="rcell">
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls4"></span>Support</div><div class="fn-meta"><span class="chip L1">L1</span><span class="tag-test">test→real</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls3"></span>Finance / billing</div><div class="fn-meta"><span class="chip L1">L1</span></div></div>
+        <div class="fn"><div class="fn-n"><span class="fn-dot cls2"></span>Uptime ops</div><div class="fn-meta"><span class="chip L2">L2</span></div></div>
+      </div>
+      <div class="rcell empty"></div>
+    </div>
+  </section>
+
+  <!-- ============ GATE LANE ============ -->
+  <section class="gatewrap">
+    <div class="gate-lane">
+      <div class="gate-grid">
+        <div class="gate-gutter">
+          <div class="gg-k">◆ Human gates</div>
+          <div class="gg-n">The only decisions you make</div>
+          <div class="gg-s">5 recurring touchpoints, fired across the timeline — the heart of the product.</div>
+        </div>
+        <!-- Discover -->
+        <div class="gate-col"></div>
+        <!-- Build -->
+        <div class="gate-col">
+          <div class="gate"><span class="diamond"></span><span class="g-n">Ship</span><span class="g-d">Approve a build slice (MAKE).</span></div>
+        </div>
+        <!-- Launch -->
+        <div class="gate-col">
+          <div class="gate"><span class="diamond"></span><span class="g-n">Spend</span><span class="g-d">Authorize money out: ads, domains, infra.</span></div>
+          <div class="gate"><span class="diamond"></span><span class="g-n">Post</span><span class="g-d">Publish under your identity: launch, social, outreach, email.</span></div>
+        </div>
+        <!-- Operate -->
+        <div class="gate-col">
+          <div class="gate"><span class="diamond"></span><span class="g-n">Sign</span><span class="g-d">Legal: entity, ToS, contracts.</span></div>
+        </div>
+        <!-- Grow -->
+        <div class="gate-col"></div>
+      </div>
+      <!-- unblock span -->
+      <div class="unblock">
+        <div class="ub-pad"></div>
+        <div class="ub-bar">
+          <span class="ub-dia"></span>
+          <span class="ub-txt"><b>Unblock</b> — resolve a stuck slice or decision. Fires in any ring, at any stage.</span>
+          <span class="ub-span">spans the whole pipeline ↔</span>
+        </div>
+      </div>
+    </div>
+    <div class="feedback"><span class="loop">↻</span> <span><b>Analytics</b> closes the loop — every operate/grow signal feeds back to <b>Discover</b> &amp; the next <b>MAKE</b> slice.</span></div>
+  </section>
+
+  <!-- ============ FOUNDATION BAR ============ -->
+  <section class="foundation">
+    <div class="f-head">
+      <span class="f-k">▤ The substrate</span>
+      <span class="f-t">Rails everything runs on</span>
+      <span class="f-s">Not work — the shared infrastructure all 3 rings sit on top of.</span>
+    </div>
+    <div class="rails">
+      <div class="rail"><div class="r-n">Connected-accounts hub</div><div class="r-s">OAuth · per service</div><div class="r-bar"></div></div>
+      <div class="rail"><div class="r-n">Budget + spend guardrails</div><div class="r-s">caps · gate triggers</div><div class="r-bar"></div></div>
+      <div class="rail"><div class="r-n">Credential vault</div><div class="r-s">per-tool scopes</div><div class="r-bar"></div></div>
+      <div class="rail"><div class="r-n">Payments / legal-entity path</div><div class="r-s">Stripe · entity · ToS</div><div class="r-bar"></div></div>
+      <div class="rail"><div class="r-n">Per-company memory &amp; state</div><div class="r-s">context · history</div><div class="r-bar"></div></div>
+      <div class="rail"><div class="r-n">Autonomy engine</div><div class="r-s">L0→L2 · test-mode</div><div class="r-bar"></div></div>
+    </div>
+  </section>
+
+  <!-- ============ COVERAGE ============ -->
+  <section class="coverage card">
+    <div class="cov-head">
+      <span class="cov-k">▣ Product surfaces</span>
+      <span class="cov-t">What the operator actually looks at — & what's built</span>
+      <span class="cov-legend">
+        <span><span class="sdot sd-built"></span> built</span>
+        <span><span class="sdot sd-partial"></span> partial</span>
+        <span><span class="sdot sd-missing"></span> missing</span>
+      </span>
+    </div>
+    <div class="cov-grid">
+      <div class="cov-item built"><span class="dot cls1" style="background:var(--make);margin-top:0"></span><span class="ci-n">Portfolio</span><span class="ci-p">dock-layouts.html</span></div>
+      <div class="cov-item built"><span class="dot cls1" style="background:var(--make);margin-top:0"></span><span class="ci-n">Company view</span><span class="ci-p">08-chat-spine · 16-text-only</span></div>
+      <div class="cov-item built"><span class="dot cls1" style="background:var(--make);margin-top:0"></span><span class="ci-n">Activity / console</span><span class="ci-p">agent console</span></div>
+      <div class="cov-item partial"><span class="dot" style="background:var(--amber);margin-top:0"></span><span class="ci-n">Gate queue / Waiting room</span><span class="ci-p">partial</span></div>
+      <div class="cov-item partial"><span class="dot" style="background:var(--amber);margin-top:0"></span><span class="ci-n">Guardrails &amp; autonomy</span><span class="ci-p">spin guardrails</span></div>
+      <div class="cov-item missing"><span class="dot" style="background:transparent;border:1.5px solid var(--red);margin-top:0"></span><span class="ci-n">Connected-accounts hub</span><span class="ci-p">gap</span></div>
+      <div class="cov-item missing"><span class="dot" style="background:transparent;border:1.5px solid var(--red);margin-top:0"></span><span class="ci-n">Budget / spend controls</span><span class="ci-p">gap</span></div>
+      <div class="cov-item missing"><span class="dot" style="background:transparent;border:1.5px solid var(--red);margin-top:0"></span><span class="ci-n">Finance / billing</span><span class="ci-p">gap</span></div>
+      <div class="cov-item missing"><span class="dot" style="background:transparent;border:1.5px solid var(--red);margin-top:0"></span><span class="ci-n">Legal / entity</span><span class="ci-p">gap</span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>C SLOP SLOP · PRODUCT MAP 02 — THE PIPELINE</span>
+    <span>read left→right · <span class="acc">every ◆ is a place you touch the system</span></span>
+    <span>MAKE → GROW → RUN → ANALYTICS ↻</span>
+  </div>
+
+</div>
+</body>
+</html>

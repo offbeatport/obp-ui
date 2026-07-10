@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop — Live Floor</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c;
+    --green:#4f8a52; --blue:#4a72b0; --violet:#7a5ea8; --amber:#c08a2e; --red:#b6483f; --slate:#8a8579;
+    --shadow:0 1px 2px rgba(60,50,38,.04), 0 8px 28px rgba(60,50,38,.07);
+    --radius:18px; --radius-sm:12px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .disp{font-family:'Space Grotesk',sans-serif;}
+
+  /* ===== App shell ===== */
+  .shell{height:100vh;display:flex;flex-direction:column;}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    flex:0 0 auto;
+    display:flex;align-items:center;gap:26px;
+    height:62px;padding:0 22px;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;
+    color:var(--accent);letter-spacing:-.2px;white-space:nowrap;
+    display:flex;align-items:center;gap:9px;
+  }
+  .brand .bolt{
+    width:22px;height:22px;border-radius:7px;background:var(--accent);
+    display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;
+    box-shadow:0 2px 6px rgba(200,100,60,.32);
+  }
+  .nav{display:flex;align-items:center;gap:4px;}
+  .nav a{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;
+    text-transform:uppercase;letter-spacing:.6px;
+    color:var(--ink-faint);text-decoration:none;
+    padding:7px 12px;border-radius:9px;
+    display:flex;align-items:center;gap:7px;
+    transition:background .15s,color .15s;
+  }
+  .nav a:hover{background:var(--cream-2);color:var(--ink-soft);}
+  .nav a.active{background:var(--cream-2);color:var(--ink);}
+  .nav a.active .dot-active{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+  }
+  .nav .badge{
+    background:var(--accent);color:#fff;font-size:10px;font-weight:700;
+    min-width:16px;height:16px;border-radius:8px;padding:0 4px;
+    display:grid;place-items:center;
+  }
+  .spacer{flex:1;}
+  .usage{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);
+    display:flex;align-items:center;gap:8px;white-space:nowrap;
+  }
+  .usage b{color:var(--ink);font-weight:600;}
+  .usage .sep{color:var(--line);}
+  .btn{
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+    border:none;cursor:pointer;border-radius:11px;
+    padding:9px 15px;display:flex;align-items:center;gap:7px;
+    transition:transform .12s,box-shadow .15s,background .15s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(200,100,60,.28);}
+  .btn-primary:hover{background:#b95835;transform:translateY(-1px);}
+  .btn-primary .plus{font-size:16px;line-height:0;margin-top:-1px;}
+  .avatar-btn{
+    display:flex;align-items:center;gap:6px;cursor:pointer;
+    padding:4px 6px 4px 4px;border-radius:24px;border:1px solid var(--line);
+    background:var(--paper);position:relative;
+  }
+  .avatar-btn:hover{background:var(--cream-2);}
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;
+    font-family:'Space Grotesk',sans-serif;
+    background:linear-gradient(135deg,#8a7d6b,#5d544a);
+  }
+  .caret{font-size:9px;color:var(--ink-faint);}
+  .menu{
+    position:absolute;top:46px;right:0;width:188px;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+    box-shadow:var(--shadow);padding:6px;z-index:40;display:none;
+  }
+  .menu.open{display:block;}
+  .menu a{
+    display:block;padding:9px 11px;border-radius:8px;font-size:13px;
+    color:var(--ink-soft);text-decoration:none;
+  }
+  .menu a:hover{background:var(--cream-2);color:var(--ink);}
+  .menu .line{height:1px;background:var(--line-soft);margin:5px 4px;}
+
+  /* ===== Pulse strip ===== */
+  .pulse{
+    flex:0 0 auto;
+    display:flex;align-items:stretch;gap:0;
+    padding:13px 22px;
+    background:linear-gradient(180deg,var(--paper),var(--cream));
+    border-bottom:1px solid var(--line);
+  }
+  .pulse-left{display:flex;align-items:center;gap:18px;flex:1;flex-wrap:wrap;}
+  .live-chip{
+    display:flex;align-items:center;gap:9px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.8px;color:var(--accent);
+    background:rgba(200,100,60,.08);border:1px solid rgba(200,100,60,.22);
+    padding:6px 12px;border-radius:20px;
+  }
+  .live-chip .ring{
+    width:8px;height:8px;border-radius:50%;background:var(--accent);position:relative;
+  }
+  .live-chip .ring::after{
+    content:"";position:absolute;inset:-4px;border-radius:50%;
+    border:2px solid var(--accent);opacity:.5;animation:ping 1.8s ease-out infinite;
+  }
+  @keyframes ping{0%{transform:scale(.6);opacity:.7;}80%,100%{transform:scale(1.7);opacity:0;}}
+  .counts{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .count{
+    display:flex;align-items:center;gap:7px;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:11px;padding:6px 12px;
+  }
+  .count .num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;line-height:1;}
+  .count .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);}
+  .count .mk{width:7px;height:7px;border-radius:50%;}
+  .count.c-build .num{color:var(--blue);} .count.c-build .mk{background:var(--blue);}
+  .count.c-need .num{color:var(--accent);} .count.c-need .mk{background:var(--accent);}
+  .count.c-live .num{color:var(--green);} .count.c-live .mk{background:var(--green);}
+  .count.c-block .num{color:var(--red);} .count.c-block .mk{background:var(--red);}
+
+  .metrics{display:flex;align-items:center;gap:2px;}
+  .metric{padding:2px 16px;text-align:right;border-left:1px solid var(--line-soft);}
+  .metric:first-child{border-left:none;}
+  .metric .mv{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:var(--ink);line-height:1.1;}
+  .metric .mv small{font-size:11px;color:var(--ink-faint);font-weight:500;}
+  .metric .ml{font-family:'JetBrains Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);margin-top:2px;}
+
+  /* ===== Body ===== */
+  .body{flex:1;display:grid;grid-template-columns:262px 1fr;min-height:0;}
+
+  /* ----- Sidebar: company filters ----- */
+  .side{
+    border-right:1px solid var(--line);
+    background:var(--cream-2);
+    display:flex;flex-direction:column;min-height:0;
+  }
+  .side-head{
+    padding:16px 18px 10px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .side-head h3{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.9px;color:var(--ink-faint);
+  }
+  .side-list{flex:1;overflow-y:auto;padding:0 12px 16px;}
+  .cfilter{
+    display:flex;align-items:center;gap:11px;
+    padding:10px 11px;border-radius:var(--radius-sm);
+    cursor:pointer;border:1px solid transparent;margin-bottom:3px;
+    transition:background .14s,border-color .14s;position:relative;
+  }
+  .cfilter:hover{background:var(--paper);}
+  .cfilter.active{background:var(--paper);border-color:var(--line);box-shadow:var(--shadow);}
+  .cfilter.active::before{
+    content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;
+    border-radius:3px;background:var(--accent);
+  }
+  .cav{
+    width:32px;height:32px;border-radius:10px;flex:0 0 auto;
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;
+    font-family:'Space Grotesk',sans-serif;position:relative;
+  }
+  .cav .livedot{
+    position:absolute;right:-3px;bottom:-3px;width:11px;height:11px;border-radius:50%;
+    border:2px solid var(--cream-2);
+  }
+  .cfilter.active .cav .livedot{border-color:var(--paper);}
+  .cmeta{flex:1;min-width:0;}
+  .cname{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:7px;}
+  .cdomain{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cnum{text-align:right;flex:0 0 auto;}
+  .cnum .mrr{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;}
+  .cnum .usr{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);}
+  .stat-pill{
+    font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.4px;padding:2px 6px;border-radius:6px;
+  }
+  .sp-active{background:rgba(79,138,82,.13);color:var(--green);}
+  .sp-paused{background:rgba(138,133,121,.16);color:var(--slate);}
+  .side-foot{padding:12px 16px;border-top:1px solid var(--line);}
+  .side-foot .ft{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);line-height:1.7;}
+
+  /* ----- River ----- */
+  .river-wrap{display:flex;flex-direction:column;min-height:0;background:var(--cream);}
+  .river-head{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 26px 12px;border-bottom:1px solid var(--line-soft);
+    background:linear-gradient(180deg,var(--cream),rgba(247,243,236,0));
+  }
+  .river-title{display:flex;align-items:center;gap:11px;}
+  .river-title h2{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;letter-spacing:-.2px;}
+  .river-title .sub{font-size:12px;color:var(--ink-faint);}
+  .blink{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .seg{display:flex;background:var(--cream-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;}
+  .seg button{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.5px;
+    border:none;background:transparent;color:var(--ink-faint);cursor:pointer;
+    padding:5px 11px;border-radius:7px;
+  }
+  .seg button.on{background:var(--paper);color:var(--ink);box-shadow:var(--shadow);}
+
+  .river{flex:1;overflow-y:auto;padding:8px 26px 40px;position:relative;}
+  .river::before{
+    content:"";position:absolute;left:43px;top:0;bottom:0;width:2px;
+    background:linear-gradient(180deg,transparent,var(--line) 40px,var(--line),transparent);
+  }
+  .daydiv{
+    display:flex;align-items:center;gap:10px;margin:14px 0 8px;padding-left:36px;
+  }
+  .daydiv span{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.8px;color:var(--ink-faint);
+    background:var(--cream);padding:0 6px;
+  }
+
+  /* a normal river row */
+  .row{
+    display:flex;align-items:flex-start;gap:14px;
+    padding:9px 0 9px 0;position:relative;
+  }
+  .node{
+    flex:0 0 auto;width:34px;display:flex;justify-content:center;padding-top:2px;position:relative;z-index:2;
+  }
+  .marker{
+    width:14px;height:14px;border-radius:50%;background:var(--paper);
+    border:2px solid var(--line);position:relative;
+  }
+  .marker.running{border-color:var(--blue);background:var(--blue);}
+  .marker.running::after{
+    content:"";position:absolute;inset:-5px;border-radius:50%;
+    border:2px solid var(--blue);opacity:.5;animation:ping 1.8s ease-out infinite;
+  }
+  .marker.ship::after,.marker.pass{}
+  .marker.pass{border-color:var(--green);background:var(--green);}
+  .marker.wait{border-color:var(--amber);background:var(--amber);}
+  .marker.blocked{border-color:var(--red);background:var(--red);}
+  .marker.info{border-color:var(--slate);background:var(--paper);}
+  .marker.ship{border-color:var(--green);background:var(--paper);}
+
+  .rline{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding-top:0;}
+  .ravatar{
+    width:24px;height:24px;border-radius:7px;flex:0 0 auto;
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:10.5px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  .rtext{flex:1;min-width:0;font-size:13.5px;color:var(--ink-soft);line-height:1.4;}
+  .rtext b{color:var(--ink);font-weight:600;}
+  .rtext .code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);background:var(--cream-2);padding:1px 6px;border-radius:5px;}
+  .kind{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.6px;padding:2px 7px;border-radius:6px;flex:0 0 auto;
+  }
+  .k-run{background:rgba(74,114,176,.13);color:var(--blue);}
+  .k-pass{background:rgba(79,138,82,.13);color:var(--green);}
+  .k-wait{background:rgba(192,138,46,.14);color:var(--amber);}
+  .k-block{background:rgba(182,72,63,.13);color:var(--red);}
+  .k-info{background:rgba(138,133,121,.15);color:var(--slate);}
+  .rtime{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);
+    flex:0 0 auto;width:46px;text-align:right;
+  }
+  .rtime .pd{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blue);margin-right:5px;vertical-align:middle;animation:blink 1.2s infinite;}
+
+  /* ===== Gate cards inline ===== */
+  .gate{
+    margin:11px 0 16px 48px;position:relative;z-index:2;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .gate::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  }
+  .gate.g-ship::before{background:var(--green);}
+  .gate.g-block::before{background:var(--red);}
+  .gate.g-spend::before{background:var(--amber);}
+  .gate-top{display:flex;align-items:center;gap:11px;padding:14px 18px 0;}
+  .gate-badge{
+    font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.8px;color:#fff;
+    padding:4px 10px;border-radius:7px;display:flex;align-items:center;gap:6px;
+  }
+  .g-ship .gate-badge{background:var(--green);}
+  .g-block .gate-badge{background:var(--red);}
+  .g-spend .gate-badge{background:var(--amber);}
+  .gate-co{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px;}
+  .gate-co .ravatar{width:22px;height:22px;}
+  .gate-flag{
+    margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--accent);background:rgba(200,100,60,.09);border:1px solid rgba(200,100,60,.2);
+    padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:6px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.5px;
+  }
+  .gate-flag .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.3s infinite;}
+  .gate-body{padding:11px 18px 6px;font-size:14px;color:var(--ink-soft);line-height:1.5;}
+  .gate-body b{color:var(--ink);font-weight:600;}
+  .gate-meta{display:flex;gap:8px;flex-wrap:wrap;padding:4px 18px 0;}
+  .chip{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-soft);
+    background:var(--cream-2);border:1px solid var(--line-soft);
+    padding:4px 9px;border-radius:7px;display:flex;align-items:center;gap:6px;
+  }
+  .chip.ok{color:var(--green);background:rgba(79,138,82,.08);border-color:rgba(79,138,82,.2);}
+  .chip.warn{color:var(--red);background:rgba(182,72,63,.07);border-color:rgba(182,72,63,.18);}
+  .gate-actions{display:flex;gap:9px;padding:14px 18px 16px;align-items:center;}
+  .gate-actions .btn{font-size:12.5px;padding:8px 14px;border-radius:10px;}
+  .btn-ghost{background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);}
+  .btn-ghost:hover{background:var(--cream-2);color:var(--ink);}
+  .btn-green{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(79,138,82,.25);}
+  .btn-green:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .btn-red{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(182,72,63,.25);}
+  .btn-red:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .btn-amber{background:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(192,138,46,.25);}
+  .btn-amber:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .gate-actions .hint{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);}
+
+  .resolved{
+    padding:13px 18px;display:flex;align-items:center;gap:10px;
+    font-size:13.5px;color:var(--ink-soft);
+  }
+  .resolved .tick{
+    width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;font-size:12px;font-weight:700;flex:0 0 auto;
+  }
+
+  .dim{opacity:.5;filter:saturate(.6);}
+
+  /* scrollbars */
+  .river::-webkit-scrollbar,.side-list::-webkit-scrollbar{width:9px;}
+  .river::-webkit-scrollbar-thumb,.side-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:2px solid var(--cream);}
+  .side-list::-webkit-scrollbar-thumb{border-color:var(--cream-2);}
+
+  @media (max-width:1080px){
+    .metrics .metric:nth-child(n+4){display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="brand"><span class="bolt">C</span>C Slop Slop</div>
+    <nav class="nav">
+      <a href="#" class="active"><span class="dot-active"></span>Portfolio</a>
+      <a href="#">Waiting room<span class="badge">3</span></a>
+      <a href="#">Opportunities</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="usage">
+      <span><b>$695</b> MRR</span><span class="sep">·</span>
+      <span><b>56</b> users</span><span class="sep">·</span>
+      <span><b>5</b> companies</span>
+    </div>
+    <button class="btn btn-primary"><span class="plus">+</span> New company</button>
+    <div class="avatar-btn" onclick="toggleMenu(event)">
+      <div class="avatar">V</div><span class="caret">▾</span>
+      <div class="menu" id="usermenu">
+        <a href="#">Operator settings</a>
+        <a href="#">Spend &amp; billing</a>
+        <a href="#">Gate preferences</a>
+        <div class="line"></div>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== PORTFOLIO PULSE ===== -->
+  <div class="pulse">
+    <div class="pulse-left">
+      <div class="live-chip"><span class="ring"></span>Live floor</div>
+      <div class="counts">
+        <div class="count c-build"><span class="mk"></span><span class="num">2</span><span class="lbl">building</span></div>
+        <div class="count c-need"><span class="mk"></span><span class="num">3</span><span class="lbl">need you</span></div>
+        <div class="count c-live"><span class="mk"></span><span class="num">3</span><span class="lbl">live</span></div>
+        <div class="count c-block"><span class="mk"></span><span class="num">1</span><span class="lbl">blocked</span></div>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="mv">$695<small>/mo</small></div><div class="ml">MRR</div></div>
+      <div class="metric"><div class="mv">56</div><div class="ml">Users</div></div>
+      <div class="metric"><div class="mv">5</div><div class="ml">Companies</div></div>
+      <div class="metric"><div class="mv">22</div><div class="ml">Slices shipped</div></div>
+      <div class="metric"><div class="mv" style="color:var(--accent)">3</div><div class="ml">Need you</div></div>
+    </div>
+  </div>
+
+  <!-- ===== BODY ===== -->
+  <div class="body">
+
+    <!-- ----- SIDEBAR ----- -->
+    <aside class="side">
+      <div class="side-head"><h3>Companies · filter</h3></div>
+      <div class="side-list" id="sidelist">
+        <div class="cfilter active" data-co="all" onclick="setFilter(this,'all')">
+          <div class="cav" style="background:linear-gradient(135deg,var(--accent),#a64e2c)">★</div>
+          <div class="cmeta"><div class="cname">All companies</div><div class="cdomain">whole portfolio · live</div></div>
+        </div>
+        <div class="cfilter" data-co="leadsift" onclick="setFilter(this,'leadsift')">
+          <div class="cav" style="background:var(--accent)">LS<span class="livedot" style="background:var(--amber)"></span></div>
+          <div class="cmeta"><div class="cname">LeadSift <span class="stat-pill sp-active">active</span></div><div class="cdomain">leadsift.app</div></div>
+          <div class="cnum"><div class="mrr">$180</div><div class="usr">12 u</div></div>
+        </div>
+        <div class="cfilter" data-co="quietinbox" onclick="setFilter(this,'quietinbox')">
+          <div class="cav" style="background:var(--blue)">QI<span class="livedot" style="background:var(--blue)"></span></div>
+          <div class="cmeta"><div class="cname">QuietInbox <span class="stat-pill sp-active">active</span></div><div class="cdomain">quietinbox.io</div></div>
+          <div class="cnum"><div class="mrr">$420</div><div class="usr">38 u</div></div>
+        </div>
+        <div class="cfilter" data-co="translatorbill" onclick="setFilter(this,'translatorbill')">
+          <div class="cav" style="background:var(--violet)">TB<span class="livedot" style="background:var(--blue)"></span></div>
+          <div class="cmeta"><div class="cname">TranslatorBill <span class="stat-pill sp-active">active</span></div><div class="cdomain">no domain yet</div></div>
+          <div class="cnum"><div class="mrr">$0</div><div class="usr">0 u</div></div>
+        </div>
+        <div class="cfilter" data-co="datadrop" onclick="setFilter(this,'datadrop')">
+          <div class="cav" style="background:var(--green)">DD<span class="livedot" style="background:var(--green)"></span></div>
+          <div class="cmeta"><div class="cname">DataDrop <span class="stat-pill sp-active">active</span></div><div class="cdomain">datadrop.sh</div></div>
+          <div class="cnum"><div class="mrr">$95</div><div class="usr">6 u</div></div>
+        </div>
+        <div class="cfilter" data-co="redditpainbot" onclick="setFilter(this,'redditpainbot')">
+          <div class="cav" style="background:var(--slate)">RP<span class="livedot" style="background:var(--red)"></span></div>
+          <div class="cmeta"><div class="cname">RedditPainBot <span class="stat-pill sp-paused">paused</span></div><div class="cdomain">no domain</div></div>
+          <div class="cnum"><div class="mrr">$0</div><div class="usr">0 u</div></div>
+        </div>
+      </div>
+      <div class="side-foot">
+        <div class="ft">22 slices shipped all-time<br/>2 building · 3 live · 1 blocked now</div>
+      </div>
+    </aside>
+
+    <!-- ----- RIVER ----- -->
+    <section class="river-wrap">
+      <div class="river-head">
+        <div class="river-title">
+          <span class="blink"></span>
+          <h2>Activity river</h2>
+          <span class="sub" id="riversub">everything, newest first · auto-updating</span>
+        </div>
+        <div class="seg">
+          <button class="on" data-seg="all" onclick="setSeg(this,'all')">All</button>
+          <button data-seg="gates" onclick="setSeg(this,'gates')">Needs you</button>
+          <button data-seg="running" onclick="setSeg(this,'running')">Running</button>
+        </div>
+      </div>
+
+      <div class="river" id="river">
+
+        <div class="daydiv"><span>Now · live</span></div>
+
+        <!-- running: TranslatorBill -->
+        <div class="row" data-co="translatorbill" data-type="running">
+          <div class="node"><div class="marker running"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--violet)">TB</div>
+            <div class="rtext"><b>TranslatorBill</b> — building slice 6 · writing <span class="code">InvoiceFormatter.tsx</span></div>
+            <span class="kind k-run">building</span>
+            <div class="rtime"><span class="pd"></span>now</div>
+          </div>
+        </div>
+
+        <!-- running: QuietInbox probe -->
+        <div class="row" data-co="quietinbox" data-type="running">
+          <div class="node"><div class="marker running"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--blue)">QI</div>
+            <div class="rtext"><b>QuietInbox</b> — deployed to <span class="code">localhost:4021</span> · running doneWhen probe</div>
+            <span class="kind k-run">deploy</span>
+            <div class="rtime"><span class="pd"></span>12s</div>
+          </div>
+        </div>
+
+        <!-- GATE: SPEND — QuietInbox -->
+        <div class="gate g-spend" data-co="quietinbox" data-type="gate" id="gate-spend">
+          <div class="gate-top">
+            <span class="gate-badge">⛁ Spend</span>
+            <span class="gate-co"><span class="ravatar" style="background:var(--blue)">QI</span>QuietInbox</span>
+            <span class="gate-flag"><span class="dot"></span>Needs you</span>
+          </div>
+          <div class="gate-body">Authorize <b>$40</b> for a Product Hunt launch — projected <b>~120 signups</b>.</div>
+          <div class="gate-meta">
+            <span class="chip">budget · $40 one-off</span>
+            <span class="chip ok">ROI est · ~120 signups</span>
+            <span class="chip">channel · Product Hunt</span>
+          </div>
+          <div class="gate-actions">
+            <button class="btn btn-amber" onclick="resolve('gate-spend','#c08a2e','Spend authorized — $40 to Product Hunt launch.')">Approve spend</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-spend','#8a8579','Held — QuietInbox launch spend parked.')">Hold</button>
+            <span class="hint">gate · SPEND</span>
+          </div>
+        </div>
+
+        <!-- LeadSift doneWhen pass -->
+        <div class="row" data-co="leadsift" data-type="pass">
+          <div class="node"><div class="marker pass"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--accent)">LS</div>
+            <div class="rtext"><b>LeadSift</b> — doneWhen passed · <span class="code">GET /digest/preview → 200</span></div>
+            <span class="kind k-pass">check ok</span>
+            <div class="rtime">2m</div>
+          </div>
+        </div>
+
+        <!-- LeadSift awaiting -->
+        <div class="row" data-co="leadsift" data-type="wait">
+          <div class="node"><div class="marker wait"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--accent)">LS</div>
+            <div class="rtext"><b>LeadSift</b> — slice 5 shipped to staging · awaiting your approval</div>
+            <span class="kind k-wait">awaiting</span>
+            <div class="rtime">2m</div>
+          </div>
+        </div>
+
+        <!-- GATE: SHIP — LeadSift -->
+        <div class="gate g-ship" data-co="leadsift" data-type="gate" id="gate-ship">
+          <div class="gate-top">
+            <span class="gate-badge">⤴ Ship</span>
+            <span class="gate-co"><span class="ravatar" style="background:var(--accent)">LS</span>LeadSift</span>
+            <span class="gate-flag"><span class="dot"></span>Needs you</span>
+          </div>
+          <div class="gate-body">Approve <b>slice 5 — daily digest of top leads.</b> Shipped to staging, preview is live and ready for production.</div>
+          <div class="gate-meta">
+            <span class="chip ok">✓ doneWhen passed</span>
+            <span class="chip ok">● preview live · /digest/preview</span>
+            <span class="chip warn">slice 8 blocked downstream</span>
+          </div>
+          <div class="gate-actions">
+            <button class="btn btn-green" onclick="resolve('gate-ship','#4f8a52','Shipped — slice 5 daily digest is live in production.')">Approve &amp; ship</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-ship','#4a72b0','Opened review — slice 5 diff &amp; preview.')">Review</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-ship','#8a8579','Held — slice 5 parked for later.')">Hold</button>
+            <span class="hint">gate · SHIP</span>
+          </div>
+        </div>
+
+        <!-- DataDrop reprioritize -->
+        <div class="row" data-co="datadrop" data-type="info">
+          <div class="node"><div class="marker info"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--green)">DD</div>
+            <div class="rtext"><b>DataDrop</b> — re-prioritized backlog · <b>slice 6 (saved chart views)</b> now top, queued</div>
+            <span class="kind k-info">planning</span>
+            <div class="rtime">5m</div>
+          </div>
+        </div>
+
+        <div class="daydiv"><span>Earlier · 18 min ago</span></div>
+
+        <!-- RedditPainBot blocked -->
+        <div class="row" data-co="redditpainbot" data-type="blocked">
+          <div class="node"><div class="marker blocked"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--slate)">RP</div>
+            <div class="rtext"><b>RedditPainBot</b> — slice 8 blocked · no progress, same failure <b>×3</b></div>
+            <span class="kind k-block">blocked</span>
+            <div class="rtime">18m</div>
+          </div>
+        </div>
+
+        <!-- GATE: UNBLOCK — RedditPainBot -->
+        <div class="gate g-block" data-co="redditpainbot" data-type="gate" id="gate-block">
+          <div class="gate-top">
+            <span class="gate-badge">⚠ Unblock</span>
+            <span class="gate-co"><span class="ravatar" style="background:var(--slate)">RP</span>RedditPainBot</span>
+            <span class="gate-flag"><span class="dot"></span>Needs you</span>
+          </div>
+          <div class="gate-body">Slice 8 stuck <b>×3</b> — dedupe near-identical pains. The agent can't make progress. Retry with a different approach, or pause the company?</div>
+          <div class="gate-meta">
+            <span class="chip warn">✗ stuck ×3 · same failure</span>
+            <span class="chip">last error · cosine threshold too tight</span>
+            <span class="chip">company · paused</span>
+          </div>
+          <div class="gate-actions">
+            <button class="btn btn-red" onclick="resolve('gate-block','#b6483f','Retrying — RedditPainBot slice 8 with a new dedupe strategy.')">Retry differently</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-block','#8a8579','Paused — RedditPainBot put on ice.')">Pause company</button>
+            <span class="hint">gate · UNBLOCK</span>
+          </div>
+        </div>
+
+        <!-- a few ambient older rows -->
+        <div class="row dim" data-co="quietinbox" data-type="pass">
+          <div class="node"><div class="marker pass"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--blue)">QI</div>
+            <div class="rtext"><b>QuietInbox</b> — slice 9 scaffolded · <span class="code">snooze a thread until tomorrow</span></div>
+            <span class="kind k-info">planning</span>
+            <div class="rtime">24m</div>
+          </div>
+        </div>
+        <div class="row dim" data-co="datadrop" data-type="pass">
+          <div class="node"><div class="marker pass"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--green)">DD</div>
+            <div class="rtext"><b>DataDrop</b> — slice 5 shipped to production · <span class="code">CSV column mapping</span></div>
+            <span class="kind k-pass">shipped</span>
+            <div class="rtime">41m</div>
+          </div>
+        </div>
+        <div class="row dim" data-co="leadsift" data-type="info">
+          <div class="node"><div class="marker info"></div></div>
+          <div class="rline">
+            <div class="ravatar" style="background:var(--accent)">LS</div>
+            <div class="rtext"><b>LeadSift</b> — new signup · <b>12 users</b> total · MRR steady at $180</div>
+            <span class="kind k-info">growth</span>
+            <div class="rtime">1h</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // user menu
+  function toggleMenu(e){
+    e.stopPropagation();
+    document.getElementById('usermenu').classList.toggle('open');
+  }
+  document.addEventListener('click',()=>document.getElementById('usermenu').classList.remove('open'));
+
+  // resolve a gate in place
+  function resolve(id,color,msg){
+    const g=document.getElementById(id);
+    if(!g)return;
+    g.style.transition='opacity .25s';
+    g.innerHTML='<div class="resolved"><span class="tick" style="background:'+color+'">✓</span><span>'+msg+'</span></div>';
+    g.style.borderColor=color+'55';
+    // decrement need-you count
+    const need=document.querySelector('.count.c-need .num');
+    const left=Math.max(0,parseInt(need.textContent,10)-1);
+    need.textContent=left;
+    document.querySelectorAll('.metric .mv').forEach(m=>{if(m.style.color)m.textContent=left;});
+    g.dataset.type='resolved';
+  }
+
+  // sidebar filter
+  function setFilter(el,co){
+    document.querySelectorAll('.cfilter').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    applyFilters();
+    const sub=document.getElementById('riversub');
+    sub.textContent = co==='all' ? 'everything, newest first · auto-updating'
+      : el.querySelector('.cname').childNodes[0].textContent.trim()+' · filtered · newest first';
+  }
+  let curCo='all', curSeg='all';
+  function setFilterCo(co){curCo=co;}
+  function setSeg(el,seg){
+    document.querySelectorAll('.seg button').forEach(b=>b.classList.remove('on'));
+    el.classList.add('on');
+    curSeg=seg;applyFilters();
+  }
+  // wire co into applyFilters by reading active sidebar item
+  function applyFilters(){
+    const active=document.querySelector('.cfilter.active');
+    const co=active?active.dataset.co:'all';
+    document.querySelectorAll('#river .row, #river .gate').forEach(node=>{
+      let show=true;
+      if(co!=='all' && node.dataset.co!==co) show=false;
+      if(curSeg==='gates' && node.dataset.type!=='gate' && node.dataset.type!=='resolved') show=false;
+      if(curSeg==='running' && node.dataset.type!=='running') show=false;
+      node.style.display = show ? '' : 'none';
+    });
+    // hide empty day dividers loosely (keep simple — always show)
+  }
+
+  // lightweight live auto-feed: prepend a fresh running line every few seconds
+  const feed=[
+    {co:'translatorbill',av:'TB',bg:'var(--violet)',txt:'compiling slice 6 · <span class="code">locale tables loaded</span>',k:'k-run',kt:'building',run:true},
+    {co:'quietinbox',av:'QI',bg:'var(--blue)',txt:'doneWhen probe → <span class="code">200 OK</span> · snooze persists',k:'k-pass',kt:'check ok',run:false},
+    {co:'datadrop',av:'DD',bg:'var(--green)',txt:'queued slice 6 · spinning up sandbox',k:'k-run',kt:'building',run:true},
+    {co:'translatorbill',av:'TB',bg:'var(--violet)',txt:'wrote test · <span class="code">formatInvoice(de-DE)</span>',k:'k-run',kt:'building',run:true},
+    {co:'quietinbox',av:'QI',bg:'var(--blue)',txt:'rebuilt bundle · redeploying <span class="code">localhost:4021</span>',k:'k-run',kt:'deploy',run:true}
+  ];
+  let fi=0;
+  setInterval(()=>{
+    const river=document.getElementById('river');
+    const firstDiv=river.querySelector('.daydiv');
+    const f=feed[fi%feed.length];fi++;
+    const row=document.createElement('div');
+    row.className='row';row.dataset.co=f.co;row.dataset.type=f.run?'running':'pass';
+    row.innerHTML='<div class="node"><div class="marker '+(f.run?'running':'pass')+'"></div></div>'+
+      '<div class="rline"><div class="ravatar" style="background:'+f.bg+'">'+f.av+'</div>'+
+      '<div class="rtext"><b>'+f.av.replace('TB','TranslatorBill').replace('QI','QuietInbox').replace('DD','DataDrop')+'</b> — '+f.txt+'</div>'+
+      '<span class="kind '+f.k+'">'+f.kt+'</span>'+
+      '<div class="rtime">'+(f.run?'<span class="pd"></span>now':'1s')+'</div></div>';
+    row.style.opacity='0';row.style.transform='translateY(-6px)';
+    firstDiv.after(row);
+    requestAnimationFrame(()=>{row.style.transition='opacity .4s,transform .4s';row.style.opacity='';row.style.transform='';});
+    applyFilters();
+    // age out: cap river length so it doesn't grow forever
+    const rows=river.querySelectorAll('.row');
+    if(rows.length>16) rows[rows.length-1].remove();
+  },4200);
+</script>
+</body>
+</html>

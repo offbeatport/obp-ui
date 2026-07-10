@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#1a1816;
+    --bg-2:#201d1a;
+    --panel:#252119;
+    --panel-2:#2b271f;
+    --ink:#efe9dd;
+    --ink-soft:#a59c8d;
+    --ink-faint:#766d60;
+    --line:#332e26;
+    --line-soft:#2a2620;
+    --accent:#d4754f;
+    --accent-soft:#3a2b22;
+    --green:#6fae72;
+    --amber:#d3a14a;
+    --red:#d0635a;
+    --blue:#6e96cf;
+    --shadow:0 18px 50px -22px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  /* ambient glow */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(620px 460px at 50% -8%, rgba(212,117,79,.10), transparent 70%),
+      radial-gradient(560px 520px at 88% 108%, rgba(110,150,207,.07), transparent 70%),
+      radial-gradient(480px 480px at 6% 96%, rgba(111,174,114,.05), transparent 70%);
+  }
+  .wrap{
+    position:relative;z-index:1;
+    max-width:760px;margin:0 auto;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    padding:26px 22px 0;
+  }
+
+  /* header */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .glyph{
+    width:26px;height:26px;border-radius:8px;
+    background:linear-gradient(150deg,var(--accent),#a8512f);
+    box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 6px 18px -8px var(--accent);
+  }
+  .brand .name{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:15px;letter-spacing:.2px;color:var(--ink);
+  }
+  .more-btn{
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:500;
+    color:var(--ink-soft);background:transparent;
+    border:1px solid var(--line);border-radius:999px;
+    padding:8px 16px;cursor:pointer;
+    display:flex;align-items:center;gap:7px;
+    transition:.2s ease;
+  }
+  .more-btn:hover{color:var(--ink);border-color:#473f33;background:rgba(255,255,255,.02)}
+  .more-btn svg{opacity:.7}
+
+  /* portfolio line */
+  .portfolio{
+    margin-top:38px;
+    text-align:center;
+  }
+  .portfolio p{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:400;font-size:18px;line-height:1.5;
+    color:var(--ink-soft);max-width:440px;margin:0 auto;
+  }
+  .portfolio strong{color:var(--ink);font-weight:600}
+  .portfolio .up{color:var(--green);font-weight:500}
+
+  /* focus stack */
+  .focus{
+    margin-top:34px;
+    flex:0 0 auto;
+  }
+  .eyebrow{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:18px;
+  }
+  .eyebrow .pip{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 10px var(--accent);
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+  .stack{display:flex;flex-direction:column;gap:14px;max-width:540px;margin:0 auto}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:20px 22px;
+    box-shadow:var(--shadow);
+    transition:opacity .45s ease, transform .45s ease, max-height .5s ease, padding .5s ease, margin .5s ease;
+    max-height:260px;overflow:hidden;
+  }
+  .card .who{
+    display:flex;align-items:center;gap:9px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.06em;color:var(--ink-faint);margin-bottom:11px;
+  }
+  .card .who .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .card .ask{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:500;font-size:17px;line-height:1.45;color:var(--ink);
+    margin-bottom:17px;
+  }
+  .card .ask .muted{color:var(--ink-soft);font-weight:400}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;
+    border-radius:11px;padding:10px 18px;cursor:pointer;border:1px solid transparent;
+    transition:.18s ease;
+  }
+  .btn.primary{
+    background:var(--accent);color:#1a1411;
+    box-shadow:0 8px 22px -12px var(--accent);
+  }
+  .btn.primary:hover{filter:brightness(1.07);transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+  .btn.ghost:hover{color:var(--ink);border-color:#473f33}
+  .btn.danger{background:transparent;color:var(--red);border-color:#4a302c}
+  .btn.danger:hover{background:rgba(208,99,90,.08)}
+
+  /* resolved state */
+  .card.done{
+    max-height:64px;padding:18px 22px;opacity:.62;
+    background:var(--bg-2);border-color:var(--line-soft);box-shadow:none;
+  }
+  .card.done .who,.card.done .ask,.card.done .actions{display:none}
+  .resolved{
+    display:none;align-items:center;gap:11px;
+    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink-soft);
+  }
+  .card.done .resolved{display:flex}
+  .resolved .check{
+    width:20px;height:20px;border-radius:50%;flex:0 0 auto;
+    display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);
+  }
+
+  .allclear{
+    display:none;text-align:center;color:var(--ink-soft);
+    font-family:'Space Grotesk',sans-serif;font-size:16px;
+    padding:8px 0 4px;
+  }
+  .allclear.show{display:block;animation:fade .5s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  /* dock */
+  .dock-wrap{margin-top:auto;padding:30px 0 26px}
+  .dock-label{
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);
+    margin-bottom:15px;
+  }
+  .dock{
+    display:flex;gap:11px;justify-content:center;flex-wrap:wrap;
+  }
+  .co{
+    flex:1 1 116px;max-width:140px;min-width:104px;
+    background:rgba(255,255,255,.018);
+    border:1px solid var(--line-soft);
+    border-radius:14px;
+    padding:14px 13px;
+    transition:.2s ease;
+    cursor:default;
+  }
+  .co:hover{background:rgba(255,255,255,.04);border-color:var(--line);transform:translateY(-2px)}
+  .co .top{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+  .co .cdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+  .co .cdot.green{background:var(--green);box-shadow:0 0 8px rgba(111,174,114,.5)}
+  .co .cdot.need{background:var(--accent);box-shadow:0 0 8px rgba(212,117,79,.55)}
+  .co .cdot.blue{background:var(--blue);box-shadow:0 0 8px rgba(110,150,207,.5)}
+  .co .cdot.paused{background:var(--amber);box-shadow:0 0 8px rgba(211,161,74,.45)}
+  .co .cname{
+    font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:13.5px;
+    color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .co .cstate{font-size:11.5px;color:var(--ink-faint);text-transform:capitalize}
+  .co.needy .cstate{color:var(--accent)}
+
+  /* drawer */
+  .scrim{
+    position:fixed;inset:0;z-index:20;background:rgba(10,9,8,.55);
+    backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:.3s ease;
+  }
+  .scrim.open{opacity:1;visibility:visible}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:380px;max-width:90vw;z-index:21;
+    background:linear-gradient(180deg,#211e18,#1c1915);
+    border-left:1px solid var(--line);
+    box-shadow:-30px 0 60px -30px rgba(0,0,0,.8);
+    transform:translateX(102%);transition:transform .34s cubic-bezier(.4,0,.1,1);
+    padding:26px 26px 30px;overflow-y:auto;
+    display:flex;flex-direction:column;gap:24px;
+  }
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between}
+  .drawer-head h2{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:var(--ink);
+  }
+  .close-x{
+    width:32px;height:32px;border-radius:9px;border:1px solid var(--line);
+    background:transparent;color:var(--ink-soft);cursor:pointer;font-size:16px;
+    display:grid;place-items:center;transition:.18s ease;
+  }
+  .close-x:hover{color:var(--ink);border-color:#473f33}
+
+  .sec h3{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px;
+  }
+  .sec p{font-size:14px;line-height:1.6;color:var(--ink-soft)}
+  .sec p strong{color:var(--ink);font-weight:600}
+  .sec p .good{color:var(--green);font-weight:500}
+
+  .cap{margin-top:13px}
+  .cap-bar{height:7px;border-radius:6px;background:#2c281f;overflow:hidden}
+  .cap-fill{height:100%;width:43%;border-radius:6px;background:linear-gradient(90deg,var(--green),#7fb682)}
+  .cap-meta{
+    display:flex;justify-content:space-between;margin-top:8px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);
+  }
+
+  .toggle-row{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:11px 0;border-top:1px solid var(--line-soft);
+  }
+  .toggle-row:first-of-type{border-top:none}
+  .toggle-row span{font-size:13.5px;color:var(--ink)}
+  .sw{
+    width:40px;height:23px;border-radius:999px;background:#3a342a;flex:0 0 auto;
+    position:relative;cursor:pointer;transition:.22s ease;border:none;
+  }
+  .sw::after{
+    content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;
+    border-radius:50%;background:#8a8174;transition:.22s ease;
+  }
+  .sw.on{background:var(--accent-soft)}
+  .sw.on::after{left:19.5px;background:var(--accent)}
+
+  @media (max-width:560px){
+    .wrap{padding:20px 16px 0}
+    .portfolio p{font-size:16.5px}
+    .portfolio{margin-top:28px}
+    .focus{margin-top:26px}
+    .card .ask{font-size:16px}
+    .dock{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+    .dock::-webkit-scrollbar{display:none}
+    .co{flex:0 0 124px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="glyph"></div>
+        <span class="name">C Slop Slop</span>
+      </div>
+      <button class="more-btn" onclick="openDrawer()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="2" cy="7" r="1.4" fill="currentColor"/><circle cx="7" cy="7" r="1.4" fill="currentColor"/><circle cx="12" cy="7" r="1.4" fill="currentColor"/></svg>
+        More
+      </button>
+    </header>
+
+    <div class="portfolio">
+      <p>Your portfolio is healthy — <strong>$695/mo</strong> and <span class="up">growing +14%</span> across <strong>5 companies</strong>.</p>
+    </div>
+
+    <section class="focus">
+      <div class="eyebrow"><span class="pip"></span> <span id="needCount">3 things need you</span></div>
+
+      <div class="stack" id="stack">
+
+        <div class="card" id="c1">
+          <div class="who"><span class="dot"></span> LeadSift</div>
+          <div class="ask">Its daily lead digest is <span class="muted">built and tested.</span> Want it live?</div>
+          <div class="actions">
+            <button class="btn primary" onclick="resolve('c1','Shipped — daily digest is live')">Approve &amp; ship</button>
+            <button class="btn ghost" onclick="resolve('c1','Marked for review')">Review</button>
+          </div>
+          <div class="resolved"><span class="check">✓</span><span class="rtext"></span></div>
+        </div>
+
+        <div class="card" id="c2">
+          <div class="who"><span class="dot"></span> QuietInbox</div>
+          <div class="ask">Spend <span class="muted">$40 to launch on Product Hunt?</span> ~120 new users expected.</div>
+          <div class="actions">
+            <button class="btn primary" onclick="resolve('c2','Approved — launching on Product Hunt')">Approve</button>
+            <button class="btn ghost" onclick="resolve('c2','Held off for now')">Not now</button>
+          </div>
+          <div class="resolved"><span class="check">✓</span><span class="rtext"></span></div>
+        </div>
+
+        <div class="card" id="c3">
+          <div class="who"><span class="dot"></span> RedditPainBot</div>
+          <div class="ask">Stuck after <span class="muted">3 failed tries, no progress.</span> Retry differently, or shut it down?</div>
+          <div class="actions">
+            <button class="btn primary" onclick="resolve('c3','Retrying with a new approach')">Retry</button>
+            <button class="btn danger" onclick="resolve('c3','Shut down')">Shut down</button>
+          </div>
+          <div class="resolved"><span class="check">✓</span><span class="rtext"></span></div>
+        </div>
+
+      </div>
+      <div class="allclear" id="allclear">All clear — nothing needs you right now.</div>
+    </section>
+
+    <section class="dock-wrap">
+      <div class="dock-label">Your 5 companies</div>
+      <div class="dock">
+        <div class="co needy"><div class="top"><span class="cdot need"></span><span class="cname">LeadSift</span></div><div class="cstate">needs you</div></div>
+        <div class="co needy"><div class="top"><span class="cdot need"></span><span class="cname">QuietInbox</span></div><div class="cstate">needs you</div></div>
+        <div class="co"><div class="top"><span class="cdot blue"></span><span class="cname">TranslatorBill</span></div><div class="cstate">building</div></div>
+        <div class="co"><div class="top"><span class="cdot green"></span><span class="cname">DataDrop</span></div><div class="cstate">live</div></div>
+        <div class="co needy"><div class="top"><span class="cdot paused"></span><span class="cname">RedditPainBot</span></div><div class="cstate">paused</div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- drawer -->
+  <div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>The deeper view</h2>
+      <button class="close-x" onclick="closeDrawer()">✕</button>
+    </div>
+
+    <div class="sec">
+      <h3>Money</h3>
+      <p>You're <span class="good">profitable</span> — net <strong>+$481/mo</strong>.</p>
+      <div class="cap">
+        <div class="cap-bar"><div class="cap-fill"></div></div>
+        <div class="cap-meta"><span>$214 spent</span><span>$500 cap</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>Autopilot</h3>
+      <p>Most work runs on its own. You only approve growth spend and big changes.</p>
+      <div class="cap">
+        <div class="toggle-row"><span>Auto-ship tested features</span><button class="sw" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><span>Auto-approve spend under $20</span><button class="sw on" onclick="this.classList.toggle('on')"></button></div>
+        <div class="toggle-row"><span>Auto-reply to customers</span><button class="sw on" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>This week</h3>
+      <p>Shipped <strong>1 feature</strong>, sent <strong>15 customer emails</strong>, spent <strong>$41</strong>. Nothing else needed your input.</p>
+    </div>
+  </aside>
+
+<script>
+  var remaining = 3;
+  function resolve(id, text){
+    var card = document.getElementById(id);
+    if(card.classList.contains('done')) return;
+    card.querySelector('.rtext').textContent = text;
+    card.classList.add('done');
+    remaining--;
+    var label = document.getElementById('needCount');
+    if(remaining <= 0){
+      label.textContent = 'Nothing needs you';
+      document.querySelector('.eyebrow .pip').style.background = 'var(--green)';
+      document.querySelector('.eyebrow .pip').style.boxShadow = '0 0 10px var(--green)';
+      document.getElementById('allclear').classList.add('show');
+    } else {
+      label.textContent = remaining + (remaining === 1 ? ' thing needs you' : ' things need you');
+    }
+  }
+  function openDrawer(){
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer').setAttribute('aria-hidden','false');
+  }
+  function closeDrawer(){
+    document.getElementById('scrim').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawer').setAttribute('aria-hidden','true');
+  }
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDrawer(); });
+</script>
+</body>
+</html>

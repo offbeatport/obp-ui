@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Overview · Needs First</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e0d6;
+    --green:#4f8a52; --green-soft:#e3efe1;
+    --blue:#4a72b0; --blue-soft:#e2eaf5;
+    --violet:#7a5ea8; --violet-soft:#ece6f5;
+    --amber:#c08a2e; --amber-soft:#f6ecd4;
+    --red:#b6483f; --red-soft:#f6e0dd;
+    --slate:#8a8579; --slate-soft:#ece8df;
+    --radius:16px;
+  }
+  :root[data-theme="dark"]{
+    --cream:#05060a; --cream-2:#080d18; --paper:#10131f;
+    --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --line-soft:#111726;
+    --accent:#e0794e; --accent-soft:rgba(224,121,78,.18);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --slate:#8a93a8; --slate-soft:rgba(120,140,200,.12);
+  }
+
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body {
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream); color:var(--ink);
+    font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.005em;
+    min-height:100vh;
+  }
+  ::selection { background:var(--accent-soft); }
+  ::-webkit-scrollbar { width:11px; height:11px; }
+  ::-webkit-scrollbar-thumb { background:var(--line); border-radius:8px; border:3px solid var(--cream); }
+  a { color:inherit; }
+  .mono { font-family:'JetBrains Mono',monospace; font-feature-settings:"tnum" 1; }
+
+  .wrap { max-width:1240px; margin:0 auto; padding:34px 48px 96px; }
+
+  /* ---------- top bar ---------- */
+  .top { display:flex; align-items:center; justify-content:space-between; margin-bottom:52px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand-mark { display:flex; align-items:center; gap:4px; }
+  .brace { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:400; color:var(--accent); opacity:.45; line-height:1; }
+  .brand-word { font-weight:600; font-size:16px; letter-spacing:-.01em; }
+  .brand-sep { width:1px; height:20px; background:var(--line); margin:0 14px; }
+  .brand-page { font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+
+  .theme-toggle {
+    width:34px; height:34px; border-radius:10px; cursor:pointer;
+    background:var(--paper); border:1px solid var(--line); color:var(--ink-soft);
+    display:grid; place-items:center;
+    transition:color .16s, border-color .16s, transform .3s;
+  }
+  .theme-toggle:hover { color:var(--accent); border-color:var(--accent-soft); transform:rotate(-18deg); }
+  .theme-toggle svg { width:17px; height:17px; }
+  .icon-sun { display:none; }
+  :root[data-theme="dark"] .icon-moon { display:none; }
+  :root[data-theme="dark"] .icon-sun { display:block; }
+
+  /* ---------- main grid ---------- */
+  .grid { display:grid; grid-template-columns:minmax(0,1fr) 316px; column-gap:60px; }
+  .aside { border-left:1px solid var(--line); padding-left:44px; }
+
+  /* ---------- hero ---------- */
+  .hero { margin-bottom:26px; }
+  .hero-eyebrow {
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .hero-eyebrow .live { width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 0 var(--accent); animation:pulse 2.4s infinite; }
+  .hero h1 { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:38px; line-height:1.05; letter-spacing:-.02em; margin:0; }
+  .hero h1 .n { color:var(--accent); }
+  .hero-sub { color:var(--ink-soft); font-size:15px; margin-top:10px; }
+
+  /* ---------- needs (hero cards) ---------- */
+  .needs { margin-top:8px; }
+  .need {
+    position:relative; padding:26px 4px 26px 26px; border-top:1px solid var(--line);
+    transition:background .2s;
+    animation:rise .5s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .need:first-child { border-top:none; }
+  .need:nth-child(2){ animation-delay:.07s; }
+  .need:nth-child(3){ animation-delay:.14s; }
+  .need::before {
+    content:""; position:absolute; left:0; top:26px; bottom:26px; width:3px;
+    border-radius:3px; background:var(--c); transition:top .2s, bottom .2s;
+  }
+  .need:hover { background:linear-gradient(90deg, var(--c-soft), transparent 78%); }
+  .need:hover::before { top:20px; bottom:20px; }
+
+  .need-top { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:11px; }
+  .need-kicker {
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500;
+    letter-spacing:.11em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  .need-kicker b { color:var(--c); font-weight:500; }
+  .need-kicker .cdot { width:8px; height:8px; border-radius:50%; background:var(--c); }
+
+  .need-title { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:22px; line-height:1.2; letter-spacing:-.01em; margin:0 0 7px; }
+  .need-desc { color:var(--ink-soft); font-size:14px; margin:0 0 16px; max-width:60ch; }
+
+  .chip {
+    display:inline-flex; align-items:center; gap:5px; flex:0 0 auto;
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:500; letter-spacing:.03em;
+    padding:4px 9px; border-radius:20px; white-space:nowrap;
+  }
+  .chip.ok { color:var(--green); background:var(--green-soft); }
+  .chip.warn { color:var(--amber); background:var(--amber-soft); }
+  .chip.bad { color:var(--red); background:var(--red-soft); }
+
+  /* preview blocks (kept airy — hairline only) */
+  .preview { margin:0 0 18px; }
+  .files { display:flex; flex-wrap:wrap; gap:7px; }
+  .file {
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:7px; padding:4px 9px; background:var(--paper);
+  }
+  .file .add { color:var(--green); }
+
+  .budget { max-width:420px; }
+  .budget-track { height:8px; border-radius:6px; background:var(--line-soft); overflow:hidden; display:flex; }
+  .budget-cur { background:var(--slate); height:100%; }
+  .budget-add { background:var(--accent); height:100%; opacity:.9; }
+  .budget-legend { display:flex; align-items:center; gap:16px; margin-top:9px; font-size:12px; color:var(--ink-faint); }
+  .budget-legend .mono { color:var(--ink); font-weight:500; }
+  .budget-legend .plus { color:var(--accent); }
+
+  .log {
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.7; color:var(--ink-soft);
+    border-left:2px solid var(--red-soft); padding:2px 0 2px 14px;
+  }
+  .log .err { color:var(--red); }
+  .log .dim { color:var(--ink-faint); }
+
+  /* actions */
+  .actions { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .btn {
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:550; letter-spacing:-.005em;
+    padding:9px 16px; border-radius:10px; cursor:pointer; border:1px solid transparent;
+    transition:transform .12s, background .15s, border-color .15s, color .15s; white-space:nowrap;
+  }
+  .btn:active { transform:translateY(1px) scale(.985); }
+  .btn.primary { background:var(--accent); color:#fff; box-shadow:0 1px 2px rgba(200,100,60,.25); }
+  .btn.primary:hover { filter:brightness(1.05); }
+  :root[data-theme="dark"] .btn.primary { color:#0a0a0f; font-weight:600; }
+  .btn.ghost { background:transparent; border-color:var(--line); color:var(--ink-soft); }
+  .btn.ghost:hover { border-color:var(--ink-faint); color:var(--ink); }
+  .btn.danger { background:transparent; border-color:var(--line); color:var(--ink-soft); }
+  .btn.danger:hover { border-color:var(--red); color:var(--red); background:var(--red-soft); }
+
+  /* dismiss animation */
+  .need.done { overflow:hidden; animation:collapse .42s cubic-bezier(.4,0,.1,1) forwards; pointer-events:none; }
+  @keyframes collapse { to { max-height:0; opacity:0; padding-top:0; padding-bottom:0; margin:0; transform:translateX(10px); } }
+
+  /* empty state */
+  .empty { display:none; padding:44px 0 20px; text-align:left; animation:rise .5s cubic-bezier(.2,.7,.2,1) both; }
+  .empty.show { display:block; }
+  .empty-check { width:48px; height:48px; border-radius:14px; background:var(--green-soft); color:var(--green); display:grid; place-items:center; margin-bottom:18px; }
+  .empty-check svg { width:24px; height:24px; }
+  .empty h2 { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:24px; margin:0 0 8px; letter-spacing:-.01em; }
+  .empty p { color:var(--ink-soft); font-size:14px; margin:0; max-width:44ch; }
+
+  /* ---------- aside (quiet secondary) ---------- */
+  .a-block { margin-bottom:38px; }
+  .a-label {
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-faint); margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .a-label span { color:var(--ink-faint); font-weight:400; }
+
+  .mrr { display:flex; align-items:baseline; gap:10px; margin-bottom:20px; }
+  .mrr-val { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:32px; letter-spacing:-.02em; }
+  .mrr-delta { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500; color:var(--green); }
+
+  .stat { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-top:1px solid var(--line-soft); }
+  .stat:first-of-type { border-top:none; }
+  .stat-k { font-size:13px; color:var(--ink-soft); }
+  .stat-v { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:var(--ink); }
+  .stat-v .up { color:var(--green); }
+  .stat-v .dim { color:var(--ink-faint); }
+  .mini-bar { width:52px; height:5px; border-radius:4px; background:var(--line-soft); overflow:hidden; display:inline-block; vertical-align:middle; margin-right:8px; }
+  .mini-bar i { display:block; height:100%; background:var(--amber); border-radius:4px; }
+
+  /* companies */
+  .co { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--line-soft); cursor:pointer; transition:padding-left .18s; }
+  .co:first-of-type { border-top:none; }
+  .co:hover { padding-left:5px; }
+  .co-dot { width:9px; height:9px; border-radius:50%; background:var(--c); flex:0 0 auto; }
+  .co-name { font-weight:550; font-size:13.5px; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .co-stat { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-faint); }
+  .co-mrr { font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:500; color:var(--ink); min-width:44px; text-align:right; }
+  .co-mrr.zero { color:var(--ink-faint); font-weight:400; }
+  .co-mrr .up { color:var(--green); font-size:10px; }
+
+  /* activity */
+  .act { display:flex; align-items:flex-start; gap:10px; padding:8px 0; }
+  .act-dot { width:7px; height:7px; border-radius:50%; margin-top:6px; flex:0 0 auto; background:var(--c); }
+  .act-dot.now { box-shadow:0 0 0 0 var(--c); animation:pulse 2s infinite; }
+  .act-tx { flex:1; font-size:12.5px; color:var(--ink-soft); line-height:1.4; }
+  .act-tx b { color:var(--ink); font-weight:550; }
+  .act-tx code { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); }
+  .act-t { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); flex:0 0 auto; padding-top:1px; }
+
+  /* toast */
+  .toast {
+    position:fixed; left:50%; bottom:30px; transform:translate(-50%,140%);
+    display:flex; align-items:center; gap:14px;
+    background:var(--paper); border:1px solid var(--line); border-radius:12px;
+    padding:11px 12px 11px 16px; box-shadow:0 8px 30px rgba(0,0,0,.14);
+    font-size:13px; color:var(--ink); z-index:40;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .toast.show { transform:translate(-50%,0); }
+  .toast .tick { color:var(--green); display:grid; place-items:center; }
+  .toast .tick svg { width:16px; height:16px; }
+  .toast-undo { font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:none; padding:6px 12px; border-radius:8px; cursor:pointer; }
+  .toast-undo:hover { filter:brightness(1.04); }
+
+  @keyframes pulse { 0%{ box-shadow:0 0 0 0 currentColor; } 70%{ box-shadow:0 0 0 6px transparent; } 100%{ box-shadow:0 0 0 0 transparent; } }
+  @keyframes rise { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+  @media (prefers-reduced-motion:reduce){ *{ animation-duration:.001s !important; transition-duration:.05s !important; } }
+  @media (max-width:1000px){ .grid { grid-template-columns:1fr; } .aside { border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:36px; margin-top:24px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- top bar -->
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark">
+        <span class="brace">{</span>
+        <span class="brand-word">C&nbsp;slop&nbsp;slop</span>
+        <span class="brace">}</span>
+      </div>
+      <span class="brand-sep"></span>
+      <span class="brand-page">Overview</span>
+    </div>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+  </header>
+
+  <div class="grid">
+
+    <!-- LEFT · NEEDS FIRST (hero) -->
+    <main>
+      <div class="hero">
+        <div class="hero-eyebrow"><span class="live"></span> Monday · Jul 1 · Autopilot running</div>
+        <h1><span class="n" id="needCount">3</span> <span id="needWord">things</span> need you</h1>
+        <p class="hero-sub" id="heroSub">Everything else is building, shipping, and growing on its own.</p>
+      </div>
+
+      <div class="needs" id="needs">
+
+        <!-- 1 · SHIP -->
+        <article class="need" style="--c:var(--accent); --c-soft:var(--accent-soft)">
+          <div class="need-top">
+            <span class="need-kicker"><i class="cdot"></i>Ship · <b>LeadSift</b></span>
+            <span class="chip ok">✓ 14 checks passed</span>
+          </div>
+          <h2 class="need-title">Ship the “daily digest” feature</h2>
+          <p class="need-desc">Built, tested, and staged for LeadSift’s 12 users. One approval away from production.</p>
+          <div class="preview">
+            <div class="files">
+              <span class="file"><span class="add">+</span> DailyDigest.tsx</span>
+              <span class="file"><span class="add">+</span> digestCron.ts</span>
+              <span class="file"><span class="add">+</span> DigestTemplate.tsx</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" data-resolve data-msg="Shipped LeadSift · daily digest">Approve &amp; ship</button>
+            <button class="btn ghost">View diff</button>
+            <button class="btn ghost">Hold</button>
+          </div>
+        </article>
+
+        <!-- 2 · SPEND -->
+        <article class="need" style="--c:var(--blue); --c-soft:var(--blue-soft)">
+          <div class="need-top">
+            <span class="need-kicker"><i class="cdot"></i>Spend · <b>QuietInbox</b></span>
+            <span class="chip warn">$40 · one-time</span>
+          </div>
+          <h2 class="need-title">Approve a $40 Product Hunt launch</h2>
+          <p class="need-desc">QuietInbox is scaling and profitable. A featured launch to reach new users.</p>
+          <div class="preview budget">
+            <div class="budget-track">
+              <div class="budget-cur" style="width:42.8%"></div>
+              <div class="budget-add" style="width:8%"></div>
+            </div>
+            <div class="budget-legend">
+              <span>After approval <span class="mono">$254</span> <span class="dim">/ $500 cap</span></span>
+              <span class="plus mono">+$40</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" data-resolve data-msg="Approved $40 · QuietInbox launch">Approve $40</button>
+            <button class="btn ghost">Adjust</button>
+            <button class="btn danger" data-resolve data-msg="Declined the $40 launch spend">Decline</button>
+          </div>
+        </article>
+
+        <!-- 3 · UNBLOCK -->
+        <article class="need" style="--c:var(--slate); --c-soft:var(--slate-soft)">
+          <div class="need-top">
+            <span class="need-kicker"><i class="cdot"></i>Unblock · <b>RedditPainBot</b></span>
+            <span class="chip bad">failed ×3</span>
+          </div>
+          <h2 class="need-title">Slice 8 is stuck — company paused</h2>
+          <p class="need-desc">The build loop can’t clear this on its own and paused itself to avoid burning spend.</p>
+          <div class="preview">
+            <div class="log">slice&nbsp;8 · scrape step<br><span class="err">RateLimitError (429)</span> — reddit API<br><span class="dim">last attempt 18m ago · 3 / 3</span></div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" data-resolve data-msg="Retrying RedditPainBot · slice 8">Retry with backoff</button>
+            <button class="btn ghost">Give guidance</button>
+            <button class="btn danger" data-resolve data-msg="Skipped slice 8 on RedditPainBot">Skip slice</button>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- empty state -->
+      <div class="empty" id="empty">
+        <div class="empty-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>You’re all caught up</h2>
+        <p>Nothing needs you right now. The autopilot is building, shipping, and growing 4 companies.</p>
+      </div>
+    </main>
+
+    <!-- RIGHT · QUIET SUMMARY -->
+    <aside class="aside">
+
+      <div class="a-block">
+        <div class="a-label">Portfolio <span>net +$481/mo</span></div>
+        <div class="mrr">
+          <div class="mrr-val mono">$695</div>
+          <div class="mrr-delta">↑ 14% MoM</div>
+        </div>
+        <div class="stat"><span class="stat-k">Users</span><span class="stat-v">56 <span class="up">+8/wk</span></span></div>
+        <div class="stat"><span class="stat-k">Spend</span><span class="stat-v"><span class="mini-bar"><i style="width:42.8%"></i></span>$214 <span class="dim">/ $500</span></span></div>
+        <div class="stat"><span class="stat-k">Shipped</span><span class="stat-v">22</span></div>
+        <div class="stat"><span class="stat-k">Active</span><span class="stat-v">4 <span class="dim">of 5</span></span></div>
+      </div>
+
+      <div class="a-block">
+        <div class="a-label">Companies <span>5</span></div>
+        <div class="co" style="--c:var(--accent)"><span class="co-dot"></span><span class="co-name">LeadSift</span><span class="co-stat">growing</span><span class="co-mrr">$180 <span class="up">↑</span></span></div>
+        <div class="co" style="--c:var(--blue)"><span class="co-dot"></span><span class="co-name">QuietInbox</span><span class="co-stat">scaling</span><span class="co-mrr">$420</span></div>
+        <div class="co" style="--c:var(--violet)"><span class="co-dot"></span><span class="co-name">TranslatorBill</span><span class="co-stat">building</span><span class="co-mrr zero">$0</span></div>
+        <div class="co" style="--c:var(--green)"><span class="co-dot"></span><span class="co-name">DataDrop</span><span class="co-stat">flat</span><span class="co-mrr">$95</span></div>
+        <div class="co" style="--c:var(--slate)"><span class="co-dot"></span><span class="co-name">RedditPainBot</span><span class="co-stat">paused</span><span class="co-mrr zero">$0</span></div>
+      </div>
+
+      <div class="a-block">
+        <div class="a-label">Live activity</div>
+        <div class="act"><span class="act-dot now" style="--c:var(--violet)"></span><span class="act-tx"><b>TranslatorBill</b> building <code>InvoiceFormatter.tsx</code></span><span class="act-t">now</span></div>
+        <div class="act"><span class="act-dot" style="--c:var(--blue)"></span><span class="act-tx"><b>QuietInbox</b> deployed · checks green</span><span class="act-t">12s</span></div>
+        <div class="act"><span class="act-dot" style="--c:var(--accent)"></span><span class="act-tx"><b>LeadSift</b> awaiting approval</span><span class="act-t">2m</span></div>
+        <div class="act"><span class="act-dot" style="--c:var(--green)"></span><span class="act-tx"><b>DataDrop</b> re-prioritized backlog</span><span class="act-t">5m</span></div>
+        <div class="act"><span class="act-dot" style="--c:var(--slate)"></span><span class="act-tx"><b>RedditPainBot</b> blocked ×3</span><span class="act-t">18m</span></div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast">
+  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+  <span id="toastMsg">Done</span>
+  <button class="toast-undo" id="toastUndo">Undo</button>
+</div>
+
+<script>
+  // ---- theme ----
+  var themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', function(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if(dark){ document.documentElement.removeAttribute('data-theme'); }
+    else { document.documentElement.setAttribute('data-theme','dark'); }
+    try{ localStorage.setItem('cslopslop-theme', dark ? 'light' : 'dark'); }catch(e){}
+  });
+
+  // ---- needs / act-in-place ----
+  var needs   = document.getElementById('needs');
+  var countEl = document.getElementById('needCount');
+  var wordEl  = document.getElementById('needWord');
+  var subEl   = document.getElementById('heroSub');
+  var emptyEl = document.getElementById('empty');
+  var toast   = document.getElementById('toast');
+  var toastMsg= document.getElementById('toastMsg');
+  var toastUndo = document.getElementById('toastUndo');
+  var toastTimer = null;
+  var lastDismissed = null; // { el, placeholder }
+
+  function remaining(){ return needs.querySelectorAll('.need:not(.done)').length; }
+
+  function updateHero(){
+    var n = remaining();
+    countEl.textContent = n;
+    wordEl.textContent = (n === 1) ? 'thing' : 'things';
+    if(n === 0){
+      countEl.textContent = '0';
+      subEl.textContent = 'Every decision cleared. Sit back — the autopilot has it.';
+      emptyEl.classList.add('show');
+    } else {
+      subEl.textContent = 'Everything else is building, shipping, and growing on its own.';
+      emptyEl.classList.remove('show');
+    }
+  }
+
+  function showToast(msg){
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); lastDismissed = null; }, 5200);
+  }
+
+  function dismiss(el, msg){
+    el.classList.add('done');
+    lastDismissed = el;
+    setTimeout(updateHero, 30);
+    showToast(msg);
+  }
+
+  needs.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn');
+    if(!btn) return;
+    if(btn.hasAttribute('data-resolve')){
+      var need = btn.closest('.need');
+      if(need && !need.classList.contains('done')){
+        dismiss(need, btn.getAttribute('data-msg') || 'Done');
+      }
+    }
+  });
+
+  toastUndo.addEventListener('click', function(){
+    if(lastDismissed){
+      lastDismissed.classList.remove('done');
+      lastDismissed.style.maxHeight = '';
+      lastDismissed = null;
+      updateHero();
+    }
+    toast.classList.remove('show');
+    if(toastTimer) clearTimeout(toastTimer);
+  });
+</script>
+</body>
+</html>

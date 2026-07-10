@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Logo explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; font-family:'Inter',system-ui,sans-serif; background:#f4efe6; color:#2c2926;
+    -webkit-font-smoothing:antialiased; padding:34px 30px 60px;
+  }
+  .page-head{ max-width:1200px; margin:0 auto 26px; }
+  .page-head h1{ margin:0; font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:600; letter-spacing:-.02em; }
+  .page-head p{ margin:7px 0 0; font-size:15px; color:#7b7368; line-height:1.5; max-width:640px; }
+
+  .grid{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(370px,1fr)); gap:18px; }
+  .card{ border:1px solid #e3dbcb; border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 1px 2px rgba(60,50,38,.04), 0 8px 24px rgba(60,50,38,.05); }
+  .card-head{ padding:13px 16px 11px; border-bottom:1px solid #f0e9dc; }
+  .card-name{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:#a04a28; }
+  .card-title{ font-size:15px; font-weight:600; margin-top:3px; }
+  .card-desc{ font-size:12.5px; color:#7b7368; margin-top:2px; line-height:1.4; }
+  .tiles{ display:grid; grid-template-columns:1fr 1fr; }
+  .tile{ position:relative; min-height:128px; display:grid; place-items:center; padding:26px 18px; }
+  .tile + .tile{ border-left:1px solid #1c2233; }
+  .tile-tag{ position:absolute; top:9px; left:11px; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; opacity:.5; }
+
+  /* ---- mode tokens, scoped per tile so every logo adapts ---- */
+  .tile.light{
+    --paper:#fffdf8; --cream-2:#f1ebe0; --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --accent:#c8643c; --accent-ink:#a04a28;
+    background:#f7f3ec; color:var(--ink);
+  }
+  .tile.dark{
+    --paper:#10131f; --cream-2:#080d18; --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --accent:#e0794e; --accent-ink:#f0a07e;
+    background:#05060a; color:var(--ink);
+  }
+  .tile.light .tile-tag{ color:#7b7368; }
+  .tile.dark .tile-tag{ color:#7c8499; }
+
+  /* ====== shared ====== */
+  .lg{ display:inline-flex; align-items:center; }
+  .blk{
+    display:grid; place-items:center; color:#fff; font-weight:700;
+    background:radial-gradient(circle at 32% 28%, #e08458, var(--accent));
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.4), 0 2px 6px rgba(200,100,60,.3);
+  }
+
+  /* ====== 01 · Current ====== */
+  .lg1{ gap:5px; }
+  .lg1 .b{ font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:400; color:var(--accent); opacity:.4; transform:translateY(-1px); }
+  .lg1 .blk{ width:26px; height:26px; border-radius:8px; font-size:13px; }
+  .lg1 .w{ font-size:17px; font-weight:600; letter-spacing:-.01em; color:var(--ink); }
+
+  /* ====== 02 · Typographic ====== */
+  .lg2{ gap:7px; font-family:'Space Grotesk',sans-serif; }
+  .lg2 .b{ font-size:25px; font-weight:300; color:var(--accent); opacity:.45; }
+  .lg2 .c{ font-size:22px; font-weight:700; color:var(--accent); }
+  .lg2 .w{ font-size:22px; font-weight:500; color:var(--ink); letter-spacing:-.015em; }
+
+  /* ====== 03 · Square brackets ====== */
+  .lg3{ gap:7px; }
+  .lg3 .b{ font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:400; color:var(--accent); opacity:.6; }
+  .lg3 .blk{ width:25px; height:25px; border-radius:6px; font-size:13px; }
+  .lg3 .w{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; color:var(--ink); }
+
+  /* ====== 04 · Stacked ====== */
+  .lg4{ gap:10px; }
+  .lg4 .blk{ width:36px; height:36px; border-radius:10px; font-size:17px; }
+  .lg4 .stack{ display:flex; flex-direction:column; line-height:.98; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:-.01em; color:var(--ink); }
+  .lg4 .stack .s2{ color:var(--accent); }
+
+  /* ====== 05 · Code object ====== */
+  .lg5{ display:inline-block; font-family:'JetBrains Mono',monospace; font-size:17px; }
+  .lg5 .p{ color:var(--ink-faint); }
+  .lg5 .k{ color:var(--accent); font-weight:600; }
+  .lg5 .v{ color:var(--ink); }
+
+  /* ====== 06 · Pill badge ====== */
+  .lg6{ gap:9px; padding:7px 15px 7px 8px; border:1px solid var(--line); border-radius:30px; background:var(--paper); box-shadow:0 1px 2px rgba(60,50,38,.05); }
+  .lg6 .blk{ width:24px; height:24px; border-radius:7px; font-size:12px; }
+  .lg6 .w{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; color:var(--ink); }
+  .lg6 .w b{ color:var(--accent); font-weight:600; }
+
+  /* ====== 07 · Glow C ====== */
+  .lg7{ gap:6px; }
+  .lg7 .b{ font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:500; color:var(--accent); opacity:.55; }
+  .lg7 .blk{ width:28px; height:28px; border-radius:9px; font-size:14px; box-shadow:0 0 0 4px rgba(200,100,60,.13), 0 4px 16px rgba(200,100,60,.5), inset 0 1px 1px rgba(255,255,255,.4); }
+  .lg7 .w{ font-size:17px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
+
+  /* ====== 08 · Gradient word ====== */
+  .lg8{ gap:6px; }
+  .lg8 .b{ font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:400; color:var(--accent); opacity:.4; }
+  .lg8 .grad{
+    font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:700; letter-spacing:-.015em;
+    background:linear-gradient(95deg, #e9885d, var(--accent) 65%); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  /* ====== 09 · Terminal ====== */
+  .lg9{ gap:8px; font-family:'JetBrains Mono',monospace; }
+  .lg9 .pr{ color:var(--accent); font-size:17px; font-weight:700; }
+  .lg9 .c{ color:var(--accent); font-weight:600; font-size:16px; }
+  .lg9 .w{ color:var(--ink); font-size:16px; }
+  .lg9 .cur{ width:8px; height:16px; background:var(--accent); display:inline-block; margin-left:-3px; animation:blink 1.05s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ====== 10 · Minimal mono ====== */
+  .lg10{ gap:4px; }
+  .lg10 .b{ font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:300; color:var(--ink-faint); }
+  .lg10 .blk{ width:20px; height:20px; border-radius:6px; font-size:11px; }
+  .lg10 .w{ font-family:'Inter',sans-serif; font-size:16px; font-weight:600; letter-spacing:-.02em; color:var(--ink); }
+
+  /* ====== set B · C outside, braces around "slop slop" only ====== */
+  .grp{ display:inline-flex; align-items:center; }
+
+  .lg11{ gap:9px; } .lg11 .grp{ gap:5px; }
+  .lg11 .blk{ width:26px; height:26px; border-radius:8px; font-size:13px; }
+  .lg11 .b{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:400; color:var(--accent); opacity:.4; transform:translateY(-1px); }
+  .lg11 .w{ font-size:17px; font-weight:600; letter-spacing:-.01em; color:var(--ink); }
+
+  .lg12{ gap:8px; font-family:'Space Grotesk',sans-serif; } .lg12 .grp{ gap:6px; }
+  .lg12 .c{ font-size:24px; font-weight:700; color:var(--accent); }
+  .lg12 .b{ font-size:23px; font-weight:300; color:var(--accent); opacity:.45; }
+  .lg12 .w{ font-size:21px; font-weight:500; color:var(--ink); letter-spacing:-.015em; }
+
+  .lg13{ gap:8px; } .lg13 .grp{ gap:6px; }
+  .lg13 .blk{ width:25px; height:25px; border-radius:6px; font-size:13px; }
+  .lg13 .b{ font-family:'JetBrains Mono',monospace; font-size:21px; font-weight:400; color:var(--accent); opacity:.6; }
+  .lg13 .w{ font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; color:var(--ink); }
+
+  .lg14{ gap:8px; } .lg14 .grp{ gap:6px; }
+  .lg14 .blk{ width:25px; height:25px; border-radius:7px; font-size:13px; }
+  .lg14 .b{ font-family:'JetBrains Mono',monospace; font-size:19px; font-weight:500; color:var(--accent); opacity:.6; }
+  .lg14 .w{ font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:500; color:var(--ink); }
+
+  .lg15{ gap:8px; } .lg15 .grp{ gap:5px; }
+  .lg15 .blk{ width:24px; height:24px; border-radius:7px; font-size:12px; }
+  .lg15 .b{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:var(--ink-faint); }
+  .lg15 .w{ font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:500; color:var(--ink); }
+
+  .lg16{ gap:8px; } .lg16 .grp{ gap:5px; }
+  .lg16 .blk{ width:26px; height:26px; border-radius:8px; font-size:13px; }
+  .lg16 .sep{ color:var(--ink-faint); font-size:17px; }
+  .lg16 .b{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:400; color:var(--accent); opacity:.4; }
+  .lg16 .w{ font-size:17px; font-weight:600; color:var(--ink); }
+
+  .lg17{ gap:9px; } .lg17 .grp{ gap:5px; }
+  .lg17 .blk{ width:26px; height:26px; border-radius:8px; font-size:13px; }
+  .lg17 .b{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:400; color:var(--accent); opacity:.4; }
+  .lg17 .grad{ font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700; letter-spacing:-.01em; background:linear-gradient(95deg,#e9885d,var(--accent) 65%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .lg18{ gap:9px; } .lg18 .grp{ gap:5px; }
+  .lg18 .chip{ width:25px; height:25px; border-radius:7px; display:grid; place-items:center; border:1.6px solid var(--accent); color:var(--accent); font-weight:700; font-size:13px; background:transparent; }
+  .lg18 .b{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:400; color:var(--accent); opacity:.4; }
+  .lg18 .w{ font-size:17px; font-weight:600; color:var(--ink); }
+
+  .lg19{ gap:6px; } .lg19 .grp{ gap:2px; }
+  .lg19 .blk{ width:20px; height:20px; border-radius:6px; font-size:11px; }
+  .lg19 .b{ font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:300; color:var(--ink-faint); }
+  .lg19 .w{ font-size:16px; font-weight:600; letter-spacing:-.02em; color:var(--ink); }
+
+  .lg20{ gap:9px; } .lg20 .grp{ gap:6px; }
+  .lg20 .blk{ width:26px; height:26px; border-radius:8px; font-size:13px; }
+  .lg20 .b{ font-family:'Space Grotesk',sans-serif; font-size:25px; font-weight:600; color:var(--accent); }
+  .lg20 .w{ font-size:17px; font-weight:600; color:var(--ink); }
+</style>
+</head>
+<body>
+  <div class="page-head">
+    <h1>{ C&nbsp;slop&nbsp;slop } · logo explorations</h1>
+    <p>Takes on the wordmark, each rendered in light and dark side by side. The terracotta C block, braces, and tokens all adapt per tile.</p>
+  </div>
+
+  <div class="page-head" style="margin-top:8px;"><h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;">Set A · braces wrap the whole mark — { C slop slop }</h2></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="page-head" style="margin-top:34px;"><h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;">Set B · C outside, braces around “slop slop” — C { slop slop }</h2></div>
+  <div class="grid" id="grid2"></div>
+
+<script>
+const LOGOS = [
+  { name:'01', title:'Current', desc:'Curly braces, gradient C block, Inter wordmark.',
+    html:'<div class="lg lg1"><span class="b">{</span><span class="blk">C</span><span class="w">slop slop</span><span class="b">}</span></div>' },
+
+  { name:'02', title:'Typographic', desc:'No block — lowercase c set in the accent, Space Grotesk.',
+    html:'<div class="lg lg2"><span class="b">{</span><span class="c">c</span><span class="w">slop slop</span><span class="b">}</span></div>' },
+
+  { name:'03', title:'Square brackets', desc:'Mono [ ] brackets with a squarer C block.',
+    html:'<div class="lg lg3"><span class="b">[</span><span class="blk">C</span><span class="w">slop slop</span><span class="b">]</span></div>' },
+
+  { name:'04', title:'Stacked', desc:'C block with slop / slop stacked two lines.',
+    html:'<div class="lg lg4"><span class="blk">C</span><span class="stack"><span>slop</span><span class="s2">slop</span></span></div>' },
+
+  { name:'05', title:'Code object', desc:'{ c: slop, slop } — developer / JSON aesthetic.',
+    html:'<div class="lg lg5"><span class="p">{ </span><span class="k">c</span><span class="p">: </span><span class="v">slop</span><span class="p">, </span><span class="v">slop</span><span class="p"> }</span></div>' },
+
+  { name:'06', title:'Pill badge', desc:'Whole lockup inside a soft rounded pill.',
+    html:'<div class="lg lg6"><span class="blk">C</span><span class="w">slop&nbsp;<b>slop</b></span></div>' },
+
+  { name:'07', title:'Glow C', desc:'C block with a stronger ring + glow, bolder braces.',
+    html:'<div class="lg lg7"><span class="b">{</span><span class="blk">C</span><span class="w">slop slop</span><span class="b">}</span></div>' },
+
+  { name:'08', title:'Gradient word', desc:'C slop slop set as terracotta gradient text.',
+    html:'<div class="lg lg8"><span class="b">{</span><span class="grad">C slop slop</span><span class="b">}</span></div>' },
+
+  { name:'09', title:'Terminal', desc:'Prompt + blinking cursor, monospace.',
+    html:'<div class="lg lg9"><span class="pr">&#10095;</span><span class="c">c</span><span class="w">slop slop</span><span class="cur"></span></div>' },
+
+  { name:'10', title:'Minimal', desc:'Hairline braces, small chip, tight lowercase.',
+    html:'<div class="lg lg10"><span class="b">{</span><span class="blk">C</span><span class="w">slopslop</span><span class="b">}</span></div>' },
+];
+
+const LOGOS2 = [
+  { name:'11', title:'Block + curly', desc:'C block outside, braces around slop slop.',
+    html:'<div class="lg lg11"><span class="blk">C</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'12', title:'Letter C', desc:'C as an accent letter, faint curly braces.',
+    html:'<div class="lg lg12"><span class="c">C</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'13', title:'Square brackets', desc:'C block + [ slop slop ].',
+    html:'<div class="lg lg13"><span class="blk">C</span><span class="grp"><span class="b">[</span><span class="w">slop slop</span><span class="b">]</span></span></div>' },
+  { name:'14', title:'Angle brackets', desc:'Generic-type &lt; slop slop &gt;, monospace.',
+    html:'<div class="lg lg14"><span class="blk">C</span><span class="grp"><span class="b">&lt;</span><span class="w">slop slop</span><span class="b">&gt;</span></span></div>' },
+  { name:'15', title:'Mono braces', desc:'JetBrains braces, dev aesthetic.',
+    html:'<div class="lg lg15"><span class="blk">C</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'16', title:'Dot separator', desc:'C · { slop slop }.',
+    html:'<div class="lg lg16"><span class="blk">C</span><span class="sep">·</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'17', title:'Gradient word', desc:'slop slop as gradient text inside braces.',
+    html:'<div class="lg lg17"><span class="blk">C</span><span class="grp"><span class="b">{</span><span class="grad">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'18', title:'Outlined C', desc:'Ghost / outlined C chip + braces.',
+    html:'<div class="lg lg18"><span class="chip">C</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+  { name:'19', title:'Tight minimal', desc:'Small chip, hairline braces, {slopslop}.',
+    html:'<div class="lg lg19"><span class="blk">C</span><span class="grp"><span class="b">{</span><span class="w">slopslop</span><span class="b">}</span></span></div>' },
+  { name:'20', title:'Bold braces', desc:'Solid terracotta braces hugging slop slop.',
+    html:'<div class="lg lg20"><span class="blk">C</span><span class="grp"><span class="b">{</span><span class="w">slop slop</span><span class="b">}</span></span></div>' },
+];
+
+function cardHTML(l){
+  return '<div class="card">'+
+    '<div class="card-head"><div class="card-name">'+l.name+'</div><div class="card-title">'+l.title+'</div><div class="card-desc">'+l.desc+'</div></div>'+
+    '<div class="tiles">'+
+      '<div class="tile light"><span class="tile-tag">Light</span>'+l.html+'</div>'+
+      '<div class="tile dark"><span class="tile-tag">Dark</span>'+l.html+'</div>'+
+    '</div>'+
+  '</div>';
+}
+document.getElementById('grid').innerHTML = LOGOS.map(cardHTML).join('');
+document.getElementById('grid2').innerHTML = LOGOS2.map(cardHTML).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Slop Slop · Atlas — what's being built</title>
+<script>
+  /* pre-paint theme: no flash */
+  (function () {
+    try {
+      var t = localStorage.getItem('cslopslop-theme');
+      if (t !== 'light' && t !== 'dark') t = 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f3ec;
+    --cream-2: #f1ebdf;
+    --paper: #fffdf8;
+    --ink: #2c2926;
+    --ink-soft: #6d645a;
+    --ink-faint: #a49a8c;
+    --line: #e5ddce;
+    --accent: #c8643c;
+    --green: #4f8a52;
+    --blue: #3b6ea5;
+    --violet: #7c5cbf;
+    --amber: #c2872a;
+    --red: #c0503f;
+    --slate: #6b7280;
+
+    --accent-soft: rgba(200, 100, 60, 0.13);
+    --green-soft: rgba(79, 138, 82, 0.14);
+    --blue-soft: rgba(59, 110, 165, 0.14);
+    --violet-soft: rgba(124, 92, 191, 0.15);
+    --amber-soft: rgba(194, 135, 42, 0.15);
+    --red-soft: rgba(192, 80, 63, 0.14);
+    --slate-soft: rgba(107, 114, 128, 0.15);
+
+    --shadow: 0 1px 2px rgba(44, 41, 38, 0.05), 0 8px 28px rgba(44, 41, 38, 0.08);
+    --shadow-lg: 0 24px 60px rgba(44, 41, 38, 0.18);
+    --grid-line: rgba(44, 41, 38, 0.05);
+  }
+
+  :root[data-theme="dark"] {
+    --cream: #05060a;
+    --cream-2: #0b0e17;
+    --paper: #10131f;
+    --ink: #e6ebf5;
+    --ink-soft: #9aa3b5;
+    --ink-faint: #5f6880;
+    --line: #212636;
+    --accent: #e0794e;
+    --green: #34d399;
+    --blue: #5b8fd6;
+    --violet: #a084e8;
+    --amber: #e0a94a;
+    --red: #e0705f;
+    --slate: #8b93a5;
+
+    --accent-soft: rgba(224, 121, 78, 0.16);
+    --green-soft: rgba(52, 211, 153, 0.16);
+    --blue-soft: rgba(91, 143, 214, 0.16);
+    --violet-soft: rgba(160, 132, 232, 0.18);
+    --amber-soft: rgba(224, 169, 74, 0.16);
+    --red-soft: rgba(224, 112, 95, 0.16);
+    --slate-soft: rgba(139, 147, 165, 0.18);
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+    --grid-line: rgba(230, 235, 245, 0.045);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 700px at 82% -8%, var(--accent-soft), transparent 60%),
+      radial-gradient(900px 600px at -6% 12%, var(--blue-soft), transparent 55%),
+      var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; margin: 0; letter-spacing: -0.02em; }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  button { font-family: inherit; cursor: pointer; }
+
+  a { color: inherit; }
+
+  /* ---------- shell ---------- */
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px clamp(14px, 3vw, 30px) 60px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 6px 2px 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+  .logo-mark {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(145deg, var(--accent), var(--red));
+    display: grid; place-items: center;
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 20px;
+    box-shadow: var(--shadow);
+    flex: none;
+  }
+
+  .brand-txt { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+  .brand-txt .name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; }
+  .brand-txt .sub { font-size: 12px; color: var(--ink-soft); }
+
+  .top-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+  .toggle {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    display: grid; place-items: center;
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, background .18s ease;
+  }
+  .toggle:hover { transform: translateY(-1px); }
+  .toggle svg { width: 19px; height: 19px; }
+  .icon-moon { display: none; }
+  :root[data-theme="dark"] .icon-sun { display: none; }
+  :root[data-theme="dark"] .icon-moon { display: block; }
+
+  .cta {
+    border: 1px solid transparent;
+    border-radius: 11px;
+    padding: 0 16px; height: 40px;
+    background: linear-gradient(145deg, var(--accent), var(--red));
+    color: #fff;
+    font-weight: 600; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, box-shadow .18s ease;
+    white-space: nowrap;
+  }
+  .cta:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+
+  /* ---------- hero line ---------- */
+  .hero {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .hero h1 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.04; max-width: 16ch; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { margin: 10px 0 0; color: var(--ink-soft); font-size: 15px; max-width: 46ch; }
+  .privacy-cue {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--ink-faint);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border: 1px dashed var(--line); border-radius: 999px;
+    background: var(--paper);
+  }
+  .privacy-cue b { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---------- controls ---------- */
+  .controls {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-soft);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 13px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: all .16s ease;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .chip[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--ink-faint)); flex: none; }
+  .chip.legend[aria-pressed="false"] { opacity: .5; }
+  .chip.legend .dot { background: var(--c); }
+
+  .count { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-faint); }
+  .count b { color: var(--ink-soft); }
+
+  .controls .divider { width: 1px; align-self: stretch; background: var(--line); margin: 2px 2px; }
+
+  /* ---------- map ---------- */
+  .map-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 14px 14px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .map-scroll { overflow-x: auto; overflow-y: hidden; }
+
+  .plot-frame { position: relative; padding: 0 0 30px 34px; min-width: 660px; }
+
+  .yaxis {
+    position: absolute; left: 0; top: 0; bottom: 30px; width: 34px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .yaxis span {
+    transform: rotate(-180deg);
+    writing-mode: vertical-rl;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+
+  .plot {
+    position: relative;
+    height: clamp(430px, 60vh, 600px);
+    border-radius: 14px;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 20%,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 20% 100%,
+      var(--cream-2);
+    border: 1px solid var(--line);
+    overflow: visible;
+  }
+
+  .xaxis {
+    position: absolute; left: 34px; right: 0; bottom: 0; height: 26px;
+  }
+  .xtick {
+    position: absolute; transform: translateX(-50%);
+    top: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .08em;
+    color: var(--ink-faint); text-transform: uppercase; white-space: nowrap;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .xtick i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); display: block; }
+
+  .arrow-x, .arrow-y {
+    position: absolute; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--ink-faint); letter-spacing: .1em;
+  }
+
+  /* nodes */
+  .node {
+    position: absolute;
+    width: var(--s); height: var(--s);
+    left: var(--x); top: var(--y);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid var(--c);
+    background: var(--c-soft);
+    color: var(--ink);
+    display: grid; place-items: center;
+    font-size: calc(var(--s) * 0.42);
+    padding: 0;
+    box-shadow: var(--shadow);
+    transition: transform .16s ease, box-shadow .16s ease, opacity .2s ease;
+    z-index: 2;
+  }
+  .node:hover, .node:focus-visible { transform: translate(-50%, -50%) scale(1.12); z-index: 6; box-shadow: var(--shadow-lg); outline: none; }
+  .node:focus-visible { box-shadow: 0 0 0 3px var(--cream-2), 0 0 0 5px var(--c), var(--shadow-lg); }
+
+  .node .glyph { line-height: 1; filter: saturate(1.1); pointer-events: none; }
+
+  .node.featured::after {
+    content: "★";
+    position: absolute; top: -6px; right: -4px;
+    font-size: 12px; color: var(--amber);
+    background: var(--paper); border-radius: 50%;
+    width: 17px; height: 17px; display: grid; place-items: center;
+    box-shadow: var(--shadow);
+  }
+
+  .node.recessive { opacity: .46; border-style: dashed; }
+  .node.recessive:hover, .node.recessive:focus-visible { opacity: 1; }
+
+  .node.live::before {
+    content: ""; position: absolute; inset: -2px; border-radius: 50%;
+    border: 2px solid var(--c);
+    animation: pulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: .55; }
+    70% { transform: scale(1.5); opacity: 0; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .node-label {
+    position: absolute;
+    left: var(--x); top: calc(var(--y) + var(--half) + 5px);
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; font-weight: 500;
+    color: var(--ink-soft);
+    white-space: nowrap; pointer-events: none;
+    z-index: 1;
+    text-shadow: 0 1px 0 var(--cream-2);
+    transition: opacity .2s ease;
+  }
+  .node-label.recessive { opacity: .5; }
+  .node.hidden, .node-label.hidden { display: none; }
+
+  /* peek */
+  .peek {
+    position: absolute;
+    width: 232px; max-width: 232px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    box-shadow: var(--shadow-lg);
+    padding: 12px 13px;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0; visibility: hidden;
+    transition: opacity .12s ease;
+  }
+  .peek.show { opacity: 1; visibility: visible; }
+  .peek .ph { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .peek .pglyph { font-size: 17px; }
+  .peek .pname { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; }
+  .peek .pmeta { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-faint); }
+  .peek .pblurb { font-size: 12.5px; color: var(--ink-soft); line-height: 1.35; margin: 4px 0 8px; }
+  .peek .pstats { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    padding: 3px 7px; border-radius: 6px; letter-spacing: .03em;
+    background: var(--c-soft); color: var(--c); border: 1px solid transparent;
+    text-transform: uppercase;
+  }
+  .badge.plain { background: var(--cream-2); color: var(--ink-soft); }
+  .peek .phint { margin-top: 7px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-faint); }
+
+  /* ---------- detail drawer ---------- */
+  .scrim {
+    position: fixed; inset: 0;
+    background: rgba(20, 16, 12, 0.42);
+    backdrop-filter: blur(3px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .24s ease;
+    z-index: 40;
+  }
+  :root[data-theme="dark"] .scrim { background: rgba(0,0,0,0.6); }
+  .scrim.show { opacity: 1; visibility: visible; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(500px, 94vw);
+    background: var(--cream);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform .3s cubic-bezier(.4, 0, .1, 1);
+    z-index: 41;
+    display: flex; flex-direction: column;
+  }
+  .drawer.show { transform: translateX(0); }
+
+  .drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    flex: none;
+  }
+  .drawer-head .lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .x-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+    display: grid; place-items: center; font-size: 17px;
+  }
+  .x-btn:hover { border-color: var(--ink-faint); }
+
+  .drawer-body { overflow-y: auto; padding: 18px; }
+
+  /* product hero mock */
+  .mock {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    background: var(--paper);
+  }
+  .mock-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 12px; background: var(--cream-2); border-bottom: 1px solid var(--line);
+  }
+  .mock-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-faint); opacity: .5; }
+  .mock-bar .url {
+    margin-left: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    color: var(--ink-faint); background: var(--paper); border: 1px solid var(--line);
+    border-radius: 6px; padding: 3px 9px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mock-stage {
+    position: relative;
+    padding: 26px 20px 24px;
+    background:
+      radial-gradient(340px 180px at 80% -20%, var(--c-soft), transparent 70%),
+      var(--paper);
+  }
+  .mock-stage .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    color: var(--c); background: var(--c-soft); border-radius: 999px; padding: 4px 10px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .mock-stage h2 { font-size: 27px; margin: 12px 0 6px; letter-spacing: -0.03em; }
+  .mock-stage .tag { font-family: 'Spectral', serif; font-size: 15.5px; color: var(--ink-soft); line-height: 1.4; max-width: 34ch; }
+  .mock-cta {
+    margin-top: 16px; display: inline-flex; align-items: center; gap: 7px;
+    background: var(--c); color: #fff; border: none; border-radius: 10px;
+    padding: 10px 16px; font-weight: 600; font-size: 14px;
+    box-shadow: var(--shadow);
+  }
+  .mock-cta:hover { filter: brightness(1.06); }
+  .mock-ui { display: flex; gap: 8px; margin-top: 18px; }
+  .mock-ui .col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .mock-ui .bar { height: 9px; border-radius: 5px; background: var(--cream-2); }
+  .mock-ui .bar.w1 { width: 90%; } .mock-ui .bar.w2 { width: 62%; } .mock-ui .bar.w3 { width: 74%; }
+  .mock-ui .bar.accentbar { background: var(--c-soft); }
+  .mock-ui .card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--cream);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .d-section { margin-top: 22px; }
+  .d-section .k {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 9px;
+  }
+  .d-what { font-family: 'Spectral', serif; font-size: 17px; line-height: 1.5; color: var(--ink); }
+
+  .traction {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;
+  }
+  .stat {
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px;
+    background: var(--paper);
+  }
+  .stat .sv { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; }
+  .stat .sk { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+  .stat.locked { background: repeating-linear-gradient(135deg, var(--cream-2), var(--cream-2) 8px, var(--paper) 8px, var(--paper) 16px); }
+  .stat.locked .sv { color: var(--ink-faint); font-size: 15px; display: flex; align-items: center; gap: 6px; }
+
+  .maker {
+    display: flex; align-items: center; gap: 11px; margin-top: 20px;
+    padding: 13px 14px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper);
+  }
+  .maker .av {
+    width: 38px; height: 38px; border-radius: 11px; flex: none;
+    display: grid; place-items: center; color: #fff; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif; font-size: 16px;
+    background: linear-gradient(145deg, var(--c), var(--ink-soft));
+  }
+  .maker .mk-txt { line-height: 1.3; }
+  .maker .mk-txt b { font-size: 14px; }
+  .maker .mk-txt span { display: block; font-size: 12px; color: var(--ink-soft); }
+  .maker .fresh {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    color: var(--green); background: var(--green-soft); padding: 4px 9px; border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .private-hint {
+    margin-top: 16px; border: 1px dashed var(--line); border-radius: 13px;
+    padding: 13px 14px; background: var(--cream-2);
+    display: flex; gap: 11px; align-items: flex-start;
+  }
+  .private-hint .lock { font-size: 16px; flex: none; margin-top: 1px; }
+  .private-hint .ph-txt { font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; }
+  .private-hint .ph-txt b { color: var(--ink); font-weight: 600; }
+
+  .try-row { display: flex; gap: 10px; margin-top: 18px; }
+  .try-row .try {
+    flex: 1; text-align: center;
+    background: linear-gradient(145deg, var(--accent), var(--red)); color: #fff;
+    border: none; border-radius: 12px; padding: 13px; font-weight: 600; font-size: 15px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: var(--shadow);
+  }
+  .try-row .try:hover { filter: brightness(1.05); }
+  .try-row .ghost {
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 12px; padding: 13px 16px; font-weight: 600; font-size: 14px;
+  }
+
+  .builtby {
+    text-align: center; margin-top: 18px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-faint);
+  }
+  .builtby a { color: var(--accent); text-decoration: none; }
+
+  /* footer */
+  footer {
+    margin-top: 30px; text-align: center;
+    font-size: 12.5px; color: var(--ink-faint);
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
+  }
+  footer .mono { font-size: 11px; }
+
+  @media (max-width: 620px) {
+    .hero { align-items: flex-start; }
+    .privacy-cue { order: 3; }
+    .drawer { width: 100vw; }
+    .traction { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+    .node.live::before { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden="true">C</div>
+        <div class="brand-txt">
+          <span class="name">C Slop Slop</span>
+          <span class="sub">the startup factory · public atlas</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="toggle" id="themeBtn" aria-label="Toggle light / dark theme" title="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+          </svg>
+        </button>
+        <a class="cta" href="#build">Build your own <span aria-hidden="true">→</span></a>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>The atlas of what people are <em>building right now.</em></h1>
+        <p>Every dot is a real company being built on the platform. Explore the landscape — position shows maturity &amp; traction, size shows momentum.</p>
+      </div>
+      <span class="privacy-cue">🔒 <b>public by default</b> · privacy is a paid upgrade</span>
+    </section>
+
+    <div class="controls" role="group" aria-label="Filter the atlas">
+      <div class="quick">
+        <button class="chip" data-view="all" aria-pressed="true">All</button>
+        <button class="chip" data-view="live" aria-pressed="false">Live &amp; growing</button>
+        <button class="chip" data-view="works" aria-pressed="false">In the works</button>
+        <button class="chip" data-view="grad" aria-pressed="false">Graduated 🎓</button>
+      </div>
+      <span class="divider" aria-hidden="true"></span>
+      <div class="quick" id="legend" aria-label="Toggle by stage"></div>
+      <span class="count" id="count"></span>
+    </div>
+
+    <div class="map-card">
+      <div class="map-scroll">
+        <div class="plot-frame">
+          <div class="yaxis" aria-hidden="true"><span>traction →</span></div>
+          <div class="plot" id="plot" role="group" aria-label="Company atlas — companies plotted by maturity and traction">
+            <div class="arrow-y" style="left:6px; top:6px;" aria-hidden="true">▲ more</div>
+          </div>
+          <div class="xaxis" id="xaxis" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div id="build" class="mono">free tier · public by default — that's the growth loop. private cockpit is a paid upgrade.</div>
+      <div>Curated to feature the live &amp; growing. Ideas are “coming soon”; killed bets keep a public post-mortem.</div>
+    </footer>
+  </div>
+
+  <!-- peek tooltip -->
+  <div class="peek" id="peek" role="status" aria-hidden="true"></div>
+
+  <!-- detail drawer -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-name" aria-hidden="true">
+    <div class="drawer-head">
+      <span class="lbl">Public company · built on C Slop Slop</span>
+      <button class="x-btn" id="closeBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+<script>
+  "use strict";
+
+  var STAGES = {
+    Idea:     { c: "slate",  label: "Idea",     note: "validating · coming soon" },
+    Building: { c: "blue",   label: "Building", note: "spinning up live" },
+    Testing:  { c: "amber",  label: "Testing",  note: "in beta" },
+    Growing:  { c: "green",  label: "Growing",  note: "live & growing" },
+    Ejected:  { c: "violet", label: "Ejected",  note: "graduated to its own company" },
+    Killed:   { c: "red",    label: "Killed",   note: "archived · post-mortem public" }
+  };
+
+  var X_TICKS = ["Idea", "Building", "Testing", "Growing", "Ejected"];
+
+  // public-safe fields only
+  var COMPANIES = [
+    { name: "MealMap", handle: "priya", cat: "Health", stage: "Growing", glyph: "🥗",
+      blurb: "AI meal plans from a photo of your fridge.",
+      users: "210 users", usersK: "users", revenue: "$6/mo", signal: "Strong",
+      fresh: "trending ↑", featured: true, live: true, traction: 90, x: 70, y: 13 },
+    { name: "InvoiceSnap", handle: "noor", cat: "Finance", stage: "Growing", glyph: "📸",
+      blurb: "Snap a receipt → a categorized expense, instantly.",
+      users: "90 users", usersK: "users", revenue: "$120/mo", signal: "Strong",
+      fresh: "steady growth", featured: true, live: false, traction: 75, x: 63, y: 27 },
+    { name: "TranslatorBill", handle: "ravi", cat: "Finance", stage: "Ejected", glyph: "🧾",
+      blurb: "Auto-translates & reformats cross-border invoices.",
+      users: "22 paying", usersK: "paying customers", revenue: "$320/mo", signal: "Strong",
+      fresh: "ejected → its own company 🎓", featured: true, live: false, traction: 65, x: 90, y: 33 },
+    { name: "LeadSift", handle: "maya", cat: "Sales", stage: "Growing", glyph: "🎯",
+      blurb: "Scores inbound webform leads 0–100 so you call the hot ones first.",
+      users: "12 users", usersK: "users", revenue: "$180/mo", signal: "Strong",
+      fresh: "shipped Daily digest · 2h ago", featured: true, live: false, traction: 55, x: 77, y: 45 },
+    { name: "LoreForge", handle: "kai", cat: "Games", stage: "Building", glyph: "🐉",
+      blurb: "Generates D&D campaign lore on demand.",
+      users: "300 waitlist", usersK: "on the waitlist", revenue: null, signal: "Building",
+      fresh: "building live", featured: false, live: true, traction: 50, x: 33, y: 40 },
+    { name: "GymStreak", handle: "theo", cat: "Fitness", stage: "Testing", glyph: "💪",
+      blurb: "Text your workout — it logs and progresses it for you.",
+      users: "48 beta", usersK: "beta users", revenue: null, signal: "Promising",
+      fresh: "shipped v2 today", featured: false, live: false, traction: 40, x: 52, y: 49 },
+    { name: "DataDrop", handle: "sana", cat: "Data", stage: "Building", glyph: "📊",
+      blurb: "CSV → clean → an instant, shareable dashboard.",
+      users: "40 waitlist", usersK: "on the waitlist", revenue: null, signal: "Building",
+      fresh: "spun up 3d ago · building live", featured: false, live: true, traction: 35, x: 27, y: 56 },
+    { name: "QuoteCue", handle: "ada", cat: "Sales", stage: "Testing", glyph: "📅",
+      blurb: "AI follow-ups that actually book the meeting.",
+      users: "15 beta", usersK: "beta users", revenue: null, signal: "Promising",
+      fresh: "shipped this week", featured: false, live: false, traction: 28, x: 58, y: 62 },
+    { name: "QuietInbox", handle: "devan", cat: "Email", stage: "Testing", glyph: "✉️",
+      blurb: "Email triage that auto-drafts the replies you approve.",
+      users: "6 beta users", usersK: "beta users", revenue: "hidden", signal: "Promising",
+      fresh: "building now", featured: false, live: true, traction: 25, x: 44, y: 64 },
+    { name: "PlantPal", handle: "sol", cat: "Home", stage: "Idea", glyph: "🌿",
+      blurb: "Diagnose your houseplant from a photo.",
+      users: "validating", usersK: "signal", revenue: null, signal: "—",
+      fresh: "coming soon", featured: false, live: false, traction: 12, x: 16, y: 71 },
+    { name: "PricePeek", handle: "lin", cat: "Pricing", stage: "Idea", glyph: "🏷️",
+      blurb: "Alerts you the moment competitors change their pricing.",
+      users: "validating", usersK: "signal", revenue: null, signal: "—",
+      fresh: "15 interviews in progress · coming soon", featured: false, live: false, traction: 10, x: 11, y: 75 },
+    { name: "RedditPainBot", handle: "omar", cat: "Research", stage: "Killed", glyph: "🔎",
+      blurb: "Mined Reddit for recurring product pains.",
+      users: "archived", usersK: "archived", revenue: null, signal: "—",
+      fresh: "killed after 3 wks · post-mortem public", featured: false, live: false, traction: 6, x: 8, y: 87 }
+  ];
+
+  var plot = document.getElementById("plot");
+  var peek = document.getElementById("peek");
+  var scrim = document.getElementById("scrim");
+  var drawer = document.getElementById("drawer");
+  var drawerBody = document.getElementById("drawerBody");
+  var countEl = document.getElementById("count");
+  var legendEl = document.getElementById("legend");
+  var xaxisEl = document.getElementById("xaxis");
+
+  var stageOn = {};
+  Object.keys(STAGES).forEach(function (s) { stageOn[s] = true; });
+  var activeView = "all";
+  var lastFocus = null;
+
+  function sizeFor(t) { return Math.round(44 + (t / 100) * 50); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  // ---- build x-axis ticks ----
+  X_TICKS.forEach(function (name, i) {
+    var st = STAGES[name];
+    var left = 11 + i * 19.6; // spread across plot width (%)
+    var t = document.createElement("div");
+    t.className = "xtick";
+    t.style.left = left + "%";
+    t.style.setProperty("--c", "var(--" + st.c + ")");
+    t.innerHTML = '<i></i>' + esc(name);
+    xaxisEl.appendChild(t);
+  });
+
+  // ---- build legend (stage filters) ----
+  Object.keys(STAGES).forEach(function (s) {
+    var st = STAGES[s];
+    var b = document.createElement("button");
+    b.className = "chip legend";
+    b.setAttribute("aria-pressed", "true");
+    b.dataset.stage = s;
+    b.style.setProperty("--c", "var(--" + st.c + ")");
+    b.innerHTML = '<span class="dot"></span>' + esc(st.label);
+    b.addEventListener("click", function () {
+      stageOn[s] = !stageOn[s];
+      b.setAttribute("aria-pressed", stageOn[s] ? "true" : "false");
+      // manual stage toggle drops us out of a named quick-view
+      setView("all", true);
+      apply();
+    });
+    legendEl.appendChild(b);
+  });
+
+  // ---- build nodes ----
+  var nodeEls = [];
+  COMPANIES.forEach(function (c, idx) {
+    var st = STAGES[c.stage];
+    var s = sizeFor(c.traction);
+    var recessive = (c.stage === "Killed" || c.stage === "Idea");
+
+    var btn = document.createElement("button");
+    btn.className = "node" + (c.featured ? " featured" : "") + (c.live ? " live" : "") + (recessive ? " recessive" : "");
+    btn.style.setProperty("--x", c.x + "%");
+    btn.style.setProperty("--y", c.y + "%");
+    btn.style.setProperty("--s", s + "px");
+    btn.style.setProperty("--half", (s / 2) + "px");
+    btn.style.setProperty("--c", "var(--" + st.c + ")");
+    btn.style.setProperty("--c-soft", "var(--" + st.c + "-soft)");
+    btn.setAttribute("aria-label", c.name + " by @" + c.handle + " — " + c.cat + ", " + st.label + ". " + c.blurb + " Traction: " + c.users + ".");
+    btn.innerHTML = '<span class="glyph">' + c.glyph + '</span>';
+
+    var lab = document.createElement("span");
+    lab.className = "node-label" + (recessive ? " recessive" : "");
+    lab.style.setProperty("--x", c.x + "%");
+    lab.style.setProperty("--y", c.y + "%");
+    lab.style.setProperty("--half", (s / 2) + "px");
+    lab.textContent = c.name;
+
+    btn.addEventListener("mouseenter", function () { showPeek(c, btn, s); });
+    btn.addEventListener("mouseleave", hidePeek);
+    btn.addEventListener("focus", function () { showPeek(c, btn, s); });
+    btn.addEventListener("blur", hidePeek);
+    btn.addEventListener("click", function () { openDetail(c, btn); });
+
+    plot.appendChild(btn);
+    plot.appendChild(lab);
+    nodeEls.push({ el: btn, lab: lab, c: c, recessive: recessive });
+  });
+
+  // ---- peek ----
+  function showPeek(c, node, s) {
+    var st = STAGES[c.stage];
+    var stats = '<span class="badge" style="--c:var(--' + st.c + ');--c-soft:var(--' + st.c + '-soft)">' + esc(st.label) + '</span>' +
+                '<span class="badge plain">' + esc(c.users) + '</span>';
+    if (c.revenue && c.revenue !== "hidden") stats += '<span class="badge plain">' + esc(c.revenue) + '</span>';
+    if (c.signal && c.signal !== "—") stats += '<span class="badge plain">signal ' + esc(c.signal) + '</span>';
+
+    peek.innerHTML =
+      '<div class="ph"><span class="pglyph">' + c.glyph + '</span>' +
+      '<div><div class="pname">' + esc(c.name) + '</div>' +
+      '<div class="pmeta">@' + esc(c.handle) + ' · ' + esc(c.cat) + '</div></div></div>' +
+      '<div class="pblurb">' + esc(c.blurb) + '</div>' +
+      '<div class="pstats">' + stats + '</div>' +
+      '<div class="phint">' + esc(c.fresh) + ' · click to open →</div>';
+
+    // position: node center = offsetLeft/offsetTop (translate(-50%,-50%) keeps layout box at %)
+    var cx = node.offsetLeft;
+    var cy = node.offsetTop;
+    peek.style.transform = "translateX(-50%)";
+    var w = 232, pw = plot.clientWidth;
+    var minL = w / 2 + 6, maxL = pw - w / 2 - 6;
+    if (maxL < minL) maxL = minL;
+    var left = Math.min(Math.max(cx, minL), maxL);
+    peek.style.left = left + "px";
+
+    peek.classList.add("show");
+    peek.setAttribute("aria-hidden", "false");
+    // measure then place above or below
+    var ph = peek.offsetHeight;
+    var above = cy - s / 2 - 12 - ph;
+    if (above < 0) {
+      peek.style.top = (cy + s / 2 + 12) + "px";
+    } else {
+      peek.style.top = above + "px";
+    }
+  }
+  function hidePeek() {
+    peek.classList.remove("show");
+    peek.setAttribute("aria-hidden", "true");
+  }
+
+  // ---- detail drawer ----
+  function openDetail(c, node) {
+    lastFocus = node || null;
+    var st = STAGES[c.stage];
+    var setC = "--c:var(--" + st.c + ");--c-soft:var(--" + st.c + "-soft)";
+
+    var revStat;
+    if (c.revenue && c.revenue !== "hidden") {
+      revStat = '<div class="stat"><div class="sv">' + esc(c.revenue) + '</div><div class="sk">revenue · public</div></div>';
+    } else if (c.revenue === "hidden") {
+      revStat = '<div class="stat locked"><div class="sv">🔒 private</div><div class="sk">revenue kept private</div></div>';
+    } else {
+      revStat = '<div class="stat"><div class="sv">' + esc(st.note.split(" · ")[0]) + '</div><div class="sk">stage</div></div>';
+    }
+
+    var signalStat = (c.signal && c.signal !== "—")
+      ? '<div class="stat"><div class="sv">' + esc(c.signal) + '</div><div class="sk">demand signal</div></div>'
+      : '<div class="stat"><div class="sv">validating</div><div class="sk">demand signal</div></div>';
+
+    var tryLabel = (c.stage === "Idea") ? "Join the waitlist" :
+                   (c.stage === "Killed") ? "Read the post-mortem" :
+                   (c.stage === "Building") ? "Get early access" : "Try it";
+
+    drawerBody.innerHTML =
+      '<div class="mock" style="' + setC + '">' +
+        '<div class="mock-bar"><i></i><i></i><i></i>' +
+          '<span class="url">' + esc(c.name.toLowerCase()) + '.cslop.app</span></div>' +
+        '<div class="mock-stage">' +
+          '<span class="pill">● ' + esc(st.label) + ' · ' + esc(c.cat) + '</span>' +
+          '<h2 id="d-name">' + esc(c.name) + '</h2>' +
+          '<div class="tag">' + esc(c.blurb) + '</div>' +
+          '<button class="mock-cta">' + esc(tryLabel) + ' <span aria-hidden="true">→</span></button>' +
+          '<div class="mock-ui">' +
+            '<div class="col"><div class="bar accentbar w1"></div><div class="bar w2"></div><div class="bar w3"></div><div class="bar w2"></div></div>' +
+            '<div class="col"><div class="card"><div class="bar accentbar w3"></div><div class="bar w2"></div></div>' +
+            '<div class="card"><div class="bar w1"></div><div class="bar accentbar w2"></div></div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="d-section"><div class="k">What it does</div>' +
+        '<div class="d-what">' + esc(c.blurb) + '</div></div>' +
+
+      '<div class="d-section"><div class="k">Public traction</div>' +
+        '<div class="traction">' +
+          '<div class="stat"><div class="sv">' + esc(c.users.replace(/\s.*$/, "")) + '</div><div class="sk">' + esc(c.usersK) + '</div></div>' +
+          signalStat +
+          revStat +
+          '<div class="stat"><div class="sv">' + esc(st.label) + '</div><div class="sk">stage · ' + esc(st.note) + '</div></div>' +
+        '</div></div>' +
+
+      '<div class="maker">' +
+        '<div class="av" style="' + setC + '">' + esc(c.handle.charAt(0).toUpperCase()) + '</div>' +
+        '<div class="mk-txt"><b>@' + esc(c.handle) + '</b><span>maker on C Slop Slop</span></div>' +
+        '<span class="fresh">' + esc(c.fresh) + '</span>' +
+      '</div>' +
+
+      '<div class="private-hint"><span class="lock">🔒</span>' +
+        '<div class="ph-txt"><b>Operations stay private.</b> The budget, spend, the AI’s plan, the approval queue and risk log all live in @' + esc(c.handle) + '’s private cockpit — never shown here. This is the product; the war room is a paid upgrade.</div>' +
+      '</div>' +
+
+      '<div class="try-row">' +
+        '<button class="try">' + esc(tryLabel) + ' <span aria-hidden="true">→</span></button>' +
+        '<a class="ghost" href="#build">Build your own</a>' +
+      '</div>' +
+
+      '<div class="builtby">built by <a href="#">@' + esc(c.handle) + '</a> on C Slop Slop · public by default</div>';
+
+    hidePeek();
+    scrim.classList.add("show");
+    drawer.classList.add("show");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    document.getElementById("closeBtn").focus();
+  }
+
+  function closeDetail() {
+    scrim.classList.remove("show");
+    drawer.classList.remove("show");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  document.getElementById("closeBtn").addEventListener("click", closeDetail);
+  scrim.addEventListener("click", closeDetail);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (drawer.classList.contains("show")) closeDetail();
+    }
+  });
+
+  // ---- views / filtering ----
+  var VIEWS = {
+    all:   function () { return true; },
+    live:  function (c) { return c.stage === "Growing"; },
+    works: function (c) { return c.stage === "Building" || c.stage === "Testing"; },
+    grad:  function (c) { return c.stage === "Ejected"; }
+  };
+
+  function setView(v, silent) {
+    activeView = v;
+    var chips = document.querySelectorAll('.chip[data-view]');
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].setAttribute("aria-pressed", chips[i].dataset.view === v ? "true" : "false");
+    }
+    if (!silent) apply();
+  }
+
+  document.querySelectorAll('.chip[data-view]').forEach(function (ch) {
+    ch.addEventListener("click", function () {
+      // reset stage toggles on when picking a named view
+      Object.keys(stageOn).forEach(function (s) { stageOn[s] = true; });
+      document.querySelectorAll('.chip.legend').forEach(function (l) { l.setAttribute("aria-pressed", "true"); });
+      setView(ch.dataset.view);
+    });
+  });
+
+  function apply() {
+    var vf = VIEWS[activeView] || VIEWS.all;
+    var shown = 0;
+    nodeEls.forEach(function (n) {
+      var visible = stageOn[n.c.stage] && vf(n.c);
+      n.el.classList.toggle("hidden", !visible);
+      n.lab.classList.toggle("hidden", !visible);
+      if (visible) shown++;
+    });
+    countEl.innerHTML = "showing <b>" + shown + "</b> of " + COMPANIES.length;
+  }
+
+  // ---- theme toggle ----
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var cur = document.documentElement.getAttribute("data-theme");
+    var next = cur === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("cslopslop-theme", next); } catch (e) {}
+  });
+
+  apply();
+</script>
+</body>
+</html>

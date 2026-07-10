@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift · C Slop Slop</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8; --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+  --line:#e6ddce; --line-soft:#efe8da; --accent:#c8643c; --accent-soft:#f4e0d6; --green:#4f8a52; --green-soft:#e3efe1;
+  --blue:#4a72b0; --blue-soft:#e2eaf5; --violet:#7a5ea8; --violet-soft:#ece6f5; --amber:#c08a2e; --amber-soft:#f6ecd4;
+  --red:#b6483f; --red-soft:#f6e0dd; --slate:#8a8579;
+  --shadow:0 1px 2px rgba(44,41,38,.04),0 8px 24px rgba(44,41,38,.05);
+  --shadow-sm:0 1px 2px rgba(44,41,38,.05);
+}
+:root[data-theme="dark"]{
+  --cream:#05060a; --cream-2:#080d18; --paper:#10131f; --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+  --line:#1c2233; --line-soft:#111726; --accent:#e0794e; --accent-soft:rgba(224,121,78,.18); --green:#34d399; --green-soft:rgba(52,211,153,.15);
+  --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15); --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16); --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+  --red:#f87171; --red-soft:rgba(248,113,113,.15); --slate:#8a93a8;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s ease,color .3s ease;
+}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.display{font-family:'Space Grotesk',sans-serif}
+
+/* ===== APP GRID ===== */
+.app{
+  display:grid;
+  grid-template-columns:400px 1fr;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ===== LEFT · AGENT ===== */
+.agent{
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--line);
+  background:var(--cream);
+  min-height:0;
+}
+.agent-head{
+  padding:26px 26px 20px;
+  border-bottom:1px solid var(--line-soft);
+}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{
+  width:40px;height:40px;flex:0 0 40px;
+  border-radius:11px;
+  background:var(--accent-soft);
+  display:grid;place-items:center;
+  box-shadow:inset 0 0 0 1px var(--accent-soft);
+}
+.logo svg{width:22px;height:22px}
+.brand-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.brand-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.ver{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);background:var(--paper);border:1px solid var(--line);padding:1px 5px;border-radius:5px}
+.mission{font-size:12.5px;color:var(--ink-soft);line-height:1.4}
+.agent-sub{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.agent-sub .sep{opacity:.4}
+.agent-sub a{color:var(--accent);text-decoration:none}
+.agent-sub a:hover{text-decoration:underline}
+
+.stream{flex:1;overflow-y:auto;padding:22px 22px 8px;display:flex;flex-direction:column;gap:16px}
+.stream::-webkit-scrollbar{width:8px}
+.stream::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.msg{display:flex;gap:11px;align-items:flex-start;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg .av{width:26px;height:26px;flex:0 0 26px;border-radius:8px;background:var(--accent-soft);display:grid;place-items:center;margin-top:1px}
+.msg .av svg{width:14px;height:14px}
+.bubble{background:var(--paper);border:1px solid var(--line-soft);border-radius:4px 12px 12px 12px;padding:11px 14px;font-size:13px;color:var(--ink);box-shadow:var(--shadow-sm);max-width:100%}
+.bubble .t{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.bubble strong{font-weight:600}
+.bubble .ok{color:var(--green);font-weight:600}
+.msg.me{flex-direction:row-reverse}
+.msg.me .bubble{background:var(--accent);color:#fff;border-color:transparent;border-radius:12px 4px 12px 12px}
+.msg.me .av{background:var(--cream-2)}
+
+/* approval card */
+.approval{background:var(--paper);border:1px solid var(--line);border-radius:4px 12px 12px 12px;box-shadow:var(--shadow);overflow:hidden;max-width:100%}
+.approval .top{padding:12px 14px 11px}
+.approval .t{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.approval .t .badge{background:var(--green-soft);color:var(--green);padding:1px 6px;border-radius:5px;letter-spacing:.04em}
+.approval p{font-size:13px;color:var(--ink);line-height:1.5}
+.approval p .ship{font-weight:600}
+.approval .acts{display:flex;gap:8px;padding:0 14px 13px}
+.btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:all .16s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 2px 8px var(--accent-soft)}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost:hover{background:var(--cream-2);color:var(--ink)}
+.approval.resolved .acts{display:none}
+.resolved-note{display:none;padding:0 14px 13px}
+.approval.resolved .resolved-note{display:block;font-size:12px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px}
+
+/* composer */
+.composer{padding:14px 18px 18px;border-top:1px solid var(--line-soft);background:var(--cream)}
+.composer .box{display:flex;align-items:flex-end;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;transition:border-color .18s ease,box-shadow .18s ease}
+.composer .box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.composer textarea{flex:1;border:none;outline:none;resize:none;background:transparent;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);max-height:96px;line-height:1.45;padding:5px 0}
+.composer textarea::placeholder{color:var(--ink-faint)}
+.send{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;display:grid;place-items:center;transition:transform .16s ease,filter .16s ease}
+.send:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.send svg{width:16px;height:16px}
+
+/* ===== RIGHT · WORKSPACE ===== */
+.workspace{display:flex;flex-direction:column;min-height:0;background:var(--cream-2)}
+.ws-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;
+  border-bottom:1px solid var(--line);
+  background:var(--cream);
+  height:60px;flex:0 0 60px;
+}
+.tabs{display:flex;gap:2px;height:100%}
+.tab{
+  position:relative;
+  font-size:13px;font-weight:500;color:var(--ink-faint);
+  background:none;border:none;cursor:pointer;
+  padding:0 15px;height:100%;
+  display:flex;align-items:center;gap:7px;
+  transition:color .16s ease;
+}
+.tab:hover{color:var(--ink-soft)}
+.tab.active{color:var(--ink);font-weight:600}
+.tab.active::after{content:"";position:absolute;left:15px;right:15px;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
+.tab .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.tab svg{width:15px;height:15px;opacity:.85}
+.ws-tools{display:flex;align-items:center;gap:10px}
+.pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--green);background:var(--green-soft);padding:4px 9px;border-radius:20px;display:flex;align-items:center;gap:6px;font-weight:500}
+.pill .live-dot{width:6px;height:6px;box-shadow:0 0 0 2px var(--green-soft)}
+.toggle{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);cursor:pointer;display:grid;place-items:center;transition:all .18s ease}
+.toggle:hover{color:var(--ink);border-color:var(--ink-faint)}
+.toggle svg{width:16px;height:16px}
+.moon{display:none}
+:root[data-theme="dark"] .sun{display:none}
+:root[data-theme="dark"] .moon{display:block}
+
+.ws-body{flex:1;overflow-y:auto;padding:28px}
+.ws-body::-webkit-scrollbar{width:10px}
+.ws-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.panel{display:none;animation:fade .3s ease both}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-faint);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+/* ---- KPI ROW ---- */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:12px}
+.kpi{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 17px;
+  box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi .k-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint)}
+.kpi .k-val{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:27px;letter-spacing:-.02em;line-height:1.1;margin-top:2px}
+.kpi .k-delta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px;margin-top:3px}
+.k-delta.up{color:var(--green)}
+.k-delta.flat{color:var(--ink-faint)}
+.spark{position:absolute;right:14px;bottom:12px;width:74px;height:34px;opacity:.9}
+.kpi.accent .k-val{color:var(--accent)}
+
+/* second metrics row - compact */
+.mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:30px}
+.mini{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm)}
+.mini .m-l{display:flex;flex-direction:column;gap:1px}
+.mini .m-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint)}
+.mini .m-val{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px}
+.mini .m-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center}
+.mini .m-ico svg{width:16px;height:16px}
+.ico-green{background:var(--green-soft);color:var(--green)}
+.ico-blue{background:var(--blue-soft);color:var(--blue)}
+.ico-amber{background:var(--amber-soft);color:var(--amber)}
+
+/* ---- LAYOUT: NEXT UP + FEATURES ---- */
+.grid-2{display:grid;grid-template-columns:1fr 1.55fr;gap:22px;align-items:start}
+
+/* next up panel */
+.plan{display:flex;flex-direction:column;gap:9px}
+.plan-group{margin-bottom:6px}
+.plan-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:600;padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:9px}
+.tag-now{background:var(--accent-soft);color:var(--accent)}
+.tag-next{background:var(--blue-soft);color:var(--blue)}
+.tag-later{background:var(--cream-2);color:var(--ink-faint)}
+.task{
+  display:flex;align-items:flex-start;gap:11px;
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:11px;padding:11px 13px;margin-bottom:8px;
+  box-shadow:var(--shadow-sm);transition:border-color .16s ease,transform .16s ease;
+}
+.task:hover{transform:translateX(2px);border-color:var(--line)}
+.task.in{animation:rise .45s cubic-bezier(.2,.7,.2,1) both}
+.task .tk-ico{width:22px;height:22px;flex:0 0 22px;border-radius:7px;display:grid;place-items:center;margin-top:1px}
+.task .tk-ico svg{width:12px;height:12px}
+.tk-build{background:var(--violet-soft);color:var(--violet)}
+.tk-gtm{background:var(--amber-soft);color:var(--amber)}
+.tk-alert{background:var(--red-soft);color:var(--red)}
+.tk-later{background:var(--cream-2);color:var(--slate)}
+.task .tk-body{flex:1;min-width:0}
+.task .tk-name{font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.task .tk-meta{font-size:11.5px;color:var(--ink-faint);margin-top:1px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:9px;padding:1px 6px;border-radius:5px;font-weight:500;letter-spacing:.02em}
+.chip.await{background:var(--amber-soft);color:var(--amber)}
+.chip.built{background:var(--green-soft);color:var(--green)}
+
+/* features rail */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.feat{
+  background:var(--paper);border:1px solid var(--line);border-radius:13px;overflow:hidden;
+  box-shadow:var(--shadow-sm);position:relative;transition:transform .2s ease,box-shadow .2s ease;
+}
+.feat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.feat.wide{grid-column:1/-1}
+.thumb{height:112px;position:relative;overflow:hidden;background:var(--cream-2);border-bottom:1px solid var(--line-soft)}
+.feat.wide .thumb{height:130px}
+.thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.feat-cap{padding:11px 14px 13px}
+.feat-cap .fc-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.feat-cap .fc-name{font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px}
+.feat-cap .fc-sum{font-size:11.5px;color:var(--ink-faint);margin-top:2px;line-height:1.4}
+.state{font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.08em;padding:2px 6px;border-radius:5px;font-weight:600;white-space:nowrap}
+.state.live{background:var(--green-soft);color:var(--green)}
+.state.building{background:var(--violet-soft);color:var(--violet)}
+.state.planned{background:var(--cream-2);color:var(--ink-faint)}
+
+/* building shimmer overlay */
+.feat.building .thumb::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(110deg,transparent 20%,var(--violet-soft) 45%,rgba(255,255,255,.25) 50%,var(--violet-soft) 55%,transparent 80%);
+  background-size:220% 100%;
+  animation:shimmer 1.9s linear infinite;
+  mix-blend-mode:normal;
+}
+:root[data-theme="dark"] .feat.building .thumb::after{background:linear-gradient(110deg,transparent 20%,var(--violet-soft) 45%,rgba(167,139,250,.28) 50%,var(--violet-soft) 55%,transparent 80%);background-size:220% 100%}
+@keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
+.build-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--line-soft);z-index:2}
+.build-bar i{display:block;height:100%;width:64%;background:var(--violet);border-radius:0 3px 3px 0;animation:grow 3s ease-in-out infinite alternate}
+@keyframes grow{from{width:52%}to{width:78%}}
+.build-tag{position:absolute;top:9px;left:9px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:#fff;background:var(--violet);padding:2px 8px;border-radius:20px;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.build-tag .bd{width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse 1.2s ease-in-out infinite}
+
+/* planned ghost overlay */
+.feat.planned .thumb{filter:grayscale(.7);opacity:.5}
+.ghost-lock{position:absolute;inset:0;z-index:2;display:grid;place-items:center;background:repeating-linear-gradient(-45deg,transparent,transparent 9px,var(--line-soft) 9px,var(--line-soft) 10px);opacity:.55}
+.ghost-lock span{font-family:'JetBrains Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);background:var(--paper);border:1px solid var(--line);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.ghost-lock svg{width:11px;height:11px}
+.feat.planned{opacity:.92}
+
+@media(prefers-reduced-motion:reduce){
+  .feat.building .thumb::after{animation:none;background:var(--violet-soft);opacity:.35}
+  .build-bar i{animation:none;width:64%}
+  .live-dot,.build-tag .bd{animation:none}
+  .msg{animation:none}
+}
+
+/* ---- DOCUMENTS ---- */
+.docs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px}
+.doc{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;
+  box-shadow:var(--shadow-sm);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  display:flex;flex-direction:column;gap:10px;text-align:left;
+}
+.doc:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--accent)}
+.doc .d-ico{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center}
+.doc .d-ico svg{width:19px;height:19px;color:var(--accent)}
+.doc .d-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.doc .d-desc{font-size:12px;color:var(--ink-faint);line-height:1.45}
+.doc .d-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);margin-top:auto;padding-top:8px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(20,16,12,.42);backdrop-filter:blur(3px);z-index:50;display:none;align-items:center;justify-content:center;padding:40px;animation:fade .2s ease}
+:root[data-theme="dark"] .modal-bg{background:rgba(0,0,0,.6)}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--paper);border:1px solid var(--line);border-radius:18px;
+  max-width:640px;width:100%;max-height:82vh;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.3);
+  display:flex;flex-direction:column;animation:pop .28s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
+.modal-head{padding:22px 26px 18px;border-bottom:1px solid var(--line-soft);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal-head h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.modal-head .mh-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);margin-top:5px}
+.modal-close{width:32px;height:32px;flex:0 0 32px;border-radius:9px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);display:grid;place-items:center}
+.modal-close:hover{background:var(--cream-2);color:var(--ink)}
+.modal-body{padding:22px 26px 28px;overflow-y:auto;font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.7;color:var(--ink-soft)}
+.modal-body h3{font-family:'Space Grotesk',sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);margin:20px 0 8px;font-weight:600}
+.modal-body h3:first-child{margin-top:0}
+.modal-body p{margin-bottom:12px}
+.modal-body ul{margin:0 0 12px 20px}
+.modal-body li{margin-bottom:5px}
+.modal-body strong{color:var(--ink);font-weight:600}
+
+/* ---- STUB TABS ---- */
+.stub{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:70px 20px;gap:14px;min-height:420px}
+.stub .s-ico{width:60px;height:60px;border-radius:16px;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.stub .s-ico svg{width:28px;height:28px;color:var(--accent)}
+.stub h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.stub p{font-size:13px;color:var(--ink-faint);max-width:340px;line-height:1.55}
+.stub .s-soon{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--accent-soft);padding:4px 11px;border-radius:20px}
+
+/* ===== ALIVE / TRUST UPGRADES ===== */
+.live-strip{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:9px 15px;margin-bottom:24px;box-shadow:var(--shadow-sm);overflow:hidden}
+.live-strip .ls-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft);animation:pulse 2.4s ease-in-out infinite}
+.live-strip .ls-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);flex:0 0 auto}
+.live-strip .ls-sep{width:1px;height:13px;background:var(--line);flex:0 0 1px}
+.live-strip .ls-log{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.live-strip .ls-log.in{animation:logIn .5s cubic-bezier(.2,.7,.2,1) both}
+.live-strip .ls-log b{color:var(--accent);font-weight:600}
+.live-strip .ls-log .ok{color:var(--green);font-weight:600}
+@keyframes logIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.metric-pop{animation:metricPop .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes metricPop{0%{transform:scale(1)}30%{transform:scale(1.09)}100%{transform:scale(1)}}
+
+.outcome{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--green);background:var(--green-soft);border-radius:6px;padding:2px 8px;margin-top:8px;letter-spacing:.01em;line-height:1.3}
+.outcome svg{width:10px;height:10px;flex:0 0 10px}
+.outcome.fresh{animation:logIn .5s ease both}
+
+.why{font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);border:1px solid var(--line);border-radius:5px;padding:1px 5px;cursor:help;font-weight:600;line-height:1.5}
+.why:hover{color:var(--accent);border-color:var(--accent)}
+
+.feat-subhead{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:var(--ink);margin:0 0 13px}
+.feat-subhead::before{content:"";width:8px;height:8px;border-radius:3px;background:var(--accent);flex:0 0 8px}
+.feat-subhead.product::before{background:var(--blue)}
+.feat-subhead.product{margin-top:26px}
+.feat-subhead span{font-family:'Inter',sans-serif;font-weight:400;font-size:11px;color:var(--ink-faint)}
+
+.ship-flash{position:absolute;inset:0;z-index:5;display:grid;place-items:center;background:var(--green-soft);animation:shipFlash 2.3s ease forwards}
+.ship-flash span{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green);background:var(--paper);border:1px solid var(--green);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow)}
+.ship-flash span svg{width:13px;height:13px;flex:0 0 13px}
+@keyframes shipFlash{0%{opacity:0}14%{opacity:1}68%{opacity:1}100%{opacity:0}}
+.feat.just-shipped{animation:tilePop .6s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 2px var(--green-soft),var(--shadow)}
+@keyframes tilePop{0%{transform:scale(1)}35%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+.blast{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-top:10px;padding-top:9px;border-top:1px dashed var(--line)}
+.blast svg{width:12px;height:12px;flex:0 0 12px}
+.blast b{color:var(--ink-soft);font-weight:600}
+.blast .risk{color:var(--green);font-weight:600}
+.explain-btn{background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:9.5px;text-transform:none;letter-spacing:0;color:var(--accent);cursor:pointer;padding:0;margin-left:auto;text-decoration:underline;text-underline-offset:2px}
+.explain-btn:hover{filter:brightness(1.1)}
+.auto-appr{display:flex;align-items:center;gap:8px;padding:2px 14px 12px;font-size:11.5px;color:var(--ink-soft);cursor:pointer;user-select:none}
+.auto-appr input{width:14px;height:14px;flex:0 0 14px;accent-color:var(--accent);cursor:pointer}
+.approval.resolved .auto-appr{display:none}
+.autonomy-note{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line-soft);background:var(--cream-2);font-size:10.5px;color:var(--ink-faint)}
+.autonomy-note svg{width:12px;height:12px;flex:0 0 12px;color:var(--accent)}
+
+@media(prefers-reduced-motion:reduce){
+  .live-strip .ls-dot{animation:none}
+  .live-strip .ls-log.in,.outcome.fresh{animation:none}
+  .metric-pop{animation:none}
+  .ship-flash{animation:none;opacity:1}
+  .feat.just-shipped{animation:none}
+  .task.in{animation:none}
+}
+
+@media(max-width:1080px){
+  .app{grid-template-columns:340px 1fr}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= LEFT · AGENT ================= -->
+  <aside class="agent">
+    <div class="agent-head">
+      <div class="brand">
+        <div class="logo" title="LeadSift">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/>
+          </svg>
+        </div>
+        <div class="brand-txt">
+          <div class="brand-name">LeadSift <span class="ver mono">v1.4.0</span></div>
+          <div class="mission">Turn every webform into scored, ranked sales leads.</div>
+        </div>
+      </div>
+      <div class="agent-sub">
+        <span class="live-dot"></span> Sift · live &amp; building
+        <span class="sep">·</span>
+        <a href="#" onclick="return false">leadsift.app</a>
+        <span class="sep">·</span> autonomous agent
+      </div>
+    </div>
+
+    <div class="stream" id="stream">
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg></div>
+        <div class="bubble">
+          <div class="t">Sift · 08:02</div>
+          Morning — Sift here. Overnight I captured <strong>4 new leads</strong>, auto-scored them, and one crossed 90, so I flagged it hot for you. MRR is holding at <strong>$180</strong>, zero churn. Quiet, healthy night.
+          <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> +1 hot lead flagged · scored 90+</div>
+        </div>
+      </div>
+
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg></div>
+        <div class="bubble">
+          <div class="t">Sift · 08:05</div>
+          Then I built the <strong>Daily digest</strong> feature — an 8am email with each day's top-scored leads. It passed its self-check <span class="ok">✓</span>. I think it's the retention lever we've been missing.
+        </div>
+      </div>
+
+      <!-- inline approval -->
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg></div>
+        <div class="approval" id="approval">
+          <div class="top">
+            <div class="t"><span class="badge">check passed ✓</span> awaiting approval <button class="explain-btn" onclick="explainDigest()">why now?</button></div>
+            <p>I finished the <span class="ship">daily digest</span> and it passed its check <span class="ok">✓</span> — ship it to all 12 users?</p>
+            <div class="blast">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg>
+              ships to <b>all 12 users</b> · <span class="risk">reversible</span> · no spend
+            </div>
+          </div>
+          <label class="auto-appr"><input type="checkbox" id="autoAppr"> auto-approve digests like this from now on</label>
+          <div class="acts">
+            <button class="btn primary" onclick="resolveApproval('shipped')">Approve &amp; ship</button>
+            <button class="btn ghost" onclick="resolveApproval('review')">Review</button>
+            <button class="btn ghost" onclick="resolveApproval('rejected')">Reject</button>
+          </div>
+          <div class="resolved-note" id="resolvedNote"></div>
+          <div class="autonomy-note" id="autonomyNote">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span id="autonomyText">Builds ship on autopilot · you approve growth &amp; spend.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="box">
+        <textarea id="composer" rows="1" placeholder="Message LeadSift…" oninput="autoGrow(this)" onkeydown="composerKey(event)"></textarea>
+        <button class="send" onclick="sendMsg()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= RIGHT · WORKSPACE ================= -->
+  <main class="workspace">
+    <div class="ws-head">
+      <div class="tabs">
+        <button class="tab active" data-tab="overview" onclick="switchTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Overview
+        </button>
+        <button class="tab" data-tab="documents" onclick="switchTab('documents')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          Documents
+        </button>
+        <button class="tab" data-tab="build" onclick="switchTab('build')">Build</button>
+        <button class="tab" data-tab="grow" onclick="switchTab('grow')">Grow</button>
+        <button class="tab" data-tab="money" onclick="switchTab('money')">Money</button>
+      </div>
+      <div class="ws-tools">
+        <span class="pill"><span class="live-dot"></span> deployed · leadsift.app</span>
+        <button class="toggle" onclick="toggleTheme()" title="Toggle theme">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ws-body">
+
+      <!-- ===== OVERVIEW ===== -->
+      <section class="panel active" id="panel-overview">
+
+        <div class="live-strip">
+          <span class="ls-dot"></span>
+          <span class="ls-label">Sift · live</span>
+          <span class="ls-sep"></span>
+          <span class="ls-log in" id="liveLog">booting activity stream…</span>
+        </div>
+
+        <div class="section-label">General metrics &amp; health</div>
+        <div class="kpi-row">
+          <div class="kpi accent">
+            <div class="k-label">MRR</div>
+            <div class="k-val">$180</div>
+            <div class="k-delta up">↑ $40 · +29% <span style="color:var(--ink-faint)">/mo</span></div>
+            <svg class="spark" viewBox="0 0 74 34" preserveAspectRatio="none">
+              <polyline points="0,28 12,26 24,24 36,20 48,16 60,11 74,5" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+              <polyline points="0,28 12,26 24,24 36,20 48,16 60,11 74,5 74,34 0,34" fill="var(--accent-soft)" stroke="none" opacity=".5"/>
+            </svg>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Active users</div>
+            <div class="k-val" id="kUsers">12</div>
+            <div class="k-delta up" id="kUsersDelta">↑ +3 <span style="color:var(--ink-faint)">/wk</span></div>
+            <svg class="spark" viewBox="0 0 74 34" preserveAspectRatio="none">
+              <polyline points="0,30 12,29 24,25 36,24 48,18 60,14 74,7" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Net revenue</div>
+            <div class="k-val">+$158</div>
+            <div class="k-delta up">margin 88% <span style="color:var(--ink-faint)">/mo</span></div>
+            <svg class="spark" viewBox="0 0 74 34" preserveAspectRatio="none">
+              <polyline points="0,26 12,24 24,25 36,19 48,17 60,12 74,8" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="kpi">
+            <div class="k-label">Churn</div>
+            <div class="k-val">0%</div>
+            <div class="k-delta flat">— stable · 0 lost</div>
+            <svg class="spark" viewBox="0 0 74 34" preserveAspectRatio="none">
+              <polyline points="0,24 12,24 24,24 36,24 48,24 60,24 74,24" fill="none" stroke="var(--slate)" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="mini-row">
+          <div class="mini">
+            <div class="m-l"><div class="m-label">Uptime · 30d</div><div class="m-val">99.9%</div></div>
+            <div class="m-ico ico-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          </div>
+          <div class="mini">
+            <div class="m-l"><div class="m-label">Leads captured · 24h</div><div class="m-val">4 <span style="font-size:12px;color:var(--green);font-weight:500">1 hot</span></div></div>
+            <div class="m-ico ico-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg></div>
+          </div>
+          <div class="mini">
+            <div class="m-l"><div class="m-label">Status</div><div class="m-val" style="color:var(--green)">Live · growing</div></div>
+            <div class="m-ico ico-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- NEXT UP -->
+          <div>
+            <div class="section-label">What's next</div>
+            <div class="plan">
+              <div class="plan-group" id="planNow">
+                <span class="plan-tag tag-now">Now</span>
+                <div class="task">
+                  <div class="tk-ico tk-build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg></div>
+                  <div class="tk-body">
+                    <div class="tk-name">Daily digest <span class="chip built">built</span> <span class="chip await">awaiting you</span></div>
+                    <div class="tk-meta">8am email of the day's top leads — passed check, in the chat.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="plan-group">
+                <span class="plan-tag tag-next">Next</span>
+                <div class="task" id="nextExport">
+                  <div class="tk-ico tk-build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
+                  <div class="tk-body">
+                    <div class="tk-name">Export to CSV <span class="why" title="7 users asked for it in-app — the single highest-signal request this week.">why</span></div>
+                    <div class="tk-meta">One-click CRM export — 7 users asked for it.</div>
+                  </div>
+                </div>
+                <div class="task">
+                  <div class="tk-ico tk-gtm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+                  <div class="tk-body">
+                    <div class="tk-name">Draft a Product Hunt launch tweet <span class="why" title="Retention is proven — 0% churn on 12 users. Time to pour on distribution.">why</span></div>
+                    <div class="tk-meta">GTM — I'll draft, you approve before it posts.</div>
+                  </div>
+                </div>
+                <div class="task">
+                  <div class="tk-ico tk-alert"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+                  <div class="tk-body">
+                    <div class="tk-name">Slack alert on a hot lead</div>
+                    <div class="tk-meta">Ping your channel the moment a lead scores 90+.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="plan-group">
+                <span class="plan-tag tag-later">Later</span>
+                <div class="task">
+                  <div class="tk-ico tk-later"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+                  <div class="tk-body">
+                    <div class="tk-name">Two-way CRM sync</div>
+                    <div class="tk-meta">Push &amp; pull leads with HubSpot / Pipedrive.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FEATURES -->
+          <div>
+            <div class="section-label">What it delivers</div>
+
+            <!-- STOREFRONT · how the company presents & sells itself -->
+            <div class="feat-subhead">Storefront <span>how the company presents &amp; sells itself</span></div>
+            <div class="feat-grid">
+
+              <!-- Landing page (wide, first) -->
+              <div class="feat wide">
+                <div class="thumb">
+                  <svg viewBox="0 0 400 130" preserveAspectRatio="xMidYMid slice">
+                    <rect width="400" height="130" fill="var(--cream-2)"/>
+                    <rect x="0" y="0" width="400" height="26" fill="var(--paper)"/>
+                    <circle cx="18" cy="13" r="4" fill="var(--accent)"/>
+                    <rect x="30" y="10" width="46" height="6" rx="3" fill="var(--ink-faint)" opacity=".5"/>
+                    <rect x="300" y="8" width="46" height="11" rx="5.5" fill="var(--accent)"/>
+                    <rect x="352" y="8" width="34" height="11" rx="5.5" fill="var(--line)"/>
+                    <rect x="30" y="46" width="180" height="13" rx="4" fill="var(--ink)" opacity=".8"/>
+                    <rect x="30" y="66" width="230" height="9" rx="4" fill="var(--ink-faint)" opacity=".45"/>
+                    <rect x="30" y="80" width="150" height="9" rx="4" fill="var(--ink-faint)" opacity=".45"/>
+                    <rect x="30" y="100" width="82" height="18" rx="9" fill="var(--accent)"/>
+                    <path d="M300 40 h70 l-27 30 v22 l-16 8 v-30 z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top">
+                    <div class="fc-name">Landing page</div>
+                    <span class="state live">Live</span>
+                  </div>
+                  <div class="fc-sum">The pitch: scored leads from any webform.</div>
+                </div>
+              </div>
+
+              <!-- Brand & design system -->
+              <div class="feat">
+                <div class="thumb">
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="20" y="20" width="44" height="44" rx="12" fill="var(--accent-soft)"/>
+                    <g transform="translate(30,32) scale(0.95)" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></g>
+                    <rect x="76" y="28" width="76" height="10" rx="5" fill="var(--ink)" opacity=".82"/>
+                    <rect x="76" y="44" width="48" height="7" rx="3.5" fill="var(--ink-faint)" opacity=".5"/>
+                    <circle cx="32" cy="88" r="9" fill="var(--accent)"/>
+                    <circle cx="56" cy="88" r="9" fill="var(--green)"/>
+                    <circle cx="80" cy="88" r="9" fill="var(--blue)"/>
+                    <circle cx="104" cy="88" r="9" fill="var(--amber)"/>
+                    <circle cx="128" cy="88" r="9" fill="var(--violet)"/>
+                    <circle cx="152" cy="88" r="9" fill="var(--paper)" stroke="var(--line)" stroke-width="1.5"/>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Brand &amp; design</div><span class="state live">Live</span></div>
+                  <div class="fc-sum">Logo, palette &amp; the look it sells with.</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- PRODUCT · the features users actually use -->
+            <div class="feat-subhead product">Product <span>what users log in to use</span></div>
+            <div class="feat-grid">
+
+              <!-- Webform capture -->
+              <div class="feat">
+                <div class="thumb">
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="26" y="18" width="138" height="16" rx="6" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="26" y="42" width="138" height="16" rx="6" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="26" y="66" width="138" height="16" rx="6" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="26" y="90" width="60" height="14" rx="7" fill="var(--accent)"/>
+                    <rect x="34" y="24" width="40" height="4" rx="2" fill="var(--ink-faint)" opacity=".5"/>
+                    <rect x="34" y="48" width="66" height="4" rx="2" fill="var(--ink-faint)" opacity=".5"/>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Webform capture</div><span class="state live">Live</span></div>
+                  <div class="fc-sum">Embeds a form, captures every lead.</div>
+                </div>
+              </div>
+
+              <!-- Lead table -->
+              <div class="feat">
+                <div class="thumb">
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="14" y="14" width="162" height="18" rx="4" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="14" y="36" width="162" height="16" rx="3" fill="var(--paper)"/>
+                    <rect x="14" y="54" width="162" height="16" rx="3" fill="var(--cream-2)"/>
+                    <rect x="14" y="72" width="162" height="16" rx="3" fill="var(--paper)"/>
+                    <rect x="14" y="90" width="162" height="16" rx="3" fill="var(--cream-2)"/>
+                    <rect x="22" y="41" width="50" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".5"/>
+                    <rect x="150" y="40" width="18" height="8" rx="4" fill="var(--green-soft)"/>
+                    <rect x="150" y="58" width="18" height="8" rx="4" fill="var(--amber-soft)"/>
+                    <rect x="150" y="76" width="18" height="8" rx="4" fill="var(--green-soft)"/>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Lead table</div><span class="state live">Live</span></div>
+                  <div class="fc-sum">Every lead, sortable + filterable.</div>
+                </div>
+              </div>
+
+              <!-- Auto-score -->
+              <div class="feat">
+                <div class="thumb">
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <circle cx="95" cy="58" r="34" fill="none" stroke="var(--line)" stroke-width="8"/>
+                    <circle cx="95" cy="58" r="34" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="160 214" transform="rotate(-90 95 58)"/>
+                    <text x="95" y="64" text-anchor="middle" font-family="Space Grotesk" font-size="24" font-weight="600" fill="var(--ink)">87</text>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Auto-score 0–100</div><span class="state live">Live</span></div>
+                  <div class="fc-sum">Scores each lead by buying intent.</div>
+                </div>
+              </div>
+
+              <!-- Filter by score -->
+              <div class="feat">
+                <div class="thumb">
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="30" y="24" width="130" height="10" rx="5" fill="var(--line)"/>
+                    <rect x="30" y="24" width="88" height="10" rx="5" fill="var(--accent)"/>
+                    <circle cx="118" cy="29" r="9" fill="var(--paper)" stroke="var(--accent)" stroke-width="3"/>
+                    <rect x="30" y="52" width="52" height="30" rx="6" fill="var(--green-soft)"/>
+                    <rect x="90" y="52" width="52" height="30" rx="6" fill="var(--green-soft)"/>
+                    <rect x="30" y="88" width="52" height="14" rx="6" fill="var(--paper)" stroke="var(--line)"/>
+                    <text x="56" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="var(--green)">92</text>
+                    <text x="116" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="var(--green)">88</text>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Filter by score</div><span class="state live">Live</span></div>
+                  <div class="fc-sum">Surface only the hot ones.</div>
+                </div>
+              </div>
+
+              <!-- Daily digest · BUILDING → LIVE -->
+              <div class="feat building" id="digestFeat">
+                <div class="thumb">
+                  <div class="build-tag"><span class="bd"></span>Building</div>
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="26" y="16" width="138" height="80" rx="7" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="26" y="16" width="138" height="20" rx="7" fill="var(--violet-soft)"/>
+                    <rect x="36" y="23" width="52" height="6" rx="3" fill="var(--violet)" opacity=".7"/>
+                    <rect x="36" y="46" width="90" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".5"/>
+                    <rect x="36" y="58" width="118" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".4"/>
+                    <rect x="36" y="70" width="70" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".4"/>
+                    <rect x="36" y="82" width="40" height="8" rx="4" fill="var(--violet)"/>
+                  </svg>
+                  <div class="build-bar"><i></i></div>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Daily digest</div><span class="state building">Building</span></div>
+                  <div class="fc-sum">8am email of the day's top leads.</div>
+                </div>
+              </div>
+
+              <!-- Export to CSV · PLANNED -->
+              <div class="feat planned">
+                <div class="thumb">
+                  <div class="ghost-lock"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Planned</span></div>
+                  <svg viewBox="0 0 190 112" preserveAspectRatio="xMidYMid slice">
+                    <rect width="190" height="112" fill="var(--cream-2)"/>
+                    <rect x="50" y="20" width="90" height="72" rx="6" fill="var(--paper)" stroke="var(--line)"/>
+                    <rect x="60" y="34" width="70" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".4"/>
+                    <rect x="60" y="46" width="70" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".4"/>
+                    <rect x="60" y="58" width="70" height="5" rx="2.5" fill="var(--ink-faint)" opacity=".4"/>
+                    <path d="M95 74 v12 M89 80 l6 6 6-6" stroke="var(--ink-faint)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="feat-cap">
+                  <div class="fc-top"><div class="fc-name">Export to CSV</div><span class="state planned">Planned</span></div>
+                  <div class="fc-sum">One-click export to your CRM.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DOCUMENTS ===== -->
+      <section class="panel" id="panel-documents">
+        <div class="section-label">The company's brain</div>
+        <div class="docs-grid">
+          <button class="doc" onclick="openDoc('mission')">
+            <div class="d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <div class="d-name">Mission statement</div>
+            <div class="d-desc">Why LeadSift exists and the wedge it owns.</div>
+            <div class="d-meta"><span>1 page</span><span>v1.4.0</span></div>
+          </button>
+          <button class="doc" onclick="openDoc('market')">
+            <div class="d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+            <div class="d-name">Market opportunity</div>
+            <div class="d-desc">TAM, ICP, and where the pain is sharpest.</div>
+            <div class="d-meta"><span>research</span><span>updated 3d</span></div>
+          </button>
+          <button class="doc" onclick="openDoc('design')">
+            <div class="d-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+            <div class="d-name">Design doc</div>
+            <div class="d-desc">System, scoring model, and the roadmap.</div>
+            <div class="d-meta"><span>technical</span><span>v3</span></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== BUILD (stub) ===== -->
+      <section class="panel" id="panel-build">
+        <div class="stub">
+          <div class="s-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></div>
+          <h2>Build</h2>
+          <p>The agent's live build log — code diffs, self-checks, and deploys. Daily digest is compiling now.</p>
+          <span class="s-soon">Coming soon</span>
+        </div>
+      </section>
+
+      <!-- ===== GROW (stub) ===== -->
+      <section class="panel" id="panel-grow">
+        <div class="stub">
+          <div class="s-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
+          <h2>Grow</h2>
+          <p>GTM experiments, launch drafts, and channel performance — Product Hunt tweet is queued for your review.</p>
+          <span class="s-soon">Coming soon</span>
+        </div>
+      </section>
+
+      <!-- ===== MONEY (stub) ===== -->
+      <section class="panel" id="panel-money">
+        <div class="stub">
+          <div class="s-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <h2>Money</h2>
+          <p>Pricing, subscriptions, and payout ledger. $180 MRR across 12 seats, 88% margin, zero refunds.</p>
+          <span class="s-soon">Coming soon</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeDoc()">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Document</h2>
+        <div class="mh-meta" id="modalMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeDoc()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ---- theme ----
+function toggleTheme(){
+  const d=document.documentElement.getAttribute('data-theme')==='dark';
+  if(d)document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme','dark');
+  try{localStorage.setItem('cslopslop-theme',d?'light':'dark');}catch(e){}
+}
+
+// ---- tabs ----
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));
+}
+
+// ---- autopilot: build → live ----
+let digestShipped=false, shipTimer=null;
+const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CHECK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+window.addEventListener('DOMContentLoaded',()=>{
+  initAutoAppr();
+  shipTimer=setTimeout(autoShipDigest,10000);
+  startLiveTicker();
+});
+
+function autoShipDigest(){
+  if(digestShipped)return;
+  const a=document.getElementById('approval');
+  if(a&&!a.classList.contains('resolved')){
+    a.classList.add('resolved');
+    const note=document.getElementById('resolvedNote');
+    if(note)note.innerHTML='<span>✓</span> Auto-approved on autopilot — the daily digest is live for all 12 users.';
+  }
+  addAgentMsg('Autopilot: the approval window passed clear, so I shipped the daily digest to all 12 users. It’s live now. ✓');
+  shipDigest();
+}
+
+function shipDigest(){
+  if(digestShipped)return; digestShipped=true;
+  clearTimeout(shipTimer);
+  const feat=document.getElementById('digestFeat');
+  if(feat){
+    feat.classList.remove('building');
+    feat.classList.add('just-shipped');
+    const thumb=feat.querySelector('.thumb');
+    const tag=feat.querySelector('.build-tag'); if(tag)tag.remove();
+    const bar=feat.querySelector('.build-bar'); if(bar)bar.remove();
+    const st=feat.querySelector('.state'); if(st){st.className='state live';st.textContent='Live';}
+    if(thumb){
+      const flash=document.createElement('div');
+      flash.className='ship-flash';
+      flash.innerHTML='<span>'+CHECK_SVG+'just shipped ✓</span>';
+      thumb.appendChild(flash);
+      setTimeout(()=>flash.remove(),2300);
+    }
+    const cap=feat.querySelector('.feat-cap');
+    if(cap&&!cap.querySelector('.outcome')){
+      const o=document.createElement('div');
+      o.className='outcome fresh';
+      o.innerHTML=CHECK_SVG+' live · all 12 users';
+      cap.appendChild(o);
+    }
+    setTimeout(()=>feat.classList.remove('just-shipped'),720);
+  }
+  // roadmap: "Now" advances from the shipped digest to the next ask
+  const now=document.getElementById('planNow');
+  if(now){
+    now.innerHTML='<span class="plan-tag tag-now">Now</span>'
+      +'<div class="task in">'
+      +'<div class="tk-ico tk-build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>'
+      +'<div class="tk-body">'
+      +'<div class="tk-name">Export to CSV <span class="chip await">starting</span> <span class="why" title="Auto-picked as the top request — 7 users asked in-app.">why</span></div>'
+      +'<div class="tk-meta">Daily digest shipped ✓ — I moved straight to the next ask.</div>'
+      +'</div></div>';
+  }
+  const nx=document.getElementById('nextExport'); if(nx)nx.remove();
+  // metric nudge: a fresh active user off the back of the ship
+  const ku=document.getElementById('kUsers');
+  const kd=document.getElementById('kUsersDelta');
+  setTimeout(()=>{
+    if(ku){ku.textContent='13'; if(!REDUCED){ku.classList.add('metric-pop'); setTimeout(()=>ku.classList.remove('metric-pop'),820);}}
+    if(kd)kd.innerHTML='↑ +4 <span style="color:var(--ink-faint)">/wk</span>';
+  },900);
+  pushLog('daily digest <span class="ok">shipped ✓</span> · live for 12 users');
+}
+
+// ---- live activity ticker ----
+const LIVE_LOGS=[
+  'scored inbound lead <b>#0492</b> → <b>87</b> · warm',
+  'captured <b>2 leads</b> from the webform · pricing page',
+  'health check <span class="ok">passed ✓</span> · 99.9% uptime',
+  'lead <b>#0489</b> crossed <b>90</b> → flagged <b>hot</b>',
+  'nightly backup complete <span class="ok">✓</span>'
+];
+let logIdx=0;
+function pushLog(html){
+  const el=document.getElementById('liveLog');
+  if(!el)return;
+  el.classList.remove('in'); void el.offsetWidth;
+  el.innerHTML=html; el.classList.add('in');
+}
+function startLiveTicker(){
+  pushLog(LIVE_LOGS[0]);
+  if(REDUCED)return;
+  setInterval(()=>{logIdx=(logIdx+1)%LIVE_LOGS.length;pushLog(LIVE_LOGS[logIdx]);},3800);
+}
+
+// ---- approval ----
+function resolveApproval(kind){
+  clearTimeout(shipTimer);
+  const a=document.getElementById('approval');
+  const note=document.getElementById('resolvedNote');
+  a.classList.add('resolved');
+  const map={
+    shipped:['✓','Approved — shipping the daily digest to all 12 users now.'],
+    review:['◱','Opening a preview for review — I\'ll hold the deploy.'],
+    rejected:['✕','Understood — I\'ll shelve the digest and pick up Export to CSV next.']
+  };
+  const[icon,txt]=map[kind];
+  note.innerHTML='<span>'+icon+'</span> '+txt;
+  if(kind==='rejected'){note.style.color='var(--red)';}
+  if(kind==='review'){note.style.color='var(--blue)';}
+  addAgentMsg(txt);
+  if(kind==='shipped')shipDigest();
+}
+function explainDigest(){
+  addAgentMsg('Why now: retention is our weak spot — users check in, then drift. A daily 8am email of their hottest leads pulls them back without any work. It passed its self-check ✓, it only sends (nothing destructive), and it’s fully reversible — so it’s a safe one to ship.');
+}
+
+// ---- auto-approve digests (autonomy toggle) ----
+const AUTO_KEY='cslopslop-auto-digest';
+let autoApproveDigests=false;
+
+function reflectAutonomy(){
+  const t=document.getElementById('autonomyText');
+  if(t)t.textContent=autoApproveDigests
+    ? 'Digests like this now ship fully automatically · you still approve growth & spend.'
+    : 'Builds ship on autopilot · you approve growth & spend.';
+}
+
+// auto-resolve the pending digest approval without a manual click
+function autoApproveDigestNow(){
+  const a=document.getElementById('approval');
+  if(!a||a.classList.contains('resolved'))return false;
+  clearTimeout(shipTimer);
+  a.classList.add('resolved');
+  const note=document.getElementById('resolvedNote');
+  if(note)note.innerHTML='<span>✓</span> Auto-approved — the daily digest is live for all 12 users.';
+  shipDigest();
+  return true;
+}
+
+function initAutoAppr(){
+  const cb=document.getElementById('autoAppr');
+  if(!cb)return;
+  try{autoApproveDigests=localStorage.getItem(AUTO_KEY)==='1';}catch(e){}
+  cb.checked=autoApproveDigests;   // restore persisted state
+  reflectAutonomy();
+  cb.addEventListener('change',()=>{
+    autoApproveDigests=cb.checked;
+    try{localStorage.setItem(AUTO_KEY,autoApproveDigests?'1':'0');}catch(e){}
+    reflectAutonomy();
+    if(autoApproveDigests){
+      addAgentMsg('Got it — I\'ll ship digests like this automatically from now on.');
+      autoApproveDigestNow();   // apply immediately to the pending digest
+    }else{
+      addAgentMsg('Understood — I\'ll check with you before shipping digests from now on.');
+    }
+  });
+}
+
+// ---- composer ----
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,96)+'px';}
+function composerKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function sendMsg(){
+  const el=document.getElementById('composer');
+  const v=el.value.trim();if(!v)return;
+  const stream=document.getElementById('stream');
+  const me=document.createElement('div');
+  me.className='msg me';
+  me.innerHTML='<div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></div><div class="bubble">'+escapeHtml(v)+'</div>';
+  stream.appendChild(me);
+  el.value='';autoGrow(el);
+  stream.scrollTop=stream.scrollHeight;
+  setTimeout(()=>addAgentMsg(pickReply(v)),650);
+}
+function pickReply(v){
+  const t=v.toLowerCase();
+  if(t.includes('ship')||t.includes('approve')||t.includes('yes'))return 'On it — deploying now and I\'ll confirm once it\'s live.';
+  if(t.includes('export')||t.includes('csv'))return 'Export to CSV is queued next — 7 users asked. I can start it right after the digest ships.';
+  if(t.includes('lead')||t.includes('score'))return 'Newest hot lead scored 92 — enterprise domain, pricing page 3x. Want a Slack alert set up?';
+  return 'Got it — I\'ll factor that into the plan and update What\'s next on the right.';
+}
+function addAgentMsg(text){
+  const stream=document.getElementById('stream');
+  const m=document.createElement('div');
+  m.className='msg';
+  const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  m.innerHTML='<div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/></svg></div><div class="bubble"><div class="t">Sift · '+time+'</div>'+escapeHtml(text)+'</div>';
+  stream.appendChild(m);
+  stream.scrollTop=stream.scrollHeight;
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+// ---- documents ----
+const DOCS={
+  mission:{title:'Mission statement',meta:'LeadSift · v1.4.0 · 1 page',body:`
+    <h3>Mission</h3>
+    <p><strong>Turn every webform into scored, ranked sales leads.</strong> Most small teams collect form submissions into a black hole — a spreadsheet nobody reads. LeadSift sits between the form and the follow-up, scoring intent so a human only ever talks to the leads worth talking to.</p>
+    <h3>The wedge</h3>
+    <p>We don't replace the CRM. We make the top of it intelligent: capture anywhere, score in real time, surface the hot ones. One thing, done exceptionally.</p>
+    <h3>Principles</h3>
+    <ul>
+      <li><strong>Speed to signal.</strong> A lead should be scored before the tab closes.</li>
+      <li><strong>Boringly reliable.</strong> 99.9% uptime is a feature, not a footnote.</li>
+      <li><strong>Human approves, agent executes.</strong> Nothing ships without a nod.</li>
+    </ul>`},
+  market:{title:'Market opportunity',meta:'Research · updated 3 days ago',body:`
+    <h3>The problem</h3>
+    <p>Small B2B teams run 3–6 lead-gen forms across a site, ad landers, and gated content. Submissions land unscored and unsorted. Sales works them top-to-bottom, wasting the first hour of every day on tire-kickers.</p>
+    <h3>Ideal customer</h3>
+    <ul>
+      <li>2–20 person B2B SaaS &amp; agencies</li>
+      <li>Already running paid or content lead-gen</li>
+      <li>No RevOps hire, no time to build scoring themselves</li>
+    </ul>
+    <h3>Sizing</h3>
+    <p>~1.9M teams fit the ICP. At $15–39/mo a realistic 0.5% capture is <strong>$1.7M–4.4M ARR</strong>. Current wedge: 12 paying, $180 MRR, 0% churn — the retention signal we needed before pushing distribution.</p>
+    <h3>Why now</h3>
+    <p>Scoring that used to need a data team is now a prompt. The moat is the workflow around it — capture, rank, alert, export — not the model.</p>`},
+  design:{title:'Design doc',meta:'Technical · v3',body:`
+    <h3>System</h3>
+    <p>Embeddable form widget → capture endpoint → scoring worker → dashboard + notification fan-out. Stateless workers, single Postgres, deployed at <strong>leadsift.app</strong>. Everything the agent ships passes an automated self-check before it can be approved.</p>
+    <h3>Scoring model 0–100</h3>
+    <ul>
+      <li>Firmographic fit (domain, company size signals) — 40%</li>
+      <li>Behavioral intent (pages seen, pricing visits, repeat) — 45%</li>
+      <li>Form completeness &amp; recency — 15%</li>
+    </ul>
+    <p>90+ is flagged <strong>hot</strong> and eligible for real-time alerts.</p>
+    <h3>Roadmap</h3>
+    <ul>
+      <li><strong>Now:</strong> Daily digest (built · awaiting approval)</li>
+      <li><strong>Next:</strong> Export to CSV · Product Hunt launch · Slack hot-lead alert</li>
+      <li><strong>Later:</strong> Two-way CRM sync (HubSpot / Pipedrive)</li>
+    </ul>`}
+};
+function openDoc(k){
+  const d=DOCS[k];if(!d)return;
+  document.getElementById('modalTitle').textContent=d.title;
+  document.getElementById('modalMeta').textContent=d.meta;
+  document.getElementById('modalBody').innerHTML=d.body;
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeDoc(){document.getElementById('modalBg').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDoc();});
+</script>
+</body>
+</html>

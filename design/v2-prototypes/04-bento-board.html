@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · 04 Bento Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f2ee;
+    --bg2:#eceae4;
+    --tile:#ffffff;
+    --ink:#1c1a17;
+    --ink2:#6b6760;
+    --ink3:#9a958c;
+    --line:#e7e3db;
+    --line2:#ddd8ce;
+    --green:#2f9e6e;     --green-bg:#e6f5ed;  --green-ring:#bfe6d2;
+    --amber:#c98a1a;     --amber-bg:#fbf1dd;  --amber-ring:#f0dcae;
+    --gray:#8c887f;      --gray-bg:#eeece7;
+    --blue:#2f6fe0;      --blue-bg:#e6efff;   --blue-ring:#c4d9fb;
+    --violet:#7a52d6;    --violet-bg:#efe9fb; --violet-ring:#d8caf3;
+    --red:#d0492f;       --red-bg:#fbe7e1;    --red-ring:#f3c8bc;
+    --slate:#7c8696;     --slate-bg:#edeff2;
+    --shadow-sm:0 1px 2px rgba(28,26,23,.04), 0 2px 6px rgba(28,26,23,.05);
+    --shadow:0 1px 3px rgba(28,26,23,.05), 0 8px 24px rgba(28,26,23,.07);
+    --shadow-lg:0 2px 8px rgba(28,26,23,.06), 0 30px 70px rgba(28,26,23,.16);
+    --r:22px;
+    --r-sm:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:
+      radial-gradient(1100px 700px at 88% -8%, #f7efe6 0%, transparent 55%),
+      radial-gradient(900px 600px at 4% 4%, #eef2f1 0%, transparent 50%),
+      var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::-webkit-scrollbar{width:11px;height:11px;}
+  ::-webkit-scrollbar-thumb{background:#d6d1c7;border-radius:20px;border:3px solid transparent;background-clip:content-box;}
+  ::-webkit-scrollbar-thumb:hover{background:#c4beb2;background-clip:content-box;}
+
+  .badge{
+    position:fixed;left:18px;bottom:18px;z-index:200;
+    background:#1c1a17;color:#f4f2ee;
+    font-size:11.5px;font-weight:600;letter-spacing:.04em;
+    padding:8px 13px;border-radius:999px;
+    box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:8px;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:#76d6a6;box-shadow:0 0 0 4px rgba(118,214,166,.22);}
+
+  /* ===== shell ===== */
+  .wrap{max-width:1480px;margin:0 auto;padding:34px 40px 200px;}
+  header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px;}
+  .brand{display:flex;flex-direction:column;gap:3px;}
+  .brand .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:600;}
+  .brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:1;margin:0;letter-spacing:-.01em;}
+  .brand h1 em{font-style:italic;color:var(--green);}
+  .top-right{display:flex;align-items:center;gap:14px;}
+  .pill-need{
+    display:flex;align-items:center;gap:9px;background:var(--violet-bg);color:#5e3db0;
+    border:1px solid var(--violet-ring);padding:9px 15px;border-radius:999px;font-weight:600;font-size:13.5px;
+    cursor:pointer;transition:.18s;
+  }
+  .pill-need:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+  .pill-need .pdot{width:8px;height:8px;border-radius:50%;background:var(--violet);animation:pulse 1.6s infinite;}
+
+  /* ===== command bar (chat spine) ===== */
+  .cmd{
+    display:flex;align-items:center;gap:14px;background:var(--tile);border:1px solid var(--line);
+    border-radius:18px;padding:13px 18px;box-shadow:var(--shadow-sm);margin-bottom:26px;
+  }
+  .cmd .spark{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+    background:linear-gradient(135deg,#2f9e6e,#7a52d6);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:18px;}
+  .cmd input{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;color:var(--ink);}
+  .cmd input::placeholder{color:var(--ink3);}
+  .cmd .send{background:var(--ink);color:#fff;border:none;border-radius:11px;padding:9px 16px;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.16s;}
+  .cmd .send:hover{background:#000;transform:translateY(-1px);}
+  .cmd .hint{font-size:11.5px;color:var(--ink3);padding-right:4px;}
+
+  /* ===== KPI row ===== */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:18px;}
+  .kpi{background:var(--tile);border:1px solid var(--line);border-radius:var(--r-sm);padding:17px 19px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+  .kpi .lab{font-size:11.5px;color:var(--ink2);font-weight:600;letter-spacing:.02em;}
+  .kpi .val{font-family:'Fraunces',serif;font-weight:600;font-size:34px;line-height:1;margin-top:9px;letter-spacing:-.02em;}
+  .kpi .sub{font-size:11.5px;color:var(--ink3);margin-top:7px;}
+  .kpi.need{background:var(--violet-bg);border-color:var(--violet-ring);cursor:pointer;}
+  .kpi.need .val{color:#5e3db0;}
+  .kpi.need .lab{color:#7a52d6;}
+  .kpi.need:hover{transform:translateY(-2px);box-shadow:var(--shadow);transition:.18s;}
+  .kpi .arrow{font-size:13px;color:var(--green);font-weight:600;}
+
+  .section-h{display:flex;align-items:baseline;gap:12px;margin:30px 2px 14px;}
+  .section-h h2{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;letter-spacing:-.01em;}
+  .section-h .cnt{font-size:12.5px;color:var(--ink3);font-weight:500;}
+
+  /* ===== bento grid ===== */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;grid-auto-rows:minmax(10px,auto);}
+  .span2{grid-column:span 2;}
+  .row2{grid-row:span 2;}
+
+  .tile{background:var(--tile);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);position:relative;}
+  .co-tile{cursor:pointer;transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s;display:flex;flex-direction:column;}
+  .co-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--line2);}
+  .co-tile.needs{border-color:var(--violet-ring);background:linear-gradient(180deg,#faf7ff, #fff 60%);}
+  .co-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .co-name{font-family:'Fraunces',serif;font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.05;}
+  .co-thesis{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.45;max-width:90%;}
+  .stat{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+  .stat .d{width:6px;height:6px;border-radius:50%;}
+  .stat.active{background:var(--green-bg);color:#1f7a52;} .stat.active .d{background:var(--green);}
+  .stat.paused{background:var(--amber-bg);color:#9a6a14;} .stat.paused .d{background:var(--amber);}
+  .stat.archived{background:var(--gray-bg);color:#6c685f;} .stat.archived .d{background:var(--gray);}
+
+  .co-metrics{display:flex;gap:22px;margin-top:16px;}
+  .co-metrics .m .mv{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.01em;}
+  .co-metrics .m .ml{font-size:10.5px;color:var(--ink3);font-weight:600;letter-spacing:.03em;text-transform:uppercase;margin-top:2px;}
+
+  .co-slice{margin-top:auto;padding-top:16px;}
+  .co-slice .csl-lab{font-size:11px;color:var(--ink3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+  .co-slice .csl-txt{font-size:13px;margin-top:5px;line-height:1.35;display:flex;align-items:center;gap:8px;}
+  .ministat{font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:6px;flex:0 0 auto;}
+  .ministat.building{background:var(--blue-bg);color:#1f54b8;}
+  .ministat.awaiting_approval{background:var(--violet-bg);color:#5e3db0;}
+  .ministat.todo{background:var(--slate-bg);color:#5b6573;}
+  .ministat.blocked{background:var(--red-bg);color:#a83218;}
+  .ministat.shipped{background:var(--green-bg);color:#1f7a52;}
+
+  /* sparkline-ish slice progress */
+  .spark-row{display:flex;align-items:flex-end;gap:3px;height:30px;margin-top:13px;}
+  .spark-row .bar{flex:1;border-radius:3px 3px 1px 1px;background:var(--line2);min-width:4px;}
+  .spark-row .bar.shipped{background:var(--green);}
+  .spark-row .bar.awaiting_approval{background:var(--violet);}
+  .spark-row .bar.building{background:var(--blue);animation:barpulse 1.6s infinite;}
+  .spark-row .bar.blocked{background:var(--red);}
+  .spark-row .bar.todo{background:var(--line2);}
+  .progress-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:8px;font-weight:500;}
+
+  .needs-flag{display:inline-flex;align-items:center;gap:6px;background:var(--violet);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:999px;}
+  .needs-flag .fd{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite;}
+
+  /* small tiles */
+  .mini-h{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin-bottom:3px;letter-spacing:-.01em;}
+  .mini-sub{font-size:11.5px;color:var(--ink3);margin-bottom:13px;}
+
+  .opp{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);}
+  .opp:first-of-type{border-top:none;}
+  .opp .oscore{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto;}
+  .oscore.hi{background:var(--green-bg);color:#1f7a52;} .oscore.mid{background:var(--amber-bg);color:#9a6a14;} .oscore.lo{background:var(--slate-bg);color:#5b6573;} .oscore.killed{background:var(--gray-bg);color:#8c887f;}
+  .opp .oinfo{flex:1;min-width:0;}
+  .opp .otitle{font-size:13.5px;font-weight:600;}
+  .opp .othought{font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+  .promote{border:1px solid var(--line2);background:#fff;color:var(--ink);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:9px;cursor:pointer;font-family:inherit;transition:.16s;flex:0 0 auto;}
+  .promote:hover{background:var(--green);border-color:var(--green);color:#fff;}
+  .promote.killed{opacity:.45;cursor:default;}
+  .promote.killed:hover{background:#fff;color:var(--ink);border-color:var(--line2);}
+
+  .thought-tile{background:linear-gradient(160deg,#1c1a17,#2b2722);color:#f4f2ee;border:none;}
+  .thought-tile .mini-h{color:#fff;}
+  .thought-tile .mini-sub{color:#b7b1a6;}
+  .thought-box{display:flex;gap:9px;margin-top:6px;}
+  .thought-box input{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:11px;padding:11px 13px;color:#fff;font-family:inherit;font-size:13px;outline:none;}
+  .thought-box input::placeholder{color:#8d877c;}
+  .thought-box button{background:#76d6a6;color:#10331f;border:none;border-radius:11px;padding:0 15px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;}
+
+  .nm{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line);font-size:13px;line-height:1.4;}
+  .nm:first-of-type{border-top:none;}
+  .nm .nmn{width:21px;height:21px;border-radius:7px;background:var(--bg2);color:var(--ink2);font-weight:700;font-size:11px;display:grid;place-items:center;flex:0 0 auto;}
+
+  .loadmore{margin:26px auto 0;display:flex;justify-content:center;}
+  .loadmore button{background:transparent;border:1.5px dashed var(--line2);color:var(--ink2);font-family:inherit;font-size:13px;font-weight:600;padding:13px 26px;border-radius:14px;cursor:pointer;transition:.18s;}
+  .loadmore button:hover{border-color:var(--green);color:var(--green);background:#fff;}
+
+  /* ===== activity strip ===== */
+  .activity{position:fixed;left:0;right:0;bottom:0;z-index:150;display:flex;justify-content:center;pointer-events:none;}
+  .act-inner{pointer-events:auto;width:100%;max-width:1480px;margin:0 auto;padding:0 40px 18px;}
+  .act-card{background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;}
+  .act-bar{display:flex;align-items:center;gap:13px;padding:13px 18px;cursor:pointer;}
+  .act-live{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);flex:0 0 auto;}
+  .act-live .ld{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.4s infinite;}
+  .act-latest{flex:1;font-size:13px;color:var(--ink);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .act-latest b{font-weight:600;}
+  .act-toggle{font-size:12px;color:var(--ink2);font-weight:600;flex:0 0 auto;display:flex;align-items:center;gap:6px;}
+  .act-chev{transition:transform .25s;}
+  .activity.open .act-chev{transform:rotate(180deg);}
+  .act-stream{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.2,.7,.3,1);border-top:1px solid transparent;}
+  .activity.open .act-stream{max-height:60vh;overflow-y:auto;border-top-color:var(--line);}
+  .act-group{padding:14px 18px;border-bottom:1px solid var(--line);}
+  .act-group:last-child{border-bottom:none;}
+  .act-group .agh{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);margin-bottom:9px;}
+  .act-item{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12.5px;}
+  .act-item .aidot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex:0 0 auto;}
+  .act-item.running .aidot{background:var(--blue);animation:pulse 1.3s infinite;}
+  .act-item.await .aidot{background:var(--violet);}
+  .act-item.check .aidot{background:var(--green);}
+  .act-item.blocked .aidot{background:var(--red);}
+  .act-item .aitxt{flex:1;color:var(--ink);}
+  .act-item.running .aitxt{font-weight:500;}
+  .act-item .ait{font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;flex:0 0 auto;}
+
+  /* ===== zoom view ===== */
+  .zoom-scrim{position:fixed;inset:0;z-index:160;background:rgba(28,26,23,.32);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .3s;}
+  .zoom-scrim.show{opacity:1;pointer-events:auto;}
+  .zoom{
+    position:fixed;z-index:170;background:var(--bg);border:1px solid var(--line);border-radius:24px;
+    box-shadow:var(--shadow-lg);overflow:hidden;opacity:0;pointer-events:none;
+    transform-origin:top left;transition:opacity .12s;
+  }
+  .zoom.animating{transition:transform .42s cubic-bezier(.22,.72,.24,1), opacity .2s, border-radius .42s;}
+  .zoom.open{opacity:1;pointer-events:auto;}
+  .zoom-inner{position:absolute;inset:0;overflow-y:auto;opacity:0;transition:opacity .25s .12s;}
+  .zoom.open .zoom-inner{opacity:1;}
+
+  .zhead{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;padding:20px 30px;background:rgba(244,242,238,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .zback{display:inline-flex;align-items:center;gap:8px;background:var(--tile);border:1px solid var(--line2);border-radius:11px;padding:9px 14px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;color:var(--ink);transition:.16s;}
+  .zback:hover{background:#fff;transform:translateX(-2px);box-shadow:var(--shadow-sm);}
+  .zhead .ztitle{font-family:'Fraunces',serif;font-weight:600;font-size:26px;letter-spacing:-.01em;}
+  .zhead .zurl{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);background:var(--blue-bg);padding:5px 10px;border-radius:8px;text-decoration:none;}
+  .zhead .zspace{flex:1;}
+
+  .zbody{display:grid;grid-template-columns:minmax(360px,1fr) 1.35fr;gap:22px;padding:26px 30px 60px;align-items:start;}
+  .zcol{display:flex;flex-direction:column;gap:18px;}
+
+  .panel{background:var(--tile);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);}
+  .panel-h{padding:16px 20px 0;font-family:'Fraunces',serif;font-weight:600;font-size:17px;}
+  .panel-b{padding:14px 20px 20px;}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;}
+  .chat-log{display:flex;flex-direction:column;gap:11px;padding:16px 18px;max-height:300px;overflow-y:auto;}
+  .msg{max-width:86%;padding:11px 14px;border-radius:14px;font-size:13px;line-height:1.45;}
+  .msg.assistant{background:var(--bg2);align-self:flex-start;border-bottom-left-radius:5px;}
+  .msg.user{background:var(--ink);color:#f4f2ee;align-self:flex-end;border-bottom-right-radius:5px;}
+  .chat-in{display:flex;gap:9px;padding:13px 16px;border-top:1px solid var(--line);}
+  .chat-in input{flex:1;border:1px solid var(--line2);border-radius:11px;padding:10px 13px;font-family:inherit;font-size:13px;outline:none;}
+  .chat-in input:focus{border-color:var(--blue);}
+  .chat-in button{background:var(--ink);color:#fff;border:none;border-radius:11px;padding:0 15px;font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;}
+
+  /* slices list */
+  .slice{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line);}
+  .slice:first-child{border-top:none;}
+  .slice .sn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);width:20px;flex:0 0 auto;}
+  .slice .stxt{flex:1;font-size:13px;line-height:1.35;}
+  .slice .snote{font-size:11px;color:var(--red);margin-top:2px;}
+  .slice .sdep{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+  /* approval gate */
+  .gate{border:1.5px solid var(--violet-ring);background:linear-gradient(180deg,#faf7ff,#fff 40%);border-radius:var(--r);box-shadow:0 10px 40px rgba(122,82,214,.12);overflow:hidden;}
+  .gate-h{padding:18px 22px;display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--violet-ring);}
+  .gate-h .gtag{background:var(--violet);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;}
+  .gate-h .gtag .gd{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.4s infinite;}
+  .gate-h .gtitle{font-family:'Fraunces',serif;font-weight:600;font-size:18px;}
+  .gate-h .gsub{font-size:11.5px;color:var(--ink2);}
+  .gate-b{padding:20px 22px;}
+
+  .gate-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+  .meta{background:var(--bg2);border-radius:12px;padding:12px 14px;}
+  .meta .ml{font-size:10.5px;color:var(--ink3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+  .meta .mv{font-size:13px;margin-top:5px;font-weight:500;}
+  .meta a{color:var(--blue);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px;}
+
+  .donewhen{display:flex;align-items:center;gap:11px;background:var(--green-bg);border:1px solid var(--green-ring);border-radius:12px;padding:13px 15px;margin-bottom:18px;}
+  .donewhen .gcheck{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700;flex:0 0 auto;font-size:14px;}
+  .donewhen .dw-txt{flex:1;}
+  .donewhen .dw-lab{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#1f7a52;}
+  .donewhen .dw-code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#225e44;margin-top:3px;}
+  .donewhen .dw-pass{font-size:11px;font-weight:700;color:#1f7a52;background:#fff;border:1px solid var(--green-ring);padding:4px 10px;border-radius:999px;flex:0 0 auto;}
+
+  .diff{background:#1c1a17;border-radius:13px;padding:15px 17px;overflow-x:auto;margin-bottom:8px;}
+  .diff .dline{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;white-space:pre;color:#cfc9bd;}
+  .diff .dline.add{color:#a7e8c6;}
+  .diff .dline.add::before{content:'';}
+  .diff-cap{font-size:11px;color:var(--ink3);margin:0 2px 18px;}
+
+  .preview-frame{border:1px solid var(--line2);border-radius:13px;overflow:hidden;margin-bottom:18px;}
+  .pf-bar{display:flex;align-items:center;gap:8px;background:var(--bg2);padding:9px 13px;border-bottom:1px solid var(--line);}
+  .pf-bar .dots{display:flex;gap:5px;}.pf-bar .dots i{width:9px;height:9px;border-radius:50%;background:#cfcabf;}
+  .pf-bar .pf-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:7px;padding:3px 9px;flex:1;}
+  .pf-body{padding:20px;background:#fff;}
+  .pf-body .pf-mock-h{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;}
+  .pf-body .pf-mock-s{font-size:12px;color:var(--ink3);margin-bottom:14px;}
+  .pf-lead{display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid var(--line);font-size:12.5px;}
+  .pf-lead:first-of-type{border-top:none;}
+  .pf-lead .pscore{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:var(--green-bg);color:#1f7a52;padding:3px 8px;border-radius:7px;}
+
+  .gate-actions{display:flex;gap:12px;align-items:center;}
+  .btn-approve{flex:1;background:var(--green);color:#fff;border:none;border-radius:13px;padding:14px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:.16s;box-shadow:0 6px 18px rgba(47,158,110,.28);}
+  .btn-approve:hover{background:#27895f;transform:translateY(-1px);}
+  .btn-reject{background:#fff;color:var(--red);border:1.5px solid var(--red-ring);border-radius:13px;padding:14px 20px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:.16s;}
+  .btn-reject:hover{background:var(--red-bg);}
+  .gate-confirm{margin-top:14px;opacity:0;transform:translateY(6px);transition:.25s;font-size:13px;font-weight:600;padding:12px 16px;border-radius:12px;}
+  .gate-confirm.show{opacity:1;transform:none;}
+  .gate-confirm.ok{background:var(--green-bg);color:#1f7a52;border:1px solid var(--green-ring);}
+  .gate-confirm.rej{background:var(--amber-bg);color:#9a6a14;border:1px solid var(--amber-ring);}
+  .reject-box{margin-top:14px;display:none;}
+  .reject-box.show{display:block;}
+  .reject-box textarea{width:100%;border:1px solid var(--line2);border-radius:12px;padding:11px 13px;font-family:inherit;font-size:13px;resize:vertical;min-height:64px;outline:none;}
+  .reject-box textarea:focus{border-color:var(--amber);}
+  .reject-box .rb-send{margin-top:9px;background:var(--amber);color:#fff;border:none;border-radius:11px;padding:10px 18px;font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;}
+
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(122,82,214,.42);}50%{box-shadow:0 0 0 6px rgba(122,82,214,0);}}
+  @keyframes barpulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+
+  .flash{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-14px);z-index:300;background:var(--ink);color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:.28s;display:flex;align-items:center;gap:9px;}
+  .flash.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .flash .fcheck{width:18px;height:18px;border-radius:50%;background:#76d6a6;color:#10331f;display:grid;place-items:center;font-size:12px;font-weight:800;}
+</style>
+</head>
+<body>
+<div class="badge"><span class="dot"></span>04 · Bento Board</div>
+<div class="flash" id="flash"><span class="fcheck">✓</span><span id="flashtxt">Approved</span></div>
+
+<div class="wrap" id="overview">
+  <header class="top">
+    <div class="brand">
+      <span class="kicker">Founder Command Center</span>
+      <h1>C Slop <em>Slop</em></h1>
+    </div>
+    <div class="top-right">
+      <div class="pill-need" onclick="openZoom('leadsift')"><span class="pdot"></span>1 needs you</div>
+    </div>
+  </header>
+
+  <!-- chat spine: global command bar -->
+  <div class="cmd">
+    <div class="spark">∿</div>
+    <input id="cmdInput" placeholder="Direct the portfolio…  e.g. “promote PayoutReconciler” or “approve LeadSift slice 5”" />
+    <span class="hint">⌘K</span>
+    <button class="send" onclick="sendCmd()">Send</button>
+  </div>
+
+  <!-- portfolio KPI tiles -->
+  <div class="kpis" id="kpis"></div>
+
+  <div class="section-h">
+    <h2>The Board</h2>
+    <span class="cnt" id="boardCount"></span>
+  </div>
+
+  <!-- bento grid -->
+  <div class="bento" id="bento"></div>
+
+  <div class="loadmore"><button onclick="loadMore()">＋ Load more bets</button></div>
+</div>
+
+<!-- zoom view -->
+<div class="zoom-scrim" id="scrim" onclick="closeZoom()"></div>
+<div class="zoom" id="zoom"><div class="zoom-inner" id="zoomInner"></div></div>
+
+<!-- live activity strip -->
+<div class="activity" id="activity">
+  <div class="act-inner">
+    <div class="act-card">
+      <div class="act-bar" onclick="toggleActivity()">
+        <span class="act-live"><span class="ld"></span>Live</span>
+        <span class="act-latest" id="actLatest"></span>
+        <span class="act-toggle"><span id="actToggleTxt">Expand</span><span class="act-chev">⌄</span></span>
+      </div>
+      <div class="act-stream" id="actStream"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ---------- KPIs ---------- */
+function renderKpis(){
+  const p = DATA.portfolio;
+  const tiles = [
+    {lab:'Monthly recurring', val:'$'+p.mrr, sub:'<span class="arrow">▲ 14%</span> vs last month'},
+    {lab:'Total users', val:p.users, sub:'across 5 live products'},
+    {lab:'Active companies', val:p.activeCompanies, sub:'1 paused'},
+    {lab:'Slices shipped', val:p.slicesShipped, sub:'live + proven'},
+    {lab:'Needs you', val:p.needsYou, sub:'awaiting approval', need:true},
+  ];
+  document.getElementById('kpis').innerHTML = tiles.map(t=>`
+    <div class="kpi ${t.need?'need':''}" ${t.need?'onclick="openZoom(\'leadsift\')"':''}>
+      <div class="lab">${t.lab}</div>
+      <div class="val">${t.val}</div>
+      <div class="sub">${t.sub}</div>
+    </div>`).join('');
+}
+
+/* ---------- company tile ---------- */
+const STATUS_ORDER = ['shipped','awaiting_approval','building','todo','blocked'];
+function sliceBars(co){
+  // build a bar array from slices (LeadSift) or synthesize from slicesShipped + current
+  let arr = [];
+  if(co.slices){
+    arr = co.slices.map(s=>s.status);
+  } else {
+    for(let i=0;i<co.slicesShipped;i++) arr.push('shipped');
+    if(co.currentSlice) arr.push(co.currentSlice.status);
+  }
+  return arr.map((st,i)=>`<div class="bar ${st}" style="height:${30 - (arr.length-1-i)*0 + (i%3)*4 + 14}%"></div>`).join('');
+}
+function currentSliceOf(co){
+  if(co.slices){
+    const a = co.slices.find(s=>s.status==='awaiting_approval') || co.slices.find(s=>s.status==='building') || co.slices.find(s=>s.status==='blocked') || co.slices.find(s=>s.status==='todo');
+    return a;
+  }
+  return co.currentSlice;
+}
+function shippedCount(co){
+  return co.slices ? co.slices.filter(s=>s.status==='shipped').length : co.slicesShipped;
+}
+function totalSlices(co){
+  return co.slices ? co.slices.length : co.slicesShipped + 1;
+}
+function companyTile(co, big){
+  const cs = currentSliceOf(co);
+  const cls = `tile co-tile ${co.needsYou?'needs':''} ${big?'span2 row2':''}`;
+  return `
+  <div class="${cls}" data-co="${co.id}" onclick="openZoom('${co.id}')">
+    <div class="co-head">
+      <div>
+        <div class="co-name">${co.name}</div>
+        ${big?`<div class="co-thesis">${co.thesis}</div>`:''}
+      </div>
+      ${co.needsYou
+        ? `<span class="needs-flag"><span class="fd"></span>Needs you</span>`
+        : `<span class="stat ${co.status}"><span class="d"></span>${co.status}</span>`}
+    </div>
+    <div class="co-metrics">
+      <div class="m"><div class="mv">$${co.mrr}</div><div class="ml">MRR</div></div>
+      <div class="m"><div class="mv">${co.users}</div><div class="ml">Users</div></div>
+      ${big?`<div class="m"><div class="mv">${shippedCount(co)}</div><div class="ml">Shipped</div></div>`:''}
+    </div>
+    <div class="co-slice">
+      <div class="csl-lab">Current slice</div>
+      <div class="csl-txt">
+        <span class="ministat ${cs.status}">${cs.status.replace('_',' ')}</span>
+        <span>#${cs.n} ${cs.title}</span>
+      </div>
+      <div class="spark-row">${sliceBars(co)}</div>
+      <div class="progress-cap"><span>${shippedCount(co)} / ${totalSlices(co)} slices shipped</span><span>bag · bag · bag</span></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- side tiles ---------- */
+function oppScoreCls(o){ if(o.status==='killed')return'killed'; if(o.score>=75)return'hi'; if(o.score>=55)return'mid'; return'lo'; }
+function oppsTile(){
+  const rows = DATA.opportunities.map(o=>`
+    <div class="opp">
+      <div class="oscore ${oppScoreCls(o)}">${o.score}</div>
+      <div class="oinfo">
+        <div class="otitle">${o.title} ${o.status==='killed'?'<span style="color:var(--ink3);font-weight:500;font-size:11px;">· killed</span>':''}</div>
+        <div class="othought">“${o.thought}”</div>
+      </div>
+      <button class="promote ${o.status==='killed'?'killed':''}" onclick="promote(event,'${o.title}',${o.status==='killed'})">${o.status==='killed'?'Revive':'Promote'}</button>
+    </div>`).join('');
+  return `<div class="tile span2">
+    <div class="mini-h">Opportunities</div>
+    <div class="mini-sub">Cheap, scored bets — promote one to a company.</div>
+    ${rows}
+  </div>`;
+}
+function thoughtTile(){
+  return `<div class="tile thought-tile">
+    <div class="mini-h">Drop a thought</div>
+    <div class="mini-sub">From thought to bag.</div>
+    <div class="thought-box">
+      <input id="thoughtInput" placeholder="a problem worth solving…" />
+      <button onclick="dropThought()">Score</button>
+    </div>
+  </div>`;
+}
+function nextMovesTile(){
+  const rows = DATA.nextMoves.map((m,i)=>`<div class="nm"><span class="nmn">${i+1}</span><span>${m}</span></div>`).join('');
+  return `<div class="tile span2">
+    <div class="mini-h">Next moves</div>
+    <div class="mini-sub">What needs your call.</div>
+    ${rows}
+  </div>`;
+}
+
+/* ---------- assemble bento ---------- */
+function renderBoard(){
+  const co = DATA.companies;
+  // LeadSift big (needs you), then mix sizes for rhythm
+  const parts = [];
+  parts.push(companyTile(co.find(c=>c.id==='leadsift'), true));      // big 2x2
+  parts.push(companyTile(co.find(c=>c.id==='quietinbox')));
+  parts.push(companyTile(co.find(c=>c.id==='datadrop')));
+  parts.push(oppsTile());                                            // span2
+  parts.push(companyTile(co.find(c=>c.id==='translatorbill')));
+  parts.push(companyTile(co.find(c=>c.id==='redditpainbot')));
+  parts.push(nextMovesTile());                                       // span2
+  parts.push(thoughtTile());
+  document.getElementById('bento').innerHTML = parts.join('');
+  document.getElementById('boardCount').textContent = `${co.filter(c=>c.status==='active').length} active · 1 paused · ${DATA.opportunities.filter(o=>o.status==='candidate').length} live opportunities`;
+}
+
+/* ---------- activity strip ---------- */
+function renderActivity(){
+  const latest = DATA.activity.find(a=>a.running) || DATA.activity[0];
+  document.getElementById('actLatest').innerHTML = `<b>${latest.co}</b> — ${latest.text} <span style="color:var(--ink3)">· ${latest.t}</span>`;
+  const groups = {};
+  DATA.activity.forEach(a=>{ (groups[a.co]=groups[a.co]||[]).push(a); });
+  document.getElementById('actStream').innerHTML = Object.entries(groups).map(([co,items])=>`
+    <div class="act-group">
+      <div class="agh">${co}</div>
+      ${items.map(it=>`<div class="act-item ${it.running?'running':''} ${it.kind}">
+        <span class="aidot"></span><span class="aitxt">${it.text}</span><span class="ait">${it.t}</span>
+      </div>`).join('')}
+    </div>`).join('');
+}
+function toggleActivity(){
+  const a = document.getElementById('activity');
+  a.classList.toggle('open');
+  document.getElementById('actToggleTxt').textContent = a.classList.contains('open')?'Collapse':'Expand';
+}
+
+/* ---------- zoom (FLIP-like) ---------- */
+let zoomOpen=false;
+function openZoom(id){
+  const co = DATA.companies.find(c=>c.id===id);
+  if(!co) return;
+  const tile = document.querySelector(`.co-tile[data-co="${id}"]`);
+  const zoom = document.getElementById('zoom');
+  const scrim = document.getElementById('scrim');
+  zoom.innerHTML = `<div class="zoom-inner" id="zoomInner">${zoomContent(co)}</div>`;
+
+  // target rect = centered panel
+  const pad = 30;
+  const tw = Math.min(1320, window.innerWidth - pad*2);
+  const th = Math.min(window.innerHeight - 60, 980);
+  const tx = (window.innerWidth - tw)/2;
+  const ty = 30;
+
+  if(tile){
+    const r = tile.getBoundingClientRect();
+    // start at tile rect
+    zoom.style.transition='none';
+    zoom.style.borderRadius='22px';
+    zoom.style.left = tx+'px';
+    zoom.style.top = ty+'px';
+    zoom.style.width = tw+'px';
+    zoom.style.height = th+'px';
+    const sx = r.width/tw, sy=r.height/th;
+    zoom.style.transformOrigin='top left';
+    zoom.style.transform = `translate(${r.left-tx}px,${r.top-ty}px) scale(${sx},${sy})`;
+    zoom.classList.add('open');
+    scrim.classList.add('show');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      zoom.classList.add('animating');
+      zoom.style.transform='translate(0,0) scale(1,1)';
+      zoom.style.borderRadius='24px';
+    }));
+  } else {
+    zoom.style.left=tx+'px';zoom.style.top=ty+'px';zoom.style.width=tw+'px';zoom.style.height=th+'px';
+    zoom.style.transform='none';
+    zoom.classList.add('open');scrim.classList.add('show');
+  }
+  zoomOpen=true;
+  document.body.style.overflow='hidden';
+  setTimeout(initZoomScripts,30);
+}
+function closeZoom(){
+  const zoom=document.getElementById('zoom');const scrim=document.getElementById('scrim');
+  zoom.classList.remove('open','animating');
+  scrim.classList.remove('show');
+  zoomOpen=false;
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&zoomOpen) closeZoom(); });
+
+function sliceRow(s){
+  const stat = `<span class="ministat ${s.status}">${s.status.replace('_',' ')}</span>`;
+  let extra='';
+  if(s.note) extra=`<div class="snote">⚠ ${s.note}</div>`;
+  if(s.dependsOn) extra=`<div class="sdep">depends on #${s.dependsOn.join(', #')}</div>`;
+  if(s.priority && s.status==='todo') extra=`<div class="sdep">priority ${s.priority}</div>`;
+  return `<div class="slice"><span class="sn">${s.n}</span><div class="stxt">${s.title}${extra}</div>${stat}</div>`;
+}
+
+function zoomContent(co){
+  const a = co.approval;
+  const slices = co.slices || [];
+  const isLead = co.id==='leadsift';
+  return `
+  <div class="zhead">
+    <button class="zback" onclick="closeZoom()">← Board</button>
+    <span class="ztitle">${co.name}</span>
+    <span class="stat ${co.status}"><span class="d"></span>${co.status}</span>
+    ${co.needsYou?`<span class="needs-flag"><span class="fd"></span>Needs you</span>`:''}
+    <span class="zspace"></span>
+    ${co.previewUrl?`<a class="zurl" href="${co.previewUrl}" target="_blank">${co.previewUrl.replace('http://','')}</a>`:''}
+  </div>
+  <div class="zbody">
+    <div class="zcol">
+      <div class="panel chat">
+        <div class="panel-h">Chat — direct ${co.name}</div>
+        <div class="chat-log" id="chatLog">
+          ${DATA.chat.map(m=>`<div class="msg ${m.role}">${m.text}</div>`).join('')}
+        </div>
+        <div class="chat-in">
+          <input id="zoomChatInput" placeholder="Tell ${co.name} what to do next…" />
+          <button onclick="sendZoomChat()">Send</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">Slices</div>
+        <div class="panel-b" style="padding-top:6px">
+          ${slices.length?slices.map(sliceRow).join(''):`<div class="slice"><span class="sn">${co.currentSlice.n}</span><div class="stxt">${co.currentSlice.title}<div class="sdep">${co.currentSlice.step}</div></div><span class="ministat ${co.currentSlice.status}">${co.currentSlice.status.replace('_',' ')}</span></div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="zcol">
+      ${isLead && a ? approvalGate(a) : artifactsPanel(co)}
+    </div>
+  </div>`;
+}
+
+function approvalGate(a){
+  return `
+  <div class="gate">
+    <div class="gate-h">
+      <span class="gtag"><span class="gd"></span>Needs you</span>
+      <div>
+        <div class="gtitle">Approval gate · Slice ${a.slice}</div>
+        <div class="gsub">${a.title} · attempt ${a.attempt}</div>
+      </div>
+    </div>
+    <div class="gate-b">
+      <div class="gate-meta">
+        <div class="meta"><div class="ml">Live preview</div><div class="mv"><a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a></div></div>
+        <div class="meta"><div class="ml">Validation</div><div class="mv">doneWhen check · attempt ${a.attempt}</div></div>
+      </div>
+
+      <div class="donewhen">
+        <div class="gcheck">✓</div>
+        <div class="dw-txt">
+          <div class="dw-lab">doneWhen passed</div>
+          <div class="dw-code">${a.doneWhen}</div>
+        </div>
+        <span class="dw-pass">${a.checkResult}</span>
+      </div>
+
+      <div class="preview-frame">
+        <div class="pf-bar"><span class="dots"><i></i><i></i><i></i></span><span class="pf-url">${a.previewUrl}</span></div>
+        <div class="pf-body">
+          <div class="pf-mock-h">Your top leads today</div>
+          <div class="pf-mock-s">Daily digest · 3 leads scored ≥ 70</div>
+          <div class="pf-lead"><span class="pscore">94</span><span>acme.co — “need 200 seats by Q3”</span></div>
+          <div class="pf-lead"><span class="pscore">88</span><span>northwind.io — enterprise demo request</span></div>
+          <div class="pf-lead"><span class="pscore">73</span><span>globex — pricing page, 4 visits</span></div>
+        </div>
+      </div>
+
+      <div class="diff-cap">Diff — 1 new component + scheduler hook</div>
+      <div class="diff">${a.diff.split('\n').map(l=>`<div class="dline ${l.trim().startsWith('+')?'add':''}">${escapeHtml(l)}</div>`).join('')}</div>
+
+      <div class="gate-actions">
+        <button class="btn-approve" onclick="approve()">Approve &amp; ship ✓</button>
+        <button class="btn-reject" onclick="toggleReject()">Reject with feedback</button>
+      </div>
+      <div class="reject-box" id="rejectBox">
+        <textarea id="rejectText" placeholder="What's wrong? The agent will iterate and re-run the doneWhen check…"></textarea>
+        <button class="rb-send" onclick="sendReject()">Send feedback &amp; re-build</button>
+      </div>
+      <div class="gate-confirm" id="gateConfirm"></div>
+    </div>
+  </div>`;
+}
+
+function artifactsPanel(co){
+  const cs = co.currentSlice;
+  return `
+  <div class="panel">
+    <div class="panel-h">Live artifacts</div>
+    <div class="panel-b">
+      <div class="meta" style="margin-bottom:14px"><div class="ml">Thesis</div><div class="mv" style="font-weight:400">${co.thesis}</div></div>
+      ${co.previewUrl?`<div class="preview-frame">
+        <div class="pf-bar"><span class="dots"><i></i><i></i><i></i></span><span class="pf-url">${co.previewUrl}</span></div>
+        <div class="pf-body"><div class="pf-mock-h">${co.name}</div><div class="pf-mock-s">Live build · ${co.slicesShipped||0} slices shipped</div></div>
+      </div>`:`<div class="meta" style="background:var(--gray-bg)"><div class="ml">Preview</div><div class="mv">No live preview — company ${co.status}</div></div>`}
+      <div class="donewhen" style="background:${cs.status==='building'?'var(--blue-bg)':'var(--bg2)'};border-color:${cs.status==='building'?'var(--blue-ring)':'var(--line)'};margin-top:16px">
+        <div class="gcheck" style="background:${cs.status==='blocked'?'var(--red)':cs.status==='building'?'var(--blue)':'var(--slate)'}">${cs.status==='blocked'?'!':cs.status==='building'?'∿':'·'}</div>
+        <div class="dw-txt"><div class="dw-lab" style="color:var(--ink2)">Current slice #${cs.n}</div><div class="dw-code" style="color:var(--ink)">${cs.title} — ${cs.step}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initZoomScripts(){
+  const log = document.getElementById('chatLog');
+  if(log) log.scrollTop = log.scrollHeight;
+}
+
+/* ---------- interactions ---------- */
+function flash(txt){
+  const f=document.getElementById('flash');
+  document.getElementById('flashtxt').textContent=txt;
+  f.classList.add('show');
+  clearTimeout(f._t); f._t=setTimeout(()=>f.classList.remove('show'),2200);
+}
+function approve(){
+  const c=document.getElementById('gateConfirm');
+  c.className='gate-confirm ok show';
+  c.innerHTML='Approved ✓ — shipping to production. LeadSift slice 5 is now live.';
+  document.querySelector('.btn-approve').textContent='Shipped ✓';
+  flash('Approved — LeadSift slice 5 shipping');
+}
+function toggleReject(){ document.getElementById('rejectBox').classList.toggle('show'); }
+function sendReject(){
+  const c=document.getElementById('gateConfirm');
+  const t=document.getElementById('rejectText').value.trim();
+  c.className='gate-confirm rej show';
+  c.innerHTML='Feedback sent ✓ — agent is re-building and will re-run the doneWhen check.'+(t?` <em>“${escapeHtml(t)}”</em>`:'');
+  document.getElementById('rejectBox').classList.remove('show');
+  flash('Rejected — sent back for rebuild');
+}
+function sendZoomChat(){
+  const i=document.getElementById('zoomChatInput'); const v=i.value.trim(); if(!v)return;
+  const log=document.getElementById('chatLog');
+  log.insertAdjacentHTML('beforeend',`<div class="msg user">${escapeHtml(v)}</div>`);
+  i.value='';
+  setTimeout(()=>{ log.insertAdjacentHTML('beforeend',`<div class="msg assistant">On it — re-prioritizing and the agent will pick this up next.</div>`); log.scrollTop=log.scrollHeight; },450);
+  log.scrollTop=log.scrollHeight;
+}
+function sendCmd(){
+  const i=document.getElementById('cmdInput'); const v=i.value.trim(); if(!v){flash('Type a command first');return;}
+  i.value=''; flash('Sent to the portfolio: “'+v.slice(0,40)+'”');
+}
+document.getElementById('cmdInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendCmd();});
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();document.getElementById('cmdInput').focus();}});
+
+function promote(ev,title,killed){
+  ev.stopPropagation();
+  if(killed){ flash('Revived “'+title+'” — back to opportunities'); return; }
+  flash('Promoting “'+title+'” to a company ✓');
+}
+function dropThought(){
+  const i=document.getElementById('thoughtInput'); const v=i.value.trim(); if(!v){flash('Type a thought first');return;}
+  i.value=''; flash('Scoring “'+v.slice(0,32)+'” → opportunity');
+}
+let extra=0;
+function loadMore(){
+  extra++;
+  flash('Loaded more bets — the board keeps growing');
+  // append faded placeholder tiles to express infinite-grow downward
+  const ghosts = ['NextBet','SignalForge','InboxZeroAI','MetricMuse'];
+  const html = ghosts.slice(0, Math.min(4, 1+extra)).map(n=>`
+    <div class="tile" style="opacity:.55;border-style:dashed;">
+      <div class="co-name" style="font-size:18px">${n}</div>
+      <div class="co-thesis">queued bet · awaiting promotion</div>
+      <div class="spark-row">${Array(5).fill('<div class="bar todo" style="height:30%"></div>').join('')}</div>
+    </div>`).join('');
+  document.getElementById('bento').insertAdjacentHTML('beforeend', html);
+}
+
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* boot */
+renderKpis(); renderBoard(); renderActivity();
+</script>
+</body>
+</html>

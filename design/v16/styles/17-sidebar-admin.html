@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --surface:#ffffff;
+    --surface-2:#fafbfc;
+    --ink:#0f172a;
+    --ink-2:#475569;
+    --ink-3:#94a3b8;
+    --line:#e7ebf0;
+    --line-2:#eef1f5;
+    --rail:#0e1726;
+    --rail-ink:#9aa6b8;
+    --rail-ink-2:#5c6b82;
+    --accent:#3b6df5;
+    --accent-soft:#eef3ff;
+    --green:#16a34a;
+    --green-soft:#e9f7ee;
+    --amber:#d97706;
+    --amber-soft:#fdf2e2;
+    --rose:#e11d48;
+    --rose-soft:#fdecef;
+    --violet:#7c3aed;
+    --radius:12px;
+    --radius-sm:8px;
+    --sp:8px;
+    --shadow:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+    --shadow-lg:0 4px 16px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.06);
+    --rail-w:240px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:Inter,system-ui,-apple-system,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+
+  /* ---------- LAYOUT ---------- */
+  .app{display:grid;grid-template-columns:var(--rail-w) 1fr;min-height:100vh}
+
+  /* ---------- SIDEBAR ---------- */
+  .rail{
+    background:var(--rail);
+    color:var(--rail-ink);
+    padding:22px 16px;
+    display:flex;flex-direction:column;gap:6px;
+    position:sticky;top:0;height:100vh;
+  }
+  .brand{display:flex;align-items:center;gap:11px;padding:4px 8px 22px}
+  .brand .mark{
+    width:34px;height:34px;border-radius:9px;flex:none;
+    background:linear-gradient(140deg,#3b6df5,#7c3aed);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;
+    box-shadow:0 4px 12px rgba(59,109,245,.4);
+  }
+  .brand .name{color:#fff;font-weight:700;font-size:15px;letter-spacing:-.2px;line-height:1.1}
+  .brand .sub{font-size:11px;color:var(--rail-ink-2);font-weight:500}
+
+  .navlabel{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--rail-ink-2);font-weight:600;padding:14px 10px 6px}
+  .navitem{
+    display:flex;align-items:center;gap:12px;
+    padding:9px 11px;border-radius:9px;
+    color:var(--rail-ink);font-weight:500;font-size:13.5px;
+    cursor:pointer;transition:.15s;
+  }
+  .navitem svg{flex:none;stroke:currentColor}
+  .navitem:hover{background:rgba(255,255,255,.05);color:#e2e8f0}
+  .navitem.active{background:rgba(59,109,245,.16);color:#fff}
+  .navitem.active svg{stroke:#fff}
+  .navitem .badge{
+    margin-left:auto;background:var(--rose);color:#fff;font-size:10.5px;font-weight:700;
+    padding:1px 7px;border-radius:20px;line-height:1.5;
+  }
+  .navitem.active .badge{background:#fff;color:var(--rail)}
+
+  .rail-foot{margin-top:auto;padding-top:14px}
+  .agentcard{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+    border-radius:11px;padding:12px;
+  }
+  .agentcard .row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none;box-shadow:0 0 0 0 rgba(22,163,74,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+  .agentcard .t{color:#fff;font-weight:600;font-size:12.5px}
+  .agentcard .d{font-size:11.5px;color:var(--rail-ink-2);margin-bottom:10px}
+  .chatbtn{
+    width:100%;border:0;cursor:pointer;
+    background:linear-gradient(140deg,#3b6df5,#5a7ff7);color:#fff;
+    font-family:inherit;font-weight:600;font-size:12.5px;
+    padding:9px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:7px;
+    transition:.15s;
+  }
+  .chatbtn:hover{filter:brightness(1.08)}
+
+  /* ---------- MAIN ---------- */
+  .main{padding:0;min-width:0;display:flex;flex-direction:column}
+  .topbar{
+    background:var(--surface);border-bottom:1px solid var(--line);
+    padding:16px 30px;display:flex;align-items:center;gap:18px;
+    position:sticky;top:0;z-index:20;
+  }
+  .topbar h1{font-size:18px;font-weight:700;letter-spacing:-.3px;margin:0}
+  .topbar .crumb{font-size:12px;color:var(--ink-3);font-weight:500}
+  .tabs{display:flex;gap:4px;margin-left:14px}
+  .tab{
+    padding:7px 14px;border-radius:8px;font-weight:600;font-size:13px;color:var(--ink-2);cursor:pointer;transition:.15s;
+  }
+  .tab:hover{background:var(--surface-2)}
+  .tab.active{background:var(--ink);color:#fff}
+  .topbar-r{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .search{
+    display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:9px;padding:7px 11px;color:var(--ink-3);font-size:12.5px;min-width:190px;
+  }
+  .search input{border:0;background:0;outline:0;font-family:inherit;font-size:12.5px;color:var(--ink);width:100%}
+  .btn-ghost{
+    border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:7px 13px;
+    font-family:inherit;font-weight:600;font-size:12.5px;color:var(--ink-2);cursor:pointer;transition:.15s;
+  }
+  .btn-ghost:hover{border-color:var(--ink-3);color:var(--ink)}
+  .avatar{
+    width:34px;height:34px;border-radius:50%;flex:none;cursor:pointer;
+    background:linear-gradient(140deg,#7c3aed,#3b6df5);color:#fff;
+    display:grid;place-items:center;font-weight:700;font-size:12px;
+  }
+
+  .content{padding:24px 30px 40px;display:flex;flex-direction:column;gap:22px;flex:1}
+
+  /* ---------- KPI ROW ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .kpi .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .kpi .label{font-size:11.5px;color:var(--ink-3);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  .kpi .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none}
+  .kpi .val{font-size:26px;font-weight:700;letter-spacing:-.6px;margin-top:7px;line-height:1.1}
+  .kpi .delta{font-size:11.5px;font-weight:600;margin-top:3px;display:flex;align-items:center;gap:4px}
+  .delta.up{color:var(--green)}.delta.dn{color:var(--rose)}.delta.flat{color:var(--ink-3)}
+  .kpi .spark{margin-top:10px;display:block;width:100%;height:34px}
+
+  /* ---------- GRID ---------- */
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:start}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .panel-h{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+  .panel-h h2{font-size:14px;font-weight:700;margin:0;letter-spacing:-.2px}
+  .panel-h .count{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:1px 9px}
+  .panel-h .more{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:600;cursor:pointer}
+  .panel-h .more:hover{color:var(--accent)}
+
+  /* ---------- COMPANY TABLE ---------- */
+  .co{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line-2);transition:.12s}
+  .co:last-child{border-bottom:0}
+  .co:hover{background:var(--surface-2)}
+  .co .dot{width:38px;height:38px;border-radius:10px;flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
+  .co .meta{min-width:0;flex:1}
+  .co .nm{display:flex;align-items:center;gap:8px}
+  .co .nm b{font-size:14px;font-weight:700;letter-spacing:-.2px}
+  .co .ver{font-size:10.5px;font-weight:600;color:var(--ink-3);background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  .co .mis{font-size:12px;color:var(--ink-2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .stage{display:flex;align-items:center;gap:0;flex:none}
+  .step{display:flex;align-items:center}
+  .step .seg{width:18px;height:4px;border-radius:3px;background:var(--line)}
+  .step.done .seg{background:var(--accent)}
+  .step.cur .seg{background:var(--accent)}
+  .stage-wrap{display:flex;flex-direction:column;gap:5px;align-items:flex-start;width:128px;flex:none}
+  .stage-name{font-size:11px;font-weight:600;color:var(--ink-2)}
+  .stage-name .frac{color:var(--ink-3);font-weight:500}
+  .pips{display:flex;gap:3px}
+  .pip{width:21px;height:4px;border-radius:2px;background:var(--line-2)}
+  .pip.on{background:var(--accent)}
+
+  .co-stats{display:flex;flex-direction:column;align-items:flex-end;gap:1px;width:96px;flex:none}
+  .co-stats .a{font-size:13.5px;font-weight:700;letter-spacing:-.2px}
+  .co-stats .b{font-size:11px;color:var(--ink-3);font-weight:500}
+  .mrr-pos{color:var(--green)}
+
+  .status{font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:4px 9px;border-radius:7px;white-space:nowrap;flex:none;width:118px;text-align:center}
+  .s-live{background:var(--green-soft);color:var(--green)}
+  .s-build{background:var(--accent-soft);color:var(--accent)}
+  .s-approve{background:var(--amber-soft);color:var(--amber)}
+  .s-block{background:var(--rose-soft);color:var(--rose)}
+
+  /* ---------- QUEUE PANELS ---------- */
+  .col-r{display:flex;flex-direction:column;gap:22px}
+  .qitem{display:flex;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line-2)}
+  .qitem:last-child{border-bottom:0}
+  .qicon{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center}
+  .qbody{flex:1;min-width:0}
+  .qbody .qt{font-size:13px;font-weight:600;letter-spacing:-.1px}
+  .qbody .qd{font-size:12px;color:var(--ink-2);margin-top:2px}
+  .qbody .qtag{font-size:10.5px;font-weight:600;color:var(--ink-3);margin-top:5px;display:inline-flex;align-items:center;gap:5px}
+  .qact{display:flex;gap:6px;margin-top:9px}
+  .mini{border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:11.5px;padding:5px 11px;border-radius:7px;transition:.15s}
+  .mini.pri{background:var(--ink);color:#fff}
+  .mini.pri:hover{background:#1e293b}
+  .mini.sec{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+  .mini.sec:hover{border-color:var(--ink-3);color:var(--ink)}
+  .mini.amb{background:var(--amber);color:#fff}
+  .mini.amb:hover{filter:brightness(1.05)}
+
+  /* ---------- ACTIVITY CONSOLE ---------- */
+  .console{background:#0e1726;border:1px solid #1b2638;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .console-h{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid #1b2638}
+  .console-h .t{color:#e2e8f0;font-weight:700;font-size:13px}
+  .console-h .dots{margin-left:auto;display:flex;gap:6px}
+  .console-h .dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .console-body{padding:12px 16px 14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.85;max-height:260px;overflow:auto}
+  .logline{display:flex;gap:9px;color:#cbd5e1}
+  .logline .ts{color:#5c6b82;flex:none}
+  .logline .lv{font-weight:600;flex:none;width:48px}
+  .lv-build{color:#60a5fa}.lv-deploy{color:#34d399}.lv-scan{color:#a78bfa}.lv-gtm{color:#fbbf24}.lv-err{color:#fb7185}
+  .logline .msg{color:#94a3b8}
+  .logline .msg b{color:#cbd5e1;font-weight:500}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:1180px){
+    .grid{grid-template-columns:1fr}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:980px){
+    :root{--rail-w:0px}
+    .app{grid-template-columns:1fr}
+    .rail{display:none}
+    .co{flex-wrap:wrap}
+    .co .meta{flex-basis:60%}
+  }
+  @media (max-width:760px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .topbar{flex-wrap:wrap;padding:14px 18px}
+    .content{padding:18px}
+    .search{display:none}
+    .stage-wrap,.co-stats,.status{width:auto}
+    .co .mis{white-space:normal}
+  }
+  @media (max-width:520px){
+    .kpis{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ====== SIDEBAR ====== -->
+  <aside class="rail">
+    <div class="brand">
+      <div class="mark">C</div>
+      <div>
+        <div class="name">C Slop Slop</div>
+        <div class="sub">Autonomous Studio</div>
+      </div>
+    </div>
+
+    <div class="navlabel">Studio</div>
+    <div class="navitem active">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Portfolio
+      <span class="badge">5</span>
+    </div>
+    <div class="navitem">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v6m0 0 4-3m-4 3L8 5"/><circle cx="12" cy="15" r="6"/></svg>
+      Opportunities
+    </div>
+
+    <div class="navlabel">Operate</div>
+    <div class="navitem">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2 3 7v6c0 5 3.5 8 9 9 5.5-1 9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg>
+      Needs You
+      <span class="badge">3</span>
+    </div>
+    <div class="navitem">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4Z"/></svg>
+      Go To Market
+      <span class="badge">4</span>
+    </div>
+    <div class="navitem">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-4 4 3 5-7"/></svg>
+      Metrics
+    </div>
+    <div class="navitem">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2l-.4-2.6H9.9l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.6h4.2l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2Z"/></svg>
+      Settings
+    </div>
+
+    <div class="rail-foot">
+      <div class="agentcard">
+        <div class="row">
+          <span class="pulse"></span>
+          <span class="t">Studio Agents</span>
+        </div>
+        <div class="d">4 active · last event 12s ago</div>
+        <button class="chatbtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.5A8.4 8.4 0 1 1 21 11.5Z"/></svg>
+          Open Agent Chat
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====== MAIN ====== -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="crumb">Studio / Portfolio</div>
+        <h1>Portfolio Overview</h1>
+      </div>
+      <div class="tabs">
+        <div class="tab active">Portfolio</div>
+        <div class="tab">Opportunities</div>
+      </div>
+      <div class="topbar-r">
+        <div class="search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+          <input placeholder="Search companies…">
+        </div>
+        <button class="btn-ghost">Sign in</button>
+        <div class="avatar" title="Operator account">VP</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== KPI ROW ===== -->
+      <section class="kpis">
+        <div class="kpi">
+          <div class="top">
+            <span class="label">Total Users</span>
+            <span class="ico" style="background:var(--accent-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 8.5a3 3 0 0 1 0 5M21 20c0-2.5-1.4-4.6-3.4-5.5"/></svg></span>
+          </div>
+          <div class="val">2,418</div>
+          <div class="delta up">▲ 8.4% <span style="color:var(--ink-3);font-weight:500">vs last wk</span></div>
+          <svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none">
+            <polyline fill="none" stroke="var(--accent)" stroke-width="2" points="0,26 22,24 44,25 66,20 88,21 110,16 132,17 154,11 176,12 200,6"/>
+            <polyline fill="rgba(59,109,245,.08)" stroke="none" points="0,26 22,24 44,25 66,20 88,21 110,16 132,17 154,11 176,12 200,6 200,34 0,34"/>
+          </svg>
+        </div>
+
+        <div class="kpi">
+          <div class="top">
+            <span class="label">Total MRR</span>
+            <span class="ico" style="background:var(--green-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 2v20M17 6.5c0-2-2.2-3-5-3s-5 1.3-5 3.3 2.2 2.7 5 3.2 5 1.2 5 3.2-2.2 3.3-5 3.3-5-1-5-3"/></svg></span>
+          </div>
+          <div class="val">$9,210</div>
+          <div class="delta up">▲ 12.1% <span style="color:var(--ink-3);font-weight:500">vs last wk</span></div>
+          <svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none">
+            <polyline fill="rgba(22,163,74,.09)" stroke="none" points="0,28 25,29 50,24 75,25 100,19 125,21 150,13 175,10 200,5 200,34 0,34"/>
+            <polyline fill="none" stroke="var(--green)" stroke-width="2" points="0,28 25,29 50,24 75,25 100,19 125,21 150,13 175,10 200,5"/>
+          </svg>
+        </div>
+
+        <div class="kpi">
+          <div class="top">
+            <span class="label">Total Companies</span>
+            <span class="ico" style="background:#f3ecff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2"><path d="M3 21V8l6-4 6 4v13"/><path d="M15 21V11l5-2v12"/><path d="M3 21h18M7 11h0M11 11h0M7 15h0M11 15h0"/></svg></span>
+          </div>
+          <div class="val">5</div>
+          <div class="delta flat">2 live · 3 in build</div>
+          <svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none">
+            <g fill="var(--violet)" opacity=".85">
+              <rect x="6"   y="22" width="16" height="12" rx="2"/>
+              <rect x="34"  y="18" width="16" height="16" rx="2"/>
+              <rect x="62"  y="20" width="16" height="14" rx="2"/>
+              <rect x="90"  y="14" width="16" height="20" rx="2"/>
+              <rect x="118" y="10" width="16" height="24" rx="2"/>
+              <rect x="146" y="13" width="16" height="21" rx="2"/>
+              <rect x="174" y="7"  width="16" height="27" rx="2"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="kpi">
+          <div class="top">
+            <span class="label">Needs You</span>
+            <span class="ico" style="background:var(--amber-soft)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M12 9v4m0 4h0M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span>
+          </div>
+          <div class="val">3</div>
+          <div class="delta dn">+1 since yesterday</div>
+          <svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none">
+            <polyline fill="none" stroke="var(--amber)" stroke-width="2" points="0,18 25,20 50,14 75,22 100,15 125,24 150,17 175,26 200,12"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ===== MAIN GRID ===== -->
+      <div class="grid">
+
+        <!-- LEFT: Companies -->
+        <section class="panel">
+          <div class="panel-h">
+            <h2>Companies</h2>
+            <span class="count">5</span>
+            <span style="font-size:11px;color:var(--ink-3);font-weight:500;margin-left:6px">Build → Features → Deploy → Ads → Live</span>
+            <span class="more">Manage →</span>
+          </div>
+
+          <!-- TranslatorBill -->
+          <div class="co">
+            <div class="dot" style="background:#f59e0b">TB</div>
+            <div class="meta">
+              <div class="nm"><b>TranslatorBill</b><span class="ver">v0.6</span></div>
+              <div class="mis">Translate invoices line-by-line for cross-border sellers.</div>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage-name">Features <span class="frac">2/5</span></div>
+              <div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i></div>
+            </div>
+            <div class="co-stats">
+              <span class="a">1,240</span><span class="b">users</span>
+              <span class="b">$0 pre-rev</span>
+            </div>
+            <span class="status s-approve">AWAITING YOU</span>
+          </div>
+
+          <!-- RedditPainBot -->
+          <div class="co">
+            <div class="dot" style="background:#fb7185">RP</div>
+            <div class="meta">
+              <div class="nm"><b>RedditPainBot</b><span class="ver">v0.3</span></div>
+              <div class="mis">Surface real product pain from Reddit threads daily.</div>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage-name">Build <span class="frac">1/5</span></div>
+              <div class="pips"><i class="pip on"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i></div>
+            </div>
+            <div class="co-stats">
+              <span class="a">320</span><span class="b">users</span>
+              <span class="b">$0</span>
+            </div>
+            <span class="status s-block">BLOCKED</span>
+          </div>
+
+          <!-- QuietInbox -->
+          <div class="co">
+            <div class="dot" style="background:#a78bfa">QI</div>
+            <div class="meta">
+              <div class="nm"><b>QuietInbox</b><span class="ver">v0.4</span></div>
+              <div class="mis">Auto-triage and summarize your support inbox.</div>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage-name">Features <span class="frac">2/5</span></div>
+              <div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip"></i><i class="pip"></i><i class="pip"></i></div>
+            </div>
+            <div class="co-stats">
+              <span class="a">880</span><span class="b">users</span>
+              <span class="b">$0</span>
+            </div>
+            <span class="status s-build">BUILDING</span>
+          </div>
+
+          <!-- LeadSift -->
+          <div class="co">
+            <div class="dot" style="background:#34d399">LS</div>
+            <div class="meta">
+              <div class="nm"><b>LeadSift</b><span class="ver">v1.2</span></div>
+              <div class="mis">Score and route inbound leads automatically.</div>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage-name">Live <span class="frac">5/5</span></div>
+              <div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div>
+            </div>
+            <div class="co-stats">
+              <span class="a">2,100</span><span class="b">users</span>
+              <span class="b mrr-pos">$312 MRR</span>
+            </div>
+            <span class="status s-live">LIVE</span>
+          </div>
+
+          <!-- DocHound -->
+          <div class="co">
+            <div class="dot" style="background:#38bdf8">DH</div>
+            <div class="meta">
+              <div class="nm"><b>DocHound</b><span class="ver">v1.0</span></div>
+              <div class="mis">Answer questions over your internal docs instantly.</div>
+            </div>
+            <div class="stage-wrap">
+              <div class="stage-name">Ads <span class="frac">4/5</span></div>
+              <div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip"></i></div>
+            </div>
+            <div class="co-stats">
+              <span class="a">1,460</span><span class="b">users</span>
+              <span class="b mrr-pos">$148 MRR</span>
+            </div>
+            <span class="status s-live">LIVE</span>
+          </div>
+        </section>
+
+        <!-- RIGHT: queues + console -->
+        <div class="col-r">
+
+          <!-- NEEDS YOU -->
+          <section class="panel">
+            <div class="panel-h">
+              <h2>Needs You</h2>
+              <span class="count">3</span>
+              <span class="more">Queue →</span>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:var(--amber-soft)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="m4 12 5 5L20 6"/></svg></span>
+              <div class="qbody">
+                <div class="qt">Approve feature 6 — TranslatorBill</div>
+                <div class="qd">Per-line invoice translation, ready to ship on staging.</div>
+                <div class="qtag"><span style="color:#f59e0b">●</span> TranslatorBill · feature 6/10</div>
+                <div class="qact">
+                  <button class="mini pri">Approve &amp; ship</button>
+                  <button class="mini sec">Review staging</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:var(--rose-soft)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2"><path d="M12 9v4m0 4h0M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span>
+              <div class="qbody">
+                <div class="qt">RedditPainBot blocked</div>
+                <div class="qd">Reddit API key expired — agent paused the build loop.</div>
+                <div class="qtag"><span style="color:#fb7185">●</span> RedditPainBot · build halted</div>
+                <div class="qact">
+                  <button class="mini amb">Add new key</button>
+                  <button class="mini sec">View logs</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:var(--green-soft)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 2v20M17 6.5c0-2-2.2-3-5-3s-5 1.3-5 3.3 2.2 2.7 5 3.2 5 1.2 5 3.2-2.2 3.3-5 3.3-5-1-5-3"/></svg></span>
+              <div class="qbody">
+                <div class="qt">Confirm pricing change — LeadSift</div>
+                <div class="qd">Agent proposes raising the plan price.</div>
+                <div class="qtag mono"><span style="color:#34d399">●</span> $29 → $39 / mo</div>
+                <div class="qact">
+                  <button class="mini pri">Confirm</button>
+                  <button class="mini sec">Hold</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- GO TO MARKET -->
+          <section class="panel">
+            <div class="panel-h">
+              <h2>Go To Market</h2>
+              <span class="count">4</span>
+              <span class="more">Open →</span>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:var(--accent-soft)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4Z"/></svg></span>
+              <div class="qbody">
+                <div class="qt">Approve launch tweet — TranslatorBill</div>
+                <div class="qtag">draft ready · awaiting send</div>
+              </div>
+              <button class="mini sec" style="align-self:center">Review</button>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:#f3ecff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.5A8.4 8.4 0 1 1 21 11.5Z"/></svg></span>
+              <div class="qbody">
+                <div class="qt">3 support messages — QuietInbox</div>
+                <div class="qtag">drafted replies pending approval</div>
+              </div>
+              <button class="mini sec" style="align-self:center">Open</button>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:var(--green-soft)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 4h16v14H7l-3 3V4Z"/></svg></span>
+              <div class="qbody">
+                <div class="qt">Reply to investor email — LeadSift</div>
+                <div class="qtag">flagged important</div>
+              </div>
+              <button class="mini sec" style="align-self:center">Reply</button>
+            </div>
+
+            <div class="qitem">
+              <span class="qicon" style="background:#e7f5fe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span>
+              <div class="qbody">
+                <div class="qt">Posted LinkedIn update — DocHound</div>
+                <div class="qtag" style="color:var(--green)">✓ live · 1.2k impressions</div>
+              </div>
+              <button class="mini sec" style="align-self:center">Stats</button>
+            </div>
+          </section>
+
+          <!-- AGENT CONSOLE -->
+          <section class="console">
+            <div class="console-h">
+              <span class="pulse"></span>
+              <span class="t">Agent Activity</span>
+              <span class="dots"><i style="background:#fb7185"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i></span>
+            </div>
+            <div class="console-body">
+              <div class="logline"><span class="ts">14:02:11</span><span class="lv lv-build">BUILD</span><span class="msg"><b>QuietInbox</b> generated triage rules engine · +312 LOC</span></div>
+              <div class="logline"><span class="ts">14:01:48</span><span class="lv lv-deploy">DEPLOY</span><span class="msg"><b>DocHound</b> rolled v1.0 to prod · 0 errors</span></div>
+              <div class="logline"><span class="ts">14:01:09</span><span class="lv lv-gtm">GTM</span><span class="msg"><b>DocHound</b> LinkedIn post published · 1.2k impr.</span></div>
+              <div class="logline"><span class="ts">14:00:52</span><span class="lv lv-err">ERROR</span><span class="msg"><b>RedditPainBot</b> auth failed · API key expired</span></div>
+              <div class="logline"><span class="ts">14:00:31</span><span class="lv lv-scan">SCAN</span><span class="msg"><b>RedditPainBot</b> indexed 1,840 threads before halt</span></div>
+              <div class="logline"><span class="ts">13:59:58</span><span class="lv lv-build">BUILD</span><span class="msg"><b>TranslatorBill</b> feature 6 staged · awaiting approval</span></div>
+              <div class="logline"><span class="ts">13:59:12</span><span class="lv lv-gtm">GTM</span><span class="msg"><b>LeadSift</b> drafted pricing test $29 → $39</span></div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

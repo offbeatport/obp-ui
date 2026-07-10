@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #f7f3ec;
+    --paper: #fffdf8;
+    --ink: #2c2926;
+    --ink-soft: #635c52;
+    --ink-faint: #7b7368;
+    --line: #e6ddce;
+    --accent: #c8643c;
+    --green: #4f8a52;
+    --amber: #c08a2e;
+    --red: #b6483f;
+    --blue: #4a72b0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.65;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    padding: 0 24px;
+  }
+
+  .page {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 84px 0 120px;
+  }
+
+  /* ---- masthead ---- */
+  .mast {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 56px;
+  }
+
+  /* ---- portfolio sentence ---- */
+  .lede {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 27px;
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .lede .up { color: var(--green); white-space: nowrap; }
+  .lede .need { color: var(--accent); white-space: nowrap; }
+  .sub {
+    color: var(--ink-faint);
+    font-size: 15px;
+    margin-bottom: 72px;
+  }
+
+  /* ---- section heading ---- */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 30px;
+  }
+
+  /* ---- the 3 things ---- */
+  .tasks { margin-bottom: 80px; }
+
+  .task {
+    padding: 28px 0;
+    border-top: 1px solid var(--line);
+  }
+  .task:last-child { border-bottom: 1px solid var(--line); }
+
+  .task h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .task p {
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin-bottom: 16px;
+    max-width: 46ch;
+  }
+
+  .actions { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    letter-spacing: -0.005em;
+    border-bottom: 1.5px solid currentColor;
+    line-height: 1.2;
+    transition: opacity 0.15s ease;
+  }
+  .btn:hover { opacity: 0.62; }
+  .btn.ghost {
+    color: var(--ink-faint);
+    font-weight: 500;
+    border-bottom-color: transparent;
+  }
+  .btn.ghost:hover { color: var(--ink); opacity: 1; }
+  .btn.danger { color: var(--red); }
+
+  /* resolved state */
+  .task.done h2,
+  .task.done p { color: var(--ink-faint); }
+  .task.done .actions { display: none; }
+  .resolved {
+    display: none;
+    font-size: 15px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .task.done .resolved { display: block; }
+  .task.done.dismissed .resolved { color: var(--ink-faint); }
+
+  /* ---- the 5 companies ---- */
+  .companies { margin-bottom: 80px; }
+
+  .co {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 13px 0;
+    line-height: 1.5;
+  }
+  .co .name {
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .co .meta { color: var(--ink-soft); font-size: 15.5px; }
+  .co .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    margin-left: auto;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .co .tag.flag { color: var(--accent); }
+  .dot {
+    color: var(--ink-faint);
+    opacity: 0.5;
+    padding: 0 1px;
+  }
+
+  /* ---- more / deeper ---- */
+  .more-wrap { }
+  .more-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .more-link:hover { color: var(--ink); }
+  .more-link .chev { transition: transform 0.25s ease; font-size: 12px; }
+  .more-link[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+  .deeper {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.35s ease, margin 0.4s ease;
+    margin-top: 0;
+  }
+  .deeper.open {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 40px;
+  }
+
+  .deep-item { margin-bottom: 30px; }
+  .deep-item:last-child { margin-bottom: 0; }
+  .deep-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 7px;
+  }
+  .deep-item p {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 50ch;
+  }
+  .deep-item p strong { color: var(--ink); font-weight: 600; }
+
+  .foot {
+    margin-top: 88px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 560px) {
+    body { padding: 0 20px; }
+    .page { padding: 56px 0 96px; }
+    .lede { font-size: 23px; }
+    .mast { margin-bottom: 44px; }
+    .sub { margin-bottom: 56px; }
+    .co { flex-wrap: wrap; gap: 4px 10px; }
+    .co .tag { margin-left: 0; flex-basis: 100%; padding-top: 2px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+
+    <div class="mast">C Slop Slop</div>
+
+    <p class="lede">
+      Your portfolio earns <strong>$695/mo</strong> and is
+      <span class="up">growing (+14%)</span>. Five companies running,
+      <span class="need">three need you</span>.
+    </p>
+    <p class="sub">Everything else is handled. Here&rsquo;s what&rsquo;s waiting.</p>
+
+    <!-- THE 3 THINGS -->
+    <section class="tasks">
+      <div class="eyebrow">Needs you &middot; 3</div>
+
+      <article class="task" id="t1">
+        <h2>Ship LeadSift&rsquo;s daily lead digest</h2>
+        <p>Built and tested, ready to go live. Want it shipped?</p>
+        <div class="actions">
+          <button class="btn" onclick="resolve('t1','Shipped &mdash; it&rsquo;s live.')">Approve &amp; ship</button>
+          <button class="btn ghost" onclick="resolve('t1','Marked for review.')">Review first</button>
+        </div>
+        <div class="resolved"></div>
+      </article>
+
+      <article class="task" id="t2">
+        <h2>Launch QuietInbox on Product Hunt</h2>
+        <p>Spend $40 to launch. Around 120 new users expected.</p>
+        <div class="actions">
+          <button class="btn" onclick="resolve('t2','Approved &mdash; launching today.')">Approve</button>
+          <button class="btn ghost dismiss" onclick="resolve('t2','Set aside for now.', true)">Not now</button>
+        </div>
+        <div class="resolved"></div>
+      </article>
+
+      <article class="task" id="t3">
+        <h2>RedditPainBot is stuck</h2>
+        <p>Three failed tries, no progress. Retry a different way, or shut it down?</p>
+        <div class="actions">
+          <button class="btn" onclick="resolve('t3','Retrying with a new approach.')">Retry</button>
+          <button class="btn danger dismiss" onclick="resolve('t3','Shut down.', true)">Shut down</button>
+        </div>
+        <div class="resolved"></div>
+      </article>
+    </section>
+
+    <!-- THE 5 COMPANIES -->
+    <section class="companies">
+      <div class="eyebrow">The five companies</div>
+
+      <div class="co">
+        <span class="name">LeadSift</span>
+        <span class="meta">live &middot; $180/mo, growing</span>
+        <span class="tag flag">needs you</span>
+      </div>
+      <div class="co">
+        <span class="name">QuietInbox</span>
+        <span class="meta">live &middot; $420/mo, your best earner</span>
+        <span class="tag flag">needs you</span>
+      </div>
+      <div class="co">
+        <span class="name">TranslatorBill</span>
+        <span class="meta">building its first version</span>
+        <span class="tag">on track</span>
+      </div>
+      <div class="co">
+        <span class="name">DataDrop</span>
+        <span class="meta">live &middot; $95/mo, flat</span>
+        <span class="tag">all good</span>
+      </div>
+      <div class="co">
+        <span class="name">RedditPainBot</span>
+        <span class="meta">paused &middot; stuck after 3 tries</span>
+        <span class="tag flag">needs you</span>
+      </div>
+    </section>
+
+    <!-- MORE -->
+    <div class="more-wrap">
+      <button class="more-link" aria-expanded="false" onclick="toggleMore(this)">
+        More <span class="chev">&#9662;</span>
+      </button>
+
+      <div class="deeper" id="deeper">
+        <div class="deep-item">
+          <div class="label">Money</div>
+          <p>You&rsquo;re spending <strong>$214/mo</strong> of your $500 cap, and netting <strong>+$481/mo</strong>. You&rsquo;re comfortably profitable.</p>
+        </div>
+        <div class="deep-item">
+          <div class="label">Autopilot</div>
+          <p>Most work runs on its own. You only get asked to approve growth spending and big changes &mdash; everything smaller is handled for you.</p>
+        </div>
+        <div class="deep-item">
+          <div class="label">This week</div>
+          <p>It shipped <strong>1 feature</strong>, sent <strong>15 customer emails</strong>, and spent <strong>$41</strong>. None of it needed your input.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">All quiet unless noted.</div>
+
+  </main>
+
+<script>
+  function resolve(id, msg, dismissed) {
+    var el = document.getElementById(id);
+    el.classList.add('done');
+    if (dismissed) el.classList.add('dismissed');
+    el.querySelector('.resolved').innerHTML = msg;
+  }
+
+  function toggleMore(btn) {
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    document.getElementById('deeper').classList.toggle('open', !open);
+  }
+</script>
+</body>
+</html>

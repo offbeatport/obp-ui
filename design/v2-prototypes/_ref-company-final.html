@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift · C Slop Slop</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e0d6;
+    --green:#4f8a52; --green-soft:#e3efe1;
+    --blue:#4a72b0; --blue-soft:#e2eaf5;
+    --violet:#7a5ea8; --violet-soft:#ece6f5;
+    --amber:#c08a2e; --amber-soft:#f6ecd4;
+    --red:#b6483f; --red-soft:#f6e0dd;
+    --slate:#8a8579;
+    --shadow:0 1px 2px rgba(44,41,38,.04), 0 6px 20px rgba(44,41,38,.05);
+    --shadow-lift:0 2px 6px rgba(44,41,38,.06), 0 16px 44px rgba(44,41,38,.09);
+    --radius:15px; --radius-sm:11px;
+  }
+  :root[data-theme="dark"]{
+    --cream:#05060a; --cream-2:#080d18; --paper:#10131f;
+    --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --line-soft:#111726;
+    --accent:#e0794e; --accent-soft:rgba(224,121,78,.18);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --slate:#8a93a8;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.42);
+    --shadow-lift:0 2px 8px rgba(0,0,0,.45), 0 18px 48px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{-webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.5; font-size:14px;
+    height:100vh; overflow:hidden;
+    transition:background .3s ease, color .3s ease;
+  }
+  ::selection{background:var(--accent-soft)}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .display{font-family:'Space Grotesk',sans-serif}
+
+  /* ============ APP SHELL ============ */
+  .app{
+    display:grid; grid-template-columns:412px minmax(0,1fr);
+    height:100vh; width:100%;
+  }
+
+  /* ============ LEFT · THE AGENT ============ */
+  .agent{
+    display:flex; flex-direction:column; min-height:0;
+    background:var(--cream);
+    border-right:1px solid var(--line);
+  }
+  .agent-hd{
+    padding:22px 24px 18px;
+    display:flex; align-items:flex-start; gap:13px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .logo{
+    width:42px; height:42px; border-radius:12px; flex-shrink:0;
+    background:linear-gradient(150deg,var(--accent),color-mix(in srgb,var(--accent) 78%, #000 22%));
+    display:grid; place-items:center; color:#fff;
+    box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 34%, transparent), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .logo svg{width:22px; height:22px}
+  .agent-id{flex:1; min-width:0; padding-top:1px}
+  .agent-name-row{display:flex; align-items:center; gap:9px}
+  .agent-name{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px; letter-spacing:-.01em}
+  .live{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600;
+    letter-spacing:.04em; color:var(--green); text-transform:uppercase;
+  }
+  .live .dot{width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px var(--green-soft); animation:breathe 2.6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:1} 50%{opacity:.4}}
+  .agent-mission{color:var(--ink-soft); font-size:13px; margin-top:4px}
+  .agent-mission .ver{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint)}
+
+  /* stream */
+  .stream{
+    flex:1; min-height:0; overflow-y:auto;
+    padding:22px 22px 8px;
+    display:flex; flex-direction:column; gap:16px;
+    scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+  }
+  .stream::-webkit-scrollbar{width:8px}
+  .stream::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px}
+  .day{
+    text-align:center; font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-faint); margin:2px 0;
+  }
+  .msg{display:flex; gap:11px; max-width:100%}
+  .msg .av{
+    width:28px; height:28px; border-radius:9px; flex-shrink:0; margin-top:1px;
+    background:var(--accent-soft); color:var(--accent);
+    display:grid; place-items:center;
+  }
+  .msg .av svg{width:15px; height:15px}
+  .bubble{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:5px 14px 14px 14px; padding:11px 14px;
+    box-shadow:var(--shadow); font-size:13.5px; color:var(--ink);
+    max-width:300px;
+  }
+  .bubble p + p{margin-top:8px}
+  .bubble b{font-weight:600}
+  .bubble .t{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-faint); margin-top:7px; display:block}
+  .bubble .ok{color:var(--green); font-weight:600}
+  /* user message */
+  .msg.me{flex-direction:row-reverse}
+  .msg.me .av{background:var(--cream-2); color:var(--ink-soft)}
+  .msg.me .bubble{
+    background:var(--accent); color:#fff; border-color:transparent;
+    border-radius:14px 5px 14px 14px;
+  }
+  :root[data-theme="dark"] .msg.me .bubble{color:#0b0d14}
+
+  /* inline approval */
+  .approval{
+    margin-top:11px; border-top:1px solid var(--line-soft); padding-top:11px;
+  }
+  .appr-facts{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:11px}
+  .fact{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:10.5px; font-weight:500; color:var(--ink-soft);
+    background:var(--cream); border:1px solid var(--line-soft);
+    border-radius:7px; padding:4px 8px;
+  }
+  .fact svg{width:11px; height:11px; color:var(--green)}
+  .appr-actions{display:flex; flex-direction:column; gap:7px}
+  .btn{
+    appearance:none; cursor:pointer; font-family:'Inter',sans-serif;
+    font-weight:600; font-size:13px; border-radius:9px; padding:9px 12px;
+    border:1px solid transparent; transition:.15s;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px; width:100%;
+  }
+  .btn svg{width:14px; height:14px}
+  .btn-primary{background:var(--accent); color:#fff; box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 26%, transparent)}
+  :root[data-theme="dark"] .btn-primary{color:#0b0d14}
+  .btn-primary:hover{filter:brightness(1.05); transform:translateY(-1px)}
+  .btn-row{display:flex; gap:7px}
+  .btn-row .btn{width:auto; flex:1}
+  .btn-ghost{background:var(--paper); color:var(--ink-soft); border-color:var(--line)}
+  .btn-ghost:hover{background:var(--cream-2); color:var(--ink)}
+  .appr-note{
+    display:none; margin-top:9px; font-size:12px; color:var(--blue);
+    background:var(--blue-soft); border:1px solid color-mix(in srgb,var(--blue) 28%, transparent);
+    border-radius:8px; padding:8px 10px; align-items:center; gap:7px;
+  }
+  .appr-note.show{display:flex; animation:fade .3s ease}
+  .appr-note svg{width:13px; height:13px; flex-shrink:0}
+  .appr-reject{display:none; margin-top:9px}
+  .appr-reject.show{display:block; animation:fade .3s ease}
+  .appr-reject textarea{
+    width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 11px;
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
+    resize:vertical; min-height:56px; background:var(--cream);
+  }
+  .appr-reject textarea:focus{outline:none; border-color:var(--accent)}
+  .appr-reject .btn-row{margin-top:7px}
+  /* resolved */
+  .appr-resolved{display:none; margin-top:11px; border-top:1px solid var(--line-soft); padding-top:12px; text-align:center}
+  .appr-resolved.show{display:block; animation:fade .4s ease}
+  .appr-resolved .rc{
+    width:38px; height:38px; border-radius:50%; margin:0 auto 9px;
+    background:var(--green-soft); display:grid; place-items:center;
+  }
+  .appr-resolved .rc svg{width:20px; height:20px; color:var(--green)}
+  .appr-resolved h4{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px}
+  .appr-resolved p{font-size:12px; color:var(--ink-soft); margin-top:5px}
+  .appr-resolved .undo{
+    margin-top:10px; background:none; border:none; cursor:pointer;
+    color:var(--ink-faint); font-size:11.5px; text-decoration:underline;
+    text-underline-offset:2px; font-family:inherit;
+  }
+  .appr-resolved .undo:hover{color:var(--ink-soft)}
+
+  /* typing */
+  .typing{display:flex; gap:11px; opacity:0; height:0; overflow:hidden; transition:.2s}
+  .typing.show{opacity:1; height:auto; overflow:visible; margin-bottom:0}
+  .typing .bubble{display:flex; gap:4px; align-items:center; padding:13px 15px}
+  .typing .bubble i{width:6px; height:6px; border-radius:50%; background:var(--ink-faint); animation:blink 1.2s infinite}
+  .typing .bubble i:nth-child(2){animation-delay:.2s}
+  .typing .bubble i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.3; transform:translateY(0)} 30%{opacity:1; transform:translateY(-2px)}}
+
+  /* composer */
+  .composer{
+    padding:14px 20px 18px; border-top:1px solid var(--line-soft);
+    background:var(--cream);
+  }
+  .composer form{
+    display:flex; align-items:flex-end; gap:9px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:13px; padding:8px 8px 8px 14px; box-shadow:var(--shadow);
+    transition:.15s;
+  }
+  .composer form:focus-within{border-color:color-mix(in srgb,var(--accent) 55%, var(--line))}
+  .composer textarea{
+    flex:1; border:none; background:none; resize:none; outline:none;
+    font-family:'Inter',sans-serif; font-size:13.5px; color:var(--ink);
+    line-height:1.45; max-height:96px; padding:5px 0;
+  }
+  .composer textarea::placeholder{color:var(--ink-faint)}
+  .send{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0; cursor:pointer;
+    border:none; background:var(--accent); color:#fff; display:grid; place-items:center;
+    transition:.15s;
+  }
+  :root[data-theme="dark"] .send{color:#0b0d14}
+  .send:hover{filter:brightness(1.06)}
+  .send svg{width:16px; height:16px}
+
+  /* ============ RIGHT · WORKSPACE ============ */
+  .workspace{display:flex; flex-direction:column; min-height:0; background:var(--cream-2)}
+  .ws-top{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 26px; border-bottom:1px solid var(--line);
+    background:var(--cream); flex-shrink:0;
+  }
+  .tabs{display:flex; gap:2px}
+  .tab{
+    appearance:none; background:none; border:none; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:500;
+    color:var(--ink-faint); padding:16px 14px; position:relative; transition:.14s;
+  }
+  .tab:hover{color:var(--ink-soft)}
+  .tab.active{color:var(--ink); font-weight:600}
+  .tab.active::after{content:""; position:absolute; left:12px; right:12px; bottom:-1px; height:2px; background:var(--accent); border-radius:2px 2px 0 0}
+  .tab .stub-dot{display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--line); margin-left:5px; vertical-align:middle}
+  .ws-tools{display:flex; align-items:center; gap:12px}
+  .preview-link{
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-faint);
+    padding:6px 10px; border-radius:8px; transition:.15s;
+  }
+  .preview-link:hover{background:var(--cream-2); color:var(--ink-soft)}
+  .preview-link svg{width:13px; height:13px}
+  .theme-toggle{
+    width:34px; height:34px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:var(--paper); color:var(--ink-soft);
+    display:grid; place-items:center; transition:.15s;
+  }
+  .theme-toggle:hover{color:var(--accent); border-color:color-mix(in srgb,var(--accent) 40%, var(--line))}
+  .theme-toggle svg{width:16px; height:16px}
+  .theme-toggle .moon{display:none}
+  :root[data-theme="dark"] .theme-toggle .sun{display:none}
+  :root[data-theme="dark"] .theme-toggle .moon{display:block}
+
+  .ws-body{flex:1; min-height:0; overflow-y:auto; padding:24px 26px 40px}
+  .ws-body::-webkit-scrollbar{width:10px}
+  .ws-body::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px}
+  .panel{display:none}
+  .panel.active{display:block; animation:fade .3s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--ink-faint); font-weight:500;
+  }
+  .sec-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px}
+
+  /* ---- metrics strip ---- */
+  .metrics{
+    display:flex; align-items:stretch; gap:0; flex-wrap:wrap;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:4px 6px; margin-bottom:16px;
+  }
+  .metric{padding:12px 20px; flex:1; min-width:118px; position:relative; display:flex; flex-direction:column; gap:5px}
+  .metric + .metric::before{content:""; position:absolute; left:0; top:14px; bottom:14px; width:1px; background:var(--line-soft)}
+  .metric .lbl{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint)}
+  .metric .valrow{display:flex; align-items:baseline; gap:7px}
+  .metric .val{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:23px; letter-spacing:-.01em; line-height:1}
+  .metric .spark{width:44px; height:16px; overflow:visible}
+  .metric .chg{font-size:11px; font-weight:500; display:inline-flex; align-items:center; gap:3px}
+  .up{color:var(--green)} .flat{color:var(--ink-faint)}
+  .chg svg{width:11px; height:11px}
+  .metric.status-metric .val{font-size:14px; color:var(--green); display:inline-flex; align-items:center; gap:6px; margin-top:3px}
+  .metric.status-metric .val .d{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px var(--green-soft)}
+
+  /* ---- what's next strip ---- */
+  .nextstrip{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:14px 18px; margin-bottom:24px;
+  }
+  .nextstrip-hd{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+  .nextstrip-hd .sub{font-size:12px; color:var(--ink-faint)}
+  .lanes{display:flex; gap:10px; flex-wrap:wrap}
+  .lane{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .lane-tag{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint);
+    padding-right:2px;
+  }
+  .task{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--cream); border:1px solid var(--line-soft);
+    border-radius:20px; padding:6px 12px 6px 10px; font-size:12.5px; font-weight:500;
+    white-space:nowrap;
+  }
+  .task .k{width:7px; height:7px; border-radius:50%; flex-shrink:0}
+  .task .tag{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--ink-faint)}
+  .task.now{border-color:color-mix(in srgb,var(--amber) 40%, var(--line)); background:var(--amber-soft)}
+  .task .type{
+    font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:600;
+    letter-spacing:.05em; padding:2px 5px; border-radius:5px; text-transform:uppercase;
+  }
+  .type-build{background:var(--blue-soft); color:var(--blue)}
+  .type-gtm{background:var(--violet-soft); color:var(--violet)}
+  .type-ops{background:var(--green-soft); color:var(--green)}
+  .lane-div{width:1px; align-self:stretch; background:var(--line-soft); margin:0 2px}
+
+  /* ---- FEATURE GRID (the star) ---- */
+  .feat-hd{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+  .feat-hd .sub{font-size:12.5px; color:var(--ink-soft)}
+  .feat-hd .count{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint)}
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(238px,1fr)); gap:16px;
+  }
+  .feat{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+    transition:.18s; display:flex; flex-direction:column;
+  }
+  .feat:hover{box-shadow:var(--shadow-lift); transform:translateY(-2px); border-color:color-mix(in srgb,var(--accent) 22%, var(--line))}
+  .mock{
+    position:relative; aspect-ratio:16/10; overflow:hidden;
+    background:var(--cream-2); border-bottom:1px solid var(--line-soft);
+    padding:13px;
+  }
+  .feat-cap{padding:13px 15px 15px}
+  .feat-name{
+    display:flex; align-items:center; gap:8px; justify-content:space-between;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px; letter-spacing:-.01em;
+  }
+  .feat-name .nm{min-width:0}
+  .feat-sum{font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.4}
+  .state{
+    font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600;
+    letter-spacing:.05em; text-transform:uppercase; padding:3px 7px; border-radius:6px;
+    flex-shrink:0; display:inline-flex; align-items:center; gap:4px;
+  }
+  .state.live{background:var(--green-soft); color:var(--green)}
+  .state.building{background:var(--amber-soft); color:var(--amber)}
+  .state.planned{background:var(--cream-2); color:var(--ink-faint); border:1px solid var(--line)}
+  .state .bd{width:5px; height:5px; border-radius:50%; background:currentColor; animation:breathe 1.4s ease-in-out infinite}
+
+  /* mock primitives */
+  .m-win{background:var(--paper); border:1px solid var(--line-soft); border-radius:8px; height:100%; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .m-bar{background:var(--line); border-radius:3px; height:6px}
+  .m-topbar{display:flex; gap:4px; padding:7px 9px; border-bottom:1px solid var(--line-soft); align-items:center}
+  .m-dot{width:6px; height:6px; border-radius:50%; background:var(--line)}
+  .m-btn{background:var(--accent); border-radius:4px; height:11px}
+  .m-pad{padding:9px 10px}
+  .m-row{display:flex; align-items:center; gap:6px; padding:5px 9px; border-top:1px solid var(--line-soft)}
+  .m-cell{height:5px; border-radius:2px; background:var(--line)}
+  .m-chip{font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:600; padding:2px 5px; border-radius:5px; line-height:1}
+
+  /* building shimmer + progress */
+  .mock.build-mock::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(110deg, transparent 34%, color-mix(in srgb,var(--accent) 22%, transparent) 50%, transparent 66%);
+    background-size:240% 100%; animation:shimmer 1.9s linear infinite;
+  }
+  @keyframes shimmer{0%{background-position:130% 0} 100%{background-position:-130% 0}}
+  .build-overlay{
+    position:absolute; left:11px; right:11px; bottom:11px; z-index:2;
+    background:color-mix(in srgb,var(--paper) 88%, transparent);
+    backdrop-filter:blur(2px); border:1px solid var(--line);
+    border-radius:8px; padding:7px 9px;
+  }
+  .build-overlay .bl{display:flex; align-items:center; justify-content:space-between; font-size:10px; font-weight:600; color:var(--amber); margin-bottom:6px}
+  .build-overlay .bl .mono{color:var(--ink-faint); font-size:9px}
+  .prog{height:4px; border-radius:3px; background:var(--line); overflow:hidden}
+  .prog i{display:block; height:100%; width:62%; border-radius:3px; background:linear-gradient(90deg,var(--amber),var(--accent)); position:relative}
+  .prog i::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent); background-size:60% 100%; animation:progsweep 1.4s linear infinite}
+  @keyframes progsweep{0%{background-position:-60% 0} 100%{background-position:160% 0}}
+
+  /* planned ghost */
+  .feat.is-planned .mock .m-win{opacity:.4; filter:grayscale(.4)}
+  .plan-overlay{
+    position:absolute; inset:0; z-index:2; display:grid; place-items:center;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 7px, color-mix(in srgb,var(--slate) 7%, transparent) 7px 8px);
+  }
+  .plan-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow);
+    border-radius:20px; padding:6px 12px; font-size:11px; font-weight:600; color:var(--ink-soft);
+  }
+  .plan-badge svg{width:13px; height:13px; color:var(--ink-faint)}
+  .feat.is-planned{opacity:.92}
+
+  /* ---- feature groups (Storefront / Product) ---- */
+  .feat-group{display:flex; align-items:center; gap:11px; margin:22px 2px 13px}
+  .feat-group .gl{display:inline-flex; align-items:center; gap:8px; flex-shrink:0}
+  .feat-group .gi{width:22px; height:22px; border-radius:7px; display:grid; place-items:center}
+  .feat-group .gi svg{width:13px; height:13px}
+  .feat-group .gt{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13.5px; letter-spacing:-.01em; color:var(--ink)}
+  .feat-group .gs{font-size:11.5px; color:var(--ink-faint)}
+  .feat-group .gline{flex:1; height:1px; background:var(--line-soft)}
+  .feat-group .gcount{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-faint); flex-shrink:0}
+
+  /* ---- outcome attribution tag ---- */
+  .outcome{
+    display:inline-flex; align-items:center; gap:5px; margin-top:9px;
+    font-size:11px; font-weight:600; color:var(--green);
+    background:var(--green-soft); border-radius:7px; padding:4px 8px;
+  }
+  .outcome svg{width:11px; height:11px}
+  .outcome.blue{color:var(--blue); background:var(--blue-soft)}
+  .outcome.violet{color:var(--violet); background:var(--violet-soft)}
+
+  /* ---- ship flourish (building → live) ---- */
+  .feat.just-shipped{border-color:var(--green); box-shadow:0 0 0 2px var(--green-soft), var(--shadow-lift)}
+  .ship-flash{position:absolute; inset:0; z-index:3; display:grid; place-items:center; background:color-mix(in srgb,var(--green) 14%, transparent); animation:shipflash 2.4s ease forwards}
+  .ship-badge{display:inline-flex; align-items:center; gap:6px; background:var(--green); color:#fff; font-weight:700; font-size:12px; padding:7px 13px; border-radius:20px; box-shadow:var(--shadow-lift); animation:pop .45s cubic-bezier(.2,1.5,.4,1)}
+  :root[data-theme="dark"] .ship-badge{color:#05221a}
+  @keyframes pop{from{transform:scale(.6); opacity:0} to{transform:scale(1); opacity:1}}
+  @keyframes shipflash{0%,72%{opacity:1} 100%{opacity:0; visibility:hidden}}
+
+  /* ---- live agent work log (stream) ---- */
+  .sys{
+    display:flex; align-items:center; gap:8px; padding:1px 6px;
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint);
+    animation:sysin .4s ease;
+  }
+  .sys .sd{width:5px; height:5px; border-radius:50%; background:var(--green); flex-shrink:0; box-shadow:0 0 0 3px var(--green-soft); animation:breathe 1.8s ease-in-out infinite}
+  .sys .sx{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .sys .st{margin-left:auto; opacity:.65; flex-shrink:0}
+  @keyframes sysin{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+
+  /* ---- approval: blast radius + autonomy + auto-approve ---- */
+  .appr-blast{display:flex; align-items:center; gap:7px; margin-bottom:10px; font-size:11.5px; color:var(--ink-soft)}
+  .appr-blast svg{width:13px; height:13px; color:var(--amber); flex-shrink:0}
+  .appr-blast b{color:var(--ink); font-weight:600}
+  .appr-blast .rev{color:var(--green); font-weight:600}
+  .appr-auto{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:11.5px; color:var(--ink-soft); cursor:pointer; user-select:none}
+  .appr-auto input{width:14px; height:14px; accent-color:var(--accent); cursor:pointer; flex-shrink:0}
+  .autonomy-note{display:flex; align-items:center; gap:6px; margin-top:10px; padding-top:9px; border-top:1px solid var(--line-soft); font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.02em; color:var(--ink-faint)}
+  .autonomy-note svg{width:12px; height:12px; color:var(--accent); flex-shrink:0}
+  .explain-link{background:none; border:none; cursor:pointer; color:var(--accent); font-size:11.5px; font-family:inherit; text-decoration:underline; text-underline-offset:2px; padding:0; margin-top:9px}
+  .explain-link:hover{filter:brightness(1.1)}
+
+  /* ---- roadmap: why + done chip ---- */
+  .task[title]{cursor:help}
+  .task.done{opacity:.78; border-color:color-mix(in srgb,var(--green) 32%, var(--line)); background:var(--green-soft)}
+  .task.done .k{background:var(--green)}
+  .why{font-size:11px; color:var(--ink-faint); display:flex; align-items:flex-start; gap:6px; line-height:1.45}
+  .why svg{width:12px; height:12px; color:var(--ink-faint); flex-shrink:0; margin-top:2px}
+  .why b{color:var(--ink-soft); font-weight:600}
+
+  /* ---- persona line ---- */
+  .persona-line{display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11.5px; color:var(--ink-faint)}
+  .persona-line svg{width:12px; height:12px; color:var(--accent); flex-shrink:0}
+  .persona-line b{color:var(--ink-soft); font-weight:600}
+
+  /* ---- live metric bump ---- */
+  .metric .val.bumped{animation:valbump .7s ease}
+  @keyframes valbump{0%{color:var(--green)} 100%{color:var(--ink)}}
+
+  /* ---- DOCUMENTS ---- */
+  .docs-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:4px}
+  .doc-card{
+    text-align:left; cursor:pointer; background:var(--paper);
+    border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:20px; transition:.18s;
+    display:flex; flex-direction:column; gap:12px; font-family:inherit; color:inherit;
+  }
+  .doc-card:hover{box-shadow:var(--shadow-lift); transform:translateY(-2px); border-color:color-mix(in srgb,var(--accent) 22%, var(--line))}
+  .doc-ic{
+    width:38px; height:38px; border-radius:10px; display:grid; place-items:center;
+  }
+  .doc-ic svg{width:19px; height:19px}
+  .doc-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px}
+  .doc-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.45}
+  .doc-meta{display:flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-faint); margin-top:auto; padding-top:4px}
+  .doc-meta .open{margin-left:auto; color:var(--accent); display:inline-flex; align-items:center; gap:3px}
+  .doc-meta .open svg{width:11px; height:11px}
+
+  /* modal */
+  .modal-scrim{
+    position:fixed; inset:0; background:rgba(10,8,6,.42); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:40px; z-index:100;
+  }
+  :root[data-theme="dark"] .modal-scrim{background:rgba(0,0,0,.62)}
+  .modal-scrim.show{display:flex; animation:fade .2s ease}
+  .modal{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:18px; box-shadow:var(--shadow-lift);
+    width:min(680px,100%); max-height:84vh; overflow:hidden; display:flex; flex-direction:column;
+  }
+  .modal-hd{
+    display:flex; align-items:center; gap:12px; padding:20px 24px;
+    border-bottom:1px solid var(--line-soft); flex-shrink:0;
+  }
+  .modal-hd .doc-ic{width:34px; height:34px}
+  .modal-hd h3{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; flex:1}
+  .modal-close{
+    width:32px; height:32px; border-radius:8px; border:1px solid var(--line);
+    background:var(--paper); color:var(--ink-faint); cursor:pointer; display:grid; place-items:center; transition:.15s;
+  }
+  .modal-close:hover{color:var(--ink); background:var(--cream-2)}
+  .modal-close svg{width:15px; height:15px}
+  .modal-body{
+    padding:24px 28px 30px; overflow-y:auto;
+    font-family:'Spectral',serif; font-size:14.5px; line-height:1.7; color:var(--ink-soft);
+  }
+  .modal-body h4{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; color:var(--ink); margin:20px 0 6px}
+  .modal-body h4:first-child{margin-top:0}
+  .modal-body p{margin-bottom:12px}
+  .modal-body ul{margin:0 0 12px 18px}
+  .modal-body li{margin-bottom:5px}
+  .modal-body b{color:var(--ink); font-weight:500}
+  .modal-body .kpi{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent)}
+
+  /* ---- stub panels ---- */
+  .stub{
+    max-width:520px; margin:60px auto; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .stub-ic{
+    width:56px; height:56px; border-radius:16px; display:grid; place-items:center;
+    background:var(--cream); border:1px solid var(--line);
+  }
+  .stub-ic svg{width:26px; height:26px; color:var(--ink-faint)}
+  .stub h3{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px}
+  .stub p{color:var(--ink-soft); font-size:13.5px; max-width:380px}
+  .stub .pill{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-faint);
+    background:var(--cream); border:1px solid var(--line); border-radius:20px; padding:5px 12px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+    .mock.build-mock::after{display:none}
+    .prog i::after{display:none}
+  }
+
+  @media (max-width:1080px){
+    .app{grid-template-columns:360px minmax(0,1fr)}
+  }
+  @media (max-width:860px){
+    body{height:auto; overflow:auto}
+    .app{grid-template-columns:1fr; height:auto}
+    .agent{border-right:none; border-bottom:1px solid var(--line); max-height:70vh}
+    .metrics{flex-wrap:wrap}
+    .metric{min-width:44%}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ LEFT · THE AGENT ============ -->
+  <aside class="agent">
+    <header class="agent-hd">
+      <div class="logo" title="LeadSift">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 4.2h19a.6.6 0 0 1 .47.98l-7.2 8.6a1 1 0 0 0-.24.64v4.3a1 1 0 0 1-.55.9l-3 1.5a.6.6 0 0 1-.87-.54v-6.16a1 1 0 0 0-.24-.64L2.03 5.18a.6.6 0 0 1 .47-.98Z" fill="currentColor"/></svg>
+      </div>
+      <div class="agent-id">
+        <div class="agent-name-row">
+          <span class="agent-name">LeadSift</span>
+          <span class="live"><span class="dot"></span>Live</span>
+        </div>
+        <div class="agent-mission">Turn every webform into scored, ranked sales leads. <span class="ver">· v1.4.0</span></div>
+        <div class="persona-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5c0 2-1 3.2-1 5H8c0-1.8-1-3-1-5a5 5 0 0 1 5-5zM9 20h6M10 22h4"/></svg>Run by <b>Sift</b> — it builds, ships &amp; grows this on its own.</div>
+      </div>
+    </header>
+
+    <div class="stream" id="stream">
+      <div class="day">Today · 8:04 AM</div>
+
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
+        <div class="bubble">
+          <p>Morning — Sift here ☕. Overnight I scored <b>41 new leads</b> and held us at <b>99.9% uptime</b>. No fires, nothing needs you yet.</p>
+          <span class="t">8:04 AM</span>
+        </div>
+      </div>
+
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
+        <div class="bubble">
+          <p>MRR ticked up to <b class="ok">$180</b> (+$40 this month) as three new users converted. Zero churn.</p>
+          <span class="t">8:05 AM</span>
+        </div>
+      </div>
+
+      <!-- INLINE APPROVAL -->
+      <div class="msg">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
+        <div class="bubble">
+          <p>I finished the <b>Daily digest</b> and it passed its check <span class="ok">✓</span> — ship it to all 12 users?</p>
+
+          <div class="approval" id="apprBody">
+            <div class="appr-facts">
+              <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Check passed</span>
+              <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>On staging</span>
+              <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Preview ready</span>
+            </div>
+            <div class="appr-blast">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span><b>Ships to all 12 users</b> · one email endpoint · <span class="rev">reversible in 1 click</span></span>
+            </div>
+            <div class="appr-actions">
+              <button class="btn btn-primary" onclick="approve()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                Approve &amp; ship
+              </button>
+              <div class="btn-row">
+                <button class="btn btn-ghost" onclick="review()">Review</button>
+                <button class="btn btn-ghost" onclick="toggleReject()">Reject</button>
+              </div>
+            </div>
+            <label class="appr-auto"><input type="checkbox" id="autoAppr" /> Auto-approve digests like this from now on</label>
+            <div class="appr-note" id="apprNote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+              Opening <span class="mono">/digest/preview</span> in a new tab…
+            </div>
+            <div class="appr-reject" id="apprReject">
+              <textarea id="rejectText" placeholder="What should I change before shipping?"></textarea>
+              <div class="btn-row">
+                <button class="btn btn-ghost" onclick="toggleReject()">Cancel</button>
+                <button class="btn btn-primary" onclick="sendReject()">Send back</button>
+              </div>
+            </div>
+            <button class="explain-link" onclick="explainDigest()">Why ship this now?</button>
+            <div class="autonomy-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+              Builds ship on autopilot · you approve growth &amp; spend
+            </div>
+          </div>
+
+          <div class="appr-resolved" id="apprResolved">
+            <div class="rc" id="rcIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <h4 id="rcTitle">Shipping now</h4>
+            <p id="rcMsg">Daily digest is rolling out to production. I'll confirm here the moment it's live.</p>
+            <button class="undo" onclick="undo()">Undo</button>
+          </div>
+
+          <span class="t">8:06 AM</span>
+        </div>
+      </div>
+
+      <div class="typing" id="typing">
+        <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>
+        <div class="bubble"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <form id="composer">
+        <textarea id="input" rows="1" placeholder="Message LeadSift…"></textarea>
+        <button class="send" type="submit" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ============ RIGHT · WORKSPACE ============ -->
+  <main class="workspace">
+    <div class="ws-top">
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="documents">Documents</button>
+        <button class="tab" data-tab="build">Build<span class="stub-dot"></span></button>
+        <button class="tab" data-tab="grow">Grow<span class="stub-dot"></span></button>
+        <button class="tab" data-tab="money">Money<span class="stub-dot"></span></button>
+      </nav>
+      <div class="ws-tools">
+        <a class="preview-link" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+          leadsift.app
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M3.5 12H1M23 12h-2.5M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M18.9 5.1l-1.7 1.7M6.8 17.2l-1.7 1.7"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ws-body">
+
+      <!-- ===== OVERVIEW ===== -->
+      <section class="panel active" id="panel-overview">
+
+        <!-- metrics strip -->
+        <div class="metrics">
+          <div class="metric">
+            <div class="lbl">MRR</div>
+            <div class="valrow">
+              <span class="val" id="mrrVal">$180</span>
+              <svg class="spark" viewBox="0 0 44 16" preserveAspectRatio="none"><path d="M1,14 L9,12 L17,9 L25,7 L33,4 L43,1.5" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chg up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+$40 · +29%</div>
+          </div>
+          <div class="metric">
+            <div class="lbl">Users</div>
+            <div class="valrow"><span class="val" id="usersVal">12</span></div>
+            <div class="chg up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+3 / week</div>
+          </div>
+          <div class="metric">
+            <div class="lbl">Net / mo</div>
+            <div class="valrow"><span class="val">+$158</span></div>
+            <div class="chg flat">after $22 costs</div>
+          </div>
+          <div class="metric">
+            <div class="lbl">Uptime</div>
+            <div class="valrow"><span class="val">99.9%</span></div>
+            <div class="chg up">30-day</div>
+          </div>
+          <div class="metric">
+            <div class="lbl">Churn</div>
+            <div class="valrow"><span class="val">0%</span></div>
+            <div class="chg flat">this month</div>
+          </div>
+          <div class="metric status-metric">
+            <div class="lbl">Status</div>
+            <div class="val"><span class="d"></span>Live · growing</div>
+          </div>
+        </div>
+
+        <!-- what's next strip -->
+        <div class="nextstrip">
+          <div class="nextstrip-hd">
+            <span class="eyebrow">What's next</span>
+            <span class="sub">The agent's plan · build + go-to-market</span>
+          </div>
+          <div class="lanes">
+            <div class="lane">
+              <span class="lane-tag">Now</span>
+              <span class="task now" id="nowTask" title="Why now: it's built and passed its check, 7 users asked for a morning summary, and it lifts daily engagement.">
+                <span class="k" style="background:var(--amber)"></span>
+                Daily digest
+                <span class="type type-build">Build</span>
+                <span class="tag">awaiting you</span>
+              </span>
+            </div>
+            <div class="lane-div"></div>
+            <div class="lane">
+              <span class="lane-tag">Next</span>
+              <span class="task" id="nextExport" title="Why next: 7 users asked for CSV export — it unblocks their CRM workflow.">
+                <span class="k" style="background:var(--blue)"></span>
+                Export to CSV
+                <span class="type type-build">Build</span>
+                <span class="tag">7 asked</span>
+              </span>
+              <span class="task" title="Why: a public launch is our biggest reachable acquisition channel — needs your go before it's public.">
+                <span class="k" style="background:var(--violet)"></span>
+                Product Hunt launch tweet
+                <span class="type type-gtm">GTM</span>
+              </span>
+              <span class="task" title="Why: real-time hot-lead alerts keep users active daily and reduce churn.">
+                <span class="k" style="background:var(--green)"></span>
+                Slack alert on a hot lead
+                <span class="type type-ops">Ops</span>
+              </span>
+            </div>
+            <div class="lane-div"></div>
+            <div class="lane">
+              <span class="lane-tag">Later</span>
+              <span class="task" title="Why later: high-value but heavy — a bigger bet worth doing once the core loop is proven.">
+                <span class="k" style="background:var(--slate)"></span>
+                Two-way CRM sync
+                <span class="type type-build">Build</span>
+              </span>
+            </div>
+          </div>
+          <div class="why" style="margin-top:12px; padding-top:11px; border-top:1px solid var(--line-soft)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <span><b>Why this order:</b> user-requested + already-built ships first; growth moves like the PH launch wait for your go; big bets like CRM sync sit in Later. Hover any item for its reason.</span>
+          </div>
+        </div>
+
+        <!-- WHAT IT DELIVERS -->
+        <div class="feat-hd">
+          <div>
+            <span class="sec-title">What it delivers</span>
+            <span class="sub"> — the company is the product</span>
+          </div>
+          <span class="count" id="featCount">6 live · 1 building · 1 planned</span>
+        </div>
+
+        <!-- STOREFRONT group -->
+        <div class="feat-group">
+          <span class="gl"><span class="gi" style="background:var(--accent-soft); color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.2-5h15.6L21 9M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9zM9 20v-6h6v6"/></svg></span><span class="gt">Storefront</span></span>
+          <span class="gs">how LeadSift presents &amp; sells itself</span>
+          <span class="gline"></span>
+          <span class="gcount">2 live</span>
+        </div>
+
+        <div class="grid">
+
+          <!-- 1 · Landing page -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win">
+                <div class="m-topbar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span></div>
+                <div class="m-pad" style="display:flex; flex-direction:column; gap:6px; align-items:center; text-align:center; padding-top:12px">
+                  <svg viewBox="0 0 24 24" width="16" height="16" style="color:var(--accent)"><path d="M2.5 4.2h19a.6.6 0 0 1 .47.98l-7.2 8.6a1 1 0 0 0-.24.64v4.3a1 1 0 0 1-.55.9l-3 1.5a.6.6 0 0 1-.87-.54v-6.16a1 1 0 0 0-.24-.64L2.03 5.18a.6.6 0 0 1 .47-.98Z" fill="currentColor"/></svg>
+                  <div class="m-bar" style="width:78%; height:8px"></div>
+                  <div class="m-bar" style="width:56%"></div>
+                  <div class="m-btn" style="width:52%; margin-top:4px"></div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Landing page</span><span class="state live">Live</span></div>
+              <div class="feat-sum">The pitch: scored leads from any webform.</div>
+              <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+8 signups this month</div>
+            </div>
+          </div>
+
+          <!-- Brand & design (storefront asset) -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win" style="display:flex; flex-direction:column">
+                <div class="m-topbar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span></div>
+                <div class="m-pad" style="display:flex; align-items:center; gap:11px">
+                  <div style="width:31px; height:31px; border-radius:9px; background:linear-gradient(150deg,var(--accent),color-mix(in srgb,var(--accent) 78%, #000 22%)); display:grid; place-items:center; color:#fff; box-shadow:0 3px 9px color-mix(in srgb,var(--accent) 30%, transparent)">
+                    <svg viewBox="0 0 24 24" width="15" height="15"><path d="M2.5 4.2h19a.6.6 0 0 1 .47.98l-7.2 8.6a1 1 0 0 0-.24.64v4.3a1 1 0 0 1-.55.9l-3 1.5a.6.6 0 0 1-.87-.54v-6.16a1 1 0 0 0-.24-.64L2.03 5.18a.6.6 0 0 1 .47-.98Z" fill="currentColor"/></svg>
+                  </div>
+                  <div style="display:flex; flex-direction:column; gap:5px">
+                    <div class="m-bar" style="width:56px; height:7px"></div>
+                    <div class="m-bar" style="width:40px"></div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:6px; padding:2px 12px 12px">
+                  <span style="width:20px; height:20px; border-radius:6px; background:var(--accent)"></span>
+                  <span style="width:20px; height:20px; border-radius:6px; background:var(--green)"></span>
+                  <span style="width:20px; height:20px; border-radius:6px; background:var(--ink)"></span>
+                  <span style="width:20px; height:20px; border-radius:6px; background:var(--cream-2); border:1px solid var(--line)"></span>
+                </div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Brand &amp; design</span><span class="state live">Live</span></div>
+              <div class="feat-sum">Logo, palette &amp; voice — one coherent look.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PRODUCT group -->
+        <div class="feat-group">
+          <span class="gl"><span class="gi" style="background:var(--blue-soft); color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4.5v9L12 20 4 15.5v-9L12 2zM4 6.5L12 11l8-4.5M12 11v9"/></svg></span><span class="gt">Product</span></span>
+          <span class="gs">the features users actually use</span>
+          <span class="gline"></span>
+          <span class="gcount" id="productCount">4 live · 1 building · 1 planned</span>
+        </div>
+
+        <div class="grid">
+
+          <!-- 2 · Webform capture -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win">
+                <div class="m-topbar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span></div>
+                <div class="m-pad" style="display:flex; flex-direction:column; gap:7px">
+                  <div class="m-bar" style="width:40%; height:5px"></div>
+                  <div class="m-bar" style="width:100%; height:12px; background:var(--cream-2); border:1px solid var(--line-soft)"></div>
+                  <div class="m-bar" style="width:100%; height:12px; background:var(--cream-2); border:1px solid var(--line-soft)"></div>
+                  <div class="m-btn" style="width:44%; height:12px; margin-top:2px"></div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Webform capture</span><span class="state live">Live</span></div>
+              <div class="feat-sum">Embeds a form, captures every lead.</div>
+            </div>
+          </div>
+
+          <!-- 3 · Lead table -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win">
+                <div class="m-topbar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span></div>
+                <div class="m-row" style="border-top:none"><div class="m-cell" style="flex:2"></div><div class="m-cell" style="flex:1.2"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">92</span></div>
+                <div class="m-row"><div class="m-cell" style="flex:2"></div><div class="m-cell" style="flex:1.2"></div><span class="m-chip" style="background:var(--amber-soft); color:var(--amber)">61</span></div>
+                <div class="m-row"><div class="m-cell" style="flex:2"></div><div class="m-cell" style="flex:1.2"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">88</span></div>
+                <div class="m-row"><div class="m-cell" style="flex:2"></div><div class="m-cell" style="flex:1.2"></div><span class="m-chip" style="background:var(--red-soft); color:var(--red)">24</span></div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Lead table</span><span class="state live">Live</span></div>
+              <div class="feat-sum">Every lead, sortable + filterable.</div>
+            </div>
+          </div>
+
+          <!-- 4 · Auto-score -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win" style="display:grid; place-items:center; padding:6px">
+                <div style="display:flex; align-items:center; gap:12px">
+                  <svg viewBox="0 0 42 42" width="58" height="58">
+                    <circle cx="21" cy="21" r="17" fill="none" stroke="var(--line)" stroke-width="4"/>
+                    <circle cx="21" cy="21" r="17" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round" stroke-dasharray="107" stroke-dashoffset="14" transform="rotate(-90 21 21)"/>
+                    <text x="21" y="24.5" text-anchor="middle" font-family="Space Grotesk" font-weight="600" font-size="13" fill="var(--ink)">87</text>
+                  </svg>
+                  <div style="display:flex; flex-direction:column; gap:5px">
+                    <span class="m-chip" style="background:var(--green-soft); color:var(--green)">HOT</span>
+                    <div class="m-bar" style="width:34px"></div>
+                    <div class="m-bar" style="width:26px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Auto-score 0–100</span><span class="state live">Live</span></div>
+              <div class="feat-sum">Scores each lead by buying intent.</div>
+              <div class="outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+$40 MRR since shipped</div>
+            </div>
+          </div>
+
+          <!-- 5 · Filter by score -->
+          <div class="feat">
+            <div class="mock">
+              <div class="m-win">
+                <div class="m-topbar" style="justify-content:space-between"><div class="m-bar" style="width:30%; height:5px"></div><span class="m-chip" style="background:var(--accent-soft); color:var(--accent)">≥ 80</span></div>
+                <div class="m-row" style="border-top:none; background:var(--green-soft)"><div class="m-cell" style="flex:2; background:color-mix(in srgb,var(--green) 40%, var(--line))"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">92</span></div>
+                <div class="m-row" style="background:var(--green-soft)"><div class="m-cell" style="flex:2; background:color-mix(in srgb,var(--green) 40%, var(--line))"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">88</span></div>
+                <div class="m-row" style="opacity:.35"><div class="m-cell" style="flex:2"></div><span class="m-chip" style="background:var(--cream-2); color:var(--ink-faint)">61</span></div>
+                <div class="m-row" style="opacity:.35"><div class="m-cell" style="flex:2"></div><span class="m-chip" style="background:var(--cream-2); color:var(--ink-faint)">24</span></div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Filter by score</span><span class="state live">Live</span></div>
+              <div class="feat-sum">Surface only the hot ones.</div>
+              <div class="outcome blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>score filter → +2 paid</div>
+            </div>
+          </div>
+
+          <!-- 6 · Daily digest · BUILDING → LIVE -->
+          <div class="feat" id="digestFeat">
+            <div class="mock build-mock">
+              <div class="m-win">
+                <div class="m-topbar"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="var(--ink-faint)" stroke-width="2"><path d="M2 5h20v14H2zM2 6l10 7 10-7"/></svg><div class="m-bar" style="width:48%; height:5px"></div><span class="m-chip mono" style="margin-left:auto; background:var(--amber-soft); color:var(--amber)">8:00 AM</span></div>
+                <div class="m-row" style="border-top:none"><div class="m-cell" style="flex:2"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">92</span></div>
+                <div class="m-row"><div class="m-cell" style="flex:2"></div><span class="m-chip" style="background:var(--green-soft); color:var(--green)">88</span></div>
+                <div class="m-row"><div class="m-cell" style="flex:2"></div><span class="m-chip" style="background:var(--amber-soft); color:var(--amber)">76</span></div>
+              </div>
+              <div class="build-overlay">
+                <div class="bl"><span>Building…</span><span class="mono">check ✓ · 62%</span></div>
+                <div class="prog"><i></i></div>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Daily digest</span><span class="state building"><span class="bd"></span>Building</span></div>
+              <div class="feat-sum">8am email of the day's top leads.</div>
+            </div>
+          </div>
+
+          <!-- 7 · Export to CSV · PLANNED -->
+          <div class="feat is-planned">
+            <div class="mock">
+              <div class="m-win">
+                <div class="m-topbar"><span class="m-dot"></span><span class="m-dot"></span><span class="m-dot"></span></div>
+                <div class="m-pad" style="display:flex; flex-direction:column; gap:6px; align-items:center; padding-top:12px">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--ink-faint)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 18v-6M9 15l3 3 3-3"/></svg>
+                  <div class="m-bar" style="width:44%"></div>
+                  <div class="m-btn" style="width:40%; height:10px; background:var(--slate)"></div>
+                </div>
+              </div>
+              <div class="plan-overlay">
+                <span class="plan-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  Planned
+                </span>
+              </div>
+            </div>
+            <div class="feat-cap">
+              <div class="feat-name"><span class="nm">Export to CSV</span><span class="state planned">Planned</span></div>
+              <div class="feat-sum">One-click export to your CRM.</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== DOCUMENTS ===== -->
+      <section class="panel" id="panel-documents">
+        <div class="feat-hd" style="margin-top:2px">
+          <div><span class="sec-title">Documents</span><span class="feat-hd-sub" style="color:var(--ink-soft); font-size:12.5px"> — LeadSift's brain, written down</span></div>
+          <span class="count">3 documents</span>
+        </div>
+        <div class="docs-grid">
+          <button class="doc-card" onclick="openDoc('mission')">
+            <div class="doc-ic" style="background:var(--accent-soft); color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div>
+              <div class="doc-title">Mission statement</div>
+              <div class="doc-desc">Why LeadSift exists and the one job it does better than anyone.</div>
+            </div>
+            <div class="doc-meta">MD · 1 page<span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+          </button>
+
+          <button class="doc-card" onclick="openDoc('market')">
+            <div class="doc-ic" style="background:var(--blue-soft); color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg></div>
+            <div>
+              <div class="doc-title">Market-opportunity research</div>
+              <div class="doc-desc">The gap, the buyers, the wedge, and why now is the moment.</div>
+            </div>
+            <div class="doc-meta">MD · 3 pages<span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+          </button>
+
+          <button class="doc-card" onclick="openDoc('design')">
+            <div class="doc-ic" style="background:var(--violet-soft); color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 20V9"/></svg></div>
+            <div>
+              <div class="doc-title">Design doc</div>
+              <div class="doc-desc">Architecture, the scoring model, and how features get shipped.</div>
+            </div>
+            <div class="doc-meta">MD · 4 pages<span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== STUBS ===== -->
+      <section class="panel" id="panel-build">
+        <div class="stub">
+          <div class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6a2 2 0 0 0 2.8 2.8l6-6a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></div>
+          <h3>Build</h3>
+          <p>The full feature pipeline, agent build logs, staging previews and check results live here.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-grow">
+        <div class="stub">
+          <div class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 9l-5 5-3-3-4 4"/></svg></div>
+          <h3>Grow</h3>
+          <p>Channels, launches, funnel and the go-to-market moves the agent is running to bring users in.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-money">
+        <div class="stub">
+          <div class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2 0 0 1 5 0c0 2.5-5 1.5-5 4a2.5 2 0 0 0 5 0"/></svg></div>
+          <h3>Money</h3>
+          <p>Revenue, costs, P&amp;L and payouts — the full financial picture for LeadSift.</p>
+          <span class="pill">Coming soon</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===== DOCUMENT MODAL ===== -->
+<div class="modal-scrim" id="modalScrim">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hd">
+      <div class="doc-ic" id="modalIc" style="background:var(--accent-soft); color:var(--accent)"></div>
+      <h3 id="modalTitle">Document</h3>
+      <button class="modal-close" onclick="closeDoc()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+  /* ---------- theme ---------- */
+  var toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('click', function(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if(dark){ document.documentElement.removeAttribute('data-theme'); }
+    else{ document.documentElement.setAttribute('data-theme','dark'); }
+    try{ localStorage.setItem('cslopslop-theme', dark ? 'light' : 'dark'); }catch(e){}
+  });
+
+  /* ---------- tabs ---------- */
+  document.getElementById('tabs').addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    b.classList.add('active');
+    var id = b.getAttribute('data-tab');
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelector('.ws-body').scrollTop = 0;
+  });
+
+  /* ---------- inline approval ---------- */
+  var apprBody = document.getElementById('apprBody');
+  var apprResolved = document.getElementById('apprResolved');
+  var apprNote = document.getElementById('apprNote');
+  var apprReject = document.getElementById('apprReject');
+  var rcIcon = document.getElementById('rcIcon');
+  var rcTitle = document.getElementById('rcTitle');
+  var rcMsg = document.getElementById('rcMsg');
+
+  function resolveAppr(title, msg, tone){
+    apprBody.style.display = 'none';
+    rcTitle.textContent = title;
+    rcMsg.textContent = msg;
+    if(tone === 'amber'){
+      rcIcon.style.background = 'var(--amber-soft)';
+      rcIcon.querySelector('svg').style.color = 'var(--amber)';
+      rcIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>';
+    }
+    apprResolved.classList.add('show');
+  }
+  function approve(){ shipDigest('approve'); }
+  function review(){
+    apprNote.classList.add('show');
+    clearTimeout(window._pv);
+    window._pv = setTimeout(function(){ apprNote.classList.remove('show'); }, 2600);
+  }
+  function toggleReject(){
+    apprReject.classList.toggle('show');
+    if(apprReject.classList.contains('show')){ document.getElementById('rejectText').focus(); }
+  }
+  function sendReject(){
+    resolveAppr('Sent back to build', 'Got your notes — I'll revise Daily digest and ask again once it passes.', 'amber');
+    var note = document.getElementById('rejectText').value.trim();
+    agentReply('Understood — sending <b>Daily digest</b> back to build' + (note ? ' with your note: "' + escapeHtml(note) + '".' : '.') + ' I'll re-run the check before the next ask.');
+  }
+  function undo(){
+    apprResolved.classList.remove('show');
+    apprBody.style.display = 'block';
+    apprReject.classList.remove('show');
+    apprNote.classList.remove('show');
+  }
+
+  /* ---------- composer ---------- */
+  var stream = document.getElementById('stream');
+  var input = document.getElementById('input');
+  var typing = document.getElementById('typing');
+  var form = document.getElementById('composer');
+
+  input.addEventListener('input', function(){
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 96) + 'px';
+  });
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); form.requestSubmit(); }
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var text = input.value.trim();
+    if(!text) return;
+    addUser(text);
+    input.value = '';
+    input.style.height = 'auto';
+    var reply = cannedReply(text);
+    typing.classList.add('show');
+    scrollDown();
+    setTimeout(function(){
+      typing.classList.remove('show');
+      agentReply(reply);
+    }, 900);
+  });
+
+  function addUser(text){
+    var el = document.createElement('div');
+    el.className = 'msg me';
+    el.innerHTML = '<div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></div>' +
+      '<div class="bubble">' + escapeHtml(text) + '</div>';
+    stream.insertBefore(el, typing);
+    scrollDown();
+  }
+  function agentReply(html){
+    var el = document.createElement('div');
+    el.className = 'msg';
+    el.innerHTML = '<div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.5V19l4 2v-8.5L22 3z"/></svg></div>' +
+      '<div class="bubble"><p>' + html + '</p></div>';
+    stream.insertBefore(el, typing);
+    scrollDown();
+  }
+  function cannedReply(t){
+    var s = t.toLowerCase();
+    if(s.indexOf('digest') > -1) return 'Daily digest is built and passed its check — it's the approval above whenever you're ready.';
+    if(s.indexOf('csv') > -1 || s.indexOf('export') > -1) return '<b>Export to CSV</b> is queued next — 7 users asked for it. Want me to bump it ahead of the Product Hunt tweet?';
+    if(s.indexOf('revenue') > -1 || s.indexOf('mrr') > -1 || s.indexOf('money') > -1) return 'MRR is <b>$180</b>, up +$40 this month at 0% churn. Net is +$158/mo after $22 in costs.';
+    if(s.indexOf('launch') > -1 || s.indexOf('tweet') > -1 || s.indexOf('grow') > -1) return 'I've drafted a Product Hunt launch tweet — it's on the plan. I'll surface it for your approval before anything goes public.';
+    return 'On it. I'll fold that into the plan and flag anything that needs your call right here.';
+  }
+  function scrollDown(){ stream.scrollTop = stream.scrollHeight; }
+  function escapeHtml(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  /* ---------- documents modal ---------- */
+  var docs = {
+    mission: {
+      title: 'Mission statement', tone:['var(--accent-soft)','var(--accent)'],
+      ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 2v20M2 12h20"/></svg>',
+      body:'<h4>The mission</h4><p><b>Turn every webform into scored, ranked sales leads.</b></p>'+
+        '<p>Small teams drown in raw form fills. A contact form gives you a name and an email — not whether this person is worth a call today. LeadSift closes that gap: the moment a lead lands, we score their buying intent 0–100 and push the hot ones to the top.</p>'+
+        '<h4>Why it matters</h4><p>Every unqualified lead a founder chases is time stolen from the ones ready to buy. By ranking intent automatically, LeadSift turns a noisy inbox into a prioritized queue — <span class="kpi">no CRM migration, no data team</span>.</p>'+
+        '<h4>The one job</h4><p>Do lead scoring so well that checking LeadSift each morning replaces guessing. Everything we build serves that: capture cleanly, score honestly, surface the hot ones first.</p>'
+    },
+    market: {
+      title: 'Market-opportunity research', tone:['var(--blue-soft)','var(--blue)'],
+      ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg>',
+      body:'<h4>The gap</h4><p>Form tools (Typeform, Google Forms, native site forms) capture leads but do nothing to <b>qualify</b> them. Full CRMs (HubSpot, Salesforce) can score — but demand setup, seats, and a data hygiene culture small teams don't have.</p>'+
+        '<h4>Who buys</h4><ul><li><b>Solo founders &amp; 2–10 person teams</b> running inbound off a landing page.</li><li><b>Agencies</b> juggling lead flow for several clients.</li><li><b>Indie SaaS</b> with a waitlist or demo request form.</li></ul>'+
+        '<h4>The wedge</h4><p>Drop-in webform + instant 0–100 score. Value is visible in minutes, not after a quarter of CRM onboarding. Land on scoring, expand into routing, digests, and CRM sync.</p>'+
+        '<h4>Why now</h4><p>LLM scoring is cheap and good enough to read intent from free-text form fields. That capability didn't exist affordably 18 months ago. <span class="kpi">Early signal: 12 paying users, 0% churn, +29% MRR.</span></p>'+
+        '<h4>Pricing</h4><p>Flat $15/mo starter. Land at a price a founder approves without a meeting; expand on lead volume.</p>'
+    },
+    design: {
+      title: 'Design doc', tone:['var(--violet-soft)','var(--violet)'],
+      ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 20V9"/></svg>',
+      body:'<h4>Architecture</h4><p>Static landing + embeddable form widget → capture API → scoring worker → dashboard. Single Postgres, one background queue. Kept deliberately small so the agent can ship features without coordination overhead.</p>'+
+        '<h4>The scoring model</h4><p>Each lead is scored 0–100 from signals: role/seniority keywords, company-size hints, message intent (free-text read by an LLM), and source page. Scores bucket into <span class="kpi">Hot ≥ 80</span>, Warm 50–79, Cold &lt; 50.</p>'+
+        '<h4>How features ship</h4><ul><li>Agent picks the next item from the plan (user-requested items weighted).</li><li>Builds on a branch, deploys to <b>staging</b>, runs an automated check.</li><li>On pass, it surfaces an approval in chat — the human ships or sends back.</li></ul>'+
+        '<h4>Shipped</h4><p>Landing page · Webform capture · Lead table · Auto-score · Filter by score.</p>'+
+        '<h4>In flight</h4><p><b>Daily digest</b> — an 8am email of the day's top leads (built, awaiting approval). <b>Export to CSV</b> next, then a Product Hunt launch and Slack hot-lead alerts. Two-way CRM sync is the larger later bet.</p>'
+    }
+  };
+  var scrim = document.getElementById('modalScrim');
+  function openDoc(key){
+    var d = docs[key]; if(!d) return;
+    var ic = document.getElementById('modalIc');
+    ic.style.background = d.tone[0]; ic.style.color = d.tone[1]; ic.innerHTML = d.ic;
+    document.getElementById('modalTitle').textContent = d.title;
+    document.getElementById('modalBody').innerHTML = d.body;
+    scrim.classList.add('show');
+  }
+  function closeDoc(){ scrim.classList.remove('show'); }
+  scrim.addEventListener('click', function(e){ if(e.target === scrim) closeDoc(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDoc(); });
+
+  /* ---------- aliveness: reduced-motion flag ---------- */
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- ship the digest (you approve OR it ships on autopilot) ---------- */
+  var digestShipped = false;
+  function shipDigest(via){
+    if(digestShipped) return;
+    digestShipped = true;
+    clearTimeout(window._digestTimer);
+
+    var feat = document.getElementById('digestFeat');
+    if(feat){
+      var mock = feat.querySelector('.mock');
+      mock.classList.remove('build-mock');
+      var ov = feat.querySelector('.build-overlay');
+      if(ov) ov.parentNode.removeChild(ov);
+      var st = feat.querySelector('.state');
+      if(st){ st.className = 'state live'; st.textContent = 'Live'; }
+      var cap = feat.querySelector('.feat-cap');
+      if(cap && !cap.querySelector('.outcome')){
+        var o = document.createElement('div');
+        o.className = 'outcome';
+        o.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Shipped just now · first 8am send tomorrow';
+        cap.appendChild(o);
+      }
+      feat.classList.add('just-shipped');
+      var flash = document.createElement('div');
+      flash.className = 'ship-flash';
+      flash.innerHTML = '<span class="ship-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M20 6L9 17l-5-5"/></svg>Just shipped</span>';
+      mock.appendChild(flash);
+      setTimeout(function(){
+        if(flash.parentNode) flash.parentNode.removeChild(flash);
+        feat.classList.remove('just-shipped');
+      }, 2400);
+    }
+
+    advanceRoadmap();
+
+    var fc = document.getElementById('featCount');
+    if(fc) fc.textContent = '7 live · 0 building · 1 planned';
+    var pc = document.getElementById('productCount');
+    if(pc) pc.textContent = '5 live · 1 planned';
+
+    /* a real outcome nudges: MRR ticks up as the digest lands */
+    bumpMetric(document.getElementById('mrrVal'), 185, '$');
+
+    var auto = document.getElementById('autoAppr');
+    if(via === 'approve'){
+      resolveAppr('Shipping now', 'You approved it — Daily digest is rolling out to production. First 8am send goes out tomorrow.', 'green');
+      agentReply('Done — <b>Daily digest</b> is <span class="ok">live</span> for all 12 users. First send tomorrow 8am; I'll watch open rates and report back.' + (auto && auto.checked ? ' I'll auto-approve future digests like this too. ✓' : ''));
+    } else {
+      if(apprBody.style.display !== 'none'){
+        resolveAppr('Shipped on autopilot', 'Check passed, so I shipped Daily digest on autopilot. You still steer growth & spend.', 'green');
+      }
+      agentReply('Heads up — <b>Daily digest</b> passed its check, so I shipped it on autopilot. It's <span class="ok">live</span> for all 12 users; first send tomorrow 8am.');
+    }
+    var undoBtn = apprResolved.querySelector('.undo');
+    if(undoBtn) undoBtn.style.display = 'none';
+    pushSys('daily digest → LIVE ✓');
+  }
+
+  function advanceRoadmap(){
+    var now = document.getElementById('nowTask');
+    if(!now) return;
+    var lane = now.parentNode;
+    now.classList.remove('now');
+    now.classList.add('done');
+    now.removeAttribute('id');
+    now.title = 'Shipped just now — live for all 12 users.';
+    now.innerHTML = '<span class="k" style="background:var(--green)"></span>Daily digest<span class="type type-ops">Shipped ✓</span>';
+    var ne = document.getElementById('nextExport');
+    if(ne){
+      ne.parentNode.removeChild(ne);
+      var t = document.createElement('span');
+      t.className = 'task now';
+      t.id = 'nowTask';
+      t.title = 'Why next: 7 users asked for CSV export — it unblocks their CRM workflow.';
+      t.innerHTML = '<span class="k" style="background:var(--blue)"></span>Export to CSV<span class="type type-build">Build</span><span class="tag">up next</span>';
+      lane.appendChild(t);
+    }
+  }
+
+  function explainDigest(){
+    agentReply('<b>Why ship now?</b> It's built, passed its automated check, and 7 users asked for a morning summary. It touches one email endpoint and is reversible in a click — low blast radius, clear upside on daily engagement.');
+  }
+
+  /* ---------- live metric nudges (count-up + green flash) ---------- */
+  function bumpMetric(el, to, prefix){
+    if(!el) return;
+    var from = parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0;
+    if(to <= from) return;
+    flashVal(el);
+    if(RM){ el.textContent = (prefix || '') + to; return; }
+    var start = null, dur = 700;
+    function step(ts){
+      if(start === null) start = ts;
+      var p = Math.min(1, (ts - start) / dur);
+      el.textContent = (prefix || '') + Math.round(from + (to - from) * p);
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function flashVal(el){ el.classList.add('bumped'); setTimeout(function(){ el.classList.remove('bumped'); }, 700); }
+
+  var mrrTicks = [185, 190, 195, 200];
+  var mrrIdx = 0;
+  function metricTick(){
+    var r = Math.random();
+    if(r < 0.5 && mrrIdx < mrrTicks.length){
+      bumpMetric(document.getElementById('mrrVal'), mrrTicks[mrrIdx++], '$');
+    } else if(r < 0.72){
+      var u = document.getElementById('usersVal');
+      if(u && (parseInt(u.textContent, 10) || 12) < 14){ bumpMetric(u, (parseInt(u.textContent, 10) || 12) + 1, ''); }
+    }
+  }
+  setInterval(metricTick, 16000);
+
+  /* ---------- live agent work log (subtle system lines over time) ---------- */
+  var clockHr = 8, clockMin = 6;
+  function nextTime(){
+    clockMin += 1 + Math.floor(Math.random() * 3);
+    if(clockMin >= 60){ clockMin -= 60; clockHr++; }
+    return clockHr + ':' + (clockMin < 10 ? '0' : '') + clockMin + ' AM';
+  }
+  var sysPool = [
+    'scored 3 new leads',
+    'rescored the lead queue',
+    'doneWhen check → 200 ✓',
+    'deployed digest to staging',
+    'drafted the launch tweet',
+    'synced 14 form submissions',
+    'nightly backup ✓',
+    'watching digest open rates',
+    'trimmed $2 off infra cost',
+    'flagged 1 hot lead (score 94)'
+  ];
+  var sysIdx = 0;
+  function pushSys(text){
+    var atBottom = stream.scrollHeight - stream.scrollTop - stream.clientHeight < 140;
+    var el = document.createElement('div');
+    el.className = 'sys';
+    el.innerHTML = '<span class="sd"></span><span class="sx">' + text + '</span><span class="st mono">' + nextTime() + '</span>';
+    stream.insertBefore(el, typing);
+    var all = stream.querySelectorAll('.sys');
+    if(all.length > 5) all[0].parentNode.removeChild(all[0]);
+    if(atBottom) scrollDown();
+  }
+  function sysTick(){ pushSys(sysPool[sysIdx % sysPool.length]); sysIdx++; }
+  setTimeout(function(){ sysTick(); setInterval(sysTick, 7000); }, 3000);
+
+  /* ---------- the little wow: digest auto-ships on autopilot (~10s) ---------- */
+  window._digestTimer = setTimeout(function(){ shipDigest('auto'); }, 10500);
+</script>
+</body>
+</html>

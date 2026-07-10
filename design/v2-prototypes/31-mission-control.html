@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C Slop Slop · Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c0f; --bg2:#101218; --panel:#13151c; --panel2:#171a22;
+    --line:#23262f; --line2:#2c303b;
+    --ink:#e9eaf0; --ink2:#a7abba; --ink3:#6c7180; --ink4:#4a4f5d;
+    --accent:#6366f1; --accent2:#818cf8; --accentdim:#312e81;
+    --green:#34d399; --blue:#60a5fa; --violet:#a78bfa; --amber:#fbbf24; --red:#f87171; --slate:#94a3b8;
+    --radius:11px; --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(1200px 700px at 78% -10%, #14161f 0%, var(--bg) 55%);
+    color:var(--ink); font-family:Inter,system-ui,sans-serif; font-size:13px;
+    -webkit-font-smoothing:antialiased; overflow:hidden; letter-spacing:.1px;
+  }
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:#262a34;border-radius:9px;border:2px solid transparent;background-clip:padding-box}
+  ::-webkit-scrollbar-thumb:hover{background:#333845;background-clip:padding-box}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .mono{font-family:var(--mono)}
+
+  /* ---------- shell ---------- */
+  #app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+  header{
+    display:flex;align-items:center;gap:14px;padding:11px 18px;
+    border-bottom:1px solid var(--line);background:rgba(15,17,23,.72);backdrop-filter:blur(10px);
+  }
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13px;letter-spacing:.2px}
+  .logo .spark{width:22px;height:22px;border-radius:7px;background:linear-gradient(140deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;font-size:12px;box-shadow:0 0 0 1px #ffffff14, 0 6px 16px -6px var(--accent)}
+  .crumbs{display:flex;align-items:center;gap:7px;color:var(--ink3);font-size:12px;margin-left:6px}
+  .crumbs b{color:var(--ink)}
+  .crumb{cursor:pointer;color:var(--ink3);padding:2px 6px;border-radius:6px;transition:.12s}
+  .crumb:hover{color:var(--ink);background:#ffffff09}
+  .crumb.cur{color:var(--ink);font-weight:600;cursor:default}
+  .crumb.cur:hover{background:none}
+  .sep{color:var(--ink4)}
+  .spacer{flex:1}
+  .kbar{
+    display:flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid var(--line);border-radius:9px;
+    background:var(--panel);color:var(--ink3);font-size:12px;min-width:210px;cursor:text;transition:.15s}
+  .kbar:hover{border-color:var(--line2)}
+  .kbd{font-family:var(--mono);font-size:10.5px;padding:1.5px 5px;border-radius:5px;background:#1c1f28;border:1px solid var(--line2);color:var(--ink2)}
+  .hint{display:flex;gap:5px;align-items:center;color:var(--ink3);font-size:11px}
+  .hint .kbd{font-size:10px}
+
+  main{display:grid;grid-template-columns:260px 1fr 366px;overflow:hidden;min-height:0}
+  .zone{overflow:auto;min-height:0;height:100%}
+  .lz{border-right:1px solid var(--line);background:linear-gradient(180deg,#0e1015,#0c0d12)}
+  .cz{background:transparent}
+  .rz{border-left:1px solid var(--line);background:linear-gradient(180deg,#0e1015,#0c0d12)}
+
+  .zhead{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 9px;position:sticky;top:0;
+    background:linear-gradient(180deg,#0e1015 70%,#0e101500);z-index:5}
+  .zlabel{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink3);font-weight:600}
+  .zcount{font-size:10.5px;color:var(--ink3);font-family:var(--mono)}
+
+  /* ---------- LEFT altitude rail ---------- */
+  .portstat{margin:0 12px 10px;padding:11px 12px;border:1px solid var(--line);border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--panel),var(--panel2));display:grid;grid-template-columns:1fr 1fr;gap:9px 6px}
+  .ps{display:flex;flex-direction:column;gap:1px}
+  .ps .v{font-size:16px;font-weight:700;font-family:var(--mono);letter-spacing:-.4px}
+  .ps .l{font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3)}
+  .ps.alert .v{color:var(--amber)}
+
+  .co{margin:0 8px 4px;padding:9px 10px;border:1px solid transparent;border-radius:10px;cursor:pointer;
+    display:flex;align-items:center;gap:9px;transition:.13s;position:relative}
+  .co:hover{background:#ffffff07;border-color:var(--line)}
+  .co.sel{background:linear-gradient(180deg,#191c26,#15171f);border-color:var(--line2);box-shadow:inset 2px 0 0 var(--accent)}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;box-shadow:0 0 0 3px #ffffff08}
+  .dot.active{background:var(--green)} .dot.paused{background:var(--amber)} .dot.archived{background:var(--slate)}
+  .dot.pulse{animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #34d39955}50%{box-shadow:0 0 0 5px #34d39900}}
+  .co .nm{flex:1;min-width:0}
+  .co .nm .t{font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .co .nm .s{font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--mono)}
+  .co .hn{font-family:var(--mono);font-size:12px;color:var(--ink2);font-weight:600}
+  .needsbadge{font-size:9px;font-weight:700;letter-spacing:.4px;color:#1b1405;background:var(--amber);
+    padding:2px 5px;border-radius:5px;position:absolute;top:7px;right:8px;text-transform:uppercase}
+
+  /* feature list (company focus) */
+  .fhead{margin:12px 14px 6px;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3);font-weight:600}
+  .feat{margin:0 8px 3px;padding:7px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.12s;border:1px solid transparent}
+  .feat:hover{background:#ffffff07;border-color:var(--line)}
+  .feat.sel{background:#181b24;border-color:var(--line2)}
+  .sdot{width:7px;height:7px;border-radius:2px;flex:none}
+  .sdot.todo{background:var(--slate)} .sdot.building{background:var(--blue);animation:pulse2 1.4s infinite}
+  .sdot.awaiting_approval{background:var(--violet)} .sdot.shipped{background:var(--green)} .sdot.blocked{background:var(--red)}
+  @keyframes pulse2{0%,100%{box-shadow:0 0 0 0 #60a5fa55}50%{box-shadow:0 0 0 4px #60a5fa00}}
+  .feat .ft{flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .feat .fn{font-family:var(--mono);font-size:10.5px;color:var(--ink4)}
+  .feat.awaiting_approval .ft{color:var(--violet);font-weight:600}
+
+  /* ---------- CENTER queue ---------- */
+  .qwrap{padding:16px 18px 40px;max-width:760px}
+  .qtitle{display:flex;align-items:baseline;gap:10px;margin-bottom:3px}
+  .qtitle h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+  .qtitle .sub{color:var(--ink3);font-size:12px}
+  .qfilters{display:flex;gap:6px;margin:13px 0 16px;flex-wrap:wrap}
+  .fchip{font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--line);color:var(--ink2);background:var(--panel);transition:.12s}
+  .fchip:hover{border-color:var(--line2);color:var(--ink)}
+  .fchip.on{background:var(--accentdim);border-color:var(--accent);color:#dfe0ff}
+
+  .card{border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,var(--panel),#101219);
+    margin-bottom:11px;overflow:hidden;transition:border-color .15s, box-shadow .15s;position:relative}
+  .card:hover{border-color:var(--line2)}
+  .card.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent), 0 14px 40px -20px var(--accent)}
+  .card.flash-ok{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+  .card.flash-rej{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber)}
+  .card.cursor{box-shadow:inset 3px 0 0 var(--accent2)}
+  .cardtop{display:flex;align-items:flex-start;gap:12px;padding:13px 14px}
+  .glyph{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:16px;
+    background:#181b24;border:1px solid var(--line2);font-family:var(--mono)}
+  .glyph.ship_feature{color:var(--green)} .glyph.tweet{color:var(--ink)} .glyph.cold_batch{color:var(--accent2)}
+  .glyph.support_reply{color:var(--amber)} .glyph.authorize_spend{color:var(--green)}
+  .cmeta{flex:1;min-width:0}
+  .crow1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px}
+  .kindlab{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);font-weight:600}
+  .coname{font-size:11px;color:var(--ink2);font-weight:600;font-family:var(--mono)}
+  .ctitle{font-size:14px;font-weight:600;line-height:1.3;margin:1px 0 6px}
+  .evid{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink2)}
+  .evid .ei{color:var(--ink4)}
+  .evid .rung{font-family:var(--mono);font-size:10px;color:var(--accent2);background:#1a1b2e;border:1px solid #2b2c4a;padding:1px 6px;border-radius:5px}
+  .gatetag{font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:3px 7px;border-radius:6px;white-space:nowrap}
+  .gatetag.gated{color:#2a1d02;background:linear-gradient(180deg,#fcd34d,#f59e0b)}
+  .gatetag.auto{color:#04261a;background:linear-gradient(180deg,#6ee7b7,#34d399)}
+  .actions{display:flex;align-items:center;gap:8px;padding:0 14px 13px;flex-wrap:wrap}
+  .btn{font-size:12px;font-weight:600;padding:7px 13px;border-radius:8px;transition:.12s;border:1px solid transparent}
+  .btn.approve{background:var(--accent);color:#fff;box-shadow:0 6px 16px -8px var(--accent)}
+  .btn.approve:hover{background:#5457e6}
+  .btn.reject{background:var(--panel2);border-color:var(--line2);color:var(--ink2)}
+  .btn.reject:hover{color:var(--ink);border-color:#3a3f4c}
+  .btn.ghost{background:transparent;color:var(--ink3);padding:7px 9px}
+  .btn.ghost:hover{color:var(--ink2)}
+  .akbd{margin-left:auto;display:flex;gap:5px;color:var(--ink4);align-items:center;font-size:10.5px}
+  .doneflag{font-family:var(--mono);font-size:10.5px;color:var(--green);display:flex;align-items:center;gap:5px}
+
+  /* reject feedback */
+  .reject-box{padding:0 14px 13px;display:none}
+  .reject-box.show{display:block}
+  .reject-box textarea{width:100%;background:#0c0e14;border:1px solid var(--line2);border-radius:9px;color:var(--ink);
+    font-family:inherit;font-size:12px;padding:9px 11px;resize:vertical;min-height:54px}
+  .reject-box textarea:focus{outline:none;border-color:var(--accent)}
+  .reject-box .rrow{display:flex;gap:8px;margin-top:8px}
+
+  /* expanded gate */
+  .gate{display:none;border-top:1px solid var(--line);background:#0c0e13}
+  .gate.show{display:block}
+  .gate-inner{padding:14px;display:grid;gap:12px}
+  .gline{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2)}
+  .glabel{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);font-weight:600;min-width:74px}
+  .preview-url{font-family:var(--mono);font-size:11.5px;color:var(--accent2);text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+    border:1px solid #2b2c4a;background:#14152400;padding:4px 9px;border-radius:7px;transition:.12s}
+  .preview-url:hover{background:#191a2e}
+  .live{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+  .donewhen{font-family:var(--mono);font-size:11px;color:var(--green);background:#0b1f17;border:1px solid #1c3a2c;border-radius:8px;padding:9px 11px;display:flex;align-items:flex-start;gap:8px}
+  .diff{background:#0a0b10;border:1px solid var(--line2);border-radius:9px;overflow:auto;font-family:var(--mono);font-size:11.5px;line-height:1.65}
+  .diff .dl{padding:0 12px;white-space:pre;display:block}
+  .diff .add{background:#0e2018;color:#9fe7c4}
+  .diff .ctx{color:var(--ink3)}
+  .diff .dl:first-child{padding-top:9px}.diff .dl:last-child{padding-bottom:9px}
+
+  .draftbox{font-size:12.5px;color:var(--ink);background:#0c0e13;border:1px solid var(--line2);border-left:2px solid var(--accent);
+    border-radius:8px;padding:10px 12px;line-height:1.55;white-space:pre-wrap}
+
+  /* empty / done */
+  .qdone{border:1px dashed var(--line2);border-radius:13px;padding:26px;text-align:center;color:var(--ink3);background:#101219}
+  .qdone .big{font-size:30px;margin-bottom:6px}
+
+  /* evidence ladder mini */
+  .ladder{margin-top:26px;border-top:1px solid var(--line);padding-top:16px}
+  .ladder h3{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+  .lrow{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #16181f}
+  .lrung{width:108px;flex:none;display:flex;align-items:center;gap:7px}
+  .lrung .rb{width:5px;height:18px;border-radius:3px;background:var(--accent);opacity:.9}
+  .lrung .rn{font-size:11.5px;font-weight:600;font-family:var(--mono)}
+  .lcost{width:78px;flex:none;font-size:10px;color:var(--ink4);font-family:var(--mono)}
+  .litems{display:flex;gap:6px;flex-wrap:wrap}
+  .lpill{font-size:10.5px;color:var(--ink2);background:#14161d;border:1px solid var(--line);padding:2px 8px;border-radius:6px}
+
+  /* ---------- RIGHT comms ---------- */
+  .tabs{display:flex;gap:2px;padding:0 12px 10px;position:sticky;top:0;background:linear-gradient(180deg,#0e1015 60%,#0e101500);z-index:5}
+  .tab{flex:1;text-align:center;font-size:11.5px;font-weight:600;padding:7px 4px;border-radius:8px;color:var(--ink3);transition:.12s;position:relative}
+  .tab:hover{color:var(--ink2);background:#ffffff06}
+  .tab.on{color:var(--ink);background:#181b24}
+  .tab .tb{font-size:9px;background:var(--accent);color:#fff;border-radius:10px;padding:0 5px;margin-left:4px;font-weight:700}
+  .pane{display:none;padding:0 12px 24px}
+  .pane.on{display:block}
+
+  /* chat */
+  .msg{margin-bottom:10px;max-width:90%}
+  .msg .who{font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink4);margin-bottom:3px;font-weight:600}
+  .bub{padding:9px 11px;border-radius:11px;font-size:12.5px;line-height:1.5}
+  .msg.assistant .bub{background:var(--panel2);border:1px solid var(--line)}
+  .msg.user{margin-left:auto}
+  .msg.user .who{text-align:right}
+  .msg.user .bub{background:var(--accentdim);border:1px solid #3b378f;color:#e4e3ff}
+  .chatin{display:flex;gap:7px;margin-top:12px;position:sticky;bottom:0;background:linear-gradient(0deg,#0e1015 70%,transparent)}
+  .chatin input{flex:1;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:9px 11px;color:var(--ink);font-family:inherit;font-size:12.5px}
+  .chatin input:focus{outline:none;border-color:var(--accent)}
+  .chatin button{background:var(--accent);color:#fff;border-radius:9px;padding:0 13px;font-weight:600;font-size:12.5px}
+
+  /* outbound + support items */
+  .obloc{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);font-weight:600;margin:14px 2px 8px}
+  .obloc:first-child{margin-top:2px}
+  .ob{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px;margin-bottom:9px}
+  .ob .obh{display:flex;align-items:center;gap:7px;margin-bottom:7px;font-size:11px;flex-wrap:wrap}
+  .stat{font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:5px;text-transform:uppercase}
+  .stat.posted{background:#0b1f17;color:var(--green);border:1px solid #1c3a2c}
+  .stat.draft{background:#2a2102;color:var(--amber);border:1px solid #4a3a08}
+  .stat.answered{background:#11202e;color:var(--blue);border:1px solid #1d3548}
+  .stat.needs{background:#2a1502;color:var(--amber);border:1px solid #4a2c08}
+  .ob .obt{font-size:12.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap}
+  .ob .obstats{font-size:10.5px;color:var(--ink3);font-family:var(--mono);margin-top:7px}
+  .ob .obmeta{font-size:10.5px;color:var(--ink3);font-family:var(--mono)}
+  .miniact{display:flex;gap:6px;margin-top:9px}
+  .miniact .mb{font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px}
+  .miniact .mb.go{background:var(--accent);color:#fff}.miniact .mb.go:hover{background:#5457e6}
+  .miniact .mb.no{background:var(--panel2);border:1px solid var(--line2);color:var(--ink2)}.miniact .mb.no:hover{color:var(--ink)}
+  .signal{font-size:10px;color:var(--amber);background:#241a02;border:1px solid #463308;border-radius:6px;padding:2px 7px;font-weight:600}
+  .candidate{font-size:11px;color:var(--accent2);margin-top:7px;display:flex;align-items:center;gap:6px}
+
+  /* ---------- BOTTOM activity ---------- */
+  footer{border-top:1px solid var(--line);background:rgba(13,14,19,.92);backdrop-filter:blur(10px)}
+  .fcollapsed{display:flex;align-items:center;gap:11px;padding:9px 18px;cursor:pointer}
+  .fcollapsed:hover{background:#ffffff05}
+  .actglyph{width:7px;height:7px;border-radius:50%;flex:none}
+  .fclabel{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);font-weight:600}
+  .fcline{font-size:12px;color:var(--ink2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fcline b{color:var(--ink)}
+  .fct{font-family:var(--mono);font-size:10.5px;color:var(--ink4)}
+  .fchev{color:var(--ink3);transition:.2s;font-size:11px}
+  footer.open .fchev{transform:rotate(180deg)}
+  .fstream{display:none;max-height:230px;overflow:auto;border-top:1px solid var(--line);padding:8px 0}
+  footer.open .fstream{display:block}
+  .ai{display:flex;align-items:center;gap:10px;padding:6px 18px;font-size:12px}
+  .ai:hover{background:#ffffff04}
+  .ai .co{all:unset;font-family:var(--mono);font-size:11px;color:var(--ink2);font-weight:600;min-width:108px;flex:none}
+  .ai .tx{color:var(--ink2);flex:1}
+  .ai .tt{font-family:var(--mono);font-size:10.5px;color:var(--ink4)}
+  .k-building{background:var(--blue)} .k-deploy{background:var(--accent2)} .k-await{background:var(--violet)}
+  .k-check{background:var(--green)} .k-reprioritize{background:var(--slate)} .k-blocked{background:var(--red)}
+  .k-comms{background:var(--amber)}
+  .running{animation:pulse2 1.4s infinite}
+
+  /* corner badge */
+  .badge{position:fixed;right:13px;bottom:54px;z-index:60;font-family:var(--mono);font-size:10.5px;
+    background:rgba(20,22,30,.9);border:1px solid var(--line2);color:var(--ink2);padding:5px 10px;border-radius:8px;
+    box-shadow:0 8px 24px -12px #000;display:flex;align-items:center;gap:7px;pointer-events:none}
+  .badge .n{color:var(--accent2);font-weight:600}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%) translateY(14px);z-index:80;
+    background:#0f1a14;border:1px solid #1f4030;color:#aef0cf;padding:9px 16px;border-radius:10px;font-size:12.5px;font-weight:600;
+    opacity:0;pointer-events:none;transition:.25s;box-shadow:0 12px 30px -12px #000}
+  #toast.rej{background:#1d1604;border-color:#473508;color:#fbe7a8}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .focusnote{font-size:11px;color:var(--ink3);margin:2px 8px 10px;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo"><span class="spark">⚡</span> C Slop Slop</div>
+    <nav class="crumbs" id="crumbs"></nav>
+    <div class="spacer"></div>
+    <div class="hint"><span class="kbd">J</span><span class="kbd">K</span> move · <span class="kbd">E</span> approve · <span class="kbd">R</span> reject · <span class="kbd">Esc</span> back</div>
+    <div class="kbar" onclick="this.querySelector('.flash')&&0"><span>⌘</span><span class="kbd">K</span><span style="margin-left:2px">Command…</span></div>
+  </header>
+
+  <main>
+    <!-- LEFT : altitude rail -->
+    <section class="zone lz">
+      <div class="zhead"><span class="zlabel">Altitude</span><span class="zcount" id="railcount"></span></div>
+      <div id="railbody"></div>
+    </section>
+
+    <!-- CENTER : needs-you queue -->
+    <section class="zone cz">
+      <div class="qwrap">
+        <div class="qtitle">
+          <h1 id="qh1">Needs you</h1>
+          <span class="sub" id="qsub"></span>
+        </div>
+        <div class="qfilters" id="qfilters"></div>
+        <div id="queue"></div>
+        <div class="ladder">
+          <h3>Evidence ladder <span style="color:var(--ink4);font-weight:400;letter-spacing:0;text-transform:none">cheapest validation first — items climb only when the rung below pays off</span></h3>
+          <div id="ladder"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT : two-way comms -->
+    <section class="zone rz">
+      <div class="tabs" id="tabs"></div>
+      <div class="pane on" id="pane-cofounder"></div>
+      <div class="pane" id="pane-outbound"></div>
+      <div class="pane" id="pane-support"></div>
+    </section>
+  </main>
+
+  <!-- BOTTOM : live activity -->
+  <footer id="footer">
+    <div class="fcollapsed" id="fcollapsed">
+      <span class="fclabel">Live</span>
+      <span class="actglyph k-building running"></span>
+      <span class="fcline" id="fcline"></span>
+      <span class="fct" id="fct"></span>
+      <span class="fchev">▾</span>
+    </div>
+    <div class="fstream" id="fstream"></div>
+  </footer>
+</div>
+
+<div class="badge"><span class="n">31</span> · Mission Control</div>
+<div id="toast"></div>
+
+<script>
+/* ============================ DATA (verbatim from _BRIEF.md) ============================ */
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ============================ DATA (verbatim from _BRIEF_3.md) ============================ */
+const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+  { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
+    evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
+    diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
+  { id:'q2', kind:'tweet', company:'LeadSift', title:'Build-in-public post', gated:true, channel:'content', rung:'adoption',
+    evidence:'last post: 2.2k impressions → 14 likes → 3 signups',
+    draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
+  { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
+    evidence:'batch 1: 25 sent → 36% open → 8% reply',
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+  { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
+    evidence:'3rd request this week → candidate feature',
+    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    evidence:'organic SEO page converts 3.1% → worth a paid test' },
+];
+
+const OUTBOUND = {
+  twitter:[ // build-in-public stream
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
+  ],
+  cold:[ // sequences (per company)
+    { company:'TranslatorBill', segment:'cross-border freelancers · 3+ currencies', size:25, step:'batch 2 of 3', stats:'batch 1 → 36% open · 8% reply', status:'draft awaiting approval' },
+  ],
+};
+
+const SUPPORT = [ // inbound = evidence stream
+  { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
+];
+
+const LADDER = [ // evidence rungs, cheapest first → most committed
+  { rung:'thought',      cost:'free',        items:[{label:'“auto-chapter podcasts”', kind:'opportunity'}] },
+  { rung:'score',        cost:'cents',       items:[{label:'PayoutReconciler · 82', kind:'opportunity'},{label:'ChapterForge · 71', kind:'opportunity'}] },
+  { rung:'live',         cost:'agent-hours', items:[{label:'RedditPainBot · skeleton', kind:'company'}] },
+  { rung:'doneWhen',     cost:'one run',     items:[{label:'LeadSift · digest feature', kind:'feature'}] },
+  { rung:'adoption',     cost:'traffic',     items:[{label:'QuietInbox · snooze', kind:'feature'},{label:'TranslatorBill · cold batch', kind:'campaign'}] },
+  { rung:'test-payment', cost:'a feature',   items:[{label:'DataDrop · ads test', kind:'campaign'},{label:'LeadSift · Stripe test', kind:'feature'}] },
+  { rung:'MRR',          cost:'real money',  items:[{label:'QuietInbox · $420', kind:'company'},{label:'LeadSift · $180', kind:'company'}] },
+];
+
+const ACTION_KIND = { // labels + glyphs for the universal queue
+  ship_feature:    { label:'Ship feature',     glyph:'⚡' },
+  tweet:           { label:'Post (build-in-public)', glyph:'𝕏' },
+  cold_batch:      { label:'Cold outreach',     glyph:'✉' },
+  support_reply:   { label:'Support reply',     glyph:'❝' },
+  authorize_spend: { label:'Authorize spend',   glyph:'$' },
+};
+
+/* ============================ STATE ============================ */
+const $ = s => document.querySelector(s);
+let state = {
+  altitude:'portfolio',   // portfolio | company | feature
+  companyId:null,
+  sliceN:null,
+  filter:'all',
+  tab:'cofounder',
+  cursor:0,               // queue keyboard cursor index
+  resolved:{},            // queue item id -> 'approved'|'rejected'
+  expanded:{ q1:true },   // gate expanded
+  chat:[...DATA.chat],
+};
+
+const COMP = id => DATA.companies.find(c=>c.id===id);
+const slicesOf = c => c.slices ? c.slices : (c.currentSlice?[c.currentSlice]:[]);
+const slicesShippedOf = c => c.slices ? c.slices.filter(s=>s.status==='shipped').length : (c.slicesShipped||0);
+
+/* ============================ TOAST ============================ */
+let toastT;
+function toast(msg, rej){
+  const t=$('#toast'); t.textContent=msg; t.className='show'+(rej?' rej':'');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.className='',1900);
+}
+
+/* ============================ CRUMBS ============================ */
+function renderCrumbs(){
+  const c = state.companyId ? COMP(state.companyId) : null;
+  let h = `<span class="crumb ${state.altitude==='portfolio'?'cur':''}" onclick="goPortfolio()">Portfolio</span>`;
+  if(c){
+    h += `<span class="sep">›</span><span class="crumb ${state.altitude==='company'?'cur':''}" onclick="goCompany('${c.id}')">${c.name}</span>`;
+    if(state.altitude==='feature' && state.sliceN!=null){
+      h += `<span class="sep">›</span><span class="crumb cur">Slice ${state.sliceN}</span>`;
+    }
+  }
+  $('#crumbs').innerHTML = h;
+}
+
+/* ============================ LEFT RAIL ============================ */
+function renderRail(){
+  const body = $('#railbody');
+  if(state.altitude==='portfolio'){
+    $('#railcount').textContent = DATA.companies.length+' companies';
+    const p = DATA.portfolio;
+    let h = `<div class="portstat">
+      <div class="ps"><span class="v">$${p.mrr}</span><span class="l">MRR</span></div>
+      <div class="ps"><span class="v">${p.users}</span><span class="l">Users</span></div>
+      <div class="ps"><span class="v">${p.slicesShipped}</span><span class="l">Slices shipped</span></div>
+      <div class="ps alert"><span class="v">${p.needsYou}</span><span class="l">Needs you</span></div>
+    </div>`;
+    DATA.companies.forEach(c=>{
+      const head = c.mrr ? '$'+c.mrr : (c.status==='paused'?'paused':'$0');
+      const sub = c.currentSlice ? ('slice '+c.currentSlice.n+' · '+c.currentSlice.status) : (slicesShippedOf(c)+' slices shipped');
+      const pulse = (c.currentSlice && c.currentSlice.status==='building') ? ' pulse' : '';
+      h += `<div class="co ${state.companyId===c.id?'sel':''}" onclick="goCompany('${c.id}')">
+        <span class="dot ${c.status}${pulse}"></span>
+        <span class="nm"><span class="t">${c.name}</span><span class="s">${sub}</span></span>
+        <span class="hn">${head}</span>
+        ${c.needsYou?'<span class="needsbadge">needs you</span>':''}
+      </div>`;
+    });
+    body.innerHTML = h;
+  } else {
+    const c = COMP(state.companyId);
+    $('#railcount').textContent = c.status;
+    const dotsub = c.thesis;
+    let h = `<div class="portstat">
+      <div class="ps"><span class="v">$${c.mrr}</span><span class="l">MRR</span></div>
+      <div class="ps"><span class="v">${c.users}</span><span class="l">Users</span></div>
+      <div class="ps"><span class="v">${slicesShippedOf(c)}</span><span class="l">Shipped</span></div>
+      <div class="ps"><span class="v" style="font-size:13px;color:var(--ink2)">${c.domain||'—'}</span><span class="l">Domain</span></div>
+    </div>
+    <div class="focusnote">${dotsub}</div>
+    <div class="fhead">Slices</div>`;
+    slicesOf(c).forEach(s=>{
+      h += `<div class="feat ${s.status} ${state.sliceN===s.n?'sel':''}" onclick="goFeature(${s.n})">
+        <span class="sdot ${s.status}"></span>
+        <span class="ft">${s.title}</span>
+        <span class="fn">#${s.n}</span>
+      </div>`;
+    });
+    body.innerHTML = h;
+  }
+}
+
+/* ============================ CENTER QUEUE ============================ */
+const KINDS = ['all','ship_feature','tweet','cold_batch','support_reply','authorize_spend'];
+function renderFilters(){
+  $('#qfilters').innerHTML = KINDS.map(k=>{
+    const lab = k==='all'?'All':(ACTION_KIND[k].glyph+' '+ACTION_KIND[k].label);
+    return `<button class="fchip ${state.filter===k?'on':''}" onclick="setFilter('${k}')">${lab}</button>`;
+  }).join('');
+}
+function setFilter(k){ state.filter=k; state.cursor=0; renderQueue(); }
+
+function visibleQueue(){
+  let q = QUEUE.filter(item=>{
+    if(state.resolved[item.id]) return false;
+    if(state.filter!=='all' && item.kind!==state.filter) return false;
+    if(state.altitude==='company' && COMP(state.companyId).name!==item.company) return false;
+    if(state.altitude==='feature'){
+      // feature altitude: only the matching ship_feature item (q1 -> slice 5)
+      const c = COMP(state.companyId);
+      return item.kind==='ship_feature' && item.company===c.name;
+    }
+    return true;
+  });
+  return q;
+}
+
+function renderQueue(){
+  const q = visibleQueue();
+  const pendingTotal = QUEUE.filter(i=>!state.resolved[i.id]).length;
+  $('#qsub').textContent = pendingTotal+' open · same shape: preview + evidence + approve/reject';
+  if(state.cursor>=q.length) state.cursor=Math.max(0,q.length-1);
+
+  if(!q.length){
+    $('#queue').innerHTML = `<div class="qdone"><div class="big">✓</div>
+      <div style="color:var(--ink);font-weight:600;font-size:14px">Inbox zero</div>
+      <div style="margin-top:4px">Nothing awaiting you${state.altitude!=='portfolio'?' here':''}. Agents keep building; reversible features auto-ship.</div></div>`;
+    return;
+  }
+
+  $('#queue').innerHTML = q.map((item,idx)=>cardHTML(item,idx)).join('');
+}
+
+function cardHTML(item, idx){
+  const ak = ACTION_KIND[item.kind];
+  const isCursor = idx===state.cursor;
+  const gateOpen = item.kind==='ship_feature' && state.expanded[item.id];
+  const gateMark = item.gated
+    ? `<span class="gatetag gated">⚠ you must approve</span>`
+    : (item.autopilot ? `<span class="gatetag auto">autopilot can ship</span>` : '');
+  const evRung = item.rung ? `<span class="rung">${item.rung}</span>` : '';
+
+  let body='';
+  // draft preview for comms-shaped items
+  if(item.draft){
+    body = `<div class="actions" style="padding-top:0"><div class="draftbox" style="width:100%">${esc(item.draft)}</div></div>`;
+  }
+  if(item.kind==='authorize_spend'){
+    body = `<div class="actions" style="padding-top:0"><div class="draftbox" style="width:100%">Channel: Google Ads · Keyword “csv to dashboard”<br>Daily cap: $50 · reversible: pause anytime · result returns as evidence.</div></div>`;
+  }
+
+  // expanded gate for ship_feature
+  let gate='';
+  if(item.kind==='ship_feature'){
+    const c = COMP('leadsift'); const ap = c.approval;
+    gate = `<div class="gate ${gateOpen?'show':''}" id="gate-${item.id}">
+      <div class="gate-inner">
+        <div class="gline"><span class="glabel">Preview</span>
+          <a class="preview-url" href="${item.previewUrl}" target="_blank" rel="noopener"><span class="live"></span>${item.previewUrl} ↗</a>
+        </div>
+        <div class="gline"><span class="glabel">doneWhen</span></div>
+        <div class="donewhen"><span style="color:var(--green)">✓</span><span>${esc(ap.doneWhen)} — <b>${ap.checkResult}</b> (attempt ${ap.attempt})</span></div>
+        <div class="gline"><span class="glabel">Diff</span><span style="color:var(--ink4);font-size:10.5px">slice ${ap.slice} · ${esc(ap.title)}</span></div>
+        <div class="diff">${diffHTML(item.diff)}</div>
+      </div>
+    </div>`;
+  }
+
+  const expandBtn = item.kind==='ship_feature'
+    ? `<button class="btn ghost" onclick="toggleGate('${item.id}')">${gateOpen?'Hide gate ▴':'Open gate ▾'}</button>` : '';
+
+  return `<div class="card ${isCursor?'cursor':''}" id="card-${item.id}" data-id="${item.id}">
+    <div class="cardtop">
+      <div class="glyph ${item.kind}">${ak.glyph}</div>
+      <div class="cmeta">
+        <div class="crow1">
+          <span class="kindlab">${ak.label}</span>
+          <span class="coname">${item.company}</span>
+          ${gateMark}
+        </div>
+        <div class="ctitle">${esc(item.title)}</div>
+        <div class="evid"><span class="ei">evidence</span> ${esc(item.evidence||'')} ${evRung}</div>
+      </div>
+    </div>
+    ${body}
+    ${gate}
+    <div class="actions">
+      <button class="btn approve" onclick="approve('${item.id}')">${approveLabel(item)}</button>
+      <button class="btn reject" onclick="toggleReject('${item.id}')">Reject…</button>
+      ${expandBtn}
+      <span class="akbd"><span class="kbd">E</span> approve <span class="kbd">R</span> reject</span>
+    </div>
+    <div class="reject-box" id="rej-${item.id}">
+      <textarea placeholder="What's wrong? This goes back to the agent as feedback to revise…"></textarea>
+      <div class="rrow">
+        <button class="btn approve" style="background:var(--amber);color:#1b1405" onclick="sendReject('${item.id}')">Send feedback ↩</button>
+        <button class="btn ghost" onclick="toggleReject('${item.id}')">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+function approveLabel(item){
+  if(item.kind==='ship_feature') return 'Approve & ship ✓';
+  if(item.kind==='tweet') return 'Approve & post ✓';
+  if(item.kind==='cold_batch') return 'Approve & send batch ✓';
+  if(item.kind==='support_reply') return 'Approve & reply ✓';
+  if(item.kind==='authorize_spend') return 'Authorize $'+item.amountUsd+' ✓';
+  return 'Approve ✓';
+}
+function diffHTML(raw){
+  return raw.split('\n').map(l=>{
+    const cls = l.startsWith('+') ? 'add' : (l.trim().startsWith('//')||l.startsWith(' ')?'ctx':'ctx');
+    return `<span class="dl ${cls}">${esc(l)||' '}</span>`;
+  }).join('');
+}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function toggleGate(id){ state.expanded[id]=!state.expanded[id]; renderQueue(); }
+
+/* approve / reject */
+function approve(id){
+  const item = QUEUE.find(i=>i.id===id);
+  const card = $('#card-'+id);
+  if(card){ card.classList.add('flash-ok'); }
+  const verb = {ship_feature:'shipped',tweet:'posted',cold_batch:'batch sent',support_reply:'reply sent',authorize_spend:'spend authorized'}[item.kind];
+  toast('Approved ✓  '+item.company+' — '+verb);
+  pushActivity(item.company, 'comms', commsLine(item,verb));
+  if(item.kind==='ship_feature') pushActivity(item.company,'check','slice 5 approved & shipped — daily digest live');
+  setTimeout(()=>{ state.resolved[id]='approved'; renderAll(); }, 560);
+}
+function commsLine(item,verb){
+  if(item.kind==='tweet') return 'build-in-public post '+verb+' → tracking impressions';
+  if(item.kind==='cold_batch') return 'cold batch 2 of 3 '+verb+' (25 emails)';
+  if(item.kind==='support_reply') return 'support reply '+verb+' to maria@acme.co';
+  if(item.kind==='authorize_spend') return '$'+item.amountUsd+' Google Ads test authorized → live';
+  return verb;
+}
+function toggleReject(id){
+  const box = $('#rej-'+id);
+  box.classList.toggle('show');
+  if(box.classList.contains('show')) box.querySelector('textarea').focus();
+}
+function sendReject(id){
+  const item = QUEUE.find(i=>i.id===id);
+  const card = $('#card-'+id);
+  if(card) card.classList.add('flash-rej');
+  toast('Sent to agent ↩  feedback recorded — '+item.company+' will revise', true);
+  pushActivity(item.company,'comms','reject-with-feedback → agent revising '+item.kind.replace('_',' '));
+  setTimeout(()=>{ state.resolved[id]='rejected'; renderAll(); }, 560);
+}
+
+/* ============================ LADDER ============================ */
+function renderLadder(){
+  $('#ladder').innerHTML = LADDER.map(r=>`
+    <div class="lrow">
+      <div class="lrung"><span class="rb"></span><span class="rn">${r.rung}</span></div>
+      <div class="lcost">${r.cost}</div>
+      <div class="litems">${r.items.map(i=>`<span class="lpill">${esc(i.label)}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+/* ============================ RIGHT COMMS ============================ */
+function renderTabs(){
+  const supN = SUPPORT.filter(t=>t.status==='needs_reply').length;
+  const obN = OUTBOUND.twitter.filter(t=>t.status==='draft').length + OUTBOUND.cold.filter(c=>/draft/.test(c.status)).length;
+  $('#tabs').innerHTML = `
+    <button class="tab ${state.tab==='cofounder'?'on':''}" onclick="setTab('cofounder')">Co-founder</button>
+    <button class="tab ${state.tab==='outbound'?'on':''}" onclick="setTab('outbound')">Outbound${obN?`<span class="tb">${obN}</span>`:''}</button>
+    <button class="tab ${state.tab==='support'?'on':''}" onclick="setTab('support')">Support${supN?`<span class="tb">${supN}</span>`:''}</button>`;
+}
+function setTab(t){
+  state.tab=t;
+  ['cofounder','outbound','support'].forEach(x=>{
+    $('#pane-'+x).classList.toggle('on', x===t);
+  });
+  renderTabs();
+}
+
+function renderCofounder(){
+  let h = state.chat.map(m=>`
+    <div class="msg ${m.role}">
+      <div class="who">${m.role==='assistant'?'Co-founder agent':'You'}</div>
+      <div class="bub">${esc(m.text)}</div>
+    </div>`).join('');
+  h += `<div class="chatin">
+    <input id="chatinput" placeholder="Direct the build…  ⏎ to send" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">↑</button>
+  </div>`;
+  $('#pane-cofounder').innerHTML = h;
+}
+function sendChat(){
+  const inp=$('#chatinput'); const v=inp.value.trim(); if(!v) return;
+  state.chat.push({role:'user',text:v});
+  state.chat.push({role:'assistant',text:'On it — that maps to the LeadSift digest gate in your queue. Open the gate to see the diff + green check, then approve to ship.'});
+  inp.value=''; renderCofounder();
+  const p=$('#pane-cofounder'); p.scrollTop=p.scrollHeight;
+}
+
+function renderOutbound(){
+  let h = `<div class="obloc">𝕏 Build-in-public</div>`;
+  OUTBOUND.twitter.forEach((t,i)=>{
+    const isDraft = t.status==='draft';
+    h += `<div class="ob">
+      <div class="obh"><span class="stat ${isDraft?'draft':'posted'}">${t.status}</span><span class="obmeta">${t.t}</span></div>
+      <div class="obt">${esc(t.text)}</div>
+      <div class="obstats">${esc(t.stats)}</div>
+      ${isDraft?`<div class="miniact">
+        <button class="mb go" onclick="obAct(this,'post')">Approve &amp; post</button>
+        <button class="mb no" onclick="obAct(this,'reject')">Reject…</button></div>`:''}
+    </div>`;
+  });
+  h += `<div class="obloc">✉ Cold reach</div>`;
+  OUTBOUND.cold.forEach(c=>{
+    h += `<div class="ob">
+      <div class="obh"><span class="stat draft">draft</span><span class="coname">${c.company}</span></div>
+      <div class="obt" style="color:var(--ink2);font-size:12px">${esc(c.segment)}</div>
+      <div class="obstats">${c.size} contacts · ${esc(c.step)} · ${esc(c.stats)}</div>
+      <div class="miniact">
+        <button class="mb go" onclick="obAct(this,'batch')">Approve batch</button>
+        <button class="mb no" onclick="obAct(this,'reject')">Edit…</button></div>
+    </div>`;
+  });
+  $('#pane-outbound').innerHTML = h;
+}
+function obAct(btn, kind){
+  const ob = btn.closest('.ob');
+  if(kind==='reject'){ toast('Sent back for edit ↩', true); pushActivity('Outbound','comms','outbound draft returned for edit'); return; }
+  const msg = kind==='post' ? 'Posted to 𝕏 ✓' : 'Cold batch sent ✓ (25)';
+  ob.querySelector('.miniact').remove();
+  const st = ob.querySelector('.stat'); st.className='stat posted'; st.textContent='sent';
+  toast(msg);
+  pushActivity('Outbound','comms', kind==='post'?'build-in-public post sent → tracking':'cold batch 2 of 3 sent (25 emails)');
+}
+
+function renderSupport(){
+  $('#pane-support').innerHTML = SUPPORT.map(t=>{
+    const needs = t.status==='needs_reply';
+    return `<div class="ob">
+      <div class="obh">
+        <span class="stat ${needs?'needs':'answered'}">${needs?'needs reply':'answered'}</span>
+        <span class="coname">${t.company}</span><span class="obmeta">${esc(t.user)}</span>
+      </div>
+      <div class="obt" style="font-weight:600;font-size:12.5px;margin-bottom:4px">${esc(t.subject)}</div>
+      <div class="obt" style="color:var(--ink2);font-size:12px">${esc(t.body)}</div>
+      <div class="candidate">↳ <span class="signal">signal: ${esc(t.signal)}</span></div>
+      ${needs?`<div class="miniact">
+        <button class="mb go" onclick="supAct(this,'reply')">Draft &amp; approve reply</button>
+        <button class="mb no" onclick="supAct(this,'feature')">→ candidate feature</button></div>`:''}
+    </div>`;
+  }).join('');
+}
+function supAct(btn, kind){
+  const ob = btn.closest('.ob');
+  if(kind==='feature'){ toast('Logged as candidate feature ✓'); pushActivity('Support','comms','support signal → candidate feature created'); return; }
+  ob.querySelector('.miniact').remove();
+  const st = ob.querySelector('.stat'); st.className='stat answered'; st.textContent='answered';
+  toast('Reply sent ✓ — recorded as evidence');
+  pushActivity('Support','comms','support reply sent → logged as adoption evidence');
+}
+
+/* ============================ BOTTOM ACTIVITY ============================ */
+let liveFeed = DATA.activity.map(a=>({...a}));
+function renderActivity(){
+  const latest = liveFeed[0];
+  $('#fcline').innerHTML = `<b>${latest.co}</b> · ${esc(latest.text)}`;
+  $('#fct').textContent = latest.t;
+  $('#fcollapsed').querySelector('.actglyph').className = 'actglyph k-'+latest.kind+(latest.running?' running':'');
+  $('#fstream').innerHTML = liveFeed.map(a=>`
+    <div class="ai">
+      <span class="actglyph k-${a.kind}${a.running?' running':''}"></span>
+      <span class="co">${a.co}</span>
+      <span class="tx">${esc(a.text)}</span>
+      <span class="tt">${a.t}</span>
+    </div>`).join('');
+}
+function pushActivity(co, kind, text){
+  liveFeed.unshift({co, kind, text, t:'now'});
+  renderActivity();
+}
+$('#fcollapsed').onclick = ()=> $('#footer').classList.toggle('open');
+
+/* simulated live tick */
+setInterval(()=>{
+  liveFeed.forEach(a=>{ if(/^\d+s$/.test(a.t)){ a.t=(parseInt(a.t)+3)+'s'; } });
+  if(liveFeed[0] && liveFeed[0].t==='now') liveFeed[0].t='3s';
+  renderActivity();
+}, 3000);
+
+/* ============================ NAV ============================ */
+function goPortfolio(){ state.altitude='portfolio'; state.companyId=null; state.sliceN=null; state.cursor=0; renderAll(); }
+function goCompany(id){ state.altitude='company'; state.companyId=id; state.sliceN=null; state.cursor=0; renderAll(); }
+function goFeature(n){ state.altitude='feature'; state.sliceN=n; state.cursor=0; renderAll(); }
+function back(){
+  if(state.altitude==='feature'){ state.altitude='company'; state.sliceN=null; }
+  else if(state.altitude==='company'){ goPortfolio(); return; }
+  renderAll();
+}
+
+/* ============================ KEYBOARD ============================ */
+document.addEventListener('keydown', e=>{
+  const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if(e.key==='Escape'){ if(typing){document.activeElement.blur();return;} back(); return; }
+  if(typing) return;
+  const q = visibleQueue();
+  if(e.key==='j'||e.key==='ArrowDown'){ state.cursor=Math.min(q.length-1,state.cursor+1); renderQueue(); scrollCursor(); e.preventDefault(); }
+  else if(e.key==='k'||e.key==='ArrowUp'){ state.cursor=Math.max(0,state.cursor-1); renderQueue(); scrollCursor(); e.preventDefault(); }
+  else if(e.key==='e'||e.key==='E'){ if(q[state.cursor]) approve(q[state.cursor].id); }
+  else if(e.key==='r'||e.key==='R'){ if(q[state.cursor]) toggleReject(q[state.cursor].id); }
+});
+function scrollCursor(){
+  const q=visibleQueue(); if(!q[state.cursor])return;
+  const el=$('#card-'+q[state.cursor].id); if(el) el.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+/* ============================ RENDER ALL ============================ */
+function renderAll(){
+  renderCrumbs(); renderRail(); renderFilters(); renderQueue(); renderLadder();
+  renderTabs(); renderCofounder(); renderOutbound(); renderSupport(); renderActivity();
+}
+renderAll();
+</script>
+</body>
+</html>

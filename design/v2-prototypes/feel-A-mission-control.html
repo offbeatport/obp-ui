@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift · Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#100d0b;
+    --panel:#1a1613;
+    --panel-2:#211b16;
+    --panel-3:#28211b;
+    --line:rgba(255,240,230,.08);
+    --line-2:rgba(255,240,230,.15);
+    --ink:#f3ece5;
+    --soft:#a99e93;
+    --dim:#6f665d;
+    --terra:#e0794e;
+    --terra-soft:rgba(224,121,78,.16);
+    --green:#47d18a;
+    --green-soft:rgba(71,209,138,.14);
+    --blue:#6aa6f0;
+    --blue-soft:rgba(106,166,240,.14);
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --disp:'Space Grotesk',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--disp);
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    min-height:100vh;
+    position:relative;
+  }
+
+  /* ---------- ambient background ---------- */
+  .ambient{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55;mix-blend-mode:screen}
+  .blob.terra{width:720px;height:720px;top:-260px;left:-160px;
+    background:radial-gradient(circle,rgba(224,121,78,.42),transparent 62%);
+    animation:drift1 26s ease-in-out infinite}
+  .blob.blue{width:640px;height:640px;bottom:-280px;right:-140px;
+    background:radial-gradient(circle,rgba(106,166,240,.30),transparent 62%);
+    animation:drift2 32s ease-in-out infinite}
+  .blob.green{width:420px;height:420px;top:44%;left:38%;
+    background:radial-gradient(circle,rgba(71,209,138,.16),transparent 60%);
+    animation:drift3 38s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,50px) scale(1.12)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-70px,-40px) scale(1.1)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-60px) scale(1.15)}}
+  .grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,240,230,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,240,230,.045) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask:radial-gradient(circle at 50% 34%,#000,transparent 78%);
+            mask:radial-gradient(circle at 50% 34%,#000,transparent 78%);}
+  .vignette{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(circle at 50% 40%,transparent 40%,rgba(0,0,0,.55) 100%)}
+  .scanline{position:fixed;left:0;right:0;height:1px;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(224,121,78,.5),transparent);
+    opacity:.5;animation:scan 9s linear infinite}
+  @keyframes scan{0%{top:-2%}100%{top:102%}}
+
+  /* ---------- shell ---------- */
+  .shell{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:26px 30px 46px}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:16px}
+  .mark{width:48px;height:48px;border-radius:13px;flex:none;display:grid;place-items:center;
+    background:linear-gradient(150deg,#2a201a,#191310);
+    border:1px solid rgba(224,121,78,.35);
+    box-shadow:0 0 0 1px rgba(0,0,0,.4),0 0 26px rgba(224,121,78,.35),inset 0 1px 0 rgba(255,255,255,.05);
+    position:relative}
+  .mark svg{width:26px;height:26px;filter:drop-shadow(0 0 6px rgba(224,121,78,.7))}
+  .mark::after{content:"";position:absolute;inset:-1px;border-radius:13px;
+    box-shadow:0 0 22px rgba(224,121,78,.4);animation:markpulse 3.4s ease-in-out infinite}
+  @keyframes markpulse{0%,100%{opacity:.5}50%{opacity:1}}
+  .brand h1{font-size:23px;font-weight:600;letter-spacing:-.5px;line-height:1;display:flex;align-items:baseline;gap:10px}
+  .ver{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--terra);
+    background:var(--terra-soft);padding:3px 7px;border-radius:5px;letter-spacing:0}
+  .brand .sub{display:flex;align-items:center;gap:10px;margin-top:7px;font-size:12.5px;color:var(--soft)}
+  .brand .sub .dom{font-family:var(--mono);color:var(--soft)}
+  .status{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--green);
+    font-weight:500}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;position:relative}
+  .dot.g{background:var(--green);box-shadow:0 0 10px var(--green)}
+  .dot.g::after,.dot.t::after,.dot.b::after{content:"";position:absolute;inset:0;border-radius:50%;
+    animation:ping 2.4s ease-out infinite}
+  .dot.g::after{box-shadow:0 0 0 0 rgba(71,209,138,.6);background:transparent}
+  .dot.t{background:var(--terra);box-shadow:0 0 10px var(--terra)}
+  .dot.b{background:var(--blue);box-shadow:0 0 10px var(--blue)}
+  @keyframes ping{0%{box-shadow:0 0 0 0 rgba(71,209,138,.5)}100%{box-shadow:0 0 0 9px rgba(71,209,138,0)}}
+
+  nav{display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.28);
+    border:1px solid var(--line);border-radius:12px;padding:5px}
+  nav a{font-size:13px;font-weight:500;color:var(--soft);text-decoration:none;
+    padding:8px 14px;border-radius:8px;transition:.2s;letter-spacing:-.1px}
+  nav a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  nav a.on{color:var(--ink);background:linear-gradient(180deg,rgba(224,121,78,.22),rgba(224,121,78,.08));
+    box-shadow:inset 0 0 0 1px rgba(224,121,78,.4),0 0 18px rgba(224,121,78,.18)}
+
+  /* ---------- mission line ---------- */
+  .mission{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .mission .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--terra);
+    text-transform:uppercase}
+  .mission p{font-size:19px;font-weight:400;color:var(--ink);letter-spacing:-.3px;line-height:1.3}
+  .mission p b{font-weight:600}
+  .mission .rule{flex:1;height:1px;min-width:40px;
+    background:linear-gradient(90deg,rgba(224,121,78,.4),transparent)}
+
+  /* ---------- stats strip ---------- */
+  .stats{display:grid;grid-template-columns:1.55fr 1fr 1fr 1fr;gap:14px;margin-bottom:22px}
+  .card{background:linear-gradient(180deg,var(--panel),#161210);
+    border:1px solid var(--line);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0;border-radius:16px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);pointer-events:none}
+  .k-label{font-family:var(--mono);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--dim)}
+  .k-val{font-size:34px;font-weight:600;letter-spacing:-1.2px;margin-top:6px;line-height:1;
+    font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:8px}
+  .k-val small{font-size:14px;font-weight:500;color:var(--soft)}
+  .delta{font-size:12.5px;font-weight:500;margin-top:9px;display:inline-flex;align-items:center;gap:6px;
+    font-variant-numeric:tabular-nums}
+  .delta.up{color:var(--green)}
+  .delta .chip{background:var(--green-soft);color:var(--green);padding:2px 6px;border-radius:5px;
+    font-family:var(--mono);font-size:11px}
+  .mrr-card{display:grid;grid-template-columns:1fr 1.05fr;gap:16px;align-items:center}
+  .spark{position:relative}
+  .spark svg{width:100%;height:74px;display:block;overflow:visible}
+  .spark .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:1.4px;color:var(--dim);text-transform:uppercase;margin-bottom:2px}
+  .end-dot{fill:var(--terra)}
+  .stat-mini .k-val{font-size:27px}
+
+  /* ---------- main grid ---------- */
+  .grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);gap:20px;align-items:stretch}
+  .col{display:flex;flex-direction:column;gap:20px;min-height:0}
+
+  .panel{background:linear-gradient(180deg,var(--panel),#151110);
+    border:1px solid var(--line);border-radius:20px;position:relative;overflow:hidden;
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9)}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 20px;border-bottom:1px solid var(--line)}
+  .panel-head .lhs{display:flex;align-items:center;gap:11px}
+  .panel-title{font-size:15px;font-weight:600;letter-spacing:-.2px}
+  .pill{font-family:var(--mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;
+    padding:4px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}
+  .pill.t{color:var(--terra);background:var(--terra-soft);border:1px solid rgba(224,121,78,.3)}
+  .pill.g{color:var(--green);background:var(--green-soft);border:1px solid rgba(71,209,138,.3)}
+
+  /* ---------- journey / watch it work ---------- */
+  .journey{flex:none}
+  .problem{padding:15px 20px 4px;display:flex;align-items:flex-start;gap:11px}
+  .problem .ic{color:var(--terra);font-size:14px;margin-top:1px}
+  .problem p{font-family:'Spectral',serif;font-style:italic;font-size:15.5px;color:var(--soft);line-height:1.4}
+  .stage{position:relative;height:322px;margin:8px 20px 0;border-radius:16px;
+    background:radial-gradient(120% 120% at 50% 0%,#241c16,#120e0c);
+    border:1px solid var(--line);overflow:hidden}
+  .stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 42%,rgba(224,121,78,.10),transparent 70%)}
+  .frame{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;padding:26px;opacity:0;transform:translateY(14px) scale(.985);
+    transition:opacity .6s ease,transform .6s ease;pointer-events:none}
+  .frame.on{opacity:1;transform:none;pointer-events:auto}
+  .frame .cue{font-family:var(--mono);font-size:11px;letter-spacing:1.4px;color:var(--terra);text-transform:uppercase}
+  .frame .headline{font-size:18px;font-weight:500;text-align:center;max-width:340px;line-height:1.35;letter-spacing:-.3px}
+  .frame .headline b{color:var(--terra);font-weight:600}
+
+  /* frame 1 webform */
+  .mini-form{width:270px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;
+    padding:15px;box-shadow:0 20px 40px -24px #000}
+  .mini-form .fh{font-size:12px;color:var(--soft);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+  .mini-form .row{height:26px;border-radius:7px;background:rgba(255,255,255,.05);margin-bottom:8px;
+    display:flex;align-items:center;padding:0 10px;font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .mini-form .row.typed{color:var(--soft)}
+  .submit-btn{margin-top:4px;height:32px;border-radius:8px;background:linear-gradient(180deg,#e88a5f,#d76c3f);
+    color:#1a0f08;font-weight:600;font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:7px;
+    box-shadow:0 0 20px rgba(224,121,78,.5);animation:press 2.4s ease-in-out infinite}
+  @keyframes press{0%,72%,100%{transform:scale(1);box-shadow:0 0 20px rgba(224,121,78,.4)}
+    80%{transform:scale(.95);box-shadow:0 0 30px rgba(224,121,78,.75)}}
+
+  /* frame 2 score */
+  .score-wrap{position:relative;width:172px;height:172px;display:grid;place-items:center}
+  .score-wrap svg{position:absolute;inset:0}
+  .score-num{font-size:52px;font-weight:600;letter-spacing:-2px;font-variant-numeric:tabular-nums;
+    color:var(--green);text-shadow:0 0 24px rgba(71,209,138,.6)}
+  .score-lab{font-family:var(--mono);font-size:10px;letter-spacing:1.6px;color:var(--soft);text-transform:uppercase;margin-top:-6px}
+  .score-lead{font-size:13px;color:var(--soft)}
+  .score-lead b{color:var(--ink);font-weight:600}
+
+  /* frame 3 digest email */
+  .email{width:320px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;overflow:hidden;
+    box-shadow:0 26px 50px -26px #000}
+  .email .ehead{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .email .efrom{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft)}
+  .email .efrom .ei{width:20px;height:20px;border-radius:6px;background:var(--terra-soft);display:grid;place-items:center}
+  .email .efrom .ei svg{width:12px;height:12px}
+  .email .etime{font-family:var(--mono);font-size:10px;color:var(--dim)}
+  .email .esub{padding:11px 14px 4px;font-size:13.5px;font-weight:600}
+  .email .lead-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:8px 14px;border-top:1px solid var(--line)}
+  .email .lead-row .who{font-size:12.5px}
+  .email .lead-row .who span{display:block;font-size:10.5px;color:var(--dim);font-family:var(--mono);margin-top:1px}
+  .scorepill{font-family:var(--mono);font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px}
+  .scorepill.hi{color:var(--green);background:var(--green-soft)}
+  .scorepill.mid{color:var(--blue);background:var(--blue-soft)}
+  .scorepill.lo{color:var(--soft);background:rgba(255,255,255,.06)}
+  .email .efoot{padding:10px 14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  .verified{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:500;color:var(--green);
+    background:var(--green-soft);border:1px solid rgba(71,209,138,.35);padding:4px 10px;border-radius:20px}
+
+  /* stepper */
+  .stepper{display:flex;gap:10px;padding:16px 20px 20px}
+  .step{flex:1;text-align:left;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+  .step .bar{height:3px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;position:relative}
+  .step .bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--terra);
+    box-shadow:0 0 10px rgba(224,121,78,.7);border-radius:3px}
+  .step.done .bar i{width:100%;transition:none}
+  .step.active .bar i{animation:fill var(--dur,3200ms) linear forwards}
+  @keyframes fill{from{width:0}to{width:100%}}
+  .step .lab{font-size:11px;color:var(--dim);margin-top:9px;transition:color .3s;line-height:1.35;
+    display:flex;gap:6px;align-items:flex-start}
+  .step .lab em{font-family:var(--mono);font-style:normal;color:var(--dim)}
+  .step.active .lab,.step.done .lab{color:var(--soft)}
+  .step.active .lab em{color:var(--terra)}
+
+  /* ---------- live activity ---------- */
+  .live{flex:1;min-height:0;display:flex;flex-direction:column}
+  .log{flex:1;overflow:hidden;padding:6px 14px 14px;display:flex;flex-direction:column;gap:2px}
+  .logline{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:10px;
+    padding:8px 8px;border-radius:9px;font-family:var(--mono);font-size:12px;
+    animation:slidein .5s ease both}
+  .logline:hover{background:rgba(255,255,255,.03)}
+  @keyframes slidein{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+  .logline .ts{color:var(--dim);font-size:10.5px}
+  .logline .msg{color:var(--soft)}
+  .logline .msg b{color:var(--ink);font-weight:500}
+  .logline .tail{color:var(--dim);font-size:10.5px}
+  .sd{width:6px;height:6px;border-radius:50%}
+  .sd.g{background:var(--green);box-shadow:0 0 8px var(--green)}
+  .sd.t{background:var(--terra);box-shadow:0 0 8px var(--terra)}
+  .sd.b{background:var(--blue);box-shadow:0 0 8px var(--blue)}
+
+  /* ---------- agent chat ---------- */
+  .chat{flex:1;display:flex;flex-direction:column;min-height:660px}
+  .agent-id{display:flex;align-items:center;gap:11px}
+  .avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(150deg,#2a201a,#171210);
+    border:1px solid rgba(71,209,138,.3);display:grid;place-items:center;position:relative;flex:none}
+  .avatar svg{width:18px;height:18px}
+  .agent-id .nm{font-size:14px;font-weight:600;line-height:1.1}
+  .agent-id .st{font-family:var(--mono);font-size:10.5px;color:var(--green);display:flex;align-items:center;gap:6px;margin-top:2px}
+  .build-chip{display:flex;flex-direction:column;gap:5px;min-width:150px}
+  .build-chip .bt{font-family:var(--mono);font-size:10px;color:var(--soft);display:flex;justify-content:space-between}
+  .build-chip .bt b{color:var(--terra);font-weight:500}
+  .shimmer{height:4px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden;position:relative}
+  .shimmer i{position:absolute;top:0;bottom:0;left:0;width:62%;border-radius:4px;
+    background:linear-gradient(90deg,rgba(224,121,78,.2),var(--terra),rgba(224,121,78,.2));
+    background-size:200% 100%;animation:sh 1.8s linear infinite}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .feed{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+  .feed::-webkit-scrollbar{width:6px}
+  .feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+  .msg-in{max-width:88%;align-self:flex-start;animation:msgin .5s ease both}
+  .msg-out{max-width:82%;align-self:flex-end;animation:msgin .5s ease both}
+  @keyframes msgin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .bubble{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;
+    padding:12px 15px;font-size:14px;line-height:1.5;color:var(--ink)}
+  .bubble b{font-weight:600}
+  .msg-in .bubble{border-top-left-radius:5px}
+  .msg-out .bubble{border-top-right-radius:5px;background:linear-gradient(180deg,#2b211a,#221a14);
+    border-color:rgba(224,121,78,.2)}
+  .mrow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .mrow .who{font-size:11px;font-weight:600;color:var(--soft)}
+  .mrow .t{font-family:var(--mono);font-size:10px;color:var(--dim)}
+
+  .sysmsg{align-self:stretch;display:flex;flex-direction:column;gap:5px;padding:2px 2px;
+    font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+  .sysmsg .sl{display:flex;align-items:center;gap:9px;animation:msgin .5s ease both}
+  .sysmsg .sl .ck{color:var(--green)}
+
+  /* approval card */
+  .approval{align-self:stretch;position:relative;border-radius:16px;padding:16px 17px;
+    background:linear-gradient(180deg,rgba(224,121,78,.10),rgba(224,121,78,.03));
+    border:1px solid rgba(224,121,78,.4);
+    box-shadow:0 0 0 1px rgba(224,121,78,.05),0 0 34px rgba(224,121,78,.18);
+    animation:glowpulse 3.2s ease-in-out infinite}
+  @keyframes glowpulse{0%,100%{box-shadow:0 0 0 1px rgba(224,121,78,.05),0 0 26px rgba(224,121,78,.14)}
+    50%{box-shadow:0 0 0 1px rgba(224,121,78,.08),0 0 44px rgba(224,121,78,.28)}}
+  .approval .atop{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .approval .atop .lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--terra)}
+  .approval .amsg{font-size:14.5px;line-height:1.5;color:var(--ink)}
+  .approval .amsg b{font-weight:600}
+  .donewhen{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 11px;border-radius:10px;
+    background:rgba(0,0,0,.28);border:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--soft)}
+  .donewhen .ck{color:var(--green);font-weight:600}
+  .preview{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--blue);
+    text-decoration:none;margin-top:11px;font-family:var(--mono)}
+  .preview:hover{text-decoration:underline}
+  .abtns{display:flex;gap:9px;margin-top:14px}
+  .btn{font-family:inherit;font-size:13px;font-weight:600;border-radius:10px;padding:10px 15px;cursor:pointer;
+    border:1px solid transparent;transition:.16s;display:inline-flex;align-items:center;gap:7px;letter-spacing:-.1px}
+  .btn.primary{background:linear-gradient(180deg,#e88a5f,#d76c3f);color:#1c0f07;
+    box-shadow:0 0 24px rgba(224,121,78,.4)}
+  .btn.primary:hover{transform:translateY(-1px);box-shadow:0 0 34px rgba(224,121,78,.6)}
+  .btn.ghost{background:rgba(255,255,255,.04);color:var(--soft);border-color:var(--line-2)}
+  .btn.ghost:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+  .btn.danger:hover{color:#f0a08a}
+
+  .resolved{align-self:stretch;border-radius:16px;padding:16px 17px;
+    background:linear-gradient(180deg,rgba(71,209,138,.12),rgba(71,209,138,.03));
+    border:1px solid rgba(71,209,138,.45);box-shadow:0 0 40px rgba(71,209,138,.22);
+    animation:msgin .5s ease both;display:none}
+  .resolved.show{display:block}
+  .resolved .rt{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--green)}
+  .resolved .rs{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;display:flex;align-items:center;gap:8px}
+
+  /* composer */
+  .composer{border-top:1px solid var(--line);padding:14px 16px;display:flex;gap:10px;align-items:center}
+  .composer input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--line-2);border-radius:12px;
+    padding:12px 15px;color:var(--ink);font-family:inherit;font-size:13.5px;outline:none;transition:.2s}
+  .composer input::placeholder{color:var(--dim)}
+  .composer input:focus{border-color:rgba(224,121,78,.5);box-shadow:0 0 0 3px rgba(224,121,78,.1)}
+  .send{width:44px;height:44px;flex:none;border-radius:12px;border:none;cursor:pointer;
+    background:linear-gradient(180deg,#e88a5f,#d76c3f);display:grid;place-items:center;
+    box-shadow:0 0 20px rgba(224,121,78,.4);transition:.16s}
+  .send:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(224,121,78,.6)}
+  .send svg{width:18px;height:18px}
+
+  .typing{align-self:flex-start;display:flex;gap:4px;padding:12px 15px;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:14px;border-top-left-radius:5px}
+  .typing span{width:6px;height:6px;border-radius:50%;background:var(--soft);animation:bounce 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.15s}
+  .typing span:nth-child(3){animation-delay:.3s}
+  @keyframes bounce{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+  /* ---------- theme toggle ---------- */
+  .head-right{display:flex;align-items:center;gap:12px}
+  .theme-toggle{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;
+    cursor:pointer;background:rgba(0,0,0,.28);border:1px solid var(--line);color:var(--soft);
+    transition:.2s;position:relative}
+  .theme-toggle:hover{color:var(--ink);border-color:rgba(224,121,78,.4);background:rgba(255,255,255,.04);
+    box-shadow:0 0 18px rgba(224,121,78,.2)}
+  .theme-toggle svg{width:18px;height:18px}
+  .theme-toggle .i-moon{display:none}
+
+  /* ============================================================
+     LIGHT THEME — bright mission control (opt-in via toggle)
+     ============================================================ */
+  :root[data-theme="light"]{
+    --bg:#f4efe8;
+    --panel:#fffdf9;
+    --panel-2:#faf4ec;
+    --panel-3:#f1e8dc;
+    --line:rgba(90,60,40,.14);
+    --line-2:rgba(90,60,40,.22);
+    --ink:#2a2420;
+    --soft:#6b5f54;
+    --dim:#9a8c7e;
+    --terra:#c8643c;
+    --terra-soft:rgba(200,100,60,.15);
+    --green:#4f8a52;
+    --green-soft:rgba(79,138,82,.15);
+    --blue:#4a72b0;
+    --blue-soft:rgba(74,114,176,.15);
+  }
+  /* ambient: dark glows -> soft warm radial tints */
+  [data-theme="light"] .blob{mix-blend-mode:multiply;opacity:.55;filter:blur(92px)}
+  [data-theme="light"] .blob.terra{background:radial-gradient(circle,rgba(200,110,70,.26),transparent 62%)}
+  [data-theme="light"] .blob.blue{background:radial-gradient(circle,rgba(90,130,190,.20),transparent 62%)}
+  [data-theme="light"] .blob.green{background:radial-gradient(circle,rgba(90,150,95,.16),transparent 62%)}
+  [data-theme="light"] .grid-overlay{background-image:
+      linear-gradient(rgba(90,60,40,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(90,60,40,.05) 1px,transparent 1px)}
+  [data-theme="light"] .vignette{background:radial-gradient(circle at 50% 40%,transparent 55%,rgba(120,90,60,.10) 100%)}
+  [data-theme="light"] .scanline{background:linear-gradient(90deg,transparent,rgba(200,100,60,.35),transparent);opacity:.3}
+  /* header / brand mark: glow -> crisp accent ring + soft shadow */
+  [data-theme="light"] .mark{background:linear-gradient(150deg,#fff6ee,#ffe7d8);
+    border-color:rgba(200,100,60,.4);
+    box-shadow:0 1px 0 rgba(255,255,255,.7),0 8px 20px -8px rgba(200,100,60,.4),inset 0 1px 0 rgba(255,255,255,.6)}
+  [data-theme="light"] .mark svg{filter:drop-shadow(0 0 4px rgba(200,100,60,.45))}
+  [data-theme="light"] .mark::after{box-shadow:0 0 18px rgba(200,100,60,.3)}
+  [data-theme="light"] nav{background:rgba(120,90,60,.05)}
+  [data-theme="light"] nav a:hover{background:rgba(120,90,60,.07)}
+  [data-theme="light"] nav a.on{background:linear-gradient(180deg,rgba(200,100,60,.16),rgba(200,100,60,.05));
+    box-shadow:inset 0 0 0 1px rgba(200,100,60,.35),0 2px 10px -4px rgba(200,100,60,.25)}
+  /* cards / panels: light gradients + soft warm shadows */
+  [data-theme="light"] .card{background:linear-gradient(180deg,#fffdf9,#f7efe4);
+    box-shadow:0 6px 16px -10px rgba(90,60,40,.28)}
+  [data-theme="light"] .card::before{box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+  [data-theme="light"] .panel{background:linear-gradient(180deg,#fffdf9,#f8f1e7);
+    box-shadow:0 20px 48px -34px rgba(90,60,40,.4),0 2px 8px -5px rgba(90,60,40,.15)}
+  /* journey stage + mocks */
+  [data-theme="light"] .stage{background:radial-gradient(120% 120% at 50% 0%,#fff8f0,#f3e9dc);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+  [data-theme="light"] .stage::after{background:radial-gradient(80% 60% at 50% 42%,rgba(200,100,60,.09),transparent 70%)}
+  [data-theme="light"] .mini-form{box-shadow:0 14px 30px -20px rgba(90,60,40,.35)}
+  [data-theme="light"] .mini-form .row{background:rgba(90,60,40,.05)}
+  [data-theme="light"] .score-num{text-shadow:none}
+  [data-theme="light"] .score-wrap circle:not(#ring){stroke:rgba(90,60,40,.10)}
+  [data-theme="light"] #ring{stroke:#4f8a52;filter:drop-shadow(0 0 4px rgba(79,138,82,.3))!important}
+  [data-theme="light"] .email{box-shadow:0 16px 34px -20px rgba(90,60,40,.32)}
+  [data-theme="light"] .scorepill.lo{background:rgba(90,60,40,.06)}
+  [data-theme="light"] .step .bar{background:rgba(90,60,40,.10)}
+  [data-theme="light"] .step .bar i{box-shadow:0 0 6px rgba(200,100,60,.4)}
+  /* live telemetry: dark mono on light panel */
+  [data-theme="light"] .logline:hover{background:rgba(90,60,40,.04)}
+  /* agent chat */
+  [data-theme="light"] .avatar{background:linear-gradient(150deg,#fff6ee,#fdeede);border-color:rgba(79,138,82,.35)}
+  [data-theme="light"] .shimmer{background:rgba(90,60,40,.09)}
+  [data-theme="light"] .feed::-webkit-scrollbar-thumb{background:rgba(90,60,40,.18)}
+  [data-theme="light"] .msg-out .bubble{background:linear-gradient(180deg,#fff3ea,#ffe8d9);border-color:rgba(200,100,60,.28)}
+  /* approval: surfaced decision still visibly pulses (ring + tint) */
+  [data-theme="light"] .approval{background:linear-gradient(180deg,rgba(200,100,60,.12),rgba(200,100,60,.03));
+    border-color:rgba(200,100,60,.45);
+    box-shadow:0 0 0 1px rgba(200,100,60,.15),0 12px 28px -14px rgba(200,100,60,.45);
+    animation:glowpulseL 3.2s ease-in-out infinite}
+  @keyframes glowpulseL{0%,100%{box-shadow:0 0 0 1px rgba(200,100,60,.12),0 8px 22px -16px rgba(200,100,60,.35)}
+    50%{box-shadow:0 0 0 2px rgba(200,100,60,.30),0 14px 32px -12px rgba(200,100,60,.55)}}
+  [data-theme="light"] .donewhen{background:rgba(90,60,40,.05)}
+  [data-theme="light"] .btn.primary{box-shadow:0 6px 16px -6px rgba(200,100,60,.55)}
+  [data-theme="light"] .btn.primary:hover{box-shadow:0 10px 22px -8px rgba(200,100,60,.7)}
+  [data-theme="light"] .btn.ghost{background:rgba(90,60,40,.04)}
+  [data-theme="light"] .btn.ghost:hover{background:rgba(90,60,40,.08)}
+  [data-theme="light"] .btn.danger:hover{color:#c0392b}
+  [data-theme="light"] .resolved{background:linear-gradient(180deg,rgba(79,138,82,.14),rgba(79,138,82,.04));
+    border-color:rgba(79,138,82,.45);box-shadow:0 0 0 1px rgba(79,138,82,.12),0 12px 28px -14px rgba(79,138,82,.35)}
+  /* composer */
+  [data-theme="light"] .composer input{background:rgba(90,60,40,.04)}
+  [data-theme="light"] .composer input:focus{border-color:rgba(200,100,60,.5);box-shadow:0 0 0 3px rgba(200,100,60,.12)}
+  [data-theme="light"] .send{box-shadow:0 6px 16px -6px rgba(200,100,60,.55)}
+  [data-theme="light"] .send:hover{box-shadow:0 10px 22px -8px rgba(200,100,60,.7)}
+  /* toggle */
+  [data-theme="light"] .theme-toggle{background:rgba(120,90,60,.05);border-color:var(--line)}
+  [data-theme="light"] .theme-toggle:hover{color:var(--ink);border-color:rgba(200,100,60,.45);
+    background:rgba(120,90,60,.08);box-shadow:0 4px 14px -6px rgba(200,100,60,.3)}
+  [data-theme="light"] .theme-toggle .i-sun{display:none}
+  [data-theme="light"] .theme-toggle .i-moon{display:block}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+    .scanline{display:none}
+  }
+</style>
+<script>(function(){try{if(localStorage.getItem('csslop-feel-a-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="blob terra"></div>
+    <div class="blob blue"></div>
+    <div class="blob green"></div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <div class="shell">
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <div class="mark">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 4.5h18l-6.4 8v6.2l-5.2 2.6V12.5z" fill="#e0794e"/>
+            <path d="M3 4.5h18l-6.4 8v6.2l-5.2 2.6V12.5z" fill="url(#fg)"/>
+            <defs><linearGradient id="fg" x1="3" y1="4" x2="21" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#f5a87f"/><stop offset="1" stop-color="#d76c3f"/></linearGradient></defs>
+          </svg>
+        </div>
+        <div>
+          <h1>LeadSift <span class="ver">v1.4.0</span></h1>
+          <div class="sub">
+            <span class="dom">leadsift.app</span>
+            <span style="color:var(--dim)">·</span>
+            <span class="status"><span class="dot g"></span>Live · growing</span>
+          </div>
+        </div>
+      </div>
+      <div class="head-right">
+        <nav aria-label="Sections">
+          <a href="#" class="on">Overview</a>
+          <a href="#">Build</a>
+          <a href="#">Grow</a>
+          <a href="#">Run</a>
+          <a href="#">Money</a>
+          <a href="#">Source</a>
+        </nav>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme" aria-pressed="false">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4.2"/>
+            <path d="M12 2.6v2.3M12 19.1v2.3M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.6 12h2.3M19.1 12h2.3M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6"/>
+          </svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.2 14.6A8 8 0 1 1 9.9 4.1a6.4 6.4 0 0 0 10.3 10.5z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- MISSION -->
+    <div class="mission">
+      <span class="tag">Mission</span>
+      <p>Turn every webform into <b>scored, ranked sales leads.</b></p>
+      <span class="rule"></span>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="card mrr-card">
+        <div>
+          <div class="k-label">MRR</div>
+          <div class="k-val">$180</div>
+          <div class="delta up">↑ $40 <span class="chip">+29% this mo</span></div>
+        </div>
+        <div class="spark">
+          <div class="cap">6-week trend</div>
+          <svg viewBox="0 0 240 74" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(224,121,78,.35)"/>
+                <stop offset="1" stop-color="rgba(224,121,78,0)"/>
+              </linearGradient>
+            </defs>
+            <path id="sparkArea" d="M0,58 L20,60 L40,52 L60,54 L80,46 L100,48 L120,38 L140,34 L160,36 L180,26 L200,22 L220,14 L240,8 L240,74 L0,74 Z" fill="url(#sg)"/>
+            <path id="sparkLine" d="M0,58 L20,60 L40,52 L60,54 L80,46 L100,48 L120,38 L140,34 L160,36 L180,26 L200,22 L220,14 L240,8"
+              fill="none" stroke="#e0794e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
+              style="filter:drop-shadow(0 0 6px rgba(224,121,78,.7))"/>
+            <circle class="end-dot" cx="240" cy="8" r="3.6"/>
+            <circle cx="240" cy="8" r="3.6" fill="none" stroke="#e0794e" stroke-width="1.5" opacity=".5">
+              <animate attributeName="r" values="3.6;9;3.6" dur="2.4s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".6;0;.6" dur="2.4s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        </div>
+      </div>
+      <div class="card stat-mini">
+        <div class="k-label">Users</div>
+        <div class="k-val">12</div>
+        <div class="delta up">↑ +3 <span class="chip">this week</span></div>
+      </div>
+      <div class="card stat-mini">
+        <div class="k-label">Net / mo</div>
+        <div class="k-val" style="color:var(--green)">+$158</div>
+        <div class="delta up">revenue − costs</div>
+      </div>
+      <div class="card stat-mini">
+        <div class="k-label">Uptime</div>
+        <div class="k-val">99.9<small>%</small></div>
+        <div class="delta up"><span class="dot g" style="width:6px;height:6px"></span> 30-day</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+      <!-- LEFT: journey + live -->
+      <div class="col">
+        <!-- JOURNEY -->
+        <section class="panel journey">
+          <div class="panel-head">
+            <div class="lhs">
+              <span class="panel-title">Watch it work</span>
+              <span class="pill t"><span class="dot t" style="width:6px;height:6px"></span>Journey proof</span>
+            </div>
+            <span class="pill g">✓ verified check</span>
+          </div>
+
+          <div class="problem">
+            <span class="ic">◆</span>
+            <p>Leads pile up in the webform and never get followed up.</p>
+          </div>
+
+          <div class="stage">
+            <!-- FRAME 1 -->
+            <div class="frame on" data-i="0">
+              <span class="cue">Step 1 · capture</span>
+              <div class="headline">A visitor submits the webform</div>
+              <div class="mini-form">
+                <div class="fh"><span class="dot t" style="width:6px;height:6px"></span> leadsift.app/contact</div>
+                <div class="row typed">Priya Nair</div>
+                <div class="row typed">priya@acme-robotics.io</div>
+                <div class="row">"Need lead scoring for our..."</div>
+                <div class="submit-btn">Submit request →</div>
+              </div>
+            </div>
+
+            <!-- FRAME 2 -->
+            <div class="frame" data-i="1">
+              <span class="cue">Step 2 · score</span>
+              <div class="score-wrap">
+                <svg viewBox="0 0 172 172">
+                  <circle cx="86" cy="86" r="70" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/>
+                  <circle id="ring" cx="86" cy="86" r="70" fill="none" stroke="#47d18a" stroke-width="10"
+                    stroke-linecap="round" transform="rotate(-90 86 86)"
+                    stroke-dasharray="440" stroke-dashoffset="440"
+                    style="filter:drop-shadow(0 0 8px rgba(71,209,138,.6));transition:stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1)"/>
+                </svg>
+                <div style="text-align:center">
+                  <div class="score-num" id="scoreNum">0</div>
+                  <div class="score-lab">Lead score</div>
+                </div>
+              </div>
+              <div class="headline">The lead auto-scores 0–100 — <b>this one hits 94</b></div>
+              <div class="score-lead"><b>Priya Nair</b> · Acme Robotics</div>
+            </div>
+
+            <!-- FRAME 3 -->
+            <div class="frame" data-i="2">
+              <span class="cue">Step 3 · deliver</span>
+              <div class="headline" style="margin-bottom:2px">At 8am a digest email lands with the day's top leads</div>
+              <div class="email">
+                <div class="ehead">
+                  <div class="efrom">
+                    <span class="ei"><svg viewBox="0 0 24 24"><path d="M3 4.5h18l-6.4 8v6.2l-5.2 2.6V12.5z" fill="#e0794e"/></svg></span>
+                    LeadSift Digest
+                  </div>
+                  <div class="etime">08:00 · today</div>
+                </div>
+                <div class="esub">Your top 3 leads today</div>
+                <div class="lead-row">
+                  <div class="who">Priya Nair<span>Acme Robotics</span></div>
+                  <div class="scorepill hi">94</div>
+                </div>
+                <div class="lead-row">
+                  <div class="who">Devon Reyes<span>Northwind Labs</span></div>
+                  <div class="scorepill mid">88</div>
+                </div>
+                <div class="lead-row">
+                  <div class="who">Sara Kim<span>Loop Health</span></div>
+                  <div class="scorepill lo">71</div>
+                </div>
+                <div class="efoot">
+                  <span class="verified">✓ verified — doneWhen check passed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stepper" id="stepper">
+            <button class="step active" data-s="0">
+              <div class="bar"><i></i></div>
+              <div class="lab"><em>01</em> A visitor submits the webform</div>
+            </button>
+            <button class="step" data-s="1">
+              <div class="bar"><i></i></div>
+              <div class="lab"><em>02</em> The lead auto-scores — hits 94</div>
+            </button>
+            <button class="step" data-s="2">
+              <div class="bar"><i></i></div>
+              <div class="lab"><em>03</em> 8am digest lands with top leads</div>
+            </button>
+          </div>
+        </section>
+
+        <!-- LIVE ACTIVITY -->
+        <section class="panel live">
+          <div class="panel-head">
+            <div class="lhs">
+              <span class="panel-title">Live activity</span>
+              <span class="pill g"><span class="dot g" style="width:6px;height:6px"></span>streaming</span>
+            </div>
+            <span style="font-family:var(--mono);font-size:10.5px;color:var(--dim)">region iad · agent active</span>
+          </div>
+          <div class="log" id="log"></div>
+        </section>
+      </div>
+
+      <!-- RIGHT: agent chat -->
+      <div class="col">
+        <section class="panel chat">
+          <div class="panel-head">
+            <div class="agent-id">
+              <div class="avatar">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="9" r="4" fill="#47d18a"/>
+                  <path d="M5 20c0-3.3 3-5.5 7-5.5s7 2.2 7 5.5" stroke="#47d18a" stroke-width="1.6" fill="none"/>
+                </svg>
+              </div>
+              <div>
+                <div class="nm">LeadSift Agent</div>
+                <div class="st"><span class="dot g" style="width:6px;height:6px"></span>online · autonomous</div>
+              </div>
+            </div>
+            <div class="build-chip">
+              <div class="bt">building <b>onboarding-email v2</b></div>
+              <div class="shimmer"><i></i></div>
+              <div class="bt" style="font-size:9.5px;color:var(--dim)">compiling · 62%</div>
+            </div>
+          </div>
+
+          <div class="feed" id="feed">
+            <!-- greeting -->
+            <div class="msg-in">
+              <div class="mrow"><span class="who">Agent</span><span class="t">07:58</span></div>
+              <div class="bubble">Morning. I've been busy overnight — shipped a fix, scored a fresh batch of leads, and I've got <b>one thing that needs your call.</b></div>
+            </div>
+
+            <!-- live activity context lines -->
+            <div class="sysmsg">
+              <div class="sl"><span class="sd b"></span> deployed <b style="color:var(--soft)">daily-digest</b> to staging</div>
+              <div class="sl"><span class="sd g"></span> <span class="ck">doneWhen ✓</span> passed — email renders + sends</div>
+              <div class="sl"><span class="sd g"></span> scored <b style="color:var(--soft)">41 new leads</b> · avg 58 · 3 hot</div>
+            </div>
+
+            <!-- APPROVAL -->
+            <div class="approval" id="approval">
+              <div class="atop">
+                <span class="dot t"></span>
+                <span class="lbl">Decision needed</span>
+              </div>
+              <div class="amsg">I finished <b>Daily digest of top leads</b> and it passed its check ✓ — want me to ship it live?</div>
+              <div class="donewhen">
+                <span class="ck">✓ doneWhen</span>
+                <span>a scheduled 8am email lists the day's top-scored leads</span>
+              </div>
+              <a class="preview" href="#" onclick="return false">↗ preview the digest · staging.leadsift.app/digest</a>
+              <div class="abtns">
+                <button class="btn primary" onclick="ship()">✓ Approve &amp; ship</button>
+                <button class="btn ghost" onclick="review()">Review</button>
+                <button class="btn ghost danger" onclick="reject()">Reject</button>
+              </div>
+            </div>
+
+            <!-- resolved state -->
+            <div class="resolved" id="resolved">
+              <div class="rt">🎉 Shipped — it's live</div>
+              <div class="rs"><span class="sd g"></span> daily-digest promoted to production · first send 08:00 tomorrow</div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <input id="composerInput" type="text" placeholder="Message the agent…  (e.g. hold the digest until Monday)" autocomplete="off" />
+            <button class="send" onclick="sendMsg()" aria-label="Send">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z" fill="#1c0f07"/></svg>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- stepped player ---------- */
+  var DUR = 3400;
+  var frames = document.querySelectorAll('.frame');
+  var steps  = document.querySelectorAll('.step');
+  var cur = 0, timer = null;
+
+  function setStep(i, auto){
+    cur = i;
+    frames.forEach(function(f){ f.classList.toggle('on', +f.dataset.i === i); });
+    steps.forEach(function(s, idx){
+      s.classList.remove('active','done');
+      if(idx < i) s.classList.add('done');
+      if(idx === i) s.classList.add('active');
+      var bar = s.querySelector('.bar i');
+      if(idx === i){ bar.style.animation='none'; void bar.offsetWidth;
+        if(!reduce){ bar.style.animation='fill '+DUR+'ms linear forwards'; }
+        else { bar.style.width='100%'; } }
+      else if(idx < i){ bar.style.animation='none'; bar.style.width='100%'; }
+      else { bar.style.animation='none'; bar.style.width='0'; }
+    });
+    if(i === 1) runScore();
+  }
+
+  function runScore(){
+    var ring = document.getElementById('ring');
+    var num  = document.getElementById('scoreNum');
+    if(reduce){ ring.style.strokeDashoffset = (440*(1-0.94)); num.textContent='94'; return; }
+    ring.style.strokeDashoffset = 440;
+    void ring.offsetWidth;
+    ring.style.strokeDashoffset = (440*(1-0.94));
+    var start = null, target = 94;
+    function tick(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts-start)/1200, 1);
+      var e = 1 - Math.pow(1-p, 3);
+      num.textContent = Math.round(e*target);
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function advance(){ setStep((cur+1) % frames.length, true); }
+  function startAuto(){ if(reduce) return; stopAuto(); timer = setInterval(advance, DUR); }
+  function stopAuto(){ if(timer){ clearInterval(timer); timer = null; } }
+
+  steps.forEach(function(s){
+    s.addEventListener('click', function(){
+      stopAuto();
+      setStep(+s.dataset.s, false);
+      startAuto();
+    });
+  });
+
+  setStep(0, true);
+  startAuto();
+
+  /* ---------- live activity stream ---------- */
+  var log = document.getElementById('log');
+  var pool = [
+    {c:'g', msg:'scored <b>7 new leads</b>', tail:'avg 63'},
+    {c:'b', msg:'deployed <b>scoring-v3</b> to staging', tail:'ok'},
+    {c:'g', msg:'<b>doneWhen ✓</b> passed', tail:'digest'},
+    {c:'t', msg:'sent <b>2 onboarding emails</b>', tail:'grow'},
+    {c:'b', msg:'health check <b>200</b>', tail:'iad'},
+    {c:'g', msg:'converted <b>lead #4188</b>', tail:'+$40'},
+    {c:'t', msg:'A/B test <b>subject line</b> started', tail:'grow'},
+    {c:'b', msg:'ingested <b>webform submission</b>', tail:'score 71'},
+    {c:'g', msg:'nightly backup <b>complete</b>', tail:'run'},
+    {c:'g', msg:'scored <b>hot lead</b> Priya N.', tail:'94'}
+  ];
+  var seed = [
+    {c:'g', t:'07:58:12', msg:'scored <b>41 leads</b> overnight', tail:'3 hot'},
+    {c:'b', t:'07:58:44', msg:'deployed <b>daily-digest</b> to staging', tail:'ok'},
+    {c:'g', t:'07:59:01', msg:'<b>doneWhen ✓</b> passed', tail:'digest'}
+  ];
+  var pi = 0, MAXLOG = 7;
+
+  function now(){
+    var d = new Date();
+    function p(n){ return (n<10?'0':'')+n; }
+    return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  }
+  function addLog(item, ts){
+    var el = document.createElement('div');
+    el.className = 'logline';
+    el.innerHTML = '<span class="sd '+item.c+'"></span>'+
+      '<span class="ts">'+(ts||now())+'</span>'+
+      '<span class="msg">'+item.msg+'</span>'+
+      '<span class="tail">'+item.tail+'</span>';
+    log.insertBefore(el, log.firstChild);
+    while(log.children.length > MAXLOG){ log.removeChild(log.lastChild); }
+  }
+  seed.forEach(function(s){ addLog(s, s.t); });
+  if(!reduce){
+    setInterval(function(){
+      addLog(pool[pi % pool.length]);
+      pi++;
+    }, 3600);
+  } else {
+    pool.slice(0,4).forEach(function(p){ addLog(p); });
+  }
+
+  /* ---------- approval resolve ---------- */
+  var approval = document.getElementById('approval');
+  var resolved = document.getElementById('resolved');
+  var feed = document.getElementById('feed');
+
+  window.ship = function(){
+    approval.style.transition = 'opacity .35s ease, transform .35s ease, filter .35s ease';
+    approval.style.opacity = '0';
+    approval.style.transform = 'scale(.97)';
+    setTimeout(function(){
+      approval.style.display = 'none';
+      resolved.classList.add('show');
+      addLog({c:'g', msg:'<b>daily-digest → production</b>', tail:'shipped'});
+      feed.scrollTop = feed.scrollHeight;
+    }, 340);
+  };
+  window.review = function(){
+    if(approval.dataset.rv) return;
+    approval.dataset.rv = '1';
+    var note = document.createElement('div');
+    note.className = 'donewhen';
+    note.style.marginTop = '10px';
+    note.style.color = 'var(--blue)';
+    note.innerHTML = '<span style="color:var(--blue)">↗ opening</span> staging preview — looks clean, send is idempotent.';
+    approval.querySelector('.abtns').before(note);
+  };
+  window.reject = function(){
+    approval.style.transition = 'opacity .3s ease';
+    approval.style.opacity = '0';
+    setTimeout(function(){
+      approval.style.display = 'none';
+      var m = document.createElement('div');
+      m.className = 'msg-in';
+      m.innerHTML = '<div class="mrow"><span class="who">Agent</span><span class="t">now</span></div>'+
+        '<div class="bubble">No problem — I\'ll hold <b>daily-digest</b> and keep it on staging. Tell me what to change and I\'ll revise the build.</div>';
+      feed.insertBefore(m, resolved);
+      feed.scrollTop = feed.scrollHeight;
+    }, 300);
+  };
+
+  /* ---------- composer ---------- */
+  var input = document.getElementById('composerInput');
+  window.sendMsg = function(){
+    var v = input.value.trim();
+    if(!v) return;
+    var out = document.createElement('div');
+    out.className = 'msg-out';
+    out.innerHTML = '<div class="mrow" style="justify-content:flex-end"><span class="t">now</span><span class="who">You</span></div>'+
+      '<div class="bubble"></div>';
+    out.querySelector('.bubble').textContent = v;
+    feed.appendChild(out);
+    input.value = '';
+    feed.scrollTop = feed.scrollHeight;
+
+    var typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    feed.appendChild(typing);
+    feed.scrollTop = feed.scrollHeight;
+
+    setTimeout(function(){
+      typing.remove();
+      var reply = document.createElement('div');
+      reply.className = 'msg-in';
+      reply.innerHTML = '<div class="mrow"><span class="who">Agent</span><span class="t">now</span></div>'+
+        '<div class="bubble">On it — I\'ll fold that into the next build pass and report back with a fresh check. 🛠️</div>';
+      feed.appendChild(reply);
+      feed.scrollTop = feed.scrollHeight;
+    }, reduce ? 200 : 1100);
+  };
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') sendMsg(); });
+
+  /* ---------- theme toggle ---------- */
+  var root = document.documentElement;
+  var tbtn = document.getElementById('themeToggle');
+  function applyTheme(t){
+    if(t === 'light') root.setAttribute('data-theme','light');
+    else root.removeAttribute('data-theme');
+    if(tbtn) tbtn.setAttribute('aria-pressed', t === 'light' ? 'true' : 'false');
+  }
+  applyTheme(root.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+  if(tbtn){
+    tbtn.addEventListener('click', function(){
+      var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      try{ localStorage.setItem('csslop-feel-a-theme', next); }catch(e){}
+    });
+  }
+})();
+</script>
+</body>
+</html>
