@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CSlopSlop builds BurningDemand — 2-Week Plan</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3140;
+    --ink:#e6edf3; --dim:#8b949e; --faint:#6e7681;
+    --accent:#f0a04b; --accent2:#58d38c; --code:#79c0ff; --danger:#ff7b72;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:80px;
+  }
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em}
+  code{background:#22272e;color:var(--code);padding:.08em .35em;border-radius:5px}
+  a{color:var(--code)}
+
+  /* sticky progress */
+  .topbar{
+    position:sticky;top:0;z-index:20;background:rgba(13,17,23,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    padding:10px 20px;display:flex;align-items:center;gap:16px;
+  }
+  .topbar h1{font-size:14px;margin:0;font-weight:600;white-space:nowrap}
+  .topbar h1 .b{color:var(--accent)} .topbar h1 .d{color:var(--accent2)}
+  .bar{flex:1;height:9px;background:#22272e;border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+  .pct{font-variant-numeric:tabular-nums;color:var(--dim);font-size:13px;white-space:nowrap;min-width:96px;text-align:right}
+  .reset{background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px}
+  .reset:hover{color:var(--danger);border-color:var(--danger)}
+  .logo{height:26px;width:auto;border-radius:6px;flex:none}
+  .notesbtn{background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;white-space:nowrap}
+  .notesbtn:hover,.notesbtn.on{color:var(--ink);border-color:var(--accent)}
+
+  /* notes drawer */
+  #notesbar{position:fixed;top:0;right:0;bottom:0;width:330px;max-width:90vw;z-index:40;background:var(--panel);border-left:1px solid var(--line);
+    box-shadow:-14px 0 40px rgba(0,0,0,.5);transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;overflow:hidden}
+  #notesbar.open{transform:translateX(0)}
+  #notesbar .nb-head{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2)}
+  #notesbar .nb-head b{font-size:14px}
+  #notesbar .nb-close{background:transparent;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
+  #notesbar .nb-close:hover{color:var(--ink)}
+  #notesbar .nb-body{padding:13px 15px;overflow-y:auto;flex:1}
+  .nb-sec{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:4px 0 9px}
+  .niche{margin:0 0 13px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .niche .nh{font-weight:700;font-size:13.5px;margin-bottom:3px}
+  .niche .nh small{font-weight:400;color:var(--faint);font-size:11px}
+  .niche .serves{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);margin-bottom:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+  .venue{display:inline-block;background:#20262f;border:1px solid var(--line);border-radius:5px;padding:2px 7px;margin:3px 4px 0 0;font-size:11px;color:var(--ink);white-space:nowrap}
+  #notesArea{width:100%;min-height:220px;resize:vertical;background:#0f141b;border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);font:13px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-sizing:border-box}
+  #notesArea:focus{outline:none;border-color:var(--accent)}
+  .nb-saved{font-size:11px;color:var(--faint);margin-top:7px}
+
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px}
+  .lede{color:var(--dim);margin:0 0 22px;font-size:15px}
+  .lede b{color:var(--ink)}
+
+  /* reference (collapsible) boxes */
+  details.ref{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;padding:0}
+  details.ref>summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;align-items:center;gap:8px}
+  details.ref>summary::-webkit-details-marker{display:none}
+  details.ref>summary::before{content:"▸";color:var(--accent);transition:transform .2s}
+  details.ref[open]>summary::before{transform:rotate(90deg)}
+  details.ref .body{padding:0 16px 14px 16px;color:var(--dim);font-size:14px}
+  details.ref .body ul{margin:.4em 0;padding-left:18px} details.ref .body li{margin:.3em 0}
+  details.ref .body b{color:var(--ink)}
+
+  /* week headers */
+  .week{margin:34px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px}
+  .week h2{font-size:19px;margin:0}
+  .week .sub{color:var(--faint);font-size:13px}
+
+  /* day cards */
+  .day{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden}
+  .day > header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .chip{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;color:#0d1117;background:var(--accent);border-radius:7px;padding:3px 9px;white-space:nowrap}
+  .day.gate > header .chip{background:var(--danger)}
+  .day.launch > header .chip{background:var(--accent2)}
+  .day .title{font-weight:600;flex:1}
+  .day .mini{color:var(--faint);font-size:12px;font-variant-numeric:tabular-nums}
+  .grp{padding:8px 16px 4px}
+  .grp h4{margin:8px 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .grp.build h4{color:var(--accent)} .grp.content h4{color:var(--code)} .grp.dist h4{color:var(--accent2)}
+
+  /* checkbox items */
+  label.item{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;border-radius:8px;cursor:pointer}
+  label.item:hover{background:#1b212b}
+  label.item input{appearance:none;-webkit-appearance:none;margin:2px 0 0;width:18px;height:18px;flex:none;
+    border:1.5px solid var(--faint);border-radius:5px;cursor:pointer;position:relative;transition:.15s}
+  label.item input:checked{background:var(--accent2);border-color:var(--accent2)}
+  label.item input:checked::after{content:"✓";position:absolute;inset:0;color:#0d1117;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  label.item span{flex:1}
+  label.item input:checked + span{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--line)}
+  .item .hrs{color:var(--faint);font-size:12px;white-space:nowrap}
+
+  .footnote{color:var(--faint);font-size:12px;margin-top:30px;text-align:center}
+
+  /* tabs */
+  .tabs{position:sticky;top:40px;z-index:19;display:flex;gap:6px;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:8px 20px}
+  .tab{background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--panel2);color:var(--ink);border-color:var(--accent)}
+  [hidden]{display:none!important}
+
+  /* calendar */
+  .wrap.cal{max-width:1780px}
+  .cal-weeklabel{margin:30px 0 12px;color:var(--faint);font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+  .cal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+  @media(max-width:1200px){.cal-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:820px){.cal-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.cal-grid{grid-template-columns:1fr}}
+  .sq{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;min-height:230px}
+  .sq .sqhead{border-bottom:1px solid var(--line);background:var(--panel2);padding:11px 15px}
+  .sq .sqh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+  .sq .sqttlrow{display:flex;align-items:baseline;gap:9px}
+  .sqphase{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  .sqdate{font-family:ui-monospace,monospace;font-size:11.5px;font-weight:700;color:var(--code)}
+  .todaybadge{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#0d1117;background:var(--accent2);border-radius:5px;padding:2px 6px}
+  .moendbadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--danger);border:1px solid var(--danger);border-radius:5px;padding:1px 5px;opacity:.85}
+  .sq.today{border-color:var(--accent2);box-shadow:0 0 0 1px var(--accent2)}
+  .sq .sqchip{font-family:ui-monospace,monospace;font-size:13px;font-weight:700;color:#0d1117;background:var(--accent);border-radius:6px;padding:4px 10px;white-space:nowrap}
+  .sq.gate .sqchip{background:var(--danger)} .sq.launch .sqchip{background:var(--accent2)}
+  .sq .sqttl{font-size:15.5px;font-weight:600;line-height:1.25;flex:1}
+  .sq .sqhrs{font-size:12.5px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sq .sqbody{padding:10px 14px 14px}
+  .cgrp-h{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin:11px 0 3px}
+  .cgrp-h.build{color:var(--accent)} .cgrp-h.content{color:var(--code)} .cgrp-h.dist{color:var(--accent2)}
+  label.cal-item{display:flex;gap:10px;align-items:flex-start;padding:5px 3px;border-radius:7px;cursor:pointer;font-size:13.5px;line-height:1.45}
+  label.cal-item:hover{background:#1b212b}
+  label.cal-item input{appearance:none;-webkit-appearance:none;margin:2px 0 0;width:18px;height:18px;flex:none;border:1.5px solid var(--faint);border-radius:5px;cursor:pointer;position:relative;transition:.15s}
+  label.cal-item input:checked{background:var(--accent2);border-color:var(--accent2)}
+  label.cal-item input:checked::after{content:"✓";position:absolute;inset:0;color:#0d1117;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  label.cal-item span{flex:1}
+  label.cal-item input:checked + span{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--line)}
+  label.cal-item code{background:#22272e;padding:0 4px;border-radius:4px}
+
+  /* wide split squares (Morning / Evening) */
+  .cal-grid.wide{grid-template-columns:repeat(auto-fill,minmax(500px,1fr));gap:18px}
+  @media(max-width:1080px){.cal-grid.wide{grid-template-columns:1fr}}
+  .sq .sqwd{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .sqsplit{display:flex;flex:1}
+  .half{flex:1;min-width:0;padding:10px 14px 14px}
+  .half.am{border-right:1px solid var(--line);background:rgba(240,160,75,.035)}
+  .half.pm{background:rgba(88,211,140,.03)}
+  .half-h{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin:2px 0 6px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .half.am .half-h{color:var(--accent)} .half.pm .half-h{color:var(--accent2)}
+  .half-h small{font-weight:600;color:var(--faint);font-size:9.5px;letter-spacing:.02em;text-transform:none}
+  .half .empty-note{color:var(--faint);font-size:11px;font-style:italic;opacity:.65;padding:3px 2px}
+  .sq .task.g-build{border-left:2px solid var(--accent);padding-left:7px}
+  .sq .task.g-content{border-left:2px solid var(--code);padding-left:7px}
+  .sq .task.g-dist{border-left:2px solid var(--accent2);padding-left:7px}
+  .rest-banner{min-height:0;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px;color:var(--accent);font-size:14px;
+    border-style:dashed;background:repeating-linear-gradient(45deg,transparent,transparent 9px,rgba(240,160,75,.05) 9px,rgba(240,160,75,.05) 18px)}
+  .rest-banner .rsun{font-size:20px} .rest-banner b{color:var(--ink)}
+  .month-divider{min-height:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;color:var(--danger);font-size:13.5px;border-style:dashed;border-color:var(--danger);background:rgba(255,123,114,.05)}
+  .month-divider b{color:var(--ink)}
+  .donebox{margin-top:24px}
+  .donechips{display:flex;flex-direction:column;gap:6px}
+  .donechip{font-size:12.5px;color:var(--faint);display:flex;align-items:center;gap:9px;padding:6px 9px;background:#12161d;border:1px solid var(--line);border-radius:8px;text-decoration:line-through;text-decoration-color:var(--line)}
+  .donechip b{color:var(--dim);font-family:ui-monospace,monospace;font-size:11px;text-decoration:none}
+  .donechip .ck{margin-left:auto;color:var(--accent2);font-weight:800;text-decoration:none}
+  @media(max-width:560px){.sqsplit{flex-direction:column}.half.am{border-right:none;border-bottom:1px solid var(--line)}}
+  .gk{color:var(--faint);font-size:12px;display:inline-flex;align-items:center}
+  .gk .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 4px 0 11px;vertical-align:0}
+  .gk .dot.build{background:var(--accent)} .gk .dot.content{background:var(--code)} .gk .dot.dist{background:var(--accent2)}
+
+  /* weekday calendar */
+  .cal-weekhead{display:grid;grid-template-columns:repeat(6,1fr) .62fr;gap:12px;margin:8px 0 6px;padding:0 2px}
+  .cal-weekhead > div{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);padding-left:5px}
+  .cal-weekhead > div.sun{color:var(--accent);text-align:center;padding-left:0}
+  .cal-grid.week{grid-template-columns:repeat(6,1fr) .62fr;margin-bottom:16px}
+  .sq.rest{min-height:320px;display:flex;align-items:center;justify-content:center;text-align:center;
+    border-style:dashed;color:var(--accent);
+    background:repeating-linear-gradient(45deg,transparent,transparent 9px,rgba(240,160,75,.05) 9px,rgba(240,160,75,.05) 18px)}
+  .sq.rest .rsun{font-size:30px;line-height:1;margin-bottom:7px}
+  .sq.rest b{color:var(--ink);display:block;font-size:15px;margin-bottom:2px}
+  .sq.rest small{color:var(--faint);font-size:11.5px}
+  .sq.empty{min-height:320px;border:1px dashed var(--line);background:transparent;opacity:.35}
+  @media(max-width:1000px){
+    .cal-weekhead{display:none}
+    .cal-grid.week{grid-template-columns:repeat(2,1fr)}
+    .sq.rest,.sq.empty{display:none}
+  }
+  @media(max-width:560px){ .cal-grid.week{grid-template-columns:1fr} }
+
+  /* product tags */
+  .tag{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;padding:1px 5px;border-radius:5px;margin-right:6px;vertical-align:1px;font-family:ui-monospace,monospace;white-space:nowrap}
+  .tag.css{background:rgba(240,160,75,.16);color:var(--accent);border:1px solid rgba(240,160,75,.4)}
+  .tag.bd{background:rgba(88,211,140,.15);color:var(--accent2);border:1px solid rgba(88,211,140,.4)}
+  .tag.both{background:rgba(121,192,255,.15);color:var(--code);border:1px solid rgba(121,192,255,.4)}
+  .pub{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;background:#e5399a;color:#fff;border-radius:5px;padding:1px 6px;margin-right:5px;vertical-align:1px;white-space:nowrap}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:0 0 22px;color:var(--dim);font-size:13px}
+  .legend span{display:inline-flex;align-items:center}
+  .cal-legend{margin:0 0 10px}
+  .th{font-family:ui-monospace,monospace;font-size:10px;color:var(--faint);background:#20262f;border-radius:4px;padding:0 4px;margin-left:5px;white-space:nowrap;font-style:normal;vertical-align:1px}
+  .half-h .hh{color:var(--ink);font-weight:800}
+
+  /* per-task details button */
+  .task{border-radius:8px}
+  .taskrow{display:flex;align-items:flex-start;gap:2px}
+  .taskrow > label{flex:1}
+  .detbtn{flex:none;background:transparent;border:none;color:var(--faint);cursor:help;font-size:13px;line-height:1;padding:5px 7px;border-radius:6px;opacity:.5;transition:.15s;margin-top:1px}
+  .detbtn:hover,.detbtn.open{opacity:1;color:var(--code);background:#1b212b}
+  .sq .detbtn{font-size:12px;padding:3px 5px}
+
+  /* floating hover tooltip */
+  #tip{position:fixed;z-index:60;max-width:440px;background:#0f141b;border:1px solid var(--line);border-left:3px solid var(--code);
+    border-radius:10px;padding:12px 14px;font-size:12.7px;line-height:1.55;color:var(--dim);
+    box-shadow:0 12px 34px rgba(0,0,0,.55);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;pointer-events:none}
+  #tip.show{opacity:1;transform:none;pointer-events:auto}
+  #tip .k,#tip .k2,#tip .k3,#tip .k4{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px}
+  #tip .k{color:var(--accent2)} #tip .k2{color:var(--accent);margin-top:9px} #tip .k3{color:var(--danger);margin-top:9px}
+  #tip .k4{color:#b392f0;margin-top:9px} #tip .k4 + *{color:#cdb9f5}
+  #tip b{color:var(--ink)} #tip code{background:#22272e;padding:0 4px;border-radius:4px;color:var(--code)}
+  #tip .pin{color:var(--faint);font-size:10.5px;margin-top:9px;display:block;border-top:1px dashed var(--line);padding-top:7px}
+  #tip .k5{color:var(--accent2);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+  #tip .promptbox{background:#12161d;border:1px solid var(--line);border-radius:6px;padding:9px 11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;max-height:320px;overflow:auto}
+  .aibtn{flex:none;background:transparent;border:none;cursor:pointer;font-size:12px;line-height:1;padding:4px 5px;border-radius:6px;opacity:.55;transition:.15s;margin-top:1px;filter:grayscale(.3)}
+  .aibtn:hover{opacity:1;background:#1b212b;filter:none}
+  .aibtn.copied{opacity:1;filter:none}
+  .sq .aibtn{font-size:11px;padding:3px 4px}
+
+  /* product-definition chips (Products box) */
+  .aud{display:inline-block;background:#20262f;border:1px solid var(--line);border-radius:6px;padding:2px 8px;margin:0 4px 4px 0;font-size:12px;color:var(--ink)}
+  .wedge{color:var(--accent2);font-weight:700}
+
+  /* ready-to-post drafts */
+  .dlabel{font-size:11px;font-weight:800;letter-spacing:.03em;color:var(--accent);text-transform:uppercase;margin:14px 0 4px}
+  .draft{background:#0f141b;border:1px solid var(--line);border-left:3px solid var(--code);border-radius:8px;padding:10px 13px;margin:0 0 6px;font-size:12.5px;line-height:1.55;color:var(--ink);white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .draft .t{color:var(--faint);font-family:-apple-system,sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img class="logo" src="logo.png" alt="C Slop Slop" onerror="this.style.display='none'">
+  <h1><span class="b">CSlopSlop</span> builds <span class="d">BurningDemand</span></h1>
+  <div class="bar"><i id="fill"></i></div>
+  <div class="pct" id="pct">0 / 0 · 0%</div>
+  <button class="reset" id="reset">reset</button>
+  <button class="notesbtn" id="notesToggle">📝 Notes</button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-view="list">☑ Checklist</button>
+  <button class="tab" data-view="calendar">▦ Calendar</button>
+</div>
+
+<div class="wrap" id="view-list">
+  <p class="lede">The true dogfood: build <b>CSlopSlop's loop</b> and make <b>BurningDemand its first company</b> — so “CSlopSlop built BurningDemand” is a <b>true</b> claim. <b>Loop-with-steering</b> · <b>2 weeks, flex to protect quality</b> · <b>Day 7 is the hard go/no-go</b>.</p>
+
+  <div class="legend">
+    <span><b class="tag css">CSS</b> CSlopSlop engine / your hub account</span>
+    <span><b class="tag bd">BD</b> BurningDemand product / its account &amp; demand</span>
+    <span><b class="tag both">BOTH</b> serves both (launch, integration)</span>
+    <span><b class="pub">X hub</b> = publish → the pill text is where</span>
+    <span style="color:var(--faint)">tap <b style="color:var(--dim)">ⓘ</b> for how-to · <b>🤖</b> to copy an AI prompt</span>
+  </div>
+
+  <details class="ref">
+    <summary>🧩 Products — audiences &amp; features (BD · CSS)</summary>
+    <div class="body">
+      <p><b class="tag bd">BD</b> <b style="color:var(--ink)">🔥 BurningDemand</b> — <i>Find what people actually want, and will pay for.</i></p>
+      <div><b>Audiences:</b> <span class="aud">Idea-stage founders</span><span class="aud">Vibe-coders (pre-code)</span><span class="aud">Audience-creators wanting a product</span> · <span class="wedge">wedge:</span> stranded GummySearch users</div>
+      <div style="margin-top:5px"><b>Features users need:</b> multi-source intake (Reddit+X+more) · dedup · score = frequency×intensity · a source URL on every claim · willingness-to-pay · auto MVP brief · free single-keyword search · gated full report + Stripe</div>
+
+      <p style="margin-top:16px"><b class="tag css">CSS</b> <b style="color:var(--ink)">🏭 C Slop Slop</b> — <i>An AI that builds, ships &amp; monetizes real companies — validated, you own the repo.</i></p>
+      <div><b>Audiences <span style="color:var(--faint);font-weight:400">(platform buyers, later):</span></b> <span class="aud">Vibe-coders at the demo wall</span><span class="aud">Dev-shop / AI-builder burn-victims</span><span class="aud">Audience-creators wanting to launch</span></div>
+      <div style="margin-top:5px"><b>Features users need:</b> thought→opportunity→company loop · planning run · run executor (<code>claude -p</code>) · local deploy → live URL · doneWhen validation (builder≠validator) · one approval gate · bounded autopilot · git-portable (you own the repo)</div>
+      <div style="margin-top:5px"><b>Moat:</b> non-trust-required — nothing is “done” until live + proven, and you own the code.</div>
+    </div>
+  </details>
+
+  <details class="ref">
+    <summary>Principles &amp; honesty rule (read once)</summary>
+    <div class="body">
+      <ul>
+        <li><b>Scope discipline:</b> BD is the forcing function — build <i>only</i> the loop BD's next feature needs.</li>
+        <li><b>Honesty (your moat):</b> say <i>“I directed it, approved every ship, it wrote &amp; validated the code.”</i> Never “fully autonomous.” Never credit the loop for features you hand-coded.</li>
+        <li><b>Distribution ownership:</b> CSlopSlop account = <b>you, manual</b> (the hub). BurningDemand account = <b>CSS-drafted, you approve &amp; post</b> (the spoke). <b>draft-not-send</b> — don't build posting APIs.</li>
+        <li><b>Channel rule:</b> CSS-drafted content is fine for SEO / comparison / scheduled X. Keep native <b>Reddit/HN human-written</b> (AI marketing gets removed there). No sockpuppets.</li>
+        <li><b>The demo is the marketing:</b> capture one clean clip per feature — diff → live preview → green <code>doneWhen</code> → approve. Un-fakeable.</li>
+        <li><b>Validate by giving, not asking:</b> interviews are saturated. Drop a finished demand report as free value where the niche gathers, then read the <b>pulls</b> (comments, DMs, tool runs, &quot;do one for X&quot;). Revealed preference &gt; stated preference.</li>
+        <li><b>It doesn't beat the attention clock:</b> CSS automates the <i>supply</i> of distribution, not the audience's reaction. Front-load account warming + your seed reports.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="ref">
+    <summary>Gates — what advances / stops the plan</summary>
+    <div class="body">
+      <ul>
+        <li><b>Wedge (by Day 2):</b> a razor-sharp &quot;does X and only X&quot; niche + 1 hand-made report ready to drop. <b>No interviews</b> — you validate by giving, then reading behavior.</li>
+        <li><b>Day 7 (spine) — HARD:</b> loop ships one action ≈≥7/10 cold. Red → flex/extend, do not proceed.</li>
+        <li><b>Demand (once live, Day 10+):</b> read <b>behavior</b> — report runs, repeat runs, deep-report unlocks, and &quot;do one for X&quot; pulls. Not surveys.</li>
+        <li><b>Day 11 (real dollar):</b> one user pre-pays — the only unfakeable yes.</li>
+        <li><b>Every ship (honesty):</b> only loop-built features count toward the claim; publish the split Day 14.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="ref">
+    <summary>Accounts &amp; branding — who posts where</summary>
+    <div class="body">
+      <ul>
+        <li><b>CSlopSlop hub = your existing <code>offbeatport</code> account</b> (don't make a cold new one). Build-in-public is parasocial — people follow the human, and your account already has trust + reach. Light rebrand only: bio &quot;building CSlopSlop — an AI that builds companies; first one it's building: BurningDemand&quot;, logo on banner + pinned tweet. Don't rename the handle.</li>
+        <li><b>BurningDemand = its own branded account</b> (the spoke — a different public: users / support / SEO). Your hub seeds it; it grows its own following.</li>
+        <li><b>You create the BD account, once — CSlopSlop does not.</b> Creating a social account is an irreversible, human-facing action (phone / captcha / ToS) and auto-creating accounts risks bans. CSS <b>drafts</b> BD's posts → you approve → <b>you</b> post. That keeps &quot;CSlopSlop does BD's GTM&quot; true (it writes + deploys the SEO/comparison pages, drafts the social) without pretending a bot ran your accounts.</li>
+        <li><b>Logo on the containers, not every message.</b> Use the logo on both profiles/banners, the demo-video end-card, the launch thread, and the pinned tweet. Hub tweets lead with the story + the human — mention the names naturally, don't stamp a logo on each post (reads like an ad, kills the build-in-public authenticity that is your edge). BD's own account is branded consistently (logo avatar, name in handle).</li>
+        <li><b>Shape:</b> <code>offbeatport</code> = you narrating CSlopSlop (hub, lightly branded) · BurningDemand = its own account, fed by CSS drafts you approve. CSS builds + markets BD; you build + market CSS.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="ref">
+    <summary>📣 Accounts to create + ready-to-post drafts</summary>
+    <div class="body">
+      <b style="color:var(--ink)">Accounts to create</b>
+      <ul>
+        <li><b>X — hub:</b> keep <code>@offbeatport</code> (don't make a cold new one). New bio below.</li>
+        <li><b>X — BurningDemand:</b> create <code>@burningdemand</code> · fallbacks <code>@getburningdemand</code> · <code>@burndemand</code> · <code>@burningdemandHQ</code>. Create ~Day 10 (soft-launch).</li>
+        <li><b>Reddit ×3:</b> warm now. Use plausible <i>personal</i> handles, never brand names (native posts must read human).</li>
+        <li><b>Hacker News ×2:</b> comment now, Show HN at launch.</li>
+        <li><b>Domain:</b> <code>burningdemand.com</code> → <code>.co</code> → <code>.app</code>.</li>
+        <li><i>CSlop's own handle (<code>@cslop</code>) — later; the hub carries it for now.</i></li>
+      </ul>
+
+      <div class="dlabel">X — @offbeatport bio (hub)</div>
+      <div class="draft">Building CSlop — an AI that builds &amp; ships real companies (you own the repo; it validates itself). First one it's building, live: 🔥 BurningDemand. Watch the loop.</div>
+
+      <div class="dlabel">X — @burningdemand bio</div>
+      <div class="draft">Find what people actually want — and will pay for. Multi-source demand research (Reddit + X + more), every claim cited to a source. Built in public by @offbeatport.</div>
+
+      <div class="dlabel">X — @burningdemand pinned tweet</div>
+      <div class="draft">GummySearch is gone. So I'm building the multi-source replacement:
+
+→ demand from Reddit + X + more, not Reddit-only
+→ every pain scored by frequency × intensity
+→ a source link on every claim
+→ tells you what people will actually pay for
+
+Free tool dropping soon. Building it in public 👇</div>
+
+      <div class="dlabel">Reddit — value comment (warming, NO link)</div>
+      <div class="draft"><span class="t">use while aging accounts — pure value, no promo</span>The trap is asking "would you use this?" — people say yes to be nice. Look at what they already do instead: search existing complaints about the problem across Reddit and X, count how often it comes up and how heated people get, and note anyone who says they already pay for a workaround. No complaints + nobody paying for a workaround = your answer. Existing spend is signal; stated interest is noise.</div>
+
+      <div class="dlabel">Reddit — the "demand drop" (validation: give, don't ask)</div>
+      <div class="draft"><span class="t">Title</span>I pulled every complaint about [niche] from Reddit + X and scored them — here's what people actually want
+
+<span class="t">Body</span>I've been building a demand-research tool, so I ran it on [niche] as a test. Top unmet pains, scored by how often × how intensely they show up, each with a source:
+
+1. [pain] — [why it hurts] (source)
+2. …
+3. …
+
+Willingness-to-pay signals I found: [a couple of quotes where people mention paying].
+
+Happy to run this on a different niche — drop one below and I'll post the results.</div>
+
+      <div class="dlabel">Reddit — native "free tool" (soft launch, warmed acct)</div>
+      <div class="draft"><span class="t">Title</span>I built a free tool that finds what people complain about in any niche (GummySearch alternative)
+
+<span class="t">Body</span>GummySearch shutting down left me without my go-to, so I built a multi-source version. Free single-keyword search: [link]. It pulls Reddit + X + more, scores each pain by frequency × intensity, and cites sources so you can verify it isn't making things up. Not selling anything — I genuinely want feedback on the scoring. What niche should I test next?</div>
+
+      <div class="dlabel">X — build-in-public starter tweets</div>
+      <div class="draft"><span class="t">Day 1</span>GummySearch died over Reddit's API pricing. So I'm building the multi-source replacement — and having an AI build it, live, in public.
+
+Day 1: the schema. Follow along 🧵</div>
+      <div class="draft"><span class="t">cost hook</span>Cost to generate a full demand report: $0.xx.
+
+It reads Reddit + X, dedupes, scores each pain by frequency × intensity, and cites every source. [clip]</div>
+      <div class="draft"><span class="t">free-tool launch</span>The free tool is live → [link]
+
+Type a keyword → the top unmet complaints in that niche, scored and sourced.
+
+100 signups in 72h or it becomes a feature.</div>
+
+      <div class="dlabel">Hacker News — Show HN title</div>
+      <div class="draft">Show HN: BurningDemand – multi-source demand research (a GummySearch alternative), built by an AI</div>
+
+      <p class="note" style="color:var(--faint);font-size:12px;margin-top:12px">Replace <code>[niche]</code> / <code>[link]</code> / <code>$0.xx</code> before posting. Keep Reddit posts human-written; CSS may draft the X / SEO copy.</p>
+    </div>
+  </details>
+
+  <!-- PRE -->
+  <div class="week"><h2>Pre-sprint</h2><span class="sub">start ASAP — these have external clocks</span></div>
+  <div class="day" data-day="pre">
+    <header><span class="chip">PRE</span><span class="title">Warming &amp; validation lead-time</span><span class="mini"></span></header>
+    <div class="grp dist"><h4>Distribution / validation</h4>
+      <label class="item"><input type="checkbox" data-id="pre-warm"><span>Register + warm 3 Reddit + 2 HN accounts (genuine comments, no links)</span></label>
+      <label class="item"><input type="checkbox" data-id="pre-list"><span>Pick 3 razor-sharp niches (&quot;does X and only X&quot;) + map exactly where each one's people already gather</span></label>
+    </div>
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="week"><h2>Week 1 — Build the CSlopSlop spine</h2><span class="sub">BD is just the hardcoded test target</span></div>
+
+  <div class="day" data-day="1">
+    <header><span class="chip">DAY 1</span><span class="title">Schema + company-repo bootstrap</span><span class="mini">~8h</span></header>
+    <div class="grp build"><h4>Engine · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d1-schema"><span>Real 5 tables (opportunity · company · action · run · message) + boot-time <code>CREATE TABLE</code></span></label>
+      <label class="item"><input type="checkbox" data-id="d1-repo"><span>Company-repo bootstrap (bare git + <code>slop/</code> + <code>AGENTS.md</code>)</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d1-post"><span>“Building the machine that builds companies. Day 1: the schema + a company = a repo you own.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Validation · 1.5h</h4>
+      <label class="item"><input type="checkbox" data-id="d1-int"><span>Hand-make 1 real demand report for a target niche — your seed asset &amp; proof (no interviews)</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="2">
+    <header><span class="chip">DAY 2</span><span class="title">Run executor v0</span><span class="mini">~8.5h</span></header>
+    <div class="grp build"><h4>Engine · 7h</h4>
+      <label class="item"><input type="checkbox" data-id="d2-spawn"><span>Spawn <code>claude -p</code> in a company repo from an action (<code>title</code>+<code>doneWhen</code>)</span></label>
+      <label class="item"><input type="checkbox" data-id="d2-diff"><span>Capture diff, commit</span></label>
+      <label class="item"><input type="checkbox" data-id="d2-log"><span>Stream logs (SSE); record <code>costUsd</code></span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d2-post"><span>“First agent-written diff, committed to a real repo. [clip]”</span></label>
+    </div>
+    <div class="grp dist"><h4>Validation · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d2-int"><span>Design the &quot;demand drop&quot;: post a finished report as pure free value — no ask, no survey</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="3">
+    <header><span class="chip">DAY 3</span><span class="title">Deploy seam</span><span class="mini">~8h</span></header>
+    <div class="grp build"><h4>Engine · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d3-deploy"><span>Company boots in a local container / dev server with a real <code>localhost</code> URL</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d3-post"><span>“It deploys itself to a live URL now — nothing counts until it's live.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Validation · 1.5h</h4>
+      <label class="item"><input type="checkbox" data-id="d3-int"><span>Hand-make a 2nd report for a different niche; pre-write where each will be dropped</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="4">
+    <header><span class="chip">DAY 4</span><span class="title">Validation contract</span><span class="mini">~7.5h</span></header>
+    <div class="grp build"><h4>Engine · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d4-check"><span>A runner <i>distinct from the builder</i> hits the URL, checks <code>doneWhen</code>, green/red</span></label>
+      <label class="item"><input type="checkbox" data-id="d4-retry"><span>Retry → <code>blocked</code> (never auto-pass)</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d4-post"><span>“The part Polsia skips: it validates against the live URL before it can say ‘done’.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d4-reply"><span>Reply to 5; answer a “GummySearch alternative?” thread</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="5">
+    <header><span class="chip">DAY 5</span><span class="title">Approval gate + queue</span><span class="mini">~7.5h</span></header>
+    <div class="grp build"><h4>Engine · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d5-gate"><span>One screen: action = diff + preview URL + green check → Approve / Reject-with-feedback</span></label>
+      <label class="item"><input type="checkbox" data-id="d5-queue"><span>Pull top-priority ready action</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d5-post"><span>“One screen. Preview + evidence + Approve. That's the whole app.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d5-reply"><span>Reply to 5</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="6">
+    <header><span class="chip">DAY 6</span><span class="title">Prove the spine</span><span class="mini">~8h</span></header>
+    <div class="grp build"><h4>Engine · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d6-hard"><span>Hardcode ONE BD action (“visitor can sign up on a live local URL”)</span></label>
+      <label class="item"><input type="checkbox" data-id="d6-10x"><span>Run end-to-end <b>10×</b>; measure cold-run reliability</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d6-post"><span>“10 cold runs of the full loop. Here's the honest score.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1.5h</h4>
+      <label class="item"><input type="checkbox" data-id="d6-post2"><span>Native “building the GummySearch replacement in public” post</span></label>
+    </div>
+  </div>
+
+  <div class="day gate" data-day="7">
+    <header><span class="chip">DAY 7</span><span class="title">Buffer + harden — GATE &amp; FLEX POINT</span><span class="mini">~5h</span></header>
+    <div class="grp build"><h4>Engine · 3–5h</h4>
+      <label class="item"><input type="checkbox" data-id="d7-harden"><span>Harden loop to <b>≈≥7/10 cold runs</b></span></label>
+      <label class="item"><input type="checkbox" data-id="d7-gate"><span><b>GATE:</b> spine green → Week 2. Red → keep hardening, slip launch (this is where the flex lives).</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d7-post"><span>“What broke over 10 runs and what I fixed. [honest recap]”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d7-reply"><span>Reply to 5</span></label>
+    </div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="week"><h2>Week 2 — CSlopSlop builds BurningDemand</h2><span class="sub">loop-with-steering + launch</span></div>
+
+  <div class="day" data-day="8">
+    <header><span class="chip">DAY 8</span><span class="title">Seed BD + feature #1</span><span class="mini">~8.5h</span></header>
+    <div class="grp build"><h4>Loop-builds-BD · 7h</h4>
+      <label class="item"><input type="checkbox" data-id="d8-seed"><span>Seed BD: thought → promote → <b>planning run</b> decomposes into <code>code</code> actions; <code>slop/spec.md</code> from the thesis</span></label>
+      <label class="item"><input type="checkbox" data-id="d8-f1"><span>Loop builds <b>feature #1 (multi-source intake)</b>; you approve</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d8-post"><span>“I gave it one sentence. Watch it plan the company and ship feature #1.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Validation · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d8-int"><span>Drop your first report in a live thread → count the pulls (replies/DMs asking &quot;do one for X&quot;)</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="9">
+    <header><span class="chip">DAY 9</span><span class="title">Scoring + WTP</span><span class="mini">~7.5h</span></header>
+    <div class="grp build"><h4>Loop-builds-BD · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d9-score"><span>Loop builds <b>scoring</b> (freq×intensity + every claim cites a URL)</span></label>
+      <label class="item"><input type="checkbox" data-id="d9-wtp"><span>Loop builds <b>WTP extraction</b>; approve each</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d9-post"><span>“Feature #2 and #3, shipped by the machine, each with a green check.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d9-reply"><span>Reply to 5</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="10">
+    <header><span class="chip">DAY 10</span><span class="title">Free tool + monetize</span><span class="mini">~8h</span></header>
+    <div class="grp build"><h4>Loop-builds-BD · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d10-free"><span>Loop builds <b>free single-keyword page + report gating</b></span></label>
+      <label class="item"><input type="checkbox" data-id="d10-launch"><span><b>Soft-launch the free tool</b></span></label>
+      <label class="item"><input type="checkbox" data-id="d10-pay"><span>Add <b>monetize action</b> (“user can pay”, real Stripe) + pricing</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d10-post"><span>“Free tool live — built by the machine, not me. [link]”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1.5h</h4>
+      <label class="item"><input type="checkbox" data-id="d10-dm"><span>Drop a real report where the niche gathers; count runs + who asks for their own — behavior, not opinions</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="11">
+    <header><span class="chip">DAY 11</span><span class="title">Acquisition + message actions + first $</span><span class="mini">~8.5h</span></header>
+    <div class="grp build"><h4>Loop-builds-BD · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d11-seo"><span>Loop builds <b>SEO / “GummySearch alternative” comparison pages</b> (acquisition <code>code</code> actions)</span></label>
+      <label class="item"><input type="checkbox" data-id="d11-rev"><span>Loop builds a <b>public /open revenue page</b> (live MRR + honest metrics) — trust asset, fills in after the first dollar</span></label>
+      <label class="item"><input type="checkbox" data-id="d11-msg"><span><b>message-action path:</b> CSS drafts BD's X/build-in-public posts → you approve → you post</span></label>
+      <label class="item"><input type="checkbox" data-id="d11-pay"><span><b>Chase first paying customer</b> (founding offer)</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d11-post"><span>“It wrote its own comparison page <i>and</i> its launch posts. And someone just paid.”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 2h</h4>
+      <label class="item"><input type="checkbox" data-id="d11-dm"><span>DM warm contacts (founding offer); post CSS-drafted BD content to BD's account</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="12">
+    <header><span class="chip">DAY 12</span><span class="title">Buffer + launch asset</span><span class="mini">~5h</span></header>
+    <div class="grp build"><h4>Engine · 3–4h</h4>
+      <label class="item"><input type="checkbox" data-id="d12-int"><span>Integrate; harden demo path; dry-run checkout end-to-end</span></label>
+      <label class="item"><input type="checkbox" data-id="d12-video"><span>Cut the <b>killer launch asset: a clean loop-ships-a-feature video</b></span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d12-post"><span>“Tomorrow. What the machine built, and what I hand-finished. [teaser]”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 1h</h4>
+      <label class="item"><input type="checkbox" data-id="d12-squad"><span>Confirm launch squad (5–10 real people)</span></label>
+      <label class="item"><input type="checkbox" data-id="d12-pr"><span>Line up PR: submit to launch directories + list 5–10 relevant newsletters/creators to pitch</span></label>
+    </div>
+  </div>
+
+  <div class="day launch" data-day="13">
+    <header><span class="chip">DAY 13</span><span class="title">LAUNCH both</span><span class="mini">~8.5h</span></header>
+    <div class="grp build"><h4>Go-live · 2h</h4>
+      <label class="item"><input type="checkbox" data-id="d13-live"><span>Go-live + monitor; hotfix only</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d13-thread"><span>Launch thread: the machine → the company it built → live + paid → “what should it build next?”</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 6h</h4>
+      <label class="item"><input type="checkbox" data-id="d13-ph"><span><b>Fire PH (00:01 PT) — first 2h fully on ProductHunt</b></span></label>
+      <label class="item"><input type="checkbox" data-id="d13-rest"><span>Then HN + Reddit-native + X; reply all day</span></label>
+    </div>
+  </div>
+
+  <div class="day" data-day="14">
+    <header><span class="chip">DAY 14</span><span class="title">Follow-through + honesty ledger</span><span class="mini">~6h</span></header>
+    <div class="grp build"><h4>Engine · 3h</h4>
+      <label class="item"><input type="checkbox" data-id="d14-fix"><span>Fix top launch issues; write the 30-day backlog from feedback</span></label>
+    </div>
+    <div class="grp content"><h4>Content</h4>
+      <label class="item"><input type="checkbox" data-id="d14-ledger"><span><b>Publish the honesty ledger</b> — which features the loop built vs which you hand-finished</span></label>
+      <label class="item"><input type="checkbox" data-id="d14-bridge"><span>Bridge post → convert BD audience into CSlopSlop waitlist</span></label>
+    </div>
+    <div class="grp dist"><h4>Distribution · 2.5h</h4>
+      <label class="item"><input type="checkbox" data-id="d14-reply"><span>Reply to every comment; thank the squad</span></label>
+    </div>
+  </div>
+
+  <details class="ref">
+    <summary>Budget &amp; reality check</summary>
+    <div class="body">
+      <ul>
+        <li><b>Spend on:</b> production quality (~$90 recorder/editor) · COGS/API credits (fund loop runs + re-runs without rationing) · launch squad ($0) · held-back “amplify the winner” X reserve. <b>No cold ads into the demand gate.</b></li>
+        <li><b>Hardest part:</b> Week 1 — building the engine from a bare shell. A fighting deploy seam or validation step eats Day 7's buffer and pushes launch. Acceptable under flex.</li>
+        <li><b>If Week 2 slips:</b> cut the <code>message</code>-action drafting first (SEO/comparison pages are the load-bearing proof). Keep native Reddit/HN human-written.</li>
+        <li><b>Don't</b> hand-code BD's product to make it prettier — the moment you do, the “CSlopSlop built it” claim dies.</li>
+      </ul>
+    </div>
+  </details>
+
+  <p class="footnote">Progress saved locally in your browser (localStorage). Refresh-safe. “reset” clears it.</p>
+</div>
+
+<div class="wrap cal" id="view-calendar" hidden></div>
+
+<div id="notesbar">
+  <div class="nb-head"><b>📝 Notes &amp; Niches</b><button class="nb-close" id="notesClose" aria-label="close">×</button></div>
+  <div class="nb-body">
+    <div class="nb-sec">Niches → where they gather</div>
+
+    <div class="niche">
+      <div class="nh">1 · Vibe-coders <small>(stuck at the demo wall)</small></div>
+      <div class="serves">serves <b class="tag bd">BD</b> <b class="tag css">CSS</b></div>
+      <span class="venue">Bolt.new Discord</span><span class="venue">Lovable Discord</span><span class="venue">Cursor Discord</span><span class="venue">r/nocode</span><span class="venue">r/SaaS</span><span class="venue">r/webdev</span><span class="venue">X: v0/Bolt replies</span>
+    </div>
+
+    <div class="niche">
+      <div class="nh">2 · Dev-shop burn-victims <small>($10–50k, broken build)</small></div>
+      <div class="serves">serves <b class="tag css">CSS</b></div>
+      <span class="venue">r/Entrepreneur</span><span class="venue">r/SaaS</span><span class="venue">r/Upwork</span><span class="venue">IndieHackers</span><span class="venue">X: dev-shop horror threads</span>
+    </div>
+
+    <div class="niche">
+      <div class="nh">3 · Audience-creators <small>(5k–100k, no product)</small></div>
+      <div class="serves">serves <b class="tag bd">BD</b> <b class="tag css">CSS</b></div>
+      <span class="venue">r/Substack</span><span class="venue">r/Newsletters</span><span class="venue">creator Discords</span><span class="venue">X #buildinpublic</span>
+    </div>
+
+    <div class="niche" style="border-bottom:none;padding-bottom:4px">
+      <div class="serves">entry wedge into #1 / #3</div>
+      <span class="venue" style="border-color:var(--accent2);color:var(--accent2)">GummySearch refugees</span>
+    </div>
+
+    <div class="nb-sec" style="margin-top:6px">My notes</div>
+    <textarea id="notesArea" placeholder="Jot anything — auto-saved in this browser."></textarea>
+    <div class="nb-saved" id="notesSaved">saved locally · this browser only</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY = "css-bd-plan-v1", TABKEY = "css-bd-plan-tab";
+  var listView = document.getElementById('view-list');
+  var calView  = document.getElementById('view-calendar');
+  var fill = document.getElementById('fill');
+  var pct  = document.getElementById('pct');
+
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ state = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+  // unique task ids = the list view is the single source of truth
+  var ids = Array.prototype.slice.call(listView.querySelectorAll('input[data-id]'))
+              .map(function(b){ return b.getAttribute('data-id'); });
+  // snapshot the clean task text up front so calendar rebuilds don't re-stack badges/hours
+  var ORIGINAL = {};
+  listView.querySelectorAll('label.item').forEach(function(l){
+    var inp = l.querySelector('input'); if(inp) ORIGINAL[inp.getAttribute('data-id')] = l.querySelector('span').innerHTML;
+  });
+
+  // ---------- product tags + per-task how-to details ----------
+  var PRODUCT = {
+    "pre-warm":"both","pre-list":"bd",
+    "d1-schema":"css","d1-repo":"css","d1-post":"css","d1-int":"bd",
+    "d2-spawn":"css","d2-diff":"css","d2-log":"css","d2-post":"css","d2-int":"bd",
+    "d3-deploy":"css","d3-post":"css","d3-int":"bd",
+    "d4-check":"css","d4-retry":"css","d4-post":"css","d4-reply":"bd",
+    "d5-gate":"css","d5-queue":"css","d5-post":"css","d5-reply":"bd",
+    "d6-hard":"css","d6-10x":"css","d6-post":"css","d6-post2":"bd",
+    "d7-harden":"css","d7-gate":"css","d7-post":"css","d7-reply":"bd",
+    "d8-seed":"bd","d8-f1":"bd","d8-post":"css","d8-int":"bd",
+    "d9-score":"bd","d9-wtp":"bd","d9-post":"css","d9-reply":"bd",
+    "d10-free":"bd","d10-launch":"bd","d10-pay":"bd","d10-post":"both","d10-dm":"bd",
+    "d11-seo":"bd","d11-msg":"both","d11-rev":"bd","d11-pay":"bd","d11-post":"both","d11-dm":"bd",
+    "d12-int":"both","d12-video":"both","d12-post":"both","d12-squad":"both","d12-pr":"both",
+    "d13-live":"both","d13-thread":"both","d13-ph":"both","d13-rest":"both",
+    "d14-fix":"both","d14-ledger":"css","d14-bridge":"css","d14-reply":"both","d14-pr":"both"
+  };
+  function badge(id){ var p = PRODUCT[id]; if(!p) return '';
+    return '<b class="tag '+p+'">'+(p==='css'?'CSS':p==='bd'?'BD':'BOTH')+'</b>'; }
+
+  // publish tasks → WHERE to post it (magenta pill = a message to publish; its text = the destination)
+  // "X hub" = @offbeatport · "X · BD" = @burningdemand
+  var CHANNEL = {
+    "pre-warm":"Reddit/HN",
+    "d1-post":"X hub","d2-post":"X hub","d3-post":"X hub","d4-post":"X hub","d5-post":"X hub","d6-post":"X hub",
+    "d7-post":"X hub","d8-post":"X hub","d9-post":"X hub","d11-post":"X hub","d12-post":"X hub",
+    "d13-thread":"X hub","d14-ledger":"X hub","d14-bridge":"X hub",
+    "d4-reply":"Reddit","d5-reply":"Reddit","d7-reply":"Reddit","d9-reply":"Reddit","d6-post2":"Reddit","d8-int":"Reddit",
+    "d10-post":"X · BD","d11-msg":"X · BD",
+    "d10-dm":"Reddit + DM","d11-dm":"Reddit + DM","d11-pay":"DM","d12-squad":"DM","d14-pr":"email/DM",
+    "d13-ph":"ProductHunt","d13-rest":"HN/Reddit/X","d14-reply":"all channels"
+  };
+  function pubPill(id){ return CHANNEL[id] ? '<b class="pub" title="where to publish">' + CHANNEL[id] + '</b>' : ''; }
+
+  var _cold  = ["You don't need an audience — reach people who <b>already complained in public</b>. Search &quot;GummySearch&quot; on Reddit &amp; X, read the shutdown-announcement comments, scan r/SaaS · r/Entrepreneur · IndieHackers. DM 1–2 with one real question: what did you use it for, what did you pay, what's missing?","Reddit &amp; X search · <code>site:reddit.com GummySearch</code> · Google · DMs","Cold reply rates are low — treat <b>reading their public complaints</b> as the reliable path and any live reply as a bonus (it's literally what BD does). Never let this block the build."];
+  var _reply = ["5 genuinely helpful replies in your target subs — answer the actual question first, mention the tool only if it fits. Find one &quot;GummySearch alternative?&quot; thread and give real value.","Reddit (warmed accounts)","A link too early gets auto-removed and can burn the account you spent weeks warming. Value first, link last.","#10 reply to every comment when starting out — sticking around turns a post into a conversation. #3 the deal happens in DMs: DM the people who engage."];
+  var _clip  = ["Record a 20–40s screen clip of what shipped and post to your CSlopSlop hub (your personal account).","Screen Studio / CleanShot · X","Show the green check, not your face — proof beats narration. Keep it under ~40s or people scroll past.","#7 your work is your content — you're not making an ad, you're saying out loud what you did today. #2 proof beats cleverness."];
+
+  var DET = {
+    "pre-warm":["Create the accounts by hand, then ~15 min/day of genuine, link-free comments in target subs so they gain age + karma and won't be auto-filtered later.","Reddit · Hacker News · password manager · check shadowban via a logged-out view"],
+    "pre-list":["Validation here is <b>behavioral, not verbal</b>. Pick 3 niches so sharp you can say &quot;this does X and <b>only</b> X&quot; (e.g. &quot;the top 5 unmet complaints for [narrow audience]&quot;). For each, list the 2–3 exact places its people already gather.","Reddit / X search · niche Discords &amp; Slacks · IndieHackers","Vague niches (&quot;SaaS founders&quot;) give vague signal. The narrower the wedge, the louder the yes/no — and the easier it is to find where they hang out."],
+    "d1-schema":["Define the 5 tables (opportunity · company · action · run · message) in <code>src/db/schema.ts</code>; create them at boot (no migrations yet). Match the field shapes in SPEC.md so nothing needs a rewrite later.","Drizzle ORM · SQLite · TanStack Start","Keep <code>action.payload</code> a JSON column (code/message/money differ) — don't model three tables. This is the schema the whole loop reads from."],
+    "d1-repo":["On promote, create a bare local git repo per company with a <code>slop/</code> folder + an <code>AGENTS.md</code> that says: read slop, ship one validated feature, persist back.","git · node fs / simple-git"],
+    "d1-post":["Screenshot the schema / the &quot;a company = a repo you own&quot; idea; post the origin framing.","X · Screen Studio","","#1 build in public from day 1 — nobody's watching yet, but the small posts keep you visible for when the product starts working. #8 make it specific to you."],
+    "d1-int":["Build one demand report <b>by hand</b> for a target niche — real sources, real citations. It's your seed asset (you'll drop it in public) and doubles as proof the output is worth paying for.","Grok / Perplexity by hand · a doc","Make this one genuinely impressive — a single strong artifact carries both your validation and your marketing. You're giving value, not asking for time."],
+    "d2-spawn":["Shell out to <code>claude -p &quot;&lt;prompt from action.title + doneWhen&gt;&quot;</code> with <code>cwd</code> = the company repo so the CLI edits that repo's files. Pass the <code>AGENTS.md</code> contract in the prompt.","claude CLI · node child_process / execa","A subprocess can't be paused/resumed — capture a checkpoint (gitSha + step) so a killed run replays from the last commit instead of restarting."],
+    "d2-diff":["After the run, <code>git add -A &amp;&amp; git commit</code>; capture the diff to show on the approval card.","git / simple-git"],
+    "d2-log":["Stream the <code>claude -p</code> stdout to the browser over SSE; sum token cost into <code>run.costUsd</code>.","SSE / EventSource · TanStack server route"],
+    "d2-post":_clip,
+    "d2-int":["Design the &quot;demand drop&quot;: you post the finished report into the niche's threads as <b>pure free value</b> — no survey, no &quot;would you use…&quot;, no interview. Demand shows up as <b>pulls</b>: comments, DMs, &quot;can you do one for X?&quot;.","a repeatable post template","Asking is saturated and gets ignored. Giving something concrete and letting people pull is the fresh move — revealed preference beats stated preference every time."],
+    "d3-deploy":["Boot the company app in a local container (or a <code>pnpm dev</code> on an assigned port) and expose a real <code>localhost</code> URL the checker can hit.","Docker or child_process dev-server · a port allocator"],
+    "d3-post":_clip,
+    "d3-int":["Hand-make a 2nd report for a different niche and pre-write exactly which thread/sub each report gets dropped into.","Grok / Perplexity · a doc","Two niches = a cheap A/B: whichever pulls harder tells you the real wedge <b>before</b> you sink build time into the wrong one."],
+    "d4-check":["A step <b>separate from the builder</b> runs the action's <code>doneWhen</code> — an HTTP probe / assertion against the live URL. Green only if it truly passes; on green the action can ship.","fetch / undici · Playwright for UI checks","This is the anti-Polsia core — the agent that wrote the code must never grade its own work. If you cut one corner all fortnight, don't let it be this one."],
+    "d4-retry":["On red: re-queue up to N attempts, then mark <code>blocked</code> and surface to chat. Never flip to done on red.","your run state machine"],
+    "d4-post":["Clip a red → green validation and explain why the builder isn't allowed to grade itself.","Screen Studio · X"],
+    "d4-reply":_reply,
+    "d5-gate":["Build the one screen: diff + preview URL + green check → Approve / Reject-with-feedback (feedback re-queues as a new attempt).","React / TanStack · your DB"],
+    "d5-queue":["Query the top-priority action whose <code>dependsOn</code> are all done + green — that's what the loop pulls next.","Drizzle query + priority sort"],
+    "d5-post":_clip,
+    "d5-reply":_reply,
+    "d6-hard":["Hardcode ONE action — &quot;visitor can sign up on a live local URL&quot; — with a real <code>doneWhen</code>. This is the spine's acceptance test.","your loop end-to-end"],
+    "d6-10x":["Run the whole loop 10× cold (fresh repo each time) on the same hardcoded action; tally pass/fail. You want ~7/10 before Week 2.","a reset-and-run script","'Cold' matters — reuse no state between runs. A loop that only works on the 2nd warm try isn't reliable; that's the exact failure you're hunting."],
+    "d6-post":["Post the honest 10-run score — reliability numbers are the credibility.","X"],
+    "d6-post2":["Native &quot;building the GummySearch replacement in public&quot; post from a <b>warmed</b> Reddit account — genuine, no spam.","Reddit (warmed acct)","","#8 specificity is the only hook that doesn't get old — &quot;the multi-source GummySearch replacement&quot; beats &quot;my new tool&quot;. Ask: could someone else post this exact line? If yes, make it yours."],
+    "d7-harden":["Fix the top failure modes from the 10 runs (flaky deploy, validation races, checkpoint resume).","logs · your loop"],
+    "d7-gate":["Rerun 10×. Proceed to Week 2 only at ~7/10+. If red, keep hardening and slip the launch — this is the flex point.","the run tally"],
+    "d7-post":["Honest &quot;what broke and what I fixed&quot; recap.","X","","#9 your failures are content too — &quot;what broke&quot; posts get more replies than wins and make people trust you more."],
+    "d7-reply":_reply,
+    "d8-seed":["Type BD's one-sentence thought → promote → a planning run (<code>claude -p</code>) decomposes it into <code>code</code> actions (title + <code>doneWhen</code> + priority) and writes <code>slop/spec.md</code> from the thesis. First action must be the walking skeleton.","claude CLI · your planner","If the plan comes back as tech layers ('build the DB', 'build the API'), reject it — every action must be a user-facing capability that ships on its own."],
+    "d8-f1":["Let the loop build feature #1 (multi-source intake). You review the diff + green check, then approve.","the loop · approval UI"],
+    "d8-post":["Clip the machine planning the company + shipping feature #1; post to the CSS hub.","Screen Studio · X","","#7 your work is your content — the loop shipping a feature IS the post; you don't have to invent anything. #2 it's also proof."],
+    "d8-int":["Drop your first hand-made report into a live thread. Don't ask if they'd use a tool — just give the report. Count the <b>pulls</b>: replies, DMs, and &quot;do one for my niche&quot; requests. Each pull is a warm lead + a real yes.","Reddit / X (warmed accounts)","One &quot;can you do this for X?&quot; is worth 100 &quot;sounds useful&quot;. Log every requester — they're your first users and your founding-customer pipeline."],
+    "d9-score":["Loop builds freq×intensity scoring where <b>every claim cites a source URL</b>. You approve.","the loop · Grok / Perplexity APIs (the product's own COGS)"],
+    "d9-wtp":["Loop builds willingness-to-pay extraction from the same sources.","the loop"],
+    "d9-post":["Clip features #2/#3 shipping, each with a green check.","Screen Studio · X"],
+    "d9-reply":_reply,
+    "d10-free":["Loop builds the free single-keyword page + gates the full report behind signup.","the loop · your app"],
+    "d10-launch":["Deploy the free tool to a real public URL so strangers can use it (a proper host or a tunnel for the demo).","deploy seam · Fly.io / Cloudflare Tunnel"],
+    "d10-pay":["Loop builds &quot;user can pay&quot; + a pricing config; <code>doneWhen</code> = a checkout completes and <code>payment_intent</code> reaches <code>succeeded</code>.","Stripe · the loop","Validate on <b>test-mode</b> keys (no real charge) so the gate is safe to re-run; flip to live keys only when you actually take the founding customer's money on Day 11."],
+    "d10-post":["&quot;Free tool live — built by the machine.&quot; Link on BD's account, echo the machine angle on the CSS hub.","X · BD account","","#2 proof beats cleverness — a live link the machine built is proof, not a claim. #3 the post's job is to warm cold DMs — reach out to everyone who reacts."],
+    "d10-dm":["Now the free tool is live: drop a real report where the niche gathers and let people <b>run it themselves</b>. Validation = did they run it, run a 2nd query, unlock the deep report. Ask for feedback only <b>after</b> they've used it.","the live tool · Reddit / X","This is your thesis: show a tool that does X and only X, let usage be the vote. A 2nd query from the same person is your strongest early signal — stronger than any interview.","#3 the post isn't where the deal happens — DM everyone who runs it or asks for their niche. #5 give before you ask: they got a free report first."],
+    "d11-seo":["Loop builds SEO + &quot;GummySearch alternative&quot; comparison pages as acquisition <code>code</code> actions — it writes <b>and deploys</b> them.","the loop"],
+    "d11-rev":["Loop builds a public <code>/open</code> page showing live MRR + honest counts (users, reports run). Start it empty and let real numbers fill in — the transparency itself is the trust play (Tibo: proof beats cleverness).","the loop · Stripe / DB read","Empty is fine and honest at first (&quot;first dollar loading&quot;). Faking a number detonates the whole moat — never do it."],
+    "d11-msg":["Loop <b>drafts</b> BD's X / build-in-public posts (message actions); you approve and <b>you</b> post (draft-not-send). Keep native Reddit/HN human-written.","the loop · you post manually"],
+    "d11-pay":["Take a founding offer (discount/lifetime) to your warmest cold-chat contacts. Aim for one real dollar.","Stripe payment link"],
+    "d11-post":["&quot;It wrote its own comparison page and its posts — and someone just paid.&quot;","X","","#2 proof beats cleverness — a &quot;someone just paid&quot; screenshot does more than any clever AI tweet."],
+    "d11-dm":["DM warm contacts with the offer; post the CSS-drafted BD content to BD's account (edit for authenticity first).","Reddit / X","","#3 the post is not where the deal happens — most conversions are in DMs; the post just turns a cold DM warm. #4 do what you said you'd do: if you promised someone the report, send it."],
+    "d12-int":["Run the whole path end-to-end; dry-run the Stripe checkout; fix anything that breaks the demo.","your app · Stripe test"],
+    "d12-video":["Cut the killer 30–60s asset: the loop shipping a feature end-to-end → green check → your approve. Your #1 launch asset.","Screen Studio / CapCut"],
+    "d12-post":["Teaser: &quot;tomorrow — what the machine built, and what I hand-finished.&quot;","X"],
+    "d12-squad":["Line up 5–10 real people (cold chats who liked it, friends, small communities) to genuinely engage at launch hour.","DMs · a group chat"],
+    "d12-pr":["Prep the press push: submit to launch directories (BetaList, indie/AI directories) and list 5–10 newsletters/creators whose audience is your niche. Draft one short, specific pitch per target.","BetaList · directories · a pitch template","Specificity is the hook (Tibo #8): &quot;an AI that built + shipped a real company in 2 weeks&quot; beats &quot;check out my launch&quot;. Pitch the story, not the tool."],
+    "d13-live":["Go live; watch errors; hotfix only — no new features today.","your logs · error tracking"],
+    "d13-thread":["Post the launch thread on the CSS hub; lead with the loop-ships-a-feature video.","X","","#8 specificity is the hook — &quot;an AI built + shipped a real company in 2 weeks&quot; beats &quot;check out my launch&quot;. #9 include what's honestly not done yet — it gets more replies, not fewer."],
+    "d13-ph":["Submit to ProductHunt at 00:01 PT; spend the first ~2h replying to every comment before touching other channels. Lead the gallery with the loop-ships-a-feature video.","ProductHunt","Ranking is engagement-velocity-driven in the first hours — splitting attention to HN/Reddit too early is the most expensive mistake. Have the squad ready to engage at launch minute."],
+    "d13-rest":["Then Show HN + native Reddit + X; reply all day.","Hacker News · Reddit · X"],
+    "d14-fix":["Fix the top launch-day issues; turn feedback into a 30-day backlog.","your issue list"],
+    "d14-ledger":["Publish which BD features the loop <b>truly</b> built vs which you hand-finished. The honesty is the moat.","a simple table / post","","#9 your failures / limits are content — the loop-built-vs-hand-finished split is exactly the kind of honest post people trust and reply to."],
+    "d14-bridge":["Bridge post: convert BD's launch audience into a CSlopSlop waitlist — same loop, now automated.","X · a waitlist form","","#6 consistency compounds, virality doesn't — the launch is a spike; the waitlist + daily posting is what actually builds the audience."],
+    "d14-reply":["Reply to every launch comment; thank the squad publicly.","X · HN · Reddit","","#10 reply to every comment when starting out — engaging is what turns a post into a conversation that the algorithm and humans both notice."],
+    "d14-pr":["Now it's live with real numbers: send the pitches — newsletters, relevant creators, open-startup directories. Lead with proof (loop-built features, first dollar, the honesty ledger).","email · X DMs · directories","Follow through on every promise (Tibo #4): if you told someone you'd send it, send it. 80% don't — that alone puts you ahead."]
+  };
+  // one copy-paste prompt per step → hand to Claude to actually do it
+  var _replyP = "Draft 5 genuinely helpful Reddit replies for founder / idea-validation threads (answer the question first, no hard sell), plus a value-first answer for a 'GummySearch alternative?' thread that mentions BurningDemand naturally. Human, specific, link-last.";
+  var PROMPTS = {
+    "pre-warm":"Draft 5 genuinely helpful, link-free Reddit comments I can post over 2-3 weeks to build karma in r/SaaS, r/Entrepreneur, r/indiehackers — each answers a common founder question with real substance, zero promotion. Then give a warming checklist with age + karma targets per subreddit.",
+    "pre-list":"Act as a demand-research analyst. Propose 3 razor-sharp niches for BurningDemand demand reports — each so narrow I can say 'top 5 unmet complaints for [them]'. For each: why it's vocal and easy to mine, plus the 2-3 exact subreddits/forums/Discords where its people gather. Rank by richness of public complaints.",
+    "d1-schema":"In this TanStack Start + Drizzle + SQLite repo, implement the 5-table schema from SPEC.md (opportunity, company, action, run, message) in src/db/schema.ts with boot-time CREATE TABLE. Keep action.payload as a JSON column; match SPEC.md field shapes exactly. Show the schema + boot code.",
+    "d1-repo":"Write a module that, on promoting an opportunity to a company, creates a bare local git repo per company with a slop/ folder (spec.md, decisions.md, research/) and an AGENTS.md telling an agent: read slop first, ship one validated feature, persist back. Give me the code and the AGENTS.md text.",
+    "d1-post":"Draft the Day-1 build-in-public tweet for @offbeatport: 'building the machine that builds companies — Day 1: the schema; a company = a git repo you own.' Specific, hooky, human.",
+    "d1-int":"Act as BurningDemand and hand-produce a real demand report for [niche]: mine public complaints from Reddit + X, dedupe, score each pain by frequency x intensity, cite a source URL per claim, extract willingness-to-pay signals, and write a 1-paragraph MVP brief. Make it genuinely impressive.",
+    "d2-spawn":"Write a Node run-executor (execa/child_process) that spawns `claude -p` with cwd = a company repo, builds the prompt from an action's title + doneWhen + the repo AGENTS.md, runs it, then git add -A and commit. Include a checkpoint (gitSha + step) so a killed run replays from the last commit.",
+    "d2-diff":"Extend the run executor: after the agent run, capture the git diff of the commit and attach it to the action so the approval card can render it. Show the code.",
+    "d2-log":"Add SSE streaming of the claude -p stdout to the browser (TanStack server route + EventSource client) and a per-run costUsd accumulator. Show the code.",
+    "d2-post":"Draft a tweet for @offbeatport: the first agent-written diff, committed to a real repo. One-line hook + note to attach the screen clip. Specific, no hype.",
+    "d2-int":"Design a repeatable 'demand drop' post template: how to share a finished demand report as pure free value in a niche's threads — no ask, no survey — structured so demand shows up as pulls (comments/DMs/'do one for X').",
+    "d3-deploy":"Write a deploy module that boots a company's app in its own process (pnpm dev on an assigned free port, or a local container) and returns a real localhost URL a checker can hit. Handle port allocation + teardown. Show the code.",
+    "d3-post":"Draft a tweet: 'it deploys itself to a live URL now — nothing counts until it's live.' Hooky and specific; note to attach the clip.",
+    "d3-int":"Hand-produce a second real demand report for a different niche [niche2] in the same format (mined complaints, deduped, scored frequency x intensity, a source per claim, WTP signals, 1-paragraph MVP brief), and tell me exactly which subreddit/forum to drop each of the two reports into.",
+    "d4-check":"Write a validation runner, SEPARATE from the builder, that executes an action's doneWhen against the live localhost URL (HTTP probe / assertion; Playwright for UI checks). Return green/red; on red re-queue up to N attempts then mark the action blocked. Never auto-pass. Show the code.",
+    "d4-retry":"Add retry + no-progress detection to the run executor: max attempts, detect repeated same-diff/same-failure, then mark the action blocked and surface to chat. Show the code.",
+    "d4-post":"Draft a tweet explaining the anti-Polsia bit: it validates against the live URL before it's allowed to say 'done' (the builder never grades its own work). Note to attach the red-to-green clip.",
+    "d4-reply":_replyP,
+    "d5-gate":"Build the one-screen approval UI in TanStack Start: a prioritized action queue where each action shows diff + preview URL + green doneWhen, with Approve and Reject-with-feedback (feedback re-queues as a new attempt). Show components + server actions.",
+    "d5-queue":"Write the Drizzle query that returns the top-priority action whose dependsOn are all done+green, ranked by impact x confidence / effort. This is what the loop pulls next.",
+    "d5-post":"Draft a tweet: 'one screen — preview + evidence + Approve. That's the whole app.' Note to attach the 30s screen recording.",
+    "d5-reply":_replyP,
+    "d6-hard":"Create a hardcoded test action 'a visitor can sign up on a live local URL' with a real executable doneWhen (POST /signup succeeds, then a GET confirms). Wire it through the full loop: build -> deploy -> validate -> approve. Show the setup.",
+    "d6-10x":"Write a script that runs the full loop on the hardcoded signup action 10x cold (fresh repo each run), tallies pass/fail, and prints a reliability score.",
+    "d6-post":"Draft a tweet posting the honest 10-cold-run reliability score of the loop. No spin.",
+    "d6-post2":"Write a native 'building the GummySearch replacement in public' Reddit post from a warmed account — genuine, value-first, no spam, ending with a real question to the community.",
+    "d7-harden":"Here are the failure logs from 10 cold runs: [paste]. Diagnose the top recurring failure modes (deploy flakiness, validation races, checkpoint resume) and propose fixes as diffs.",
+    "d7-gate":"Given these 10-run results [paste], tell me honestly: is the spine >=7/10 cold? If not, what are the 2 highest-leverage fixes before I move to Week 2?",
+    "d7-post":"Draft an honest 'what broke over 10 runs and what I fixed' recap tweet. Failures build trust — don't hide them.",
+    "d7-reply":_replyP,
+    "d8-seed":"Seed BurningDemand as a company: from this one-line thesis '[paste thesis]', write slop/spec.md and decompose it into the first code actions (title + executable doneWhen + priority + dependsOn), starting with the walking skeleton. Reject any action that is a tech layer instead of a user-facing capability.",
+    "d8-f1":"Implement BurningDemand feature #1 — multi-source demand intake: pull demand signals for a keyword from Grok + Perplexity APIs and normalize to a common shape. doneWhen: GET /intake?kw=... returns >=1 item, each with a source URL. Show the code.",
+    "d8-post":"Draft a tweet: 'I gave it one sentence — watch it plan the company and ship feature #1.' Note to attach the clip. Specific, human.",
+    "d8-int":"I have a hand-made demand report for [niche]. Write the Reddit 'demand drop' post that shares it as pure free value (no ask, no survey) and naturally invites 'do one for my niche' replies.",
+    "d9-score":"Implement BurningDemand scoring: dedupe complaints across sources, then score each pain = frequency x intensity. Every scored item MUST carry a source URL. doneWhen: GET /report?kw=... returns scored, deduped, sourced items. Show the code.",
+    "d9-wtp":"Add willingness-to-pay extraction: from the same sources, surface signals people would pay (mentions of paying for a workaround, 'I'd pay for', budget hints) and attach them to the report. Show the code.",
+    "d9-post":"Draft a tweet: 'feature #2 and #3, shipped by the machine, each with a green check.' Note to attach the clip.",
+    "d9-reply":_replyP,
+    "d10-free":"Build BurningDemand's free single-keyword page (public) and gate the full report behind a waitlist/signup. Show routes + components.",
+    "d10-launch":"Set up a real public deploy for the free tool (Fly.io, or a Cloudflare tunnel for the demo) so strangers can use it. Give me the deploy config + exact commands.",
+    "d10-pay":"Add 'user can pay' with Stripe: pricing config + checkout. doneWhen (test-mode): a checkout completes and payment_intent reaches succeeded with test keys. Show the code and how to flip to live keys.",
+    "d10-post":"Draft the 'free tool live — built by the machine, not me' tweet with the link for @burningdemand, plus an echo for @offbeatport that leans on the machine angle.",
+    "d10-dm":"Write a Reddit post announcing the free tool with one real example report, inviting people to run their own keyword. Value-first, human, no marketing voice.",
+    "d11-seo":"Generate BurningDemand's SEO + 'GummySearch alternative' comparison pages as real deployable routes (meta tags + reachable sitemap.xml). Write the content and the code.",
+    "d11-msg":"Draft 3 build-in-public posts for @burningdemand about what shipped this week (feature X) — specific, proof-driven, no hype. I'll review and post them.",
+    "d11-rev":"Build a public /open page for BurningDemand showing live MRR + honest counts (users, reports run), read from Stripe + the DB. Start empty with 'first dollar loading'. Show the code.",
+    "d11-pay":"Write 3 short, specific founding-customer DMs for warm contacts: the offer + why it helps them + a payment-link ask. No fluff, no pressure.",
+    "d11-post":"Draft a tweet: 'it wrote its own comparison page and its posts — and someone just paid.' Attach the screenshot.",
+    "d11-dm":"Write 3 warm DMs to ex-GummySearch users with the founding offer + a specific reason it helps them. Human, specific, link-last.",
+    "d12-int":"Review the BurningDemand end-to-end path (intake -> report -> signup -> checkout). Find anything that breaks the demo, dry-run the Stripe checkout, and list issues + fixes.",
+    "d12-video":"Write a 30-45s script + shot list for the launch video: the loop shipping a BurningDemand feature end-to-end -> green check -> my approve. Punchy, proof-first.",
+    "d12-post":"Draft a launch-teaser tweet for tomorrow: 'what the machine built, and what I hand-finished.' Specific and honest.",
+    "d12-squad":"Draft 2 short, warm DMs to line up 5-10 people to engage at launch hour — friendly, specific ask, no pressure.",
+    "d12-pr":"Give me a launch PR list: relevant launch directories (BetaList etc.) + 8 newsletters/creators whose audience is indie builders, each with a one-line specific pitch.",
+    "d13-live":"I'm going live now. Give me a go-live monitoring checklist (errors, key flows, Stripe) and the fastest hotfix path for the top 3 likely launch-day breakages.",
+    "d13-thread":"Write my launch thread for @offbeatport: the machine -> the company it built (BurningDemand) -> live + first dollar -> what's honestly not done -> 'what niche should it build next?'. Lead with the video. Specific, human, no hype.",
+    "d13-ph":"Write my ProductHunt launch: name, tagline, description, first comment, and a maker's-reply template — all specific to 'an AI built and shipped a real company in 2 weeks'.",
+    "d13-rest":"Write my Show HN title + text and a native Reddit (r/SaaS) launch post. HN = technical and honest; Reddit = value-first and human. No marketing voice.",
+    "d14-fix":"Here's the top launch-day feedback [paste]. Turn it into a prioritized 30-day backlog (impact x confidence / effort) and fix the top 3 issues now as diffs.",
+    "d14-ledger":"Write the honesty-ledger post: a clear table of which BurningDemand features the loop truly built vs which I hand-finished, plus an honest reflection. This is the anti-Polsia proof.",
+    "d14-bridge":"Write the bridge post that converts BurningDemand's launch audience into a CSlopSlop waitlist — same loop, now automated. Include a one-line CTA + waitlist copy.",
+    "d14-reply":"Draft 5 warm, specific reply templates for common launch-day comments (praise, skepticism, feature request, 'how does it work', pricing) — human, non-defensive.",
+    "d14-pr":"Write my press pitches: a short specific email to each of [list newsletters/creators], leading with proof (loop-built features, first dollar, the honesty ledger). One per target, no template smell."
+  };
+
+  function detHtml(id){ var d = DET[id]; if(!d) return '';
+    var s = '<span class="k">How to run</span>' + d[0];
+    if(d[1]) s += '<span class="k2">Tools</span>' + d[1];
+    if(d[2]) s += '<span class="k3">Watch out</span>' + d[2];
+    if(d[3]) s += '<span class="k4">📣 Tibo</span>' + d[3];
+    return s; }
+
+  // ---------- shared hover tooltip ----------
+  var tip = document.createElement('div'); tip.id = 'tip'; document.body.appendChild(tip);
+  var tipHideT = null, pinnedBtn = null;
+  function placeTip(btn){
+    tip.classList.add('show');
+    var r = btn.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight, pad = 12;
+    var left = Math.max(pad, Math.min(r.left, window.innerWidth - tw - pad));
+    var top = r.bottom + 8;
+    if(top + th > window.innerHeight - pad) top = Math.max(pad, r.top - th - 8);
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  }
+  function showTip(id, btn){
+    if(tipHideT){ clearTimeout(tipHideT); tipHideT = null; }
+    tip.innerHTML = detHtml(id) + '<span class="pin">hover to read · click ⓘ to pin · click away to close</span>';
+    placeTip(btn);
+  }
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function showPrompt(id, btn){
+    if(tipHideT){ clearTimeout(tipHideT); tipHideT = null; }
+    tip.innerHTML = '<span class="k5">🤖 Prompt for Claude</span><div class="promptbox">' + escapeHtml(PROMPTS[id]) + '</div><span class="pin">click 🤖 to copy</span>';
+    placeTip(btn);
+  }
+  function fallbackCopy(t){
+    var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyText(t){
+    try { if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).catch(function(){ fallbackCopy(t); }); return; } } catch(e){}
+    fallbackCopy(t);
+  }
+  function hideSoon(){ tipHideT = setTimeout(function(){ if(!pinnedBtn) tip.classList.remove('show'); }, 140); }
+  tip.addEventListener('mouseenter', function(){ if(tipHideT){ clearTimeout(tipHideT); tipHideT = null; } });
+  tip.addEventListener('mouseleave', function(){ if(!pinnedBtn) hideSoon(); });
+  document.addEventListener('click', function(e){
+    if(pinnedBtn && e.target !== pinnedBtn && !tip.contains(e.target)){ pinnedBtn.classList.remove('open'); pinnedBtn = null; tip.classList.remove('show'); }
+  });
+  window.addEventListener('scroll', function(){ if(pinnedBtn) placeTip(pinnedBtn); }, true);
+
+  // ⓘ = how-to tooltip (hover/pin) · 🤖 = copy a ready-made Claude prompt for this step
+  function attachDetails(id, wrap, row){
+    if(DET[id]){
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'detbtn'; btn.textContent = 'ⓘ';
+      row.appendChild(btn);
+      btn.addEventListener('mouseenter', function(){ if(!pinnedBtn) showTip(id, btn); });
+      btn.addEventListener('mouseleave', function(){ if(!pinnedBtn) hideSoon(); });
+      btn.addEventListener('focus', function(){ if(!pinnedBtn) showTip(id, btn); });
+      btn.addEventListener('blur',  function(){ if(!pinnedBtn) hideSoon(); });
+      btn.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(pinnedBtn === btn){ pinnedBtn = null; btn.classList.remove('open'); tip.classList.remove('show'); }
+        else { if(pinnedBtn) pinnedBtn.classList.remove('open'); pinnedBtn = btn; btn.classList.add('open'); showTip(id, btn); }
+      });
+    }
+    if(PROMPTS[id]){
+      var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'aibtn'; ab.textContent = '🤖'; ab.title = 'Copy an AI prompt for this step';
+      row.appendChild(ab);
+      ab.addEventListener('mouseenter', function(){ if(!pinnedBtn) showPrompt(id, ab); });
+      ab.addEventListener('mouseleave', function(){ if(!pinnedBtn) hideSoon(); });
+      ab.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        copyText(PROMPTS[id]);
+        var prev = ab.textContent; ab.textContent = '✓'; ab.classList.add('copied');
+        setTimeout(function(){ ab.textContent = prev; ab.classList.remove('copied'); }, 1200);
+      });
+    }
+  }
+
+  // enhance an existing LIST label into a .task (badge + details)
+  function enhanceList(){
+    Array.prototype.slice.call(listView.querySelectorAll('label.item')).forEach(function(label){
+      var id = label.querySelector('input').getAttribute('data-id');
+      var span = label.querySelector('span');
+      if(!span.querySelector('.tag')) span.insertAdjacentHTML('afterbegin', badge(id) + pubPill(id));
+      if(!span.querySelector('.th')) span.insertAdjacentHTML('beforeend', hoursChip(id));
+      var wrap = document.createElement('div'); wrap.className = 'task';
+      var row = document.createElement('div'); row.className = 'taskrow';
+      label.parentNode.insertBefore(wrap, label);
+      row.appendChild(label); wrap.appendChild(row);
+      attachDetails(id, wrap, row);
+    });
+  }
+
+  // build a fresh CALENDAR task (.task) from clean list html
+  function makeCalTask(id, spanHtml){
+    var wrap = document.createElement('div'); wrap.className = 'task';
+    var row = document.createElement('div'); row.className = 'taskrow';
+    var lab = document.createElement('label'); lab.className = 'cal-item';
+    var inp = document.createElement('input'); inp.type = 'checkbox'; inp.setAttribute('data-id', id);
+    var sp = document.createElement('span'); sp.innerHTML = badge(id) + pubPill(id) + spanHtml + hoursChip(id);
+    lab.appendChild(inp); lab.appendChild(sp); row.appendChild(lab); wrap.appendChild(row);
+    attachDetails(id, wrap, row);
+    return wrap;
+  }
+
+  // energy split: 'am' = creative / decision-heavy (draining), 'pm' = mechanical / known (light)
+  var ENERGY = {
+    "pre-warm":"pm","pre-list":"am",
+    "d1-schema":"am","d1-repo":"pm","d1-post":"am","d1-int":"am",
+    "d2-spawn":"am","d2-diff":"pm","d2-log":"pm","d2-post":"pm","d2-int":"am",
+    "d3-deploy":"am","d3-post":"pm","d3-int":"am",
+    "d4-check":"am","d4-retry":"pm","d4-post":"pm","d4-reply":"pm",
+    "d5-gate":"am","d5-queue":"pm","d5-post":"pm","d5-reply":"pm",
+    "d6-hard":"am","d6-10x":"pm","d6-post":"pm","d6-post2":"am",
+    "d7-harden":"am","d7-gate":"pm","d7-post":"pm","d7-reply":"pm",
+    "d8-seed":"am","d8-f1":"pm","d8-post":"pm","d8-int":"pm",
+    "d9-score":"pm","d9-wtp":"pm","d9-post":"pm","d9-reply":"pm",
+    "d10-free":"pm","d10-launch":"pm","d10-pay":"am","d10-post":"am","d10-dm":"am",
+    "d11-seo":"pm","d11-msg":"pm","d11-rev":"pm","d11-pay":"am","d11-post":"am","d11-dm":"am",
+    "d12-int":"am","d12-video":"am","d12-post":"pm","d12-squad":"pm","d12-pr":"am",
+    "d13-live":"pm","d13-thread":"am","d13-ph":"am","d13-rest":"pm",
+    "d14-fix":"am","d14-ledger":"am","d14-bridge":"am","d14-reply":"pm","d14-pr":"am"
+  };
+  // per-task time estimates (hours)
+  var HOURS = {
+    "pre-warm":0.5,"pre-list":1,
+    "d1-schema":4,"d1-repo":2,"d1-post":0.5,"d1-int":1.5,
+    "d2-spawn":4,"d2-diff":1,"d2-log":2,"d2-post":0.5,"d2-int":1,
+    "d3-deploy":6,"d3-post":0.5,"d3-int":1.5,
+    "d4-check":4,"d4-retry":2,"d4-post":0.5,"d4-reply":1,
+    "d5-gate":4,"d5-queue":2,"d5-post":0.5,"d5-reply":1,
+    "d6-hard":3,"d6-10x":3,"d6-post":0.5,"d6-post2":1.5,
+    "d7-harden":3,"d7-gate":0.5,"d7-post":0.5,"d7-reply":1,
+    "d8-seed":4,"d8-f1":3,"d8-post":0.5,"d8-int":1,
+    "d9-score":3,"d9-wtp":3,"d9-post":0.5,"d9-reply":1,
+    "d10-free":3,"d10-launch":1,"d10-pay":2,"d10-post":0.5,"d10-dm":1.5,
+    "d11-seo":2,"d11-msg":1,"d11-rev":1.5,"d11-pay":1.5,"d11-post":0.5,"d11-dm":2,
+    "d12-int":2,"d12-video":1.5,"d12-post":0.5,"d12-squad":0.5,"d12-pr":1,
+    "d13-live":2,"d13-thread":0.5,"d13-ph":3,"d13-rest":3,
+    "d14-fix":2,"d14-ledger":1,"d14-bridge":1,"d14-reply":1,"d14-pr":1
+  };
+  function fmtH(n){ return (Math.round(n*10)%10 ? n.toFixed(1) : n) + 'h'; }
+  function hoursChip(id){ var h = HOURS[id]; return h ? ' <em class="th">' + fmtH(h) + '</em>' : ''; }
+  function groupOf(grp){ return grp.classList.contains('build') ? 'build' : grp.classList.contains('content') ? 'content' : 'dist'; }
+  function halfPanel(cls, title, sub){
+    var el = document.createElement('div'); el.className = 'half ' + cls;
+    var h = document.createElement('div'); h.className = 'half-h'; h.innerHTML = title + ' <span class="hh"></span> <small>' + sub + '</small>';
+    var body = document.createElement('div'); body.className = 'half-body';
+    el.appendChild(h); el.appendChild(body);
+    return { el: el, body: body };
+  }
+
+  // ---------- dates (computed live in the browser) ----------
+  var WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function fmtDate(d){ return WEEKDAYS[d.getDay()] + ' · ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+  function todayStart(){ var t = new Date(); t.setHours(0,0,0,0); if(t.getDay() === 0) t.setDate(t.getDate() + 1); return t; }
+  function nextWorking(d){ var n = new Date(d); n.setDate(n.getDate() + 1); if(n.getDay() === 0) n.setDate(n.getDate() + 1); return n; }
+  function daysBetween(a, b){ return Math.round((b - a) / 86400000); }
+  function isLastOfMonth(d){ var n = new Date(d); n.setDate(n.getDate() + 1); return n.getMonth() !== d.getMonth(); }
+  function phaseOf(num){ return num <= 7 ? 'Spine' : num <= 11 ? 'Build BD' : num === 12 ? 'Prep' : 'Launch'; }
+  function isDayComplete(dayNode){
+    var boxes = dayNode.querySelectorAll('input[data-id]');
+    if(!boxes.length) return false;
+    for(var i = 0; i < boxes.length; i++){ if(!state[boxes[i].getAttribute('data-id')]) return false; }
+    return true;
+  }
+  function fullWidth(el){ el.style.gridColumn = '1 / -1'; return el; }
+
+  function makeSquare(dayNode, opts){
+    opts = opts || {};
+    var sq = document.createElement('div'); sq.className = 'sq';
+    if(dayNode.classList.contains('gate'))   sq.classList.add('gate');
+    if(dayNode.classList.contains('launch')) sq.classList.add('launch');
+    if(opts.today) sq.classList.add('today');
+    sq.setAttribute('data-day', dayNode.getAttribute('data-day'));
+
+    var head = document.createElement('div'); head.className = 'sqhead';
+    var h = document.createElement('div'); h.className = 'sqh';
+    var chip = document.createElement('span'); chip.className = 'sqchip'; chip.textContent = dayNode.querySelector('.chip').textContent;
+    h.appendChild(chip);
+    if(opts.phase){ var ph = document.createElement('span'); ph.className = 'sqphase'; ph.textContent = opts.phase; h.appendChild(ph); }
+    var dt = document.createElement('span'); dt.className = 'sqdate'; dt.textContent = opts.date ? fmtDate(opts.date) : 'ongoing'; h.appendChild(dt);
+    if(opts.today){ var tb = document.createElement('span'); tb.className = 'todaybadge'; tb.textContent = 'TODAY'; h.appendChild(tb); }
+    if(opts.date && isLastOfMonth(opts.date)){ var me = document.createElement('span'); me.className = 'moendbadge'; me.textContent = 'month-end'; h.appendChild(me); }
+    head.appendChild(h);
+    var tr = document.createElement('div'); tr.className = 'sqttlrow';
+    var ttl = document.createElement('span'); ttl.className = 'sqttl'; ttl.textContent = dayNode.querySelector('.title').textContent;
+    var hrs = document.createElement('span'); hrs.className = 'sqhrs';
+    var m = dayNode.querySelector('.mini'); hrs.textContent = m ? (m.getAttribute('data-base') || m.textContent.trim()) : '';
+    tr.appendChild(ttl); tr.appendChild(hrs); head.appendChild(tr);
+    sq.appendChild(head);
+
+    var split = document.createElement('div'); split.className = 'sqsplit';
+    var am = halfPanel('am', '🌅 Morning', 'deep · creative'), pm = halfPanel('pm', '🌙 Evening', 'mechanical · light');
+    var amH = 0, pmH = 0;
+    dayNode.querySelectorAll('.grp').forEach(function(grp){
+      var gcls = groupOf(grp);
+      grp.querySelectorAll('label.item').forEach(function(it){
+        var id = it.querySelector('input').getAttribute('data-id');
+        var task = makeCalTask(id, ORIGINAL[id]);
+        task.classList.add('g-' + gcls);
+        if(ENERGY[id] === 'am'){ am.body.appendChild(task); amH += (HOURS[id] || 0); }
+        else { pm.body.appendChild(task); pmH += (HOURS[id] || 0); }
+      });
+    });
+    am.el.querySelector('.hh').textContent = amH ? fmtH(amH) : '';
+    pm.el.querySelector('.hh').textContent = pmH ? fmtH(pmH) : '';
+    if(!am.body.children.length) am.body.innerHTML = '<div class="empty-note">— nothing heavy —</div>';
+    if(!pm.body.children.length) pm.body.innerHTML = '<div class="empty-note">— nothing light —</div>';
+    split.appendChild(am.el); split.appendChild(pm.el); sq.appendChild(split);
+    return sq;
+  }
+
+  function restBanner(sunDate){
+    var s = document.createElement('div'); s.className = 'sq rest-banner';
+    s.innerHTML = '<span class="rsun">☀</span> <b>Sunday</b>' + (sunDate ? ' · ' + MONTHS[sunDate.getMonth()] + ' ' + sunDate.getDate() : '') + ' — God’s day, rest';
+    return fullWidth(s);
+  }
+  function monthDivider(prevDate){
+    var d = document.createElement('div'); d.className = 'sq month-divider';
+    d.innerHTML = '🗓️ <b>End of ' + MONTHS_FULL[prevDate.getMonth()] + '</b> — ' + MONTHS_FULL[(prevDate.getMonth() + 1) % 12] + ' begins';
+    return fullWidth(d);
+  }
+
+  // rolling dated calendar: incomplete days get real dates from today (Sundays free); finished days drop to Done
+  function buildCalendar(){
+    calView.innerHTML = '';
+    var days = Array.prototype.slice.call(listView.querySelectorAll('.day'));
+    var byNum = {}, pre = null;
+    days.forEach(function(d){ var dn = d.getAttribute('data-day'); if(dn === 'pre') pre = d; else byNum[parseInt(dn,10)] = d; });
+
+    var lg = document.createElement('div'); lg.className = 'legend cal-legend';
+    lg.innerHTML = '<span><b class="tag css">CSS</b> engine / hub</span>'
+                 + '<span><b class="tag bd">BD</b> product</span>'
+                 + '<span><b class="tag both">BOTH</b> both</span>'
+                 + '<span class="gk"><i class="dot build"></i>build<i class="dot content"></i>content<i class="dot dist"></i>distribution</span>'
+                 + '<span><b class="pub">X hub</b> = publish → the pill text is where</span>'
+                 + '<span style="color:var(--faint)">🤖 = copy an AI prompt</span>';
+    calView.appendChild(lg);
+
+    // pre-sprint card (ongoing, undated) while incomplete
+    if(pre && !isDayComplete(pre)){
+      var pl = document.createElement('div'); pl.className = 'cal-weeklabel'; pl.textContent = 'Pre-sprint · ongoing, start ASAP';
+      calView.appendChild(pl);
+      var pg = document.createElement('div'); pg.className = 'cal-grid wide';
+      pg.appendChild(fullWidth(makeSquare(pre, { phase: 'Prep' })));
+      calView.appendChild(pg);
+    }
+
+    var active = [], done = [];
+    for(var i = 1; i <= 14; i++){ if(byNum[i]) (isDayComplete(byNum[i]) ? done : active).push(byNum[i]); }
+
+    var hl = document.createElement('div'); hl.className = 'cal-weeklabel';
+    hl.textContent = active.length ? 'Schedule — from today, Sundays free' : '🎉 All 14 days done — nice.';
+    calView.appendChild(hl);
+
+    if(active.length){
+      var grid = document.createElement('div'); grid.className = 'cal-grid wide';
+      var d = todayStart(), prev = null;
+      active.forEach(function(node, idx){
+        if(prev){
+          if(daysBetween(prev, d) > 1) grid.appendChild(restBanner(new Date(prev.getTime() + 86400000)));
+          if(d.getMonth() !== prev.getMonth()) grid.appendChild(monthDivider(prev));
+        }
+        var num = parseInt(node.getAttribute('data-day'), 10);
+        grid.appendChild(makeSquare(node, { date: new Date(d), today: idx === 0, phase: phaseOf(num) }));
+        prev = new Date(d);
+        d = nextWorking(d);
+      });
+      calView.appendChild(grid);
+    }
+
+    // Done queue
+    var allDone = (pre && isDayComplete(pre) ? [pre] : []).concat(done);
+    if(allDone.length){
+      var det = document.createElement('details'); det.className = 'ref donebox';
+      var sm = document.createElement('summary'); sm.textContent = '✓ Done (' + allDone.length + ')'; det.appendChild(sm);
+      var wrap = document.createElement('div'); wrap.className = 'body donechips';
+      allDone.forEach(function(node){
+        var c = document.createElement('div'); c.className = 'donechip';
+        c.innerHTML = '<b>' + node.querySelector('.chip').textContent + '</b> ' + node.querySelector('.title').textContent + ' <span class="ck">✓</span>';
+        wrap.appendChild(c);
+      });
+      det.appendChild(wrap); calView.appendChild(det);
+    }
+  }
+
+  // ---------- shared state ----------
+  function syncId(id){
+    document.querySelectorAll('input[type=checkbox][data-id="' + id + '"]').forEach(function(b){ b.checked = !!state[id]; });
+  }
+  function applyState(){ ids.forEach(syncId); }
+
+  function updateMinis(){
+    document.querySelectorAll('[data-day]').forEach(function(blk){
+      var ins = blk.querySelectorAll('input[type=checkbox][data-id]');
+      if(!ins.length) return;
+      var done = 0; ins.forEach(function(i){ if(i.checked) done++; });
+      var c = blk.querySelector('.mini, .sqhrs'); if(!c) return;
+      var base = c.getAttribute('data-base');
+      if(base === null){ base = c.textContent.trim(); c.setAttribute('data-base', base); }
+      c.textContent = (base ? base + " · " : "") + done + "/" + ins.length;
+    });
+  }
+  function updateProgress(){
+    var done = ids.filter(function(id){ return !!state[id]; }).length;
+    var total = ids.length;
+    var p = total ? Math.round(done/total*100) : 0;
+    fill.style.width = p + "%";
+    pct.textContent = done + " / " + total + " · " + p + "%";
+    updateMinis();
+  }
+
+  // delegated: handles both list and dynamically-built calendar checkboxes
+  document.addEventListener('change', function(e){
+    var t = e.target;
+    if(!(t && t.matches && t.matches('input[type=checkbox][data-id]'))) return;
+    var id = t.getAttribute('data-id');
+    if(t.checked) state[id] = true; else delete state[id];
+    save(); buildCalendar(); applyState(); updateProgress();
+  });
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if(!confirm('Clear all checkmarks?')) return;
+    state = {}; save(); applyState(); updateProgress();
+  });
+
+  // ---------- tabs ----------
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  function setView(v){
+    tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-view') === v); });
+    listView.hidden = (v !== 'list');
+    calView.hidden  = (v !== 'calendar');
+    try { localStorage.setItem(TABKEY, v); } catch(e){}
+    window.scrollTo(0, 0);
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ setView(t.getAttribute('data-view')); }); });
+
+  // ---------- notes drawer ----------
+  (function(){
+    var bar = document.getElementById('notesbar');
+    var toggle = document.getElementById('notesToggle');
+    var closeb = document.getElementById('notesClose');
+    var area = document.getElementById('notesArea');
+    if(!bar || !toggle || !area) return;
+    var NK = 'css-bd-notes-v1', OK = 'css-bd-notes-open';
+    try { area.value = localStorage.getItem(NK) || ''; } catch(e){}
+    area.addEventListener('input', function(){ try { localStorage.setItem(NK, area.value); } catch(e){} });
+    function set(open){ bar.classList.toggle('open', open); toggle.classList.toggle('on', open); try { localStorage.setItem(OK, open ? '1' : '0'); } catch(e){} }
+    toggle.addEventListener('click', function(){ set(!bar.classList.contains('open')); });
+    closeb.addEventListener('click', function(){ set(false); });
+    var o; try { o = localStorage.getItem(OK); } catch(e){}
+    set(o === '1');
+  })();
+
+  // ---------- init ----------
+  buildCalendar();   // build calendar from the clean list first (adds badges + details)
+  enhanceList();     // then decorate the list view with the same badges + details
+  applyState();
+  updateProgress();
+  var savedTab; try { savedTab = localStorage.getItem(TABKEY); } catch(e){}
+  setView(savedTab === 'calendar' ? 'calendar' : 'list');
+})();
+</script>
+</body>
+</html>

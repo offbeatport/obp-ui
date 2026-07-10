@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Slop Slop · Zen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Inter:wght@300;400;450;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfa;
+    --ink:#1a1a18;
+    --ink-2:#56544e;
+    --ink-3:#8c897f;
+    --ink-4:#b8b5ac;
+    --line:#eceae4;
+    --line-2:#e3e1da;
+    --panel:#ffffff;
+    --accent:#3a7d5c;       /* one faint sage accent */
+    --accent-soft:#eef4f0;
+    --green:#3a7d5c;
+    --amber:#b08431;
+    --gray:#a9a69d;
+    --violet:#7b6cae;
+    --blue:#4a6da8;
+    --red:#b05744;
+    --shadow:0 1px 2px rgba(26,26,24,.04), 0 24px 60px rgba(26,26,24,.07);
+    --r:14px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  ::selection{background:var(--accent-soft)}
+
+  /* ---------- scaffold ---------- */
+  .stage{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:84px 40px 200px;
+    transition:opacity .5s var(--ease);
+  }
+  .wrap{width:100%;max-width:660px}
+
+  /* ---------- corner badge ---------- */
+  .badge{
+    position:fixed;right:22px;bottom:20px;z-index:60;
+    font-size:11px;letter-spacing:.06em;color:var(--ink-4);
+    font-family:"JetBrains Mono",monospace;
+    user-select:none;
+  }
+
+  /* ---------- top hint row ---------- */
+  .top{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:96px;
+  }
+  .brand{font-family:"Newsreader",serif;font-size:16px;font-weight:400;color:var(--ink-3);letter-spacing:.01em}
+  .brand b{color:var(--ink);font-weight:500}
+  .kbd{
+    font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-3);
+    border:1px solid var(--line-2);border-radius:6px;padding:3px 7px;background:var(--panel);
+    line-height:1;
+  }
+  .hint-k{display:flex;gap:8px;align-items:center;color:var(--ink-4);font-size:12px}
+
+  /* ---------- headline ---------- */
+  .headline{
+    font-family:"Newsreader",serif;
+    font-weight:300;
+    font-size:clamp(38px,6vw,64px);
+    line-height:1.04;
+    letter-spacing:-.018em;
+    color:var(--ink);
+    margin-bottom:18px;
+  }
+  .headline .num{font-weight:400}
+  .headline .dot{color:var(--ink-4);font-weight:300}
+  .headline .needs{color:var(--accent)}
+  .sub{
+    font-size:14.5px;color:var(--ink-3);font-weight:400;
+    margin-bottom:78px;line-height:1.6;
+  }
+  .sub a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line-2);cursor:pointer}
+  .sub a:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* ---------- section label ---------- */
+  .sec{
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-4);font-weight:500;margin-bottom:22px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .sec .toggle{cursor:pointer;color:var(--ink-4);transition:color .15s}
+  .sec .toggle:hover{color:var(--accent)}
+  .sec .toggle.on{color:var(--accent)}
+
+  /* ---------- company lines ---------- */
+  .list{list-style:none}
+  .row{
+    display:flex;align-items:baseline;gap:0;
+    padding:18px 4px;cursor:pointer;
+    border-bottom:1px solid var(--line);
+    transition:padding .2s var(--ease), background .2s;
+    position:relative;
+  }
+  .row:first-child{border-top:1px solid var(--line)}
+  .row:hover{padding-left:14px;padding-right:14px;background:rgba(255,255,255,.6)}
+  .row .nm{
+    font-family:"Newsreader",serif;font-size:23px;font-weight:400;
+    color:var(--ink);letter-spacing:-.01em;flex:0 0 auto;
+  }
+  .row:hover .nm{color:var(--accent)}
+  .row .gap{flex:1 1 auto}
+  .row .meta{
+    font-size:12.5px;color:var(--ink-3);font-weight:400;
+    display:flex;align-items:center;gap:14px;white-space:nowrap;
+  }
+  .row .mrr{color:var(--ink-2)}
+  .stat{
+    display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-3);
+  }
+  .sdot{width:6px;height:6px;border-radius:50%;background:var(--gray);flex:0 0 auto}
+  .sdot.active{background:var(--green)}
+  .sdot.paused{background:var(--amber)}
+  .sdot.building{background:var(--blue);animation:pulse 1.8s var(--ease) infinite}
+  .sdot.await{background:var(--violet)}
+  .sdot.blocked{background:var(--red)}
+  .row .needsflag{color:var(--accent);font-weight:450}
+  .chev{margin-left:14px;color:var(--ink-4);opacity:0;transition:opacity .2s, transform .2s;font-size:13px}
+  .row:hover .chev{opacity:1;transform:translateX(3px)}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* ---------- opportunities (quiet) ---------- */
+  .opps{margin-top:88px}
+  .opp{
+    display:flex;align-items:baseline;gap:16px;padding:14px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .opp:first-of-type{border-top:1px solid var(--line)}
+  .opp .ot{font-family:"Newsreader",serif;font-size:18px;color:var(--ink);font-weight:400}
+  .opp .oth{font-size:12.5px;color:var(--ink-3);flex:1 1 auto}
+  .opp .sc{font-size:12px;color:var(--ink-3)}
+  .opp .sc b{color:var(--ink);font-weight:500}
+  .opp.killed{opacity:.42}
+  .opp.killed .ot{text-decoration:line-through;text-decoration-color:var(--ink-4)}
+  .promote{
+    border:1px solid var(--line-2);background:var(--panel);color:var(--ink-2);
+    font-family:"Inter",sans-serif;font-size:11.5px;font-weight:450;
+    padding:6px 12px;border-radius:8px;cursor:pointer;
+    transition:all .15s var(--ease);white-space:nowrap;
+  }
+  .promote:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .promote.done{border-color:var(--accent);color:#fff;background:var(--accent)}
+
+  /* ---------- next moves ---------- */
+  .moves{margin-top:88px}
+  .move{
+    display:flex;gap:14px;align-items:flex-start;padding:13px 4px;
+    font-size:14px;color:var(--ink-2);line-height:1.5;font-weight:400;
+  }
+  .move i{color:var(--ink-4);font-style:normal;font-family:"JetBrains Mono",monospace;font-size:12px;padding-top:2px;flex:0 0 auto}
+
+  /* ---------- global command bar ---------- */
+  .cmd{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:34px;z-index:55;width:100%;max-width:560px;padding:0 40px;
+  }
+  .cmd-inner{
+    display:flex;align-items:center;gap:12px;
+    background:var(--panel);border:1px solid var(--line-2);
+    border-radius:13px;padding:13px 16px;
+    box-shadow:0 1px 2px rgba(26,26,24,.04), 0 14px 36px rgba(26,26,24,.08);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .cmd-inner:focus-within{border-color:var(--accent);box-shadow:0 1px 2px rgba(26,26,24,.04), 0 18px 44px rgba(58,125,92,.12)}
+  .cmd-inner .ck{color:var(--ink-4);font-size:12px}
+  .cmd input{
+    flex:1;border:none;outline:none;background:transparent;
+    font-family:"Inter",sans-serif;font-size:14px;color:var(--ink);font-weight:400;
+  }
+  .cmd input::placeholder{color:var(--ink-4)}
+  .cmd .sk{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-4);border:1px solid var(--line-2);border-radius:5px;padding:2px 6px}
+
+  /* ---------- live activity (collapsed line / expanded) ---------- */
+  .live{
+    position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:50;
+    width:100%;max-width:660px;padding:0 40px;
+  }
+  .live-line{
+    display:flex;align-items:center;gap:11px;cursor:pointer;
+    padding:9px 14px;border-radius:10px;
+    background:rgba(251,251,250,.82);backdrop-filter:blur(8px);
+    border:1px solid transparent;
+    transition:border-color .2s, background .2s;
+    font-size:12.5px;color:var(--ink-3);
+  }
+  .live-line:hover{border-color:var(--line-2);background:rgba(255,255,255,.9)}
+  .live-line .lt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .live-line .lt b{color:var(--ink-2);font-weight:500}
+  .live-line .lx{color:var(--ink-4);font-size:11px;flex:0 0 auto}
+  .pdot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex:0 0 auto;animation:pulse 1.6s var(--ease) infinite}
+  .live-panel{
+    margin-top:8px;background:var(--panel);border:1px solid var(--line-2);
+    border-radius:13px;box-shadow:var(--shadow);overflow:hidden;
+    max-height:0;opacity:0;transition:max-height .35s var(--ease), opacity .25s;
+  }
+  .live-panel.open{max-height:520px;opacity:1}
+  .live-panel-in{padding:8px 6px 12px}
+  .lg{padding:12px 16px 6px}
+  .lg-co{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);font-weight:500;margin-bottom:8px}
+  .li{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px;color:var(--ink-2)}
+  .li .lk{width:6px;height:6px;border-radius:50%;background:var(--ink-4);flex:0 0 auto}
+  .li.run .lk{background:var(--blue);animation:pulse 1.6s var(--ease) infinite}
+  .li .lt2{flex:1}
+  .li .lx2{color:var(--ink-4);font-size:11px}
+  .li.blocked .lk{background:var(--red)}
+  .li.await .lk{background:var(--violet)}
+  .li.check .lk{background:var(--green)}
+
+  /* ---------- company zoom (right-sliding panel) ---------- */
+  .scrim{
+    position:fixed;inset:0;z-index:70;background:rgba(26,26,24,.14);
+    backdrop-filter:blur(2px);opacity:0;pointer-events:none;
+    transition:opacity .4s var(--ease);
+  }
+  .scrim.open{opacity:1;pointer-events:auto}
+  .zoom{
+    position:fixed;top:0;right:0;bottom:0;z-index:71;
+    width:min(720px,94vw);background:var(--bg);
+    box-shadow:-30px 0 80px rgba(26,26,24,.10);
+    transform:translateX(100%);transition:transform .42s var(--ease);
+    overflow-y:auto;display:flex;flex-direction:column;
+  }
+  .zoom.open{transform:translateX(0)}
+  .zoom-in{padding:72px 64px 120px;flex:1}
+  .back{
+    position:absolute;top:26px;left:30px;
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-size:12.5px;color:var(--ink-3);background:none;border:none;
+    font-family:"Inter",sans-serif;transition:color .15s;
+  }
+  .back:hover{color:var(--accent)}
+  .back .esc{font-family:"JetBrains Mono",monospace;font-size:10px;border:1px solid var(--line-2);border-radius:5px;padding:2px 6px;color:var(--ink-4)}
+
+  .z-head{margin-bottom:8px;display:flex;align-items:center;gap:14px}
+  .z-name{font-family:"Newsreader",serif;font-size:42px;font-weight:300;letter-spacing:-.02em;color:var(--ink)}
+  .z-thesis{font-size:14.5px;color:var(--ink-3);line-height:1.6;margin-bottom:28px;max-width:520px}
+  .z-meta{display:flex;gap:28px;margin-bottom:48px;padding-bottom:34px;border-bottom:1px solid var(--line)}
+  .z-meta .m{display:flex;flex-direction:column;gap:5px}
+  .z-meta .mv{font-family:"Newsreader",serif;font-size:24px;color:var(--ink);font-weight:400}
+  .z-meta .ml{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);font-weight:500}
+  .z-meta .mv a{color:var(--accent);text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:14px}
+
+  /* slices list inside zoom */
+  .z-sec{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);font-weight:500;margin-bottom:18px}
+  .sl{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .sl .sn{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-4);width:18px;flex:0 0 auto}
+  .sl .st{flex:1;color:var(--ink-2)}
+  .sl.shipped .st{color:var(--ink-3)}
+  .sl .sb{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:3px 8px;border-radius:6px}
+  .sb.shipped{color:var(--green);background:#eef4f0}
+  .sb.todo{color:var(--ink-3);background:#f1f0ec}
+  .sb.building{color:var(--blue);background:#eef1f7}
+  .sb.await{color:var(--violet);background:#f0eef7}
+  .sb.blocked{color:var(--red);background:#f7efed}
+  .sl .pr{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-4)}
+
+  /* ---------- approval gate panel ---------- */
+  .gate{
+    margin:14px 0 52px;background:var(--panel);
+    border:1px solid var(--line-2);border-radius:var(--r);
+    box-shadow:var(--shadow);overflow:hidden;
+    animation:rise .5s var(--ease) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .gate-head{padding:24px 28px 20px;border-bottom:1px solid var(--line)}
+  .gate-tag{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);font-weight:500;margin-bottom:12px}
+  .gate-tag .d{width:6px;height:6px;border-radius:50%;background:var(--violet)}
+  .gate-title{font-family:"Newsreader",serif;font-size:24px;font-weight:400;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+  .gate-sub{font-size:12.5px;color:var(--ink-3);margin-top:8px}
+
+  .gate-body{padding:24px 28px}
+  .field{margin-bottom:24px}
+  .field-l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);font-weight:500;margin-bottom:10px}
+  .preview{
+    display:flex;align-items:center;gap:11px;font-family:"JetBrains Mono",monospace;
+    font-size:12.5px;color:var(--ink-2);
+    background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:11px 14px;
+    text-decoration:none;transition:border-color .15s, color .15s;
+  }
+  .preview:hover{border-color:var(--accent);color:var(--accent)}
+  .preview .live-d{width:7px;height:7px;border-radius:50%;background:var(--green);flex:0 0 auto;box-shadow:0 0 0 3px #eef4f0}
+  .preview .ext{margin-left:auto;color:var(--ink-4);font-size:11px}
+
+  .diff{
+    background:#fcfcfb;border:1px solid var(--line);border-radius:9px;
+    font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.7;
+    padding:14px 4px;overflow-x:auto;
+  }
+  .diff .dl{display:block;padding:0 16px;white-space:pre;color:var(--ink-3)}
+  .diff .dl.add{color:var(--accent);background:rgba(58,125,92,.05)}
+  .diff .dl.add::before{content:"";}
+
+  .check{
+    display:flex;align-items:center;gap:11px;
+    background:#eef4f0;border:1px solid #d8e7df;border-radius:9px;padding:13px 15px;
+  }
+  .check .ic{
+    width:20px;height:20px;border-radius:50%;background:var(--green);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;flex:0 0 auto;
+  }
+  .check .ct{font-size:12.5px;color:var(--ink-2);font-family:"JetBrains Mono",monospace}
+  .check .ct b{color:var(--green);font-weight:500}
+
+  .gate-foot{padding:20px 28px 26px;border-top:1px solid var(--line);display:flex;gap:12px;align-items:center}
+  .btn{
+    font-family:"Inter",sans-serif;font-size:13.5px;font-weight:450;
+    border-radius:10px;padding:12px 22px;cursor:pointer;border:1px solid;
+    transition:all .15s var(--ease);
+  }
+  .btn-approve{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn-approve:hover{background:#326b4f;border-color:#326b4f}
+  .btn-reject{background:var(--panel);border-color:var(--line-2);color:var(--ink-2)}
+  .btn-reject:hover{border-color:var(--red);color:var(--red)}
+  .gate-foot .gk{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-4)}
+
+  /* reject feedback */
+  .reject-box{padding:0 28px 22px;display:none}
+  .reject-box.open{display:block;animation:rise .3s var(--ease) both}
+  .reject-box textarea{
+    width:100%;border:1px solid var(--line-2);border-radius:9px;padding:12px 14px;
+    font-family:"Inter",sans-serif;font-size:13.5px;color:var(--ink);resize:vertical;min-height:74px;outline:none;
+    background:var(--bg);
+  }
+  .reject-box textarea:focus{border-color:var(--red)}
+  .reject-box .ra{display:flex;gap:10px;margin-top:12px}
+  .btn-sm{font-size:12.5px;padding:9px 16px}
+
+  /* confirmation flash */
+  .confirm{
+    display:flex;align-items:center;gap:12px;padding:16px 20px;border-radius:11px;
+    font-size:14px;animation:rise .35s var(--ease) both;
+  }
+  .confirm.ok{background:#eef4f0;border:1px solid #d8e7df;color:var(--green)}
+  .confirm.rej{background:#f7efed;border:1px solid #ecdcd7;color:var(--red)}
+  .confirm .ci{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex:0 0 auto}
+  .confirm.ok .ci{background:var(--green)}
+  .confirm.rej .ci{background:var(--red)}
+
+  /* company chat in zoom */
+  .z-chat{margin-top:8px}
+  .msg{margin-bottom:16px;max-width:88%}
+  .msg .who{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);font-weight:500;margin-bottom:6px}
+  .msg .bubble{font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+  .msg.user{margin-left:auto;text-align:right}
+  .msg.user .bubble{color:var(--ink);background:var(--accent-soft);display:inline-block;padding:10px 14px;border-radius:12px;text-align:left}
+  .z-cmd{margin-top:24px}
+  .z-cmd-inner{
+    display:flex;align-items:center;gap:11px;background:var(--panel);
+    border:1px solid var(--line-2);border-radius:12px;padding:12px 15px;transition:border-color .2s;
+  }
+  .z-cmd-inner:focus-within{border-color:var(--accent)}
+  .z-cmd input{flex:1;border:none;outline:none;background:transparent;font-family:"Inter",sans-serif;font-size:13.5px;color:var(--ink)}
+  .z-cmd input::placeholder{color:var(--ink-4)}
+
+  .toast{
+    position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(10px);
+    background:var(--ink);color:#fff;font-size:13px;padding:11px 20px;border-radius:10px;
+    z-index:90;opacity:0;pointer-events:none;transition:all .3s var(--ease);
+    box-shadow:0 14px 40px rgba(26,26,24,.2);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .fade{animation:fadein .55s var(--ease) both}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- live activity -->
+<div class="live">
+  <div class="live-line" id="liveLine" onclick="toggleLive()">
+    <span class="pdot"></span>
+    <span class="lt" id="liveText"></span>
+    <span class="lx" id="liveCount"></span>
+  </div>
+  <div class="live-panel" id="livePanel"><div class="live-panel-in" id="liveStream"></div></div>
+</div>
+
+<!-- overview stage -->
+<div class="stage" id="stage">
+  <div class="wrap fade">
+    <div class="top">
+      <div class="brand"><b>C&nbsp;Slop&nbsp;Slop</b> &nbsp;·&nbsp; portfolio</div>
+      <div class="hint-k"><span class="kbd">j</span><span class="kbd">k</span> move <span class="kbd">↵</span> open</div>
+    </div>
+
+    <h1 class="headline" id="headline"></h1>
+    <p class="sub" id="sub"></p>
+
+    <div class="sec">Companies</div>
+    <ul class="list" id="companyList"></ul>
+
+    <div class="opps">
+      <div class="sec">Opportunities</div>
+      <div id="oppList"></div>
+    </div>
+
+    <div class="moves">
+      <div class="sec">Next moves</div>
+      <div id="moveList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- global command bar -->
+<div class="cmd">
+  <div class="cmd-inner">
+    <span class="ck mono">⌘K</span>
+    <input id="cmdInput" placeholder="Direct your companies…  e.g. promote PayoutReconciler">
+    <span class="sk">↵</span>
+  </div>
+</div>
+
+<!-- zoom -->
+<div class="scrim" id="scrim" onclick="closeZoom()"></div>
+<aside class="zoom" id="zoom">
+  <button class="back" onclick="closeZoom()"><span class="esc">esc</span> portfolio</button>
+  <div class="zoom-in" id="zoomIn"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<div class="badge">28 · Zen</div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ---------- overview render ---------- */
+const STAT = {active:'active', paused:'paused', building:'building', awaiting_approval:'await', blocked:'blocked', shipped:'shipped', todo:'todo'};
+
+function compStatusDot(c){
+  if(c.needsYou) return {cls:'await', label:'needs you'};
+  if(c.status==='paused') return {cls:'paused', label:'paused'};
+  if(c.currentSlice && c.currentSlice.status==='building') return {cls:'building', label:'building'};
+  if(c.currentSlice && c.currentSlice.status==='blocked') return {cls:'blocked', label:'blocked'};
+  return {cls:'active', label:'active'};
+}
+
+function renderHeadline(){
+  const p = DATA.portfolio;
+  document.getElementById('headline').innerHTML =
+    `<span class="num mono">$${p.mrr}</span> MRR <span class="dot">·</span> <span class="needs">${p.needsYou} needs you</span>`;
+  document.getElementById('sub').innerHTML =
+    `${p.activeCompanies} companies live · ${p.users} users · ${p.slicesShipped} slices shipped. ` +
+    `<a onclick="openZoom('leadsift')">LeadSift is waiting on you.</a>`;
+}
+
+function renderCompanies(){
+  const el = document.getElementById('companyList');
+  el.innerHTML = DATA.companies.map((c,i)=>{
+    const s = compStatusDot(c);
+    const mrr = c.mrr>0 ? `<span class="mrr mono">$${c.mrr}</span>` : `<span class="mono" style="color:var(--ink-4)">—</span>`;
+    const flag = c.needsYou ? `<span class="needsflag">needs you</span>` : `<span>${s.label}</span>`;
+    return `<li class="row" data-i="${i}" onclick="openZoom('${c.id}')">
+      <span class="nm">${c.name}</span>
+      <span class="gap"></span>
+      <span class="meta">${mrr}<span class="stat"><span class="sdot ${s.cls}"></span>${flag}</span></span>
+      <span class="chev">→</span>
+    </li>`;
+  }).join('');
+}
+
+function renderOpps(){
+  const el = document.getElementById('oppList');
+  el.innerHTML = DATA.opportunities.map(o=>{
+    const killed = o.status==='killed';
+    const btn = killed ? `<span class="sc" style="color:var(--ink-4)">killed</span>`
+      : `<button class="promote" data-id="${o.id}" onclick="promote(event,'${o.title}')">Promote</button>`;
+    return `<div class="opp ${killed?'killed':''}">
+      <span class="ot">${o.title}</span>
+      <span class="oth">${o.thesis}</span>
+      <span class="sc">score <b class="mono">${o.score}</b></span>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function renderMoves(){
+  document.getElementById('moveList').innerHTML = DATA.nextMoves.map((m,i)=>
+    `<div class="move"><i>0${i+1}</i><span>${m}</span></div>`).join('');
+}
+
+function promote(e,title){
+  e.stopPropagation();
+  const b = e.target;
+  b.textContent = 'Promoted ✓'; b.classList.add('done');
+  showToast(`“${title}” promoted to a company`);
+  setTimeout(()=>{ b.textContent='Promote'; b.classList.remove('done'); }, 2200);
+}
+
+/* ---------- live activity ---------- */
+let liveOpen=false;
+function renderLive(){
+  const a = DATA.activity;
+  const cur = a.find(x=>x.running) || a[0];
+  document.getElementById('liveText').innerHTML = `<b>${cur.co}</b> ${cur.text}`;
+  const running = a.filter(x=>x.running).length;
+  document.getElementById('liveCount').textContent = `+${a.length-1} more`;
+
+  const groups = {};
+  a.forEach(x=>{ (groups[x.co]=groups[x.co]||[]).push(x); });
+  document.getElementById('liveStream').innerHTML = Object.entries(groups).map(([co,items])=>{
+    return `<div class="lg"><div class="lg-co">${co}</div>${
+      items.map(it=>`<div class="li ${it.running?'run':''} ${it.kind}"><span class="lk"></span><span class="lt2">${it.text}</span><span class="lx2 mono">${it.t}</span></div>`).join('')
+    }</div>`;
+  }).join('');
+}
+function toggleLive(){
+  liveOpen=!liveOpen;
+  document.getElementById('livePanel').classList.toggle('open',liveOpen);
+}
+
+/* ---------- zoom ---------- */
+function openZoom(id){
+  const c = DATA.companies.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('zoomIn').innerHTML = c.id==='leadsift' ? leadsiftZoom(c) : genericZoom(c);
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('zoom').classList.add('open');
+  document.getElementById('stage').style.opacity=.35;
+  document.getElementById('zoom').scrollTop=0;
+}
+function closeZoom(){
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('zoom').classList.remove('open');
+  document.getElementById('stage').style.opacity=1;
+}
+
+function metaBlock(c){
+  const dom = c.domain ? `<a href="https://${c.domain}" onclick="return false">${c.domain}</a>` : '<span style="color:var(--ink-4)">no domain</span>';
+  const prev = c.previewUrl ? `<a href="${c.previewUrl}" target="_blank">${c.previewUrl.replace('http://','')}</a>` : '<span style="color:var(--ink-4)">—</span>';
+  return `<div class="z-meta">
+    <div class="m"><span class="mv mono">$${c.mrr}</span><span class="ml">MRR</span></div>
+    <div class="m"><span class="mv mono">${c.users}</span><span class="ml">Users</span></div>
+    <div class="m"><span class="mv">${prev}</span><span class="ml">Live preview</span></div>
+  </div>`;
+}
+
+function leadsiftZoom(c){
+  const ap = c.approval;
+  const diffLines = ap.diff.split('\n').map(l=>{
+    const add = l.startsWith('+');
+    return `<span class="dl ${add?'add':''}">${escapeHtml(l)}</span>`;
+  }).join('');
+  const slices = c.slices.map(s=>{
+    const k = STAT[s.status];
+    const lbl = s.status.replace('_',' ');
+    const right = s.priority ? `<span class="pr">p${s.priority}</span>` : '';
+    return `<div class="sl ${k}"><span class="sn">${s.n}</span><span class="st">${s.title}</span>${right}<span class="sb ${k}">${lbl}</span></div>`;
+  }).join('');
+
+  const chat = DATA.chat.map(m=>
+    `<div class="msg ${m.role}"><div class="who">${m.role==='user'?'you':'agent'}</div><div class="bubble">${m.text}</div></div>`).join('');
+
+  return `
+    <div class="z-head"><span class="sdot await" style="width:9px;height:9px"></span><h2 class="z-name">${c.name}</h2></div>
+    <p class="z-thesis">${c.thesis}</p>
+    ${metaBlock(c)}
+
+    <div class="z-sec">Awaiting your approval</div>
+    <div class="gate" id="gate">
+      <div class="gate-head">
+        <div class="gate-tag"><span class="d"></span>Slice ${ap.slice} · needs you · attempt ${ap.attempt}</div>
+        <div class="gate-title">${ap.title}</div>
+        <div class="gate-sub">It’s live and the validation check passed. Approve to ship it, or send it back with feedback.</div>
+      </div>
+      <div class="gate-body">
+        <div class="field">
+          <div class="field-l">Live preview</div>
+          <a class="preview" href="${ap.previewUrl}" target="_blank">
+            <span class="live-d"></span>${ap.previewUrl.replace('http://','')}
+            <span class="ext">open ↗</span>
+          </a>
+        </div>
+        <div class="field">
+          <div class="field-l">Diff</div>
+          <div class="diff">${diffLines}</div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-l">doneWhen</div>
+          <div class="check">
+            <span class="ic">✓</span>
+            <span class="ct"><b>passed</b> — ${escapeHtml(ap.doneWhen)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="gate-foot">
+        <button class="btn btn-approve" onclick="approve()">Approve &amp; ship</button>
+        <button class="btn btn-reject" onclick="toggleReject()">Reject with feedback</button>
+        <span class="gk">A approve · R reject</span>
+      </div>
+      <div class="reject-box" id="rejectBox">
+        <textarea id="rejectText" placeholder="What should change? e.g. send digest at 07:00, not 08:00…"></textarea>
+        <div class="ra">
+          <button class="btn btn-reject btn-sm" onclick="submitReject()">Send back to agents</button>
+          <button class="btn btn-reject btn-sm" style="border-color:var(--line-2);color:var(--ink-3)" onclick="toggleReject()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="z-sec">All slices</div>
+    <div style="margin-bottom:52px">${slices}</div>
+
+    <div class="z-sec">Chat</div>
+    <div class="z-chat">${chat}</div>
+    <div class="z-cmd"><div class="z-cmd-inner">
+      <span class="ck mono" style="color:var(--ink-4);font-size:12px">›</span>
+      <input placeholder="Ask or direct ${c.name}…" id="zChatInput">
+      <span class="sk" style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--ink-4)">↵</span>
+    </div></div>
+  `;
+}
+
+function genericZoom(c){
+  const cs = c.currentSlice;
+  const k = STAT[cs.status];
+  return `
+    <div class="z-head"><span class="sdot ${compStatusDot(c).cls}" style="width:9px;height:9px"></span><h2 class="z-name">${c.name}</h2></div>
+    <p class="z-thesis">${c.thesis}</p>
+    ${metaBlock(c)}
+    <div class="z-sec">Current slice</div>
+    <div class="gate" style="box-shadow:none;border:1px solid var(--line)">
+      <div class="gate-head" style="border-bottom:none;padding-bottom:18px">
+        <div class="gate-tag" style="color:var(--${k==='building'?'blue':k==='blocked'?'red':'ink-3'})"><span class="d" style="background:var(--${k==='building'?'blue':k==='blocked'?'red':'gray'})"></span>Slice ${cs.n} · ${cs.status.replace('_',' ')}</div>
+        <div class="gate-title" style="font-size:21px">${cs.title}</div>
+        <div class="gate-sub">${cs.step}</div>
+      </div>
+    </div>
+    <div class="z-sec" style="margin-top:12px">Progress</div>
+    <div class="move"><i>✓</i><span>${c.slicesShipped} slices shipped · always live</span></div>
+    ${c.status==='paused' ? '<div class="move"><i>‖</i><span>Company paused — agents idle.</span></div>' : ''}
+    <div class="z-cmd" style="margin-top:40px"><div class="z-cmd-inner">
+      <span class="ck mono" style="color:var(--ink-4);font-size:12px">›</span>
+      <input placeholder="Ask or direct ${c.name}…">
+      <span class="sk" style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--ink-4)">↵</span>
+    </div></div>
+  `;
+}
+
+/* ---------- approval actions ---------- */
+function approve(){
+  const gate = document.getElementById('gate');
+  gate.innerHTML = `<div class="gate-body" style="padding:28px">
+    <div class="confirm ok"><span class="ci">✓</span><div><div style="font-weight:500">Approved &amp; shipping</div>
+    <div style="font-size:12.5px;color:var(--ink-3);margin-top:3px">Slice 5 is going live. Agents will pull the next top slice.</div></div></div></div>`;
+  showToast('Slice 5 approved ✓ — shipping now');
+}
+function toggleReject(){
+  const b = document.getElementById('rejectBox');
+  b.classList.toggle('open');
+  if(b.classList.contains('open')) setTimeout(()=>document.getElementById('rejectText').focus(),60);
+}
+function submitReject(){
+  const gate = document.getElementById('gate');
+  const fb = (document.getElementById('rejectText').value||'').trim();
+  gate.innerHTML = `<div class="gate-body" style="padding:28px">
+    <div class="confirm rej"><span class="ci">↩</span><div><div style="font-weight:500">Sent back with feedback</div>
+    <div style="font-size:12.5px;color:var(--ink-3);margin-top:3px">${fb?escapeHtml(fb):'Agents will revise slice 5 and re-run the check.'}</div></div></div></div>`;
+  showToast('Rejected — feedback sent to agents');
+}
+
+/* ---------- utils ---------- */
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ---------- keyboard ---------- */
+let sel=-1;
+function highlight(){
+  document.querySelectorAll('.row').forEach((r,i)=>{
+    r.style.background = i===sel ? 'rgba(255,255,255,.85)' : '';
+    r.style.paddingLeft = i===sel ? '14px':'';
+  });
+}
+document.addEventListener('keydown',e=>{
+  const zoomOpen = document.getElementById('zoom').classList.contains('open');
+  if(e.key==='Escape'){ closeZoom(); return; }
+  if(zoomOpen){
+    if(e.key==='a'||e.key==='A'){ if(document.getElementById('gate')&&document.querySelector('.btn-approve')) approve(); }
+    if(e.key==='r'||e.key==='R'){ if(document.getElementById('rejectBox')) toggleReject(); }
+    return;
+  }
+  if(e.metaKey&&e.key==='k'){ e.preventDefault(); document.getElementById('cmdInput').focus(); return; }
+  if(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA') return;
+  const n=DATA.companies.length;
+  if(e.key==='j'){ sel=Math.min(n-1,sel+1); highlight(); }
+  if(e.key==='k'){ sel=Math.max(0,sel-1); highlight(); }
+  if(e.key==='Enter'&&sel>=0){ openZoom(DATA.companies[sel].id); }
+});
+document.getElementById('cmdInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.value.trim()){ showToast('Sent to agents: “'+e.target.value.trim()+'”'); e.target.value=''; }
+});
+
+/* ---------- init ---------- */
+renderHeadline(); renderCompanies(); renderOpps(); renderMoves(); renderLive();
+</script>
+</body>
+</html>

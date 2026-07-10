@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LeadSift — Company Dossier · C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-wash:#f6e6dd;
+    --green:#4f8a52; --green-wash:#e7f0e5;
+    --blue:#4a72b0; --violet:#7a5ea8; --amber:#c08a2e; --red:#b6483f;
+    --shadow:0 1px 2px rgba(44,41,38,.04), 0 8px 24px rgba(44,41,38,.06);
+    --shadow-lg:0 2px 4px rgba(44,41,38,.05), 0 18px 48px rgba(44,41,38,.09);
+    --sans:'Inter',system-ui,sans-serif;
+    --disp:'Space Grotesk',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    max-width:1000px; margin:0 auto; padding:22px 32px 8px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .back{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.02em;
+    color:var(--ink-faint); text-decoration:none;
+    padding:7px 12px 7px 9px; border-radius:9px; transition:.18s;
+  }
+  .back:hover{ color:var(--ink); background:var(--cream-2); }
+  .back .arw{ font-size:14px; transition:transform .18s; }
+  .back:hover .arw{ transform:translateX(-2px); }
+  .masthead{ font-family:var(--mono); font-size:11px; letter-spacing:.22em;
+    color:var(--ink-faint); text-transform:uppercase; opacity:.8; }
+
+  /* ---------- company switcher ---------- */
+  .switcher{ position:relative; }
+  .switch-btn{
+    display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    background:var(--paper); border:1px solid var(--line); border-radius:10px;
+    padding:6px 11px 6px 7px; font-family:var(--sans); font-size:13px; font-weight:500;
+    color:var(--ink); box-shadow:var(--shadow); transition:.18s;
+  }
+  .switch-btn:hover{ border-color:#dccfb8; }
+  .switch-btn .mini{ width:20px; height:20px; border-radius:6px; background:var(--accent);
+    color:#fff; font-family:var(--disp); font-weight:600; font-size:12px;
+    display:grid; place-items:center; }
+  .switch-btn .car{ color:var(--ink-faint); font-size:11px; }
+  .switch-menu{
+    position:absolute; right:0; top:calc(100% + 8px); z-index:40;
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow-lg); padding:7px; min-width:260px;
+    opacity:0; transform:translateY(-6px) scale(.98); pointer-events:none; transition:.16s;
+  }
+  .switch-menu.open{ opacity:1; transform:none; pointer-events:auto; }
+  .switch-menu .mhead{ font-family:var(--mono); font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-faint); padding:8px 10px 6px; }
+  .co-item{ display:flex; align-items:center; gap:11px; padding:9px 10px; border-radius:9px;
+    font-size:13.5px; color:var(--ink-soft); cursor:default; }
+  .co-item .dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+  .co-item.active{ color:var(--ink); font-weight:600; background:var(--cream-2); cursor:default; }
+  .co-item.active .nm{ color:var(--ink); }
+  .co-item .nm{ flex:1; }
+  .co-item .tag{ font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); }
+  .switch-note{ padding:8px 12px 4px; font-size:11.5px; color:var(--ink-faint); line-height:1.45; }
+
+  /* ---------- page shell ---------- */
+  .page{ max-width:1000px; margin:0 auto; padding:0 32px 120px; }
+  .measure{ max-width:660px; margin-left:auto; margin-right:auto; }
+  .kicker{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.15em;
+    text-transform:uppercase; color:var(--ink-faint);
+    display:inline-flex; align-items:center; gap:9px;
+  }
+  .kicker .ix{ color:var(--accent); font-weight:500; }
+  .kicker .bar{ width:22px; height:1px; background:var(--line); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:40px 0 8px; }
+  .id-row{ display:flex; align-items:center; gap:14px; margin:22px 0 26px; flex-wrap:wrap; }
+  .chip{
+    width:46px; height:46px; border-radius:13px; flex:none;
+    background:linear-gradient(150deg,#d1704a,#bd5730); color:#fff;
+    font-family:var(--disp); font-weight:600; font-size:24px;
+    display:grid; place-items:center; box-shadow:0 4px 14px rgba(200,100,60,.28);
+  }
+  .id-name{ font-family:var(--disp); font-weight:600; font-size:22px; letter-spacing:-.01em; line-height:1; }
+  .id-sub{ display:flex; align-items:center; gap:10px; margin-top:6px; font-size:13px; color:var(--ink-faint); }
+  .id-sub .dom{ font-family:var(--mono); }
+  .id-sep{ width:3px; height:3px; border-radius:50%; background:var(--line); }
+  .pill{ display:inline-flex; align-items:center; gap:7px; padding:4px 11px 4px 9px;
+    border-radius:999px; font-size:12px; font-weight:500; }
+  .pill.live{ background:var(--green-wash); color:#3a6b3d; }
+  .pill .pdot{ width:7px; height:7px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 0 0 rgba(79,138,82,.5); animation:pulse 2.6s infinite; }
+  @keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(79,138,82,.45);} 70%{box-shadow:0 0 0 7px rgba(79,138,82,0);} 100%{box-shadow:0 0 0 0 rgba(79,138,82,0);} }
+
+  .hero h1{
+    font-family:var(--disp); font-weight:600; letter-spacing:-.025em;
+    font-size:clamp(38px,5.6vw,60px); line-height:1.03; margin:6px 0 0; max-width:15ch;
+  }
+  .hero h1 em{ font-style:normal; color:var(--accent); }
+  .standfirst{ font-size:20px; line-height:1.55; color:var(--ink-soft); max-width:600px; margin:22px 0 0; }
+  .standfirst b{ color:var(--ink); font-weight:600; }
+  .thesis{ margin-top:20px; font-family:var(--disp); font-weight:500; font-size:15px; color:var(--ink-faint);
+    display:inline-flex; align-items:center; gap:10px; }
+  .thesis .q{ color:var(--accent); font-size:19px; line-height:0; }
+
+  /* ---------- numbers band ---------- */
+  .numbers{ margin:52px 0 8px; background:var(--paper); border:1px solid var(--line);
+    border-radius:18px; box-shadow:var(--shadow); overflow:hidden; }
+  .mrr-feature{ display:grid; grid-template-columns:1.05fr .95fr; gap:28px;
+    padding:30px 32px 26px; align-items:center; }
+  .stat-label{ font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-faint); }
+  .mrr-value{ font-family:var(--disp); font-weight:600; font-size:52px; letter-spacing:-.02em;
+    line-height:1; margin-top:12px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .trend{ font-family:var(--sans); font-size:13px; font-weight:600; color:#3a6b3d;
+    background:var(--green-wash); padding:5px 10px; border-radius:8px; letter-spacing:0; }
+  .trend .ar{ margin-right:2px; }
+  .mrr-sub{ margin-top:14px; font-size:13.5px; color:var(--ink-soft); }
+
+  .spark{ margin:0; }
+  .spark svg{ width:100%; height:auto; display:block; }
+  .spark figcaption{ font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    color:var(--ink-faint); margin-top:10px; display:flex; justify-content:space-between; }
+
+  .statrow{ display:grid; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line-soft); }
+  .stat{ padding:20px 24px; border-left:1px solid var(--line-soft); }
+  .stat:first-child{ border-left:none; }
+  .stat .k{ font-family:var(--mono); font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-faint); }
+  .stat .v{ font-family:var(--disp); font-weight:600; font-size:26px; letter-spacing:-.01em;
+    margin-top:8px; line-height:1; }
+  .stat .d{ font-size:12px; color:var(--ink-faint); margin-top:6px; }
+  .stat .d.up{ color:var(--green); }
+
+  /* ---------- story ---------- */
+  .story{ padding-top:12px; }
+  .sec{ padding-top:64px; }
+  .sec h2{ font-family:var(--disp); font-weight:600; font-size:clamp(26px,3.4vw,34px);
+    letter-spacing:-.02em; line-height:1.12; margin:16px 0 0; }
+  .sec p{ font-size:18px; line-height:1.72; color:var(--ink-soft); margin:18px 0 0; }
+  .sec p b, .sec p strong{ color:var(--ink); font-weight:600; }
+  .sec p a{ color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-wash); }
+  .lead::first-letter{
+    font-family:var(--disp); font-weight:600; font-size:3.5em; line-height:.78;
+    float:left; margin:.02em .1em 0 0; color:var(--accent);
+  }
+
+  /* inline pull chips inside prose */
+  .facts{ display:flex; flex-wrap:wrap; gap:10px; margin:26px 0 2px; }
+  .fact{ background:var(--paper); border:1px solid var(--line); border-radius:11px;
+    padding:11px 14px; box-shadow:var(--shadow); }
+  .fact .fk{ font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-faint); }
+  .fact .fv{ font-family:var(--disp); font-weight:600; font-size:17px; margin-top:4px; letter-spacing:-.01em; }
+  .fact .fv small{ font-family:var(--sans); font-weight:500; font-size:12px; color:var(--ink-faint); margin-left:4px; }
+
+  /* cost breakdown */
+  .costs{ margin-top:26px; border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    background:var(--paper); box-shadow:var(--shadow); }
+  .cost-row{ display:flex; align-items:center; justify-content:space-between;
+    padding:12px 18px; border-top:1px solid var(--line-soft); font-size:14px; }
+  .cost-row:first-child{ border-top:none; }
+  .cost-row .cl{ color:var(--ink-soft); display:flex; align-items:center; gap:10px; }
+  .cost-row .cl .cd{ width:8px; height:8px; border-radius:2px; }
+  .cost-row .cv{ font-family:var(--mono); font-size:13px; color:var(--ink); }
+  .cost-row.total{ background:var(--cream-2); font-weight:600; }
+  .cost-row.total .cl{ color:var(--ink); font-weight:600; }
+  .cost-row.total .cv{ color:var(--green); font-weight:500; }
+
+  /* ---------- the decision (set apart) ---------- */
+  .decision-wrap{ margin:70px auto 0; max-width:840px; }
+  .decision{
+    position:relative; background:var(--paper); border:1px solid var(--line);
+    border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden;
+  }
+  .decision::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--accent),#e0895f); }
+  .decision-in{ padding:34px 38px 34px; }
+  .dec-kicker{ font-family:var(--mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--accent); font-weight:500; display:inline-flex; align-items:center; gap:9px; }
+  .dec-kicker .rdot{ width:8px; height:8px; border-radius:50%; background:var(--accent);
+    animation:pulse-a 2.4s infinite; }
+  @keyframes pulse-a{ 0%{box-shadow:0 0 0 0 rgba(200,100,60,.4);} 70%{box-shadow:0 0 0 8px rgba(200,100,60,0);} 100%{box-shadow:0 0 0 0 rgba(200,100,60,0);} }
+  .decision h2{ font-family:var(--disp); font-weight:600; font-size:29px; letter-spacing:-.02em;
+    line-height:1.14; margin:16px 0 0; }
+  .dec-lede{ font-size:16.5px; color:var(--ink-soft); margin:12px 0 0; max-width:56ch; }
+
+  .evidence{ display:flex; flex-wrap:wrap; gap:9px; margin:22px 0 0; }
+  .ev{ display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px;
+    background:var(--cream); border:1px solid var(--line-soft); border-radius:9px; padding:7px 11px; color:var(--ink-soft); }
+  .ev .ok{ color:var(--green); font-weight:600; }
+  .ev.link{ color:var(--blue); }
+  .ev.link a{ text-decoration:none; }
+
+  .dec-actions{ display:flex; align-items:center; gap:12px; margin-top:26px; flex-wrap:wrap; }
+  .btn{ font-family:var(--sans); font-size:14.5px; font-weight:600; cursor:pointer;
+    border-radius:11px; padding:13px 20px; border:1px solid transparent; transition:.16s; }
+  .btn-primary{ background:var(--accent); color:#fff; box-shadow:0 3px 12px rgba(200,100,60,.28); }
+  .btn-primary:hover{ background:#bc5730; transform:translateY(-1px); box-shadow:0 6px 18px rgba(200,100,60,.32); }
+  .btn-secondary{ background:var(--paper); color:var(--ink); border-color:var(--line); }
+  .btn-secondary:hover{ border-color:#d8cbb4; background:var(--cream); }
+  .btn-quiet{ background:none; color:var(--ink-faint); font-weight:500; padding:13px 8px; }
+  .btn-quiet:hover{ color:var(--red); }
+
+  /* preview panel */
+  .preview{ display:none; margin-top:22px; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .preview.open{ display:block; animation:drop .22s ease; }
+  @keyframes drop{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;} }
+  .pv-bar{ display:flex; align-items:center; gap:8px; padding:9px 13px; background:var(--cream-2);
+    border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12px; color:var(--ink-soft); }
+  .pv-bar .dots{ display:flex; gap:5px; margin-right:4px; }
+  .pv-bar .dots i{ width:9px; height:9px; border-radius:50%; background:#d9ccb6; }
+  .pv-body{ padding:20px 22px; background:var(--paper); }
+  .pv-mail{ border:1px solid var(--line-soft); border-radius:11px; padding:16px 18px; background:var(--cream); }
+  .pv-mail .subj{ font-family:var(--disp); font-weight:600; font-size:16px; }
+  .pv-mail .from{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+  .pv-lead{ display:flex; align-items:center; justify-content:space-between; padding:9px 0;
+    border-top:1px solid var(--line-soft); font-size:13.5px; }
+  .pv-lead:first-of-type{ margin-top:12px; }
+  .pv-lead .nm{ color:var(--ink); font-weight:500; }
+  .pv-lead .sc{ font-family:var(--mono); font-size:12px; padding:2px 8px; border-radius:6px;
+    background:var(--green-wash); color:#3a6b3d; }
+  .diff{ margin-top:16px; font-family:var(--mono); font-size:12.5px; line-height:1.7;
+    background:#fbf7ef; border:1px solid var(--line-soft); border-radius:10px; padding:14px 16px; overflow-x:auto; }
+  .diff .add{ color:#3a6b3d; }
+  .diff .ctx{ color:var(--ink-faint); }
+  .diff .caption{ font-size:11px; color:var(--ink-faint); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
+
+  /* feedback form */
+  .fb-form{ display:none; margin-top:22px; }
+  .fb-form textarea{ width:100%; min-height:88px; resize:vertical; font-family:var(--sans); font-size:14.5px;
+    color:var(--ink); background:var(--cream); border:1px solid var(--line); border-radius:12px; padding:13px 15px; }
+  .fb-form textarea:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-wash); }
+  .fb-actions{ display:flex; gap:10px; margin-top:12px; }
+
+  /* confirmation */
+  .confirm{ display:none; align-items:flex-start; gap:14px; margin-top:6px;
+    padding:20px 22px; border-radius:14px; font-size:15px; line-height:1.55; }
+  .confirm.show{ display:flex; animation:drop .24s ease; }
+  .confirm-ic{ width:30px; height:30px; border-radius:50%; flex:none; display:grid; place-items:center;
+    font-size:16px; color:#fff; margin-top:1px; }
+  .confirm--ship{ background:var(--green-wash); color:#33612f; }
+  .confirm--ship .confirm-ic{ background:var(--green); }
+  .confirm--hold{ background:#f6ecd7; color:#7a5a1e; }
+  .confirm--hold .confirm-ic{ background:var(--amber); }
+  .confirm b{ font-weight:600; }
+
+  /* ---------- meta strip: autonomy + connected ---------- */
+  .strip{ margin-top:70px; display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); }
+  .card h3{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-faint); margin:0 0 18px; font-weight:500; }
+  .auto-row{ display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--line-soft); }
+  .auto-row:first-of-type{ border-top:none; padding-top:0; }
+  .auto-row .an{ flex:1; font-weight:500; font-size:14.5px; }
+  .auto-badge{ font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:7px; }
+  .auto-badge.pilot{ background:var(--green-wash); color:#3a6b3d; }
+  .auto-badge.you{ background:var(--accent-wash); color:#a24b26; }
+  .conns{ display:flex; flex-wrap:wrap; gap:9px; }
+  .conn{ display:inline-flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px;
+    border-radius:9px; border:1px solid var(--line-soft); background:var(--cream); }
+  .conn .ck{ font-weight:600; }
+  .conn.on .ck{ color:var(--green); }
+  .conn.off{ border-style:dashed; border-color:#e3ccae; background:#fbf5ea; color:var(--ink-faint); }
+  .conn.off .ck{ color:var(--amber); }
+  .conn.off .why{ font-size:11px; color:var(--amber); }
+
+  /* ---------- recent activity ---------- */
+  .recent{ margin-top:70px; }
+  .recent .kicker{ margin-bottom:8px; }
+  .recent h2{ font-family:var(--disp); font-weight:600; font-size:28px; letter-spacing:-.02em; margin:14px 0 26px; }
+  .timeline{ position:relative; padding-left:26px; }
+  .timeline::before{ content:""; position:absolute; left:5px; top:6px; bottom:6px; width:1.5px; background:var(--line); }
+  .tl{ position:relative; padding:11px 0; display:flex; align-items:baseline; gap:14px; }
+  .tl::before{ content:""; position:absolute; left:-24px; top:16px; width:9px; height:9px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--ink-faint); }
+  .tl.green::before{ border-color:var(--green); }
+  .tl.blue::before{ border-color:var(--blue); }
+  .tl .tt{ flex:1; font-size:15px; color:var(--ink); }
+  .tl .tt .mono{ font-family:var(--mono); font-size:13px; color:var(--ink-soft); }
+  .tl .ago{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); flex:none; }
+
+  /* ---------- footer ---------- */
+  footer{ margin-top:80px; padding-top:26px; border-top:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--ink-faint); }
+  footer .fnote{ text-transform:uppercase; letter-spacing:.14em; }
+
+  /* ---------- corner badge ---------- */
+  .badge{ position:fixed; right:16px; bottom:16px; z-index:50;
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink-soft);
+    background:var(--paper); border:1px solid var(--line); border-radius:999px;
+    padding:7px 13px; box-shadow:var(--shadow); }
+  .badge b{ color:var(--accent); font-weight:500; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:760px){
+    .page,.topbar{ padding-left:20px; padding-right:20px; }
+    .mrr-feature{ grid-template-columns:1fr; gap:22px; }
+    .statrow{ grid-template-columns:1fr 1fr; }
+    .stat:nth-child(3){ border-left:none; }
+    .stat{ border-top:1px solid var(--line-soft); }
+    .stat:nth-child(-n+2){ border-top:none; }
+    .strip{ grid-template-columns:1fr; }
+    .masthead{ display:none; }
+    .decision-in{ padding:26px 22px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- top bar -->
+  <div class="topbar">
+    <a class="back" href="#"><span class="arw">←</span> Back to portfolio</a>
+    <div class="masthead">C Slop Slop · Portfolio</div>
+    <div class="switcher">
+      <button class="switch-btn" onclick="toggleSwitcher(event)">
+        <span class="mini">L</span> LeadSift <span class="car">▾</span>
+      </button>
+      <div class="switch-menu" id="switchMenu">
+        <div class="mhead">Companies</div>
+        <div class="co-item active"><span class="dot" style="background:var(--green)"></span><span class="nm">LeadSift</span><span class="tag">$180</span></div>
+        <div class="co-item"><span class="dot" style="background:var(--green)"></span><span class="nm">QuietInbox</span><span class="tag">$420</span></div>
+        <div class="co-item"><span class="dot" style="background:var(--blue)"></span><span class="nm">TranslatorBill</span><span class="tag">building</span></div>
+        <div class="co-item"><span class="dot" style="background:var(--green)"></span><span class="nm">DataDrop</span><span class="tag">$95</span></div>
+        <div class="co-item"><span class="dot" style="background:#b8b0a3"></span><span class="nm">RedditPainBot</span><span class="tag">paused</span></div>
+        <div class="switch-note">This dossier shows LeadSift.</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="page">
+
+    <!-- ===================== HERO ===================== -->
+    <header class="hero measure">
+      <span class="kicker"><span class="ix">No. 01</span><span class="bar"></span> Company Dossier</span>
+
+      <div class="id-row">
+        <div class="chip">L</div>
+        <div>
+          <div class="id-name">LeadSift</div>
+          <div class="id-sub">
+            <span class="dom">leadsift.app</span>
+            <span class="id-sep"></span>
+            <span class="pill live"><span class="pdot"></span> Live &amp; growing</span>
+          </div>
+        </div>
+      </div>
+
+      <h1>It&rsquo;s working &mdash; and it&rsquo;s <em>speeding up.</em></h1>
+      <p class="standfirst">LeadSift grew to <b>$180 a month</b> in recurring revenue this month, up <b>29%</b>, with <b>twelve people</b> now relying on it and <b>zero</b> churn. One built-and-tested feature is waiting at the door for your call.</p>
+      <div class="thesis"><span class="q">&ldquo;</span> Scrape + score inbound leads from any webform.</div>
+    </header>
+
+    <!-- ===================== NUMBERS ===================== -->
+    <section class="numbers measure" aria-label="Key numbers">
+      <div class="mrr-feature">
+        <div>
+          <div class="stat-label">Monthly recurring revenue</div>
+          <div class="mrr-value">$180 <span class="trend"><span class="ar">↑</span>29% &middot; +$40</span></div>
+          <div class="mrr-sub">Net <b>+$158/mo</b> after $22 in costs &middot; 0% churn</div>
+        </div>
+        <figure class="spark">
+          <svg viewBox="0 0 236 72" role="img" aria-label="MRR trend over six months, 60 to 180">
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#c8643c" stop-opacity=".18"/>
+                <stop offset="1" stop-color="#c8643c" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M6,62 L50.8,49 L95.6,36 L140.4,27.33 L185.2,18.67 L230,10 L230,72 L6,72 Z" fill="url(#g)"/>
+            <polyline points="6,62 50.8,49 95.6,36 140.4,27.33 185.2,18.67 230,10"
+              fill="none" stroke="#c8643c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="230" cy="10" r="3.6" fill="#c8643c"/>
+            <circle cx="230" cy="10" r="6.5" fill="#c8643c" fill-opacity=".16"/>
+          </svg>
+          <figcaption><span>MRR &middot; last 6 months</span><span>60 → 180</span></figcaption>
+        </figure>
+      </div>
+      <div class="statrow">
+        <div class="stat"><div class="k">Users</div><div class="v">12</div><div class="d up">+3 this week</div></div>
+        <div class="stat"><div class="k">Net margin</div><div class="v">+$158</div><div class="d">per month</div></div>
+        <div class="stat"><div class="k">Churn</div><div class="v">0%</div><div class="d">no cancellations</div></div>
+        <div class="stat"><div class="k">Uptime</div><div class="v">99.9%</div><div class="d">last 30 days</div></div>
+      </div>
+    </section>
+
+    <!-- ===================== STORY ===================== -->
+    <article class="story">
+
+      <!-- BUILD -->
+      <section class="sec measure">
+        <span class="kicker"><span class="ix">01</span><span class="bar"></span> Build &middot; on autopilot</span>
+        <h2>Four features in. The fifth is at the door.</h2>
+        <p class="lead">LeadSift has shipped four capabilities so far &mdash; a working lead webform, a stored lead table, an automatic 0&ndash;100 score on every lead, and score-based filtering. Each one went live only after its own automated check turned green.</p>
+        <p>A <b>fifth is now built and deployed to staging</b>: a daily digest that emails each user their top leads at 8am. Its check has passed. It is waiting on exactly one thing &mdash; you.</p>
+        <p>Not everything is smooth. The <b>inbound webhook</b> has failed three times in a row and is parked until it&rsquo;s untangled. Next in line, once the digest ships: <b>exporting leads to CSV</b>.</p>
+      </section>
+
+      <!-- THE DECISION (set apart) -->
+      <section class="decision-wrap" id="decisionSection">
+        <div class="decision">
+          <div class="decision-in" id="decisionBody">
+            <span class="dec-kicker"><span class="rdot"></span> One thing needs you</span>
+            <h2>Ship &ldquo;Daily digest of top leads&rdquo;?</h2>
+            <p class="dec-lede">Built, deployed to staging, and its automated check passed. The preview is live &mdash; approving sends it to all 12 users starting tomorrow at 8am.</p>
+
+            <div class="evidence">
+              <span class="ev"><span class="ok">✓</span> doneWhen &middot; GET /digest/preview → 200</span>
+              <span class="ev">check passed &middot; attempt 2</span>
+              <span class="ev link"><a href="#" onclick="return false">http://localhost:4019/digest/preview</a></span>
+            </div>
+
+            <!-- preview panel -->
+            <div class="preview" id="previewPanel">
+              <div class="pv-bar"><span class="dots"><i></i><i></i><i></i></span> http://localhost:4019/digest/preview</div>
+              <div class="pv-body">
+                <div class="pv-mail">
+                  <div class="subj">Your top leads today</div>
+                  <div class="from">from LeadSift &middot; to devon@dgsales.io &middot; 8:00 AM</div>
+                  <div class="pv-lead"><span class="nm">Acme Robotics — “demo request”</span><span class="sc">score 94</span></div>
+                  <div class="pv-lead"><span class="nm">Northwind Ltd — “pricing question”</span><span class="sc">score 88</span></div>
+                  <div class="pv-lead"><span class="nm">Sheetly — “enterprise plan?”</span><span class="sc">score 81</span></div>
+                </div>
+                <div class="diff">
+                  <div class="caption">slice 5 diff</div>
+                  <div class="add">+ export function DailyDigest({ leads }: { leads: Lead[] }) {</div>
+                  <div class="add">+&nbsp;&nbsp; const top = leads.filter(l =&gt; l.score &gt;= 70).slice(0, 10)</div>
+                  <div class="add">+&nbsp;&nbsp; return &lt;DigestEmail subject="Your top leads today" leads={top} /&gt;</div>
+                  <div class="add">+ }</div>
+                  <div class="ctx">&nbsp;&nbsp;// schedule: cron 08:00, per-user timezone</div>
+                  <div class="add">+ scheduleDailyDigest(userId, "08:00")</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- actions -->
+            <div class="dec-actions" id="decActions">
+              <button class="btn btn-primary" onclick="approve()">Approve &amp; ship</button>
+              <button class="btn btn-secondary" onclick="togglePreview(this)">Review preview</button>
+              <button class="btn btn-quiet" onclick="openReject()">Reject with feedback</button>
+            </div>
+
+            <!-- feedback form -->
+            <div class="fb-form" id="fbForm">
+              <textarea id="fb" placeholder="What should it change before shipping? e.g. send at 9am, only include score ≥ 80…"></textarea>
+              <div class="fb-actions">
+                <button class="btn btn-primary" onclick="sendFeedback()">Send feedback</button>
+                <button class="btn btn-secondary" onclick="cancelReject()">Cancel</button>
+              </div>
+            </div>
+
+            <!-- confirmation -->
+            <div class="confirm" id="confirm"><span class="confirm-ic" id="confirmIc">✓</span><div id="confirmMsg"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OPERATE -->
+      <section class="sec measure">
+        <span class="kicker"><span class="ix">02</span><span class="bar"></span> Operate &middot; growth = you approve, running = autopilot</span>
+        <h2>Twelve users, and a steady trickle more.</h2>
+        <p>Three weeks ago LeadSift <b>launched on Product Hunt</b> and picked up eight signups. Four SEO articles now pull roughly <b>320 visits a month</b>, and of everyone who lands, <b>18%</b> start a trial and convert to paid. Three of those became users just this week.</p>
+        <p>On the running side it&rsquo;s quiet, which is the point. Uptime holds at <b>99.9%</b>, two support tickets are open with about a four-hour average reply, and there was a single refund this month.</p>
+        <div class="facts">
+          <div class="fact"><div class="fk">Product Hunt</div><div class="fv">+8 <small>signups · 3 wks ago</small></div></div>
+          <div class="fact"><div class="fk">SEO</div><div class="fv">~320 <small>visits/mo · 4 articles</small></div></div>
+          <div class="fact"><div class="fk">Visitor → paid</div><div class="fv">18% <small>funnel</small></div></div>
+          <div class="fact"><div class="fk">Support</div><div class="fv">2 open <small>~4h reply</small></div></div>
+          <div class="fact"><div class="fk">Refunds</div><div class="fv">1 <small>this month</small></div></div>
+        </div>
+      </section>
+
+      <!-- MONEY -->
+      <section class="sec measure">
+        <span class="kicker"><span class="ix">03</span><span class="bar"></span> Money</span>
+        <h2>$180 in, $22 out.</h2>
+        <p>Revenue is <b>$180 a month</b> and climbing &mdash; up $40, or 29%, since last month. Running the whole thing costs <b>$22</b>, which leaves <b>$158 of net margin</b> every month with churn still at zero.</p>
+        <div class="costs">
+          <div class="cost-row"><span class="cl"><span class="cd" style="background:var(--blue)"></span> Infrastructure</span><span class="cv">$9</span></div>
+          <div class="cost-row"><span class="cl"><span class="cd" style="background:var(--violet)"></span> APIs</span><span class="cv">$7</span></div>
+          <div class="cost-row"><span class="cl"><span class="cd" style="background:var(--amber)"></span> Email</span><span class="cv">$5</span></div>
+          <div class="cost-row"><span class="cl"><span class="cd" style="background:var(--ink-faint)"></span> Domain</span><span class="cv">$1</span></div>
+          <div class="cost-row total"><span class="cl">Net margin</span><span class="cv">+$158 / mo</span></div>
+        </div>
+      </section>
+
+      <!-- autonomy + connected -->
+      <div class="strip measure">
+        <div class="card">
+          <h3>How it runs on its own</h3>
+          <div class="auto-row"><span class="an">Building the product</span><span class="auto-badge pilot">autopilot</span></div>
+          <div class="auto-row"><span class="an">Growth &amp; outreach</span><span class="auto-badge you">you approve</span></div>
+          <div class="auto-row"><span class="an">Running &amp; support</span><span class="auto-badge pilot">autopilot</span></div>
+        </div>
+        <div class="card">
+          <h3>Connected</h3>
+          <div class="conns">
+            <span class="conn on"><span class="ck">✓</span> Stripe</span>
+            <span class="conn on"><span class="ck">✓</span> Domain</span>
+            <span class="conn on"><span class="ck">✓</span> Email</span>
+            <span class="conn on"><span class="ck">✓</span> Product Hunt</span>
+            <span class="conn off"><span class="ck">✗</span> X / Twitter <span class="why">— needed for social posts</span></span>
+          </div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ===================== RECENT ===================== -->
+    <section class="recent measure">
+      <span class="kicker"><span class="ix">04</span><span class="bar"></span> What it did recently</span>
+      <h2>The last few hours.</h2>
+      <div class="timeline">
+        <div class="tl green"><div class="tt">Check passed &mdash; <span class="mono">/digest/preview → 200</span></div><div class="ago">2m</div></div>
+        <div class="tl blue"><div class="tt">Deployed feature 5 to staging</div><div class="ago">4m</div></div>
+        <div class="tl"><div class="tt">Sent 3 onboarding emails</div><div class="ago">1h</div></div>
+        <div class="tl"><div class="tt">Scored 41 new leads</div><div class="ago">3h</div></div>
+      </div>
+    </section>
+
+    <footer>
+      <span class="fnote">LeadSift &mdash; a C Slop Slop company</span>
+      <span>build: autopilot &middot; growth: you approve &middot; run: autopilot</span>
+    </footer>
+
+  </main>
+
+  <div class="badge">07 &middot; <b>Story</b></div>
+
+<script>
+  // ---- company switcher ----
+  function toggleSwitcher(e){
+    e.stopPropagation();
+    document.getElementById('switchMenu').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.switcher')){
+      document.getElementById('switchMenu').classList.remove('open');
+    }
+  });
+
+  // ---- decision ----
+  function togglePreview(btn){
+    var p = document.getElementById('previewPanel');
+    var open = p.classList.toggle('open');
+    if(btn) btn.textContent = open ? 'Hide preview' : 'Review preview';
+  }
+  function openReject(){
+    document.getElementById('decActions').style.display = 'none';
+    document.getElementById('fbForm').style.display = 'block';
+    document.getElementById('fb').focus();
+  }
+  function cancelReject(){
+    document.getElementById('fbForm').style.display = 'none';
+    document.getElementById('decActions').style.display = 'flex';
+  }
+  function showConfirm(kind, ic, msg){
+    document.getElementById('decActions').style.display = 'none';
+    document.getElementById('fbForm').style.display = 'none';
+    var c = document.getElementById('confirm');
+    c.className = 'confirm show ' + kind;
+    document.getElementById('confirmIc').textContent = ic;
+    document.getElementById('confirmMsg').innerHTML = msg;
+    // retire the pulsing "needs you" cue
+    var k = document.querySelector('.dec-kicker');
+    if(k){ k.querySelector('.rdot').style.animation='none'; }
+  }
+  function approve(){
+    showConfirm('confirm--ship', '✓',
+      '<b>Shipped.</b> The daily digest is live for all 12 users &mdash; the next one goes out tomorrow at 8am. &ldquo;Export leads to CSV&rdquo; moves to the top of the queue.');
+  }
+  function sendFeedback(){
+    var note = document.getElementById('fb').value.trim();
+    var extra = note ? ' It&rsquo;ll work in: &ldquo;' + note.replace(/</g,'&lt;') + '&rdquo;' : '';
+    showConfirm('confirm--hold', '↻',
+      '<b>Sent back with your notes.</b> LeadSift will rework the digest and re-run its check before asking again.' + extra);
+  }
+</script>
+</body>
+</html>

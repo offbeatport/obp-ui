@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Product Map · The Loop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec;  --cream-2:#f1ebe0;  --paper:#fffdf8;
+    --ink:#2c2926;  --ink-soft:#635c52;  --ink-faint:#7b7368;
+    --line:#e6ddce;  --line-soft:#efe8da;
+    --make:#4f8a52;   --grow:#c8643c;   --run:#4a72b0;   --gate:#7a5ea8;
+    --amber:#c08a2e;  --red:#b6483f;
+    --shadow:0 1px 2px rgba(60,50,38,.04), 0 8px 28px rgba(60,50,38,.07);
+    --radius:18px; --radius-sm:12px;
+
+    --make-t:#3c6b40; --make-bg:rgba(79,138,82,.10);
+    --grow-t:#a44e2c; --grow-bg:rgba(200,100,60,.10);
+    --run-t:#3c5f97;  --run-bg:rgba(74,114,176,.10);
+    --gate-t:#6a4f97; --gate-bg:rgba(122,94,168,.12);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:var(--ink);
+    -webkit-font-smoothing:antialiased; padding:40px 26px 56px;
+    background-image:radial-gradient(circle at 50% -8%, rgba(200,100,60,.05), transparent 46%);
+  }
+  .wrap{ max-width:1180px; margin:0 auto; }
+
+  /* ---------------- header ---------------- */
+  .head{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:26px; }
+  .brand{ display:flex; align-items:center; gap:11px; }
+  .mark{
+    width:34px; height:34px; border-radius:10px; display:grid; place-items:center; color:#fff;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px;
+    background:radial-gradient(circle at 32% 28%, #e08458, var(--grow));
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.4), 0 3px 10px rgba(200,100,60,.28);
+  }
+  .brand .bw{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:18px; letter-spacing:-.01em; }
+  .brand .bw b{ color:var(--grow); font-weight:600; }
+  .head h1{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:30px; letter-spacing:-.02em; margin:14px 0 4px; }
+  .head .sub{ font-size:14.5px; color:var(--ink-soft); max-width:560px; line-height:1.5; }
+  .kick{ font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--grow); }
+  .head-r{ text-align:right; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); line-height:1.7; letter-spacing:.02em; }
+  .head-r .chip{ display:inline-block; border:1px solid var(--line); background:var(--paper); border-radius:20px; padding:3px 10px; box-shadow:var(--shadow); }
+
+  /* ---------------- orbit stage ---------------- */
+  .hero{ background:linear-gradient(180deg,var(--paper),#fffdf6); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow); padding:14px 14px 8px; margin-bottom:22px; position:relative; overflow:hidden; }
+  .hero::before{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 50% 42%, rgba(200,100,60,.04), transparent 52%); pointer-events:none; }
+  .orbit{ position:relative; width:760px; height:760px; margin:6px auto 0; }
+
+  .orbit-path{ position:absolute; width:640px; height:640px; left:60px; top:60px; border-radius:50%; border:1px dashed var(--line); opacity:.65; animation:spin 200s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .band{
+    position:absolute; width:532px; height:532px; left:114px; top:114px; border-radius:50%;
+    background: conic-gradient(from 0deg,
+      var(--make) 0deg 58deg,
+      transparent 58deg 62deg,
+      var(--grow) 62deg 178deg,
+      transparent 178deg 182deg,
+      var(--run) 182deg 298deg,
+      transparent 298deg 302deg,
+      var(--make) 302deg 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 209px, #000 210px, #000 265px, transparent 266px);
+            mask: radial-gradient(circle, transparent 209px, #000 210px, #000 265px, transparent 266px);
+    filter:saturate(.96);
+  }
+  .edge{ position:absolute; border-radius:50%; border:1px solid var(--line-soft); pointer-events:none; }
+  .edge.inner{ width:420px; height:420px; left:170px; top:170px; }
+  .edge.outer{ width:532px; height:532px; left:114px; top:114px; }
+
+  /* feedback arc (RUN -> MAKE) */
+  .fb{ position:absolute; inset:0; pointer-events:none; }
+
+  /* radial node positioning */
+  .node{ position:absolute; left:50%; top:50%; width:0; height:0;
+    transform: rotate(var(--a)) translateY(calc(var(--r) * -1)); }
+  .node > .lab{ position:absolute; left:0; top:0;
+    transform: translate(-50%,-50%) rotate(calc(var(--a) * -1)); }
+
+  /* ring name (on band) */
+  .ringname{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; letter-spacing:.18em; color:#fff; text-shadow:0 1px 2px rgba(60,40,30,.28); white-space:nowrap; }
+
+  /* ring-job strip (under orbit) */
+  .ringjobs{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:2px 4px 8px; }
+  .rj{ border:1px solid; border-radius:13px; padding:9px 13px; display:flex; flex-direction:column; gap:2px; }
+  .rj .rj-h{ display:flex; align-items:center; gap:8px; }
+  .rj .rj-n{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; letter-spacing:.06em; }
+  .rj .rj-d{ font-size:11.5px; line-height:1.35; color:var(--ink-soft); }
+  .rj .rj-m{ font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:.04em; color:var(--ink-faint); margin-top:1px; }
+  .rj .rj-m b{ color:var(--gate-t); font-weight:600; }
+  .rj.make{ background:var(--make-bg); border-color:rgba(79,138,82,.34); } .rj.make .rj-n{ color:var(--make-t); }
+  .rj.grow{ background:var(--grow-bg); border-color:rgba(200,100,60,.34); } .rj.grow .rj-n{ color:var(--grow-t); }
+  .rj.run{ background:var(--run-bg); border-color:rgba(74,114,176,.34); } .rj.run .rj-n{ color:var(--run-t); }
+  .rj .pin{ font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:1px 6px; border-radius:8px; color:#fff; }
+  .rj.make .pin{ background:var(--make); } .rj.grow .pin{ background:var(--grow); } .rj.run .pin{ background:var(--run); }
+
+  /* function pills */
+  .fn{ white-space:nowrap; font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:20px;
+    border:1px solid; background:var(--paper); box-shadow:0 1px 2px rgba(60,50,38,.05); display:flex; align-items:center; gap:6px; }
+  .fn::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; }
+  .fn.make{ color:var(--make-t); border-color:rgba(79,138,82,.42); background:linear-gradient(var(--make-bg),var(--make-bg)),var(--paper); }
+  .fn.grow{ color:var(--grow-t); border-color:rgba(200,100,60,.42); background:linear-gradient(var(--grow-bg),var(--grow-bg)),var(--paper); }
+  .fn.run{ color:var(--run-t); border-color:rgba(74,114,176,.42); background:linear-gradient(var(--run-bg),var(--run-bg)),var(--paper); }
+
+  /* gate diamonds */
+  .gate{ display:flex; align-items:center; gap:7px; white-space:nowrap; }
+  .gate .dia{ width:15px; height:15px; background:var(--gate); transform:rotate(45deg); border-radius:3px;
+    box-shadow:0 0 0 4px rgba(122,94,168,.14), 0 2px 6px rgba(122,94,168,.32); flex:none; }
+  .gate .gl{ font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.08em; color:var(--gate-t);
+    background:rgba(255,253,248,.82); border:1px solid rgba(122,94,168,.34); padding:2px 7px; border-radius:11px; backdrop-filter:blur(2px); }
+
+  /* center hub */
+  .hub{ position:absolute; width:264px; height:264px; left:248px; top:248px; border-radius:50%;
+    background:radial-gradient(circle at 50% 36%, #fffefa, var(--paper)); border:1px solid var(--line);
+    box-shadow:0 0 0 7px rgba(122,94,168,.06), 0 0 0 1px rgba(122,94,168,.10), var(--shadow);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 26px; }
+  .hub .hk{ font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--gate); }
+  .hub .you{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:34px; letter-spacing:-.02em; line-height:1; margin:3px 0 3px; }
+  .hub .role{ font-size:10.5px; color:var(--ink-soft); font-weight:500; }
+  .hub .div{ width:108px; height:1px; background:var(--line); margin:11px 0 9px; }
+  .hub .rk{ font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px; }
+  .hub .rails{ display:flex; flex-direction:column; gap:3.5px; }
+  .hub .rail{ font-family:'JetBrains Mono',monospace; font-size:8.6px; line-height:1.18; color:var(--ink-soft); letter-spacing:.005em; }
+  .hub .rail b{ color:var(--ink); font-weight:600; }
+
+  /* corner notes */
+  .cnote{ position:absolute; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.04em; color:var(--ink-faint); }
+  .cnote.diff{ right:8px; bottom:6px; text-align:right; line-height:1.6; }
+  .cnote.diff b{ color:var(--grow); }
+  .cnote.cw{ left:8px; top:6px; line-height:1.6; }
+  .cnote.cw b{ color:var(--ink-soft); }
+  .feedlab{ position:absolute; left:170px; top:430px; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600; letter-spacing:.04em; color:var(--ink-faint); transform:rotate(-58deg); }
+
+  .legend-inline{ text-align:center; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); letter-spacing:.03em; margin:2px 0 6px; }
+  .legend-inline b{ color:var(--ink-soft); }
+  .legend-inline .sw{ display:inline-block; width:9px; height:9px; border-radius:50%; vertical-align:-1px; margin:0 3px 0 9px; }
+
+  /* ---------------- legends row ---------------- */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:22px; }
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 17px 17px; }
+  .card.gatec{ border-color:rgba(122,94,168,.32); box-shadow:0 0 0 1px rgba(122,94,168,.06), var(--shadow); }
+  .card-k{ font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); }
+  .card-t{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15.5px; letter-spacing:-.01em; margin:4px 0 13px; }
+  .card.gatec .card-k{ color:var(--gate); }
+
+  .row{ display:flex; gap:10px; padding:7px 0; border-top:1px solid var(--line-soft); }
+  .row:first-of-type{ border-top:none; padding-top:1px; }
+  .row .ic{ flex:none; margin-top:1px; }
+  .row .tx{ font-size:12px; line-height:1.42; color:var(--ink-soft); }
+  .row .tx b{ color:var(--ink); font-weight:600; }
+  .row .tag{ font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
+
+  .gdia{ width:13px; height:13px; background:var(--gate); transform:rotate(45deg); border-radius:3px; margin:3px 1px 0; }
+  .csw{ width:13px; height:13px; border-radius:4px; margin-top:2px; }
+
+  /* autonomy ladder */
+  .ladder{ display:flex; flex-direction:column; gap:8px; }
+  .step{ display:flex; align-items:center; gap:11px; }
+  .step .bar{ height:30px; border-radius:7px; border:1px solid; display:flex; align-items:center; padding:0 11px; flex:none; }
+  .step .lv{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; }
+  .step .d{ font-size:11.5px; line-height:1.3; color:var(--ink-soft); }
+  .step .d b{ color:var(--ink); font-weight:600; }
+  .s0 .bar{ width:74px; background:rgba(123,115,104,.08); border-color:var(--line); color:var(--ink-faint); }
+  .s1 .bar{ width:108px; background:var(--amber-bg,rgba(192,138,46,.12)); border-color:rgba(192,138,46,.4); color:var(--amber); }
+  .s2 .bar{ width:142px; background:var(--make-bg); border-color:rgba(79,138,82,.42); color:var(--make-t); }
+  .testmode{ margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; letter-spacing:.02em; color:var(--grow-t);
+    background:var(--grow-bg); border:1px dashed rgba(200,100,60,.4); border-radius:10px; padding:8px 11px; text-align:center; }
+  .testmode b{ color:var(--grow); }
+
+  /* ---------------- north star ---------------- */
+  .north{ background:linear-gradient(100deg,#2c2926,#3a332c); color:#fbf7ee; border-radius:20px; padding:22px 26px; margin-bottom:22px;
+    display:flex; align-items:center; gap:20px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  .north::after{ content:""; position:absolute; right:-40px; top:-40px; width:200px; height:200px; border-radius:50%;
+    background:radial-gradient(circle, rgba(200,100,60,.30), transparent 70%); }
+  .north .nk{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#e0794e; flex:none; }
+  .north .nt{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:22px; letter-spacing:-.015em; line-height:1.22; position:relative; }
+  .north .nt b{ color:#e0a98a; font-weight:600; }
+
+  /* ---------------- surfaces ---------------- */
+  .surf-h{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 11px 2px; }
+  .surf{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+  .scard{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:11px 12px 12px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:5px; }
+  .scard .sn{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12.5px; letter-spacing:-.01em; }
+  .scard .sd{ font-size:10.5px; line-height:1.36; color:var(--ink-faint); flex:1; }
+  .scard .sf{ font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-soft); letter-spacing:.01em; word-break:break-word; }
+  .stat{ align-self:flex-start; font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:9px; }
+  .stat.built{ color:var(--make-t); background:var(--make-bg); border:1px solid rgba(79,138,82,.36); }
+  .stat.partial{ color:var(--amber); background:rgba(192,138,46,.12); border:1px solid rgba(192,138,46,.36); }
+  .stat.gap{ color:var(--red); background:rgba(182,72,63,.10); border:1px solid rgba(182,72,63,.32); }
+
+  .foot{ text-align:center; margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-faint); letter-spacing:.04em; }
+
+  @media (prefers-reduced-motion: reduce){ .orbit-path{ animation:none; } }
+  @media (max-width:1080px){ .surf{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:860px){
+    .orbit{ transform:scale(.86); transform-origin:top center; margin-bottom:-96px; }
+    .grid3{ grid-template-columns:1fr; }
+    .surf{ grid-template-columns:repeat(2,1fr); }
+    .north{ flex-direction:column; align-items:flex-start; gap:8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== HEADER ===== -->
+  <header class="head">
+    <div>
+      <div class="brand">
+        <div class="mark">C</div>
+        <div class="bw">C <b>Slop Slop</b></div>
+        <span class="kick" style="margin-left:6px;">· Product Map</span>
+      </div>
+      <h1>The company loop</h1>
+      <div class="sub">An AI that spins up and builds tiny software companies from a thought. You are the <b>operator</b> — you oversee and approve. One continuous loop, not departments.</div>
+    </div>
+    <div class="head-r">
+      <span class="chip">one operator · many companies</span><br/>
+      <span style="display:inline-block;margin-top:8px;">MAKE → GROW → RUN → ↺ feedback → MAKE</span>
+    </div>
+  </header>
+
+  <!-- ===== ORBIT HERO ===== -->
+  <section class="hero">
+    <div class="orbit">
+
+      <div class="orbit-path"></div>
+      <div class="band"></div>
+      <div class="edge inner"></div>
+      <div class="edge outer"></div>
+
+      <!-- feedback arc RUN -> MAKE -->
+      <svg class="fb" viewBox="0 0 760 760">
+        <defs>
+          <marker id="ah" markerWidth="7" markerHeight="7" refX="3.4" refY="3.4" orient="auto">
+            <path d="M0,0 L7,3.4 L0,6.8 Z" fill="#9c9488"></path>
+          </marker>
+        </defs>
+        <path d="M239,431 A150,150 0 0,1 354,232" fill="none" stroke="#9c9488" stroke-width="1.4"
+              stroke-dasharray="3 4" marker-end="url(#ah)" opacity=".8"></path>
+      </svg>
+      <div class="feedlab">↺ analytics feedback</div>
+
+      <!-- ring names (on band) -->
+      <div class="node" style="--a:0deg;--r:238px;"><div class="lab"><div class="ringname">MAKE</div></div></div>
+      <div class="node" style="--a:120deg;--r:238px;"><div class="lab"><div class="ringname">GROW</div></div></div>
+      <div class="node" style="--a:240deg;--r:238px;"><div class="lab"><div class="ringname">RUN</div></div></div>
+
+      <!-- MAKE functions -->
+      <div class="node" style="--a:-48deg;--r:320px;"><div class="lab"><div class="fn make">Discover / validate</div></div></div>
+      <div class="node" style="--a:-24deg;--r:320px;"><div class="lab"><div class="fn make">Design / brand</div></div></div>
+      <div class="node" style="--a:0deg;--r:320px;"><div class="lab"><div class="fn make">Build / engineering</div></div></div>
+      <div class="node" style="--a:24deg;--r:320px;"><div class="lab"><div class="fn make">Infra / devops</div></div></div>
+      <div class="node" style="--a:48deg;--r:320px;"><div class="lab"><div class="fn make">Analytics</div></div></div>
+
+      <!-- GROW functions -->
+      <div class="node" style="--a:70deg;--r:320px;"><div class="lab"><div class="fn grow">Distribution / GTM</div></div></div>
+      <div class="node" style="--a:90deg;--r:320px;"><div class="lab"><div class="fn grow">Content &amp; SEO</div></div></div>
+      <div class="node" style="--a:110deg;--r:320px;"><div class="lab"><div class="fn grow">Social</div></div></div>
+      <div class="node" style="--a:130deg;--r:320px;"><div class="lab"><div class="fn grow">Lifecycle email</div></div></div>
+      <div class="node" style="--a:150deg;--r:320px;"><div class="lab"><div class="fn grow">Sales</div></div></div>
+      <div class="node" style="--a:170deg;--r:320px;"><div class="lab"><div class="fn grow">Pricing</div></div></div>
+
+      <!-- RUN functions -->
+      <div class="node" style="--a:196deg;--r:320px;"><div class="lab"><div class="fn run">Support</div></div></div>
+      <div class="node" style="--a:228deg;--r:320px;"><div class="lab"><div class="fn run">Finance / billing</div></div></div>
+      <div class="node" style="--a:260deg;--r:320px;"><div class="lab"><div class="fn run">Legal / compliance</div></div></div>
+      <div class="node" style="--a:292deg;--r:320px;"><div class="lab"><div class="fn run">Uptime ops</div></div></div>
+
+      <!-- gates on rim -->
+      <div class="node" style="--a:58deg;--r:272px;"><div class="lab"><div class="gate"><span class="dia"></span><span class="gl">SHIP</span></div></div></div>
+      <div class="node" style="--a:120deg;--r:272px;"><div class="lab"><div class="gate"><span class="dia"></span><span class="gl">POST</span></div></div></div>
+      <div class="node" style="--a:180deg;--r:272px;"><div class="lab"><div class="gate"><span class="dia"></span><span class="gl">SPEND</span></div></div></div>
+      <div class="node" style="--a:255deg;--r:272px;"><div class="lab"><div class="gate"><span class="dia"></span><span class="gl">SIGN</span></div></div></div>
+      <div class="node" style="--a:300deg;--r:272px;"><div class="lab"><div class="gate"><span class="dia"></span><span class="gl">UNBLOCK</span></div></div></div>
+
+      <!-- hub -->
+      <div class="hub">
+        <div class="hk">The operator</div>
+        <div class="you">You</div>
+        <div class="role">oversee · approve · unblock</div>
+        <div class="div"></div>
+        <div class="rk">The substrate · rails</div>
+        <div class="rails">
+          <div class="rail"><b>Connected accounts</b> · OAuth hub</div>
+          <div class="rail"><b>Budget</b> + spend guardrails</div>
+          <div class="rail"><b>Credential vault</b> · per-tool scopes</div>
+          <div class="rail"><b>Payments</b> · legal-entity path</div>
+          <div class="rail"><b>Per-company</b> memory / state</div>
+          <div class="rail"><b>Autonomy engine</b></div>
+        </div>
+      </div>
+
+      <!-- corner notes -->
+      <div class="cnote cw">↻ the loop runs clockwise<br/><b>you touch it only at the gates ◆</b></div>
+      <div class="cnote diff">difficulty rises<br/><b>MAKE → GROW → RUN</b></div>
+
+    </div>
+
+    <div class="ringjobs">
+      <div class="rj make">
+        <div class="rj-h"><span class="rj-n">MAKE</span><span class="pin">autonomous</span></div>
+        <div class="rj-d">Turn a thesis into a working, branded, deployed product.</div>
+        <div class="rj-m">discover · design · build · infra · analytics — 1 gate: <b>ship?</b></div>
+      </div>
+      <div class="rj grow">
+        <div class="rj-h"><span class="rj-n">GROW</span><span class="pin">behind your accounts</span></div>
+        <div class="rj-d">Get it in front of people &amp; turn them into paying users.</div>
+        <div class="rj-m">GTM · content · social · email · sales · pricing — gates: <b>spend · post</b></div>
+      </div>
+      <div class="rj run">
+        <div class="rj-h"><span class="rj-n">RUN</span><span class="pin">monitored</span></div>
+        <div class="rj-d">Keep it alive, paid, supported &amp; legal.</div>
+        <div class="rj-m">support · finance · legal · uptime — gates: <b>spend · sign</b></div>
+      </div>
+    </div>
+
+    <div class="legend-inline">
+      <span class="sw" style="background:var(--gate);"></span><b>◆ gates</b> = the only recurring decisions you make
+      &nbsp;·&nbsp; ↻ loop runs clockwise &nbsp;·&nbsp; difficulty rises <b>MAKE → GROW → RUN</b>
+      &nbsp;·&nbsp; RUN's analytics feed back into MAKE
+    </div>
+  </section>
+
+  <!-- ===== LEGENDS ===== -->
+  <div class="grid3">
+
+    <!-- C — gates -->
+    <div class="card gatec">
+      <div class="card-k">The heart of it</div>
+      <div class="card-t">The 5 gates — where you touch the loop</div>
+      <div class="row"><span class="gdia ic"></span><div class="tx"><b>Ship</b> — approve a build slice <span class="tag">make</span></div></div>
+      <div class="row"><span class="gdia ic"></span><div class="tx"><b>Spend</b> — authorize money out: ads, domains, infra <span class="tag">grow / run</span></div></div>
+      <div class="row"><span class="gdia ic"></span><div class="tx"><b>Post</b> — publish under your identity: launch, social, outreach, email <span class="tag">grow</span></div></div>
+      <div class="row"><span class="gdia ic"></span><div class="tx"><b>Sign</b> — legal: entity, ToS, contracts <span class="tag">run</span></div></div>
+      <div class="row"><span class="gdia ic"></span><div class="tx"><b>Unblock</b> — resolve a stuck slice or decision <span class="tag">any ring</span></div></div>
+    </div>
+
+    <!-- D — authorization boundary -->
+    <div class="card">
+      <div class="card-k">Why it can / can't auto-run</div>
+      <div class="card-t">Authorization boundary — 5 action classes</div>
+      <div class="row"><span class="csw ic" style="background:var(--make-bg);border:1px solid var(--make);"></span><div class="tx"><b>Pure software</b> — runs silently, fully autonomous</div></div>
+      <div class="row"><span class="csw ic" style="background:var(--run-bg);border:1px solid var(--run);"></span><div class="tx"><b>Connected account</b> — acts via your OAuth'd services: Stripe, registrar, ESP, social, ads, host</div></div>
+      <div class="row"><span class="csw ic" style="background:rgba(192,138,46,.14);border:1px solid var(--amber);"></span><div class="tx"><b>Spends money</b> — needs budget guardrail + gate</div></div>
+      <div class="row"><span class="csw ic" style="background:var(--grow-bg);border:1px solid var(--grow);"></span><div class="tx"><b>Acts under your identity</b> — reputation / ban risk → test-mode → record-intent → real</div></div>
+      <div class="row"><span class="csw ic" style="background:var(--gate-bg);border:1px solid var(--gate);"></span><div class="tx"><b>Needs a signature</b> — human / legal authority</div></div>
+    </div>
+
+    <!-- E — autonomy ladder -->
+    <div class="card">
+      <div class="card-k">How trust grows</div>
+      <div class="card-t">Autonomy ladder — each function climbs it</div>
+      <div class="ladder">
+        <div class="step s0"><div class="bar"><span class="lv">L0</span></div><div class="d"><b>Propose</b> every action, you approve</div></div>
+        <div class="step s1"><div class="bar"><span class="lv">L1</span></div><div class="d"><b>Autopilot</b> within guardrails, you spot-check</div></div>
+        <div class="step s2"><div class="bar"><span class="lv">L2</span></div><div class="d"><b>Fully autonomous</b>, you just see results</div></div>
+      </div>
+      <div class="testmode">before any real-world action: <b>test-mode → record-intent → real</b></div>
+    </div>
+
+  </div>
+
+  <!-- ===== NORTH STAR ===== -->
+  <section class="north">
+    <span class="nk">North star</span>
+    <div class="nt">Can <b>one operator</b> run <b>5–20 companies</b> by touching only the <b>gate queue</b>?</div>
+  </section>
+
+  <!-- ===== SURFACES ===== -->
+  <div class="surf-h">Product surfaces → where each is prototyped</div>
+  <div class="surf">
+    <div class="scard">
+      <div class="sn">Portfolio</div>
+      <div class="sd">All companies + what each is doing</div>
+      <div class="sf">dock-layouts.html</div>
+      <span class="stat built">Built</span>
+    </div>
+    <div class="scard">
+      <div class="sn">Company view</div>
+      <div class="sd">At-a-glance / chat / in-progress</div>
+      <div class="sf">08-chat-spine · 16-text-only</div>
+      <span class="stat built">Built</span>
+    </div>
+    <div class="scard">
+      <div class="sn">Gate queue</div>
+      <div class="sd">Waiting room: ship · spend · post · sign · unblock</div>
+      <div class="sf">waiting-room</div>
+      <span class="stat partial">Partial</span>
+    </div>
+    <div class="scard">
+      <div class="sn">Guardrails &amp; autonomy</div>
+      <div class="sd">Raise functions L0 → L1 → L2</div>
+      <div class="sf">spin guardrails</div>
+      <span class="stat partial">Partial</span>
+    </div>
+    <div class="scard">
+      <div class="sn">Activity / console</div>
+      <div class="sd">Ambient proof it's running</div>
+      <div class="sf">agent console</div>
+      <span class="stat built">Built</span>
+    </div>
+    <div class="scard">
+      <div class="sn">Gaps</div>
+      <div class="sd">Connected-accounts hub · budget/spend · finance/billing · legal/entity</div>
+      <div class="sf">not yet built</div>
+      <span class="stat gap">Gap</span>
+    </div>
+  </div>
+
+  <div class="foot">C Slop Slop · product map v2 · the loop — one operator, many companies</div>
+
+</div>
+</body>
+</html>

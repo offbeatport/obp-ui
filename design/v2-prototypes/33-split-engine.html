@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · 33 Split Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#15181d; --ink2:#5b626d; --ink3:#929aa6;
+    --line:#e6e8ec; --line2:#eef0f3; --accent:#4f46e5; --accent-soft:#eef0ff;
+    --green:#16a34a; --green-soft:#e9f7ee; --blue:#2563eb; --blue-soft:#e8f0fe;
+    --violet:#7c3aed; --violet-soft:#f1ecfe; --amber:#d97706; --amber-soft:#fdf3e3;
+    --red:#dc2626; --red-soft:#fdecec; --slate:#64748b; --slate-soft:#eef1f5;
+    --build:#2563eb; --gtm:#0d9488;
+    --shadow:0 1px 2px rgba(16,24,40,.04),0 6px 24px rgba(16,24,40,.06);
+    --r:12px;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body {
+    font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink);
+    font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  }
+  .mono { font-family:'JetBrains Mono',monospace; }
+  button { font-family:inherit; cursor:pointer; }
+  ::-webkit-scrollbar { width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb { background:#d3d7dd; border-radius:9px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+
+  /* ── Top bar ── */
+  .topbar {
+    display:flex; align-items:center; gap:14px; padding:10px 18px;
+    background:var(--panel); border-bottom:1px solid var(--line); flex:0 0 auto; z-index:30;
+  }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:700; letter-spacing:-.2px; }
+  .brand .dot { width:18px; height:18px; border-radius:6px;
+    background:linear-gradient(135deg,var(--build),var(--gtm)); }
+  .switcher {
+    position:relative; display:flex; align-items:center; gap:8px; padding:6px 11px;
+    border:1px solid var(--line); border-radius:9px; background:#fff; font-weight:600;
+    cursor:pointer; transition:.12s;
+  }
+  .switcher:hover { border-color:#cfd3da; }
+  .switcher .caret { color:var(--ink3); font-size:11px; }
+  .switcher .co-dot { width:8px; height:8px; border-radius:50%; }
+  .switch-menu {
+    position:absolute; top:calc(100% + 6px); left:0; min-width:280px; background:#fff;
+    border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:6px;
+    display:none; z-index:60;
+  }
+  .switch-menu.open { display:block; }
+  .switch-menu .sm-head { font-size:11px; text-transform:uppercase; letter-spacing:.5px;
+    color:var(--ink3); padding:8px 10px 4px; font-weight:600; }
+  .sm-item { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; cursor:pointer; }
+  .sm-item:hover { background:var(--line2); }
+  .sm-item .nm { font-weight:600; flex:1; }
+  .sm-item .mt { font-size:12px; color:var(--ink3); }
+  .breadcrumb { display:flex; align-items:center; gap:7px; color:var(--ink2); font-size:13px; }
+  .breadcrumb b { color:var(--ink); }
+  .breadcrumb .crumb { cursor:pointer; }
+  .breadcrumb .crumb:hover { color:var(--accent); }
+  .breadcrumb .sep { color:var(--ink3); }
+  .spacer { flex:1; }
+  .pf-metrics { display:flex; gap:18px; }
+  .pf-metric { text-align:right; }
+  .pf-metric .v { font-weight:700; font-size:15px; }
+  .pf-metric .l { font-size:11px; color:var(--ink3); }
+
+  /* ── Needs-you queue strip ── */
+  .queue-strip { background:var(--panel); border-bottom:1px solid var(--line); flex:0 0 auto; }
+  .queue-head { display:flex; align-items:center; gap:10px; padding:9px 18px 4px; }
+  .queue-head .ttl { font-weight:700; font-size:13px; letter-spacing:-.1px; }
+  .pill-count { background:var(--accent); color:#fff; font-size:11px; font-weight:700;
+    border-radius:20px; padding:1px 8px; }
+  .queue-head .sub { color:var(--ink3); font-size:12px; }
+  .queue-row {
+    display:flex; gap:11px; padding:4px 18px 13px; overflow-x:auto; scroll-behavior:smooth;
+  }
+  .qcard {
+    flex:0 0 320px; border:1px solid var(--line); border-radius:12px; background:#fff;
+    padding:11px 13px; display:flex; flex-direction:column; gap:8px; transition:.13s;
+    position:relative; cursor:pointer;
+  }
+  .qcard:hover { border-color:#cfd3da; box-shadow:var(--shadow); }
+  .qcard .qtop { display:flex; align-items:center; gap:8px; }
+  .qglyph { width:26px; height:26px; border-radius:7px; display:grid; place-items:center;
+    font-weight:700; font-size:14px; flex:0 0 auto; }
+  .qcard .qkind { font-size:11px; text-transform:uppercase; letter-spacing:.4px; font-weight:600; color:var(--ink2); }
+  .qcard .qco { font-size:11px; color:var(--ink3); }
+  .qcard .qtitle { font-weight:600; font-size:13.5px; line-height:1.3; }
+  .qcard .qev { font-size:12px; color:var(--ink2); display:flex; gap:6px; align-items:flex-start; }
+  .qcard .qev .ic { color:var(--green); font-weight:700; }
+  .badge-gate, .badge-auto {
+    font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:20px; white-space:nowrap;
+  }
+  .badge-gate { background:var(--amber-soft); color:var(--amber); }
+  .badge-auto { background:var(--green-soft); color:var(--green); }
+  .qactions { display:flex; gap:7px; margin-top:2px; }
+  .btn { border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 11px;
+    font-size:12.5px; font-weight:600; color:var(--ink); transition:.12s; }
+  .btn:hover { border-color:#cfd3da; background:#fafbfc; }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primary:hover { background:#4338ca; }
+  .btn.tiny { padding:4px 9px; font-size:11.5px; }
+  .qcard.resolved { opacity:.55; }
+  .qcard .qexpand { font-size:11.5px; color:var(--accent); font-weight:600; }
+  .qresolved-tag { font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; }
+  .qresolved-tag.ok { background:var(--green-soft); color:var(--green); }
+  .qresolved-tag.no { background:var(--red-soft); color:var(--red); }
+
+  /* ── Body: two engines ── */
+  .body { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+  .engines { flex:1 1 auto; display:grid; grid-template-columns:1fr 1fr; min-height:0; }
+  .engine { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+  .engine.build { border-right:1px solid var(--line); }
+  .engine-head { display:flex; align-items:center; gap:10px; padding:12px 20px 10px; flex:0 0 auto; }
+  .engine-head .echip { width:9px; height:9px; border-radius:3px; }
+  .engine.build .echip { background:var(--build); }
+  .engine.gtm .echip { background:var(--gtm); }
+  .engine-head .etitle { font-weight:700; font-size:14px; letter-spacing:-.2px; }
+  .engine-head .esub { font-size:12px; color:var(--ink3); }
+  .engine-scroll { flex:1 1 auto; overflow-y:auto; padding:0 20px 24px; }
+  .engine.build .engine-scroll::after, .engine.gtm .engine-scroll::after {
+    content:'↓ more below'; display:block; text-align:center; color:var(--ink3);
+    font-size:11px; padding:14px 0 4px; letter-spacing:.3px;
+  }
+
+  .group-label { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink3);
+    font-weight:600; margin:16px 0 8px; display:flex; align-items:center; gap:8px; }
+  .group-label .ct { background:var(--line2); color:var(--ink2); border-radius:20px; padding:0 7px; font-size:10.5px; }
+
+  /* feature rows */
+  .feat { display:flex; align-items:center; gap:11px; padding:10px 12px; border:1px solid var(--line);
+    border-radius:10px; background:#fff; margin-bottom:7px; cursor:pointer; transition:.12s; }
+  .feat:hover { border-color:#cfd3da; box-shadow:var(--shadow); transform:translateY(-1px); }
+  .feat .sn { font-size:11px; color:var(--ink3); width:20px; text-align:center; font-weight:600; }
+  .feat .ftitle { flex:1; font-weight:500; font-size:13.5px; }
+  .feat .fcheck { font-size:11px; }
+  .st { font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:20px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:5px; }
+  .st .d { width:6px; height:6px; border-radius:50%; }
+  .st.todo { background:var(--slate-soft); color:var(--slate); } .st.todo .d { background:var(--slate); }
+  .st.building { background:var(--blue-soft); color:var(--blue); } .st.building .d { background:var(--blue); animation:pulse 1.3s infinite; }
+  .st.awaiting { background:var(--violet-soft); color:var(--violet); } .st.awaiting .d { background:var(--violet); animation:pulse 1.3s infinite; }
+  .st.shipped { background:var(--green-soft); color:var(--green); } .st.shipped .d { background:var(--green); }
+  .st.blocked { background:var(--red-soft); color:var(--red); } .st.blocked .d { background:var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .feat.awaiting { border-color:#d9c9f7; background:linear-gradient(0deg,#faf7ff,#fff); }
+
+  /* GTM channel cards */
+  .chan-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .chan { border:1px solid var(--line); border-radius:10px; background:#fff; padding:10px 12px; }
+  .chan .cn { display:flex; align-items:center; justify-content:space-between; }
+  .chan .cname { font-weight:600; font-size:13px; text-transform:capitalize; }
+  .chan .cbudget { font-size:11.5px; color:var(--ink2); margin-top:5px; }
+  .chan .cbudget b { color:var(--ink); }
+  .chan-st { font-size:10px; font-weight:600; padding:1px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:.3px; }
+  .chan-st.live { background:var(--green-soft); color:var(--green); }
+  .chan-st.testing { background:var(--amber-soft); color:var(--amber); }
+  .chan-st.idle { background:var(--slate-soft); color:var(--slate); }
+
+  /* outbound + support streams */
+  .stream-item, .ticket {
+    border:1px solid var(--line); border-radius:10px; background:#fff; padding:11px 13px;
+    margin-bottom:7px; cursor:pointer; transition:.12s;
+  }
+  .stream-item:hover, .ticket:hover { border-color:#cfd3da; box-shadow:var(--shadow); }
+  .si-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .si-icon { width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-weight:700; font-size:12px; }
+  .si-meta { font-size:11px; color:var(--ink3); }
+  .si-body { font-size:13px; color:var(--ink); line-height:1.4; }
+  .si-stats { font-size:11.5px; color:var(--ink2); margin-top:6px; }
+  .si-foot { display:flex; align-items:center; gap:7px; margin-top:9px; }
+  .stream-item.posted { opacity:.78; }
+  .tick-top { display:flex; align-items:center; gap:8px; }
+  .tick-sub { font-weight:600; font-size:13px; flex:1; }
+  .tick-user { font-size:11.5px; color:var(--ink3); }
+  .tick-body { font-size:12.5px; color:var(--ink2); margin:6px 0; }
+  .tick-signal { font-size:11px; color:var(--gtm); font-weight:600; background:#e6f6f4; padding:2px 8px; border-radius:20px; }
+  .you-approve { font-size:10px; font-weight:700; color:var(--amber); background:var(--amber-soft);
+    padding:2px 7px; border-radius:20px; letter-spacing:.2px; }
+
+  /* ── Measure strip ── */
+  .measure {
+    flex:0 0 auto; background:#101522; color:#e8eaf0; border-top:1px solid #0a0d15;
+    display:flex; align-items:stretch; gap:0; padding:0; overflow-x:auto;
+  }
+  .measure .mlabel { display:flex; flex-direction:column; justify-content:center; padding:13px 20px;
+    border-right:1px solid #1d2435; flex:0 0 auto; }
+  .measure .mlabel .t { font-weight:700; font-size:13px; letter-spacing:-.1px; }
+  .measure .mlabel .s { font-size:11px; color:#8b93a7; }
+  .mstat { padding:13px 22px; border-right:1px solid #1d2435; display:flex; flex-direction:column; gap:2px; flex:0 0 auto; }
+  .mstat .v { font-weight:700; font-size:18px; letter-spacing:-.4px; }
+  .mstat .l { font-size:11px; color:#8b93a7; display:flex; align-items:center; gap:5px; }
+  .mstat .src { width:7px; height:7px; border-radius:2px; }
+  .mstat .src.build { background:#5b8def; } .mstat .src.gtm { background:#2dd4bf; }
+  .mladder { padding:11px 22px; flex:1 1 auto; min-width:280px; display:flex; flex-direction:column; gap:6px; }
+  .mladder .lt { font-size:11px; color:#8b93a7; }
+  .ladder-track { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+  .rung-chip { font-size:10px; padding:3px 9px; border-radius:7px; background:#1d2435; color:#9aa3ba; white-space:nowrap; font-weight:500; }
+  .rung-chip.now { background:#2dd4bf; color:#06231f; font-weight:700; }
+  .rung-arrow { color:#3a4255; font-size:10px; }
+
+  /* ── Live activity ── */
+  .activity { flex:0 0 auto; background:var(--panel); border-top:1px solid var(--line); }
+  .act-bar { display:flex; align-items:center; gap:10px; padding:8px 18px; cursor:pointer; }
+  .act-bar .lbl { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink3); font-weight:600; }
+  .act-latest { flex:1; font-size:12.5px; color:var(--ink2); display:flex; align-items:center; gap:8px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 1.3s infinite; flex:0 0 auto; }
+  .act-toggle { font-size:12px; color:var(--ink3); }
+  .act-stream { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .act-stream.open { max-height:230px; overflow-y:auto; }
+  .act-line { display:flex; align-items:center; gap:10px; padding:6px 18px; font-size:12.5px; border-top:1px solid var(--line2); }
+  .act-line .co { font-weight:600; min-width:110px; }
+  .act-line .tx { flex:1; color:var(--ink2); }
+  .act-line .tt { color:var(--ink3); font-size:11px; }
+  .act-line .kdot { width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
+  .act-line.run .kdot { animation:pulse 1.3s infinite; }
+
+  /* ── Drawer (feature / thread detail) ── */
+  .scrim { position:fixed; inset:0; background:rgba(16,20,30,.4); opacity:0; pointer-events:none; transition:.2s; z-index:90; }
+  .scrim.open { opacity:1; pointer-events:auto; }
+  .drawer {
+    position:fixed; top:0; right:0; height:100vh; width:560px; max-width:92vw; background:#fff;
+    box-shadow:-12px 0 40px rgba(16,24,40,.18); transform:translateX(100%); transition:transform .24s cubic-bezier(.4,0,.2,1);
+    z-index:100; display:flex; flex-direction:column;
+  }
+  .drawer.open { transform:translateX(0); }
+  .dr-head { display:flex; align-items:flex-start; gap:12px; padding:18px 22px 14px; border-bottom:1px solid var(--line); }
+  .dr-head .dh-kind { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink3); font-weight:600; }
+  .dr-head .dh-title { font-weight:700; font-size:17px; letter-spacing:-.3px; margin-top:2px; }
+  .dr-close { margin-left:auto; border:1px solid var(--line); background:#fff; width:30px; height:30px; border-radius:8px; font-size:15px; color:var(--ink2); }
+  .dr-close:hover { background:var(--line2); }
+  .dr-body { flex:1; overflow-y:auto; padding:18px 22px 30px; }
+  .dr-sec { margin-bottom:18px; }
+  .dr-sec .sl { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--ink3); font-weight:600; margin-bottom:7px; }
+  .preview-url { display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:9px; padding:9px 12px; background:#fafbfc; }
+  .preview-url .glove { width:8px; height:8px; border-radius:50%; background:var(--green); }
+  .preview-url a { color:var(--accent); font-size:12.5px; text-decoration:none; }
+  .preview-url a:hover { text-decoration:underline; }
+  .donewhen { display:flex; align-items:center; gap:9px; border:1px solid var(--green); background:var(--green-soft);
+    border-radius:9px; padding:10px 12px; color:#0c5c2b; font-size:12.5px; }
+  .donewhen .chk { width:18px; height:18px; border-radius:50%; background:var(--green); color:#fff; display:grid; place-items:center; font-size:11px; font-weight:700; }
+  .diff { background:#0f1117; border-radius:10px; padding:13px 15px; font-size:12px; line-height:1.6; overflow-x:auto; }
+  .diff .ln { white-space:pre; }
+  .diff .add { color:#7ee2a8; } .diff .ctx { color:#8a90a0; }
+  .draft-box { border:1px solid var(--line); border-radius:10px; padding:13px 15px; font-size:13px; line-height:1.5; background:#fafbfc; white-space:pre-wrap; }
+  .draft-box.edit { outline:2px solid var(--accent-soft); }
+  .dr-actions { display:flex; gap:9px; padding:14px 22px; border-top:1px solid var(--line); background:#fff; }
+  .reject-box { padding:0 22px 14px; }
+  .reject-box textarea { width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 11px; font-family:inherit; font-size:13px; resize:vertical; min-height:60px; }
+  .confirm-flash { padding:11px 22px; font-weight:600; font-size:13px; display:none; align-items:center; gap:8px; }
+  .confirm-flash.ok { color:var(--green); } .confirm-flash.no { color:var(--red); }
+  .confirm-flash.show { display:flex; }
+  .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .meta-cell { border:1px solid var(--line); border-radius:9px; padding:9px 11px; }
+  .meta-cell .mk { font-size:11px; color:var(--ink3); }
+  .meta-cell .mv { font-weight:600; font-size:14px; }
+
+  /* portfolio company cards (shown when at portfolio altitude inside build engine? we keep zoom via switcher) */
+  .corner-badge {
+    position:fixed; bottom:14px; left:14px; background:#101522; color:#fff; font-size:11px; font-weight:600;
+    padding:6px 12px; border-radius:20px; box-shadow:var(--shadow); z-index:200; letter-spacing:.2px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .corner-badge .n { background:linear-gradient(135deg,var(--build),var(--gtm)); border-radius:5px; padding:1px 6px; }
+
+  .hint { font-size:11px; color:var(--ink3); }
+  .esc-hint { font-size:11px; color:var(--ink3); border:1px solid var(--line); border-radius:6px; padding:1px 6px; }
+</style>
+</head>
+<body>
+
+<!-- ════ TOP BAR ════ -->
+<header class="topbar">
+  <div class="brand"><span class="dot"></span>C&nbsp;Slop&nbsp;Slop</div>
+  <div class="switcher" id="switcher">
+    <span class="co-dot" id="sw-dot" style="background:var(--build)"></span>
+    <span id="sw-name">Portfolio</span>
+    <span class="caret">▼</span>
+    <div class="switch-menu" id="switchMenu"></div>
+  </div>
+  <div class="breadcrumb" id="breadcrumb"></div>
+  <div class="spacer"></div>
+  <div class="pf-metrics" id="pfMetrics"></div>
+</header>
+
+<!-- ════ NEEDS-YOU QUEUE ════ -->
+<section class="queue-strip">
+  <div class="queue-head">
+    <span class="ttl">Needs you</span>
+    <span class="pill-count" id="qCount">0</span>
+    <span class="sub">— every action is the same shape: preview · evidence · approve / reject. Spans both engines.</span>
+  </div>
+  <div class="queue-row" id="queueRow"></div>
+</section>
+
+<!-- ════ BODY: TWO ENGINES ════ -->
+<div class="body">
+  <div class="engines">
+    <!-- BUILD ENGINE -->
+    <section class="engine build">
+      <div class="engine-head">
+        <span class="echip"></span>
+        <div>
+          <div class="etitle">Build engine</div>
+          <div class="esub" id="buildSub">Feature backlog → shipped · what the product can do</div>
+        </div>
+      </div>
+      <div class="engine-scroll" id="buildScroll"></div>
+    </section>
+    <!-- GTM ENGINE -->
+    <section class="engine gtm">
+      <div class="engine-head">
+        <span class="echip"></span>
+        <div>
+          <div class="etitle">Go-to-market engine</div>
+          <div class="esub" id="gtmSub">Channels · outbound · support · how the world finds + tells you</div>
+        </div>
+      </div>
+      <div class="engine-scroll" id="gtmScroll"></div>
+    </section>
+  </div>
+
+  <!-- ════ MEASURE STRIP (shared, fed by both) ════ -->
+  <section class="measure" id="measure"></section>
+
+  <!-- ════ LIVE ACTIVITY ════ -->
+  <section class="activity">
+    <div class="act-bar" id="actBar">
+      <span class="lbl">Live</span>
+      <span class="act-latest" id="actLatest"></span>
+      <span class="act-toggle" id="actToggle">▲ expand</span>
+    </div>
+    <div class="act-stream" id="actStream"></div>
+  </section>
+</div>
+
+<!-- ════ DRAWER ════ -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="dr-head">
+    <div>
+      <div class="dh-kind" id="drKind"></div>
+      <div class="dh-title" id="drTitle"></div>
+    </div>
+    <button class="dr-close" id="drClose">✕</button>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="confirm-flash" id="drFlash"></div>
+  <div class="reject-box" id="drReject" style="display:none;">
+    <textarea id="drRejectText" placeholder="What needs to change? Your feedback goes back to the co-founder agent…"></textarea>
+    <div style="margin-top:9px;display:flex;gap:9px;">
+      <button class="btn primary" id="drRejectSend">Send feedback</button>
+      <button class="btn" id="drRejectCancel">Cancel</button>
+    </div>
+  </div>
+  <div class="dr-actions" id="drActions"></div>
+</aside>
+
+<div class="corner-badge"><span class="n">33</span> · Split Engine</div>
+
+<script>
+/* ═══════════════ DATA (verbatim from _BRIEF.md) ═══════════════ */
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ═══════════════ EXTRA DATA (verbatim from _BRIEF_3.md) ═══════════════ */
+const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+  { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
+    evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
+    diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
+  { id:'q2', kind:'tweet', company:'LeadSift', title:'Build-in-public post', gated:true, channel:'content', rung:'adoption',
+    evidence:'last post: 2.2k impressions → 14 likes → 3 signups',
+    draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
+  { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
+    evidence:'batch 1: 25 sent → 36% open → 8% reply',
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+  { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
+    evidence:'3rd request this week → candidate feature',
+    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    evidence:'organic SEO page converts 3.1% → worth a paid test' },
+];
+
+const OUTBOUND = {
+  twitter:[ // build-in-public stream
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
+  ],
+  cold:[ // sequences (per company)
+    { company:'TranslatorBill', segment:'cross-border freelancers · 3+ currencies', size:25, step:'batch 2 of 3', stats:'batch 1 → 36% open · 8% reply', status:'draft awaiting approval' },
+  ],
+};
+
+const SUPPORT = [ // inbound = evidence stream
+  { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
+];
+
+const LADDER = [ // evidence rungs, cheapest first → most committed
+  { rung:'thought',      cost:'free',        items:[{label:'“auto-chapter podcasts”', kind:'opportunity'}] },
+  { rung:'score',        cost:'cents',       items:[{label:'PayoutReconciler · 82', kind:'opportunity'},{label:'ChapterForge · 71', kind:'opportunity'}] },
+  { rung:'live',         cost:'agent-hours', items:[{label:'RedditPainBot · skeleton', kind:'company'}] },
+  { rung:'doneWhen',     cost:'one run',     items:[{label:'LeadSift · digest feature', kind:'feature'}] },
+  { rung:'adoption',     cost:'traffic',     items:[{label:'QuietInbox · snooze', kind:'feature'},{label:'TranslatorBill · cold batch', kind:'campaign'}] },
+  { rung:'test-payment', cost:'a feature',   items:[{label:'DataDrop · ads test', kind:'campaign'},{label:'LeadSift · Stripe test', kind:'feature'}] },
+  { rung:'MRR',          cost:'real money',  items:[{label:'QuietInbox · $420', kind:'company'},{label:'LeadSift · $180', kind:'company'}] },
+];
+
+const ACTION_KIND = { // labels + glyphs for the universal queue
+  ship_feature:    { label:'Ship feature',     glyph:'⚡' },
+  tweet:           { label:'Post (build-in-public)', glyph:'𝕏' },
+  cold_batch:      { label:'Cold outreach',     glyph:'✉' },
+  support_reply:   { label:'Support reply',     glyph:'❝' },
+  authorize_spend: { label:'Authorize spend',   glyph:'$' },
+};
+
+/* ═══════════════ STATE ═══════════════ */
+let view = 'portfolio';        // 'portfolio' | companyId
+let resolved = {};             // queue id -> 'approved' | 'rejected'
+const KIND_COLOR = {
+  ship_feature:   {fg:'var(--build)', bg:'var(--blue-soft)'},
+  tweet:          {fg:'#0f172a',      bg:'#eef0f3'},
+  cold_batch:     {fg:'var(--gtm)',   bg:'#e6f6f4'},
+  support_reply:  {fg:'var(--violet)',bg:'var(--violet-soft)'},
+  authorize_spend:{fg:'var(--amber)', bg:'var(--amber-soft)'},
+};
+const STATUS_CLASS = { todo:'todo', building:'building', awaiting_approval:'awaiting', shipped:'shipped', blocked:'blocked' };
+const STATUS_LABEL = { todo:'Todo', building:'Building', awaiting_approval:'Needs you', shipped:'Shipped', blocked:'Blocked' };
+const co = id => DATA.companies.find(c=>c.id===id);
+
+/* ═══════════════ TOP BAR ═══════════════ */
+function renderSwitcher() {
+  const menu = document.getElementById('switchMenu');
+  const dot = document.getElementById('sw-dot');
+  const name = document.getElementById('sw-name');
+  if (view==='portfolio') { name.textContent='Portfolio'; dot.style.background='linear-gradient(135deg,var(--build),var(--gtm))'; }
+  else { const c=co(view); name.textContent=c.name; dot.style.background = c.status==='active'?'var(--green)':c.status==='paused'?'var(--amber)':'var(--slate)'; }
+
+  let h = `<div class="sm-head">Portfolio access</div>`;
+  h += `<div class="sm-item" data-co="portfolio"><span class="co-dot" style="background:linear-gradient(135deg,var(--build),var(--gtm))"></span><span class="nm">All companies</span><span class="mt">$${DATA.portfolio.mrr} MRR</span></div>`;
+  h += `<div class="sm-head">Companies</div>`;
+  DATA.companies.forEach(c=>{
+    const col = c.status==='active'?'var(--green)':c.status==='paused'?'var(--amber)':'var(--slate)';
+    h += `<div class="sm-item" data-co="${c.id}"><span class="co-dot" style="background:${col}"></span><span class="nm">${c.name}</span>${c.needsYou?'<span class="you-approve">needs you</span>':''}<span class="mt">$${c.mrr}</span></div>`;
+  });
+  menu.innerHTML = h;
+  menu.querySelectorAll('.sm-item').forEach(el=>el.onclick=e=>{ e.stopPropagation(); setView(el.dataset.co); menu.classList.remove('open'); });
+}
+function renderBreadcrumb() {
+  const bc = document.getElementById('breadcrumb');
+  if (view==='portfolio') { bc.innerHTML = `<span class="sep">/</span><b>Portfolio</b> <span class="hint" style="margin-left:6px;">5 companies · 2 engines → 1 Measure</span>`; }
+  else { const c=co(view);
+    bc.innerHTML = `<span class="sep">/</span><span class="crumb" data-go="portfolio">Portfolio</span><span class="sep">›</span><b>${c.name}</b>`;
+    bc.querySelector('[data-go]').onclick=()=>setView('portfolio');
+  }
+}
+function renderPfMetrics() {
+  const el = document.getElementById('pfMetrics');
+  if (view==='portfolio') {
+    const p=DATA.portfolio;
+    el.innerHTML = `
+      <div class="pf-metric"><div class="v">$${p.mrr}</div><div class="l">MRR</div></div>
+      <div class="pf-metric"><div class="v">${p.users}</div><div class="l">users</div></div>
+      <div class="pf-metric"><div class="v">${p.activeCompanies}</div><div class="l">active</div></div>`;
+  } else {
+    const c=co(view);
+    el.innerHTML = `
+      <div class="pf-metric"><div class="v">$${c.mrr}</div><div class="l">MRR</div></div>
+      <div class="pf-metric"><div class="v">${c.users}</div><div class="l">users</div></div>
+      <div class="pf-metric"><div class="v">${c.domain||'no domain'}</div><div class="l">domain</div></div>`;
+  }
+}
+
+/* ═══════════════ QUEUE ═══════════════ */
+function queueItems() {
+  // at company altitude, filter to that company; else all
+  return QUEUE.filter(q => view==='portfolio' || q.company === co(view).name);
+}
+function renderQueue() {
+  const row = document.getElementById('queueRow');
+  const items = queueItems();
+  const open = items.filter(q=>!resolved[q.id]);
+  document.getElementById('qCount').textContent = open.length;
+  if (!items.length) { row.innerHTML = `<div class="hint" style="padding:6px 0;">No pending actions for this company.</div>`; return; }
+  row.innerHTML = items.map(q=>{
+    const k = ACTION_KIND[q.kind]; const col = KIND_COLOR[q.kind];
+    const r = resolved[q.id];
+    let foot;
+    if (r) foot = `<span class="qresolved-tag ${r==='approved'?'ok':'no'}">${r==='approved'?'Approved ✓':'Sent back ✕'}</span>`;
+    else foot = `<div class="qactions"><button class="btn primary tiny" data-ap="${q.id}">Approve</button><button class="btn tiny" data-rj="${q.id}">Reject…</button>${q.kind==='ship_feature'?'<span class="qexpand" style="margin-left:auto;align-self:center;">open gate ›</span>':''}</div>`;
+    const flag = q.gated ? `<span class="badge-gate" title="real human / real money">⚠ you must approve</span>` : (q.autopilot?`<span class="badge-auto">autopilot can ship</span>`:'');
+    return `<div class="qcard ${r?'resolved':''}" data-open="${q.id}">
+      <div class="qtop">
+        <span class="qglyph" style="background:${col.bg};color:${col.fg}">${k.glyph}</span>
+        <div style="flex:1;min-width:0;"><div class="qkind">${k.label}</div><div class="qco">${q.company} · rung: ${q.rung}</div></div>
+        ${flag}
+      </div>
+      <div class="qtitle">${q.title}</div>
+      <div class="qev"><span class="ic">▸</span><span>${q.evidence}</span></div>
+      ${foot}
+    </div>`;
+  }).join('');
+  // wire
+  row.querySelectorAll('[data-ap]').forEach(b=>b.onclick=e=>{e.stopPropagation(); approveQueue(b.dataset.ap);});
+  row.querySelectorAll('[data-rj]').forEach(b=>b.onclick=e=>{e.stopPropagation(); openQueueDrawer(b.dataset.rj, true);});
+  row.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>{ if(!resolved[el.dataset.open]) openQueueDrawer(el.dataset.open,false); });
+}
+function approveQueue(id) {
+  resolved[id] = 'approved';
+  const q = QUEUE.find(x=>x.id===id);
+  pushActivity(q.company, commsKind(q), commsApprovedText(q), true);
+  renderQueue(); renderMeasure();
+}
+function commsKind(q){ return q.kind==='ship_feature'?'deploy':q.kind==='tweet'?'posted':q.kind==='cold_batch'?'sent':q.kind==='support_reply'?'reply':'spend'; }
+function commsApprovedText(q){
+  switch(q.kind){
+    case 'ship_feature': return 'slice 5 approved → shipping daily digest, going live';
+    case 'tweet':        return 'build-in-public post approved → posted to 𝕏';
+    case 'cold_batch':   return 'cold batch 2/3 approved → 25 emails sending';
+    case 'support_reply':return 'support reply approved → sent to '+ (SUPPORT.find(t=>t.company===q.company)?.user||'user');
+    case 'authorize_spend': return '$'+q.amountUsd+' ads test authorized → campaign live';
+  }
+}
+
+/* ═══════════════ BUILD ENGINE ═══════════════ */
+function renderBuild() {
+  const el = document.getElementById('buildScroll');
+  const sub = document.getElementById('buildSub');
+  if (view==='portfolio') {
+    sub.textContent = 'What every company can do · ranked by status';
+    // group by status across companies (show currentSlice / awaiting)
+    let h = '';
+    // awaiting first (needs you)
+    const awaiting = [{co:co('leadsift'), s:co('leadsift').slices.find(x=>x.status==='awaiting_approval')}];
+    h += groupHeader('Awaiting your approval', awaiting.length);
+    awaiting.forEach(a=>h+=featRow(a.co, a.s, true));
+    // building
+    const building = DATA.companies.filter(c=>c.currentSlice && c.currentSlice.status==='building');
+    h += groupHeader('Building now', building.length);
+    building.forEach(c=>h+=featRow(c, c.currentSlice, true));
+    // queued / todo
+    const queued = DATA.companies.filter(c=>c.currentSlice && c.currentSlice.status==='todo');
+    h += groupHeader('Queued', queued.length);
+    queued.forEach(c=>h+=featRow(c, c.currentSlice, true));
+    // blocked
+    const blocked = DATA.companies.filter(c=>c.currentSlice && c.currentSlice.status==='blocked');
+    h += groupHeader('Blocked', blocked.length);
+    blocked.forEach(c=>h+=featRow(c, c.currentSlice, true));
+    el.innerHTML = h;
+  } else {
+    const c = co(view);
+    sub.textContent = c.thesis;
+    if (!c.slices) {
+      el.innerHTML = groupHeader('Current slice', 1) + featRow(c, c.currentSlice, false) +
+        `<div class="hint" style="margin-top:14px;">${c.slicesShipped} slices shipped · full backlog lives here as the company grows ↓</div>`;
+    } else {
+      let h='';
+      const order=['awaiting_approval','building','todo','blocked','shipped'];
+      order.forEach(st=>{
+        const ss=c.slices.filter(s=>s.status===st);
+        if(!ss.length) return;
+        h+=groupHeader(STATUS_LABEL[st], ss.length);
+        ss.forEach(s=>h+=featRow(c,s,false));
+      });
+      el.innerHTML=h;
+    }
+  }
+  el.querySelectorAll('[data-feat]').forEach(r=>r.onclick=()=>{
+    const [cid,n]=r.dataset.feat.split('|'); openFeature(cid, parseInt(n));
+  });
+}
+function groupHeader(label,ct){ return `<div class="group-label">${label}<span class="ct">${ct}</span></div>`; }
+function featRow(c, s, showCo) {
+  if(!s) return '';
+  const cls = STATUS_CLASS[s.status];
+  const co2 = showCo ? `<span class="hint" style="margin-right:6px;">${c.name}</span>` : '';
+  const chk = s.check==='green' ? `<span class="fcheck" style="color:var(--green);">●&nbsp;check green</span>` : (s.note?`<span class="fcheck" style="color:var(--red);">${s.note}</span>`:'');
+  return `<div class="feat ${cls==='awaiting'?'awaiting':''}" data-feat="${c.id}|${s.n}">
+    <span class="sn">#${s.n}</span>
+    <span class="ftitle">${s.title}${s.step?` <span class="hint">· ${s.step}</span>`:''}</span>
+    ${co2}${chk}
+    <span class="st ${cls}"><span class="d"></span>${STATUS_LABEL[s.status]}</span>
+  </div>`;
+}
+
+/* ═══════════════ GTM ENGINE ═══════════════ */
+function renderGtm() {
+  const el = document.getElementById('gtmScroll');
+  const sub = document.getElementById('gtmSub');
+  const scope = view==='portfolio' ? null : co(view).name;
+  sub.textContent = scope ? `Channels + outbound + support for ${scope}` : 'Across all companies · how the world finds you + tells you what to build';
+
+  // Channels
+  const channels = [
+    {name:'seo',      status:'live',    budget:'organic · 3.1% conversion'},
+    {name:'ads',      status:'testing', budget:'$50 Google test — pending your authorize'},
+    {name:'content',  status:'live',    budget:'build-in-public · 2.2k impressions'},
+    {name:'outbound', status:'testing', budget:'cold email · batch 2 of 3'},
+    {name:'referral', status:'idle',    budget:'not started'},
+  ];
+  // Inward co-founder chat (the spine) — you ⇄ co-founder agent, where you direct the build
+  let cfBlock = groupHeader('Co-founder · inward', DATA.chat.length)
+    + `<div style="display:flex;flex-direction:column;gap:8px;margin:2px 0 12px;">`
+    + DATA.chat.map(m=>`<div style="align-self:${m.role==='user'?'flex-end':'flex-start'};max-width:84%;background:${m.role==='user'?'var(--build)':'#fff'};color:${m.role==='user'?'#fff':'#0f172a'};border:1px solid var(--line);padding:8px 11px;border-radius:13px;font-size:12.5px;line-height:1.45;">${m.text}</div>`).join('')
+    + `</div><div style="display:flex;gap:8px;margin:0 0 16px;"><input id="cfInput" placeholder="Tell your co-founder what to focus on…" style="flex:1;min-width:0;padding:8px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:12.5px;background:#fff;"><button class="btn primary tiny" id="cfSend">Send</button></div>`;
+  let h = cfBlock + groupHeader('Channels', channels.length) + `<div class="chan-grid">`;
+  channels.forEach(ch=>{
+    h += `<div class="chan"><div class="cn"><span class="cname">${ch.name}</span><span class="chan-st ${ch.status}">${ch.status}</span></div><div class="cbudget">${ch.budget}</div></div>`;
+  });
+  h += `</div>`;
+
+  // Outbound streams
+  h += groupHeader('Outbound', OUTBOUND.twitter.length + OUTBOUND.cold.length);
+  OUTBOUND.twitter.forEach((t,i)=>{
+    if (scope && scope!=='LeadSift') return;
+    const draft = t.status==='draft';
+    h += `<div class="stream-item ${t.status}" data-out="tw|${i}">
+      <div class="si-top"><span class="si-icon" style="background:#eef0f3;color:#0f172a">𝕏</span>
+        <span class="si-meta">Build-in-public · ${t.t}</span>
+        ${draft?'<span class="you-approve" style="margin-left:auto;">⚠ you approve</span>':'<span class="hint" style="margin-left:auto;">posted</span>'}</div>
+      <div class="si-body">${t.text}</div>
+      <div class="si-stats">${t.stats}</div>
+      ${draft?'<div class="si-foot"><button class="btn primary tiny" data-out-ap="tw|'+i+'">Approve &amp; post</button><button class="btn tiny" data-out-rj="tw|'+i+'">Reject…</button></div>':''}
+    </div>`;
+  });
+  OUTBOUND.cold.forEach((c2,i)=>{
+    if (scope && scope!==c2.company) return;
+    h += `<div class="stream-item" data-out="cold|${i}">
+      <div class="si-top"><span class="si-icon" style="background:#e6f6f4;color:var(--gtm)">✉</span>
+        <span class="si-meta">Cold sequence · ${c2.company}</span>
+        <span class="you-approve" style="margin-left:auto;">⚠ you approve</span></div>
+      <div class="si-body">${c2.segment} · ${c2.size} contacts · ${c2.step}</div>
+      <div class="si-stats">${c2.stats}</div>
+      <div class="si-foot"><button class="btn primary tiny" data-out-ap="cold|${i}">Approve batch</button><button class="btn tiny" data-out-rj="cold|${i}">Reject…</button></div>
+    </div>`;
+  });
+
+  // Support inbox
+  const tickets = SUPPORT.filter(t=>!scope || t.company===scope);
+  h += groupHeader('Support inbox · evidence in', tickets.length);
+  tickets.forEach(t=>{
+    const needs = t.status==='needs_reply';
+    h += `<div class="ticket" data-ticket="${t.id}">
+      <div class="tick-top"><span class="tick-sub">${t.subject}</span>
+        <span class="tick-signal">signal → ${t.signal}</span></div>
+      <div class="tick-user">${t.company} · ${t.user}</div>
+      <div class="tick-body">${t.body}</div>
+      ${needs?'<span class="you-approve">⚠ you approve reply</span>':'<span class="hint">answered</span>'}
+    </div>`;
+  });
+
+  el.innerHTML = h;
+  // wire outbound approve/reject
+  el.querySelectorAll('[data-out-ap]').forEach(b=>b.onclick=e=>{e.stopPropagation(); approveOutbound(b.dataset.outAp);});
+  el.querySelectorAll('[data-out-rj]').forEach(b=>b.onclick=e=>{e.stopPropagation(); rejectOutbound(b.dataset.outRj);});
+  el.querySelectorAll('[data-out]').forEach(s=>s.onclick=()=>openOutbound(s.dataset.out));
+  el.querySelectorAll('[data-ticket]').forEach(t=>t.onclick=()=>openTicket(t.dataset.ticket));
+  // wire inward co-founder chat
+  const cfSend=document.getElementById('cfSend'), cfInput=document.getElementById('cfInput');
+  if(cfSend){
+    const send=()=>{ const v=cfInput.value.trim(); if(!v) return;
+      DATA.chat.push({role:'user',text:v});
+      DATA.chat.push({role:'assistant',text:'Got it — re-prioritizing the backlog around that. The next action will surface in your queue.'});
+      pushActivity(scope||'Portfolio','reprioritize','you steered the co-founder → backlog re-scored',false);
+      renderGtm();
+    };
+    cfSend.onclick=send;
+    cfInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  }
+}
+function approveOutbound(ref){
+  const [type,i]=ref.split('|');
+  if(type==='tw'){ OUTBOUND.twitter[i].status='posted'; OUTBOUND.twitter[i].stats='posted just now'; pushActivity('LeadSift','posted','build-in-public post approved → posted to 𝕏',true); }
+  else { OUTBOUND.cold[i].status='sent'; pushActivity(OUTBOUND.cold[i].company,'sent','cold batch 2/3 approved → 25 emails sending',true); }
+  renderGtm();
+}
+function rejectOutbound(ref){ const [type,i]=ref.split('|'); openOutbound(ref, true); }
+
+/* ═══════════════ MEASURE STRIP ═══════════════ */
+function renderMeasure() {
+  const el = document.getElementById('measure');
+  const scope = view==='portfolio' ? DATA.portfolio : null;
+  const mrr = view==='portfolio'? DATA.portfolio.mrr : co(view).mrr;
+  const users = view==='portfolio'? DATA.portfolio.users : co(view).users;
+  const shipped = view==='portfolio'? DATA.portfolio.slicesShipped : (co(view).slices? co(view).slices.filter(s=>s.status==='shipped').length : co(view).slicesShipped);
+  const adoption = view==='portfolio'? '3.1%' : (co(view).id==='datadrop'?'3.1%':co(view).id==='leadsift'?'4.4%':'—');
+  const currentRung = view==='portfolio'? 'test-payment' : (co(view).id==='leadsift'?'doneWhen':co(view).id==='quietinbox'?'MRR':co(view).id==='datadrop'?'test-payment':'adoption');
+
+  let h = `<div class="mlabel"><div class="t">Measure</div><div class="s">fed by both engines</div></div>`;
+  h += mstat('$'+mrr, 'MRR', 'gtm');
+  h += mstat(users, 'users', 'gtm');
+  h += mstat(shipped, 'slices shipped', 'build');
+  h += mstat(adoption, 'adoption', 'build');
+  // ladder
+  h += `<div class="mladder"><div class="lt">Evidence ladder — current rung highlighted (climbs only when the rung below pays off)</div><div class="ladder-track">`;
+  LADDER.forEach((r,i)=>{
+    h += `<span class="rung-chip ${r.rung===currentRung?'now':''}" title="${r.cost}">${r.rung}</span>`;
+    if(i<LADDER.length-1) h += `<span class="rung-arrow">›</span>`;
+  });
+  h += `</div></div>`;
+  el.innerHTML = h;
+}
+function mstat(v,l,src){ return `<div class="mstat"><div class="v">${v}</div><div class="l"><span class="src ${src}"></span>${l}</div></div>`; }
+
+/* ═══════════════ LIVE ACTIVITY ═══════════════ */
+let activityLog = DATA.activity.slice();
+const ACT_COLOR = { building:'var(--blue)', deploy:'var(--blue)', await:'var(--violet)', check:'var(--green)', reprioritize:'var(--slate)', blocked:'var(--red)', posted:'#0f172a', sent:'var(--gtm)', reply:'var(--violet)', spend:'var(--amber)' };
+function renderActivity() {
+  const latest = activityLog[0];
+  document.getElementById('actLatest').innerHTML = `<span class="live-dot"></span><b>${latest.co}</b> — ${latest.text} <span class="tt">· ${latest.t}</span>`;
+  const stream = document.getElementById('actStream');
+  stream.innerHTML = activityLog.map(a=>`
+    <div class="act-line ${a.running?'run':''}">
+      <span class="kdot" style="background:${ACT_COLOR[a.kind]||'var(--slate)'}"></span>
+      <span class="co">${a.co}</span>
+      <span class="tx">${a.text}</span>
+      <span class="tt">${a.t}</span>
+    </div>`).join('');
+}
+function pushActivity(coName, kind, text, running) {
+  activityLog.unshift({co:coName, kind, text, t:'now', running:!!running});
+  renderActivity();
+}
+document.getElementById('actBar').onclick = () => {
+  const s = document.getElementById('actStream'); const t = document.getElementById('actToggle');
+  const open = s.classList.toggle('open');
+  t.textContent = open ? '▼ collapse' : '▲ expand';
+};
+
+/* ═══════════════ DRAWER ═══════════════ */
+const scrim=document.getElementById('scrim'), drawer=document.getElementById('drawer');
+const drKind=document.getElementById('drKind'), drTitle=document.getElementById('drTitle');
+const drBody=document.getElementById('drBody'), drActions=document.getElementById('drActions');
+const drFlash=document.getElementById('drFlash'), drReject=document.getElementById('drReject'), drRejectText=document.getElementById('drRejectText');
+let currentDrawer=null;
+
+function openDrawer(){ scrim.classList.add('open'); drawer.classList.add('open'); }
+function closeDrawer(){ scrim.classList.remove('open'); drawer.classList.remove('open'); drReject.style.display='none'; drFlash.classList.remove('show'); currentDrawer=null; }
+scrim.onclick=closeDrawer; document.getElementById('drClose').onclick=closeDrawer;
+
+function flash(ok,msg){ drFlash.className='confirm-flash show '+(ok?'ok':'no'); drFlash.innerHTML=(ok?'✓ ':'✕ ')+msg; }
+
+/* — queue item drawer (full gate for ship_feature, draft for comms) — */
+function openQueueDrawer(id, rejectMode) {
+  const q = QUEUE.find(x=>x.id===id); if(!q) return;
+  currentDrawer={type:'queue', id};
+  const k = ACTION_KIND[q.kind];
+  drKind.textContent = k.label + ' · ' + q.company;
+  drTitle.textContent = q.title;
+  let body='';
+  body += `<div class="dr-sec"><div class="sl">Why this needs you</div>${q.gated?'<div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Gated — this talks to a real human or spends real money. Always your call.</div>':'<div class="donewhen"><span class="chk">↺</span>Reversible & non-spend — autopilot could ship this, but here it is to inspect.</div>'}</div>`;
+  body += `<div class="dr-sec"><div class="sl">Evidence · rung: ${q.rung}</div><div class="preview-url"><span class="glove"></span><span>${q.evidence}</span></div></div>`;
+
+  if (q.kind==='ship_feature') {
+    const a = DATA.companies[0].approval;
+    body += `<div class="dr-sec"><div class="sl">Live preview</div><div class="preview-url"><span class="glove"></span><a href="${q.previewUrl}" target="_blank">${q.previewUrl}</a><span class="hint" style="margin-left:auto;">open ↗</span></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">doneWhen check</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} — <b>${a.checkResult}</b> (attempt ${a.attempt})</span></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">Diff</div><div class="diff">${diffHtml(q.diff)}</div></div>`;
+  } else if (q.draft) {
+    body += `<div class="dr-sec"><div class="sl">Draft (agent wrote · you approve before it goes out)</div><div class="draft-box" contenteditable="true">${escapeHtml(q.draft)}</div></div>`;
+  } else if (q.kind==='authorize_spend') {
+    body += `<div class="dr-sec"><div class="sl">Spend authorization</div><div class="meta-grid"><div class="meta-cell"><div class="mk">Amount</div><div class="mv">$${q.amountUsd}</div></div><div class="meta-cell"><div class="mk">Channel</div><div class="mv">${q.channel}</div></div></div></div>`;
+  }
+  drBody.innerHTML = body;
+  drActions.innerHTML = `<button class="btn primary" id="drAp">${q.kind==='ship_feature'?'Approve & ship':q.kind==='authorize_spend'?'Authorize $'+q.amountUsd:q.kind==='tweet'?'Approve & post':'Approve & send'}</button><button class="btn" id="drRj">Reject with feedback</button>`;
+  document.getElementById('drAp').onclick=()=>{ approveQueue(id); flash(true, 'Approved — '+commsApprovedText(q)); setTimeout(closeDrawer,1100); };
+  document.getElementById('drRj').onclick=()=>showReject(()=>{ resolved[id]='rejected'; pushActivity(q.company,'reprioritize','feedback sent to co-founder agent → re-drafting',false); renderQueue(); flash(false,'Sent back with your feedback'); setTimeout(closeDrawer,1100); });
+  drReject.style.display='none'; drFlash.classList.remove('show');
+  openDrawer();
+  if (rejectMode) showReject(()=>{ resolved[id]='rejected'; pushActivity(q.company,'reprioritize','feedback sent to co-founder agent → re-drafting',false); renderQueue(); flash(false,'Sent back with your feedback'); setTimeout(closeDrawer,1100); });
+}
+function showReject(onSend){
+  drReject.style.display='block'; drRejectText.value=''; drRejectText.focus();
+  document.getElementById('drRejectSend').onclick=onSend;
+  document.getElementById('drRejectCancel').onclick=()=>{drReject.style.display='none';};
+}
+
+/* — feature detail — */
+function openFeature(cid, n) {
+  const c=co(cid); const s = c.slices ? c.slices.find(x=>x.n===n) : c.currentSlice;
+  if(!s) return;
+  currentDrawer={type:'feature'};
+  drKind.textContent = `${c.name} · slice #${s.n}`;
+  drTitle.textContent = s.title;
+  let body='';
+  body += `<div class="dr-sec"><div class="sl">Status</div><span class="st ${STATUS_CLASS[s.status]}"><span class="d"></span>${STATUS_LABEL[s.status]}</span>${s.priority?` <span class="hint" style="margin-left:8px;">priority ${s.priority}</span>`:''}</div>`;
+  if (c.previewUrl) body += `<div class="dr-sec"><div class="sl">Live preview</div><div class="preview-url"><span class="glove"></span><a href="${c.previewUrl}" target="_blank">${c.previewUrl}</a></div></div>`;
+  if (s.status==='awaiting_approval' && c.approval && c.approval.slice===s.n) {
+    const a=c.approval;
+    body += `<div class="dr-sec"><div class="sl">Gate preview</div><div class="preview-url"><span class="glove"></span><a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">doneWhen</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} — <b>${a.checkResult}</b></span></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">Diff</div><div class="diff">${diffHtml(a.diff)}</div></div>`;
+    drActions.innerHTML = `<button class="btn primary" id="drApF">Approve & ship</button><button class="btn" id="drRjF">Reject with feedback</button>`;
+    document.getElementById('drApF').onclick=()=>{ resolved['q1']='approved'; s.status='shipped'; pushActivity(c.name,'deploy','slice '+s.n+' approved → shipping daily digest',true); renderAll(); flash(true,'Approved & shipping ✓'); setTimeout(closeDrawer,1100); };
+    document.getElementById('drRjF').onclick=()=>showReject(()=>{ pushActivity(c.name,'reprioritize','feedback sent → re-working slice '+s.n,false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });
+  } else {
+    if(s.step) body += `<div class="dr-sec"><div class="sl">Current step</div><div class="draft-box">${s.step}</div></div>`;
+    if(s.note) body += `<div class="dr-sec"><div class="sl">Note</div><div class="donewhen" style="background:var(--red-soft);border-color:var(--red);color:#8a1a1a;"><span class="chk" style="background:var(--red);">!</span>${s.note}</div></div>`;
+    if(s.dependsOn) body += `<div class="dr-sec"><div class="sl">Depends on</div><div class="hint">slice ${s.dependsOn.join(', ')}</div></div>`;
+    body += `<div class="dr-sec"><div class="sl">Evidence framing</div><div class="hint">This slice climbs the ladder only when its doneWhen check passes. ${s.check==='green'?'Check is green.':'No green check yet.'}</div></div>`;
+    drActions.innerHTML = `<button class="btn" id="drZoom">Zoom into ${c.name} ›</button>`;
+    document.getElementById('drZoom').onclick=()=>{ closeDrawer(); setView(c.id); };
+  }
+  drBody.innerHTML=body; drReject.style.display='none'; drFlash.classList.remove('show');
+  openDrawer();
+}
+
+/* — outbound stream detail — */
+function openOutbound(ref, rejectMode) {
+  const [type,i]=ref.split('|');
+  const item = type==='tw'?OUTBOUND.twitter[i]:OUTBOUND.cold[i];
+  currentDrawer={type:'outbound'};
+  drKind.textContent = type==='tw'?'Build-in-public · LeadSift':'Cold sequence · '+item.company;
+  drTitle.textContent = type==='tw'?'𝕏 post':'Cold email batch';
+  const draft = type==='tw'? item.status==='draft' : true;
+  let body = `<div class="dr-sec"><div class="sl">Why gated</div><div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Outbound to real humans — always your call before it sends.</div></div>`;
+  if(type==='tw') body += `<div class="dr-sec"><div class="sl">Draft (editable)</div><div class="draft-box" contenteditable="true">${escapeHtml(item.text)}</div></div><div class="dr-sec"><div class="sl">Evidence — replies come back as adoption signal</div><div class="preview-url"><span class="glove"></span><span>${item.stats}</span></div></div>`;
+  else body += `<div class="dr-sec"><div class="sl">Segment</div><div class="draft-box">${item.segment} · ${item.size} contacts · ${item.step}</div></div><div class="dr-sec"><div class="sl">Evidence</div><div class="preview-url"><span class="glove"></span><span>${item.stats}</span></div></div>`;
+  drBody.innerHTML=body;
+  if(draft){
+    drActions.innerHTML = `<button class="btn primary" id="drApO">${type==='tw'?'Approve & post':'Approve batch'}</button><button class="btn" id="drRjO">Reject with feedback</button>`;
+    document.getElementById('drApO').onclick=()=>{ approveOutbound(ref); flash(true,'Approved & '+(type==='tw'?'posted':'sending')+' ✓'); setTimeout(closeDrawer,1100); };
+    document.getElementById('drRjO').onclick=()=>showReject(()=>{ pushActivity(type==='tw'?'LeadSift':item.company,'reprioritize','feedback sent → re-drafting outbound',false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });
+  } else { drActions.innerHTML=`<span class="hint" style="align-self:center;">Already posted · ${item.stats}</span>`; }
+  drReject.style.display='none'; drFlash.classList.remove('show');
+  openDrawer();
+  if(rejectMode && draft) showReject(()=>{ pushActivity(type==='tw'?'LeadSift':item.company,'reprioritize','feedback sent → re-drafting outbound',false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });
+}
+
+/* — support ticket detail (thread + draftable reply) — */
+function openTicket(id) {
+  const t = SUPPORT.find(x=>x.id===id); if(!t) return;
+  currentDrawer={type:'ticket'};
+  drKind.textContent = `Support · ${t.company}`;
+  drTitle.textContent = t.subject;
+  const matched = QUEUE.find(q=>q.kind==='support_reply' && q.company===t.company);
+  let body='';
+  body += `<div class="dr-sec"><div class="sl">From</div><div class="hint">${t.user}</div></div>`;
+  body += `<div class="dr-sec"><div class="sl">Message</div><div class="draft-box">${escapeHtml(t.body)}</div></div>`;
+  body += `<div class="dr-sec"><div class="sl">Signal → candidate feature</div><div class="preview-url" style="background:#e6f6f4;border-color:#bfe6df;"><span class="glove"></span><span>${t.signal} — this seeds the build backlog</span></div></div>`;
+  if(t.status==='needs_reply'){
+    body += `<div class="dr-sec"><div class="sl">Drafted reply (you approve before it sends)</div><div class="draft-box" contenteditable="true">${escapeHtml(matched? matched.draft : 'Thanks for the note — looking into it now.')}</div></div>`;
+    drActions.innerHTML = `<button class="btn primary" id="drApT">Approve & send reply</button><button class="btn" id="drRjT">Reject with feedback</button>`;
+    document.getElementById('drApT').onclick=()=>{ t.status='answered'; if(matched) resolved[matched.id]='approved'; pushActivity(t.company,'reply','support reply approved → sent to '+t.user,false); renderAll(); flash(true,'Reply sent ✓'); setTimeout(closeDrawer,1100); };
+    document.getElementById('drRjT').onclick=()=>showReject(()=>{ pushActivity(t.company,'reprioritize','feedback sent → re-drafting support reply',false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });
+  } else {
+    body += `<div class="dr-sec"><div class="sl">Status</div><div class="donewhen"><span class="chk">✓</span>Answered</div></div>`;
+    drActions.innerHTML = `<span class="hint" style="align-self:center;">Answered · signal logged to backlog</span>`;
+  }
+  drBody.innerHTML=body; drReject.style.display='none'; drFlash.classList.remove('show');
+  openDrawer();
+}
+
+/* ═══════════════ HELPERS ═══════════════ */
+function diffHtml(diff){
+  return diff.split('\n').map(l=>{
+    const add = l.startsWith('+');
+    return `<div class="ln ${add?'add':'ctx'}">${escapeHtml(l)}</div>`;
+  }).join('');
+}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ═══════════════ VIEW / RENDER ═══════════════ */
+function setView(v){ view=v; renderAll(); }
+function renderAll(){
+  renderSwitcher(); renderBreadcrumb(); renderPfMetrics();
+  renderQueue(); renderBuild(); renderGtm(); renderMeasure(); renderActivity();
+}
+
+/* switcher toggle */
+document.getElementById('switcher').onclick=(e)=>{ e.stopPropagation(); document.getElementById('switchMenu').classList.toggle('open'); };
+document.addEventListener('click',()=>document.getElementById('switchMenu').classList.remove('open'));
+
+/* Esc / back */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(drawer.classList.contains('open')) closeDrawer();
+    else if(view!=='portfolio') setView('portfolio');
+  }
+});
+
+renderAll();
+</script>
+</body>
+</html>

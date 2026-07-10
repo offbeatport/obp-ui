@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-zoom="in">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C Slop Slop · Operations Floor</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('cslopslop-theme');
+      document.documentElement.setAttribute('data-theme', (t === 'dark' || t === 'light') ? t : 'light');
+      var z = localStorage.getItem('cslopslop-zoom');
+      document.documentElement.setAttribute('data-zoom', (z === 'out') ? 'out' : 'in');
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.setAttribute('data-zoom', 'in');
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #f7f3ec;
+    --cream-2: #f1eae0;
+    --paper: #fffdf8;
+    --ink: #2c2926;
+    --ink-soft: #6b645d;
+    --ink-faint: #9c948b;
+    --line: #e7ded0;
+    --line-soft: #f0e9dd;
+    --accent: #c8643c;
+    --accent-soft: #f4ddce;
+    --green: #4f8a52;
+    --green-soft: #dcebd7;
+    --blue: #3f6fb0;
+    --blue-soft: #d9e3f2;
+    --violet: #7c5cc4;
+    --violet-soft: #e6ddf4;
+    --amber: #c08a2c;
+    --amber-soft: #f3e6c6;
+    --red: #c0503f;
+    --red-soft: #f4d8d1;
+    --slate: #6a7686;
+    --slate-soft: #e3e2df;
+    --shadow: 0 1px 2px rgba(44, 41, 38, 0.05), 0 8px 30px rgba(44, 41, 38, 0.07);
+    --shadow-lift: 0 2px 6px rgba(44, 41, 38, 0.08), 0 18px 50px rgba(44, 41, 38, 0.16);
+  }
+  :root[data-theme="dark"] {
+    --cream: #05060a;
+    --cream-2: #0a0c14;
+    --paper: #10131f;
+    --ink: #e6ebf5;
+    --ink-soft: #a5adbf;
+    --ink-faint: #6b7385;
+    --line: #242938;
+    --line-soft: #1a1e2b;
+    --accent: #e0794e;
+    --accent-soft: #3a2417;
+    --green: #34d399;
+    --green-soft: #10362c;
+    --blue: #5b9cf0;
+    --blue-soft: #142a45;
+    --violet: #a78bfa;
+    --violet-soft: #241d3f;
+    --amber: #fbbf24;
+    --amber-soft: #372a10;
+    --red: #f87171;
+    --red-soft: #3a1c1c;
+    --slate: #94a3b8;
+    --slate-soft: #202634;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 34px rgba(0, 0, 0, 0.5);
+    --shadow-lift: 0 2px 8px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent-soft); color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+  /* stage tone mapping */
+  .s-idea    { --tone: var(--slate);  --tone-soft: var(--slate-soft); }
+  .s-building{ --tone: var(--blue);   --tone-soft: var(--blue-soft); }
+  .s-testing { --tone: var(--amber);  --tone-soft: var(--amber-soft); }
+  .s-growing { --tone: var(--green);  --tone-soft: var(--green-soft); }
+  .s-ejected { --tone: var(--violet); --tone-soft: var(--violet-soft); }
+  .s-killed  { --tone: var(--red);    --tone-soft: var(--red-soft); }
+
+  /* area accents */
+  .a-build { --area: var(--blue);   --area-soft: var(--blue-soft); }
+  .a-grow  { --area: var(--violet); --area-soft: var(--violet-soft); }
+  .a-run   { --area: var(--green);  --area-soft: var(--green-soft); }
+
+  /* bay status → status-light color (--lite) */
+  .st-active { --lite: var(--green); }
+  .st-idle   { --lite: var(--amber); }
+  .st-off    { --lite: var(--ink-faint); }
+  .st-needs  { --lite: var(--accent); }
+
+  /* ---------- Top bar ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    padding: 11px clamp(16px, 4vw, 44px);
+    background: color-mix(in srgb, var(--cream) 84%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px; flex: none;
+    display: grid; place-items: center; position: relative;
+    background: linear-gradient(150deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--amber)));
+    color: #fff; box-shadow: var(--shadow);
+  }
+  .logo svg { width: 17px; height: 17px; }
+  .logo .hum {
+    position: absolute; right: -3px; top: -3px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--green); border: 2px solid var(--cream);
+  }
+  .logo .hum::after {
+    content: ""; position: absolute; inset: -2px; border-radius: 50%;
+    background: var(--green); opacity: .5; animation: ring 2.4s ease-out infinite;
+  }
+  .brand-txt { display: flex; flex-direction: column; line-height: 1.05; min-width: 0; }
+  .brand-txt b {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    font-size: 15px; letter-spacing: -0.01em; white-space: nowrap;
+  }
+  .brand-txt span { font-size: 10px; color: var(--ink-faint); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; }
+  .top-spacer { flex: 1; }
+  .needs-pill {
+    display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .03em;
+    color: var(--accent); padding: 5px 11px; border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line)); background: var(--accent-soft);
+  }
+  .needs-pill .fl {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent); position: relative;
+  }
+  .needs-pill .fl::after {
+    content: ""; position: absolute; inset: -3px; border-radius: 50%;
+    background: var(--accent); opacity: .45; animation: ring 1.9s ease-out infinite;
+  }
+  .icon-btn {
+    width: 36px; height: 36px; flex: none; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+    transition: transform .15s ease, background .2s ease, border-color .2s ease;
+  }
+  .icon-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .icon-btn svg { width: 17px; height: 17px; }
+  .sun { display: none; }
+  :root[data-theme="dark"] .sun { display: block; }
+  :root[data-theme="dark"] .moon { display: none; }
+  .zoom-btn {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; letter-spacing: .03em;
+    color: var(--ink); padding: 8px 12px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--paper); white-space: nowrap;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .zoom-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .zoom-btn svg { width: 15px; height: 15px; }
+  .zoom-btn .zi-in { display: none; }
+  .zoom-btn .zi-out { display: inline; }
+  :root[data-zoom="out"] .zoom-btn .zi-in { display: inline; }
+  :root[data-zoom="out"] .zoom-btn .zi-out { display: none; }
+  .zoom-btn .zt::after { content: "compact"; }
+  :root[data-zoom="out"] .zoom-btn .zt::after { content: "expand"; }
+
+  /* ---------- Floor header ---------- */
+  .floor-head {
+    padding: clamp(22px, 4vw, 40px) clamp(16px, 4vw, 44px) clamp(14px, 2vw, 22px);
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 8% 0%, var(--accent-soft) 0%, transparent 52%),
+      radial-gradient(90% 80% at 96% 0%, var(--blue-soft) 0%, transparent 55%);
+  }
+  .floor-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--green); font-weight: 600;
+    padding: 4px 10px 4px 8px; border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--green) 38%, var(--line)); background: var(--green-soft);
+  }
+  .floor-eyebrow .d { width: 7px; height: 7px; border-radius: 50%; background: var(--green); position: relative; }
+  .floor-eyebrow .d::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; background: var(--green); opacity: .45; animation: ring 1.8s ease-out infinite; }
+  .floor-head h1 {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    font-size: clamp(26px, 5vw, 46px); line-height: 1.03; letter-spacing: -0.025em;
+    margin: 14px 0 0; max-width: 20ch;
+  }
+  .floor-sub {
+    font-family: 'Spectral', Georgia, serif; font-size: clamp(14px, 2vw, 18px);
+    color: var(--ink-soft); margin: 10px 0 0; max-width: 62ch; line-height: 1.5;
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; }
+  .lg {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .04em;
+    color: var(--ink-soft);
+  }
+  .lg i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .lg .g { background: var(--green); }
+  .lg .a { background: var(--amber); }
+  .lg .o { background: var(--ink-faint); }
+  .lg .n { background: var(--accent); }
+
+  /* ---------- Grid ---------- */
+  .wrap { padding: clamp(18px, 3vw, 30px) clamp(16px, 4vw, 44px) 30px; }
+  .grid {
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    max-width: 1360px; margin: 0 auto;
+  }
+  :root[data-zoom="out"] .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+
+  /* ---------- Company board ---------- */
+  .board {
+    position: relative; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px; display: flex; flex-direction: column; gap: 12px;
+    box-shadow: var(--shadow);
+    animation: rise .5s cubic-bezier(.2,.7,.3,1) both;
+    transition: border-color .22s ease, box-shadow .22s ease;
+  }
+  .board:hover { border-color: color-mix(in srgb, var(--tone) 40%, var(--line)); box-shadow: var(--shadow-lift); }
+  .board.b-killed { opacity: .6; }
+  .board.b-killed:hover { opacity: .85; }
+
+  .board-head { display: flex; align-items: center; gap: 9px; }
+  .board-head h3 {
+    margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    font-size: 18px; letter-spacing: -0.01em; flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .stage-chip {
+    flex: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: .05em; text-transform: uppercase; color: var(--tone);
+    background: var(--tone-soft); border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
+    padding: 3px 9px; border-radius: 999px;
+  }
+
+  /* lifecycle spine */
+  .spine {
+    display: flex; align-items: center; gap: 0;
+    padding: 2px 2px 0;
+  }
+  .step { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .step:last-child { flex: none; }
+  .step .node {
+    width: 9px; height: 9px; border-radius: 50%; flex: none;
+    background: var(--paper); border: 1.5px solid var(--line);
+    position: relative;
+  }
+  .step .lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--ink-faint); margin-left: 5px; white-space: nowrap;
+  }
+  .step .bar { flex: 1; height: 2px; background: var(--line); margin: 0 6px; border-radius: 2px; min-width: 8px; }
+  .step.done .node { background: var(--tone); border-color: var(--tone); }
+  .step.done .bar { background: var(--tone); }
+  .step.done .lbl { color: var(--ink-soft); }
+  .step.cur .node {
+    background: var(--tone); border-color: var(--tone);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 22%, transparent);
+  }
+  .step.cur .lbl { color: var(--tone); font-weight: 600; }
+  .board.b-killed .step .node { background: var(--cream-2); border-color: var(--line); }
+  .board.b-killed .step .bar { background: var(--line); }
+  .board.b-killed .step .lbl { text-decoration: line-through; }
+
+  .board-note {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--red);
+    background: var(--red-soft); border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
+    border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 7px;
+  }
+
+  /* ---------- Bays ---------- */
+  .bays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bay {
+    display: flex; flex-direction: column; gap: 7px;
+    padding: 9px 9px 10px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--paper);
+    min-width: 0;
+  }
+  .bay.st-active, .bay.st-needs {
+    background: linear-gradient(165deg, color-mix(in srgb, var(--area-soft) 55%, var(--paper)), var(--paper) 75%);
+    border-color: color-mix(in srgb, var(--area) 32%, var(--line));
+  }
+  .bay.st-needs { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); }
+  .bay.st-off { opacity: .5; }
+
+  .bay-head { display: flex; align-items: center; gap: 6px; }
+  .bay-ico { width: 15px; height: 15px; color: var(--area); flex: none; }
+  .bay.st-off .bay-ico { color: var(--ink-faint); }
+  .bay-nm {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; color: var(--ink); flex: 1; min-width: 0;
+  }
+  .light {
+    width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--lite);
+  }
+  .st-active .light, .st-needs .light { animation: glow 2.1s ease-in-out infinite; }
+
+  .bay-sub { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .auto {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: .06em;
+    padding: 2px 6px; border-radius: 5px; color: var(--area);
+    background: color-mix(in srgb, var(--area) 12%, var(--paper));
+    border: 1px solid color-mix(in srgb, var(--area) 30%, var(--line));
+  }
+  .auto.auto-off { color: var(--ink-faint); background: var(--cream-2); border-color: var(--line); }
+  .flag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; letter-spacing: .05em;
+    text-transform: uppercase; color: #fff; background: var(--accent);
+    padding: 2px 6px; border-radius: 5px;
+  }
+  .flag::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%; background: #fff;
+    animation: blink 1.4s steps(2, start) infinite;
+  }
+
+  .task {
+    font-size: 11.5px; color: var(--ink); font-weight: 500; line-height: 1.3;
+    min-height: 30px;
+  }
+  .bay-off {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-faint);
+    line-height: 1.35; min-height: 30px; display: flex; align-items: center;
+  }
+  .log {
+    display: flex; flex-direction: column; gap: 2px; height: 46px; overflow: hidden;
+    border-top: 1px dashed var(--line); padding-top: 6px;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 22%);
+    mask-image: linear-gradient(180deg, transparent, #000 22%);
+  }
+  .log-ln {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink-soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .log-ln::before { content: "›"; color: var(--area); font-weight: 600; }
+  .log-ln.fresh { animation: slidein .42s cubic-bezier(.2,.7,.3,1) both; }
+
+  /* ---------- Compact (zoom-out) ---------- */
+  .compact { display: none; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .glyphs { display: flex; align-items: center; gap: 6px; }
+  .glyph {
+    position: relative; width: 34px; height: 34px; border-radius: 9px; flex: none;
+    display: grid; place-items: center; color: var(--area);
+    border: 1px solid color-mix(in srgb, var(--area) 30%, var(--line));
+    background: color-mix(in srgb, var(--area-soft) 45%, var(--paper));
+  }
+  .glyph svg { width: 16px; height: 16px; }
+  .glyph.st-off { color: var(--ink-faint); border-color: var(--line); background: var(--cream-2); opacity: .55; }
+  .glyph .gd {
+    position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--lite); border: 1.5px solid var(--paper);
+  }
+  .glyph.st-active .gd, .glyph.st-needs .gd { animation: glow 2.1s ease-in-out infinite; }
+  .compact .stage-chip { margin-left: auto; }
+
+  :root[data-zoom="out"] .spine,
+  :root[data-zoom="out"] .bays,
+  :root[data-zoom="out"] .board-note { display: none; }
+  :root[data-zoom="out"] .compact { display: flex; }
+  :root[data-zoom="out"] .board { gap: 10px; padding: 12px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 24px clamp(16px, 4vw, 44px); margin-top: 10px;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-faint);
+  }
+  footer b { color: var(--ink-soft); }
+
+  /* ---------- keyframes ---------- */
+  @keyframes ring { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(2.4); opacity: 0; } }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .25; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes slidein { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @keyframes glow {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lite) 55%, transparent); }
+    70% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--lite) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lite) 0%, transparent); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .needs-pill span.lbl-txt { display: none; }
+    .brand-txt span { display: none; }
+  }
+</style>
+</head>
+<body>
+  <!-- Top bar -->
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18M6 20V9l4 3V9l4 3V9l4 3v8" />
+        </svg>
+        <span class="hum"></span>
+      </div>
+      <div class="brand-txt">
+        <b>C Slop Slop</b>
+        <span>operations floor</span>
+      </div>
+    </div>
+    <div class="top-spacer"></div>
+    <span class="needs-pill" id="needsPill" title="Bays with a pending gate — waiting on you">
+      <span class="fl" aria-hidden="true"></span><b id="needsN">0</b>&nbsp;<span class="lbl-txt">need you</span>
+    </span>
+    <button class="zoom-btn" id="zoomBtn" aria-label="Toggle compact / expanded view">
+      <svg class="zi-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>
+      <svg class="zi-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+      <span class="zt mono"></span>
+    </button>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle light / dark theme" title="Toggle theme">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </header>
+
+  <!-- Floor header -->
+  <section class="floor-head">
+    <span class="floor-eyebrow"><span class="d"></span> factory floor · live</span>
+    <h1>Six companies on the line, three stations each.</h1>
+    <p class="floor-sub">Every company runs across three bays — <b>Build</b> (the product), <b>Grow</b> (get it out there), <b>Run</b> (keep it alive). Lit bays are working; amber idles; grey is dark. A terracotta flag means a bay hit a gate and needs your call.</p>
+    <div class="legend">
+      <span class="lg"><i class="g"></i> active</span>
+      <span class="lg"><i class="a"></i> idle</span>
+      <span class="lg"><i class="o"></i> off</span>
+      <span class="lg"><i class="n"></i> needs you</span>
+      <span class="lg mono">· L0/L1/L2 = autonomy level</span>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <span>C Slop Slop · <b>operations floor</b> — the AI works the bays, you oversee</span>
+    <span>stage = where it is · bays = what it's doing · <b>gates wait for you</b></span>
+  </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var STAGE_STEPS = ['Idea', 'Building', 'Testing', 'Growing', 'Eject'];
+  var STAGE_INDEX = { Idea: 0, Building: 1, Testing: 2, Growing: 3, Ejected: 4, Killed: -1 };
+  var STAGE_CLS = {
+    Idea: 's-idea', Building: 's-building', Testing: 's-testing',
+    Growing: 's-growing', Ejected: 's-ejected', Killed: 's-killed'
+  };
+
+  var AREAS = [
+    { key: 'build', name: 'BUILD' },
+    { key: 'grow',  name: 'GROW' },
+    { key: 'run',   name: 'RUN' }
+  ];
+  var ICONS = {
+    build: '<path d="M14.5 6.6a3.7 3.7 0 0 0-5 5L3 18v3h3l6.4-6.5a3.7 3.7 0 0 0 5-5l-2.4 2.4-2-2 2.5-2.3z"/>',
+    grow:  '<polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/>',
+    run:   '<path d="M22 12h-4l-3 8L9 4l-3 8H2"/>'
+  };
+
+  var companies = [
+    {
+      name: 'LeadSift', stage: 'Growing',
+      bays: {
+        build: { state: 'active', auto: 'L1', task: 'CSV export',
+          log: ['wrote the exporter', 'ran tests ✓', 'deployed to staging', 'wired CSV headers', 'opened PR #48'] },
+        grow: { state: 'needs', auto: 'L0', task: 'Product Hunt launch — $40 gated', gate: 'SPEND',
+          log: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you', 'researched launch timing'] },
+        run: { state: 'active', auto: 'L1', task: 'onboarding + support',
+          log: ['sent 3 onboarding emails', 'answered a ticket', 'billing webhook ✓', 'uptime 200 OK'] }
+      }
+    },
+    {
+      name: 'QuietInbox', stage: 'Growing',
+      bays: {
+        build: { state: 'active', auto: 'L2', task: 'Snooze a thread',
+          log: ['wrote snooze logic', 'deployed slice 9', 'added an undo timer', 'unit tests ✓'] },
+        grow: { state: 'active', auto: 'L1', task: 'newsletter + launch',
+          log: ['scheduled a tweet 4pm', '1.2k newsletter sent', 'drafted launch copy', 'A/B’d the subject'] },
+        run: { state: 'active', auto: 'L1', task: 'support queue',
+          log: ['drafted 9 replies', '0 refunds', 'triaged the queue', 'closed 4 tickets'] }
+      }
+    },
+    {
+      name: 'DataDrop', stage: 'Testing',
+      bays: {
+        build: { state: 'active', auto: 'L1', task: 'Saved chart views',
+          log: ['re-prioritized backlog', 'cleaning CSV parser', 'sketched saved views', 'fixed a delimiter bug'] },
+        grow: { state: 'needs', auto: 'L0', task: 'r/SaaS launch thread', gate: 'POST',
+          log: ['drafted the thread + 3 replies', 'awaiting your post', 'listed 5 subreddits', 'wrote a hook line'] },
+        run: { state: 'idle', auto: 'L1', task: 'quiet — 1 open ticket',
+          log: ['checked uptime · 200 OK', '1 ticket open', 'reviewed error logs'] }
+      }
+    },
+    {
+      name: 'TranslatorBill', stage: 'Building',
+      bays: {
+        build: { state: 'active', auto: 'L1', task: 'InvoiceFormatter.tsx',
+          log: ['translating a sample invoice', 'ran tests · green', 'wired InvoiceFormatter.tsx', 'mapped currency fields'] },
+        grow: { state: 'off', auto: null, task: 'blocked — no domain' },
+        run: { state: 'off', auto: null, task: 'pre-revenue' }
+      }
+    },
+    {
+      name: 'PricePeek', stage: 'Idea',
+      bays: {
+        build: { state: 'idle', auto: 'L0', task: 'validating — 15 interviews',
+          log: ['drafted interview script', 'listed 15 targets', 'booked 2 calls', 'noted a pattern'] },
+        grow: { state: 'off', auto: null, task: '' },
+        run: { state: 'off', auto: null, task: '' }
+      }
+    },
+    {
+      name: 'RedditPainBot', stage: 'Killed', note: 'loop stopped · post-mortem filed',
+      bays: {
+        build: { state: 'off', auto: null, task: '' },
+        grow: { state: 'off', auto: null, task: '' },
+        run: { state: 'off', auto: null, task: '' }
+      }
+    }
+  ];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (m) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+    });
+  }
+
+  function svg(area) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+           'stroke-linecap="round" stroke-linejoin="round">' + ICONS[area] + '</svg>';
+  }
+
+  function spineHTML(stage) {
+    var cur = STAGE_INDEX[stage];
+    var out = '';
+    for (var i = 0; i < STAGE_STEPS.length; i++) {
+      var cls = 'step';
+      if (cur >= 0) {
+        if (i < cur) { cls += ' done'; }
+        else if (i === cur) { cls += ' cur'; }
+      }
+      out += '<span class="' + cls + '"><span class="node"></span><span class="lbl">' + esc(STAGE_STEPS[i]) + '</span>';
+      if (i < STAGE_STEPS.length - 1) { out += '<span class="bar"></span>'; }
+      out += '</span>';
+    }
+    return '<div class="spine" aria-hidden="true">' + out + '</div>';
+  }
+
+  function bayHTML(ci, area, b) {
+    var stCls = 'st-' + b.state;
+    var auto = b.auto ? esc(b.auto) : 'OFF';
+    var autoCls = b.auto ? '' : ' auto-off';
+    var head = '<div class="bay-head"><span class="bay-ico">' + svg(area.key) + '</span>' +
+               '<span class="bay-nm">' + area.name + '</span>' +
+               '<span class="light" aria-hidden="true"></span></div>';
+    var flag = (b.state === 'needs')
+      ? '<span class="flag">' + esc(b.gate) + '</span>'
+      : '';
+    var sub = '<div class="bay-sub"><span class="auto' + autoCls + '">' + auto + '</span>' + flag + '</div>';
+    var body;
+    if (b.state === 'off') {
+      body = '<div class="bay-off">' + (b.task ? esc(b.task) : '—') + '</div>';
+    } else {
+      body = '<div class="task">' + esc(b.task) + '</div>' +
+             '<div class="log" data-log data-c="' + ci + '" data-a="' + area.key + '"></div>';
+    }
+    return '<div class="bay a-' + area.key + ' ' + stCls + '">' + head + sub + body + '</div>';
+  }
+
+  function compactHTML(c) {
+    var g = '<div class="glyphs">';
+    for (var i = 0; i < AREAS.length; i++) {
+      var a = AREAS[i], b = c.bays[a.key];
+      g += '<span class="glyph a-' + a.key + ' st-' + b.state + '" title="' + a.name + ' · ' + esc(b.state) + '">' +
+           svg(a.key) + '<i class="gd"></i></span>';
+    }
+    g += '</div>';
+    return '<div class="compact"><span class="mono" style="font-size:10px;color:var(--ink-faint)">B·G·R</span>' +
+           g + '<span class="stage-chip">' + esc(c.stage) + '</span></div>';
+  }
+
+  function boardHTML(c, i) {
+    var killed = c.stage === 'Killed';
+    var bays = '';
+    for (var k = 0; k < AREAS.length; k++) {
+      bays += bayHTML(i, AREAS[k], c.bays[AREAS[k].key]);
+    }
+    var note = c.note ? '<div class="board-note"><span class="mono">☠</span>' + esc(c.note) + '</div>' : '';
+    return '<article class="board ' + STAGE_CLS[c.stage] + (killed ? ' b-killed' : '') + '" style="animation-delay:' + Math.min(i * 55, 350) + 'ms">' +
+             '<div class="board-head"><h3>' + esc(c.name) + '</h3><span class="stage-chip">' + esc(c.stage) + '</span></div>' +
+             compactHTML(c) +
+             spineHTML(c.stage) +
+             note +
+             '<div class="bays">' + bays + '</div>' +
+           '</article>';
+  }
+
+  // ----- render -----
+  var grid = document.getElementById('grid');
+  grid.innerHTML = companies.map(boardHTML).join('');
+
+  // ----- needs-you count -----
+  var needs = 0;
+  companies.forEach(function (c) {
+    AREAS.forEach(function (a) { if (c.bays[a.key].state === 'needs') { needs++; } });
+  });
+  document.getElementById('needsN').textContent = needs;
+  if (needs === 0) { document.getElementById('needsPill').style.display = 'none'; }
+
+  // ----- live worklog ticking -----
+  function startLog(el, lines) {
+    var idx = 0;
+    function push(fresh) {
+      var ln = document.createElement('div');
+      ln.className = 'log-ln' + (fresh ? ' fresh' : '');
+      ln.textContent = lines[idx % lines.length];
+      el.insertBefore(ln, el.firstChild);
+      while (el.children.length > 3) { el.removeChild(el.lastChild); }
+      idx++;
+    }
+    // seed 3 (oldest first so newest lands on top)
+    push(false); push(false); push(false);
+    if (rm) { return; }
+    (function loop() {
+      var wait = 2600 + Math.random() * 2600;
+      setTimeout(function () { push(true); loop(); }, wait);
+    })();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.log[data-log]'), function (el) {
+    var c = +el.getAttribute('data-c');
+    var a = el.getAttribute('data-a');
+    startLog(el, companies[c].bays[a].log);
+  });
+
+  // ----- theme toggle -----
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('cslopslop-theme', next); } catch (e) {}
+  });
+
+  // ----- zoom toggle -----
+  document.getElementById('zoomBtn').addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-zoom');
+    var next = cur === 'out' ? 'in' : 'out';
+    document.documentElement.setAttribute('data-zoom', next);
+    try { localStorage.setItem('cslopslop-zoom', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift — C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f3e0d5;
+    --green:#4f8a52; --blue:#4a72b0; --violet:#7a5ea8;
+    --amber:#c08a2e; --red:#b6483f;
+    --shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 20px 44px -30px rgba(70,54,32,.5);
+    --shadow-sm:0 1px 0 rgba(255,255,255,.6) inset, 0 8px 22px -18px rgba(70,54,32,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  ::selection{background:var(--accent-soft);color:var(--ink)}
+  button{font-family:inherit;cursor:pointer}
+
+  /* ---------- shell ---------- */
+  .shell{max-width:920px;margin:0 auto;padding:0 28px 96px}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:26px 0 8px;
+  }
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    background:none;border:none;color:var(--ink-faint);
+    font-size:13.5px;font-weight:500;letter-spacing:.01em;
+    padding:6px 10px 6px 6px;border-radius:9px;
+    transition:color .16s ease, background .16s ease;
+  }
+  .back:hover{color:var(--ink);background:var(--cream-2)}
+  .back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:13.5px;letter-spacing:.03em;
+    color:var(--ink-faint);
+  }
+  .brand b{color:var(--accent);font-weight:700}
+
+  /* ---------- switcher ---------- */
+  .switch{position:relative}
+  .switch-btn{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:11px;padding:6px 11px 6px 8px;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .16s ease, transform .16s ease;
+  }
+  .switch-btn:hover{border-color:#dccdb4}
+  .switch-btn .mono-chip{
+    width:22px;height:22px;border-radius:7px;background:var(--accent);
+    color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:12px;display:grid;place-items:center;
+  }
+  .switch-btn span{font-size:13px;font-weight:600;color:var(--ink)}
+  .switch-btn svg{width:13px;height:13px;stroke:var(--ink-faint);fill:none;stroke-width:1.9;transition:transform .2s ease}
+  .switch.open .switch-btn svg{transform:rotate(180deg)}
+  .menu{
+    position:absolute;top:calc(100% + 8px);right:0;z-index:40;
+    width:250px;background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;padding:6px;box-shadow:var(--shadow);
+    opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity .16s ease, transform .16s ease, visibility .16s;
+  }
+  .switch.open .menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .menu-label{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
+    padding:8px 10px 6px;
+  }
+  .menu-item{
+    display:flex;align-items:center;gap:10px;width:100%;
+    background:none;border:none;text-align:left;
+    padding:8px 10px;border-radius:9px;
+    transition:background .13s ease;
+  }
+  .menu-item:hover{background:var(--cream)}
+  .menu-item.current{background:var(--accent-soft)}
+  .menu-item .mchip{
+    width:24px;height:24px;border-radius:7px;flex:none;
+    display:grid;place-items:center;color:#fff;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;
+  }
+  .menu-item .mtxt{display:flex;flex-direction:column;line-height:1.25}
+  .menu-item .mtxt b{font-size:13px;font-weight:600;color:var(--ink)}
+  .menu-item .mtxt small{font-size:11px;color:var(--ink-faint)}
+  .menu-item .mdot{margin-left:auto;width:7px;height:7px;border-radius:50%}
+
+  /* ---------- identity ---------- */
+  .identity{
+    display:flex;align-items:center;gap:16px;
+    padding:28px 0 8px;
+  }
+  .mono{
+    width:52px;height:52px;border-radius:14px;flex:none;
+    background:linear-gradient(155deg,#d9744c,#c8643c 60%,#b8552f);
+    color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:26px;display:grid;place-items:center;
+    box-shadow:0 10px 22px -12px rgba(200,100,60,.75), 0 1px 0 rgba(255,255,255,.35) inset;
+  }
+  .id-text h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:26px;letter-spacing:-.01em;color:var(--ink);line-height:1.1;
+  }
+  .id-sub{display:flex;align-items:center;gap:10px;margin-top:4px}
+  .id-domain{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--ink-faint);
+  }
+  .id-dot{width:3px;height:3px;border-radius:50%;background:var(--line);}
+  .status{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:600;color:var(--green);
+  }
+  .status .pulse{
+    width:7px;height:7px;border-radius:50%;background:var(--green);
+    position:relative;
+  }
+  .status .pulse::after{
+    content:"";position:absolute;inset:-4px;border-radius:50%;
+    border:1.5px solid var(--green);opacity:.5;
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{0%{transform:scale(.5);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+  .thesis{
+    color:var(--ink-soft);font-size:14.5px;
+    padding:2px 0 0;max-width:560px;
+  }
+  .thesis .q{color:var(--accent);font-weight:600}
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;gap:4px;margin:22px 0 6px;
+    border-bottom:1px solid var(--line);
+  }
+  .tab{
+    background:none;border:none;position:relative;
+    padding:10px 14px 13px;font-size:13.5px;font-weight:600;
+    color:var(--ink-faint);letter-spacing:.01em;
+    transition:color .15s ease;
+  }
+  .tab:hover{color:var(--ink-soft)}
+  .tab.active{color:var(--ink)}
+  .tab.active::after{
+    content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;
+    background:var(--accent);border-radius:2px;
+  }
+  .tab .badge{
+    display:inline-grid;place-items:center;margin-left:7px;
+    min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+    background:var(--accent);color:#fff;font-size:10px;font-weight:700;
+    font-family:'JetBrains Mono',monospace;vertical-align:1px;
+  }
+
+  .panel{display:none;animation:fade .3s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    text-align:center;
+    padding:44px 20px 30px;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+    margin-bottom:14px;
+  }
+  .hero-figure{
+    display:flex;align-items:flex-start;justify-content:center;gap:16px;
+  }
+  .hero-num{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:clamp(72px,13vw,116px);line-height:.9;letter-spacing:-.03em;
+    color:var(--ink);
+  }
+  .hero-num .cur{font-size:.42em;font-weight:600;color:var(--ink-faint);vertical-align:.72em;margin-right:2px}
+  .hero-num .per{font-size:.2em;font-weight:500;color:var(--ink-faint);letter-spacing:0;vertical-align:.9em}
+  .delta{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:14px;padding:6px 12px;border-radius:999px;
+    background:rgba(79,138,82,.1);color:var(--green);
+    font-size:14px;font-weight:600;
+  }
+  .delta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
+  .delta small{color:var(--green);opacity:.72;font-weight:500}
+
+  /* ---------- chart ---------- */
+  .chart-wrap{margin:22px auto 0;max-width:720px}
+  .chart{width:100%;height:auto;display:block;overflow:visible}
+  .chart-axis{
+    display:flex;justify-content:space-between;
+    max-width:720px;margin:6px auto 0;padding:0 4px;
+  }
+  .chart-axis span{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--ink-faint);letter-spacing:.04em;
+  }
+  .chart-axis span:last-child{color:var(--accent);font-weight:500}
+
+  /* ---------- stat row ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    margin-top:34px;
+  }
+  .stat{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);
+  }
+  .stat .k{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .stat .v{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:24px;color:var(--ink);margin-top:8px;letter-spacing:-.01em;
+  }
+  .stat .t{font-size:12px;font-weight:500;margin-top:3px}
+  .t.up{color:var(--green)}
+  .t.flat{color:var(--ink-faint)}
+  .t.good{color:var(--blue)}
+
+  /* ---------- section headings ---------- */
+  .sec-head{
+    display:flex;align-items:center;gap:10px;
+    margin:40px 0 16px;
+  }
+  .sec-head h2{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:15px;color:var(--ink);letter-spacing:.005em;
+  }
+  .sec-head .rule{flex:1;height:1px;background:var(--line-soft)}
+  .sec-head .hint{font-size:12px;color:var(--ink-faint)}
+
+  /* ---------- DECISION card ---------- */
+  .decision{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(200,100,60,.09), transparent 55%),
+      var(--paper);
+    border:1px solid #ecd3c2;
+    border-radius:18px;padding:26px 26px 22px;
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 24px 50px -30px rgba(200,100,60,.5);
+  }
+  .decision::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:linear-gradient(var(--accent),#d98a5e);
+  }
+  .dec-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+    font-weight:500;
+  }
+  .dec-eyebrow .spark{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(200,100,60,.5);animation:spark 2s infinite;
+  }
+  @keyframes spark{0%{box-shadow:0 0 0 0 rgba(200,100,60,.5)}70%{box-shadow:0 0 0 8px rgba(200,100,60,0)}100%{box-shadow:0 0 0 0 rgba(200,100,60,0)}}
+  .dec-title{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:22px;color:var(--ink);margin:12px 0 6px;letter-spacing:-.01em;
+  }
+  .dec-sub{color:var(--ink-soft);font-size:14.5px;max-width:520px}
+  .dec-meta{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 20px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--cream);border:1px solid var(--line);
+    border-radius:8px;padding:5px 10px;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);
+  }
+  .chip .dt{width:6px;height:6px;border-radius:50%}
+  .chip .dt.g{background:var(--green)}
+  .chip .dt.b{background:var(--blue)}
+  .dec-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .btn{
+    border:1px solid transparent;border-radius:11px;
+    font-size:14px;font-weight:600;letter-spacing:.005em;
+    padding:11px 18px;transition:transform .12s ease, box-shadow .16s ease, background .16s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{
+    background:var(--accent);color:#fff;
+    box-shadow:0 12px 24px -12px rgba(200,100,60,.9);
+  }
+  .btn-primary:hover{background:#bd5a33;box-shadow:0 14px 28px -12px rgba(200,100,60,1)}
+  .btn-primary svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;vertical-align:-3px;margin-right:6px}
+  .btn-secondary{
+    background:var(--paper);color:var(--ink);border-color:var(--line);
+  }
+  .btn-secondary:hover{border-color:#d8c8ad;background:var(--cream)}
+  .btn-quiet{
+    background:none;color:var(--ink-faint);padding:11px 8px;
+  }
+  .btn-quiet:hover{color:var(--red)}
+
+  /* resolved state */
+  .dec-resolved{
+    display:none;align-items:center;gap:16px;
+    padding:6px 2px;
+  }
+  .dec-resolved.show{display:flex;animation:fade .35s ease}
+  .decision.done{border-color:#cfe0d0;background:
+      radial-gradient(120% 140% at 100% 0%, rgba(79,138,82,.1), transparent 55%),var(--paper)}
+  .decision.done::before{background:linear-gradient(var(--green),#6fa672)}
+  .check-badge{
+    width:44px;height:44px;border-radius:12px;flex:none;
+    background:rgba(79,138,82,.12);display:grid;place-items:center;
+  }
+  .check-badge svg{width:22px;height:22px;stroke:var(--green);fill:none;stroke-width:2.4}
+  .dec-resolved .rtxt b{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;
+    color:var(--ink);display:block;
+  }
+  .dec-resolved .rtxt span{font-size:13px;color:var(--ink-soft)}
+  .undo{
+    margin-left:auto;background:none;border:none;color:var(--ink-faint);
+    font-size:12.5px;font-weight:500;text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .undo:hover{color:var(--ink)}
+
+  /* ---------- activity strip ---------- */
+  .activity{list-style:none}
+  .act{
+    display:flex;align-items:center;gap:14px;
+    padding:12px 4px;border-bottom:1px solid var(--line-soft);
+  }
+  .act:last-child{border-bottom:none}
+  .act .adot{width:8px;height:8px;border-radius:50%;flex:none}
+  .act code{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--ink-soft);flex:1;
+  }
+  .act code b{color:var(--ink);font-weight:500}
+  .act .at{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    color:var(--ink-faint);flex:none;
+  }
+
+  /* ---------- autonomy strip ---------- */
+  .autonomy{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    margin-top:14px;background:var(--paper);
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    box-shadow:var(--shadow-sm);
+  }
+  .auto{padding:16px 18px;border-right:1px solid var(--line-soft)}
+  .auto:last-child{border-right:none}
+  .auto .al{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .auto .av{
+    display:inline-flex;align-items:center;gap:7px;margin-top:8px;
+    font-size:13.5px;font-weight:600;color:var(--ink);
+  }
+  .auto .av .m{width:8px;height:8px;border-radius:50%}
+  .m.auto-on{background:var(--green)}
+  .m.approve{background:var(--amber)}
+
+  /* ---------- generic cards ---------- */
+  .card{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:16px;box-shadow:var(--shadow-sm);
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  /* build roadmap */
+  .roadmap{list-style:none;padding:8px 6px}
+  .rm{
+    display:flex;align-items:center;gap:14px;padding:13px 14px;
+    border-radius:11px;transition:background .13s ease;
+  }
+  .rm+.rm{margin-top:2px}
+  .rm.wait{background:var(--accent-soft)}
+  .rm.stuck{background:rgba(182,72,63,.07)}
+  .rm-ic{
+    width:26px;height:26px;border-radius:8px;flex:none;
+    display:grid;place-items:center;
+  }
+  .rm-ic svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.4}
+  .ic-done{background:var(--green)}
+  .ic-wait{background:var(--accent)}
+  .ic-stuck{background:var(--red)}
+  .ic-next{background:var(--paper);border:1.5px dashed var(--line)}
+  .ic-next span{width:6px;height:6px;border-radius:50%;background:var(--ink-faint)}
+  .rm-txt{flex:1;min-width:0}
+  .rm-txt b{font-size:14px;font-weight:600;color:var(--ink)}
+  .rm-txt small{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
+  .rm-tag{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;
+    letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:7px;flex:none;
+  }
+  .tag-live{background:rgba(79,138,82,.12);color:var(--green)}
+  .tag-wait{background:var(--accent);color:#fff}
+  .tag-stuck{background:rgba(182,72,63,.12);color:var(--red)}
+  .tag-next{background:var(--cream-2);color:var(--ink-faint)}
+  .btn-retry{
+    background:var(--paper);border:1px solid #e6c6c1;color:var(--red);
+    border-radius:8px;font-size:12px;font-weight:600;padding:6px 11px;flex:none;
+  }
+  .btn-retry:hover{background:rgba(182,72,63,.06)}
+
+  .ship-progress{
+    display:flex;align-items:center;gap:12px;padding:14px 18px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .track{flex:1;height:7px;border-radius:4px;background:var(--cream-2);overflow:hidden}
+  .track i{display:block;height:100%;width:50%;border-radius:4px;background:linear-gradient(90deg,var(--green),#6fa672)}
+  .ship-progress b{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft)}
+
+  /* operate + money mini metric */
+  .mini{padding:18px 20px}
+  .mini h3{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+    color:var(--ink);margin-bottom:14px;
+  }
+  .kv{display:flex;align-items:baseline;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .kv:last-child{border-bottom:none}
+  .kv .kvl{font-size:13.5px;color:var(--ink-soft)}
+  .kv .kvl small{color:var(--ink-faint);font-size:12px}
+  .kv .kvv{font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:500;color:var(--ink)}
+  .kvv.pos{color:var(--green)}
+
+  /* funnel bar */
+  .funnel{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .fn{display:flex;align-items:center;gap:12px}
+  .fn .fnl{width:88px;font-size:12.5px;color:var(--ink-soft);flex:none}
+  .fn .fnbar{flex:1;height:26px;border-radius:7px;background:var(--cream-2);position:relative;overflow:hidden}
+  .fn .fnbar i{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:linear-gradient(90deg,#d9744c,var(--accent))}
+  .fn .fnv{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);width:54px;text-align:right;flex:none}
+
+  /* money split bar */
+  .money-hero{text-align:center;padding:22px 20px 6px}
+  .money-hero .mh-net{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:44px;
+    color:var(--green);letter-spacing:-.02em;
+  }
+  .money-hero .mh-sub{font-size:13px;color:var(--ink-faint);margin-top:4px}
+  .splitbar{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:20px 0 8px;background:var(--cream-2)}
+  .splitbar i{height:100%}
+  .split-legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:4px}
+  .lg{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft)}
+  .lg .sw{width:10px;height:10px;border-radius:3px}
+
+  /* connected */
+  .conns{display:flex;flex-wrap:wrap;gap:10px}
+  .conn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:9px 13px;font-size:13px;font-weight:500;color:var(--ink);
+    box-shadow:var(--shadow-sm);
+  }
+  .conn .cst{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;flex:none}
+  .conn .cst svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:3}
+  .cst.ok{background:var(--green)}
+  .cst.no{background:var(--red)}
+  .conn.missing{border-color:#e6c6c1;background:rgba(182,72,63,.04)}
+  .conn.missing .need{font-size:11px;color:var(--red);font-weight:500;margin-left:2px}
+
+  .footer-note{
+    text-align:center;font-size:12px;color:var(--ink-faint);
+    margin-top:44px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;
+  }
+
+  @media (max-width:680px){
+    .shell{padding:0 18px 72px}
+    .stats{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .autonomy{grid-template-columns:1fr}
+    .auto{border-right:none;border-bottom:1px solid var(--line-soft)}
+    .auto:last-child{border-bottom:none}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <button class="back" onclick="history.length>1?history.back():null">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      Portfolio
+    </button>
+    <div class="brand">C <b>Slop</b> Slop</div>
+    <div class="switch" id="switch">
+      <button class="switch-btn" onclick="toggleSwitch(event)">
+        <span class="mono-chip">L</span>
+        <span>LeadSift</span>
+        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="menu">
+        <div class="menu-label">Portfolio · 5 companies</div>
+        <button class="menu-item current">
+          <span class="mchip" style="background:#c8643c">L</span>
+          <span class="mtxt"><b>LeadSift</b><small>MRR $180 · growing</small></span>
+          <span class="mdot" style="background:#4f8a52"></span>
+        </button>
+        <button class="menu-item">
+          <span class="mchip" style="background:#4a72b0">Q</span>
+          <span class="mtxt"><b>QuietInbox</b><small>MRR $95 · steady</small></span>
+          <span class="mdot" style="background:#4f8a52"></span>
+        </button>
+        <button class="menu-item">
+          <span class="mchip" style="background:#7a5ea8">T</span>
+          <span class="mtxt"><b>TranslatorBill</b><small>MRR $40 · early</small></span>
+          <span class="mdot" style="background:#c08a2e"></span>
+        </button>
+        <button class="menu-item">
+          <span class="mchip" style="background:#c08a2e">D</span>
+          <span class="mtxt"><b>DataDrop</b><small>MRR $12 · building</small></span>
+          <span class="mdot" style="background:#c08a2e"></span>
+        </button>
+        <button class="menu-item">
+          <span class="mchip" style="background:#635c52">R</span>
+          <span class="mtxt"><b>RedditPainBot</b><small>pre-revenue</small></span>
+          <span class="mdot" style="background:#7b7368"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- identity -->
+  <div class="identity">
+    <div class="mono">L</div>
+    <div class="id-text">
+      <h1>LeadSift</h1>
+      <div class="id-sub">
+        <span class="id-domain">leadsift.app</span>
+        <span class="id-dot"></span>
+        <span class="status"><span class="pulse"></span>Live &amp; growing</span>
+      </div>
+    </div>
+  </div>
+  <p class="thesis"><span class="q">"</span>Scrape + score inbound leads from any webform.<span class="q">"</span></p>
+
+  <!-- tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="build">Build <span class="badge">1</span></button>
+    <button class="tab" data-tab="operate">Operate</button>
+    <button class="tab" data-tab="money">Money</button>
+  </nav>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section class="panel active" id="overview">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Monthly recurring revenue</div>
+      <div class="hero-figure">
+        <div class="hero-num"><span class="cur">$</span>180<span class="per">/mo</span></div>
+      </div>
+      <div class="delta">
+        <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+        29% <small>· +$40 this month</small>
+      </div>
+
+      <!-- chart -->
+      <div class="chart-wrap">
+        <svg class="chart" viewBox="0 0 720 240" preserveAspectRatio="none" role="img" aria-label="MRR growth over six months">
+          <defs>
+            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c8643c" stop-opacity=".22"/>
+              <stop offset="100%" stop-color="#c8643c" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#d9814f"/>
+              <stop offset="100%" stop-color="#c8643c"/>
+            </linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- faint baseline -->
+          <line x1="40" y1="210" x2="680" y2="210" stroke="#efe8da" stroke-width="1"/>
+          <!-- area -->
+          <path d="M40 200 C61.3 192.9 125.3 171.7 168 157.5 C210.7 143.3 253.3 126.8 296 115 C338.7 103.2 381.3 96.2 424 86.7 C466.7 77.3 509.3 67.8 552 58.3 C594.7 48.9 658.7 34.7 680 30 L680 210 L40 210 Z"
+                fill="url(#area)"/>
+          <!-- line -->
+          <path d="M40 200 C61.3 192.9 125.3 171.7 168 157.5 C210.7 143.3 253.3 126.8 296 115 C338.7 103.2 381.3 96.2 424 86.7 C466.7 77.3 509.3 67.8 552 58.3 C594.7 48.9 658.7 34.7 680 30"
+                fill="none" stroke="url(#line)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- vertices -->
+          <g fill="#fffdf8" stroke="#c8643c" stroke-width="2.5">
+            <circle cx="40" cy="200" r="3.5"/>
+            <circle cx="168" cy="157.5" r="3.5"/>
+            <circle cx="296" cy="115" r="3.5"/>
+            <circle cx="424" cy="86.7" r="3.5"/>
+            <circle cx="552" cy="58.3" r="3.5"/>
+          </g>
+          <!-- end marker -->
+          <circle cx="680" cy="30" r="7" fill="#c8643c" filter="url(#glow)"/>
+          <circle cx="680" cy="30" r="3" fill="#fffdf8"/>
+        </svg>
+        <div class="chart-axis">
+          <span>Feb $60</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul $180 · now</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- secondary stat row -->
+    <div class="stats">
+      <div class="stat">
+        <div class="k">Users</div>
+        <div class="v">12</div>
+        <div class="t up">+3 this week</div>
+      </div>
+      <div class="stat">
+        <div class="k">Net / mo</div>
+        <div class="v">+$158</div>
+        <div class="t good">$180 − $22 costs</div>
+      </div>
+      <div class="stat">
+        <div class="k">Churn</div>
+        <div class="v">0%</div>
+        <div class="t flat">no cancels</div>
+      </div>
+      <div class="stat">
+        <div class="k">Uptime</div>
+        <div class="v">99.9%</div>
+        <div class="t up">healthy</div>
+      </div>
+    </div>
+
+    <!-- DECISION -->
+    <div class="sec-head">
+      <h2>Needs you</h2>
+      <div class="rule"></div>
+      <span class="hint">1 decision waiting</span>
+    </div>
+
+    <div class="decision" id="decision">
+      <div class="dec-live">
+        <span class="dec-eyebrow"><span class="spark"></span>Approval · Build</span>
+        <div class="dec-title">Ship "Daily digest of top leads"?</div>
+        <p class="dec-sub">Feature 5 is built &amp; tested. A live preview is on staging and the automated check passed — it's ready to go live.</p>
+        <div class="dec-meta">
+          <span class="chip"><span class="dt g"></span>check passed · /digest/preview → 200</span>
+          <span class="chip"><span class="dt b"></span>deployed to staging · 4m ago</span>
+        </div>
+        <div class="dec-actions">
+          <button class="btn btn-primary" onclick="approve()">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Approve &amp; ship
+          </button>
+          <button class="btn btn-secondary" onclick="preview()">Review preview</button>
+          <button class="btn btn-quiet" onclick="reject()">Reject with feedback</button>
+        </div>
+      </div>
+      <div class="dec-resolved" id="decResolved">
+        <div class="check-badge">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="rtxt">
+          <b id="resTitle">Shipping to production…</b>
+          <span id="resSub">Promoting staging build · users will see the daily digest shortly.</span>
+        </div>
+        <button class="undo" onclick="undo()">Undo</button>
+      </div>
+    </div>
+
+    <!-- activity -->
+    <div class="sec-head">
+      <h2>Recent activity</h2>
+      <div class="rule"></div>
+      <span class="hint">last few hours</span>
+    </div>
+    <ul class="activity card" style="padding:6px 14px">
+      <li class="act"><span class="adot" style="background:#4f8a52"></span><code>check passed · <b>/digest/preview</b> → 200</code><span class="at">2m</span></li>
+      <li class="act"><span class="adot" style="background:#4a72b0"></span><code>deployed <b>feature 5</b> to staging</code><span class="at">4m</span></li>
+      <li class="act"><span class="adot" style="background:#7a5ea8"></span><code>sent <b>3 onboarding emails</b></code><span class="at">1h</span></li>
+      <li class="act"><span class="adot" style="background:#c08a2e"></span><code>scored <b>41 new leads</b></code><span class="at">3h</span></li>
+    </ul>
+
+    <!-- autonomy -->
+    <div class="sec-head">
+      <h2>Autonomy</h2>
+      <div class="rule"></div>
+      <span class="hint">who does what</span>
+    </div>
+    <div class="autonomy">
+      <div class="auto">
+        <div class="al">Build</div>
+        <div class="av"><span class="m auto-on"></span>On autopilot</div>
+      </div>
+      <div class="auto">
+        <div class="al">Growth</div>
+        <div class="av"><span class="m approve"></span>You approve</div>
+      </div>
+      <div class="auto">
+        <div class="al">Running</div>
+        <div class="av"><span class="m auto-on"></span>On autopilot</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================== BUILD ===================== -->
+  <section class="panel" id="build">
+    <div class="sec-head" style="margin-top:28px">
+      <h2>Product build</h2><div class="rule"></div>
+      <span class="hint">4 shipped · 1 waiting on you</span>
+    </div>
+    <div class="card">
+      <div class="ship-progress">
+        <b>4 / 8 features live</b>
+        <div class="track"><i></i></div>
+        <b>50%</b>
+      </div>
+      <ul class="roadmap">
+        <li class="rm"><div class="rm-ic ic-done"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="rm-txt"><b>Webform scraper</b><small>Pulls submissions from any embedded form</small></div>
+          <span class="rm-tag tag-live">Live</span></li>
+        <li class="rm"><div class="rm-ic ic-done"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="rm-txt"><b>Lead scoring model</b><small>Ranks inbound leads 0–100</small></div>
+          <span class="rm-tag tag-live">Live</span></li>
+        <li class="rm"><div class="rm-ic ic-done"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="rm-txt"><b>Slack notifications</b><small>Pings on every high-score lead</small></div>
+          <span class="rm-tag tag-live">Live</span></li>
+        <li class="rm"><div class="rm-ic ic-done"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="rm-txt"><b>Team dashboard</b><small>Shared view of the lead pipeline</small></div>
+          <span class="rm-tag tag-live">Live</span></li>
+        <li class="rm wait"><div class="rm-ic ic-wait"><svg viewBox="0 0 24 24"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9" fill="none"/></svg></div>
+          <div class="rm-txt"><b>Daily digest of top leads</b><small>Built · deployed to staging · check passed</small></div>
+          <span class="rm-tag tag-wait">Needs you</span></li>
+        <li class="rm stuck"><div class="rm-ic ic-stuck"><svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/></svg></div>
+          <div class="rm-txt"><b>Inbound webhook</b><small>Stuck — failed 3 tries · agent is looking into it</small></div>
+          <button class="btn-retry" onclick="this.textContent='Retrying…';this.disabled=true">Retry</button></li>
+        <li class="rm"><div class="rm-ic ic-next"><span></span></div>
+          <div class="rm-txt"><b>Export leads to CSV</b><small>Next up in the queue</small></div>
+          <span class="rm-tag tag-next">Queued</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== OPERATE ===================== -->
+  <section class="panel" id="operate">
+    <div class="sec-head" style="margin-top:28px">
+      <h2>Growth</h2><div class="rule"></div>
+      <span class="hint">getting users in</span>
+    </div>
+    <div class="grid-2">
+      <div class="card mini">
+        <h3>Channels</h3>
+        <div class="kv"><span class="kvl">Product Hunt launch <small>3 weeks ago</small></span><span class="kvv pos">+8 signups</span></div>
+        <div class="kv"><span class="kvl">SEO articles <small>4 published</small></span><span class="kvv">~320 visits/mo</span></div>
+        <div class="kv"><span class="kvl">Onboarding emails <small>automated</small></span><span class="kvv">on</span></div>
+      </div>
+      <div class="card mini">
+        <h3>Funnel · visitor → paid</h3>
+        <div class="funnel">
+          <div class="fn"><span class="fnl">Visitors</span><span class="fnbar"><i style="width:100%"></i></span><span class="fnv">100%</span></div>
+          <div class="fn"><span class="fnl">Trials</span><span class="fnbar"><i style="width:34%"></i></span><span class="fnv">34%</span></div>
+          <div class="fn"><span class="fnl">Paid</span><span class="fnbar"><i style="width:18%"></i></span><span class="fnv">18%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head">
+      <h2>Health &amp; run</h2><div class="rule"></div>
+      <span class="hint">keeping it alive</span>
+    </div>
+    <div class="grid-2">
+      <div class="card mini">
+        <h3>Support &amp; reliability</h3>
+        <div class="kv"><span class="kvl">Open tickets</span><span class="kvv">2 <small>~4h avg reply</small></span></div>
+        <div class="kv"><span class="kvl">Uptime <small>30 days</small></span><span class="kvv pos">99.9%</span></div>
+        <div class="kv"><span class="kvl">Refunds this month</span><span class="kvv">1</span></div>
+      </div>
+      <div class="card mini">
+        <h3>Connected accounts</h3>
+        <div class="conns" style="margin-top:2px">
+          <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Stripe</span>
+          <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Domain</span>
+          <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Email</span>
+          <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Product Hunt</span>
+          <span class="conn missing"><span class="cst no"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></span>X / Twitter <span class="need">— needed for social posts</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MONEY ===================== -->
+  <section class="panel" id="money">
+    <div class="sec-head" style="margin-top:28px">
+      <h2>Money</h2><div class="rule"></div>
+      <span class="hint">$180 in · $22 out</span>
+    </div>
+    <div class="card">
+      <div class="money-hero">
+        <div class="mh-net">+$158<span style="font-size:.4em;color:var(--ink-faint);font-weight:500">/mo net</span></div>
+        <div class="mh-sub">$180 MRR minus $22 running costs</div>
+        <div class="splitbar">
+          <i style="width:87.8%;background:linear-gradient(90deg,#4f8a52,#6fa672)" title="Net"></i>
+          <i style="width:4.1%;background:#4a72b0" title="Infra"></i>
+          <i style="width:3.2%;background:#7a5ea8" title="APIs"></i>
+          <i style="width:2.3%;background:#c08a2e" title="Email"></i>
+          <i style="width:0.6%;background:#b6483f" title="Domain"></i>
+        </div>
+        <div class="split-legend">
+          <span class="lg"><span class="sw" style="background:#4f8a52"></span>Net +$158</span>
+          <span class="lg"><span class="sw" style="background:#4a72b0"></span>Infra $9</span>
+          <span class="lg"><span class="sw" style="background:#7a5ea8"></span>APIs $7</span>
+          <span class="lg"><span class="sw" style="background:#c08a2e"></span>Email $5</span>
+          <span class="lg"><span class="sw" style="background:#b6483f"></span>Domain $1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div class="card mini">
+        <h3>Revenue</h3>
+        <div class="kv"><span class="kvl">MRR</span><span class="kvv pos">$180</span></div>
+        <div class="kv"><span class="kvl">Growth this month</span><span class="kvv pos">+$40 · +29%</span></div>
+        <div class="kv"><span class="kvl">Paying users</span><span class="kvv">12</span></div>
+        <div class="kv"><span class="kvl">Churn</span><span class="kvv">0%</span></div>
+      </div>
+      <div class="card mini">
+        <h3>Costs · $22/mo</h3>
+        <div class="kv"><span class="kvl">Infrastructure</span><span class="kvv">$9</span></div>
+        <div class="kv"><span class="kvl">APIs</span><span class="kvv">$7</span></div>
+        <div class="kv"><span class="kvl">Email</span><span class="kvv">$5</span></div>
+        <div class="kv"><span class="kvl">Domain</span><span class="kvv">$1</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">C Slop Slop · LeadSift · autonomous build &amp; run</div>
+
+</div>
+
+<script>
+  // tabs
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      document.getElementById(t.dataset.tab).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+
+  // company switcher
+  function toggleSwitch(e){ e.stopPropagation(); document.getElementById('switch').classList.toggle('open'); }
+  document.addEventListener('click', function(){ document.getElementById('switch').classList.remove('open'); });
+
+  // decision
+  var dec = document.getElementById('decision');
+  var live = dec.querySelector('.dec-live');
+  var resolved = document.getElementById('decResolved');
+  var resTitle = document.getElementById('resTitle');
+  var resSub = document.getElementById('resSub');
+  var buildBadge = document.querySelector('.tab[data-tab="build"] .badge');
+
+  function resolve(title, sub, cls){
+    live.style.display='none';
+    resolved.classList.add('show');
+    dec.classList.add('done');
+    resTitle.textContent = title;
+    resSub.textContent = sub;
+    if(cls){ dec.querySelector('.check-badge').style.background=cls.bg;
+             dec.querySelector('.check-badge svg').style.stroke=cls.stroke; }
+    if(buildBadge){ buildBadge.style.display='none'; }
+    document.querySelector('.sec-head .hint').textContent = 'all clear';
+  }
+  function approve(){
+    resolve('Approved · shipping to production',
+            'Promoting the staging build now — users will see the daily digest shortly.', null);
+  }
+  function preview(){
+    // simulate opening the staging preview
+    var b = event.target; var old = b.textContent;
+    b.textContent = 'Opening preview…'; b.disabled = true;
+    setTimeout(function(){ b.textContent = old; b.disabled = false; }, 1400);
+  }
+  function reject(){
+    resolve('Sent back with feedback',
+            'Feature 5 returned to the build queue — the agent will revise and resubmit.',
+            {bg:'rgba(182,72,63,.12)', stroke:'#b6483f'});
+    dec.style.setProperty('border-color','#e6c6c1');
+    dec.querySelector('.check-badge svg').innerHTML='<path d="M9 14l6-6M15 14L9 8"/>';
+    dec.querySelector('.dec-resolved').style.background='transparent';
+  }
+  function undo(){
+    live.style.display='block';
+    resolved.classList.remove('show');
+    dec.classList.remove('done');
+    dec.style.removeProperty('border-color');
+    if(buildBadge){ buildBadge.style.display=''; }
+    document.querySelector('.sec-head .hint').textContent = '1 decision waiting';
+    // reset check icon
+    dec.querySelector('.check-badge svg').innerHTML='<path d="M20 6L9 17l-5-5"/>';
+    dec.querySelector('.check-badge').style.background='rgba(79,138,82,.12)';
+    dec.querySelector('.check-badge svg').style.stroke='#4f8a52';
+  }
+</script>
+</body>
+</html>

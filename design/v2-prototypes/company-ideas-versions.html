@@ -1,0 +1,1835 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Company page · 10 fundamentally different ways to work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --cream:#faf6f0; --cream-2:#f3ebe0; --paper:#ffffff; --ink:#2b2320; --ink-soft:#6a5f55; --ink-faint:#9c8f81;
+  --accent:#c2683f; --accent-ink:#a8542f; --accent-soft:#f4e2d6;
+  --green:#4f8a52; --green-soft:#e2efdf; --amber:#c08a2c; --amber-soft:#f6ecd6; --blue:#3f6fb0; --blue-soft:#e2ecf6; --gray:#b9ada0;
+  --line:#e7ddd0; --line-soft:#efe7db;
+  --shadow:0 1px 2px rgba(44,41,38,.05), 0 8px 24px rgba(44,41,38,.06);
+  --shadow-lg:0 2px 6px rgba(44,41,38,.08), 0 18px 46px rgba(44,41,38,.12);
+  --radius:16px; --radius-sm:12px;
+}
+[data-theme="dark"]{
+  --cream:#12100e; --cream-2:#1c1813; --paper:#191512; --ink:#f0e8dd; --ink-soft:#bcae9f; --ink-faint:#8a7d6f;
+  --accent:#e0894f; --accent-ink:#e8a06a; --accent-soft:#3a2a1e;
+  --green:#66b06a; --green-soft:#22301f; --amber:#d6a54b; --amber-soft:#332a17; --blue:#5a94d6; --blue-soft:#1b2733; --gray:#6a5f52;
+  --line:#2c261f; --line-soft:#241f19;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.5);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.5), 0 22px 54px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1180px;margin:0 auto;padding:34px 26px 120px;}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:300;font-size:34px;letter-spacing:-.02em;margin:0;}
+.sub{font-size:14px;color:var(--ink-soft);margin:9px 0 0;max-width:80ch;line-height:1.55;}
+.theme-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;}
+.vpanel{margin-top:34px;}
+.vhead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.vnum{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:#fff;background:var(--accent);border-radius:7px;padding:3px 9px;}
+.vtitle{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;}
+.vblurb{font-size:12.5px;color:var(--ink-faint);flex:1;min-width:200px;}
+.vstage{background:var(--cream-2);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;justify-content:center;}
+.vstage > *{width:100%;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Company page · 10 fundamentally different ways to work</h1><p class="sub">Ten distinct organizing principles for the company working surface (chat + sidebar stay left). Each uses real LeadSift data. Pick the ones you want to prototype fully.</p></div>
+    <button class="theme-btn" id="themeBtn" type="button">☾ Dark</button>
+  </div>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V1</span><span class="vtitle">Decision stream</span><span class="vblurb">The company as one calm live feed — everything the AI did, decided, or is blocked on, newest first, with pending decisions surfacing inline as approve/redirect cards.</span></div><div class="vstage"><div class="cp-panel cp-v1">
+  <div class="cp-head">
+    <div class="cp-brandrow">
+      <div class="cp-name">LeadSift</div>
+      <div class="cp-mrr">$180 MRR <b>&#9650; +29%</b></div>
+    </div>
+    <div class="cp-status">
+      <span class="cp-pulse"></span>
+      <span>Live &amp; growing</span><span class="cp-sep">&middot;</span>
+      <span>12 users, +3 this week</span><span class="cp-sep">&middot;</span>
+      <span>net +$158/mo</span><span class="cp-sep">&middot;</span>
+      <span>uptime 99.6%</span>
+    </div>
+    <div class="cp-loops">
+      <div class="cp-loop"><span class="cp-ld cp-dbuild"></span><span class="cp-lname">BUILD</span><span class="cp-lst">running</span></div>
+      <div class="cp-loop cp-need"><span class="cp-ld cp-dgrow"></span><span class="cp-lname">GROW</span><span class="cp-lst">needs you</span></div>
+      <div class="cp-loop"><span class="cp-ld cp-drun"></span><span class="cp-lname">RUN</span><span class="cp-lst">healthy</span></div>
+    </div>
+  </div>
+
+  <div class="cp-stream">
+
+    <div class="cp-decwrap">
+      <span class="cp-mark"></span>
+      <div class="cp-dec">
+        <div class="cp-dhead">
+          <span class="cp-dlabel">&#9650; Awaiting your OK &middot; Grow</span>
+          <span class="cp-dtime">just now</span>
+        </div>
+        <div class="cp-dtitle">Post to r/sales about LeadSift</div>
+        <div class="cp-dbody">Reddit is the strongest untapped channel for you. I drafted a value-first post &mdash; <strong>no hard sell</strong>. Approve to publish and start the Reddit strategy.</div>
+        <div class="cp-acts">
+          <button class="cp-btn cp-approve">Approve &amp; post</button>
+          <button class="cp-btn cp-redirect">Redirect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-decwrap">
+      <span class="cp-mark"></span>
+      <div class="cp-dec">
+        <div class="cp-dhead">
+          <span class="cp-dlabel">&#9650; Awaiting your OK &middot; Build</span>
+          <span class="cp-dtime">2m ago</span>
+        </div>
+        <div class="cp-dtitle">Ship &ldquo;Daily digest &mdash; slice 5&rdquo;</div>
+        <div class="cp-dbody">Digest email is implemented, wired into the UI, and passed polish tests. <strong>Ready to ship</strong> to all 12 users.</div>
+        <div class="cp-acts">
+          <button class="cp-btn cp-approve">Approve &amp; ship</button>
+          <button class="cp-btn cp-redirect">Redirect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-item b">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Finished <b>LS-115</b> &mdash; wired the digest into the UI. <span class="cp-tag">1 task left: LS-116 test &amp; polish</span></div>
+      <div class="cp-meta"><span class="cp-loopn">Build</span> &middot; 14m ago</div>
+    </div>
+
+    <div class="cp-item g">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Published 4th SEO article &mdash; organic traffic now <b>320 visits/mo</b>. <span class="cp-chip">SEO on &middot; 2/wk</span></div>
+      <div class="cp-meta"><span class="cp-loopn">Grow</span> &middot; 40m ago</div>
+    </div>
+
+    <div class="cp-item r">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Resolved a support ticket about CSV import. <span class="cp-tag">2 tickets still open</span></div>
+      <div class="cp-meta"><span class="cp-loopn">Run</span> &middot; 1h ago</div>
+    </div>
+
+    <div class="cp-daymark">Earlier today</div>
+
+    <div class="cp-item b">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Started building <b>Daily email digest of top leads</b> &mdash; LS-114 implement, LS-115 UI, LS-116 polish.</div>
+      <div class="cp-meta"><span class="cp-loopn">Build</span> &middot; 3h ago</div>
+    </div>
+
+    <div class="cp-item g">
+      <span class="cp-mark"></span>
+      <div class="cp-line"><b>3 new users</b> signed up &mdash; MRR up +$40 this month.</div>
+      <div class="cp-meta"><span class="cp-loopn">Grow</span> &middot; 5h ago</div>
+    </div>
+
+    <div class="cp-item g">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Launched on <b>Product Hunt</b> &mdash; +8 signups so far. <span class="cp-chip">$40 ad boost proposed</span></div>
+      <div class="cp-meta"><span class="cp-loopn">Grow</span> &middot; 8h ago</div>
+    </div>
+
+    <div class="cp-item r">
+      <span class="cp-mark"></span>
+      <div class="cp-line">Nightly health check passed &mdash; uptime <b>99.6%</b>, spend $22 of $500 cap.</div>
+      <div class="cp-meta"><span class="cp-loopn">Run</span> &middot; 11h ago</div>
+    </div>
+
+  </div>
+
+  <div class="cp-foot">Up next in Build: Export leads to CSV &middot; Slack ping on a hot lead</div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V2</span><span class="vtitle">Loop console</span><span class="vblurb">Three big horizontal lanes — BUILD, GROW, RUN. Each shows its current move in plain words, a live line, and a single Off/Assist/Auto dial. Working with the company means turning loops up or down. GROW surfaces its &quot;needs you&quot; post inline.</span></div><div class="vstage"><div class="cp-panel cp-v2">
+  <div class="cp-head">
+    <div class="cp-brand">
+      <div class="cp-name">LeadSift <span class="cp-live"><span class="cp-dot"></span>Live</span></div>
+      <div class="cp-mission">Turn every webform into scored, ranked sales leads.</div>
+    </div>
+    <div class="cp-mrr">
+      <div class="cp-mrr-v">$180</div>
+      <div class="cp-mrr-d">&#9650; +$40 &middot; +29%</div>
+      <div class="cp-mrr-l">MRR / month</div>
+    </div>
+  </div>
+
+  <div class="cp-strip">
+    <div class="cp-stat"><div class="cp-stat-v">12</div><div class="cp-stat-l">paying &middot; +3</div></div>
+    <div class="cp-stat"><div class="cp-stat-v">+$158</div><div class="cp-stat-l">net / mo</div></div>
+    <div class="cp-stat"><div class="cp-stat-v">1%</div><div class="cp-stat-l">churn</div></div>
+    <div class="cp-stat"><div class="cp-stat-v">$22/500</div><div class="cp-stat-l">spend cap</div></div>
+    <div class="cp-stat"><div class="cp-stat-v">99.6%</div><div class="cp-stat-l">uptime</div></div>
+  </div>
+
+  <div class="cp-lanes">
+
+    <div class="cp-lane build">
+      <div class="cp-lane-top">
+        <div class="cp-lane-id">
+          <div class="cp-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></div>
+          <div class="cp-lane-title">
+            <div class="cp-lane-name">Build</div>
+            <div class="cp-lane-state"><span class="s-dot"></span>Running &middot; shipping next slice</div>
+          </div>
+        </div>
+        <div class="cp-dial">
+          <div class="cp-dial-track"><span class="cp-stop">Off</span><span class="cp-stop">Assist</span><span class="cp-stop act">Auto</span></div>
+          <div class="cp-dial-cap">Loop speed</div>
+        </div>
+      </div>
+      <div class="cp-move">Building <em>&mdash;</em> Daily email digest of top leads</div>
+      <div class="cp-tasks">
+        <span class="cp-task on"><span class="t-dot"></span>LS-114 Implement digest</span>
+        <span class="cp-task on"><span class="t-dot"></span>LS-115 Wire into UI</span>
+        <span class="cp-task"><span class="t-dot"></span>LS-116 Test &amp; polish &middot; queued</span>
+      </div>
+      <div class="cp-next">Up next &mdash; <b>Export leads to CSV</b>, <b>Slack ping on a hot lead</b></div>
+    </div>
+
+    <div class="cp-lane grow">
+      <div class="cp-lane-top">
+        <div class="cp-lane-id">
+          <div class="cp-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></div>
+          <div class="cp-lane-title">
+            <div class="cp-lane-name">Grow</div>
+            <div class="cp-lane-state attn"><span class="s-dot"></span>Needs you &middot; 1 post awaiting OK</div>
+          </div>
+        </div>
+        <div class="cp-dial">
+          <div class="cp-dial-track"><span class="cp-stop">Off</span><span class="cp-stop act">Assist</span><span class="cp-stop">Auto</span></div>
+          <div class="cp-dial-cap">Loop speed</div>
+        </div>
+      </div>
+      <div class="cp-move">SEO pages <em>on &middot; 2/wk</em> &nbsp;&middot;&nbsp; Reddit <em>recommended</em> &nbsp;&middot;&nbsp; Paid ads <em>off</em> &nbsp;&middot;&nbsp; PR <em>off</em></div>
+
+      <div class="cp-needs">
+        <div class="cp-needs-h"><span class="cp-dot cp-needs-dot"></span>Reddit post &mdash; awaiting your OK</div>
+        <div class="cp-needs-post">&ldquo;We built LeadSift to score webform leads automatically &mdash; sharing what we learned ranking 10k+ submissions. Happy to answer questions on r/SaaS.&rdquo;</div>
+        <div class="cp-needs-act">
+          <button class="cp-btn pri">Approve &amp; post</button>
+          <button class="cp-btn sec">Edit</button>
+          <button class="cp-btn sec">Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-lane run">
+      <div class="cp-lane-top">
+        <div class="cp-lane-id">
+          <div class="cp-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="cp-lane-title">
+            <div class="cp-lane-name">Run</div>
+            <div class="cp-lane-state"><span class="s-dot"></span>Running &middot; healthy</div>
+          </div>
+        </div>
+        <div class="cp-dial">
+          <div class="cp-dial-track"><span class="cp-stop">Off</span><span class="cp-stop">Assist</span><span class="cp-stop act">Auto</span></div>
+          <div class="cp-dial-cap">Loop speed</div>
+        </div>
+      </div>
+      <div class="cp-move">Keeping the lights on &mdash; monitoring, replies, uptime</div>
+      <div class="cp-run-grid">
+        <div class="cp-run-cell"><div class="cp-run-v">2 open</div><div class="cp-run-l">support tickets</div></div>
+        <div class="cp-run-cell"><div class="cp-run-v">99.6%</div><div class="cp-run-l">uptime</div></div>
+        <div class="cp-run-cell"><div class="cp-run-v">320/mo</div><div class="cp-run-l">SEO visits</div></div>
+        <div class="cp-run-cell"><div class="cp-run-v">+8</div><div class="cp-run-l">PH signups</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cp-foot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+    2 decisions pending &middot; approve &ldquo;Daily digest slice 5&rdquo; &middot; approve $40 Product Hunt spend
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V3</span><span class="vtitle">One number, one move</span><span class="vblurb">Radically minimal steering surface: one huge North-Star MRR number, one &quot;doing next&quot; card, and at most one decision waiting. Everything else collapses into quiet one-line links.</span></div><div class="vstage"><div class="cp-panel cp-v3">
+  <div class="cp-eyebrow"><span class="cp-dot"></span> LeadSift · live &amp; growing</div>
+
+  <div class="cp-hero">
+    <div class="cp-hero-label">Monthly recurring revenue</div>
+    <div class="cp-num"><span class="cp-cur">$</span>180<span class="cp-per">/mo</span></div>
+    <div>
+      <span class="cp-trend">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8.5L5 5l2 2 3-4M10 3H7.5M10 3v2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        +$40 · +29% this month
+      </span>
+    </div>
+    <div class="cp-subline"><b>12</b> paying users · net <b>+$158/mo</b> · churn <b>1%</b></div>
+  </div>
+
+  <div class="cp-rule"></div>
+
+  <div class="cp-now">
+    <div class="cp-now-top">
+      <span class="cp-pulse"><span></span></span>
+      <span class="cp-now-kicker">What I'm doing next</span>
+    </div>
+    <div class="cp-now-title">Shipping “Daily email digest of top leads”</div>
+    <div class="cp-tasks">
+      <div class="cp-task">
+        <svg class="cp-ic" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.3" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.3v2.7l1.8 1.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="cp-code">LS-114</span><span class="cp-tlabel">Implement digest</span><span class="cp-state building">Building</span>
+      </div>
+      <div class="cp-task">
+        <svg class="cp-ic" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.3" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.3v2.7l1.8 1.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="cp-code">LS-115</span><span class="cp-tlabel">Wire digest into the UI</span><span class="cp-state building">Building</span>
+      </div>
+      <div class="cp-task">
+        <svg class="cp-ic q" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.3" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 2"/></svg>
+        <span class="cp-code">LS-116</span><span class="cp-tlabel">Test &amp; polish</span><span class="cp-state queued">Queued</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cp-decision">
+    <div class="cp-dec-kicker">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5v7M6.5 11.2v.05" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      One decision waiting
+    </div>
+    <div class="cp-dec-title">Approve &amp; ship “Daily digest — slice 5”</div>
+    <div class="cp-dec-sub">The GROW loop is holding until you say go. Ship it and the digest goes live to all 12 users.</div>
+    <div class="cp-dec-actions">
+      <button class="cp-btn primary">Approve &amp; ship</button>
+      <button class="cp-btn ghost">Review first</button>
+    </div>
+  </div>
+
+  <div class="cp-more">
+    <div class="cp-more-row">
+      <span class="cp-more-l"><svg class="cp-mi" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11l3-3 2 2 5-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Grow — Reddit post ready, $40 PH spend</span>
+      <span class="cp-more-r"><span class="cp-need">needs you</span><span class="cp-arrow">→</span></span>
+    </div>
+    <div class="cp-more-row">
+      <span class="cp-more-l"><svg class="cp-mi" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.7 3.5 3.8.5-2.8 2.6.7 3.8L7 10.6 3.6 12.5l.7-3.8L1.5 6.1l3.8-.5L7 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg> Run — healthy, 99.6% uptime, 2 open tickets</span>
+      <span class="cp-more-r">$22 / $500 <span class="cp-arrow">→</span></span>
+    </div>
+    <div class="cp-more-row">
+      <span class="cp-more-l"><svg class="cp-mi" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.3" stroke="currentColor" stroke-width="1.2"/><path d="M7 7l2.3-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Up next — Export leads to CSV · Slack ping on hot lead</span>
+      <span class="cp-more-r"><span class="cp-arrow">→</span></span>
+    </div>
+    <div class="cp-more-row">
+      <span class="cp-more-l"><svg class="cp-mi" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M2 3.5h10M2 10.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Recent — +3 users · Product Hunt +8 · 4 SEO articles, 320 visits/mo</span>
+      <span class="cp-more-r"><span class="cp-arrow">→</span></span>
+    </div>
+  </div>
+
+  <div class="cp-foot">THE AI RUNS IT · YOU STEER</div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V4</span><span class="vtitle">Daily standup</span><span class="vblurb">The AI briefs you in first person — yesterday&#x27;s shipped work, what&#x27;s blocking on your OK with inline approve, and today&#x27;s plan. Feels like managing a very good employee.</span></div><div class="vstage"><div class="cp-panel cp-v4">
+  <div class="v4-top">
+    <div class="v4-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M9 13v2M15 13v2"/></svg></div>
+    <div class="v4-hd">
+      <h1>Morning. Here's where LeadSift stands.</h1>
+      <p>Your standup for <b>Thu, Jun 26</b> · I've been running the company overnight.</p>
+    </div>
+    <div class="v4-live"><span class="v4-dot"></span>Live</div>
+  </div>
+
+  <div class="v4-metrics">
+    <div class="v4-m"><div class="k">MRR</div><div class="val">$180</div><div class="sub"><span class="up">▲ +$40</span> +29%</div></div>
+    <div class="v4-m"><div class="k">Users</div><div class="val">12</div><div class="sub"><span class="up">+3</span> this week</div></div>
+    <div class="v4-m"><div class="k">Net / mo</div><div class="val">+$158</div><div class="sub">churn 1%</div></div>
+    <div class="v4-m"><div class="k">Spend</div><div class="val">$22</div><div class="sub">of $500 · 99.6% up</div></div>
+  </div>
+
+  <div class="v4-sec">
+    <div class="v4-lbl"><span>Yesterday</span><div class="ln"></div></div>
+    <div class="v4-bub">
+      <p>Good day. I shipped, grew, and kept the lights on:</p>
+      <ul class="v4-list">
+        <li><span class="v4-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>Signed up <b>3 new paying users</b> — MRR up to $180.</div></li>
+        <li><span class="v4-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>Launched on <b>Product Hunt</b> <span class="v4-tag">+8 signups</span></div></li>
+        <li><span class="v4-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>Published <b>4 SEO articles</b> <span class="v4-tag">320 visits/mo</span></div></li>
+        <li><span class="v4-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>Resolved support &amp; tidied 2 open tickets in RUN.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="v4-sec">
+    <div class="v4-lbl"><span>Blocked · needs you</span><div class="ln"></div></div>
+    <div class="v4-block">
+      <div class="who"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span>GROW · waiting on your OK</span></div>
+      <p>I drafted a <b>Reddit post</b> in r/sales pitching LeadSift. It's ready to go, but posting to a community is your call. I'd also like <b>$40 for Product Hunt</b> to push yesterday's launch further.</p>
+      <div class="v4-acts">
+        <button class="v4-btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Approve Reddit post</button>
+        <button class="v4-btn ghost">Approve $40 spend</button>
+        <button class="v4-btn ghost">Review</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="v4-2col">
+    <div class="v4-sec v4-plan" style="margin-bottom:0">
+      <div class="v4-lbl"><span>Today</span><div class="ln"></div></div>
+      <div class="v4-bub">
+        <p style="margin-bottom:11px">Building the <b>Daily email digest of top leads</b>:</p>
+        <ul class="v4-list">
+          <li><span class="v4-run"></span><div><b>LS-114</b> Implement digest <span class="v4-tag">building</span></div></li>
+          <li><span class="v4-run"></span><div><b>LS-115</b> Wire digest into UI <span class="v4-tag">building</span></div></li>
+          <li><span class="v4-queue"></span><div><b>LS-116</b> Test &amp; polish <span class="v4-tag">queued</span></div></li>
+        </ul>
+        <div class="p2">
+          <div class="h">Up next</div>
+          <div class="v4-next"><span class="v4-pill">Export leads to CSV</span><span class="v4-pill">Slack ping on hot lead</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="v4-sec" style="margin-bottom:0">
+      <div class="v4-lbl"><span>Growth engine</span><div class="ln"></div></div>
+      <div class="v4-side">
+        <div class="h">Strategies I'm running</div>
+        <div class="v4-grow">
+          <div class="g"><div class="v4-sw on"></div><div class="nm">SEO pages</div><div class="st">2 / wk</div></div>
+          <div class="g rec"><div class="v4-sw"></div><div class="nm">Reddit</div><div class="st">Recommended</div></div>
+          <div class="g"><div class="v4-sw"></div><div class="nm">Paid ads</div><div class="st">Off</div></div>
+          <div class="g"><div class="v4-sw"></div><div class="nm">Launch &amp; PR</div><div class="st">Off</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v4-foot">
+    <input placeholder="Reply to your AI — steer, ask, or set a priority…" />
+    <button class="v4-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg></button>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V5</span><span class="vtitle">Living spec</span><span class="vblurb">The whole company as one editable outline — Vision to Features to Tasks — that reads like a beautiful living document. Edit the intent, the agent re-plans.</span></div><div class="vstage"><div class="cp-panel cp-v5">
+  <div class="v5-top">
+    <div class="v5-doc"><span class="v5-dot"></span>leadsift · company spec</div>
+    <div class="v5-savestate">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      agent synced · 2m ago
+    </div>
+  </div>
+
+  <div class="v5-body">
+    <!-- VISION -->
+    <div class="v5-vision">
+      <p class="v5-kicker">Vision</p>
+      <h1 class="v5-title">LeadSift</h1>
+      <p class="v5-mission">Turn every webform into scored, ranked sales leads. <span class="v5-edit">✎</span></p>
+
+      <div class="v5-metrics">
+        <div class="v5-metric"><p class="v5-mlabel">MRR</p><div class="v5-mval">$180 <span class="v5-mdelta v5-up">▲29%</span></div></div>
+        <div class="v5-metric"><p class="v5-mlabel">Users</p><div class="v5-mval">12 <span class="v5-mdelta v5-up">+3</span></div></div>
+        <div class="v5-metric"><p class="v5-mlabel">Net / mo</p><div class="v5-mval">+$158</div></div>
+        <div class="v5-metric"><p class="v5-mlabel">Spend</p><div class="v5-mval">$22 <span class="v5-mdelta v5-flat">/500</span></div></div>
+        <div class="v5-metric"><p class="v5-mlabel">Uptime</p><div class="v5-mval">99.6%</div></div>
+      </div>
+    </div>
+
+    <!-- LOOPS -->
+    <div class="v5-outline">
+      <p class="v5-sectionlabel">The three loops</p>
+      <div class="v5-loops">
+        <div class="v5-loop">
+          <span class="v5-loopbadge v5-b-build">BUILD</span>
+          <span class="v5-looptext">Shipping the next slice — <b>Daily email digest</b></span>
+          <span class="v5-loopstate v5-running"><span class="v5-pulse"></span>running</span>
+        </div>
+        <div class="v5-loop">
+          <span class="v5-loopbadge v5-b-grow">GROW</span>
+          <span class="v5-looptext">A <b>Reddit post</b> is awaiting your OK</span>
+          <span class="v5-loopstate v5-needs"><span class="v5-pulse"></span>needs you</span>
+        </div>
+        <div class="v5-loop">
+          <span class="v5-loopbadge v5-b-run">RUN</span>
+          <span class="v5-looptext">Healthy · <b>2 open</b> support tickets</span>
+          <span class="v5-loopstate v5-running"><span class="v5-pulse"></span>running</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="v5-outline">
+      <p class="v5-sectionlabel">Features → Tasks</p>
+
+      <div class="v5-feature v5-active">
+        <div class="v5-fhead">
+          <div class="v5-fname"><span class="v5-caret">▾</span>Daily email digest of top leads</div>
+          <div class="v5-fmeta">
+            <span class="v5-building-tag">building</span>
+            <span class="v5-ver">v0.5</span>
+          </div>
+        </div>
+        <div class="v5-tasks">
+          <div class="v5-task"><span class="v5-tid">LS-114</span><span class="v5-tname">Implement digest</span><span class="v5-tstatus v5-s-building"><span class="v5-sq"></span>building</span></div>
+          <div class="v5-task"><span class="v5-tid">LS-115</span><span class="v5-tname">Wire digest into the UI</span><span class="v5-tstatus v5-s-building"><span class="v5-sq"></span>building</span></div>
+          <div class="v5-task"><span class="v5-tid">LS-116</span><span class="v5-tname">Test &amp; polish</span><span class="v5-tstatus v5-s-queued"><span class="v5-sq"></span>queued</span></div>
+        </div>
+      </div>
+
+      <div class="v5-backlog">
+        <div class="v5-blitem"><span class="v5-plus">+</span>Export leads to CSV</div>
+        <div class="v5-blitem"><span class="v5-plus">+</span>Slack ping on a hot lead</div>
+        <div class="v5-addfeature">write a new feature intent<span class="v5-cursor"></span></div>
+      </div>
+    </div>
+
+    <!-- GROWTH -->
+    <div class="v5-outline">
+      <p class="v5-sectionlabel">Growth strategies</p>
+      <div class="v5-growth">
+        <div class="v5-grow"><span class="v5-gname"><b>SEO pages</b> · 2 pages / week</span><span class="v5-gmeta">320 visits/mo</span><span class="v5-tog on"></span></div>
+        <div class="v5-grow"><span class="v5-gname"><b>Reddit</b></span><span class="v5-rec">recommended</span><span class="v5-tog"></span></div>
+        <div class="v5-grow"><span class="v5-gname"><b>Paid ads</b></span><span class="v5-gmeta">off</span><span class="v5-tog"></span></div>
+        <div class="v5-grow"><span class="v5-gname"><b>Launch &amp; PR</b></span><span class="v5-gmeta">+8 signups on PH</span><span class="v5-tog"></span></div>
+      </div>
+    </div>
+
+    <!-- DECISIONS -->
+    <div class="v5-decisions">
+      <p class="v5-dlabel">◆ Awaiting your decision</p>
+      <div class="v5-drow">
+        <span class="v5-dtext">Approve &amp; ship <b>Daily digest — slice 5</b></span>
+        <span class="v5-later">later</span>
+        <button class="v5-approve">Approve &amp; ship</button>
+      </div>
+      <div class="v5-drow">
+        <span class="v5-dtext">Approve <b>$40</b> Product Hunt spend</span>
+        <span class="v5-later">later</span>
+        <button class="v5-approve">Approve $40</button>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V6</span><span class="vtitle">Task board</span><span class="vblurb">A slim four-column kanban — Backlog, Building, Review, Shipped — where every card is a real task with a loop tag. The Building column is emphasized so you always see what the AI is shipping right now, and Review holds the things awaiting your OK.</span></div><div class="vstage"><div class="cp-panel cp-v6">
+  <div class="v6-head">
+    <div>
+      <div class="v6-eyebrow"><span class="v6-dot"></span>LeadSift · live &amp; growing</div>
+      <h1>The work board</h1>
+      <div class="v6-mission">Turn every webform into scored, ranked sales leads. The AI ships the cards — you steer what's next.</div>
+    </div>
+    <div class="v6-metrics">
+      <div class="v6-mrr">$180<b>▲ 29%</b></div>
+      <div class="v6-sub">12 users · +3 this wk</div>
+      <div class="v6-sub">net +$158/mo · 99.6% up</div>
+      <div class="v6-sub">$40 spend pending · churn 1%</div>
+    </div>
+  </div>
+
+  <div class="v6-loops">
+    <div class="v6-loop">
+      <div class="v6-loop-top"><span class="v6-loop-name">Build</span><span class="v6-pill run">Running</span></div>
+      <div class="v6-loop-desc">Shipping “Daily email digest of top leads”.</div>
+    </div>
+    <div class="v6-loop attn">
+      <div class="v6-loop-top"><span class="v6-loop-name">Grow</span><span class="v6-pill need">Needs you</span></div>
+      <div class="v6-loop-desc">A $40 Product Hunt spend is waiting for your OK.</div>
+    </div>
+    <div class="v6-loop">
+      <div class="v6-loop-top"><span class="v6-loop-name">Run</span><span class="v6-pill run">Running</span></div>
+      <div class="v6-loop-desc">Healthy · 2 open support tickets.</div>
+    </div>
+  </div>
+
+  <div class="v6-board">
+    <div class="v6-col">
+      <div class="v6-col-head"><span class="v6-col-title">Backlog</span><span class="v6-count">3</span></div>
+      <div class="v6-card">
+        <div class="v6-card-id">LS-116 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Test &amp; polish digest</div>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id">LS-120 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Export leads to CSV</div>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id">LS-121 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Slack ping on a hot lead</div>
+      </div>
+    </div>
+
+    <div class="v6-col building">
+      <div class="v6-col-head"><span class="v6-col-title">Building</span><span class="v6-count">2</span></div>
+      <div class="v6-card active">
+        <div class="v6-card-id">LS-114 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Implement digest</div>
+        <div class="v6-bar"><i style="width:72%"></i></div>
+        <div class="v6-live"><b></b>slice 5 · writing code</div>
+      </div>
+      <div class="v6-card active">
+        <div class="v6-card-id">LS-115 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Wire digest into the UI</div>
+        <div class="v6-bar"><i style="width:38%"></i></div>
+        <div class="v6-live"><b></b>in progress</div>
+      </div>
+    </div>
+
+    <div class="v6-col">
+      <div class="v6-col-head"><span class="v6-col-title">Review</span><span class="v6-count">2</span></div>
+      <div class="v6-card">
+        <div class="v6-card-id">LS-113 <span class="v6-tag build">Build</span></div>
+        <div class="v6-card-title">Daily digest — slice 5</div>
+        <button class="v6-review-btn">Approve &amp; ship</button>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id">GR-07 <span class="v6-tag grow">Grow</span></div>
+        <div class="v6-card-title">Product Hunt spend — $40</div>
+        <button class="v6-review-btn">Approve spend</button>
+      </div>
+    </div>
+
+    <div class="v6-col">
+      <div class="v6-col-head"><span class="v6-col-title">Shipped</span><span class="v6-count">4</span></div>
+      <div class="v6-card">
+        <div class="v6-card-id"><span class="v6-check">✓</span> GR-05 <span class="v6-tag grow">Grow</span></div>
+        <div class="v6-card-title">Launched on Product Hunt · +8</div>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id"><span class="v6-check">✓</span> GR-04 <span class="v6-tag grow">Grow</span></div>
+        <div class="v6-card-title">4 SEO articles · 320 visits/mo</div>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id"><span class="v6-check">✓</span> RN-09 <span class="v6-tag run">Run</span></div>
+        <div class="v6-card-title">Signed up 3 new users</div>
+      </div>
+      <div class="v6-card">
+        <div class="v6-card-id"><span class="v6-check">✓</span> RN-08 <span class="v6-tag run">Run</span></div>
+        <div class="v6-card-title">Resolved 2 support tickets</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v6-foot">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg>
+    <div class="v6-foot-txt"><b>2 cards in Review</b> need your call — approve digest slice 5 &amp; the $40 Product Hunt spend to keep both loops moving.</div>
+    <div class="v6-foot-act">
+      <button class="v6-btn ghost">Later</button>
+      <button class="v6-btn primary">Review now</button>
+    </div>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V7</span><span class="vtitle">Factory pipeline</span><span class="vblurb">A left-to-right assembly line — Idea to Revenue — where each node shows its state, its number, and what the AI is doing there right now. See the whole machine and where value sits, with one clear next move underneath.</span></div><div class="vstage"><div class="cp-panel cp-v7">
+  <div class="v7-head">
+    <div class="v7-id">
+      <div class="v7-logo">L</div>
+      <div>
+        <div class="v7-name">LeadSift</div>
+        <div class="v7-mission">Turn every webform into scored, ranked sales leads.</div>
+      </div>
+    </div>
+    <span class="v7-live"><span class="d"></span>Live &amp; growing</span>
+  </div>
+
+  <div class="v7-machine">
+    <div class="v7-mlabel">The machine · idea to revenue</div>
+    <div class="v7-line">
+
+      <div class="v7-node on">
+        <div class="v7-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.3 1 2.5h6c0-1.2.4-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg></div>
+        <div class="v7-stage">Idea</div>
+        <div class="v7-num">2</div>
+        <div class="v7-sub">up next</div>
+        <div class="v7-act a-build"><span class="pulse"></span>Planning CSV export</div>
+      </div>
+
+      <div class="v7-conn"><svg viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h18"/><path d="M17 3l4 3-4 3"/></svg></div>
+
+      <div class="v7-node on">
+        <div class="v7-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-3 3 3 3M16 9l3 3-3 3"/></svg></div>
+        <div class="v7-stage">Built</div>
+        <div class="v7-num">3</div>
+        <div class="v7-sub">slices in flight</div>
+        <div class="v7-act a-build"><span class="pulse"></span>Shipping daily digest</div>
+      </div>
+
+      <div class="v7-conn"><svg viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h18"/><path d="M17 3l4 3-4 3"/></svg></div>
+
+      <div class="v7-node done">
+        <div class="v7-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-4 7-10V5l-7-3-7 3v7c0 6 7 10 7 10Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <div class="v7-stage">Live</div>
+        <div class="v7-num">99.6%</div>
+        <div class="v7-sub">uptime</div>
+        <div class="v7-act a-run"><span class="pulse"></span>2 tickets open</div>
+      </div>
+
+      <div class="v7-conn"><svg viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h18"/><path d="M17 3l4 3-4 3"/></svg></div>
+
+      <div class="v7-node on">
+        <div class="v7-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/><circle cx="9.5" cy="8" r="3"/><path d="M17 11h4M19 9v4"/></svg></div>
+        <div class="v7-stage">Users</div>
+        <div class="v7-num">12</div>
+        <div class="v7-sub">+3 this week</div>
+        <div class="v7-act a-grow"><span class="pulse"></span>Reddit post waiting</div>
+      </div>
+
+      <div class="v7-conn"><svg viewBox="0 0 26 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 6h18"/><path d="M17 3l4 3-4 3"/></svg></div>
+
+      <div class="v7-node done">
+        <div class="v7-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="v7-stage">Revenue</div>
+        <div class="v7-num">$180</div>
+        <div class="v7-sub">MRR</div>
+        <div class="v7-act a-run">▲ +$40 · +29%</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="v7-focus">
+    <div class="v7-card">
+      <div class="v7-ct">Now building</div>
+      <div class="v7-feat">Daily email digest of top leads</div>
+      <div class="v7-task"><svg class="tk b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5"/></svg><span class="tid">LS-114</span> Implement digest <span class="tbadge tb-go">building</span></div>
+      <div class="v7-task"><svg class="tk b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5"/></svg><span class="tid">LS-115</span> Wire into the UI <span class="tbadge tb-go">building</span></div>
+      <div class="v7-task"><svg class="tk q" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg><span class="tid">LS-116</span> Test &amp; polish <span class="tbadge tb-q">queued</span></div>
+    </div>
+    <div class="v7-card">
+      <div class="v7-ct">Health</div>
+      <div class="v7-mrow"><span class="big">$180</span><span class="delta">▲ +$40 / +29%</span></div>
+      <div class="v7-grid2">
+        <div class="v7-mini"><div class="k">Net / mo</div><div class="v">+$158</div></div>
+        <div class="v7-mini"><div class="k">Churn</div><div class="v">1%</div></div>
+        <div class="v7-mini"><div class="k">Spend</div><div class="v">$22 / $500</div></div>
+        <div class="v7-mini"><div class="k">SEO traffic</div><div class="v">320 / mo</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v7-next">
+    <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></div>
+    <div>
+      <div class="nx-l">Next move · needs you</div>
+      <div class="nx-t">Approve the <b>Reddit post</b> to open the Users stage — likely +signups this week.</div>
+    </div>
+    <button class="nx-btn">Review &amp; approve</button>
+  </div>
+
+  <div class="v7-pend">
+    <div class="v7-chip"><span class="ci gr"></span>Ship “Daily digest — slice 5”<span class="ca">Approve →</span></div>
+    <div class="v7-chip"><span class="ci am"></span>$40 Product Hunt spend<span class="ca">Approve →</span></div>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V8</span><span class="vtitle">Command bar</span><span class="vblurb">A power-user console for steering LeadSift: one prominent command input with example chips, over a calm scrollback of recent commands and rich inline results.</span></div><div class="vstage"><div class="cp-panel cp-v8">
+  <div class="v8-top">
+    <div class="v8-id">
+      <div class="v8-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 11.5 6 6l3 3 5-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="v8-name">LeadSift</div>
+        <div class="v8-sub">console · turn every webform into scored, ranked leads</div>
+      </div>
+    </div>
+    <div class="v8-live"><span class="v8-dot"></span>live & growing</div>
+  </div>
+
+  <div class="v8-prompt">
+    <div class="v8-inputline">
+      <span class="v8-caret mono">></span>
+      <div class="v8-input"><span class="ph">type a command</span> <span class="v8-cursor"></span></div>
+      <span class="v8-run">↵ run</span>
+    </div>
+    <div class="v8-chips">
+      <span class="v8-chip"><span class="k mono">›</span>ship digest</span>
+      <span class="v8-chip"><span class="k mono">›</span>pause ads</span>
+      <span class="v8-chip"><span class="k mono">›</span>show P&L</span>
+      <span class="v8-chip"><span class="k mono">›</span>raise cap to $200</span>
+      <span class="v8-chip"><span class="k mono">›</span>approve reddit post</span>
+      <span class="v8-chip"><span class="k mono">›</span>status</span>
+    </div>
+  </div>
+
+  <div class="v8-scroll">
+    <div class="v8-scrolltitle">scrollback</div>
+
+    <!-- ship digest -->
+    <div class="v8-entry ok">
+      <div class="v8-cmd"><span class="pchar">></span><span class="txt">ship digest — slice 5</span><span class="ts">2m ago</span></div>
+      <div class="v8-res">
+        <div class="v8-reshead"><span class="v8-badge ok"><span class="v8-dot"></span>shipped</span> Daily email digest of top leads</div>
+        <div class="v8-resnote">Slice 5 is live. Tasks moved forward on <b>Daily email digest</b>.</div>
+        <div class="v8-tasks">
+          <div class="v8-task"><span class="tid">LS-114</span><span class="tname">Implement digest</span><span class="v8-tag done">done</span></div>
+          <div class="v8-task"><span class="tid">LS-115</span><span class="tname">Wire digest into the UI</span><span class="v8-tag build">building</span></div>
+          <div class="v8-task"><span class="tid">LS-116</span><span class="tname">Test & polish</span><span class="v8-tag queue">queued</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- show P&L -->
+    <div class="v8-entry">
+      <div class="v8-cmd"><span class="pchar">></span><span class="txt">show P&L</span><span class="ts">6m ago</span></div>
+      <div class="v8-res">
+        <div class="v8-reshead"><span class="v8-badge info">this month</span> profit & loss</div>
+        <div class="v8-pnl">
+          <div class="v8-cell"><div class="lbl">MRR</div><div class="val up">$180</div><div class="delta">▲ +$40 · +29%</div></div>
+          <div class="v8-cell"><div class="lbl">Spend</div><div class="val">$22</div><div class="delta mute">of $100 cap</div></div>
+          <div class="v8-cell"><div class="lbl">Net</div><div class="val up">+$158</div><div class="delta">/mo</div></div>
+        </div>
+        <div class="v8-resnote">12 paying users <b>(+3 this week)</b> · churn 1% · uptime 99.6%</div>
+      </div>
+    </div>
+
+    <!-- approve spend -->
+    <div class="v8-entry warn">
+      <div class="v8-cmd"><span class="pchar">></span><span class="txt">approve $40 product hunt spend</span><span class="ts">just now</span></div>
+      <div class="v8-res">
+        <div class="v8-reshead"><span class="v8-badge warn">needs you</span> GROW · Reddit post awaiting OK</div>
+        <div class="v8-resnote">Two decisions are staged and ready to execute on your word.</div>
+        <div class="v8-actions">
+          <button class="v8-btn primary">approve & ship</button>
+          <button class="v8-btn ghost">hold</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- status -->
+    <div class="v8-entry">
+      <div class="v8-cmd"><span class="pchar">></span><span class="txt">status</span><span class="ts">9m ago</span></div>
+      <div class="v8-res">
+        <div class="v8-reshead"><span class="v8-badge info">3 loops</span> autopilot health</div>
+        <div class="v8-loops">
+          <div class="v8-loop"><div class="ln">build</div><div class="ls"><span class="pill run"></span>shipping next slice</div></div>
+          <div class="v8-loop"><div class="ln">grow</div><div class="ls"><span class="pill warn"></span>reddit needs OK</div></div>
+          <div class="v8-loop"><div class="ln">run</div><div class="ls"><span class="pill ok"></span>healthy · 2 tickets</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V9</span><span class="vtitle">Cockpit / vitals</span><span class="vblurb">A glanceable vitals cockpit for run-mode: a grid of green/amber vital tiles (revenue, users, churn, uptime, spend vs cap, net) each self-declaring whether it needs you, one prominent &quot;needs you&quot; strip for the pending Reddit/Grow decision, and a calm ticker of what the AI did while you were away.</span></div><div class="vstage"><div class="cp-panel cp-v9">
+  <div class="v9-head">
+    <div class="v9-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg>
+    </div>
+    <div class="v9-htext">
+      <div class="v9-name disp">LeadSift <span class="v9-live"><span class="v9-dot"></span>Live &amp; growing</span></div>
+      <div class="v9-mission">Turn every webform into scored, ranked sales leads.</div>
+    </div>
+  </div>
+
+  <div class="v9-needs">
+    <div class="v9-needs-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+    <div class="v9-needs-txt">
+      <div class="v9-needs-k">Grow · needs you</div>
+      <div class="v9-needs-h">Reddit post is written and waiting for your OK</div>
+      <div class="v9-needs-s">Approve to publish, or approve the $40 Product Hunt spend below.</div>
+    </div>
+    <div class="v9-needs-btns">
+      <button class="v9-btn">Review</button>
+      <button class="v9-btn pri">Approve</button>
+    </div>
+  </div>
+
+  <div class="v9-vitals">
+    <div class="v9-tile g">
+      <div class="v9-tlabel"><span class="v9-tk">Revenue · MRR</span><span class="v9-stat g"></span></div>
+      <div class="v9-tval disp">$180<small>/mo</small></div>
+      <div class="v9-tdelta up">▲ +$40 · +29% this month</div>
+    </div>
+    <div class="v9-tile g">
+      <div class="v9-tlabel"><span class="v9-tk">Paying users</span><span class="v9-stat g"></span></div>
+      <div class="v9-tval disp">12</div>
+      <div class="v9-tdelta up">▲ +3 this week</div>
+    </div>
+    <div class="v9-tile g">
+      <div class="v9-tlabel"><span class="v9-tk">Net / month</span><span class="v9-stat g"></span></div>
+      <div class="v9-tval disp">+$158<small>/mo</small></div>
+      <div class="v9-tdelta up">▲ profitable</div>
+    </div>
+    <div class="v9-tile g">
+      <div class="v9-tlabel"><span class="v9-tk">Churn</span><span class="v9-stat g"></span></div>
+      <div class="v9-tval disp">1<small>%</small></div>
+      <div class="v9-tdelta flat">— well under target</div>
+    </div>
+    <div class="v9-tile g">
+      <div class="v9-tlabel"><span class="v9-tk">Uptime</span><span class="v9-stat g"></span></div>
+      <div class="v9-tval disp">99.6<small>%</small></div>
+      <div class="v9-gauge"><div class="v9-gfill g" style="width:99.6%"></div></div>
+      <div class="v9-gcap">30-day rolling</div>
+    </div>
+    <div class="v9-tile b">
+      <div class="v9-tlabel"><span class="v9-tk">Spend vs cap</span><span class="v9-stat b"></span></div>
+      <div class="v9-tval disp">$22<small>/ $500</small></div>
+      <div class="v9-gauge"><div class="v9-gfill b" style="width:4.4%"></div></div>
+      <div class="v9-gcap">4% of budget used · $40 pending</div>
+    </div>
+  </div>
+
+  <div class="v9-lower">
+    <div class="v9-card">
+      <div class="v9-ctitle">The three loops</div>
+      <div class="v9-loop">
+        <span class="v9-lp-dot g"></span>
+        <div class="v9-lp-txt"><div class="v9-lp-name">Build</div><div class="v9-lp-sub">Shipping "Daily email digest" · LS-114, LS-115, LS-116</div></div>
+        <span class="v9-lp-tag g">Running</span>
+      </div>
+      <div class="v9-loop">
+        <span class="v9-lp-dot a"></span>
+        <div class="v9-lp-txt"><div class="v9-lp-name">Grow</div><div class="v9-lp-sub">Reddit post awaiting your OK</div></div>
+        <span class="v9-lp-tag a">Needs you</span>
+      </div>
+      <div class="v9-loop">
+        <span class="v9-lp-dot g"></span>
+        <div class="v9-lp-txt"><div class="v9-lp-name">Run</div><div class="v9-lp-sub">Healthy · 2 open support tickets</div></div>
+        <span class="v9-lp-tag g">Running</span>
+      </div>
+    </div>
+    <div class="v9-card">
+      <div class="v9-ctitle">While you were away</div>
+      <div class="v9-act"><span class="v9-ac-dot"></span><div class="v9-ac-txt"><b>+3 new users</b> signed up this week</div></div>
+      <div class="v9-act"><span class="v9-ac-dot"></span><div class="v9-ac-txt">Drafted the <b>Reddit post</b> for the Grow loop</div></div>
+      <div class="v9-act"><span class="v9-ac-dot"></span><div class="v9-ac-txt">Queued a <b>$40 Product Hunt</b> launch · awaiting approval</div></div>
+      <div class="v9-act"><span class="v9-ac-dot"></span><div class="v9-ac-txt">Handling <b>2 support tickets</b></div></div>
+    </div>
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V10</span><span class="vtitle">Goal-driven</span><span class="vblurb">Reframes the whole company around one outcome — Reach $1,000 MRR — with a progress bar from today&#x27;s $180, then the agent&#x27;s 2–3 active bets to close the gap, each with expected impact, status, and the single decision it needs from you.</span></div><div class="vstage"><div class="cp-panel cp-v10">
+  <p class="v10-eyebrow">LeadSift &nbsp;·&nbsp; <b>● Live &amp; growing</b> &nbsp;·&nbsp; Turn every webform into scored, ranked sales leads</p>
+
+  <section class="v10-goal">
+    <div class="v10-goal-top">
+      <div>
+        <p class="v10-goal-label">The goal</p>
+        <h1>Reach <span>$1,000</span> MRR</h1>
+      </div>
+      <div class="v10-eta">
+        <div class="n">~5 mo</div>
+        <div class="l">at current pace</div>
+      </div>
+    </div>
+
+    <div class="v10-bar-wrap">
+      <div class="v10-bar-nums">
+        <div class="v10-bar-now">$180<em>▲ +$40 · +29% this month</em></div>
+        <div class="v10-bar-goal">$1,000</div>
+      </div>
+      <div class="v10-track"><div class="v10-fill"></div></div>
+      <div class="v10-pct"><b>18%</b> there · net +$158/mo · $820 to go</div>
+    </div>
+  </section>
+
+  <div class="v10-sub">
+    <h2>The agent's bets</h2>
+    <span class="cnt">3 active</span>
+    <span class="rule"></span>
+  </div>
+
+  <div class="v10-bets">
+
+    <article class="v10-bet need">
+      <div class="v10-dot build">◆</div>
+      <div class="v10-body">
+        <div class="v10-bet-top">
+          <h3>Ship the daily email digest</h3>
+          <span class="v10-impact">+$60/mo est.</span>
+        </div>
+        <p>Highest-leverage bet. Slice 5 is built and tested — daily digest of each user's top-scored leads to drive retention and word of mouth.</p>
+        <div class="v10-bet-foot">
+          <span class="v10-status waiting">waiting on you</span>
+          <span class="v10-meta">LS-114 ✓ · LS-115 ✓ · LS-116 queued</span>
+        </div>
+        <div class="v10-ask">
+          <div class="txt">Approve &amp; ship <b>“Daily digest — slice 5”</b> to all 12 users.</div>
+          <button class="v10-btn">Approve &amp; ship</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="v10-bet need">
+      <div class="v10-dot grow">↗</div>
+      <div class="v10-body">
+        <div class="v10-bet-top">
+          <h3>Turn on Reddit + Product Hunt push</h3>
+          <span class="v10-impact">+~15 signups</span>
+        </div>
+        <p>SEO is already compounding (320 visits/mo). Next channel: a value-first Reddit post drafted and ready, plus a $40 PH boost — last launch drove +8 signups.</p>
+        <div class="v10-bet-foot">
+          <span class="v10-status waiting">2 approvals</span>
+          <span class="v10-meta">Reddit recommended · Paid + PR off</span>
+        </div>
+        <div class="v10-ask">
+          <div class="txt">Post the drafted <b>Reddit</b> thread &amp; approve <b>$40</b> Product Hunt spend.</div>
+          <button class="v10-btn ghost">Review</button>
+          <button class="v10-btn">Approve both</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="v10-bet">
+      <div class="v10-dot run">●</div>
+      <div class="v10-body">
+        <div class="v10-bet-top">
+          <h3>Keep the base healthy &amp; churn low</h3>
+          <span class="v10-impact">protects +$158/mo</span>
+        </div>
+        <p>Uptime 99.6%, churn 1%, spend $22 of your $500 cap. Two support tickets in flight — the agent is handling both, no action needed.</p>
+        <div class="v10-bet-foot">
+          <span class="v10-status healthy">on autopilot</span>
+          <span class="v10-meta">2 tickets · +3 users this week</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="v10-next">
+    <p class="h">Queued behind the digest</p>
+    <div class="v10-chips">
+      <span class="v10-chip">Export leads to CSV</span>
+      <span class="v10-chip">Slack ping on a hot lead</span>
+      <span class="v10-chip off">Paid ads — off</span>
+      <span class="v10-chip off">Launch &amp; PR — off</span>
+    </div>
+  </div>
+</div></div></section>
+</div>
+<style>
+.cp-v1{--dot:10px;max-width:760px;margin:0 auto;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);padding:0 4px}
+.cp-v1 *{box-sizing:border-box}
+.cp-v1 .cp-head{position:sticky;top:0;z-index:5;background:linear-gradient(var(--cream) 72%,transparent);padding:22px 20px 16px}
+.cp-v1 .cp-brandrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.cp-v1 .cp-name{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.cp-v1 .cp-mrr{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-soft)}
+.cp-v1 .cp-mrr b{color:var(--green);font-weight:600}
+.cp-v1 .cp-status{margin-top:8px;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft)}
+.cp-v1 .cp-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green-soft);flex:none}
+.cp-v1 .cp-status .cp-sep{color:var(--ink-faint)}
+.cp-v1 .cp-loops{margin-top:14px;display:flex;gap:8px}
+.cp-v1 .cp-loop{flex:1;display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:11px;background:var(--paper);border:1px solid var(--line-soft);font-size:12px}
+.cp-v1 .cp-loop .cp-ld{width:8px;height:8px;border-radius:50%;flex:none}
+.cp-v1 .cp-loop .cp-lname{font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:.04em;color:var(--ink)}
+.cp-v1 .cp-loop .cp-lst{color:var(--ink-faint);margin-left:auto;font-size:11px}
+.cp-v1 .cp-loop.cp-need{border-color:var(--amber-soft);background:var(--amber-soft)}
+.cp-v1 .cp-loop.cp-need .cp-lst{color:var(--amber)}
+.cp-v1 .cp-dbuild{background:var(--blue)}.cp-v1 .cp-dgrow{background:var(--amber)}.cp-v1 .cp-drun{background:var(--green)}
+/* stream */
+.cp-v1 .cp-stream{position:relative;padding:8px 20px 48px 20px}
+.cp-v1 .cp-stream:before{content:"";position:absolute;left:12px;top:0;bottom:44px;width:1.5px;background:var(--line-soft)}
+.cp-v1 .cp-item{position:relative;padding:11px 0 11px 34px;display:flex;flex-direction:column;gap:2px}
+.cp-v1 .cp-item .cp-mark{position:absolute;left:8px;top:15px;width:var(--dot);height:var(--dot);border-radius:50%;background:var(--gray);box-shadow:0 0 0 4px var(--cream)}
+.cp-v1 .cp-item.b .cp-mark{background:var(--blue)}
+.cp-v1 .cp-item.g .cp-mark{background:var(--amber)}
+.cp-v1 .cp-item.r .cp-mark{background:var(--green)}
+.cp-v1 .cp-line{font-size:14px;color:var(--ink);line-height:1.45}
+.cp-v1 .cp-line b{font-weight:600}
+.cp-v1 .cp-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+.cp-v1 .cp-meta{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+.cp-v1 .cp-meta .cp-loopn{text-transform:uppercase;letter-spacing:.05em}
+.cp-v1 .cp-item.b .cp-loopn{color:var(--blue)}
+.cp-v1 .cp-item.g .cp-loopn{color:var(--amber)}
+.cp-v1 .cp-item.r .cp-loopn{color:var(--green)}
+.cp-v1 .cp-chip{display:inline-block;font-size:11px;padding:1px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
+/* decision card */
+.cp-v1 .cp-decwrap{position:relative;padding:6px 0 6px 34px}
+.cp-v1 .cp-decwrap .cp-mark{position:absolute;left:6px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px var(--cream),0 0 0 6px var(--amber-soft)}
+.cp-v1 .cp-dec{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow)}
+.cp-v1 .cp-dec .cp-dhead{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.cp-v1 .cp-dec .cp-dlabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600}
+.cp-v1 .cp-dec .cp-dtime{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);margin-left:auto}
+.cp-v1 .cp-dec .cp-dtitle{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.cp-v1 .cp-dec .cp-dbody{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:5px}
+.cp-v1 .cp-dec .cp-dbody strong{color:var(--ink);font-weight:600}
+.cp-v1 .cp-acts{display:flex;gap:9px;margin-top:14px}
+.cp-v1 .cp-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid transparent;cursor:pointer;transition:transform .08s ease}
+.cp-v1 .cp-btn:active{transform:translateY(1px)}
+.cp-v1 .cp-approve{background:var(--accent);color:var(--accent-ink)}
+.cp-v1 .cp-redirect{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.cp-v1 .cp-daymark{position:relative;padding:16px 0 6px 34px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v1 .cp-foot{padding:6px 20px 34px;font-size:12px;color:var(--ink-faint);text-align:center}
+
+.cp-v2{--_pad:26px;max-width:760px;margin:0 auto;font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);padding:4px;box-sizing:border-box}
+.cp-v2 *{box-sizing:border-box}
+.cp-v2 .cp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:6px 4px 20px}
+.cp-v2 .cp-brand{display:flex;flex-direction:column;gap:5px}
+.cp-v2 .cp-name{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1;display:flex;align-items:center;gap:10px}
+.cp-v2 .cp-live{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--green);background:var(--green-soft);padding:4px 9px;border-radius:20px}
+.cp-v2 .cp-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.cp-v2 .cp-mission{font-size:13px;color:var(--ink-soft);max-width:360px;line-height:1.4}
+.cp-v2 .cp-mrr{text-align:right;flex-shrink:0}
+.cp-v2 .cp-mrr-v{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.cp-v2 .cp-mrr-d{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);margin-top:5px;font-weight:500}
+.cp-v2 .cp-mrr-l{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:7px}
+.cp-v2 .cp-strip{display:flex;gap:0;padding:2px 4px 22px;flex-wrap:wrap}
+.cp-v2 .cp-stat{flex:1;min-width:96px;padding:0 16px;border-left:1px solid var(--line-soft)}
+.cp-v2 .cp-stat:first-child{padding-left:4px;border-left:0}
+.cp-v2 .cp-stat-v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--ink)}
+.cp-v2 .cp-stat-l{font-size:11px;color:var(--ink-faint);margin-top:3px}
+.cp-v2 .cp-lanes{display:flex;flex-direction:column;gap:14px}
+.cp-v2 .cp-lane{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:var(--_pad);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.cp-v2 .cp-lane::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.cp-v2 .cp-lane.build::before{background:var(--blue)}
+.cp-v2 .cp-lane.grow::before{background:var(--accent)}
+.cp-v2 .cp-lane.run::before{background:var(--green)}
+.cp-v2 .cp-lane-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.cp-v2 .cp-lane-id{display:flex;align-items:center;gap:12px;min-width:0}
+.cp-v2 .cp-badge{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cp-v2 .build .cp-badge{background:var(--blue-soft);color:var(--blue)}
+.cp-v2 .grow .cp-badge{background:var(--accent-soft);color:var(--accent-ink)}
+.cp-v2 .run .cp-badge{background:var(--green-soft);color:var(--green)}
+.cp-v2 .cp-badge svg{width:19px;height:19px}
+.cp-v2 .cp-lane-title{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cp-v2 .cp-lane-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v2 .cp-lane-state{font-size:11px;display:inline-flex;align-items:center;gap:6px;color:var(--ink-soft)}
+.cp-v2 .cp-lane-state .s-dot{width:6px;height:6px;border-radius:50%}
+.cp-v2 .build .s-dot{background:var(--blue)}
+.cp-v2 .grow .s-dot{background:var(--amber)}
+.cp-v2 .run .s-dot{background:var(--green)}
+.cp-v2 .cp-lane-state.attn{color:var(--amber)}
+.cp-v2 .cp-move{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;letter-spacing:-.01em;margin:18px 0 4px;line-height:1.35}
+.cp-v2 .cp-move em{font-style:normal;color:var(--ink-faint)}
+.cp-v2 .cp-tasks{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.cp-v2 .cp-task{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);display:inline-flex;align-items:center;gap:6px}
+.cp-v2 .cp-task .t-dot{width:5px;height:5px;border-radius:50%;background:var(--ink-faint)}
+.cp-v2 .cp-task.on .t-dot{background:var(--blue)}
+.cp-v2 .cp-task.on{color:var(--ink);border-color:var(--blue-soft)}
+.cp-v2 .cp-next{font-size:12px;color:var(--ink-faint);margin-top:13px}
+.cp-v2 .cp-next b{color:var(--ink-soft);font-weight:500}
+.cp-v2 .cp-dial{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.cp-v2 .cp-dial-track{display:flex;background:var(--cream-2);border:1px solid var(--line-soft);border-radius:10px;padding:3px}
+.cp-v2 .cp-stop{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.04em;padding:6px 12px;border-radius:7px;color:var(--ink-faint);white-space:nowrap}
+.cp-v2 .cp-stop.act{background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}
+.cp-v2 .build .cp-stop.act{color:var(--blue)}
+.cp-v2 .grow .cp-stop.act{color:var(--accent-ink)}
+.cp-v2 .run .cp-stop.act{color:var(--green)}
+.cp-v2 .cp-dial-cap{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v2 .cp-needs{margin-top:18px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:16px 18px}
+.cp-v2 .cp-needs-h{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);display:flex;align-items:center;gap:7px}
+.cp-v2 .cp-needs-dot{background:var(--accent)}
+.cp-v2 .cp-needs-post{font-size:13px;color:var(--ink);line-height:1.5;margin-top:9px;padding-left:12px;border-left:2px solid var(--accent)}
+.cp-v2 .cp-needs-act{display:flex;gap:9px;margin-top:14px}
+.cp-v2 .cp-btn{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;padding:8px 16px;border-radius:9px;border:1px solid transparent;cursor:pointer}
+.cp-v2 .cp-btn.pri{background:var(--accent);color:#fff}
+.cp-v2 .cp-btn.sec{background:var(--paper);border-color:var(--line);color:var(--ink-soft)}
+.cp-v2 .cp-run-grid{display:flex;gap:0;margin-top:16px;flex-wrap:wrap}
+.cp-v2 .cp-run-cell{flex:1;min-width:110px;padding:0 16px;border-left:1px solid var(--line-soft)}
+.cp-v2 .cp-run-cell:first-child{padding-left:0;border-left:0}
+.cp-v2 .cp-run-v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500}
+.cp-v2 .cp-run-l{font-size:11px;color:var(--ink-faint);margin-top:2px}
+.cp-v2 .cp-foot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-faint);padding:20px 6px 6px}
+.cp-v2 .cp-foot svg{width:14px;height:14px}
+@media(max-width:640px){.cp-v2 .cp-lane-top{flex-direction:column;align-items:flex-start;gap:14px}.cp-v2 .cp-dial{align-items:flex-start}}
+
+.cp-v3{--pad:0;box-sizing:border-box;max-width:760px;margin:0 auto;padding:72px 56px 96px;background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.cp-v3 *{box-sizing:border-box}
+.cp-v3 .cp-eyebrow{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:40px}
+.cp-v3 .cp-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.cp-v3 .cp-hero{text-align:center;margin-bottom:14px}
+.cp-v3 .cp-hero-label{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:18px}
+.cp-v3 .cp-num{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:96px;line-height:.9;letter-spacing:-.03em;color:var(--ink);display:inline-flex;align-items:flex-start}
+.cp-v3 .cp-num .cp-cur{font-size:44px;font-weight:500;color:var(--ink-soft);margin-top:10px;margin-right:2px}
+.cp-v3 .cp-num .cp-per{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:400;color:var(--ink-faint);align-self:flex-end;margin:0 0 16px 8px}
+.cp-v3 .cp-trend{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:7px 15px;border-radius:100px;background:var(--green-soft);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500}
+.cp-v3 .cp-trend svg{display:block}
+.cp-v3 .cp-subline{margin-top:20px;font-size:13.5px;color:var(--ink-faint);letter-spacing:.01em}
+.cp-v3 .cp-subline b{color:var(--ink-soft);font-weight:500}
+.cp-v3 .cp-rule{height:1px;background:var(--line-soft);margin:56px 0 40px}
+.cp-v3 .cp-now{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:26px 28px;box-shadow:var(--shadow)}
+.cp-v3 .cp-now-top{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.cp-v3 .cp-pulse{position:relative;width:8px;height:8px;flex:none}
+.cp-v3 .cp-pulse span{position:absolute;inset:0;border-radius:50%;background:var(--accent)}
+.cp-v3 .cp-now-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.cp-v3 .cp-now-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin-bottom:20px}
+.cp-v3 .cp-tasks{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+.cp-v3 .cp-task{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:14px;color:var(--ink-soft)}
+.cp-v3 .cp-task .cp-code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint);width:46px;flex:none}
+.cp-v3 .cp-task .cp-tlabel{flex:1}
+.cp-v3 .cp-task .cp-state{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:100px}
+.cp-v3 .cp-state.building{background:var(--accent-soft);color:var(--accent-ink)}
+.cp-v3 .cp-state.queued{background:var(--gray);color:var(--ink-faint)}
+.cp-v3 .cp-ic{flex:none;color:var(--accent)}
+.cp-v3 .cp-ic.q{color:var(--ink-faint)}
+.cp-v3 .cp-decision{margin-top:32px;background:var(--paper);border:1px solid var(--amber);border-radius:20px;padding:24px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.cp-v3 .cp-decision:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber)}
+.cp-v3 .cp-dec-kicker{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+.cp-v3 .cp-dec-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
+.cp-v3 .cp-dec-sub{font-size:13.5px;color:var(--ink-faint);margin-bottom:22px;line-height:1.5}
+.cp-v3 .cp-dec-actions{display:flex;align-items:center;gap:12px}
+.cp-v3 .cp-btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;border-radius:100px;padding:11px 22px;cursor:pointer;border:1px solid transparent;transition:transform .12s ease}
+.cp-v3 .cp-btn:active{transform:translateY(1px)}
+.cp-v3 .cp-btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow)}
+.cp-v3 .cp-btn.ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.cp-v3 .cp-more{margin-top:48px;display:flex;flex-direction:column;gap:0}
+.cp-v3 .cp-more-row{display:flex;align-items:center;justify-content:space-between;padding:15px 4px;border-top:1px solid var(--line-soft);cursor:pointer;color:var(--ink-soft);font-size:13.5px}
+.cp-v3 .cp-more-row:last-child{border-bottom:1px solid var(--line-soft)}
+.cp-v3 .cp-more-l{display:flex;align-items:center;gap:12px}
+.cp-v3 .cp-more-l .cp-mi{color:var(--ink-faint)}
+.cp-v3 .cp-more-r{display:flex;align-items:center;gap:12px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:12px}
+.cp-v3 .cp-more-r .cp-need{color:var(--amber);background:var(--amber-soft);padding:2px 8px;border-radius:100px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+.cp-v3 .cp-arrow{color:var(--ink-faint)}
+.cp-v3 .cp-foot{margin-top:44px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--ink-faint)}
+
+.cp-v4{--r:16px;max-width:760px;margin:0 auto;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);padding:28px 26px 34px;box-sizing:border-box}
+.cp-v4 *{box-sizing:border-box}
+.cp-v4 .v4-top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.cp-v4 .v4-ava{width:46px;height:46px;border-radius:14px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow)}
+.cp-v4 .v4-ava svg{width:24px;height:24px}
+.cp-v4 .v4-hd h1{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;margin:0;letter-spacing:-.01em}
+.cp-v4 .v4-hd p{margin:2px 0 0;font-size:12.5px;color:var(--ink-soft)}
+.cp-v4 .v4-hd b{color:var(--ink)}
+.cp-v4 .v4-live{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--green);background:var(--green-soft);padding:5px 10px;border-radius:999px;font-weight:600}
+.cp-v4 .v4-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.cp-v4 .v4-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:26px}
+.cp-v4 .v4-m{background:var(--paper);padding:13px 14px}
+.cp-v4 .v4-m .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v4 .v4-m .val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-top:4px;letter-spacing:-.02em}
+.cp-v4 .v4-m .sub{font-size:11px;margin-top:2px;color:var(--ink-soft)}
+.cp-v4 .v4-m .up{color:var(--green);font-weight:600}
+.cp-v4 .v4-sec{margin-bottom:22px}
+.cp-v4 .v4-lbl{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.cp-v4 .v4-lbl span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.cp-v4 .v4-lbl .ln{flex:1;height:1px;background:var(--line)}
+.cp-v4 .v4-bub{background:var(--paper);border:1px solid var(--line);border-radius:14px;border-top-left-radius:4px;padding:15px 17px;box-shadow:var(--shadow)}
+.cp-v4 .v4-bub p{margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.cp-v4 .v4-bub p:last-child{margin-bottom:0}
+.cp-v4 .v4-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.cp-v4 .v4-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;color:var(--ink)}
+.cp-v4 .v4-chk{width:18px;height:18px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cp-v4 .v4-chk svg{width:11px;height:11px}
+.cp-v4 .v4-list b{font-weight:600}
+.cp-v4 .v4-tag{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--cream-2);color:var(--ink-soft);padding:1px 6px;border-radius:5px;margin-left:4px;vertical-align:1px}
+.cp-v4 .v4-block{background:var(--amber-soft);border:1px solid var(--amber);border-radius:14px;border-top-left-radius:4px;padding:16px 18px;box-shadow:var(--shadow)}
+.cp-v4 .v4-block .who{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.cp-v4 .v4-block .who span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--amber)}
+.cp-v4 .v4-block .who svg{width:15px;height:15px;color:var(--amber)}
+.cp-v4 .v4-block p{margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.cp-v4 .v4-block p b{font-weight:600}
+.cp-v4 .v4-acts{display:flex;gap:9px;flex-wrap:wrap}
+.cp-v4 .v4-btn{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.cp-v4 .v4-btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow)}
+.cp-v4 .v4-btn.primary svg{width:13px;height:13px}
+.cp-v4 .v4-btn.ghost{background:var(--paper);color:var(--ink);border-color:var(--line)}
+.cp-v4 .v4-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cp-v4 .v4-plan .p2{margin-top:13px;padding-top:13px;border-top:1px dashed var(--line)}
+.cp-v4 .v4-plan .p2 .h{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
+.cp-v4 .v4-next{display:flex;gap:7px;flex-wrap:wrap}
+.cp-v4 .v4-pill{font-size:11.5px;background:var(--cream-2);border:1px solid var(--line-soft);color:var(--ink-soft);padding:4px 10px;border-radius:999px}
+.cp-v4 .v4-run{width:14px;height:14px;border-radius:50%;border:2px solid var(--blue-soft);border-top-color:var(--blue);flex-shrink:0;margin-top:1px}
+.cp-v4 .v4-queue{width:18px;height:18px;border-radius:50%;border:1.5px dashed var(--line);flex-shrink:0;margin-top:1px}
+.cp-v4 .v4-side{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.cp-v4 .v4-side .h{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px}
+.cp-v4 .v4-grow{display:flex;flex-direction:column;gap:9px}
+.cp-v4 .v4-grow .g{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.cp-v4 .v4-sw{width:26px;height:15px;border-radius:999px;flex-shrink:0;position:relative;background:var(--line)}
+.cp-v4 .v4-sw.on{background:var(--green)}
+.cp-v4 .v4-sw::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#fff}
+.cp-v4 .v4-sw.on::after{left:13px}
+.cp-v4 .v4-grow .g .nm{flex:1}
+.cp-v4 .v4-grow .g .st{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v4 .v4-grow .g.rec .st{color:var(--accent-ink);background:var(--accent-soft);padding:2px 6px;border-radius:5px}
+.cp-v4 .v4-foot{display:flex;align-items:center;gap:9px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.cp-v4 .v4-foot input{flex:1;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:11px 14px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink)}
+.cp-v4 .v4-foot input::placeholder{color:var(--ink-faint)}
+.cp-v4 .v4-send{width:40px;height:40px;border-radius:10px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:none}
+.cp-v4 .v4-send svg{width:16px;height:16px}
+
+
+.cp-v5{
+  --v5-gutter:96px;
+  max-width:760px;margin:0 auto;padding:0;
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+}
+.cp-v5 *{box-sizing:border-box;}
+
+/* ---- masthead ---- */
+.cp-v5 .v5-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 34px;
+  border-bottom:1px solid var(--line-soft);
+  background:var(--cream);
+}
+.cp-v5 .v5-doc{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-faint);
+  display:flex;align-items:center;gap:9px;
+}
+.cp-v5 .v5-doc .v5-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+.cp-v5 .v5-savestate{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:.04em;
+  color:var(--ink-faint);
+  display:flex;align-items:center;gap:6px;
+}
+.cp-v5 .v5-savestate svg{width:13px;height:13px;stroke:var(--ink-faint);}
+
+/* ---- vision block ---- */
+.cp-v5 .v5-body{padding:30px 34px 38px;}
+.cp-v5 .v5-vision{margin-bottom:32px;}
+.cp-v5 .v5-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 12px;font-weight:600;
+}
+.cp-v5 .v5-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:30px;line-height:1.12;font-weight:600;letter-spacing:-.02em;
+  color:var(--ink);margin:0 0 4px;
+}
+.cp-v5 .v5-mission{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:19px;line-height:1.45;font-weight:400;
+  color:var(--ink-soft);margin:0;
+  position:relative;padding-left:16px;border-left:2px solid var(--accent-soft);
+}
+.cp-v5 .v5-mission .v5-edit{color:var(--ink-faint);}
+
+/* ---- metric strip ---- */
+.cp-v5 .v5-metrics{
+  display:flex;gap:0;flex-wrap:wrap;
+  margin:22px 0 0;padding:16px 20px;
+  background:var(--cream-2);border:1px solid var(--line-soft);border-radius:12px;
+}
+.cp-v5 .v5-metric{flex:1;min-width:96px;padding:0 14px;border-right:1px solid var(--line-soft);}
+.cp-v5 .v5-metric:last-child{border-right:none;}
+.cp-v5 .v5-metric .v5-mlabel{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);margin:0 0 4px;
+}
+.cp-v5 .v5-metric .v5-mval{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
+}
+.cp-v5 .v5-metric .v5-mdelta{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;margin-left:2px;
+}
+.cp-v5 .v5-up{color:var(--green);}
+.cp-v5 .v5-flat{color:var(--ink-faint);}
+
+/* ---- outline ---- */
+.cp-v5 .v5-outline{margin-top:34px;}
+.cp-v5 .v5-sectionlabel{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-faint);margin:0 0 16px;
+  display:flex;align-items:center;gap:12px;
+}
+.cp-v5 .v5-sectionlabel::after{content:"";flex:1;height:1px;background:var(--line-soft);}
+
+/* loop rows */
+.cp-v5 .v5-loops{display:flex;flex-direction:column;gap:2px;margin-bottom:30px;}
+.cp-v5 .v5-loop{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 14px;border-radius:10px;
+  transition:background .15s;
+}
+.cp-v5 .v5-loop:hover{background:var(--cream-2);}
+.cp-v5 .v5-loopbadge{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.1em;font-weight:600;
+  width:56px;text-align:center;padding:5px 0;border-radius:6px;flex-shrink:0;
+}
+.cp-v5 .v5-b-build{background:var(--blue-soft);color:var(--blue);}
+.cp-v5 .v5-b-grow{background:var(--amber-soft);color:var(--amber);}
+.cp-v5 .v5-b-run{background:var(--green-soft);color:var(--green);}
+.cp-v5 .v5-looptext{flex:1;font-size:14px;color:var(--ink-soft);line-height:1.4;}
+.cp-v5 .v5-looptext b{color:var(--ink);font-weight:600;}
+.cp-v5 .v5-loopstate{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.cp-v5 .v5-loopstate .v5-pulse{width:6px;height:6px;border-radius:50%;}
+.cp-v5 .v5-running{color:var(--ink-faint);}
+.cp-v5 .v5-running .v5-pulse{background:var(--green);}
+.cp-v5 .v5-needs{color:var(--amber);}
+.cp-v5 .v5-needs .v5-pulse{background:var(--amber);box-shadow:0 0 0 3px var(--amber-soft);}
+
+/* feature card */
+.cp-v5 .v5-feature{
+  border:1px solid var(--line-soft);border-radius:14px;
+  padding:20px 22px;margin-bottom:14px;background:var(--paper);
+}
+.cp-v5 .v5-feature.v5-active{border-color:var(--accent-soft);box-shadow:var(--shadow);}
+.cp-v5 .v5-fhead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.cp-v5 .v5-fname{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.01em;
+  display:flex;align-items:center;gap:9px;
+}
+.cp-v5 .v5-fmeta{display:flex;gap:8px;align-items:center;}
+.cp-v5 .v5-caret{color:var(--ink-faint);font-size:11px;}
+.cp-v5 .v5-ver{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.06em;
+  color:var(--ink-faint);
+  padding:3px 8px;border:1px solid var(--line);border-radius:20px;
+  flex-shrink:0;
+}
+.cp-v5 .v5-building-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;
+  color:var(--blue);background:var(--blue-soft);
+  padding:3px 9px;border-radius:20px;flex-shrink:0;
+}
+
+/* tasks */
+.cp-v5 .v5-tasks{margin-top:16px;display:flex;flex-direction:column;gap:1px;}
+.cp-v5 .v5-task{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 4px 9px 6px;
+  border-top:1px solid var(--line-soft);
+  font-size:13.5px;
+}
+.cp-v5 .v5-task:first-child{border-top:none;}
+.cp-v5 .v5-tid{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--ink-faint);width:52px;flex-shrink:0;
+}
+.cp-v5 .v5-tname{flex:1;color:var(--ink-soft);}
+.cp-v5 .v5-tstatus{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.cp-v5 .v5-tstatus .v5-sq{width:7px;height:7px;border-radius:2px;}
+.cp-v5 .v5-s-building{color:var(--blue);}
+.cp-v5 .v5-s-building .v5-sq{background:var(--blue);}
+.cp-v5 .v5-s-queued{color:var(--ink-faint);}
+.cp-v5 .v5-s-queued .v5-sq{background:var(--gray);}
+
+/* backlog / up next */
+.cp-v5 .v5-backlog{margin-top:6px;}
+.cp-v5 .v5-blitem{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 8px;border-radius:9px;
+  font-size:14px;color:var(--ink-soft);
+}
+.cp-v5 .v5-blitem:hover{background:var(--cream-2);}
+.cp-v5 .v5-plus{
+  font-family:'JetBrains Mono',monospace;color:var(--ink-faint);
+  border:1px dashed var(--line);border-radius:5px;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.cp-v5 .v5-addfeature{
+  display:flex;align-items:center;gap:10px;
+  margin-top:8px;padding:11px 8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;
+  color:var(--ink-faint);cursor:text;
+}
+.cp-v5 .v5-addfeature .v5-cursor{
+  width:1px;height:15px;background:var(--accent);
+}
+
+/* growth toggles */
+.cp-v5 .v5-growth{display:flex;flex-direction:column;gap:2px;margin-bottom:6px;}
+.cp-v5 .v5-grow{
+  display:flex;align-items:center;gap:14px;padding:11px 8px;border-radius:9px;font-size:14px;
+}
+.cp-v5 .v5-grow:hover{background:var(--cream-2);}
+.cp-v5 .v5-gname{flex:1;color:var(--ink-soft);}
+.cp-v5 .v5-gname b{color:var(--ink);font-weight:600;}
+.cp-v5 .v5-gmeta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);}
+.cp-v5 .v5-tog{
+  width:34px;height:19px;border-radius:20px;flex-shrink:0;position:relative;
+  background:var(--gray);transition:background .15s;
+}
+.cp-v5 .v5-tog.on{background:var(--green);}
+.cp-v5 .v5-tog::after{
+  content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;
+  border-radius:50%;background:#fff;transition:left .15s;
+}
+.cp-v5 .v5-tog.on::after{left:17px;}
+.cp-v5 .v5-rec{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;
+  color:var(--amber);background:var(--amber-soft);padding:2px 7px;border-radius:20px;
+}
+
+/* decisions footer */
+.cp-v5 .v5-decisions{
+  margin-top:30px;padding:20px 22px;
+  background:var(--amber-soft);border:1px solid var(--amber);border-radius:14px;
+}
+.cp-v5 .v5-dlabel{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--amber);font-weight:600;margin:0 0 14px;
+  display:flex;align-items:center;gap:8px;
+}
+.cp-v5 .v5-drow{display:flex;align-items:center;gap:14px;padding:9px 0;}
+.cp-v5 .v5-drow+.v5-drow{border-top:1px solid var(--amber);}
+.cp-v5 .v5-dtext{flex:1;font-size:14px;color:var(--ink);}
+.cp-v5 .v5-dtext b{font-weight:600;}
+.cp-v5 .v5-approve{
+  font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;
+  color:var(--accent-ink);background:var(--accent);
+  border:none;padding:8px 16px;border-radius:8px;cursor:pointer;flex-shrink:0;
+}
+.cp-v5 .v5-later{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--ink-soft);padding:8px 4px;flex-shrink:0;cursor:pointer;
+}
+
+
+.cp-v6{max-width:760px;margin:0 auto;font-family:'Inter',sans-serif;color:var(--ink);padding:4px 2px 24px}
+.cp-v6 *{box-sizing:border-box}
+.cp-v6 .v6-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px}
+.cp-v6 .v6-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.cp-v6 .v6-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.cp-v6 h1{font-family:'Space Grotesk',sans-serif;font-size:23px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.cp-v6 .v6-mission{font-size:12.5px;color:var(--ink-soft);margin-top:5px;max-width:400px}
+.cp-v6 .v6-metrics{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.cp-v6 .v6-mrr{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;line-height:1}
+.cp-v6 .v6-mrr b{color:var(--green);font-size:12px;font-weight:600;margin-left:5px;font-family:'JetBrains Mono',monospace}
+.cp-v6 .v6-sub{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.02em}
+
+.cp-v6 .v6-loops{display:flex;gap:8px;margin:16px 0 18px}
+.cp-v6 .v6-loop{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+.cp-v6 .v6-loop.attn{border-color:var(--accent);background:var(--accent-soft)}
+.cp-v6 .v6-loop-top{display:flex;align-items:center;justify-content:space-between}
+.cp-v6 .v6-loop-name{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.cp-v6 .v6-loop.attn .v6-loop-name{color:var(--accent-ink)}
+.cp-v6 .v6-pill{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:20px;font-weight:600}
+.cp-v6 .v6-pill.run{background:var(--green-soft);color:var(--green)}
+.cp-v6 .v6-pill.need{background:#fff;color:var(--accent-ink);border:1px solid var(--accent)}
+.cp-v6 .v6-loop-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.35}
+.cp-v6 .v6-loop.attn .v6-loop-desc{color:var(--accent-ink)}
+
+.cp-v6 .v6-board{display:grid;grid-template-columns:1fr 1.25fr 1fr 1fr;gap:8px;align-items:start}
+.cp-v6 .v6-col{background:var(--cream-2);border:1px solid var(--line-soft);border-radius:13px;padding:8px 7px;min-height:230px}
+.cp-v6 .v6-col.building{background:var(--paper);border-color:var(--accent);box-shadow:var(--shadow)}
+.cp-v6 .v6-col-head{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 9px}
+.cp-v6 .v6-col-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.cp-v6 .v6-col.building .v6-col-title{color:var(--accent-ink)}
+.cp-v6 .v6-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);background:var(--cream);border-radius:20px;padding:1px 6px;min-width:18px;text-align:center}
+.cp-v6 .v6-col.building .v6-count{background:var(--accent-soft);color:var(--accent-ink)}
+
+.cp-v6 .v6-card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 9px;margin-bottom:6px;box-shadow:var(--shadow)}
+.cp-v6 .v6-col.building .v6-card{border-color:var(--line)}
+.cp-v6 .v6-card.active{border-color:var(--accent);background:#fff}
+.cp-v6 .v6-card-id{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--ink-faint);display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.cp-v6 .v6-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:4px;font-weight:600}
+.cp-v6 .v6-tag.build{background:var(--blue-soft);color:var(--blue)}
+.cp-v6 .v6-tag.grow{background:var(--accent-soft);color:var(--accent-ink)}
+.cp-v6 .v6-tag.run{background:var(--green-soft);color:var(--green)}
+.cp-v6 .v6-card-title{font-size:12px;line-height:1.3;color:var(--ink);font-weight:500}
+.cp-v6 .v6-bar{height:3px;border-radius:3px;background:var(--line-soft);margin-top:7px;overflow:hidden}
+.cp-v6 .v6-bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.cp-v6 .v6-live{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--accent-ink);margin-top:6px;letter-spacing:.04em}
+.cp-v6 .v6-live b{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cp-v6 .v6-check{color:var(--green)}
+.cp-v6 .v6-review-btn{display:block;width:100%;margin-top:7px;background:var(--accent);color:var(--accent-ink);border:none;border-radius:6px;padding:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;cursor:pointer}
+
+.cp-v6 .v6-foot{display:flex;align-items:center;gap:8px;margin-top:16px;padding:11px 13px;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+.cp-v6 .v6-foot svg{color:var(--accent);flex-shrink:0}
+.cp-v6 .v6-foot-txt{font-size:12px;color:var(--ink-soft);flex:1}
+.cp-v6 .v6-foot-txt b{color:var(--ink);font-weight:600}
+.cp-v6 .v6-foot-act{display:flex;gap:6px}
+.cp-v6 .v6-btn{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;padding:6px 12px;border-radius:7px;font-weight:600;cursor:pointer;border:1px solid var(--line)}
+.cp-v6 .v6-btn.ghost{background:transparent;color:var(--ink-soft)}
+.cp-v6 .v6-btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+
+.cp-v7{--r:16px;max-width:760px;margin:0 auto;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);padding:26px 24px 22px;box-sizing:border-box}
+.cp-v7 *{box-sizing:border-box}
+
+.cp-v7 .v7-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.cp-v7 .v7-id{display:flex;align-items:center;gap:12px}
+.cp-v7 .v7-logo{width:40px;height:40px;border-radius:11px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;box-shadow:var(--shadow)}
+.cp-v7 .v7-name{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.cp-v7 .v7-mission{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+.cp-v7 .v7-live{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);background:var(--green-soft);padding:6px 11px;border-radius:999px;font-weight:600}
+.cp-v7 .v7-live .d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+
+.cp-v7 .v7-machine{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px 18px 22px}
+.cp-v7 .v7-mlabel{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.cp-v7 .v7-mlabel::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+.cp-v7 .v7-line{display:flex;align-items:stretch}
+.cp-v7 .v7-node{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+.cp-v7 .v7-conn{width:26px;display:flex;align-items:flex-start;justify-content:center;padding-top:19px;flex:0 0 auto}
+.cp-v7 .v7-conn svg{width:26px;height:12px;color:var(--line)}
+
+.cp-v7 .v7-dot{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--cream-2);color:var(--ink-soft);border:1px solid var(--line);position:relative;z-index:1}
+.cp-v7 .v7-dot svg{width:20px;height:20px}
+.cp-v7 .v7-node.on .v7-dot{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.cp-v7 .v7-node.done .v7-dot{background:var(--green-soft);color:var(--green);border-color:var(--green-soft)}
+
+.cp-v7 .v7-stage{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:11px}
+.cp-v7 .v7-num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.05;margin-top:3px}
+.cp-v7 .v7-sub{font-size:10.5px;color:var(--ink-soft);margin-top:2px}
+.cp-v7 .v7-act{font-size:10.5px;margin-top:9px;padding:4px 8px;border-radius:7px;line-height:1.3;max-width:120px}
+.cp-v7 .v7-act.a-build{background:var(--blue-soft);color:var(--blue)}
+.cp-v7 .v7-act.a-grow{background:var(--amber-soft);color:var(--amber)}
+.cp-v7 .v7-act.a-run{background:var(--green-soft);color:var(--green)}
+.cp-v7 .v7-act .pulse{display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:middle;animation:v7breathe 2.4s ease-in-out infinite}
+@keyframes v7breathe{0%,100%{opacity:.35}50%{opacity:1}}
+
+.cp-v7 .v7-focus{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cp-v7 .v7-card{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:14px 15px;box-shadow:var(--shadow)}
+.cp-v7 .v7-ct{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+.cp-v7 .v7-feat{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:-.01em;margin-bottom:11px}
+.cp-v7 .v7-task{display:flex;align-items:center;gap:9px;font-size:12px;padding:3px 0;color:var(--ink-soft)}
+.cp-v7 .v7-task .tid{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--ink-faint)}
+.cp-v7 .v7-task .tbadge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:5px}
+.cp-v7 .tb-go{background:var(--blue-soft);color:var(--blue)}
+.cp-v7 .tb-q{background:var(--cream-2);color:var(--ink-faint)}
+.cp-v7 .v7-task .tk{width:14px;height:14px;flex:0 0 auto}
+.cp-v7 .v7-task .tk.b{color:var(--blue)}
+.cp-v7 .v7-task .tk.q{color:var(--ink-faint)}
+
+.cp-v7 .v7-mrow{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.cp-v7 .v7-mrow .big{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;letter-spacing:-.02em}
+.cp-v7 .v7-mrow .delta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)}
+.cp-v7 .v7-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.cp-v7 .v7-mini .k{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.cp-v7 .v7-mini .v{font-size:12.5px;font-weight:600;margin-top:1px}
+
+.cp-v7 .v7-next{margin-top:16px;display:flex;align-items:center;gap:14px;background:var(--accent);color:#fff;border-radius:13px;padding:14px 16px;box-shadow:var(--shadow-lg)}
+.cp-v7 .v7-next .nx-ic{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:0 0 auto}
+.cp-v7 .v7-next .nx-ic svg{width:18px;height:18px}
+.cp-v7 .v7-next .nx-l{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.cp-v7 .v7-next .nx-t{font-size:13.5px;font-weight:600;margin-top:2px;line-height:1.35}
+.cp-v7 .v7-next .nx-t b{font-weight:700}
+.cp-v7 .v7-next .nx-btn{margin-left:auto;background:#fff;color:var(--accent-ink,var(--accent));font-weight:600;font-size:12.5px;border-radius:9px;padding:9px 15px;white-space:nowrap;font-family:'Inter',sans-serif}
+
+.cp-v7 .v7-pend{margin-top:11px;display:flex;gap:9px}
+.cp-v7 .v7-chip{flex:1;display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:10px 12px;box-shadow:var(--shadow);font-size:12px}
+.cp-v7 .v7-chip .ci{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.cp-v7 .v7-chip .ci.am{background:var(--amber)}
+.cp-v7 .v7-chip .ci.gr{background:var(--green)}
+.cp-v7 .v7-chip .ca{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:600}
+
+
+
+.cp-v8 { --pad: 22px; box-sizing: border-box; width: 100%; max-width: 760px; margin: 0 auto; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: var(--cream); padding: 26px; border-radius: 18px; border: 1px solid var(--line); box-shadow: var(--shadow-lg); }
+.cp-v8 *, .cp-v8 *::before, .cp-v8 *::after { box-sizing: border-box; }
+.cp-v8 .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ---- header line ---- */
+.cp-v8 .v8-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.cp-v8 .v8-id { display: flex; align-items: center; gap: 11px; }
+.cp-v8 .v8-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: var(--shadow); }
+.cp-v8 .v8-mark svg { display: block; }
+.cp-v8 .v8-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: -0.01em; line-height: 1; }
+.cp-v8 .v8-sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-faint); letter-spacing: 0.02em; margin-top: 4px; }
+.cp-v8 .v8-live { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 5px 11px; letter-spacing: 0.04em; text-transform: uppercase; }
+.cp-v8 .v8-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* ---- command input ---- */
+.cp-v8 .v8-prompt { background: var(--paper); border: 1px solid var(--line); border-radius: 13px; padding: 15px 16px; box-shadow: var(--shadow); }
+.cp-v8 .v8-inputline { display: flex; align-items: center; gap: 11px; }
+.cp-v8 .v8-caret { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 700; font-size: 15px; }
+.cp-v8 .v8-input { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--ink); }
+.cp-v8 .v8-input .ph { color: var(--ink-faint); }
+.cp-v8 .v8-cursor { display: inline-block; width: 8px; height: 17px; background: var(--accent); vertical-align: -3px; margin-left: 2px; border-radius: 1px; }
+.cp-v8 .v8-run { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-faint); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; letter-spacing: 0.02em; }
+.cp-v8 .v8-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; padding-top: 13px; border-top: 1px dashed var(--line-soft); }
+.cp-v8 .v8-chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); background: var(--cream-2); border: 1px solid var(--line-soft); border-radius: 7px; padding: 5px 10px; letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 6px; }
+.cp-v8 .v8-chip .k { color: var(--accent); font-weight: 700; }
+
+/* ---- scrollback ---- */
+.cp-v8 .v8-scroll { margin-top: 20px; }
+.cp-v8 .v8-scrolltitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 12px; }
+.cp-v8 .v8-entry { padding-left: 17px; position: relative; margin-bottom: 20px; }
+.cp-v8 .v8-entry::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 2px; background: var(--line); border-radius: 2px; }
+.cp-v8 .v8-entry.ok::before { background: var(--green); }
+.cp-v8 .v8-entry.warn::before { background: var(--amber); }
+.cp-v8 .v8-cmd { display: flex; align-items: baseline; gap: 9px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+.cp-v8 .v8-cmd .pchar { color: var(--accent); font-weight: 700; }
+.cp-v8 .v8-cmd .txt { color: var(--ink); }
+.cp-v8 .v8-cmd .ts { margin-left: auto; font-size: 10px; color: var(--ink-faint); }
+
+/* result card */
+.cp-v8 .v8-res { margin-top: 9px; background: var(--paper); border: 1px solid var(--line-soft); border-radius: 11px; padding: 14px 15px; box-shadow: var(--shadow); }
+.cp-v8 .v8-reshead { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.02em; }
+.cp-v8 .v8-badge { display: inline-flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 8px; border-radius: 999px; }
+.cp-v8 .v8-badge.ok { color: var(--green); background: var(--green-soft); }
+.cp-v8 .v8-badge.warn { color: var(--amber); background: var(--amber-soft); }
+.cp-v8 .v8-badge.info { color: var(--blue); background: var(--blue-soft); }
+.cp-v8 .v8-resnote { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin-top: 8px; }
+.cp-v8 .v8-resnote b { color: var(--ink); font-weight: 600; }
+
+/* mini P&L grid */
+.cp-v8 .v8-pnl { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--line-soft); border-radius: 9px; overflow: hidden; margin-top: 11px; }
+.cp-v8 .v8-cell { background: var(--paper); padding: 11px 12px; }
+.cp-v8 .v8-cell .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; }
+.cp-v8 .v8-cell .val { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 600; color: var(--ink); margin-top: 5px; letter-spacing: -0.01em; }
+.cp-v8 .v8-cell .val.up { color: var(--green); }
+.cp-v8 .v8-cell .delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--green); margin-top: 2px; }
+.cp-v8 .v8-cell .delta.mute { color: var(--ink-faint); }
+
+/* task rows */
+.cp-v8 .v8-tasks { margin-top: 11px; display: flex; flex-direction: column; gap: 1px; background: var(--line-soft); border-radius: 9px; overflow: hidden; }
+.cp-v8 .v8-task { display: flex; align-items: center; gap: 10px; background: var(--paper); padding: 9px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+.cp-v8 .v8-task .tid { color: var(--ink-faint); }
+.cp-v8 .v8-task .tname { color: var(--ink); flex: 1; }
+.cp-v8 .v8-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 999px; }
+.cp-v8 .v8-tag.build { color: var(--blue); background: var(--blue-soft); }
+.cp-v8 .v8-tag.queue { color: var(--ink-soft); background: var(--cream-2); }
+.cp-v8 .v8-tag.done { color: var(--green); background: var(--green-soft); }
+
+/* action row inside result */
+.cp-v8 .v8-actions { display: flex; gap: 8px; margin-top: 12px; }
+.cp-v8 .v8-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 7px 13px; border-radius: 8px; letter-spacing: 0.01em; border: 1px solid transparent; }
+.cp-v8 .v8-btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow); }
+.cp-v8 .v8-btn.ghost { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+
+/* loops inline strip */
+.cp-v8 .v8-loops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.cp-v8 .v8-loop { background: var(--paper); border: 1px solid var(--line-soft); border-radius: 9px; padding: 10px 11px; }
+.cp-v8 .v8-loop .ln { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; }
+.cp-v8 .v8-loop .ls { font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+.cp-v8 .v8-loop .pill { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.cp-v8 .v8-loop .pill.run { background: var(--blue); }
+.cp-v8 .v8-loop .pill.warn { background: var(--amber); }
+.cp-v8 .v8-loop .pill.ok { background: var(--green); }
+
+
+.cp-v9{--pad:22px;font-family:'Inter',system-ui,sans-serif;color:var(--ink);max-width:760px;margin:0 auto;padding:4px;box-sizing:border-box}
+.cp-v9 *{box-sizing:border-box}
+.cp-v9 .mono{font-family:'JetBrains Mono',monospace}
+.cp-v9 .disp{font-family:'Space Grotesk','Inter',sans-serif}
+
+/* header */
+.cp-v9 .v9-head{display:flex;align-items:center;gap:14px;padding:2px 4px 18px}
+.cp-v9 .v9-badge{width:44px;height:44px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:var(--shadow)}
+.cp-v9 .v9-badge svg{width:22px;height:22px}
+.cp-v9 .v9-htext{min-width:0;flex:1}
+.cp-v9 .v9-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;letter-spacing:-.01em;line-height:1.1;display:flex;align-items:center;gap:10px}
+.cp-v9 .v9-live{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);background:var(--green-soft);padding:3px 8px;border-radius:20px;font-weight:600}
+.cp-v9 .v9-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.cp-v9 .v9-mission{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+
+/* needs-you strip */
+.cp-v9 .v9-needs{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:14px;padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cp-v9 .v9-needs-ic{width:34px;height:34px;border-radius:10px;background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;flex:none}
+.cp-v9 .v9-needs-ic svg{width:18px;height:18px}
+.cp-v9 .v9-needs-txt{flex:1;min-width:0}
+.cp-v9 .v9-needs-k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:600}
+.cp-v9 .v9-needs-h{font-size:13.5px;font-weight:600;color:var(--ink);margin-top:2px}
+.cp-v9 .v9-needs-s{font-size:12px;color:var(--ink-soft);margin-top:1px}
+.cp-v9 .v9-needs-btns{display:flex;gap:8px;flex:none}
+.cp-v9 .v9-btn{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:600;border-radius:9px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);transition:.15s}
+.cp-v9 .v9-btn:hover{border-color:var(--gray)}
+.cp-v9 .v9-btn.pri{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}
+.cp-v9 .v9-btn.pri:hover{filter:brightness(.96)}
+
+/* vitals grid */
+.cp-v9 .v9-vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.cp-v9 .v9-tile{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px 15px 14px;box-shadow:var(--shadow);overflow:hidden}
+.cp-v9 .v9-tile::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px}
+.cp-v9 .v9-tile.g::before{background:var(--green)}
+.cp-v9 .v9-tile.a::before{background:var(--amber)}
+.cp-v9 .v9-tile.b::before{background:var(--blue)}
+.cp-v9 .v9-tlabel{display:flex;align-items:center;justify-content:space-between}
+.cp-v9 .v9-tk{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+.cp-v9 .v9-stat{width:8px;height:8px;border-radius:50%}
+.cp-v9 .v9-stat.g{background:var(--green)}
+.cp-v9 .v9-stat.a{background:var(--amber)}
+.cp-v9 .v9-stat.b{background:var(--blue)}
+.cp-v9 .v9-tval{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em;line-height:1;margin-top:12px;color:var(--ink)}
+.cp-v9 .v9-tval small{font-size:14px;font-weight:500;color:var(--ink-faint)}
+.cp-v9 .v9-tdelta{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:7px;display:flex;align-items:center;gap:5px}
+.cp-v9 .v9-tdelta.up{color:var(--green)}
+.cp-v9 .v9-tdelta.flat{color:var(--ink-faint)}
+.cp-v9 .v9-tdelta.warn{color:var(--amber)}
+/* gauge bar */
+.cp-v9 .v9-gauge{height:5px;border-radius:4px;background:var(--cream-2);margin-top:11px;overflow:hidden}
+.cp-v9 .v9-gfill{height:100%;border-radius:4px}
+.cp-v9 .v9-gfill.g{background:var(--green)}
+.cp-v9 .v9-gfill.a{background:var(--amber)}
+.cp-v9 .v9-gfill.b{background:var(--blue)}
+.cp-v9 .v9-gcap{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);margin-top:6px}
+
+/* loops + activity row */
+.cp-v9 .v9-lower{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cp-v9 .v9-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow)}
+.cp-v9 .v9-ctitle{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:12px}
+.cp-v9 .v9-loop{display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid var(--line-soft)}
+.cp-v9 .v9-loop:first-of-type{border-top:none;padding-top:2px}
+.cp-v9 .v9-lp-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.cp-v9 .v9-lp-dot.g{background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.cp-v9 .v9-lp-dot.a{background:var(--amber);box-shadow:0 0 0 3px var(--amber-soft)}
+.cp-v9 .v9-lp-txt{flex:1;min-width:0}
+.cp-v9 .v9-lp-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--ink)}
+.cp-v9 .v9-lp-sub{font-size:11.5px;color:var(--ink-soft);margin-top:1px}
+.cp-v9 .v9-lp-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:3px 7px;border-radius:6px;flex:none}
+.cp-v9 .v9-lp-tag.g{color:var(--green);background:var(--green-soft)}
+.cp-v9 .v9-lp-tag.a{color:var(--amber);background:var(--amber-soft)}
+
+.cp-v9 .v9-act{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft)}
+.cp-v9 .v9-act:first-of-type{border-top:none;padding-top:2px}
+.cp-v9 .v9-ac-dot{width:5px;height:5px;border-radius:50%;background:var(--gray);margin-top:6px;flex:none}
+.cp-v9 .v9-ac-txt{font-size:12px;color:var(--ink-soft);line-height:1.4}
+.cp-v9 .v9-ac-txt b{color:var(--ink);font-weight:600}
+
+.cp-v10{--gap:20px;max-width:760px;margin:0 auto;padding:28px;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--cream);box-sizing:border-box}
+.cp-v10 *{box-sizing:border-box}
+.cp-v10 .v10-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 14px}
+.cp-v10 .v10-eyebrow b{color:var(--green);font-weight:600}
+
+.cp-v10 .v10-goal{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:26px 28px;box-shadow:var(--shadow-lg)}
+.cp-v10 .v10-goal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.cp-v10 .v10-goal-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 6px}
+.cp-v10 .v10-goal h1{font-family:'Space Grotesk',sans-serif;font-size:30px;line-height:1.1;font-weight:600;margin:0;letter-spacing:-.02em}
+.cp-v10 .v10-goal h1 span{color:var(--accent)}
+.cp-v10 .v10-eta{text-align:right;flex-shrink:0}
+.cp-v10 .v10-eta .n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;color:var(--ink)}
+.cp-v10 .v10-eta .l{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:2px}
+
+.cp-v10 .v10-bar-wrap{margin-top:24px}
+.cp-v10 .v10-bar-nums{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.cp-v10 .v10-bar-now{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600}
+.cp-v10 .v10-bar-now em{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:12px;color:var(--green);margin-left:8px}
+.cp-v10 .v10-bar-goal{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-soft)}
+.cp-v10 .v10-track{position:relative;height:14px;background:var(--cream-2);border-radius:8px;overflow:hidden;border:1px solid var(--line-soft)}
+.cp-v10 .v10-fill{position:absolute;top:0;left:0;bottom:0;width:18%;background:var(--accent);border-radius:8px}
+.cp-v10 .v10-fill::after{content:"";position:absolute;top:0;right:0;bottom:0;width:2px;background:var(--accent-ink);opacity:.5}
+.cp-v10 .v10-pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);margin-top:8px;text-align:right}
+.cp-v10 .v10-pct b{color:var(--ink-soft);font-weight:600}
+
+.cp-v10 .v10-sub{display:flex;align-items:center;gap:8px;margin:30px 2px 14px}
+.cp-v10 .v10-sub h2{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin:0}
+.cp-v10 .v10-sub .cnt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+.cp-v10 .v10-sub .rule{flex:1;height:1px;background:var(--line-soft)}
+
+.cp-v10 .v10-bets{display:flex;flex-direction:column;gap:14px}
+.cp-v10 .v10-bet{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);display:flex;gap:16px}
+.cp-v10 .v10-bet.need{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber),var(--shadow)}
+.cp-v10 .v10-dot{flex-shrink:0;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px}
+.cp-v10 .v10-dot.build{background:var(--blue-soft);color:var(--blue)}
+.cp-v10 .v10-dot.grow{background:var(--amber-soft);color:var(--amber)}
+.cp-v10 .v10-dot.run{background:var(--green-soft);color:var(--green)}
+.cp-v10 .v10-body{flex:1;min-width:0}
+.cp-v10 .v10-bet-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.cp-v10 .v10-bet h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin:0;letter-spacing:-.01em}
+.cp-v10 .v10-impact{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);font-weight:600;white-space:nowrap}
+.cp-v10 .v10-bet p{font-size:13px;color:var(--ink-soft);line-height:1.5;margin:6px 0 0}
+.cp-v10 .v10-bet-foot{display:flex;align-items:center;gap:10px;margin-top:13px;flex-wrap:wrap}
+.cp-v10 .v10-status{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-weight:600}
+.cp-v10 .v10-status.running{background:var(--blue-soft);color:var(--blue)}
+.cp-v10 .v10-status.healthy{background:var(--green-soft);color:var(--green)}
+.cp-v10 .v10-status.waiting{background:var(--amber-soft);color:var(--amber)}
+.cp-v10 .v10-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+.cp-v10 .v10-ask{margin-top:14px;padding:12px 14px;background:var(--cream-2);border-radius:10px;display:flex;align-items:center;gap:12px}
+.cp-v10 .v10-ask .txt{flex:1;font-size:13px;color:var(--ink)}
+.cp-v10 .v10-ask .txt b{font-weight:600}
+.cp-v10 .v10-btn{flex-shrink:0;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:8px 16px;border-radius:9px;border:0;background:var(--accent);color:var(--accent-ink);cursor:pointer;white-space:nowrap}
+.cp-v10 .v10-btn.ghost{background:transparent;color:var(--ink-soft);padding:8px 10px}
+
+.cp-v10 .v10-next{margin-top:22px;padding:16px 18px;background:var(--paper);border:1px dashed var(--line);border-radius:14px}
+.cp-v10 .v10-next .h{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px}
+.cp-v10 .v10-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cp-v10 .v10-chip{font-size:12px;color:var(--ink-soft);background:var(--cream-2);border:1px solid var(--line-soft);border-radius:8px;padding:5px 11px}
+.cp-v10 .v10-chip.off{color:var(--ink-faint)}
+</style>
+<script>
+var tb=document.getElementById('themeBtn');
+tb.addEventListener('click',function(){var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');tb.textContent=d?'☾ Dark':'☀ Light';});
+</script>
+</body>
+</html>

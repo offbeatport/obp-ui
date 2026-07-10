@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop — Portfolio Drawing No. CSS-001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a2c54;
+    --bg2:#0d335f;
+    --ink:#dfeefc;
+    --line:#5a9fd4;
+    --line-soft:#2f6699;
+    --cyan:#5ff0ff;
+    --white:#ffffff;
+    --dim:#8fb8dd;
+    --grid:rgba(120,180,230,.10);
+    --grid2:rgba(120,180,230,.22);
+    --paper:#0c3160;
+    --amber:#f59e0b;
+    --rose:#fb7185;
+    --violet:#a78bfa;
+    --green:#34d399;
+    --sky:#38bdf8;
+    --sp:8px;
+    --r:2px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    color:var(--ink);
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+      linear-gradient(var(--grid2) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid2) 1px,transparent 1px);
+    background-size:16px 16px,16px 16px,128px 128px,128px 128px;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  .mono{font-family:"IBM Plex Mono",monospace}
+  a{color:inherit}
+
+  /* ---------- sheet frame ---------- */
+  .sheet{
+    max-width:1320px;
+    margin:24px auto;
+    border:1px solid var(--line);
+    outline:4px solid var(--bg);
+    outline-offset:-10px;
+    position:relative;
+    background:rgba(8,40,76,.55);
+  }
+  .corner{position:absolute;width:18px;height:18px;border:1px solid var(--cyan);opacity:.7}
+  .corner.tl{top:6px;left:6px;border-right:none;border-bottom:none}
+  .corner.tr{top:6px;right:6px;border-left:none;border-bottom:none}
+  .corner.bl{bottom:6px;left:6px;border-right:none;border-top:none}
+  .corner.br{bottom:6px;right:6px;border-left:none;border-top:none}
+
+  .pad{padding:28px 30px}
+
+  /* ---------- title block / nav ---------- */
+  header.title{
+    display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+    gap:18px;
+    border-bottom:1px solid var(--line);
+    padding:22px 30px 16px;
+  }
+  .wordmark{display:flex;align-items:baseline;gap:12px}
+  .wordmark .glyph{
+    font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;
+    border:1px solid var(--cyan);color:var(--cyan);border-radius:50%;
+    width:34px;height:34px;display:grid;place-items:center;flex:none;
+  }
+  .wordmark h1{
+    font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:22px;
+    letter-spacing:.14em;text-transform:uppercase;margin:0;color:var(--white);
+  }
+  .subtitle{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+
+  nav.tabs{display:flex;gap:0;border:1px solid var(--line)}
+  nav.tabs a{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    padding:9px 18px;text-decoration:none;color:var(--dim);position:relative;
+  }
+  nav.tabs a+a{border-left:1px solid var(--line-soft)}
+  nav.tabs a.on{background:var(--cyan);color:#06243f;font-weight:500}
+
+  .acct{display:flex;align-items:center;gap:14px}
+  .acct .signin{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--cyan);text-decoration:none;border-bottom:1px solid var(--line-soft);padding-bottom:2px;
+  }
+  .acct .reg{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    border:1px solid var(--cyan);color:var(--cyan);padding:7px 12px;text-decoration:none;
+  }
+
+  /* ---------- stat strip ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-bottom:1px solid var(--line);
+  }
+  .stat{padding:18px 26px;position:relative}
+  .stat+.stat{border-left:1px dashed var(--line-soft)}
+  .stat .lab{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .stat .val{font-family:"IBM Plex Mono",monospace;font-size:30px;font-weight:300;color:var(--white);margin-top:4px;line-height:1}
+  .stat .val b{color:var(--cyan);font-weight:400}
+  .stat .tick{position:absolute;left:26px;bottom:10px;font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--line)}
+
+  /* dimension caption used throughout */
+  .dim-cap{
+    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--cyan);display:flex;align-items:center;gap:10px;margin:0 0 14px;
+  }
+  .dim-cap::before{content:"";flex:none;width:22px;height:1px;background:var(--cyan)}
+  .dim-cap::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+  /* ---------- main layout ---------- */
+  .grid-main{display:grid;grid-template-columns:1fr 360px;gap:0}
+  .col-left{border-right:1px solid var(--line);padding:26px 30px}
+  .col-right{padding:26px 26px;display:flex;flex-direction:column;gap:26px}
+
+  /* ---------- company drawings ---------- */
+  .companies{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .co{
+    --c:var(--cyan);
+    border:1px solid var(--line);background:rgba(7,38,72,.6);
+    padding:16px 16px 14px;position:relative;
+  }
+  .co::before{ /* callout leader from corner */
+    content:"";position:absolute;top:-1px;left:-1px;width:14px;height:14px;
+    border-top:2px solid var(--c);border-left:2px solid var(--c);
+  }
+  .co-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .co-id{display:flex;align-items:center;gap:9px}
+  .co-swatch{width:11px;height:11px;border:1px solid var(--c);background:var(--c);flex:none;transform:rotate(45deg)}
+  .co-name{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:500;color:var(--white);letter-spacing:.02em}
+  .co-ver{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim);border:1px solid var(--line-soft);padding:2px 6px}
+  .co-mission{font-size:12.5px;color:var(--ink);margin:10px 0 14px;min-height:34px;opacity:.92}
+
+  /* metric ticks */
+  .co-metrics{display:flex;gap:0;border-top:1px dashed var(--line-soft);border-bottom:1px dashed var(--line-soft)}
+  .co-metrics div{flex:1;padding:8px 0;text-align:center}
+  .co-metrics div+div{border-left:1px dashed var(--line-soft)}
+  .co-metrics .k{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+  .co-metrics .v{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--white);margin-top:2px}
+  .co-metrics .v.rev{color:var(--c)}
+
+  /* stage pipeline */
+  .pipe{margin-top:14px}
+  .pipe-lab{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+  .pipe-lab .cur{color:var(--c)}
+  .steps{display:flex;align-items:center}
+  .node{
+    flex:none;width:13px;height:13px;border:1px solid var(--line);border-radius:50%;
+    background:var(--paper);position:relative;display:grid;place-items:center;
+  }
+  .node.done{background:var(--c);border-color:var(--c)}
+  .node.done::after{content:"";width:4px;height:4px;background:#06243f;border-radius:50%}
+  .node.cur{border-color:var(--c);box-shadow:0 0 0 3px rgba(95,240,255,.15)}
+  .node.cur::after{content:"";width:5px;height:5px;background:var(--c);border-radius:50%}
+  .seg{flex:1;height:1px;background:var(--line)}
+  .seg.done{background:var(--c)}
+  .stage-names{display:flex;justify-content:space-between;margin-top:5px;font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--line)}
+  .stage-names span{flex:1;text-align:center}
+  .stage-names span:first-child{text-align:left}
+  .stage-names span:last-child{text-align:right}
+  .stage-names span.on{color:var(--c)}
+
+  /* status chip */
+  .co-status{
+    margin-top:14px;display:flex;align-items:center;gap:8px;
+    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    padding:7px 9px;border:1px solid var(--line-soft);
+  }
+  .led{width:7px;height:7px;border-radius:50%;flex:none}
+  .st-approve{color:var(--amber);border-color:rgba(245,158,11,.5)} .st-approve .led{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+  .st-blocked{color:var(--rose);border-color:rgba(251,113,133,.5)} .st-blocked .led{background:var(--rose);box-shadow:0 0 6px var(--rose)}
+  .st-building{color:var(--violet);border-color:rgba(167,139,250,.5)} .st-building .led{background:var(--violet);box-shadow:0 0 6px var(--violet)}
+  .st-live{color:var(--green);border-color:rgba(52,211,153,.5)} .st-live .led{background:var(--green);box-shadow:0 0 6px var(--green)}
+  .co-status small{color:var(--dim);text-transform:none;letter-spacing:.02em;font-size:10px}
+
+  /* ---------- queues (right col) ---------- */
+  .panel{border:1px solid var(--line);background:rgba(7,38,72,.6)}
+  .panel-h{
+    padding:11px 14px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-h .t{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--white)}
+  .panel-h .n{font-family:"IBM Plex Mono",monospace;font-size:10px;color:#06243f;background:var(--cyan);padding:2px 7px}
+  .qitem{padding:12px 14px;border-bottom:1px dashed var(--line-soft);display:flex;gap:11px}
+  .qitem:last-child{border-bottom:none}
+  .qmark{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--cyan);flex:none;width:20px}
+  .qbody .qt{font-size:12.5px;color:var(--white);font-weight:500}
+  .qbody .qd{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .qbody .tag{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
+  .qact{margin-left:auto;align-self:center}
+  .qbtn{
+    font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+    border:1px solid var(--cyan);color:var(--cyan);background:transparent;padding:5px 9px;cursor:pointer;white-space:nowrap;
+  }
+  .qbtn:hover{background:var(--cyan);color:#06243f}
+
+  /* ---------- agent console ---------- */
+  .console{display:flex;flex-direction:column}
+  .console-body{padding:12px 14px;font-family:"IBM Plex Mono",monospace;font-size:11px;max-height:220px;overflow:auto}
+  .logrow{display:flex;gap:9px;padding:3px 0;border-bottom:1px dotted rgba(120,180,230,.12)}
+  .logrow .ts{color:var(--line);flex:none}
+  .logrow .tag{flex:none;width:54px}
+  .tag-build{color:var(--violet)} .tag-deploy{color:var(--green)} .tag-scan{color:var(--sky)} .tag-gtm{color:var(--amber)} .tag-err{color:var(--rose)}
+  .logrow .msg{color:var(--ink);opacity:.9}
+  .cursor{display:inline-block;width:7px;height:13px;background:var(--cyan);animation:blink 1.1s steps(1) infinite;vertical-align:-2px}
+  @keyframes blink{50%{opacity:0}}
+
+  /* agent chat input */
+  .chat{display:flex;align-items:center;gap:10px;padding:11px 14px;border-top:1px solid var(--line)}
+  .chat .pfx{font-family:"IBM Plex Mono",monospace;color:var(--cyan);font-size:13px}
+  .chat input{
+    flex:1;background:transparent;border:none;color:var(--ink);
+    font-family:"IBM Plex Mono",monospace;font-size:12px;outline:none;
+  }
+  .chat input::placeholder{color:var(--line)}
+  .chat .send{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line-soft);background:transparent;color:var(--cyan);padding:5px 8px;cursor:pointer}
+  .chat .send:hover{border-color:var(--cyan)}
+
+  /* ---------- legend / footer revision block ---------- */
+  .revblock{
+    display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;border-top:1px solid var(--line);
+    font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--dim);
+  }
+  .revblock>div{padding:12px 16px}
+  .revblock>div+div{border-left:1px solid var(--line-soft)}
+  .revblock .lab{letter-spacing:.18em;text-transform:uppercase;color:var(--line);font-size:9px}
+  .revblock .v{color:var(--ink);margin-top:4px;font-size:11px}
+  .revblock .v b{color:var(--cyan);font-weight:400}
+
+  @media(max-width:1080px){
+    .grid-main{grid-template-columns:1fr}
+    .col-left{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media(max-width:760px){
+    .sheet{margin:8px;outline-offset:-8px}
+    .pad,.col-left{padding:18px 16px}
+    .companies{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr}
+    .stat+.stat{border-left:none;border-top:1px dashed var(--line-soft)}
+    header.title{padding:16px}
+    .revblock{grid-template-columns:1fr 1fr}
+    .revblock>div:nth-child(odd){border-left:none}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <span class="corner tl"></span><span class="corner tr"></span>
+  <span class="corner bl"></span><span class="corner br"></span>
+
+  <!-- TITLE BLOCK -->
+  <header class="title">
+    <div>
+      <div class="wordmark">
+        <span class="glyph">C//</span>
+        <div>
+          <h1>C Slop Slop</h1>
+          <div class="subtitle mono">Autonomous Studio · Operator Portfolio</div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs mono">
+      <a href="#" class="on">Portfolio</a>
+      <a href="#">Opportunities</a>
+    </nav>
+    <div class="acct">
+      <a href="#" class="signin">Sign in</a>
+      <a href="#" class="reg">Register</a>
+    </div>
+  </header>
+
+  <!-- STAT STRIP -->
+  <section class="stats">
+    <div class="stat">
+      <div class="lab">Total Users</div>
+      <div class="val">2,418</div>
+      <div class="tick">├──────┤ measured</div>
+    </div>
+    <div class="stat">
+      <div class="lab">Total MRR</div>
+      <div class="val"><b>$9,210</b></div>
+      <div class="tick">├──────┤ recurring/mo</div>
+    </div>
+    <div class="stat">
+      <div class="lab">Total Companies</div>
+      <div class="val">05</div>
+      <div class="tick">├──────┤ in portfolio</div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <div class="grid-main">
+    <!-- LEFT: company drawings -->
+    <div class="col-left">
+      <p class="dim-cap">Fig. 1 — Portfolio Assembly · 5 units · stages BUILD→FEATURES→DEPLOY→ADS→LIVE</p>
+      <div class="companies">
+
+        <!-- 1 TranslatorBill -->
+        <article class="co" style="--c:#f59e0b">
+          <div class="co-head">
+            <div class="co-id"><span class="co-swatch"></span><span class="co-name">TranslatorBill</span></div>
+            <span class="co-ver mono">v0.6</span>
+          </div>
+          <p class="co-mission">Translate invoices line-by-line for cross-border sellers.</p>
+          <div class="co-metrics">
+            <div><div class="k">Users</div><div class="v">1,240</div></div>
+            <div><div class="k">MRR</div><div class="v rev">$0</div></div>
+            <div><div class="k">Rev</div><div class="v">pre</div></div>
+          </div>
+          <div class="pipe">
+            <div class="pipe-lab"><span>Stage</span><span class="cur">Features · 2/5</span></div>
+            <div class="steps">
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node cur"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span>
+            </div>
+            <div class="stage-names"><span class="on">Build</span><span class="on">Feat</span><span>Deploy</span><span>Ads</span><span>Live</span></div>
+          </div>
+          <div class="co-status st-approve"><span class="led"></span>Awaiting your approval <small>· feature 6/10 on staging</small></div>
+        </article>
+
+        <!-- 2 RedditPainBot -->
+        <article class="co" style="--c:#fb7185">
+          <div class="co-head">
+            <div class="co-id"><span class="co-swatch"></span><span class="co-name">RedditPainBot</span></div>
+            <span class="co-ver mono">v0.3</span>
+          </div>
+          <p class="co-mission">Surface real product pain from Reddit threads daily.</p>
+          <div class="co-metrics">
+            <div><div class="k">Users</div><div class="v">320</div></div>
+            <div><div class="k">MRR</div><div class="v rev">$0</div></div>
+            <div><div class="k">Rev</div><div class="v">pre</div></div>
+          </div>
+          <div class="pipe">
+            <div class="pipe-lab"><span>Stage</span><span class="cur">Build · 1/5</span></div>
+            <div class="steps">
+              <span class="node cur"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span>
+            </div>
+            <div class="stage-names"><span class="on">Build</span><span>Feat</span><span>Deploy</span><span>Ads</span><span>Live</span></div>
+          </div>
+          <div class="co-status st-blocked"><span class="led"></span>Blocked <small>· Reddit API key expired</small></div>
+        </article>
+
+        <!-- 3 QuietInbox -->
+        <article class="co" style="--c:#a78bfa">
+          <div class="co-head">
+            <div class="co-id"><span class="co-swatch"></span><span class="co-name">QuietInbox</span></div>
+            <span class="co-ver mono">v0.4</span>
+          </div>
+          <p class="co-mission">Auto-triage and summarize your support inbox.</p>
+          <div class="co-metrics">
+            <div><div class="k">Users</div><div class="v">880</div></div>
+            <div><div class="k">MRR</div><div class="v rev">$0</div></div>
+            <div><div class="k">Rev</div><div class="v">pre</div></div>
+          </div>
+          <div class="pipe">
+            <div class="pipe-lab"><span>Stage</span><span class="cur">Features · 2/5</span></div>
+            <div class="steps">
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node cur"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span><span class="seg"></span>
+              <span class="node"></span>
+            </div>
+            <div class="stage-names"><span class="on">Build</span><span class="on">Feat</span><span>Deploy</span><span>Ads</span><span>Live</span></div>
+          </div>
+          <div class="co-status st-building"><span class="led"></span>Building <small>· agents at work</small></div>
+        </article>
+
+        <!-- 4 LeadSift -->
+        <article class="co" style="--c:#34d399">
+          <div class="co-head">
+            <div class="co-id"><span class="co-swatch"></span><span class="co-name">LeadSift</span></div>
+            <span class="co-ver mono">v1.2</span>
+          </div>
+          <p class="co-mission">Score and route inbound leads automatically.</p>
+          <div class="co-metrics">
+            <div><div class="k">Users</div><div class="v">2,100</div></div>
+            <div><div class="k">MRR</div><div class="v rev">$312</div></div>
+            <div><div class="k">Rev</div><div class="v">live</div></div>
+          </div>
+          <div class="pipe">
+            <div class="pipe-lab"><span>Stage</span><span class="cur">Live · 5/5</span></div>
+            <div class="steps">
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node cur"></span>
+            </div>
+            <div class="stage-names"><span class="on">Build</span><span class="on">Feat</span><span class="on">Deploy</span><span class="on">Ads</span><span class="on">Live</span></div>
+          </div>
+          <div class="co-status st-live"><span class="led"></span>Live <small>· shipping in production</small></div>
+        </article>
+
+        <!-- 5 DocHound -->
+        <article class="co" style="--c:#38bdf8">
+          <div class="co-head">
+            <div class="co-id"><span class="co-swatch"></span><span class="co-name">DocHound</span></div>
+            <span class="co-ver mono">v1.0</span>
+          </div>
+          <p class="co-mission">Answer questions over your internal docs instantly.</p>
+          <div class="co-metrics">
+            <div><div class="k">Users</div><div class="v">1,460</div></div>
+            <div><div class="k">MRR</div><div class="v rev">$148</div></div>
+            <div><div class="k">Rev</div><div class="v">live</div></div>
+          </div>
+          <div class="pipe">
+            <div class="pipe-lab"><span>Stage</span><span class="cur">Ads · 4/5</span></div>
+            <div class="steps">
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node done"></span><span class="seg done"></span>
+              <span class="node cur"></span><span class="seg"></span>
+              <span class="node"></span>
+            </div>
+            <div class="stage-names"><span class="on">Build</span><span class="on">Feat</span><span class="on">Deploy</span><span class="on">Ads</span><span>Live</span></div>
+          </div>
+          <div class="co-status st-live"><span class="led"></span>Live <small>· acquisition phase</small></div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: queues + agent layer -->
+    <div class="col-right">
+
+      <section class="panel">
+        <div class="panel-h"><span class="t">Needs You</span><span class="n">3</span></div>
+        <div class="qitem">
+          <span class="qmark">A▸</span>
+          <div class="qbody">
+            <div class="tag">TranslatorBill</div>
+            <div class="qt">Approve feature 6</div>
+            <div class="qd">Per-line invoice translation, ready to ship.</div>
+          </div>
+          <div class="qact"><button class="qbtn">Approve</button></div>
+        </div>
+        <div class="qitem">
+          <span class="qmark">B▸</span>
+          <div class="qbody">
+            <div class="tag">RedditPainBot</div>
+            <div class="qt">Blocked — Reddit API key expired</div>
+            <div class="qd">Provide a fresh key to resume scanning.</div>
+          </div>
+          <div class="qact"><button class="qbtn">Fix</button></div>
+        </div>
+        <div class="qitem">
+          <span class="qmark">C▸</span>
+          <div class="qbody">
+            <div class="tag">LeadSift</div>
+            <div class="qt">Confirm pricing change</div>
+            <div class="qd">$29 → $39 / mo.</div>
+          </div>
+          <div class="qact"><button class="qbtn">Confirm</button></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h"><span class="t">Go To Market</span><span class="n">4</span></div>
+        <div class="qitem">
+          <span class="qmark">01</span>
+          <div class="qbody"><div class="tag">TranslatorBill</div><div class="qt">Approve launch tweet</div></div>
+          <div class="qact"><button class="qbtn">Review</button></div>
+        </div>
+        <div class="qitem">
+          <span class="qmark">02</span>
+          <div class="qbody"><div class="tag">QuietInbox</div><div class="qt">3 support messages</div></div>
+          <div class="qact"><button class="qbtn">Open</button></div>
+        </div>
+        <div class="qitem">
+          <span class="qmark">03</span>
+          <div class="qbody"><div class="tag">LeadSift</div><div class="qt">Reply to investor email</div></div>
+          <div class="qact"><button class="qbtn">Reply</button></div>
+        </div>
+        <div class="qitem">
+          <span class="qmark">04</span>
+          <div class="qbody"><div class="tag">DocHound</div><div class="qt">Posted LinkedIn update</div><div class="qd">1.2k impressions.</div></div>
+          <div class="qact"><button class="qbtn">View</button></div>
+        </div>
+      </section>
+
+      <!-- AGENT CONSOLE + CHAT -->
+      <section class="panel console">
+        <div class="panel-h"><span class="t">Agent Activity</span><span class="n mono" style="background:transparent;color:var(--green)">● LIVE</span></div>
+        <div class="console-body" id="feed">
+          <div class="logrow"><span class="ts">14:02:11</span><span class="tag tag-build">BUILD</span><span class="msg">QuietInbox · compiled triage classifier v0.4.2</span></div>
+          <div class="logrow"><span class="ts">14:01:47</span><span class="tag tag-scan">SCAN</span><span class="msg">RedditPainBot · 0 threads — auth failed</span></div>
+          <div class="logrow"><span class="ts">14:00:55</span><span class="tag tag-gtm">GTM</span><span class="msg">DocHound · LinkedIn post +1.2k impressions</span></div>
+          <div class="logrow"><span class="ts">13:59:30</span><span class="tag tag-deploy">DEPLOY</span><span class="msg">TranslatorBill · feature 6 → staging OK</span></div>
+          <div class="logrow"><span class="ts">13:58:02</span><span class="tag tag-err">ERR</span><span class="msg">RedditPainBot · 401 reddit api key expired</span></div>
+          <div class="logrow"><span class="ts">13:57:14</span><span class="tag tag-build">BUILD</span><span class="msg">LeadSift · routing rules recompiled</span></div>
+          <div class="logrow"><span class="ts">13:56:00</span><span class="tag tag-deploy">DEPLOY</span><span class="msg">LeadSift · prod healthy · 2,100 users<span class="cursor"></span></span></div>
+        </div>
+        <div class="chat">
+          <span class="pfx">›</span>
+          <input id="chatIn" type="text" placeholder="instruct the build agent…" aria-label="agent chat">
+          <button class="send" id="chatSend">Send</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- REVISION / TITLE FOOTER BLOCK -->
+  <section class="revblock">
+    <div>
+      <div class="lab">Drawing</div>
+      <div class="v">C Slop Slop — Operator Portfolio · <b>Sheet 1 of 1</b></div>
+    </div>
+    <div>
+      <div class="lab">Drawing No.</div>
+      <div class="v mono">CSS-001 · REV. <b>D</b></div>
+    </div>
+    <div>
+      <div class="lab">Units in pipeline</div>
+      <div class="v mono">05 · scale 1:1</div>
+    </div>
+    <div>
+      <div class="lab">Status</div>
+      <div class="v mono">2 LIVE · 1 BLOCKED · <b>1 AWAITING</b></div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // tiny agent console liveness (no libs)
+  (function(){
+    var feed=document.getElementById('feed');
+    var samples=[
+      ['BUILD','tag-build','QuietInbox · summarizer pass 12 complete'],
+      ['SCAN','tag-scan','DocHound · indexed 412 doc chunks'],
+      ['GTM','tag-gtm','TranslatorBill · launch tweet drafted, pending approval'],
+      ['DEPLOY','tag-deploy','LeadSift · canary 5% → 100%'],
+      ['BUILD','tag-build','QuietInbox · test suite 88/88 green']
+    ];
+    function ts(){var d=new Date();return d.toTimeString().slice(0,8);}
+    var i=0;
+    setInterval(function(){
+      var s=samples[i++%samples.length];
+      var row=document.createElement('div');
+      row.className='logrow';
+      row.innerHTML='<span class="ts">'+ts()+'</span><span class="tag '+s[1]+'">'+s[0]+'</span><span class="msg">'+s[2]+'</span>';
+      feed.insertBefore(row,feed.firstChild);
+      while(feed.children.length>14) feed.removeChild(feed.lastChild);
+    },4200);
+
+    // chat echoes into feed as an instruction
+    function send(){
+      var inp=document.getElementById('chatIn');
+      var v=inp.value.trim(); if(!v) return;
+      var row=document.createElement('div');
+      row.className='logrow';
+      row.innerHTML='<span class="ts">'+ts()+'</span><span class="tag" style="color:var(--cyan)">YOU</span><span class="msg">'+v.replace(/</g,'&lt;')+'</span>';
+      feed.insertBefore(row,feed.firstChild);
+      inp.value='';
+    }
+    document.getElementById('chatSend').addEventListener('click',send);
+    document.getElementById('chatIn').addEventListener('keydown',function(e){if(e.key==='Enter')send();});
+  })();
+</script>
+</body>
+</html>

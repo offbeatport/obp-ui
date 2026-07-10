@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --paper:#fffdf8; --ink:#2c2926; --ink-soft:#635c52;
+    --ink-faint:#7b7368; --line:#e6ddce; --accent:#c8643c; --green:#4f8a52;
+    --amber:#c08a2e; --red:#b6483f; --blue:#4a72b0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px clamp(20px,5vw,40px);
+  }
+  .who{display:flex; align-items:center; gap:10px;}
+  .pulse{
+    width:9px; height:9px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 0 0 rgba(79,138,82,.45);
+    animation:breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 0 0 rgba(79,138,82,.40);}
+    50%{box-shadow:0 0 0 7px rgba(79,138,82,0);}
+  }
+  .who b{font-family:'Space Grotesk'; font-weight:600; font-size:15px; letter-spacing:-.01em;}
+  .who span{font-size:13px; color:var(--ink-faint);}
+  .everything{
+    font-family:'Inter'; font-size:13.5px; font-weight:500; color:var(--ink-soft);
+    background:none; border:none; cursor:pointer; padding:8px 4px;
+    border-bottom:1px solid transparent; transition:color .2s, border-color .2s;
+  }
+  .everything:hover{color:var(--ink); border-color:var(--line);}
+
+  /* ---------- center stage ---------- */
+  main{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:24px clamp(22px,6vw,40px) 64px; text-align:center;
+  }
+  .stage{max-width:640px; width:100%;}
+
+  .progress{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:30px;}
+  .dots{display:flex; gap:8px;}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--line); transition:background .35s, transform .35s;}
+  .dot.active{background:var(--accent); transform:scale(1.18);}
+  .dot.done{background:var(--ink-faint);}
+  .count{font-family:'JetBrains Mono'; font-size:11.5px; letter-spacing:.04em; color:var(--ink-faint);}
+
+  .bubble{transition:opacity .34s ease, transform .34s ease;}
+  .bubble.out{opacity:0; transform:translateY(-10px);}
+  .bubble.in{opacity:0; transform:translateY(12px);}
+
+  .tag{
+    font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:16px; display:inline-block;
+  }
+  .question{
+    font-family:'Space Grotesk'; font-weight:500;
+    font-size:clamp(25px,4.6vw,38px); line-height:1.24; letter-spacing:-.02em;
+    color:var(--ink); margin:0 auto; max-width:18ch;
+  }
+  .question em{font-style:normal; color:var(--accent); font-weight:600;}
+  .detail{
+    margin-top:18px; font-size:15.5px; line-height:1.6; color:var(--ink-soft);
+    max-width:30ch; margin-left:auto; margin-right:auto;
+  }
+
+  .actions{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:38px;}
+  .btn{
+    font-family:'Inter'; font-size:15px; font-weight:600; cursor:pointer;
+    padding:14px 26px; border-radius:13px; border:1px solid transparent;
+    transition:transform .15s, background .2s, box-shadow .2s, border-color .2s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn.primary{
+    background:var(--accent); color:#fff;
+    box-shadow:0 5px 16px -7px rgba(200,100,60,.65);
+  }
+  .btn.primary:hover{background:#b95736;}
+  .btn.ghost{background:transparent; color:var(--ink-soft); border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--ink-faint); color:var(--ink);}
+  .btn.danger{color:var(--red); border-color:rgba(182,72,63,.32); background:transparent;}
+  .btn.danger:hover{background:rgba(182,72,63,.06); border-color:var(--red);}
+
+  /* ---------- acknowledgement ---------- */
+  .ack{
+    max-width:520px; opacity:0; transform:translateY(10px);
+    transition:opacity .4s ease, transform .4s ease; pointer-events:none;
+  }
+  .ack.show{opacity:1; transform:translateY(0);}
+  .ack .check{
+    width:40px; height:40px; border-radius:50%; background:rgba(79,138,82,.12);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+    color:var(--green); font-size:20px;
+  }
+  .ack p{font-family:'Space Grotesk'; font-weight:500; font-size:clamp(20px,3.4vw,26px); line-height:1.35; color:var(--ink); letter-spacing:-.01em;}
+
+  /* ---------- done ---------- */
+  .done .check{background:rgba(79,138,82,.12);}
+  .done .sub{margin-top:16px; font-size:15.5px; color:var(--ink-soft); line-height:1.6;}
+  .done .review{
+    margin-top:30px; font-family:'Inter'; font-size:14px; font-weight:600; color:var(--accent);
+    background:none; border:none; cursor:pointer; border-bottom:1px solid rgba(200,100,60,.3); padding-bottom:2px;
+  }
+  .done .review:hover{border-color:var(--accent);}
+
+  /* ---------- drawer / overview ---------- */
+  .scrim{
+    position:fixed; inset:0; background:rgba(44,41,38,.32); opacity:0; visibility:hidden;
+    transition:opacity .3s; z-index:10; backdrop-filter:blur(2px);
+  }
+  .scrim.open{opacity:1; visibility:visible;}
+  .sheet{
+    position:fixed; left:50%; bottom:0; transform:translateX(-50%) translateY(100%);
+    width:min(560px,100%); max-height:88vh; overflow-y:auto;
+    background:var(--paper); border:1px solid var(--line); border-bottom:none;
+    border-radius:22px 22px 0 0; z-index:11; transition:transform .36s cubic-bezier(.22,.7,.2,1);
+    padding:8px clamp(22px,5vw,34px) 36px;
+    box-shadow:0 -18px 50px -22px rgba(44,41,38,.3);
+  }
+  .sheet.open{transform:translateX(-50%) translateY(0);}
+  .grab{width:40px; height:4px; border-radius:4px; background:var(--line); margin:12px auto 18px;}
+  .sheet h2{font-family:'Space Grotesk'; font-weight:600; font-size:19px; letter-spacing:-.01em;}
+  .lead{margin-top:8px; font-size:15px; color:var(--ink-soft); line-height:1.55;}
+  .lead b{color:var(--ink); font-weight:600;}
+
+  .group{margin-top:26px;}
+  .group .h{
+    font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-faint); margin-bottom:12px;
+  }
+  .co{display:flex; align-items:flex-start; gap:11px; padding:11px 0; border-bottom:1px solid var(--line);}
+  .co:last-child{border-bottom:none;}
+  .co .sdot{width:8px; height:8px; border-radius:50%; margin-top:6px; flex:none;}
+  .co .nm{font-weight:600; font-size:15px;}
+  .co .ds{font-size:13.5px; color:var(--ink-soft); margin-top:2px; line-height:1.45;}
+  .co .needs{color:var(--accent); font-weight:500;}
+
+  .plain{font-size:15px; line-height:1.62; color:var(--ink-soft);}
+  .plain + .plain{margin-top:14px;}
+  .plain b{color:var(--ink); font-weight:600;}
+
+  @media (max-width:430px){
+    .actions{flex-direction:column-reverse;}
+    .btn{width:100%;}
+    .who span{display:none;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="who">
+      <span class="pulse"></span>
+      <b>C Slop Slop</b><span>· your AI is on it</span>
+    </div>
+    <button class="everything" id="openSheet">Show me everything</button>
+  </div>
+
+  <main>
+    <div class="stage">
+      <div class="progress" id="progress">
+        <div class="dots">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+        <span class="count" id="count"></span>
+      </div>
+
+      <!-- question -->
+      <div class="bubble" id="bubble">
+        <span class="tag" id="qtag"></span>
+        <h1 class="question" id="qtext"></h1>
+        <p class="detail" id="qdetail"></p>
+        <div class="actions">
+          <button class="btn primary" id="btnYes"></button>
+          <button class="btn ghost" id="btnNo"></button>
+        </div>
+      </div>
+
+      <!-- acknowledgement (transient) -->
+      <div class="ack" id="ack">
+        <div class="check">✓</div>
+        <p id="acktext"></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- overview sheet -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="sheet" id="sheet" aria-label="Overview">
+    <div class="grab"></div>
+    <h2>Your portfolio</h2>
+    <p class="lead"><b>$695/mo, growing 14%</b> · 5 companies. Most run on their own.</p>
+
+    <div class="group">
+      <div class="h">The 5 companies</div>
+      <div class="co"><span class="sdot" style="background:var(--accent)"></span><div><div class="nm">LeadSift</div><div class="ds">Live · $180/mo, growing — <span class="needs">a new feature is ready to ship</span></div></div></div>
+      <div class="co"><span class="sdot" style="background:var(--accent)"></span><div><div class="nm">QuietInbox</div><div class="ds">Live · $420/mo, your best earner — <span class="needs">wants to launch on Product Hunt</span></div></div></div>
+      <div class="co"><span class="sdot" style="background:var(--ink-faint)"></span><div><div class="nm">TranslatorBill</div><div class="ds">Still building its first version — nothing needed</div></div></div>
+      <div class="co"><span class="sdot" style="background:var(--amber)"></span><div><div class="nm">DataDrop</div><div class="ds">Live · $95/mo, flat — could use a growth push</div></div></div>
+      <div class="co"><span class="sdot" style="background:var(--red)"></span><div><div class="nm">RedditPainBot</div><div class="ds">Paused · stuck after 3 tries — <span class="needs">needs a decision</span></div></div></div>
+    </div>
+
+    <div class="group">
+      <div class="h">Money</div>
+      <p class="plain">Spending <b>$214/mo</b> of your $500 cap. Net <b>+$481/mo</b> — you're profitable.</p>
+    </div>
+
+    <div class="group">
+      <div class="h">Autopilot</div>
+      <p class="plain">Most work runs on its own. You only approve <b>growth spend</b> and <b>big changes</b>.</p>
+    </div>
+
+    <div class="group">
+      <div class="h">This week, for you</div>
+      <p class="plain">Shipped 1 feature, sent 15 customer emails, spent $41. <b>Nothing needed your input.</b></p>
+    </div>
+  </aside>
+
+<script>
+  const questions = [
+    {
+      tag: "LeadSift",
+      text: "<em>LeadSift's</em> daily lead digest is built and tested. Want me to ship it?",
+      detail: "I've checked it end to end — it's ready for customers.",
+      yes: "Yes, ship it", no: "Let me review",
+      ackYes: "Shipping it now — LeadSift's digest goes live today.",
+      ackNo: "Sure, I'll hold it so you can take a look first.",
+    },
+    {
+      tag: "QuietInbox",
+      text: "<em>QuietInbox</em> is ready to launch on Product Hunt. Want me to go ahead?",
+      detail: "It'd cost $40 and should bring around 120 new users.",
+      yes: "Yes, do it", no: "Not now",
+      ackYes: "On it — I'll launch QuietInbox and watch the signups.",
+      ackNo: "No problem, I'll keep it ready for whenever you like.",
+    },
+    {
+      tag: "RedditPainBot",
+      text: "<em>RedditPainBot</em> is stuck — 3 tries, no progress. Try a new way, or shut it down?",
+      detail: "I can take a fresh approach, or we can let this one go.",
+      yes: "Try a new way", no: "Shut it down", danger: true,
+      ackYes: "Got it — I'll try a completely different approach.",
+      ackNo: "Okay, I'll wind RedditPainBot down gently.",
+    },
+  ];
+
+  const bubble = document.getElementById('bubble');
+  const ack = document.getElementById('ack');
+  const acktext = document.getElementById('acktext');
+  const qtag = document.getElementById('qtag');
+  const qtext = document.getElementById('qtext');
+  const qdetail = document.getElementById('qdetail');
+  const btnYes = document.getElementById('btnYes');
+  const btnNo = document.getElementById('btnNo');
+  const count = document.getElementById('count');
+  const dots = document.querySelectorAll('.dot');
+  let i = 0;
+
+  function paintDots(){
+    dots.forEach((d, n) => {
+      d.className = 'dot' + (n < i ? ' done' : n === i ? ' active' : '');
+    });
+  }
+
+  function render(){
+    const q = questions[i];
+    qtag.textContent = q.tag;
+    qtext.innerHTML = q.text;
+    qdetail.textContent = q.detail;
+    btnYes.textContent = q.yes;
+    btnNo.textContent = q.no;
+    btnNo.className = 'btn ' + (q.danger ? 'danger' : 'ghost');
+    count.textContent = (i + 1) + ' of ' + questions.length;
+    paintDots();
+    bubble.classList.remove('out');
+    bubble.classList.add('in');
+    requestAnimationFrame(() => requestAnimationFrame(() => bubble.classList.remove('in')));
+  }
+
+  function answer(choice){
+    const q = questions[i];
+    bubble.style.pointerEvents = 'none';
+    bubble.classList.add('out');
+    setTimeout(() => {
+      acktext.textContent = choice === 'yes' ? q.ackYes : q.ackNo;
+      ack.classList.add('show');
+      setTimeout(() => {
+        ack.classList.remove('show');
+        i++;
+        setTimeout(() => {
+          if (i >= questions.length) { finish(); }
+          else { bubble.style.pointerEvents = ''; render(); }
+        }, 360);
+      }, 1500);
+    }, 320);
+  }
+
+  function finish(){
+    document.getElementById('progress').style.visibility = 'hidden';
+    bubble.style.display = 'none';
+    ack.classList.add('done');
+    ack.innerHTML =
+      '<div class="check">✓</div>' +
+      '<p>Great — nothing else needs you right now.</p>' +
+      '<p class="sub">I\'ll keep building, growing and running things, and let you know the moment something comes up.</p>' +
+      '<button class="review" id="reviewBtn">Show me everything</button>';
+    ack.classList.add('show');
+    document.getElementById('reviewBtn').addEventListener('click', openSheet);
+  }
+
+  btnYes.addEventListener('click', () => answer('yes'));
+  btnNo.addEventListener('click', () => answer('no'));
+
+  // sheet
+  const scrim = document.getElementById('scrim');
+  const sheet = document.getElementById('sheet');
+  function openSheet(){ scrim.classList.add('open'); sheet.classList.add('open'); }
+  function closeSheet(){ scrim.classList.remove('open'); sheet.classList.remove('open'); }
+  document.getElementById('openSheet').addEventListener('click', openSheet);
+  scrim.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+  render();
+</script>
+</body>
+</html>

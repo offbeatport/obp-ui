@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop — The Portfolio Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e7;
+    --paper-2:#efe7d6;
+    --ink:#211d17;
+    --ink-soft:#4a4337;
+    --ink-faint:#8a7f6c;
+    --rule:#cdc2ab;
+    --rule-soft:#ded4bf;
+    --accent:#9a2b1f;
+    --gold:#a07b2c;
+    --green:#3f6b3a;
+    --col-gap:48px;
+    --pad:clamp(20px,4vw,64px);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Source Serif 4",Georgia,serif;
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 18% 12%, rgba(160,123,44,.05), transparent 60%),
+      radial-gradient(circle at 82% 78%, rgba(154,43,31,.04), transparent 55%);
+  }
+  ::selection{background:var(--accent);color:var(--paper);}
+  a{color:inherit;}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 var(--pad);}
+
+  /* ---------- Masthead ---------- */
+  .masthead{border-bottom:3px double var(--ink);}
+  .masthead-top{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;padding:14px 0;border-bottom:1px solid var(--rule);
+    font-family:"Source Serif 4",serif;
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .masthead-top .edition{font-style:italic;letter-spacing:.05em;text-transform:none;color:var(--ink-faint);font-size:13px;}
+  .acct{display:flex;gap:18px;align-items:center;}
+  .acct a{text-decoration:none;letter-spacing:.14em;border-bottom:1px solid transparent;padding-bottom:2px;transition:border-color .2s;}
+  .acct a:hover{border-color:var(--ink);}
+  .acct .reg{background:var(--ink);color:var(--paper);padding:7px 16px;letter-spacing:.16em;}
+  .acct .reg:hover{background:var(--accent);border-color:var(--accent);}
+
+  .wordmark{
+    text-align:center;padding:30px 0 18px;
+  }
+  .wordmark h1{
+    font-family:"Fraunces",serif;
+    font-weight:900;font-optical-sizing:auto;
+    font-size:clamp(44px,9vw,116px);
+    line-height:.9;letter-spacing:-.02em;margin:0;
+  }
+  .wordmark h1 .slop{font-style:italic;font-weight:500;color:var(--accent);}
+  .wordmark .dek{
+    font-style:italic;color:var(--ink-soft);font-size:clamp(15px,2.2vw,21px);
+    margin-top:14px;letter-spacing:.01em;
+  }
+
+  /* ---------- Nav tabs ---------- */
+  .tabs{
+    display:flex;justify-content:center;gap:0;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    margin-top:18px;
+  }
+  .tabs button{
+    font-family:"Fraunces",serif;font-weight:500;
+    background:none;border:none;cursor:pointer;color:var(--ink-faint);
+    font-size:16px;letter-spacing:.22em;text-transform:uppercase;
+    padding:13px 32px;position:relative;transition:color .2s;
+  }
+  .tabs button + button{border-left:1px solid var(--rule);}
+  .tabs button[aria-selected="true"]{color:var(--ink);}
+  .tabs button[aria-selected="true"]::after{
+    content:"";position:absolute;left:24px;right:24px;bottom:-1px;height:3px;background:var(--accent);
+  }
+  .tabs button:hover{color:var(--ink);}
+
+  /* ---------- Stat strip (folio) ---------- */
+  .folio{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .folio div{
+    text-align:center;padding:18px 12px;
+  }
+  .folio div + div{border-left:1px solid var(--rule);}
+  .folio .num{
+    font-family:"Fraunces",serif;font-weight:600;font-size:clamp(26px,4vw,40px);
+    line-height:1;letter-spacing:-.01em;
+  }
+  .folio .lbl{
+    display:block;margin-top:7px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);
+  }
+
+  /* ---------- Section headers ---------- */
+  .kicker{
+    font-family:"Source Serif 4",serif;
+    font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);
+    display:flex;align-items:center;gap:14px;margin:0 0 6px;
+  }
+  .kicker::after{content:"";flex:1;height:1px;background:var(--rule);}
+  .section-title{
+    font-family:"Fraunces",serif;font-weight:600;font-optical-sizing:auto;
+    font-size:clamp(26px,4vw,40px);line-height:1.05;letter-spacing:-.01em;margin:0;
+  }
+  .section-head{margin:0 0 26px;}
+  .section-head .byline{font-style:italic;color:var(--ink-faint);font-size:15px;margin-top:8px;}
+
+  /* ---------- Lead feature ---------- */
+  .feature{
+    padding:clamp(30px,4vw,52px) 0;border-bottom:1px solid var(--rule);
+  }
+  .lead-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:var(--col-gap);align-items:start;}
+  .lead-body{column-count:1;}
+  .lead-body p{margin:0 0 1em;}
+  .lead-body p:first-of-type::first-letter{
+    font-family:"Fraunces",serif;font-weight:900;
+    float:left;font-size:5.4em;line-height:.74;
+    padding:6px 12px 0 0;color:var(--accent);
+  }
+  .lead-tag{
+    display:inline-block;font-family:"Source Serif 4",serif;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;background:var(--accent);color:var(--paper);padding:4px 12px;margin-bottom:16px;
+  }
+  .lead-grid h3{
+    font-family:"Fraunces",serif;font-weight:700;font-size:clamp(28px,4vw,46px);
+    line-height:1.02;letter-spacing:-.015em;margin:0 0 14px;
+  }
+  .pull{
+    border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);
+    padding:20px 0;margin:4px 0 22px;
+  }
+  .pull .stat-row{display:flex;justify-content:space-between;gap:10px;font-size:14px;}
+  .pull .stat-row + .stat-row{margin-top:10px;padding-top:10px;border-top:1px dotted var(--rule);}
+  .pull .stat-row b{font-family:"Fraunces",serif;font-weight:600;}
+  .pull .stat-row span:first-child{color:var(--ink-faint);font-size:12px;letter-spacing:.12em;text-transform:uppercase;}
+  .approve-note{font-style:italic;color:var(--ink-soft);font-size:15px;border-left:3px solid var(--gold);padding-left:16px;}
+  .btn-row{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    font-family:"Source Serif 4",serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    border:1px solid var(--ink);background:none;color:var(--ink);padding:10px 20px;cursor:pointer;
+    transition:.2s;text-decoration:none;display:inline-block;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);}
+  .btn.primary:hover{background:#7e2118;}
+
+  /* ---------- Companies columns ---------- */
+  .companies{padding:clamp(30px,4vw,52px) 0;border-bottom:1px solid var(--rule);}
+  .cols{
+    column-count:2;column-gap:var(--col-gap);column-rule:1px solid var(--rule);
+  }
+  .firm{break-inside:avoid;padding:0 0 30px;margin-bottom:30px;border-bottom:1px solid var(--rule-soft);}
+  .firm:last-child{border-bottom:none;margin-bottom:0;}
+  .firm-head{display:flex;align-items:baseline;gap:10px;}
+  .firm-mark{
+    width:11px;height:11px;border-radius:50%;flex:none;transform:translateY(-2px);
+    box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--rule);
+  }
+  .firm h4{
+    font-family:"Fraunces",serif;font-weight:600;font-size:25px;line-height:1.05;margin:0;letter-spacing:-.01em;
+  }
+  .firm .ver{font-style:italic;color:var(--ink-faint);font-size:14px;margin-left:auto;}
+  .firm .mission{font-style:italic;color:var(--ink-soft);font-size:15.5px;margin:8px 0 14px;}
+  .firm-meta{display:flex;gap:22px;font-size:13px;margin-bottom:14px;flex-wrap:wrap;}
+  .firm-meta .m b{font-family:"Fraunces",serif;font-weight:600;font-size:18px;display:block;}
+  .firm-meta .m span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);}
+
+  /* lifecycle stepper */
+  .pipe{margin:6px 0 12px;}
+  .pipe-stages{display:flex;gap:0;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;}
+  .pipe-stages .st{
+    flex:1;text-align:center;color:var(--ink-faint);position:relative;padding-bottom:11px;
+  }
+  .pipe-stages .st::before{
+    content:"";position:absolute;left:0;right:0;bottom:3px;height:2px;background:var(--rule);
+  }
+  .pipe-stages .st.done::before{background:var(--ink);}
+  .pipe-stages .st.cur::before{background:var(--accent);height:3px;bottom:2px;}
+  .pipe-stages .st.cur{color:var(--accent);font-weight:600;}
+  .pipe-stages .st.done{color:var(--ink-soft);}
+  .pipe-stages .st .dot{
+    position:absolute;left:50%;bottom:0;width:7px;height:7px;border-radius:50%;
+    transform:translateX(-50%);background:var(--rule);border:1px solid var(--paper);
+  }
+  .pipe-stages .st.done .dot{background:var(--ink);}
+  .pipe-stages .st.cur .dot{background:var(--accent);box-shadow:0 0 0 2px rgba(154,43,31,.2);}
+
+  .status{
+    display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    font-family:"Source Serif 4",serif;
+  }
+  .status .tick{width:7px;height:7px;border-radius:50%;flex:none;}
+  .s-live .tick{background:var(--green);}
+  .s-live{color:var(--green);}
+  .s-build .tick{background:var(--gold);animation:pulse 1.6s infinite;}
+  .s-build{color:var(--gold);}
+  .s-wait .tick{background:var(--accent);animation:pulse 1.6s infinite;}
+  .s-wait{color:var(--accent);}
+  .s-block .tick{background:#000;}
+  .s-block{color:#000;}
+  .status .note{font-style:italic;letter-spacing:0;text-transform:none;color:var(--ink-faint);font-size:13.5px;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+  /* ---------- Two-up desks (Needs You / GTM) ---------- */
+  .desks{padding:clamp(30px,4vw,52px) 0;border-bottom:1px solid var(--rule);}
+  .desks-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--col-gap);}
+  .desk-col h3{
+    font-family:"Fraunces",serif;font-weight:600;font-size:23px;margin:0 0 4px;
+  }
+  .desk-col .sub{font-style:italic;color:var(--ink-faint);font-size:14px;margin:0 0 18px;}
+  .entry{
+    display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--rule-soft);
+  }
+  .entry:first-of-type{border-top:1px solid var(--ink);}
+  .entry .no{
+    font-family:"Fraunces",serif;font-weight:600;font-size:15px;color:var(--accent);flex:none;width:26px;
+    font-feature-settings:"tnum";font-variant-numeric:tabular-nums;
+  }
+  .entry .body h5{font-family:"Fraunces",serif;font-weight:600;font-size:16.5px;margin:0 0 3px;line-height:1.2;}
+  .entry .body p{margin:0;font-size:14.5px;color:var(--ink-soft);}
+  .entry .body .who{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px;display:block;}
+  .entry .act{margin-left:auto;flex:none;align-self:center;}
+  .mini{
+    font-family:"Source Serif 4",serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    border:1px solid var(--ink);background:none;color:var(--ink);padding:6px 12px;cursor:pointer;white-space:nowrap;transition:.2s;
+  }
+  .mini:hover{background:var(--ink);color:var(--paper);}
+  .mini.gold{border-color:var(--gold);color:var(--gold);}
+  .mini.gold:hover{background:var(--gold);color:var(--paper);}
+
+  /* ---------- Agent layer ---------- */
+  .agents{padding:clamp(30px,4vw,52px) 0;}
+  .agent-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:var(--col-gap);align-items:start;}
+  .console{
+    background:var(--ink);color:var(--paper-2);border-radius:2px;padding:22px 24px;
+    font-family:"Spectral",serif;font-size:13.5px;line-height:1.7;
+  }
+  .console .ttl{
+    font-family:"Source Serif 4",serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--paper);opacity:.6;display:flex;align-items:center;gap:9px;margin-bottom:16px;
+    border-bottom:1px solid rgba(246,241,231,.2);padding-bottom:12px;
+  }
+  .console .ttl .live{width:7px;height:7px;border-radius:50%;background:#7fd17a;animation:pulse 1.4s infinite;}
+  .console .log{margin:0;padding:0;list-style:none;max-height:280px;overflow:auto;}
+  .console .log li{display:flex;gap:12px;padding:3px 0;}
+  .console .log .t{color:#b6a86f;font-feature-settings:"tnum";font-variant-numeric:tabular-nums;flex:none;opacity:.8;}
+  .console .log .ev{color:var(--paper-2);}
+  .console .log .ev .agent{color:#e8a14a;font-style:italic;}
+  .console .log .ev .ok{color:#7fd17a;}
+  .console .log .ev .warn{color:#e87a6a;}
+
+  .chat{border:1px solid var(--ink);border-radius:2px;overflow:hidden;background:var(--paper-2);}
+  .chat .ttl{
+    font-family:"Fraunces",serif;font-weight:600;font-size:19px;padding:18px 22px 14px;
+    border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;
+  }
+  .chat .ttl small{font-family:"Source Serif 4",serif;font-weight:400;font-style:italic;font-size:13px;color:var(--ink-faint);margin-left:auto;}
+  .chat .stream{padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
+  .bubble{max-width:88%;}
+  .bubble .nm{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px;}
+  .bubble p{margin:0;font-size:15px;line-height:1.55;}
+  .bubble.me{align-self:flex-end;text-align:right;}
+  .bubble.me p{background:var(--ink);color:var(--paper);padding:9px 14px;border-radius:2px;display:inline-block;text-align:left;}
+  .bubble.ai p{font-style:italic;color:var(--ink-soft);border-left:2px solid var(--accent);padding-left:14px;}
+  .chat .compose{display:flex;border-top:1px solid var(--rule);}
+  .chat .compose input{
+    flex:1;border:none;background:none;padding:14px 22px;font-family:"Source Serif 4",serif;font-size:15px;color:var(--ink);
+  }
+  .chat .compose input::placeholder{color:var(--ink-faint);font-style:italic;}
+  .chat .compose input:focus{outline:none;}
+  .chat .compose button{
+    border:none;border-left:1px solid var(--rule);background:var(--accent);color:var(--paper);cursor:pointer;
+    font-family:"Source Serif 4",serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:0 22px;
+  }
+  .chat .compose button:hover{background:#7e2118;}
+
+  /* ---------- Colophon ---------- */
+  .colophon{
+    border-top:3px double var(--ink);padding:26px 0 50px;text-align:center;
+    font-style:italic;color:var(--ink-faint);font-size:14px;
+  }
+  .colophon b{font-family:"Fraunces",serif;font-style:normal;font-weight:600;color:var(--ink-soft);}
+
+  .panel[hidden]{display:none;}
+
+  /* ---------- Opportunities tab ---------- */
+  .opp{padding:clamp(30px,4vw,52px) 0;}
+  .opp-lead{font-family:"Fraunces",serif;font-weight:300;font-size:clamp(22px,3.2vw,34px);line-height:1.3;margin:0 0 32px;max-width:760px;letter-spacing:-.01em;}
+  .opp-lead em{font-weight:500;font-style:italic;color:var(--accent);}
+  .opp-list{columns:2;column-gap:var(--col-gap);column-rule:1px solid var(--rule);}
+  .opp-item{break-inside:avoid;padding:18px 0;border-top:1px solid var(--rule-soft);}
+  .opp-item:first-child{border-top:1px solid var(--ink);}
+  .opp-item h4{font-family:"Fraunces",serif;font-weight:600;font-size:20px;margin:0 0 5px;}
+  .opp-item p{margin:0;font-size:14.5px;color:var(--ink-soft);font-style:italic;}
+  .opp-item .score{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-top:8px;display:block;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:980px){
+    .lead-grid,.desks-grid,.agent-grid{grid-template-columns:1fr;gap:34px;}
+    .cols,.opp-list{column-count:1;column-rule:none;}
+  }
+  @media (max-width:640px){
+    body{font-size:16px;}
+    .folio{grid-template-columns:1fr;}
+    .folio div + div{border-left:none;border-top:1px solid var(--rule);}
+    .tabs button{padding:12px 20px;letter-spacing:.16em;}
+    .masthead-top{flex-direction:column;gap:10px;text-align:center;}
+    .acct{justify-content:center;}
+    .firm-meta{gap:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <span class="edition">No. 5 · The Autonomous Studio Review</span>
+      <span class="edition">Operator's Desk · 24 June 2026</span>
+      <nav class="acct" aria-label="Account">
+        <a href="#">Sign in</a>
+        <a href="#" class="reg">Register</a>
+      </nav>
+    </div>
+    <div class="wordmark">
+      <h1>C&nbsp;<span class="slop">Slop&nbsp;Slop</span></h1>
+      <p class="dek">A portfolio of micro-SaaS companies, conceived, built &amp; operated by agents — reviewed by you.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-portfolio" aria-selected="true" aria-controls="panel-portfolio" onclick="showTab('portfolio')">Portfolio</button>
+      <button role="tab" id="tab-opportunities" aria-selected="false" aria-controls="panel-opportunities" onclick="showTab('opportunities')">Opportunities</button>
+    </div>
+    <div class="folio">
+      <div><span class="num">2,418</span><span class="lbl">Total Users</span></div>
+      <div><span class="num">$9,210</span><span class="lbl">Total MRR</span></div>
+      <div><span class="num">5</span><span class="lbl">Companies</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== PORTFOLIO ===================== -->
+<section class="panel" id="panel-portfolio" role="tabpanel" aria-labelledby="tab-portfolio">
+
+  <!-- LEAD FEATURE: TranslatorBill -->
+  <article class="feature">
+    <div class="lead-grid">
+      <div>
+        <p class="kicker">Awaiting your approval</p>
+        <span class="lead-tag" style="background:#f59e0b;color:#211d17;">TranslatorBill · v0.6</span>
+        <h3>A line-by-line invoice translator, ready on staging.</h3>
+        <div class="lead-body">
+          <p>Feature six of ten has cleared the agents' build pipeline and now sits on staging, waiting only for a human signature. The work — per-line translation of cross-border invoices — was scoped, written, tested, and queued autonomously over the past two cycles.</p>
+          <p>It is the studio's most-used pre-revenue property, with 1,240 readers of foreign paperwork who would rather not squint at a column of unfamiliar tax codes. The agents recommend shipping; the pricing model remains free until line-translation graduates from beta.</p>
+        </div>
+      </div>
+      <aside>
+        <div class="pull">
+          <div class="stat-row"><span>Users</span><b>1,240</b></div>
+          <div class="stat-row"><span>MRR</span><b>$0 · pre-rev</b></div>
+          <div class="stat-row"><span>Stage</span><b>Features · 2 of 5</b></div>
+          <div class="stat-row"><span>Mission</span><b style="font-weight:400;font-style:italic;text-align:right;font-size:14px;">Translate invoices line-by-line for cross-border sellers.</b></div>
+        </div>
+        <p class="approve-note">"Feature 6 (per-line invoice translation) is ready to ship. I recommend approving the launch tweet alongside the release." — Build Agent</p>
+        <div class="btn-row">
+          <button class="btn primary">Approve &amp; Ship Feature 6</button>
+          <button class="btn">View on staging</button>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  <!-- COMPANIES IN COLUMNS -->
+  <section class="companies">
+    <header class="section-head">
+      <p class="kicker">The Holdings</p>
+      <h2 class="section-title">Five companies, in production.</h2>
+      <p class="byline">Each property advances through five stages — Build, Features, Deploy, Ads, Live — under continuous agent supervision.</p>
+    </header>
+
+    <div class="cols">
+
+      <!-- TranslatorBill -->
+      <article class="firm">
+        <div class="firm-head">
+          <span class="firm-mark" style="background:#f59e0b;"></span>
+          <h4>TranslatorBill</h4>
+          <span class="ver">v0.6</span>
+        </div>
+        <p class="mission">Translate invoices line-by-line for cross-border sellers.</p>
+        <div class="firm-meta">
+          <span class="m"><b>1,240</b><span>Users</span></span>
+          <span class="m"><b>$0</b><span>MRR · pre-rev</span></span>
+        </div>
+        <div class="pipe">
+          <div class="pipe-stages">
+            <span class="st done">Build<span class="dot"></span></span>
+            <span class="st cur">Features<span class="dot"></span></span>
+            <span class="st">Deploy<span class="dot"></span></span>
+            <span class="st">Ads<span class="dot"></span></span>
+            <span class="st">Live<span class="dot"></span></span>
+          </div>
+        </div>
+        <span class="status s-wait"><span class="tick"></span>Awaiting your approval <span class="note">— feature 6/10 ready on staging</span></span>
+      </article>
+
+      <!-- RedditPainBot -->
+      <article class="firm">
+        <div class="firm-head">
+          <span class="firm-mark" style="background:#fb7185;"></span>
+          <h4>RedditPainBot</h4>
+          <span class="ver">v0.3</span>
+        </div>
+        <p class="mission">Surface real product pain from Reddit threads daily.</p>
+        <div class="firm-meta">
+          <span class="m"><b>320</b><span>Users</span></span>
+          <span class="m"><b>$0</b><span>MRR</span></span>
+        </div>
+        <div class="pipe">
+          <div class="pipe-stages">
+            <span class="st cur">Build<span class="dot"></span></span>
+            <span class="st">Features<span class="dot"></span></span>
+            <span class="st">Deploy<span class="dot"></span></span>
+            <span class="st">Ads<span class="dot"></span></span>
+            <span class="st">Live<span class="dot"></span></span>
+          </div>
+        </div>
+        <span class="status s-block"><span class="tick"></span>Blocked <span class="note">— Reddit API key expired</span></span>
+      </article>
+
+      <!-- QuietInbox -->
+      <article class="firm">
+        <div class="firm-head">
+          <span class="firm-mark" style="background:#a78bfa;"></span>
+          <h4>QuietInbox</h4>
+          <span class="ver">v0.4</span>
+        </div>
+        <p class="mission">Auto-triage and summarize your support inbox.</p>
+        <div class="firm-meta">
+          <span class="m"><b>880</b><span>Users</span></span>
+          <span class="m"><b>$0</b><span>MRR</span></span>
+        </div>
+        <div class="pipe">
+          <div class="pipe-stages">
+            <span class="st done">Build<span class="dot"></span></span>
+            <span class="st cur">Features<span class="dot"></span></span>
+            <span class="st">Deploy<span class="dot"></span></span>
+            <span class="st">Ads<span class="dot"></span></span>
+            <span class="st">Live<span class="dot"></span></span>
+          </div>
+        </div>
+        <span class="status s-build"><span class="tick"></span>Building <span class="note">— agents at work</span></span>
+      </article>
+
+      <!-- LeadSift -->
+      <article class="firm">
+        <div class="firm-head">
+          <span class="firm-mark" style="background:#34d399;"></span>
+          <h4>LeadSift</h4>
+          <span class="ver">v1.2</span>
+        </div>
+        <p class="mission">Score and route inbound leads automatically.</p>
+        <div class="firm-meta">
+          <span class="m"><b>2,100</b><span>Users</span></span>
+          <span class="m"><b>$312</b><span>MRR</span></span>
+        </div>
+        <div class="pipe">
+          <div class="pipe-stages">
+            <span class="st done">Build<span class="dot"></span></span>
+            <span class="st done">Features<span class="dot"></span></span>
+            <span class="st done">Deploy<span class="dot"></span></span>
+            <span class="st done">Ads<span class="dot"></span></span>
+            <span class="st cur">Live<span class="dot"></span></span>
+          </div>
+        </div>
+        <span class="status s-live"><span class="tick"></span>Live <span class="note">— pricing change pending review</span></span>
+      </article>
+
+      <!-- DocHound -->
+      <article class="firm">
+        <div class="firm-head">
+          <span class="firm-mark" style="background:#38bdf8;"></span>
+          <h4>DocHound</h4>
+          <span class="ver">v1.0</span>
+        </div>
+        <p class="mission">Answer questions over your internal docs instantly.</p>
+        <div class="firm-meta">
+          <span class="m"><b>1,460</b><span>Users</span></span>
+          <span class="m"><b>$148</b><span>MRR</span></span>
+        </div>
+        <div class="pipe">
+          <div class="pipe-stages">
+            <span class="st done">Build<span class="dot"></span></span>
+            <span class="st done">Features<span class="dot"></span></span>
+            <span class="st done">Deploy<span class="dot"></span></span>
+            <span class="st cur">Ads<span class="dot"></span></span>
+            <span class="st">Live<span class="dot"></span></span>
+          </div>
+        </div>
+        <span class="status s-live"><span class="tick"></span>Live <span class="note">— scaling acquisition</span></span>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- DESKS: NEEDS YOU + GO TO MARKET -->
+  <section class="desks">
+    <header class="section-head">
+      <p class="kicker">On your desk this morning</p>
+      <h2 class="section-title">Decisions the agents cannot make alone.</h2>
+    </header>
+    <div class="desks-grid">
+
+      <div class="desk-col">
+        <h3>Needs You</h3>
+        <p class="sub">The human-intervention queue — three items.</p>
+
+        <div class="entry">
+          <span class="no">I.</span>
+          <div class="body">
+            <h5>Approve feature 6 — TranslatorBill</h5>
+            <p>Per-line invoice translation is ready to ship.</p>
+            <span class="who">TranslatorBill · v0.6</span>
+          </div>
+          <div class="act"><button class="mini">Approve</button></div>
+        </div>
+
+        <div class="entry">
+          <span class="no">II.</span>
+          <div class="body">
+            <h5>RedditPainBot blocked</h5>
+            <p>Reddit API key expired — agents paused until rotated.</p>
+            <span class="who">RedditPainBot · v0.3</span>
+          </div>
+          <div class="act"><button class="mini">Resolve</button></div>
+        </div>
+
+        <div class="entry">
+          <span class="no">III.</span>
+          <div class="body">
+            <h5>Confirm pricing change — LeadSift</h5>
+            <p>Proposed increase: $29 → $39 / month.</p>
+            <span class="who">LeadSift · v1.2</span>
+          </div>
+          <div class="act"><button class="mini">Confirm</button></div>
+        </div>
+      </div>
+
+      <div class="desk-col">
+        <h3>Go to Market</h3>
+        <p class="sub">Distribution &amp; growth — four items.</p>
+
+        <div class="entry">
+          <span class="no">I.</span>
+          <div class="body">
+            <h5>Approve launch tweet</h5>
+            <p>Announcement copy drafted for feature 6.</p>
+            <span class="who">TranslatorBill</span>
+          </div>
+          <div class="act"><button class="mini gold">Review</button></div>
+        </div>
+
+        <div class="entry">
+          <span class="no">II.</span>
+          <div class="body">
+            <h5>3 support messages</h5>
+            <p>Drafted replies awaiting your sign-off.</p>
+            <span class="who">QuietInbox</span>
+          </div>
+          <div class="act"><button class="mini gold">Open</button></div>
+        </div>
+
+        <div class="entry">
+          <span class="no">III.</span>
+          <div class="body">
+            <h5>Reply to investor email</h5>
+            <p>Inbound interest — draft prepared.</p>
+            <span class="who">LeadSift</span>
+          </div>
+          <div class="act"><button class="mini gold">Reply</button></div>
+        </div>
+
+        <div class="entry">
+          <span class="no">IV.</span>
+          <div class="body">
+            <h5>Posted LinkedIn update</h5>
+            <p>Published autonomously — 1.2k impressions.</p>
+            <span class="who">DocHound</span>
+          </div>
+          <div class="act"><button class="mini">View</button></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AGENT LAYER -->
+  <section class="agents">
+    <header class="section-head">
+      <p class="kicker">The Machine Room</p>
+      <h2 class="section-title">Where the agents work.</h2>
+      <p class="byline">A standing conversation with the studio assistant, and the live activity it logs as it builds.</p>
+    </header>
+
+    <div class="agent-grid">
+
+      <div class="chat">
+        <div class="ttl">Studio Assistant <small>builds &amp; edits companies</small></div>
+        <div class="stream" id="chat-stream">
+          <div class="bubble ai"><div class="nm">Assistant</div><p>Feature 6 for TranslatorBill is on staging and passing tests. Shall I ship it and post the launch tweet?</p></div>
+          <div class="bubble me"><div class="nm">You</div><p>Hold the tweet. Ship the feature first.</p></div>
+          <div class="bubble ai"><div class="nm">Assistant</div><p>Understood. Deploying now — I'll keep the tweet drafted in Go to Market for your review.</p></div>
+        </div>
+        <form class="compose" onsubmit="sendMsg(event)">
+          <input id="chat-input" type="text" placeholder="Tell the agents what to build…" aria-label="Message the studio assistant">
+          <button type="submit">Send</button>
+        </form>
+      </div>
+
+      <div class="console" aria-label="Agent activity feed">
+        <div class="ttl"><span class="live"></span>Agent Activity · Live Console</div>
+        <ul class="log" id="log">
+          <li><span class="t">09:42:07</span><span class="ev"><span class="agent">build-agent</span> deployed TranslatorBill feature/6 to staging <span class="ok">✓</span></span></li>
+          <li><span class="t">09:41:55</span><span class="ev"><span class="agent">test-agent</span> 18/18 tests passed on feature/6 <span class="ok">✓</span></span></li>
+          <li><span class="t">09:40:12</span><span class="ev"><span class="agent">scan-agent</span> RedditPainBot fetch failed — 401 key expired <span class="warn">✗</span></span></li>
+          <li><span class="t">09:38:44</span><span class="ev"><span class="agent">build-agent</span> QuietInbox: writing summarizer module…</span></li>
+          <li><span class="t">09:36:01</span><span class="ev"><span class="agent">gtm-agent</span> drafted launch tweet for TranslatorBill</span></li>
+          <li><span class="t">09:34:29</span><span class="ev"><span class="agent">gtm-agent</span> posted LinkedIn update for DocHound — 1.2k impressions <span class="ok">✓</span></span></li>
+          <li><span class="t">09:31:50</span><span class="ev"><span class="agent">ops-agent</span> LeadSift pricing experiment queued ($29→$39)</span></li>
+          <li><span class="t">09:29:13</span><span class="ev"><span class="agent">build-agent</span> DocHound: indexed 4,120 new docs <span class="ok">✓</span></span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+</section>
+
+<!-- ===================== OPPORTUNITIES ===================== -->
+<section class="panel opp" id="panel-opportunities" role="tabpanel" aria-labelledby="tab-opportunities" hidden>
+  <header class="section-head">
+    <p class="kicker">The Pipeline</p>
+    <h2 class="section-title">What the studio might build next.</h2>
+  </header>
+  <p class="opp-lead">Between cycles, the scanning agents read the open web for unmet, <em>painful</em>, monetizable problems — and propose the companies worth founding.</p>
+  <div class="opp-list">
+    <article class="opp-item">
+      <h4>ContractDiff</h4>
+      <p>Redline two contract versions and explain every change in plain language.</p>
+      <span class="score">Signal · High · est. $40/mo</span>
+    </article>
+    <article class="opp-item">
+      <h4>StandupGhost</h4>
+      <p>Write async standup updates from a team's commits and tickets.</p>
+      <span class="score">Signal · Medium · est. $19/mo</span>
+    </article>
+    <article class="opp-item">
+      <h4>ChurnWhisper</h4>
+      <p>Predict and pre-empt SaaS cancellations from usage decay.</p>
+      <span class="score">Signal · High · est. $79/mo</span>
+    </article>
+    <article class="opp-item">
+      <h4>MenuRender</h4>
+      <p>Turn a photographed paper menu into an ordering page in minutes.</p>
+      <span class="score">Signal · Medium · est. $29/mo</span>
+    </article>
+    <article class="opp-item">
+      <h4>RefundShield</h4>
+      <p>Auto-draft chargeback evidence packets for small merchants.</p>
+      <span class="score">Signal · High · est. $49/mo</span>
+    </article>
+    <article class="opp-item">
+      <h4>CitePilot</h4>
+      <p>Verify citations in research drafts against their actual sources.</p>
+      <span class="score">Signal · Medium · est. $24/mo</span>
+    </article>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon">
+  <div class="wrap">
+    <p>Set in <b>Fraunces</b>, <b>Source Serif 4</b> &amp; <b>Spectral</b>. <br>
+    <b>C Slop Slop</b> — an autonomous studio. Built by agents, reviewed by you. · Operator's Edition № 5</p>
+  </div>
+</footer>
+
+<script>
+  function showTab(name){
+    var isP = name === 'portfolio';
+    document.getElementById('panel-portfolio').hidden = !isP;
+    document.getElementById('panel-opportunities').hidden = isP;
+    document.getElementById('tab-portfolio').setAttribute('aria-selected', isP);
+    document.getElementById('tab-opportunities').setAttribute('aria-selected', !isP);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function sendMsg(e){
+    e.preventDefault();
+    var inp = document.getElementById('chat-input');
+    var v = inp.value.trim();
+    if(!v) return;
+    var stream = document.getElementById('chat-stream');
+    var me = document.createElement('div');
+    me.className = 'bubble me';
+    me.innerHTML = '<div class="nm">You</div><p></p>';
+    me.querySelector('p').textContent = v;
+    stream.appendChild(me);
+    inp.value = '';
+    setTimeout(function(){
+      var ai = document.createElement('div');
+      ai.className = 'bubble ai';
+      ai.innerHTML = '<div class="nm">Assistant</div><p>Noted. I’ll route that to the build queue and report back in the activity console.</p>';
+      stream.appendChild(ai);
+      stream.scrollTop = stream.scrollHeight;
+    }, 600);
+    stream.scrollTop = stream.scrollHeight;
+  }
+</script>
+
+</body>
+</html>

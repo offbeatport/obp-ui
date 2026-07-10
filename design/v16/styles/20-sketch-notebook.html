@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C Slop Slop — Notebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Gochi+Hand&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#fbf6e9;
+    --paper-2:#f6efdb;
+    --ink:#2c2a26;
+    --ink-soft:#5c574d;
+    --ink-faint:#8a8377;
+    --rule:#c9d6e8;       /* notebook horizontal rule */
+    --margin:#e7a39a;     /* red margin line */
+    --hl-yellow:#fff07a;
+    --hl-green:#bdf0c4;
+    --hl-pink:#ffc6d3;
+    --hl-blue:#bfe3ff;
+    --line:#3a362f;
+    --green:#2f8a4f;
+    --red:#cc4b3b;
+    --amber:#c98a1a;
+    --shadow:rgba(60,54,40,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Kalam',cursive;
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px);
+    background-size:100% 30px;
+    background-position:0 14px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* red margin line down the left */
+  body::before{
+    content:"";
+    position:fixed;
+    top:0;bottom:0;
+    left:56px;
+    width:2px;
+    background:var(--margin);
+    opacity:.5;
+    z-index:0;
+    pointer-events:none;
+  }
+  @media (max-width:768px){
+    body::before{left:20px}
+    body{background-size:100% 28px}
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 40px 80px 88px;
+  }
+  @media (max-width:768px){ .wrap{padding:20px 18px 60px 36px} }
+
+  h1,h2,h3,.hand{font-family:'Caveat',cursive;font-weight:700;letter-spacing:.3px}
+
+  a{color:inherit}
+
+  /* ---------- header ---------- */
+  header.top{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:18px;flex-wrap:wrap;
+    border-bottom:3px solid var(--line);
+    border-image: none;
+    padding-bottom:10px;
+    margin-bottom:6px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px}
+  .brand .logo{
+    font-family:'Gochi Hand',cursive;
+    font-size:clamp(34px,5vw,52px);
+    line-height:.9;
+    color:var(--ink);
+    position:relative;
+  }
+  .brand .logo .slop{background:linear-gradient(transparent 60%, var(--hl-yellow) 60%);padding:0 .08em}
+  .brand .tag{font-family:'Caveat';font-size:20px;color:var(--ink-faint);transform:rotate(-2deg)}
+
+  .account{display:flex;align-items:center;gap:10px}
+  .btn{
+    font-family:'Caveat';font-weight:700;font-size:20px;
+    background:var(--paper);
+    color:var(--ink);
+    border:2px solid var(--line);
+    border-radius:14px 12px 16px 11px/12px 16px 11px 15px;
+    padding:5px 16px;cursor:pointer;
+    box-shadow:2px 3px 0 var(--shadow);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:3px 4px 0 var(--shadow)}
+  .btn:active{transform:translate(1px,2px);box-shadow:1px 1px 0 var(--shadow)}
+  .btn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  /* tabs */
+  nav.tabs{display:flex;gap:6px;margin:14px 0 24px}
+  .tab{
+    font-family:'Caveat';font-weight:700;font-size:24px;
+    padding:4px 18px 6px;
+    color:var(--ink-faint);
+    position:relative;cursor:pointer;
+    background:none;border:none;
+  }
+  .tab.active{color:var(--ink)}
+  .tab.active::after{
+    content:"";position:absolute;left:6px;right:6px;bottom:0;height:8px;
+    background:var(--hl-yellow);
+    border-radius:40% 60% 50% 45%/60% 50% 60% 40%;
+    z-index:-1;transform:rotate(-1deg);
+  }
+
+  /* ---------- stats strip ---------- */
+  .stats{
+    display:flex;gap:0;flex-wrap:wrap;
+    border:2.5px solid var(--line);
+    border-radius:18px 16px 20px 15px/15px 20px 14px 18px;
+    background:var(--paper-2);
+    box-shadow:3px 4px 0 var(--shadow);
+    overflow:hidden;
+    margin-bottom:34px;
+  }
+  .stat{flex:1 1 200px;padding:14px 22px;position:relative}
+  .stat + .stat::before{
+    content:"";position:absolute;left:0;top:14%;bottom:14%;
+    border-left:2px dashed var(--ink-faint);opacity:.5;
+  }
+  .stat .k{font-family:'Caveat';font-size:18px;color:var(--ink-soft)}
+  .stat .v{font-family:'Gochi Hand';font-size:34px;line-height:1}
+  .stat .v small{font-size:18px;color:var(--ink-faint)}
+  .stat:nth-child(2) .v{color:var(--green)}
+
+  /* section heading */
+  .sec-h{display:flex;align-items:baseline;gap:14px;margin:8px 0 16px}
+  .sec-h h2{font-size:34px;margin:0;line-height:1}
+  .sec-h .sub{font-family:'Caveat';font-size:19px;color:var(--ink-faint)}
+  .doodle-arrow{font-family:'Caveat';color:var(--margin);font-size:26px;transform:rotate(-6deg)}
+
+  /* layout columns */
+  .cols{display:grid;grid-template-columns:1fr 360px;gap:34px;align-items:start}
+  @media (max-width:980px){ .cols{grid-template-columns:1fr} }
+
+  /* ---------- company cards ---------- */
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  @media (max-width:680px){ .cards{grid-template-columns:1fr} }
+
+  .card{
+    background:var(--paper);
+    border:2.5px solid var(--line);
+    border-radius:20px 16px 22px 15px/16px 22px 15px 20px;
+    padding:18px 18px 16px;
+    position:relative;
+    box-shadow:3px 5px 0 var(--shadow);
+    --c:#888;
+  }
+  .card::after{ /* tape */
+    content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-3deg);
+    width:64px;height:20px;background:rgba(255,240,122,.55);
+    border:1px solid rgba(0,0,0,.06);
+  }
+  .card .cardhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+  .swatch{
+    width:26px;height:26px;flex:0 0 auto;margin-top:3px;
+    background:var(--c);
+    border:2px solid var(--ink);
+    border-radius:50% 45% 55% 48%/48% 55% 45% 52%;
+    box-shadow:1px 2px 0 var(--shadow);
+  }
+  .card .name{font-family:'Caveat';font-weight:700;font-size:28px;line-height:1}
+  .card .ver{font-family:'Kalam';font-size:13px;color:var(--ink-faint)}
+  .card .mission{font-size:15px;color:var(--ink-soft);min-height:42px;margin:4px 0 10px}
+
+  .metrics{display:flex;gap:18px;margin-bottom:12px}
+  .metric .ml{font-family:'Caveat';font-size:15px;color:var(--ink-faint);line-height:1}
+  .metric .mv{font-family:'Gochi Hand';font-size:22px;line-height:1.1}
+  .metric .mv.rev{color:var(--green)}
+  .metric .mv.zero{color:var(--ink-faint)}
+
+  /* lifecycle stepper */
+  .pipe{display:flex;align-items:center;gap:0;margin:6px 0 12px}
+  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+  .step .dot{
+    width:18px;height:18px;border:2px solid var(--ink);border-radius:50%;
+    background:var(--paper);z-index:1;display:grid;place-items:center;
+    font-size:11px;line-height:1;
+  }
+  .step.done .dot{background:var(--c)}
+  .step.cur .dot{background:var(--hl-yellow);box-shadow:0 0 0 4px rgba(255,240,122,.45)}
+  .step .sl{font-family:'Caveat';font-size:13px;color:var(--ink-faint)}
+  .step.done .sl,.step.cur .sl{color:var(--ink)}
+  .step::before{ /* connector */
+    content:"";position:absolute;top:9px;left:-50%;width:100%;height:2px;
+    background:repeating-linear-gradient(90deg,var(--ink-faint) 0 5px,transparent 5px 9px);
+    opacity:.6;z-index:0;
+  }
+  .step:first-child::before{display:none}
+  .step.done::before,.step.cur::before{background:var(--ink);opacity:.8}
+
+  /* status pill */
+  .status{
+    display:inline-flex;align-items:center;gap:7px;
+    font-family:'Caveat';font-weight:700;font-size:18px;
+    padding:3px 12px 4px;border:2px solid var(--ink);
+    border-radius:13px 11px 14px 10px/10px 14px 9px 13px;
+    background:var(--paper-2);
+  }
+  .status::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ink)}
+  .status.approve{background:var(--hl-yellow)}
+  .status.approve::before{background:var(--amber)}
+  .status.blocked{background:var(--hl-pink)}
+  .status.blocked::before{background:var(--red)}
+  .status.building{background:var(--hl-blue)}
+  .status.building::before{background:#2b6fb0}
+  .status.live{background:var(--hl-green)}
+  .status.live::before{background:var(--green)}
+  .card .note{font-family:'Kalam';font-size:13px;color:var(--ink-soft);margin-top:8px;font-style:italic}
+
+  /* ---------- sidebar boxes ---------- */
+  .panel{
+    background:var(--paper);
+    border:2.5px solid var(--line);
+    border-radius:18px 20px 16px 22px/20px 16px 22px 16px;
+    box-shadow:3px 5px 0 var(--shadow);
+    padding:16px 18px;margin-bottom:26px;position:relative;
+  }
+  .panel h3{font-size:28px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+  .panel .ph-sub{font-family:'Kalam';font-size:13px;color:var(--ink-faint);margin-bottom:10px}
+  .panel.needs h3 .mark{background:var(--hl-pink);padding:0 .15em;border-radius:6px}
+  .panel.gtm h3 .mark{background:var(--hl-green);padding:0 .15em;border-radius:6px}
+
+  ul.todo{list-style:none;margin:0;padding:0}
+  ul.todo li{
+    display:flex;gap:10px;align-items:flex-start;
+    padding:9px 0;border-bottom:1.5px dashed #d8d0bd;
+  }
+  ul.todo li:last-child{border-bottom:none}
+  .chk{
+    flex:0 0 auto;width:22px;height:22px;margin-top:1px;
+    border:2px solid var(--ink);border-radius:6px 5px 7px 4px/5px 7px 4px 6px;
+    display:grid;place-items:center;font-family:'Caveat';font-weight:700;
+    color:var(--green);font-size:22px;background:var(--paper);
+  }
+  .chk.arrow{color:var(--margin);border-color:var(--margin)}
+  .todo .t{font-size:14.5px;line-height:1.35}
+  .todo .t b{font-family:'Caveat';font-weight:700;font-size:18px}
+  .todo .who{font-family:'Caveat';color:var(--ink-faint);font-size:15px}
+
+  /* ---------- agent console ---------- */
+  .console{
+    background:#2b2822;
+    color:#e7e0cf;
+    border:2.5px solid var(--ink);
+    border-radius:16px 18px 14px 18px/18px 14px 18px 16px;
+    box-shadow:3px 5px 0 var(--shadow);
+    padding:14px 16px;margin-bottom:26px;
+    font-family:'Kalam';
+  }
+  .console h3{font-family:'Caveat';font-size:26px;margin:0 0 8px;color:#fff07a;display:flex;align-items:center;gap:8px}
+  .console .blink{width:9px;height:14px;background:#bdf0c4;display:inline-block;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .feed{font-size:13px;line-height:1.7;max-height:210px;overflow:auto}
+  .feed .ln{display:flex;gap:8px}
+  .feed .ts{color:#8a8377;flex:0 0 auto}
+  .feed .ag{color:#bfe3ff}
+  .feed .ev .ok{color:#bdf0c4}
+  .feed .ev .warn{color:#ffc6d3}
+
+  /* agent chat dock */
+  .chatdock{
+    display:flex;gap:8px;align-items:center;
+    background:var(--paper);border:2.5px solid var(--line);
+    border-radius:16px;padding:8px 10px;box-shadow:3px 5px 0 var(--shadow);
+  }
+  .chatdock .avatar{
+    width:40px;height:40px;flex:0 0 auto;border:2px solid var(--ink);border-radius:50%;
+    background:var(--hl-blue);display:grid;place-items:center;font-family:'Gochi Hand';font-size:20px;
+  }
+  .chatdock input{
+    flex:1;border:none;background:transparent;font-family:'Kalam';font-size:14px;color:var(--ink);
+    outline:none;
+  }
+  .chatdock input::placeholder{color:var(--ink-faint)}
+  .chatdock .send{
+    font-family:'Caveat';font-weight:700;font-size:18px;background:var(--ink);color:var(--paper);
+    border:none;border-radius:12px;padding:5px 14px;cursor:pointer;
+  }
+
+  footer{
+    margin-top:40px;text-align:center;font-family:'Caveat';font-size:18px;color:var(--ink-faint);
+  }
+  .scribble{display:inline-block;transform:rotate(-2deg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="brand">
+      <div class="logo">C&nbsp;<span class="slop">Slop&nbsp;Slop</span></div>
+      <div class="tag">the studio notebook ~ agents building little companies</div>
+    </div>
+    <div class="account">
+      <button class="btn">sign in</button>
+      <button class="btn solid">register</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active">Portfolio</button>
+    <button class="tab">Opportunities</button>
+  </nav>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="k">total users</div><div class="v">2,418</div></div>
+    <div class="stat"><div class="k">total MRR</div><div class="v">$9,210</div></div>
+    <div class="stat"><div class="k">companies</div><div class="v">5 <small>in the book</small></div></div>
+  </div>
+
+  <div class="cols">
+
+    <!-- LEFT: companies -->
+    <main>
+      <div class="sec-h">
+        <h2>The Portfolio</h2>
+        <span class="sub">5 little companies, all in motion</span>
+        <span class="doodle-arrow">&#10551; pinned to the page</span>
+      </div>
+
+      <div class="cards">
+
+        <!-- TranslatorBill -->
+        <article class="card" style="--c:#f59e0b">
+          <div class="cardhead">
+            <div class="swatch"></div>
+            <div>
+              <div class="name">TranslatorBill</div>
+              <div class="ver">v0.6</div>
+            </div>
+          </div>
+          <p class="mission">Translate invoices line-by-line for cross-border sellers.</p>
+          <div class="metrics">
+            <div class="metric"><div class="ml">users</div><div class="mv">1,240</div></div>
+            <div class="metric"><div class="ml">MRR</div><div class="mv zero">$0 <span style="font-size:12px">pre-rev</span></div></div>
+          </div>
+          <div class="pipe">
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Build</div></div>
+            <div class="step cur"><div class="dot"></div><div class="sl">Features</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Deploy</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Ads</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Live</div></div>
+          </div>
+          <span class="status approve">awaiting your approval</span>
+          <p class="note">feature 6/10 ready on staging &rarr; needs your eyes</p>
+        </article>
+
+        <!-- RedditPainBot -->
+        <article class="card" style="--c:#fb7185">
+          <div class="cardhead">
+            <div class="swatch"></div>
+            <div>
+              <div class="name">RedditPainBot</div>
+              <div class="ver">v0.3</div>
+            </div>
+          </div>
+          <p class="mission">Surface real product pain from Reddit threads daily.</p>
+          <div class="metrics">
+            <div class="metric"><div class="ml">users</div><div class="mv">320</div></div>
+            <div class="metric"><div class="ml">MRR</div><div class="mv zero">$0</div></div>
+          </div>
+          <div class="pipe">
+            <div class="step cur"><div class="dot"></div><div class="sl">Build</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Features</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Deploy</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Ads</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Live</div></div>
+          </div>
+          <span class="status blocked">blocked</span>
+          <p class="note">Reddit API key expired &mdash; agent is stuck, halp!</p>
+        </article>
+
+        <!-- QuietInbox -->
+        <article class="card" style="--c:#a78bfa">
+          <div class="cardhead">
+            <div class="swatch"></div>
+            <div>
+              <div class="name">QuietInbox</div>
+              <div class="ver">v0.4</div>
+            </div>
+          </div>
+          <p class="mission">Auto-triage and summarize your support inbox.</p>
+          <div class="metrics">
+            <div class="metric"><div class="ml">users</div><div class="mv">880</div></div>
+            <div class="metric"><div class="ml">MRR</div><div class="mv zero">$0</div></div>
+          </div>
+          <div class="pipe">
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Build</div></div>
+            <div class="step cur"><div class="dot"></div><div class="sl">Features</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Deploy</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Ads</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Live</div></div>
+          </div>
+          <span class="status building">building</span>
+          <p class="note">agent humming along, no input needed yet</p>
+        </article>
+
+        <!-- LeadSift -->
+        <article class="card" style="--c:#34d399">
+          <div class="cardhead">
+            <div class="swatch"></div>
+            <div>
+              <div class="name">LeadSift</div>
+              <div class="ver">v1.2</div>
+            </div>
+          </div>
+          <p class="mission">Score and route inbound leads automatically.</p>
+          <div class="metrics">
+            <div class="metric"><div class="ml">users</div><div class="mv">2,100</div></div>
+            <div class="metric"><div class="ml">MRR</div><div class="mv rev">$312</div></div>
+          </div>
+          <div class="pipe">
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Build</div></div>
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Features</div></div>
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Deploy</div></div>
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Ads</div></div>
+            <div class="step cur"><div class="dot">&#10003;</div><div class="sl">Live</div></div>
+          </div>
+          <span class="status live">live &amp; earning</span>
+          <p class="note">the star pupil of the class</p>
+        </article>
+
+        <!-- DocHound -->
+        <article class="card" style="--c:#38bdf8">
+          <div class="cardhead">
+            <div class="swatch"></div>
+            <div>
+              <div class="name">DocHound</div>
+              <div class="ver">v1.0</div>
+            </div>
+          </div>
+          <p class="mission">Answer questions over your internal docs instantly.</p>
+          <div class="metrics">
+            <div class="metric"><div class="ml">users</div><div class="mv">1,460</div></div>
+            <div class="metric"><div class="ml">MRR</div><div class="mv rev">$148</div></div>
+          </div>
+          <div class="pipe">
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Build</div></div>
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Features</div></div>
+            <div class="step done"><div class="dot">&#10003;</div><div class="sl">Deploy</div></div>
+            <div class="step cur"><div class="dot"></div><div class="sl">Ads</div></div>
+            <div class="step"><div class="dot"></div><div class="sl">Live</div></div>
+          </div>
+          <span class="status live">live</span>
+          <p class="note">running ads now &mdash; squeezing for growth</p>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- RIGHT: queues + agents -->
+    <aside>
+
+      <section class="panel needs">
+        <h3>&#9755; <span class="mark">Needs You</span></h3>
+        <div class="ph-sub">3 things only a human can decide</div>
+        <ul class="todo">
+          <li>
+            <span class="chk">&#10003;</span>
+            <span class="t"><b>Approve feature 6</b> <span class="who">— TranslatorBill</span><br/>per-line invoice translation, ready to ship.</span>
+          </li>
+          <li>
+            <span class="chk arrow">!</span>
+            <span class="t"><b>RedditPainBot blocked</b><br/>Reddit API key expired &mdash; paste a fresh one.</span>
+          </li>
+          <li>
+            <span class="chk">&#10003;</span>
+            <span class="t"><b>Confirm pricing change</b> <span class="who">— LeadSift</span><br/>$29 &rarr; $39 / mo.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel gtm">
+        <h3>&#9758; <span class="mark">Go To Market</span></h3>
+        <div class="ph-sub">4 things out in the world</div>
+        <ul class="todo">
+          <li><span class="chk">&#10003;</span><span class="t"><b>Approve launch tweet</b> <span class="who">— TranslatorBill</span></span></li>
+          <li><span class="chk">&#10003;</span><span class="t"><b>3 support messages</b> <span class="who">— QuietInbox</span></span></li>
+          <li><span class="chk">&#10003;</span><span class="t"><b>Reply to investor email</b> <span class="who">— LeadSift</span></span></li>
+          <li><span class="chk">&#10003;</span><span class="t"><b>Posted LinkedIn update</b> <span class="who">— DocHound</span> · 1.2k impressions</span></li>
+        </ul>
+      </section>
+
+      <section class="console">
+        <h3>&#9670; Agent Activity <span class="blink"></span></h3>
+        <div class="feed">
+          <div class="ln"><span class="ts">09:41</span><span class="ag">@builder</span><span class="ev">scaffolding feature 6 <span class="ok">ok</span></span></div>
+          <div class="ln"><span class="ts">09:43</span><span class="ag">@deployer</span><span class="ev">pushed TranslatorBill &rarr; staging</span></div>
+          <div class="ln"><span class="ts">09:50</span><span class="ag">@scanner</span><span class="ev">reddit fetch failed <span class="warn">401 key expired</span></span></div>
+          <div class="ln"><span class="ts">10:02</span><span class="ag">@gtm</span><span class="ev">drafted launch tweet, queued for review</span></div>
+          <div class="ln"><span class="ts">10:14</span><span class="ag">@builder</span><span class="ev">QuietInbox triage rules compiled <span class="ok">ok</span></span></div>
+          <div class="ln"><span class="ts">10:20</span><span class="ag">@ads</span><span class="ev">DocHound campaign live, CPC $0.42</span></div>
+          <div class="ln"><span class="ts">10:31</span><span class="ag">@finance</span><span class="ev">LeadSift MRR ticked +$24</span></div>
+        </div>
+      </section>
+
+      <div class="chatdock">
+        <div class="avatar">AI</div>
+        <input placeholder="ask an agent to build or fix a company..." aria-label="agent chat" />
+        <button class="send">go</button>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <footer><span class="scribble">~ end of page ~ flip for tomorrow's standup ~</span></footer>
+
+</div>
+
+<script>
+  // tabs (purely cosmetic toggle)
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

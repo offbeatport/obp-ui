@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop — Layout options</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#010407;color:#cdd6e0;font:14px/1.5 ui-sans-serif,system-ui,sans-serif}
+  .bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 22px;background:#060d1c;border-bottom:1px solid rgba(100,130,180,.26)}
+  .bar b{color:#fff}
+  select{font:13px ui-monospace,monospace;background:#010407;color:#cdd6e0;border:1px solid rgba(100,130,180,.4);border-radius:6px;padding:6px 10px;min-width:340px}
+  .desc{color:#7e8ca0;font-size:12px}
+  main{padding:22px}
+  h1{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7e8ca0;font-weight:600;margin:0 0 14px}
+  /* schematic blocks */
+  .box{border:1px dashed rgba(100,130,180,.4);border-radius:8px;padding:14px;background:rgba(100,130,180,.04)}
+  .box.solid{border-style:solid;background:rgba(100,130,180,.07)}
+  .lbl{font:11px ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#8aa;margin-bottom:10px}
+  .chip{display:inline-block;border:1px solid rgba(100,130,180,.35);border-radius:5px;padding:4px 9px;margin:3px 4px 3px 0;font:12px ui-monospace,monospace;color:#aeb9c9}
+  .chip.acc{border-color:#60a5fa;color:#9cc4fb}
+  .chip.warn{border-color:#f59e0b;color:#f6c267}
+  .row{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(100,130,180,.12)}
+  .row:last-child{border-bottom:0}
+  .dot{width:8px;height:8px;border-radius:50%;background:#60a5fa;flex:0 0 auto}
+  .muted{color:#7e8ca0;font-size:12px}
+  .step{height:6px;border-radius:3px;background:rgba(100,130,180,.2);margin-top:7px;position:relative;overflow:hidden}
+  .step i{position:absolute;left:0;top:0;bottom:0;background:#60a5fa;border-radius:3px}
+  .grid{display:grid;gap:16px;align-items:start}
+  .hide{display:none}
+  .note{color:#5f6b7d;font-size:11px;margin:18px 0 0}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <b>C Slop Slop · Layout options</b>
+    <select id="pick">
+      <option value="1">1 · Inbox + Workspace (two-pane)</option>
+      <option value="2">2 · Companies-first rows (full-width)</option>
+      <option value="3">3 · Priority lanes (Now / Soon / Done)</option>
+      <option value="4">4 · Hero + supporting (single focus)</option>
+      <option value="5">5 · Current, balanced (Companies / Actions / GTM)</option>
+    </select>
+    <span class="desc" id="desc"></span>
+  </div>
+
+  <main>
+
+    <!-- 1 · Inbox + Workspace -->
+    <section data-l="1">
+      <div class="box solid" style="margin-bottom:14px">
+        <span class="chip">Company switch ▾ TranslatorBill</span>
+        <span class="chip">RedditPainBot</span><span class="chip">QuietInbox</span>
+        <span class="chip">LeadSift</span><span class="chip">DocHound</span>
+      </div>
+      <div class="grid" style="grid-template-columns:minmax(300px,380px) 1fr">
+        <div class="box">
+          <div class="lbl">Needs you · merged feed (sorted by urgency)</div>
+          <div class="row"><span class="dot" style="background:#f59e0b"></span><div><div>Approve feature 6 — TranslatorBill</div><div class="muted">approval · staging ready</div></div></div>
+          <div class="row"><span class="dot" style="background:#ef4444"></span><div><div>RedditPainBot blocked</div><div class="muted">API key expired</div></div></div>
+          <div class="row"><span class="dot" style="background:#60a5fa"></span><div><div>Approve launch tweet — TranslatorBill</div><div class="muted">gtm · post pending</div></div></div>
+          <div class="row"><span class="dot"></span><div><div>3 support messages — QuietInbox</div><div class="muted">gtm · support</div></div></div>
+          <div class="row"><span class="dot"></span><div><div>Confirm pricing — LeadSift</div><div class="muted">decision</div></div></div>
+        </div>
+        <div class="box" style="min-height:340px">
+          <div class="lbl">Workspace · selected item detail</div>
+          <div class="muted">Live preview · diff · description · approve / chat — for whatever is selected on the left.</div>
+          <div class="box" style="margin-top:14px;height:200px;display:flex;align-items:center;justify-content:center;color:#5f6b7d">detail / preview area</div>
+        </div>
+      </div>
+      <p class="note">Optimizes for "what do I action next". Companies are a thin switcher; everything actionable is one feed.</p>
+    </section>
+
+    <!-- 2 · Companies-first rows -->
+    <section data-l="2" class="hide">
+      <div class="box">
+        <div class="lbl">Companies · one full-width row each, actions inline</div>
+        <div class="row" style="gap:14px">
+          <div style="flex:0 0 200px"><b>TranslatorBill</b> <span class="muted">v0.6</span><div class="step"><i style="width:40%"></i></div><div class="muted">Features · 1,240 users</div></div>
+          <div style="flex:1"><span class="chip warn">⚑ approve feature 6</span><span class="chip acc">launch tweet</span></div>
+        </div>
+        <div class="row" style="gap:14px">
+          <div style="flex:0 0 200px"><b>RedditPainBot</b> <span class="muted">v0.3</span><div class="step"><i style="width:20%;background:#ef4444"></i></div><div class="muted">Build · blocked</div></div>
+          <div style="flex:1"><span class="chip" style="border-color:#ef4444;color:#f3a">⚑ blocked: API key</span></div>
+        </div>
+        <div class="row" style="gap:14px">
+          <div style="flex:0 0 200px"><b>LeadSift</b> <span class="muted">v1.2</span><div class="step"><i style="width:100%;background:#34d399"></i></div><div class="muted">Live · $312 MRR</div></div>
+          <div style="flex:1"><span class="chip">pricing decision</span><span class="chip acc">investor email</span></div>
+        </div>
+        <div class="row" style="gap:14px">
+          <div style="flex:0 0 200px"><b>DocHound</b> <span class="muted">v1.0</span><div class="step"><i style="width:80%;background:#38bdf8"></i></div><div class="muted">Ads · $148 MRR</div></div>
+          <div style="flex:1"><span class="chip">posted: LinkedIn</span></div>
+        </div>
+      </div>
+      <p class="note">Everything hangs off the company. Best when you think company-by-company. No separate columns.</p>
+    </section>
+
+    <!-- 3 · Priority lanes -->
+    <section data-l="3" class="hide">
+      <div class="box solid" style="margin-bottom:14px"><span class="lbl" style="margin:0">Companies overview (collapsible strip)</span>
+        <span class="chip">T 40%</span><span class="chip">R blocked</span><span class="chip">Q 40%</span><span class="chip">L live</span><span class="chip">D ads</span>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="box"><div class="lbl" style="color:#f59e0b">Now</div>
+          <div class="row"><span class="dot" style="background:#f59e0b"></span>Approve feature 6 — TB</div>
+          <div class="row"><span class="dot" style="background:#ef4444"></span>RedditPainBot blocked</div>
+        </div>
+        <div class="box"><div class="lbl" style="color:#60a5fa">Soon</div>
+          <div class="row"><span class="dot"></span>Launch tweet — TB</div>
+          <div class="row"><span class="dot"></span>Support — QuietInbox</div>
+          <div class="row"><span class="dot"></span>Pricing — LeadSift</div>
+        </div>
+        <div class="box"><div class="lbl" style="color:#34d399">Done</div>
+          <div class="row"><span class="dot" style="background:#34d399"></span>Posted LinkedIn — DocHound</div>
+          <div class="row"><span class="dot" style="background:#34d399"></span>Shipped feature 11 — LeadSift</div>
+        </div>
+      </div>
+      <p class="note">Columns = when (Now / Soon / Done), mixing companies + approvals + GTM. Reframes the board around time, not type.</p>
+    </section>
+
+    <!-- 4 · Hero + supporting -->
+    <section data-l="4" class="hide">
+      <div class="box solid" style="display:flex;gap:18px;margin-bottom:16px">
+        <div style="flex:1">
+          <div class="lbl" style="color:#f59e0b">Next best action</div>
+          <div style="font-size:18px;color:#fff;margin-bottom:8px">Approve feature 6 — TranslatorBill</div>
+          <div class="muted">Per-line invoice translation, on staging, ready to ship.</div>
+          <div style="margin-top:12px"><span class="chip acc">Approve &amp; ship</span><span class="chip">Chat to refine</span></div>
+        </div>
+        <div class="box" style="flex:0 0 280px;display:flex;align-items:center;justify-content:center;color:#5f6b7d">mini preview</div>
+      </div>
+      <div class="grid" style="grid-template-columns:minmax(260px,1fr) 1.4fr">
+        <div class="box"><div class="lbl">Companies</div>
+          <div class="row"><span class="dot"></span>TranslatorBill <span class="muted">· Features</span></div>
+          <div class="row"><span class="dot"></span>RedditPainBot <span class="muted">· blocked</span></div>
+          <div class="row"><span class="dot"></span>LeadSift <span class="muted">· live</span></div>
+        </div>
+        <div class="box"><div class="lbl">Combined activity feed</div>
+          <div class="muted">approvals · GTM · agent activity, chronological…</div>
+        </div>
+      </div>
+      <p class="note">Calm, one-thing-at-a-time. One big focus up top; everything else is supporting context.</p>
+    </section>
+
+    <!-- 5 · Current, balanced -->
+    <section data-l="5" class="hide">
+      <div class="grid" style="grid-template-columns:1.3fr 1fr 1fr">
+        <div class="box"><div class="lbl">Companies</div>
+          <div class="row"><span class="dot"></span>TranslatorBill<div class="step" style="flex:1;margin:0 0 0 10px"><i style="width:40%"></i></div></div>
+          <div class="row"><span class="dot"></span>RedditPainBot<div class="step" style="flex:1;margin:0 0 0 10px"><i style="width:20%;background:#ef4444"></i></div></div>
+          <div class="row"><span class="dot"></span>QuietInbox<div class="step" style="flex:1;margin:0 0 0 10px"><i style="width:40%"></i></div></div>
+          <div class="row"><span class="dot"></span>LeadSift<div class="step" style="flex:1;margin:0 0 0 10px"><i style="width:100%;background:#34d399"></i></div></div>
+          <div class="row"><span class="dot"></span>DocHound<div class="step" style="flex:1;margin:0 0 0 10px"><i style="width:80%;background:#38bdf8"></i></div></div>
+        </div>
+        <div class="box"><div class="lbl">Actions (Needs you + GTM merged)</div>
+          <div class="row"><span class="dot" style="background:#f59e0b"></span>Approve feature 6 — TB</div>
+          <div class="row"><span class="dot" style="background:#ef4444"></span>RedditPainBot blocked</div>
+          <div class="row"><span class="dot"></span>Launch tweet — TB</div>
+          <div class="row"><span class="dot"></span>Pricing — LeadSift</div>
+        </div>
+        <div class="box"><div class="lbl">Go to market</div>
+          <div class="row"><span class="dot"></span>Support — QuietInbox</div>
+          <div class="row"><span class="dot"></span>Investor email — LeadSift</div>
+          <div class="row"><span class="dot"></span>Posted LinkedIn — DocHound</div>
+        </div>
+      </div>
+      <p class="note">Lowest-risk evolution of today: equal-ish columns, Needs-you + GTM mergeable into one "Actions" lane to give Companies room.</p>
+    </section>
+
+  </main>
+
+  <script>
+    var pick = document.getElementById('pick'),
+        desc = document.getElementById('desc'),
+        secs = document.querySelectorAll('section[data-l]');
+    var notes = {
+      '1':'two-pane · feed left, detail right',
+      '2':'full-width rows, one per company',
+      '3':'columns by urgency, not by type',
+      '4':'single hero focus + supporting',
+      '5':'three balanced columns'
+    };
+    function show(n){
+      secs.forEach(function(s){ s.classList.toggle('hide', s.dataset.l !== n); });
+      desc.textContent = notes[n] || '';
+    }
+    pick.addEventListener('change', function(){ show(pick.value); });
+    show('1');
+  </script>
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeadSift · C Slop Slop</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --green:#4f8a52; --blue:#4a72b0;
+    --violet:#7a5ea8; --amber:#c08a2e; --red:#b6483f;
+    --shadow:0 1px 2px rgba(44,41,38,.04), 0 6px 20px rgba(44,41,38,.05);
+    --shadow-lift:0 2px 4px rgba(44,41,38,.05), 0 14px 40px rgba(44,41,38,.09);
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.5;
+    padding:44px 24px 96px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+
+  /* ---------- back + switch row ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+  .back{
+    display:inline-flex;align-items:center;gap:7px;
+    color:var(--ink-faint);text-decoration:none;font-size:13.5px;font-weight:500;
+    padding:6px 10px 6px 6px;border-radius:9px;transition:.16s;
+  }
+  .back:hover{background:var(--cream-2);color:var(--ink-soft)}
+  .back svg{width:15px;height:15px}
+
+  .switcher{position:relative}
+  .switch-btn{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:6px 10px 6px 8px;cursor:pointer;font-family:inherit;font-size:13px;
+    color:var(--ink-soft);box-shadow:var(--shadow);transition:.16s;
+  }
+  .switch-btn:hover{border-color:#dcd0bb}
+  .switch-btn .mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+  .switch-btn .chev{width:13px;height:13px;color:var(--ink-faint);transition:transform .18s}
+  .switcher.open .chev{transform:rotate(180deg)}
+  .menu{
+    position:absolute;right:0;top:calc(100% + 8px);z-index:40;
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow-lift);padding:6px;min-width:236px;
+    opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transition:.16s;
+  }
+  .switcher.open .menu{opacity:1;transform:none;pointer-events:auto}
+  .menu-label{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);padding:8px 10px 4px;font-weight:600}
+  .menu-item{
+    display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;
+    cursor:pointer;transition:.13s;
+  }
+  .menu-item:hover{background:var(--cream-2)}
+  .menu-item .m-chip{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-family:'Space Grotesk';font-weight:600;font-size:12px;color:#fff}
+  .menu-item .m-name{font-size:13.5px;font-weight:500;flex:1}
+  .menu-item .m-mrr{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint)}
+  .menu-item.active{background:var(--cream-2)}
+  .menu-item.active .m-name{color:var(--ink)}
+  .dot-live{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+  /* ---------- company header ---------- */
+  .company-head{display:flex;align-items:flex-start;gap:18px;margin-bottom:24px}
+  .chip{
+    width:56px;height:56px;border-radius:15px;flex-shrink:0;
+    background:linear-gradient(150deg,#d5764d,#bd5730);
+    display:grid;place-items:center;color:#fff;
+    font-family:'Space Grotesk';font-weight:700;font-size:27px;
+    box-shadow:0 4px 14px rgba(200,100,60,.28);
+  }
+  .head-main{flex:1;min-width:0;padding-top:1px}
+  .name-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{font-family:'Space Grotesk';font-weight:600;font-size:27px;letter-spacing:-.01em;line-height:1.1}
+  .domain{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-faint)}
+  .status{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(79,138,82,.1);color:var(--green);
+    font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;
+  }
+  .status .dot-live{box-shadow:0 0 0 3px rgba(79,138,82,.16)}
+  .thesis{margin-top:9px;color:var(--ink-soft);font-size:14.5px;max-width:60ch}
+
+  /* ---------- decision banner ---------- */
+  .decision{
+    background:var(--paper);border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:var(--r);box-shadow:var(--shadow);
+    padding:16px 18px;margin-bottom:28px;
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  .decision .d-icon{
+    width:38px;height:38px;border-radius:10px;flex-shrink:0;
+    background:rgba(200,100,60,.1);color:var(--accent);
+    display:grid;place-items:center;
+  }
+  .decision .d-icon svg{width:19px;height:19px}
+  .d-body{flex:1;min-width:220px}
+  .d-kicker{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:3px}
+  .d-title{font-family:'Space Grotesk';font-weight:600;font-size:16px;letter-spacing:-.005em}
+  .d-sub{font-size:13px;color:var(--ink-faint);margin-top:2px}
+  .d-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .btn{
+    font-family:inherit;font-size:13.5px;font-weight:600;
+    border-radius:10px;padding:9px 15px;cursor:pointer;border:1px solid transparent;
+    transition:.15s;white-space:nowrap;
+  }
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(200,100,60,.28)}
+  .btn-primary:hover{background:#b85832;transform:translateY(-1px)}
+  .btn-ghost{background:var(--paper);border-color:var(--line);color:var(--ink-soft)}
+  .btn-ghost:hover{border-color:#dcd0bb;background:var(--cream)}
+  .btn-quiet{background:transparent;color:var(--ink-faint);padding:9px 10px}
+  .btn-quiet:hover{color:var(--red)}
+
+  .decision.resolved{border-left-color:var(--green);background:linear-gradient(0deg,var(--paper),var(--paper))}
+  .resolved-view{display:none;align-items:center;gap:14px;flex:1}
+  .decision.resolved .default-view{display:none}
+  .decision.resolved .resolved-view{display:flex}
+  .resolved-view .r-icon{width:38px;height:38px;border-radius:10px;background:rgba(79,138,82,.12);color:var(--green);display:grid;place-items:center;flex-shrink:0}
+  .resolved-view .r-icon svg{width:20px;height:20px}
+  .resolved-view h4{font-family:'Space Grotesk';font-weight:600;font-size:15px}
+  .resolved-view p{font-size:13px;color:var(--ink-faint);margin-top:1px}
+
+  /* reject box */
+  .reject-box{display:none;flex-basis:100%;margin-top:4px}
+  .reject-box.show{display:block}
+  .reject-box textarea{
+    width:100%;font-family:inherit;font-size:13.5px;color:var(--ink);
+    background:var(--cream);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;resize:vertical;min-height:62px;
+  }
+  .reject-box textarea:focus{outline:none;border-color:var(--accent)}
+  .reject-row{display:flex;justify-content:flex-end;gap:8px;margin-top:9px}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  .tab{
+    font-family:inherit;font-size:14px;font-weight:500;color:var(--ink-faint);
+    background:none;border:none;cursor:pointer;padding:11px 14px 13px;
+    position:relative;transition:.15s;border-radius:8px 8px 0 0;
+  }
+  .tab:hover{color:var(--ink-soft);background:var(--cream-2)}
+  .tab.active{color:var(--ink);font-weight:600}
+  .tab.active::after{
+    content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2px;
+    background:var(--accent);border-radius:2px;
+  }
+  .tab .badge{
+    display:inline-block;margin-left:7px;font-family:'JetBrains Mono',monospace;
+    font-size:10px;font-weight:500;background:var(--accent);color:#fff;
+    border-radius:999px;padding:1px 6px;vertical-align:middle;
+  }
+
+  .panel{display:none;animation:fade .28s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- generic cards ---------- */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .grid{display:grid;gap:16px}
+  .g-2{grid-template-columns:1fr 1fr}
+  .g-3{grid-template-columns:repeat(3,1fr)}
+  .card-h{padding:16px 18px 0;display:flex;align-items:center;justify-content:space-between}
+  .card-t{font-family:'Space Grotesk';font-weight:600;font-size:14.5px}
+  .card-hint{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.03em}
+
+  /* ---------- metric stat ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 16px 15px}
+  .stat .s-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+  .stat .s-val{font-family:'Space Grotesk';font-weight:600;font-size:25px;letter-spacing:-.01em;line-height:1}
+  .stat .s-val .unit{font-size:15px;color:var(--ink-faint);font-weight:500}
+  .stat .s-trend{margin-top:8px;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+  .up{color:var(--green)}.flat{color:var(--ink-faint)}
+  .s-trend svg{width:12px;height:12px}
+
+  /* ---------- sparkline card ---------- */
+  .trend-card{padding:18px 20px;grid-column:span 2}
+  .trend-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:6px}
+  .trend-big{font-family:'Space Grotesk';font-weight:600;font-size:30px;letter-spacing:-.015em;line-height:1}
+  .trend-meta{text-align:right}
+  .trend-meta .tm-1{font-size:12.5px;font-weight:600;color:var(--green)}
+  .trend-meta .tm-2{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-top:2px}
+  .spark{width:100%;height:78px;display:block;margin-top:6px}
+  .spark-axis{display:flex;justify-content:space-between;margin-top:6px}
+  .spark-axis span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint)}
+
+  /* ---------- autonomy + connect rows ---------- */
+  .rowcard{padding:16px 18px}
+  .mode-list{display:flex;flex-direction:column;gap:2px}
+  .mode{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .mode:last-child{border-bottom:none}
+  .mode .m-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .mode .m-name{font-weight:500;font-size:13.5px;flex:1}
+  .mode .m-tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 9px;border-radius:999px}
+  .tag-auto{background:rgba(74,114,176,.1);color:var(--blue)}
+  .tag-gate{background:rgba(192,138,46,.12);color:var(--amber)}
+
+  /* ---------- activity ---------- */
+  .act-list{display:flex;flex-direction:column}
+  .act{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:13px}
+  .act:last-child{border-bottom:none}
+  .act .a-dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0;background:var(--ink-faint)}
+  .act .a-dot.ok{background:var(--green)}
+  .act .a-txt{flex:1;color:var(--ink-soft)}
+  .act .a-txt code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink);background:var(--cream-2);padding:1px 5px;border-radius:4px}
+  .act .a-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);white-space:nowrap}
+
+  /* ---------- build: features ---------- */
+  .feat{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+  .feat:last-child{border-bottom:none}
+  .f-ico{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:grid;place-items:center}
+  .f-ico svg{width:14px;height:14px}
+  .ico-done{background:rgba(79,138,82,.12);color:var(--green)}
+  .ico-wait{background:rgba(200,100,60,.12);color:var(--accent)}
+  .ico-stuck{background:rgba(182,72,63,.1);color:var(--red)}
+  .ico-next{background:var(--cream-2);color:var(--ink-faint)}
+  .f-main{flex:1;min-width:0}
+  .f-title{font-weight:500;font-size:14px}
+  .f-sub{font-size:12px;color:var(--ink-faint);margin-top:1px}
+  .f-status{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .st-done{background:rgba(79,138,82,.1);color:var(--green)}
+  .st-wait{background:rgba(200,100,60,.12);color:var(--accent)}
+  .st-stuck{background:rgba(182,72,63,.1);color:var(--red)}
+  .st-next{background:var(--cream-2);color:var(--ink-faint)}
+
+  .progress-head{display:flex;align-items:center;gap:14px;padding:16px 18px 14px;border-bottom:1px solid var(--line-soft)}
+  .progress-head .p-num{font-family:'Space Grotesk';font-weight:600;font-size:22px}
+  .pbar{flex:1;height:7px;background:var(--cream-2);border-radius:999px;overflow:hidden}
+  .pbar i{display:block;height:100%;background:linear-gradient(90deg,#4f8a52,#5c9b60);border-radius:999px}
+
+  /* gate detail inside build */
+  .gate{margin-top:16px;padding:18px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r);background:var(--paper);box-shadow:var(--shadow)}
+  .gate-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .gate-h .g-t{font-family:'Space Grotesk';font-weight:600;font-size:15px;flex:1}
+  .gate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+  .gate-item{background:var(--cream);border:1px solid var(--line-soft);border-radius:11px;padding:12px 14px}
+  .gi-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+  .gi-val{font-size:13px;font-weight:500}
+  .gi-val.green{color:var(--green);display:flex;align-items:center;gap:6px}
+  .gi-val a{color:var(--blue);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .gi-val a:hover{text-decoration:underline}
+  .gate-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+
+  /* ---------- operate ---------- */
+  .kv{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px}
+  .kv:last-child{border-bottom:none}
+  .kv .k{color:var(--ink-soft);display:flex;align-items:center;gap:9px}
+  .kv .k .kdot{width:7px;height:7px;border-radius:50%}
+  .kv .v{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:12.5px}
+  .kv .v small{font-family:'Inter';font-weight:500;color:var(--ink-faint)}
+
+  .connect{display:flex;flex-wrap:wrap;gap:8px}
+  .conn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;padding:7px 12px;border-radius:999px;border:1px solid var(--line)}
+  .conn.on{background:rgba(79,138,82,.07);color:var(--ink-soft);border-color:rgba(79,138,82,.25)}
+  .conn.off{background:rgba(182,72,63,.05);color:var(--red);border-color:rgba(182,72,63,.28)}
+  .conn .c-mk{font-weight:700}
+  .conn.off .c-mk{color:var(--red)}
+  .conn.on .c-mk{color:var(--green)}
+  .conn-note{font-size:12px;color:var(--ink-faint);margin-top:11px}
+
+  .funnel{display:flex;flex-direction:column;gap:11px;margin-top:4px}
+  .fn-row{display:flex;align-items:center;gap:12px}
+  .fn-lab{font-size:12.5px;color:var(--ink-soft);width:66px;flex-shrink:0}
+  .fn-track{flex:1;height:26px;background:var(--cream-2);border-radius:8px;overflow:hidden;position:relative}
+  .fn-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:11px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500}
+
+  /* ---------- money ---------- */
+  .money-hero{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:16px}
+  .mh{background:var(--paper);padding:20px 20px}
+  .mh .mh-l{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+  .mh .mh-v{font-family:'Space Grotesk';font-weight:600;font-size:27px;letter-spacing:-.01em}
+  .mh.pos .mh-v{color:var(--green)}
+  .mh.cost .mh-v{color:var(--ink)}
+  .mh .mh-s{font-size:12px;color:var(--ink-faint);margin-top:5px}
+
+  .cost-list{padding:4px 18px 8px}
+  .cost-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:14px 18px 16px}
+  .cost-bar i{height:100%}
+  .cost-item{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px}
+  .cost-item:last-child{border-bottom:none}
+  .cost-item .ci-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+  .cost-item .ci-name{flex:1;color:var(--ink-soft)}
+  .cost-item .ci-val{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500}
+
+  .foot{margin-top:34px;text-align:center;font-size:12px;color:var(--ink-faint)}
+
+  /* corner badge */
+  .badge-corner{
+    position:fixed;left:16px;bottom:16px;z-index:60;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);
+    background:var(--paper);border:1px solid var(--line);border-radius:999px;
+    padding:6px 12px;box-shadow:var(--shadow);
+  }
+  .badge-corner b{color:var(--accent);font-weight:500}
+
+  @media(max-width:720px){
+    body{padding:24px 14px 80px}
+    .stats{grid-template-columns:1fr 1fr}
+    .g-2,.g-3,.money-hero,.gate-grid{grid-template-columns:1fr}
+    .trend-card{grid-column:span 1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- back + switcher -->
+  <div class="topbar">
+    <a class="back" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to portfolio
+    </a>
+    <div class="switcher" id="switcher">
+      <button class="switch-btn" id="switchBtn">
+        <span class="dot-live"></span>
+        LeadSift
+        <span class="mono">1 / 5</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="menu">
+        <div class="menu-label">Your companies · 5</div>
+        <div class="menu-item active">
+          <span class="m-chip" style="background:linear-gradient(150deg,#d5764d,#bd5730)">L</span>
+          <span class="m-name">LeadSift</span><span class="m-mrr">$180</span>
+        </div>
+        <div class="menu-item">
+          <span class="m-chip" style="background:#4a72b0">Q</span>
+          <span class="m-name">QuietInbox</span><span class="m-mrr">$420</span>
+        </div>
+        <div class="menu-item">
+          <span class="m-chip" style="background:#7a5ea8">T</span>
+          <span class="m-name">TranslatorBill</span><span class="m-mrr">$95</span>
+        </div>
+        <div class="menu-item">
+          <span class="m-chip" style="background:#4f8a52">D</span>
+          <span class="m-name">DataDrop</span><span class="m-mrr">$0</span>
+        </div>
+        <div class="menu-item">
+          <span class="m-chip" style="background:#c08a2e">R</span>
+          <span class="m-name">RedditPainBot</span><span class="m-mrr">$0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- company header -->
+  <div class="company-head">
+    <div class="chip">L</div>
+    <div class="head-main">
+      <div class="name-row">
+        <h1>LeadSift</h1>
+        <span class="domain">leadsift.app</span>
+        <span class="status"><span class="dot-live"></span>Live &amp; growing</span>
+      </div>
+      <p class="thesis">Scrape + score inbound leads from any webform.</p>
+    </div>
+  </div>
+
+  <!-- decision banner -->
+  <div class="decision" id="decision">
+    <div class="default-view" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;flex:1">
+      <div class="d-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div class="d-body">
+        <div class="d-kicker">Needs your approval</div>
+        <div class="d-title">Ship “Daily digest of top leads”?</div>
+        <div class="d-sub">Built &amp; tested · automated check passed · preview is live.</div>
+      </div>
+      <div class="d-actions">
+        <button class="btn btn-primary" onclick="approve()">Approve &amp; ship</button>
+        <button class="btn btn-ghost" onclick="review()">Review preview</button>
+        <button class="btn btn-quiet" onclick="toggleReject()">Reject with feedback</button>
+      </div>
+      <div class="reject-box" id="rejectBox">
+        <textarea id="rejectText" placeholder="What should change before this ships? Your feedback goes back to the co-founder agent…"></textarea>
+        <div class="reject-row">
+          <button class="btn btn-ghost" onclick="toggleReject()">Cancel</button>
+          <button class="btn btn-primary" style="background:var(--red);box-shadow:none" onclick="reject()">Send feedback</button>
+        </div>
+      </div>
+    </div>
+    <div class="resolved-view" id="resolvedView">
+      <div class="r-icon" id="resolvedIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div>
+        <h4 id="resolvedTitle">Shipped to production</h4>
+        <p id="resolvedSub">“Daily digest of top leads” is now live for all 12 users. Running is back on autopilot.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="overview" onclick="showTab('overview',this)">Overview</button>
+    <button class="tab" data-tab="build" onclick="showTab('build',this)">Build<span class="badge" id="buildBadge">1</span></button>
+    <button class="tab" data-tab="operate" onclick="showTab('operate',this)">Operate</button>
+    <button class="tab" data-tab="money" onclick="showTab('money',this)">Money</button>
+  </div>
+
+  <!-- ============ OVERVIEW ============ -->
+  <div class="panel active" id="p-overview">
+    <div class="stats">
+      <div class="stat">
+        <div class="s-label">MRR</div>
+        <div class="s-val">$180</div>
+        <div class="s-trend up">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+          29% · +$40 this month
+        </div>
+      </div>
+      <div class="stat">
+        <div class="s-label">Users</div>
+        <div class="s-val">12</div>
+        <div class="s-trend up">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+          +3 this week
+        </div>
+      </div>
+      <div class="stat">
+        <div class="s-label">Net / mo</div>
+        <div class="s-val up" style="color:var(--green)">+$158</div>
+        <div class="s-trend flat">after $22 costs</div>
+      </div>
+      <div class="stat">
+        <div class="s-label">Churn</div>
+        <div class="s-val">0<span class="unit">%</span></div>
+        <div class="s-trend up">99.9% uptime</div>
+      </div>
+    </div>
+
+    <div class="grid g-2">
+      <!-- sparkline -->
+      <div class="card trend-card">
+        <div class="trend-top">
+          <div>
+            <div class="card-hint" style="margin-bottom:6px">MRR · LAST 6 MONTHS</div>
+            <div class="trend-big">$180</div>
+          </div>
+          <div class="trend-meta">
+            <div class="tm-1">↑ 3× since Jan</div>
+            <div class="tm-2">60 → 180</div>
+          </div>
+        </div>
+        <svg class="spark" id="spark" viewBox="0 0 480 78" preserveAspectRatio="none"></svg>
+        <div class="spark-axis">
+          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+        </div>
+      </div>
+
+      <!-- autonomy -->
+      <div class="card rowcard">
+        <div class="card-t" style="margin-bottom:10px">How LeadSift runs</div>
+        <div class="mode-list">
+          <div class="mode">
+            <span class="m-dot" style="background:var(--blue)"></span>
+            <span class="m-name">Building the product</span>
+            <span class="m-tag tag-auto">autopilot</span>
+          </div>
+          <div class="mode">
+            <span class="m-dot" style="background:var(--amber)"></span>
+            <span class="m-name">Growing it</span>
+            <span class="m-tag tag-gate">you approve</span>
+          </div>
+          <div class="mode">
+            <span class="m-dot" style="background:var(--blue)"></span>
+            <span class="m-name">Running &amp; support</span>
+            <span class="m-tag tag-auto">autopilot</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- activity -->
+    <div class="card rowcard" style="margin-top:16px">
+      <div class="card-h" style="padding:0 0 10px">
+        <span class="card-t">Recent activity</span>
+        <span class="card-hint">LIVE</span>
+      </div>
+      <div class="act-list">
+        <div class="act"><span class="a-dot ok"></span><span class="a-txt">check passed · <code>/digest/preview → 200</code></span><span class="a-time">2m</span></div>
+        <div class="act"><span class="a-dot"></span><span class="a-txt">deployed feature 5 to staging</span><span class="a-time">4m</span></div>
+        <div class="act"><span class="a-dot"></span><span class="a-txt">sent 3 onboarding emails</span><span class="a-time">1h</span></div>
+        <div class="act"><span class="a-dot"></span><span class="a-txt">scored 41 new leads</span><span class="a-time">3h</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BUILD ============ -->
+  <div class="panel" id="p-build">
+    <div class="card" style="margin-bottom:16px">
+      <div class="progress-head">
+        <span class="p-num">4</span>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">Features shipped</div>
+          <div class="pbar" style="margin-top:8px"><i style="width:50%"></i></div>
+        </div>
+        <span class="card-hint">4 live · 1 in review · 1 stuck</span>
+      </div>
+      <div style="padding:6px 18px 10px">
+        <div class="feat">
+          <span class="f-ico ico-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div class="f-main"><div class="f-title">Lead scoring engine</div><div class="f-sub">Feature 1 · the one that drove most of MRR</div></div>
+          <span class="f-status st-done">live</span>
+        </div>
+        <div class="feat">
+          <span class="f-ico ico-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div class="f-main"><div class="f-title">Webform scraper</div><div class="f-sub">Feature 2</div></div>
+          <span class="f-status st-done">live</span>
+        </div>
+        <div class="feat">
+          <span class="f-ico ico-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div class="f-main"><div class="f-title">Slack notifications</div><div class="f-sub">Feature 3</div></div>
+          <span class="f-status st-done">live</span>
+        </div>
+        <div class="feat">
+          <span class="f-ico ico-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div class="f-main"><div class="f-title">Lead dedupe</div><div class="f-sub">Feature 4</div></div>
+          <span class="f-status st-done">live</span>
+        </div>
+        <div class="feat" id="feat5">
+          <span class="f-ico ico-wait" id="feat5ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div class="f-main"><div class="f-title">Daily digest of top leads</div><div class="f-sub" id="feat5sub">Feature 5 · deployed to staging · check passed</div></div>
+          <span class="f-status st-wait" id="feat5status">waiting for you</span>
+        </div>
+        <div class="feat">
+          <span class="f-ico ico-stuck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L14.7 3.9a2 2 0 00-3.4 0z"/></svg></span>
+          <div class="f-main"><div class="f-title">Inbound webhook</div><div class="f-sub">Feature 8 · failed 3 tries — needs a look</div></div>
+          <span class="f-status st-stuck">stuck</span>
+        </div>
+        <div class="feat">
+          <span class="f-ico ico-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          <div class="f-main"><div class="f-title">Export leads to CSV</div><div class="f-sub">Next up in the queue</div></div>
+          <span class="f-status st-next">queued</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- gate detail -->
+    <div class="gate" id="gate">
+      <div class="gate-h">
+        <div class="d-icon" style="width:32px;height:32px;border-radius:9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="g-t">Approval gate · feature 5</div>
+        <span class="f-status st-wait">reversible · autopilot can ship</span>
+      </div>
+      <div class="gate-grid">
+        <div class="gate-item">
+          <div class="gi-label">Live preview</div>
+          <div class="gi-val"><a href="#" onclick="review();return false;">localhost:4019/digest/preview</a></div>
+        </div>
+        <div class="gate-item">
+          <div class="gi-label">Done-when check</div>
+          <div class="gi-val green"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>passed · digest renders top 10</div>
+        </div>
+        <div class="gate-item">
+          <div class="gi-label">Change</div>
+          <div class="gi-val" style="font-family:'JetBrains Mono',monospace;font-size:12px"><span style="color:var(--green)">+ digest.job.ts</span> · <span style="color:var(--green)">+ email/digest.tsx</span></div>
+        </div>
+        <div class="gate-item">
+          <div class="gi-label">Blast radius</div>
+          <div class="gi-val">12 users · reversible in 1 click</div>
+        </div>
+      </div>
+      <div class="gate-actions">
+        <button class="btn btn-primary" onclick="approve()">Approve &amp; ship</button>
+        <button class="btn btn-ghost" onclick="review()">Open preview</button>
+        <button class="btn btn-quiet" onclick="showTab('overview',document.querySelector('.tab'));toggleReject(true)">Reject with feedback</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OPERATE ============ -->
+  <div class="panel" id="p-operate">
+    <div class="grid g-2">
+      <!-- growth -->
+      <div class="card rowcard">
+        <div class="card-t" style="margin-bottom:12px">Growth</div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--violet)"></span>Product Hunt launch</span>
+          <span class="v">+8 <small>signups · 3 wks ago</small></span>
+        </div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--blue)"></span>SEO articles</span>
+          <span class="v">4 <small>→ ~320 visits/mo</small></span>
+        </div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--green)"></span>Visitor → paid</span>
+          <span class="v">18<small>%</small></span>
+        </div>
+        <div class="funnel">
+          <div class="fn-row"><span class="fn-lab">Visitors</span><div class="fn-track"><div class="fn-fill" style="width:100%;background:#a9c1e0">~320/mo</div></div></div>
+          <div class="fn-row"><span class="fn-lab">Trials</span><div class="fn-track"><div class="fn-fill" style="width:58%;background:var(--blue)">~34%</div></div></div>
+          <div class="fn-row"><span class="fn-lab">Paid</span><div class="fn-track"><div class="fn-fill" style="width:30%;background:var(--green)">18%</div></div></div>
+        </div>
+      </div>
+
+      <!-- health -->
+      <div class="card rowcard">
+        <div class="card-t" style="margin-bottom:12px">Health &amp; support</div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--amber)"></span>Open tickets</span>
+          <span class="v">2 <small>· ~4h avg reply</small></span>
+        </div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--green)"></span>Uptime</span>
+          <span class="v">99.9<small>%</small></span>
+        </div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--red)"></span>Refunds this month</span>
+          <span class="v">1</span>
+        </div>
+        <div class="kv">
+          <span class="k"><span class="kdot" style="background:var(--ink-faint)"></span>Churn</span>
+          <span class="v">0<small>%</small></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- connections -->
+    <div class="card rowcard" style="margin-top:16px">
+      <div class="card-h" style="padding:0 0 12px">
+        <span class="card-t">Connected accounts</span>
+        <span class="card-hint">4 OF 5 CONNECTED</span>
+      </div>
+      <div class="connect">
+        <span class="conn on"><span class="c-mk">✓</span> Stripe</span>
+        <span class="conn on"><span class="c-mk">✓</span> Domain</span>
+        <span class="conn on"><span class="c-mk">✓</span> Email</span>
+        <span class="conn on"><span class="c-mk">✓</span> Product Hunt</span>
+        <span class="conn off"><span class="c-mk">✗</span> X / Twitter</span>
+      </div>
+      <div class="conn-note">Connect X to let the co-founder draft build-in-public posts for your approval.</div>
+    </div>
+  </div>
+
+  <!-- ============ MONEY ============ -->
+  <div class="panel" id="p-money">
+    <div class="money-hero">
+      <div class="mh">
+        <div class="mh-l">MRR</div>
+        <div class="mh-v">$180</div>
+        <div class="mh-s up" style="color:var(--green)">↑ 29% · +$40 this month</div>
+      </div>
+      <div class="mh cost">
+        <div class="mh-l">Costs / mo</div>
+        <div class="mh-v">$22</div>
+        <div class="mh-s">infra · email · domain · APIs</div>
+      </div>
+      <div class="mh pos">
+        <div class="mh-l">Net / mo</div>
+        <div class="mh-v">+$158</div>
+        <div class="mh-s">88% margin</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h" style="padding:16px 18px 4px">
+        <span class="card-t">Where the $22 goes</span>
+        <span class="card-hint">MONTHLY</span>
+      </div>
+      <div class="cost-bar">
+        <i style="width:41%;background:var(--blue)"></i>
+        <i style="width:32%;background:var(--violet)"></i>
+        <i style="width:23%;background:var(--amber)"></i>
+        <i style="width:4%;background:var(--green)"></i>
+      </div>
+      <div class="cost-list">
+        <div class="cost-item"><span class="ci-dot" style="background:var(--amber)"></span><span class="ci-name">APIs</span><span class="ci-val">$7</span></div>
+        <div class="cost-item"><span class="ci-dot" style="background:var(--blue)"></span><span class="ci-name">Infra / hosting</span><span class="ci-val">$9</span></div>
+        <div class="cost-item"><span class="ci-dot" style="background:var(--violet)"></span><span class="ci-name">Email</span><span class="ci-val">$5</span></div>
+        <div class="cost-item"><span class="ci-dot" style="background:var(--green)"></span><span class="ci-name">Domain</span><span class="ci-val">$1</span></div>
+      </div>
+    </div>
+
+    <div class="card rowcard" style="margin-top:16px">
+      <div class="card-t" style="margin-bottom:4px">Revenue trend</div>
+      <div class="card-hint" style="margin-bottom:8px">MRR CLIMBING STEADILY · 6 MONTHS</div>
+      <svg class="spark" id="spark2" viewBox="0 0 480 78" preserveAspectRatio="none" style="height:70px"></svg>
+      <div class="spark-axis"><span>$60</span><span>$90</span><span>$120</span><span>$140</span><span>$160</span><span>$180</span></div>
+    </div>
+  </div>
+
+  <div class="foot">LeadSift · one of 5 companies your co-founder is running · C Slop Slop</div>
+</div>
+
+<div class="badge-corner">DESIGN <b>3</b> · tabs</div>
+
+<script>
+  // ---- sparkline generator ----
+  function drawSpark(id, data, color){
+    var svg = document.getElementById(id);
+    if(!svg) return;
+    var W = 480, H = 78, pad = 8;
+    var min = Math.min.apply(null,data), max = Math.max.apply(null,data);
+    var span = (max-min) || 1;
+    var innerW = W - pad*2, innerH = H - pad*2;
+    var pts = data.map(function(v,i){
+      var x = pad + (innerW * i/(data.length-1));
+      var y = pad + innerH*(1-(v-min)/span);
+      return [x,y];
+    });
+    var line = pts.map(function(p,i){ return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1); }).join(' ');
+    var area = line + ' L'+pts[pts.length-1][0].toFixed(1)+' '+(H)+' L'+pts[0][0].toFixed(1)+' '+(H)+' Z';
+    var gid = 'g_'+id;
+    svg.innerHTML =
+      '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0" stop-color="'+color+'" stop-opacity="0.22"/>'+
+      '<stop offset="1" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'+
+      '<path d="'+area+'" fill="url(#'+gid+')"/>'+
+      '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'+
+      pts.map(function(p,i){
+        var last = i===pts.length-1;
+        return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(last?4:2.6)+'" fill="'+(last?color:'#fffdf8')+'" stroke="'+color+'" stroke-width="'+(last?0:2)+'"/>';
+      }).join('');
+  }
+  var series = [60,90,120,140,160,180];
+  drawSpark('spark', series, '#4f8a52');
+  drawSpark('spark2', series, '#4f8a52');
+
+  // ---- tabs ----
+  function showTab(id, el){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+    document.getElementById('p-'+id).classList.add('active');
+    if(el) el.classList.add('active');
+    else document.querySelector('.tab[data-tab="'+id+'"]').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // ---- switcher ----
+  var sw = document.getElementById('switcher');
+  document.getElementById('switchBtn').addEventListener('click', function(e){
+    e.stopPropagation(); sw.classList.toggle('open');
+  });
+  document.addEventListener('click', function(){ sw.classList.remove('open'); });
+  document.querySelectorAll('.menu-item').forEach(function(it){
+    it.addEventListener('click', function(e){ e.stopPropagation(); sw.classList.remove('open'); });
+  });
+
+  // ---- decision resolve ----
+  var decision = document.getElementById('decision');
+  function resolveDecision(kind){
+    var icon = document.getElementById('resolvedIcon');
+    var title = document.getElementById('resolvedTitle');
+    var sub = document.getElementById('resolvedSub');
+    if(kind==='reject'){
+      decision.style.borderLeftColor = 'var(--amber)';
+      icon.style.background = 'rgba(192,138,46,.14)';
+      icon.style.color = 'var(--amber)';
+      icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';
+      title.textContent = 'Feedback sent to your co-founder';
+      sub.textContent = 'Feature 5 held. The agent will revise “Daily digest” and re-submit for approval.';
+      // build tab reflects hold
+      setFeat5('hold');
+    } else {
+      title.textContent = 'Shipped to production';
+      sub.textContent = '“Daily digest of top leads” is now live for all 12 users. Running is back on autopilot.';
+      setFeat5('shipped');
+    }
+    decision.classList.add('resolved');
+    document.getElementById('buildBadge').style.display = 'none';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function setFeat5(state){
+    var ico = document.getElementById('feat5ico');
+    var st = document.getElementById('feat5status');
+    var sub = document.getElementById('feat5sub');
+    var gate = document.getElementById('gate');
+    if(state==='shipped'){
+      ico.className='f-ico ico-done';
+      ico.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+      st.className='f-status st-done'; st.textContent='live';
+      sub.textContent='Feature 5 · shipped to production just now';
+      gate.style.display='none';
+      document.querySelector('#p-build .pbar i').style.width='60%';
+      document.querySelector('#p-build .p-num').textContent='5';
+    } else if(state==='hold'){
+      st.className='f-status st-next'; st.textContent='revising';
+      sub.textContent='Feature 5 · held for changes — back with the co-founder';
+      gate.style.display='none';
+    }
+  }
+  function approve(){ resolveDecision('approve'); }
+  function reject(){
+    var t = document.getElementById('rejectText').value.trim();
+    resolveDecision('reject');
+    document.getElementById('rejectBox').classList.remove('show');
+  }
+  function toggleReject(force){
+    var box = document.getElementById('rejectBox');
+    if(force){ box.classList.add('show'); document.getElementById('rejectText').focus(); return; }
+    box.classList.toggle('show');
+    if(box.classList.contains('show')) document.getElementById('rejectText').focus();
+  }
+  function review(){
+    var btns = document.querySelectorAll('.d-actions .btn-ghost, .gate-actions .btn-ghost');
+    btns.forEach(function(b){
+      var o = b.textContent; b.textContent = 'Opening preview…';
+      setTimeout(function(){ b.textContent = o; }, 1100);
+    });
+  }
+</script>
+</body>
+</html>

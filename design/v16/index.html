@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C Slop Slop — v16 (Playbook Library)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#ffffff; --ink:#0f1216; --ink2:#5b6472; --ink3:#8a93a3;
+    --line:#e7eaef; --line2:#eef1f5; --accent:#4f46e5; --accent-weak:#eef0fe;
+    --green:#0ea66e; --amber:#c4870a; --red:#dc4b4b; --violet:#7c5cff;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; line-height:1.5;}
+  a{color:inherit; text-decoration:none}
+  .mono{font-family:var(--mono)}
+
+  /* ============ TOP BAR ============ */
+  .topbar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .topbar-inner{max-width:1320px; margin:0 auto; height:56px; padding:0 24px; display:flex; align-items:center; gap:22px;}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:700; letter-spacing:-.01em}
+  .logo{display:grid; place-items:center; width:24px; height:24px; border-radius:7px; background:var(--accent); color:#fff; font-weight:800; font-size:13px;}
+  .nav-links{display:flex; gap:4px}
+  .nav-links a{padding:6px 11px; border-radius:8px; color:var(--ink2); font-weight:500;}
+  .nav-links a.active{background:var(--accent-weak); color:var(--accent); font-weight:600}
+  .nav-links a:hover:not(.active){background:var(--line2); color:var(--ink)}
+  .totals{margin-left:auto; display:flex; align-items:center; gap:16px; font-size:13px; color:var(--ink2)}
+  .totals .stat b{color:var(--ink); font-weight:700}
+  .totals .alert{display:flex; align-items:center; gap:6px; color:var(--amber); font-weight:600}
+  .totals .alert .dot{width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 0 3px #f6e9cd; animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .account{display:flex; align-items:center; gap:8px; padding-left:14px; border-left:1px solid var(--line); color:var(--ink2); font-size:12.5px;}
+  .avatar{display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:#1f2430; color:#fff; font-size:11px; font-weight:700;}
+
+  /* ============ SHELL ============ */
+  .shell{max-width:1320px; margin:0 auto; padding:34px 24px 80px; display:grid; grid-template-columns:1fr 348px; gap:34px; align-items:start;}
+  .main{min-width:0}
+
+  /* HERO + LAUNCH */
+  .hero{text-align:center; padding:24px 0 30px}
+  .hero h1{font-size:34px; font-weight:800; letter-spacing:-.025em; margin:0 0 8px}
+  .hero p{color:var(--ink2); font-size:15px; margin:0 auto 22px; max-width:540px}
+  .launch{max-width:660px; margin:0 auto}
+  .input{display:flex; align-items:center; gap:11px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px 6px 6px 16px; box-shadow:0 2px 18px -10px rgba(15,18,22,.25);}
+  .input:focus-within{border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-weak)}
+  .input svg{flex:0 0 auto; color:var(--ink3)}
+  .input input{flex:1; min-width:0; border:0; outline:0; font:inherit; font-size:14.5px; background:transparent; color:var(--ink)}
+  .input input::placeholder{color:var(--ink3)}
+  .go{display:flex; align-items:center; gap:7px; background:var(--accent); color:#fff; border:0; border-radius:10px; padding:10px 16px; font:inherit; font-weight:600; cursor:pointer;}
+  .go:hover{filter:brightness(1.06)}
+  .chips{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px}
+  .chip{padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--panel); color:var(--ink2); font-size:12.5px; cursor:pointer; font-weight:500;}
+  .chip:hover{border-color:#d3d8e0; color:var(--ink)}
+  .chip.active{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .chip.ghost{border-style:dashed; color:var(--accent)}
+
+  /* SECTIONS */
+  .section{margin-top:36px}
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:14px}
+  .sec-head h2{font-size:15px; font-weight:700; letter-spacing:-.01em; margin:0}
+  .sec-head .hint{color:var(--ink3); font-size:12.5px}
+  .sec-head .count{margin-left:auto; color:var(--ink3); font-size:12px}
+
+  /* PLAYBOOKS */
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .pb-card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:8px; cursor:pointer; transition:border-color .15s, transform .15s, box-shadow .15s;}
+  .pb-card:hover{border-color:#d3d8e0; transform:translateY(-2px); box-shadow:0 12px 30px -18px rgba(15,18,22,.35)}
+  .pb-card.blank{border-style:dashed; background:transparent}
+  .pb-icon{display:grid; place-items:center; width:30px; height:30px; border-radius:9px; background:var(--accent-weak); color:var(--accent)}
+  .pb-card .pt{font-weight:700; font-size:14px; letter-spacing:-.01em}
+  .pb-card .sub{color:var(--ink2); font-size:12.5px; line-height:1.5; flex:1}
+  .pb-card .run{color:var(--accent); font-size:12.5px; font-weight:600; margin-top:2px}
+
+  /* COMPANIES */
+  .companies{display:flex; flex-direction:column; gap:12px}
+  .co-card{display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px;}
+  .co-card.l1{border-color:#f0d9b0; background:linear-gradient(0deg,#fffaf0,#fff)}
+  .co-card.blocked{border-color:#f3cccc}
+  .ring{display:grid; place-items:center; width:40px; height:40px; border-radius:11px; color:#fff; font-weight:800; font-size:16px;}
+  .co-body{min-width:0}
+  .co-title{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .co-title .nm{font-weight:700; letter-spacing:-.01em}
+  .badge{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px;}
+  .badge .d{width:7px; height:7px; border-radius:50%}
+  .badge.approve{background:#f6e9cd; color:#8a5e08} .badge.approve .d{background:var(--amber)}
+  .badge.blocked{background:#f8dcdc; color:#a82f2f} .badge.blocked .d{background:var(--red)}
+  .badge.building{background:#e2eafe; color:#324bb3} .badge.building .d{background:var(--accent); animation:pulse 1.4s infinite}
+  .badge.live{background:#d8f3e6; color:#0a724c} .badge.live .d{background:var(--green)}
+  .badge.idle{background:#eef1f5; color:#6b7484} .badge.idle .d{background:var(--ink3)}
+  .co-hero{color:var(--ink); font-size:13px; margin:6px 0 7px}
+  .co-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; color:var(--ink3); font-size:11.5px}
+  .co-meta .tag{color:var(--ink2)}
+  .co-meta .sep{opacity:.4}
+  .co-actions{display:flex; flex-direction:column; gap:6px; align-items:flex-end}
+  .btn{font:inherit; font-size:12.5px; font-weight:600; padding:8px 13px; border-radius:9px; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; white-space:nowrap;}
+  .btn.primary{background:var(--accent); color:#fff; border-color:transparent}
+  .btn.warn{background:var(--amber); color:#fff; border-color:transparent}
+  .btn.danger{background:#fff; color:var(--red); border-color:#f0c4c4}
+  .btn.link{border:0; background:transparent; color:var(--ink3); padding:4px 0; font-weight:500}
+  .btn:hover{filter:brightness(.98)}
+
+  /* RIGHT RAIL */
+  .rail{position:sticky; top:90px; display:flex; flex-direction:column; gap:16px}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .guide-head{display:flex; align-items:center; gap:8px; padding:13px 16px; border-bottom:1px solid var(--line2); font-size:12px; font-weight:600; color:var(--accent)}
+  .guide-head .gdot{width:7px; height:7px; border-radius:2px; background:var(--accent)}
+  .gact{display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line2); font-size:12.5px;}
+  .gact span{flex:1; color:var(--ink)}
+  .gact i{font-style:normal; font-size:11.5px; font-weight:600; color:var(--accent); cursor:pointer; padding:4px 9px; border:1px solid var(--accent-weak); border-radius:7px; background:var(--accent-weak);}
+  .gp{padding:13px 16px; font-size:12px; line-height:1.55; color:var(--ink2)}
+  .gp b{color:var(--ink)}
+  .wmono{display:inline-grid; place-items:center; width:16px; height:16px; border-radius:4px; color:#fff; font-size:10px; font-weight:700; vertical-align:-2px; margin-right:2px;}
+  .chat-head{padding:13px 16px; border-bottom:1px solid var(--line2); font-size:12px; font-weight:600; color:var(--ink2)}
+  .cmsg{padding:13px 16px; font-size:12.5px; line-height:1.55; color:var(--ink2)}
+  .ccmp{display:flex; align-items:center; gap:8px; margin:0 12px 12px; padding:9px 12px; border:1px solid var(--line); border-radius:10px; color:var(--ink3); font-size:12.5px}
+  .ccmp i{margin-left:auto; font-style:normal; color:var(--ink3)}
+
+  /* logo monogram colors */
+  .l-translatorbill,.w-translatorbill{background:#3b82f6}
+  .l-redditpainbot,.w-redditpainbot{background:#ef6a3b}
+  .l-quietinbox,.w-quietinbox{background:#7c5cff}
+  .l-leadsift,.w-leadsift{background:#0ea66e}
+  .l-c5{background:#8a93a3}
+
+  @media(max-width:1040px){ .shell{grid-template-columns:1fr} .rail{position:static} .grid3{grid-template-columns:1fr 1fr} }
+  @media(max-width:620px){ .grid3{grid-template-columns:1fr} .hero h1{font-size:27px} .totals .stat:not(.alert){display:none} .co-card{grid-template-columns:auto 1fr} .co-actions{grid-column:1/-1; flex-direction:row; flex-wrap:wrap} }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#"><span class="logo">C</span><span class="name">C Slop Slop</span></a>
+    <nav class="nav-links">
+      <a href="#" class="active">Library</a>
+      <a href="#">Companies</a>
+    </nav>
+    <div class="totals">
+      <span class="stat"><b>5</b> companies</span>
+      <span class="stat alert"><span class="dot"></span><b>3</b> need you</span>
+      <span class="stat">$<b>9,210</b> MRR</span>
+      <span class="account"><span class="avatar">O</span>offbeatport@gmail.com</span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- ============ MAIN COLUMN ============ -->
+  <main class="main">
+
+    <!-- HERO + LAUNCH -->
+    <section class="hero">
+      <h1>What company do you want to run?</h1>
+      <p>Drop a thought. Pick a playbook. The engine ships it slice by slice.</p>
+
+      <form class="launch" onsubmit="return false">
+        <label class="input">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+          <input type="text" placeholder="Describe the thought — e.g. 'a tool that auto-drafts cold-email replies for agencies'">
+          <button class="go" type="submit">Launch
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </label>
+        <div class="chips">
+          <span class="chip active">Auto-detect</span>
+          <span class="chip">Lead-gen SaaS</span>
+          <span class="chip">Inbox / triage tool</span>
+          <span class="chip">Billing &amp; invoicing</span>
+          <span class="chip">Audience pain miner</span>
+          <span class="chip">Marketplace</span>
+          <span class="chip ghost">Browse all playbooks →</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- PLAYBOOK LIBRARY -->
+    <section class="section">
+      <div class="sec-head">
+        <h2>Playbook library</h2>
+        <span class="hint">Pick a proven company shape — clicking pre-fills the launch input above</span>
+        <span class="count mono">6 playbooks</span>
+      </div>
+      <div class="grid3">
+        <div class="pb-card">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="pt">Lead-gen SaaS</div>
+          <div class="sub">Finds qualified leads in a niche and sells the list as a subscription · typically ships a working scraper + landing page by slice 3</div>
+          <span class="run">Launch from this playbook →</span>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></div>
+          <div class="pt">Inbox / triage tool</div>
+          <div class="sub">Sorts, drafts, and routes a noisy inbox · ships a connected demo inbox + draft engine early</div>
+          <span class="run">Launch from this playbook →</span>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="M3 10h18M7 15h4"/></svg></div>
+          <div class="pt">Billing &amp; invoicing</div>
+          <div class="sub">Turns usage or hours into sent invoices · ships Stripe-backed billing you can charge through</div>
+          <span class="run">Launch from this playbook →</span>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5m0 14h16M8 16v-5m4 5V8m4 8v-3"/></svg></div>
+          <div class="pt">Audience pain miner</div>
+          <div class="sub">Mines forums for recurring complaints and ranks buildable fixes · ships a daily pain digest</div>
+          <span class="run">Launch from this playbook →</span>
+        </div>
+        <div class="pb-card">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18l-2 12H5L3 7z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></div>
+          <div class="pt">Niche marketplace</div>
+          <div class="sub">Matches two sides of a small market · ships a two-sided listing + checkout slice</div>
+          <span class="run">Launch from this playbook →</span>
+        </div>
+        <div class="pb-card blank">
+          <div class="pb-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16M4 12h16" stroke-dasharray="3 3"/></svg></div>
+          <div class="pt">Blank company</div>
+          <div class="sub">No template — the engine picks the shape from your thought · best when your idea is unusual</div>
+          <span class="run">Start blank →</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- YOUR COMPANIES -->
+    <section class="section">
+      <div class="sec-head">
+        <h2>Your companies</h2>
+        <span class="hint">Running portfolio — ordered by what needs you first</span>
+        <span class="count mono">5 running · 3 need you</span>
+      </div>
+      <div class="companies">
+
+        <article class="co-card l1">
+          <div class="ring l-translatorbill">T</div>
+          <div class="co-body">
+            <div class="co-title">
+              <span class="nm">TranslatorBill</span>
+              <span class="badge approve"><span class="d"></span>awaiting your approval</span>
+            </div>
+            <div class="co-hero">Multilingual invoice generator — slice 6 ships the billing screen 3 trial users are waiting on.</div>
+            <div class="co-meta mono"><span class="tag">slice 6/10</span><span class="sep">·</span><span>11 min</span><span class="sep">·</span><span>$0.38</span></div>
+          </div>
+          <div class="co-actions">
+            <button class="btn warn">APPROVE TO SHIP →</button>
+            <button class="btn link">show steps</button>
+          </div>
+        </article>
+
+        <article class="co-card blocked">
+          <div class="ring l-redditpainbot">R</div>
+          <div class="co-body">
+            <div class="co-title">
+              <span class="nm">RedditPainBot</span>
+              <span class="badge blocked"><span class="d"></span>blocked</span>
+            </div>
+            <div class="co-hero">Slice 3 · stuck: needs a Reddit API key from you.</div>
+            <div class="co-meta mono"><span class="tag">slice 3</span><span class="sep">·</span><span>4 min</span><span class="sep">·</span><span>$0.09</span></div>
+          </div>
+          <div class="co-actions">
+            <button class="btn danger">RESOLVE →</button>
+            <button class="btn link">show steps</button>
+          </div>
+        </article>
+
+        <article class="co-card">
+          <div class="ring l-quietinbox">Q</div>
+          <div class="co-body">
+            <div class="co-title">
+              <span class="nm">QuietInbox</span>
+              <span class="badge building"><span class="d"></span>building now</span>
+            </div>
+            <div class="co-hero">Slice 4/9 · draft-reply engine · running.</div>
+            <div class="co-meta mono"><span class="tag">slice 4/9</span><span class="sep">·</span><span>6 min</span><span class="sep">·</span><span>$0.21</span></div>
+          </div>
+          <div class="co-actions">
+            <button class="btn">live preview</button>
+            <button class="btn link">show steps</button>
+          </div>
+        </article>
+
+        <article class="co-card">
+          <div class="ring l-leadsift">L</div>
+          <div class="co-body">
+            <div class="co-title">
+              <span class="nm">LeadSift</span>
+              <span class="badge live"><span class="d"></span>live</span>
+            </div>
+            <div class="co-hero">Slice 12/12 · $312 MRR · shipped &amp; deployed · validated.</div>
+            <div class="co-meta mono"><span class="tag">slice 12/12</span><span class="sep">·</span><span>$312 MRR</span></div>
+          </div>
+          <div class="co-actions">
+            <button class="btn">view product →</button>
+            <button class="btn primary">grow next slice →</button>
+          </div>
+        </article>
+
+        <article class="co-card">
+          <div class="ring l-c5">5</div>
+          <div class="co-body">
+            <div class="co-title">
+              <span class="nm">Company #5</span>
+              <span class="badge idle"><span class="d"></span>idle</span>
+            </div>
+            <div class="co-hero">Slice 8/8 · paused by you.</div>
+            <div class="co-meta mono"><span class="tag">slice 8/8</span></div>
+          </div>
+          <div class="co-actions">
+            <button class="btn">resume →</button>
+            <button class="btn link">show steps</button>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ RIGHT RAIL ============ -->
+  <aside class="rail">
+    <!-- Proactive next -->
+    <div class="card">
+      <div class="guide-head"><span class="gdot"></span>agent · proactive</div>
+      <div class="gact"><span>Approve <span class="wmono w-translatorbill">T</span>TranslatorBill slice 6 → +est. revenue</span><i>do it</i></div>
+      <div class="gact"><span>Unblock <span class="wmono w-redditpainbot">R</span>RedditPainBot (add Reddit API key)</span><i>do it</i></div>
+      <div class="gact"><span><span class="wmono w-leadsift">L</span>LeadSift hit 12/12 — launch a growth slice?</span><i>do it</i></div>
+      <div class="gp"><b>Next best step:</b> Approve <span class="wmono w-translatorbill">T</span>TranslatorBill slice 6. It ships the billing screen that 3 trial users are currently waiting on — most likely path to new MRR today. After that: unblock <span class="wmono w-redditpainbot">R</span>RedditPainBot (just needs a Reddit API key) so it can resume on its own.</div>
+    </div>
+
+    <!-- Chat agent -->
+    <div class="card">
+      <div class="chat-head">Chat agent</div>
+      <div class="cmsg">Ask anything, or steer a company. Try: <i>'why is <span class="wmono w-redditpainbot">R</span>RedditPainBot blocked?'</i> · <i>'pause <span class="wmono w-quietinbox">Q</span>QuietInbox'</i> · <i>'what's <span class="wmono w-leadsift">L</span>LeadSift's best growth move?'</i></div>
+      <div class="ccmp"><span>Ask the agent…</span><i>↵</i></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  // minimal: chip selection
+  document.querySelectorAll('.chip:not(.ghost)').forEach(c=>{
+    c.addEventListener('click', ()=>{
+      document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

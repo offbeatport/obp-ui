@@ -1,0 +1,3119 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Company page — 10 versions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --cream:#faf6f0; --cream-2:#f3ebe0; --paper:#ffffff; --ink:#2b2320; --ink-soft:#6a5f55; --ink-faint:#9c8f81;
+  --accent:#c2683f; --accent-ink:#a8542f; --accent-soft:#f4e2d6;
+  --green:#4f8a52; --green-soft:#e2efdf; --amber:#c08a2c; --amber-soft:#f6ecd6; --blue:#3f6fb0; --blue-soft:#e2ecf6; --gray:#b9ada0;
+  --line:#e7ddd0; --line-soft:#efe7db;
+  --shadow:0 1px 2px rgba(44,41,38,.05), 0 8px 24px rgba(44,41,38,.06);
+  --shadow-lg:0 2px 6px rgba(44,41,38,.08), 0 18px 46px rgba(44,41,38,.12);
+  --radius:16px; --radius-sm:12px;
+}
+[data-theme="dark"]{
+  --cream:#12100e; --cream-2:#1c1813; --paper:#191512; --ink:#f0e8dd; --ink-soft:#bcae9f; --ink-faint:#8a7d6f;
+  --accent:#e0894f; --accent-ink:#e8a06a; --accent-soft:#3a2a1e;
+  --green:#66b06a; --green-soft:#22301f; --amber:#d6a54b; --amber-soft:#332a17; --blue:#5a94d6; --blue-soft:#1b2733; --gray:#6a5f52;
+  --line:#2c261f; --line-soft:#241f19;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.5);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.5), 0 22px 54px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1180px;margin:0 auto;padding:34px 26px 120px;}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:300;font-size:34px;letter-spacing:-.02em;margin:0;}
+.sub{font-size:14px;color:var(--ink-soft);margin:9px 0 0;max-width:80ch;line-height:1.55;}
+.theme-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:9px 16px;cursor:pointer;}
+.vpanel{margin-top:34px;}
+.vhead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.vnum{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:#fff;background:var(--accent);border-radius:7px;padding:3px 9px;}
+.vtitle{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;}
+.vblurb{font-size:12.5px;color:var(--ink-faint);flex:1;min-width:200px;}
+.vstage{background:var(--cream-2);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;justify-content:center;}
+.vstage > *{width:100%;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Company page — 10 versions</h1><p class="sub">Ten very-simple, modern company-page (LeadSift) designs. Same data across all. Toggle dark to compare, then tell me a number.</p></div>
+    <button class="theme-btn" id="themeBtn" type="button">☾ Dark</button>
+  </div>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V1</span><span class="vtitle">LeadSift — Editorial dashboard</span><span class="vblurb">A calm, editorial company overview: confident header with name, online status and stage; a big MRR number over a warm terracotta area-chart; a tidy metrics row; then the three always-on AI loops, the roadmap, and an autonomous activity feed — all on one spacious ~820px screen.</span></div><div class="vstage"><div class="co-page co-v1">
+  <article class="v1-sheet">
+    <header class="v1-head">
+      <div class="v1-id">
+        <span class="v1-logo">LS</span>
+        <div class="v1-id-txt">
+          <h1 class="v1-name">LeadSift <span class="v1-dot" aria-label="online"></span></h1>
+          <div class="v1-tags">
+            <span class="v1-stage">Live</span>
+            <span class="v1-growing">Growing</span>
+          </div>
+        </div>
+      </div>
+      <p class="v1-mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+    </header>
+
+    <section class="v1-mrr">
+      <div class="v1-mrr-top">
+        <div class="v1-mrr-label">Monthly recurring revenue</div>
+        <div class="v1-mrr-num">
+          <span class="v1-mrr-big">$180</span>
+          <span class="v1-mrr-trend">+$158 <span class="v1-pct">+88%</span></span>
+        </div>
+      </div>
+      <div class="v1-chart">
+        <svg viewBox="0 0 720 120" preserveAspectRatio="none" class="v1-svg" role="img" aria-label="MRR trend rising from $120 to $180 over six months">
+          <path class="v1-area" d="M0,100 L144,88 L288,76 L432,60 L576,40 L720,16 L720,120 L0,120 Z"/>
+          <polyline class="v1-line" points="0,100 144,88 288,76 432,60 576,40 720,16"/>
+          <circle class="v1-tip" cx="720" cy="16" r="4"/>
+        </svg>
+      </div>
+      <div class="v1-months">
+        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+      </div>
+    </section>
+
+    <section class="v1-metrics">
+      <div class="v1-metric">
+        <span class="v1-m-num">12</span>
+        <span class="v1-m-lab">paying users</span>
+        <span class="v1-m-delta v1-up">+3 this week</span>
+      </div>
+      <div class="v1-metric">
+        <span class="v1-m-num">1%</span>
+        <span class="v1-m-lab">monthly churn</span>
+        <span class="v1-m-delta v1-flat">healthy</span>
+      </div>
+      <div class="v1-metric">
+        <span class="v1-m-num">+$158</span>
+        <span class="v1-m-lab">net / month</span>
+        <span class="v1-m-delta v1-up">growing</span>
+      </div>
+    </section>
+
+    <section class="v1-block">
+      <h2 class="v1-h">The AI is running</h2>
+      <div class="v1-loops">
+        <div class="v1-loop">
+          <div class="v1-loop-top"><span class="v1-loop-name">Build</span><span class="v1-state v1-run">running</span></div>
+          <p class="v1-loop-desc">Shipping the next slice.</p>
+        </div>
+        <div class="v1-loop">
+          <div class="v1-loop-top"><span class="v1-loop-name">Grow</span><span class="v1-state v1-need">needs you</span></div>
+          <p class="v1-loop-desc">A post is awaiting your OK.</p>
+        </div>
+        <div class="v1-loop">
+          <div class="v1-loop-top"><span class="v1-loop-name">Run</span><span class="v1-state v1-run">running</span></div>
+          <p class="v1-loop-desc">Healthy · 99.6% uptime.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="v1-block">
+      <h2 class="v1-h">Roadmap</h2>
+      <div class="v1-current">
+        <div class="v1-current-tag">Now building</div>
+        <h3 class="v1-current-title">Daily email digest of top leads</h3>
+        <p class="v1-story">"As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first."</p>
+        <div class="v1-done"><span class="v1-done-lab">Done when</span>a scheduled 8am email lists the day's top 10 leads.</div>
+      </div>
+      <ul class="v1-upcoming">
+        <li>Lead-source breakdown</li>
+        <li>Slack notification on hot leads</li>
+        <li>One-click CSV export</li>
+      </ul>
+    </section>
+
+    <section class="v1-block">
+      <h2 class="v1-h">Recent activity</h2>
+      <ul class="v1-feed">
+        <li><span class="v1-feed-dot"></span>Scored 4 new leads overnight</li>
+        <li><span class="v1-feed-dot"></span>Sent 12 onboarding emails</li>
+        <li><span class="v1-feed-dot"></span>Published an SEO article · indexed</li>
+      </ul>
+    </section>
+  </article>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V2</span><span class="vtitle">LeadSift — Bento grid</span><span class="vblurb">Version 2 &quot;Bento grid&quot;: one calm ~820px screen of modular rounded tiles in varied sizes — an identity tile, a tall MRR/trend hero with an inline SVG sparkline (12 users, churn, net), a Build/Grow/Run loops tile with running/needs-you states, a wide roadmap tile (current slice + user story + done-when + up-next), and a recent-activity feed. Warm cream palette, JetBrains Mono numbers, all color from theme tokens.</span></div><div class="vstage"><div class="co-page co-v2">
+  <div class="bento">
+
+    <section class="tile t-id">
+      <div class="id-top">
+        <div class="chip">LS</div>
+        <div class="id-main">
+          <div class="id-line">
+            <h1>LeadSift</h1>
+            <span class="online"><i class="odot ring"></i>online</span>
+          </div>
+          <div class="id-sub">
+            <span class="stage">LIVE</span>
+            <span class="grw">Growing</span>
+          </div>
+        </div>
+      </div>
+      <p class="mission">Scores inbound webform leads <b>0&ndash;100</b> so you call the hot ones first.</p>
+    </section>
+
+    <section class="tile t-mrr">
+      <div class="eyebrow">Monthly recurring</div>
+      <div class="mrr-num mono">$180</div>
+      <div class="mrr-trend">
+        <span class="up mono">&#9650; +$158</span>
+        <span class="pct">+88%</span>
+        <span class="per">this month</span>
+      </div>
+      <svg class="spark" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true">
+        <path class="area" d="M0,32 L20,26.4 L40,22.67 L60,18 L80,12.4 L100,4 L100,34 L0,34 Z"/>
+        <polyline class="line" points="0,32 20,26.4 40,22.67 60,18 80,12.4 100,4"/>
+        <circle class="dot" cx="100" cy="4" r="2.6"/>
+      </svg>
+      <div class="mrr-foot">
+        <div class="ff"><span class="ffn mono">12</span>paying users<span class="ffd">+3 this week</span></div>
+        <div class="ff sub"><span>churn <b class="mono">1%</b></span><span>net <b class="mono">+$158</b>/mo</span></div>
+      </div>
+    </section>
+
+    <section class="tile t-loops">
+      <div class="eyebrow">Always-on loops</div>
+      <div class="loops">
+        <div class="loop run">
+          <div class="loop-head"><i class="ld"></i><span class="loop-name mono">BUILD</span></div>
+          <div class="loop-state">running</div>
+          <div class="loop-note">Shipping the next slice</div>
+        </div>
+        <div class="loop need">
+          <div class="loop-head"><i class="ld"></i><span class="loop-name mono">GROW</span></div>
+          <div class="loop-state">needs you</div>
+          <div class="loop-note">A post is awaiting your OK</div>
+        </div>
+        <div class="loop run">
+          <div class="loop-head"><i class="ld"></i><span class="loop-name mono">RUN</span></div>
+          <div class="loop-state">running</div>
+          <div class="loop-note">Healthy &middot; 99.6% uptime</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tile t-road">
+      <div class="eyebrow"><i class="g ring"></i>Now building</div>
+      <h3 class="road-title">Daily email digest of top leads</h3>
+      <div class="story">
+        <div class="story-row"><span class="lab mono">Story</span><p>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p></div>
+        <div class="story-row"><span class="lab mono">Done when</span><p>A scheduled 8am email lists the day&rsquo;s top 10 leads.</p></div>
+      </div>
+      <div class="up">
+        <div class="up-lab mono">Up next</div>
+        <div class="up-chips">
+          <span>Lead-source breakdown</span>
+          <span>Slack notification on hot leads</span>
+          <span>One-click CSV export</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tile t-act">
+      <div class="eyebrow">Recent activity</div>
+      <ul class="feed">
+        <li><i class="fd a"></i><span>Scored <b>4</b> new leads overnight</span></li>
+        <li><i class="fd b"></i><span>Sent <b>12</b> onboarding emails</span></li>
+        <li><i class="fd c"></i><span>Published an SEO article <em>&middot; indexed</em></span></li>
+      </ul>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V3</span><span class="vtitle">Single-column story</span><span class="vblurb">A calm, vertical reading flow for one autonomous micro-SaaS: identity with an explicit online status and stage, then a big MRR moment with a growth sparkline, the three always-on loops, the roadmap slice with its story and done-when, and the live activity feed. Lots of air, warm palette, one calm screen.</span></div><div class="vstage"><div class="co-page co-v3">
+  <article class="wrap">
+
+    <header class="id">
+      <div class="id-top">
+        <h1 class="name">LeadSift</h1>
+        <span class="status"><span class="dot-online" aria-hidden="true"></span>Online</span>
+        <span class="stage">LIVE</span>
+        <span class="grow">Growing</span>
+      </div>
+      <p class="mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+    </header>
+
+    <hr class="rule">
+
+    <section class="sec metrics">
+      <div class="k"><span class="kn">01</span> Metrics</div>
+      <div class="mrr">
+        <div class="mrr-main">
+          <div class="mrr-label">Monthly recurring revenue</div>
+          <div class="mrr-row">
+            <span class="mrr-num"><span class="cur">$</span>180</span>
+            <span class="mrr-trend">+$158 this month <span class="pct">+88%</span></span>
+          </div>
+          <div class="mrr-sub">up from $22 last month</div>
+        </div>
+        <div class="spark">
+          <svg viewBox="0 0 120 40" fill="none" aria-hidden="true">
+            <path d="M0,38 L24,31.2 L48,26.7 L72,21 L96,14.2 L120,4 L120,40 L0,40 Z" fill="var(--green-soft)"></path>
+            <polyline points="0,38 24,31.2 48,26.7 72,21 96,14.2 120,4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <circle cx="120" cy="4" r="3" fill="var(--green)" stroke="#fff" stroke-width="1.5"></circle>
+          </svg>
+          <span class="spark-cap">6-mo trend</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="sv">12</span><span class="sl">paying users <em>+3 this week</em></span></div>
+        <div class="stat"><span class="sv">1%</span><span class="sl">monthly churn</span></div>
+        <div class="stat"><span class="sv">+$158</span><span class="sl">net / month</span></div>
+      </div>
+    </section>
+
+    <section class="sec loops">
+      <div class="k"><span class="kn">02</span> Always-on loops</div>
+      <div class="loops-card">
+        <div class="loop">
+          <div class="loop-head"><span class="loop-dot run"></span><span class="loop-name">Build</span></div>
+          <div class="loop-desc">Shipping the next slice.</div>
+          <span class="loop-state run">Running</span>
+        </div>
+        <div class="loop">
+          <div class="loop-head"><span class="loop-dot need"></span><span class="loop-name">Grow</span></div>
+          <div class="loop-desc">A post is awaiting your OK.</div>
+          <span class="loop-state need">Needs you</span>
+        </div>
+        <div class="loop">
+          <div class="loop-head"><span class="loop-dot run"></span><span class="loop-name">Run</span></div>
+          <div class="loop-desc">Healthy · 99.6% uptime.</div>
+          <span class="loop-state run">Running</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec road">
+      <div class="k"><span class="kn">03</span> Roadmap</div>
+      <div class="slice">
+        <span class="slice-tag"><i></i> Current slice · building</span>
+        <h3 class="slice-title">Daily email digest of top leads</h3>
+        <p class="story">“As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.”</p>
+        <div class="donewhen"><span class="dw-label">Done when</span> a scheduled 8am email lists the day's top 10 leads.</div>
+      </div>
+      <div class="upcoming">
+        <div class="up-label">Up next</div>
+        <ol class="up-list">
+          <li>Lead-source breakdown</li>
+          <li>Slack notification on hot leads</li>
+          <li>One-click CSV export</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec activity">
+      <div class="k"><span class="kn">04</span> Recent activity <span class="k-note">autonomous</span></div>
+      <ul class="feed">
+        <li><span class="fdot b"></span><span class="ftext">Scored <b>4</b> new leads overnight</span><span class="ftag">leads</span></li>
+        <li><span class="fdot a"></span><span class="ftext">Sent <b>12</b> onboarding emails</span><span class="ftag">email</span></li>
+        <li><span class="fdot g"></span><span class="ftext">Published an SEO article · <b>indexed</b></span><span class="ftag">content</span></li>
+      </ul>
+    </section>
+
+    <footer class="foot">The AI builds, grows and runs LeadSift · you only step in where it asks.</footer>
+
+  </article>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V4</span><span class="vtitle">Metric hero</span><span class="vblurb">LeadSift&#x27;s MRR is the whole show: a big $180 (+88%) headline riding a full-width terracotta area sparkline, with net, users and churn tucked into one mono strip beneath. The three always-on loops, the current build slice with its user story, what&#x27;s up next, and the autonomous activity feed sit compact below — calm, warm, data-forward, one scannable ~820px screen.</span></div><div class="vstage"><div class="co-page co-v4">
+  <div class="wrap">
+
+    <!-- identity -->
+    <header class="id">
+      <div class="mark">L</div>
+      <div class="id-main">
+        <div class="id-line">
+          <h1>LeadSift</h1>
+          <span class="online"><i></i>online</span>
+        </div>
+      </div>
+      <div class="stage">
+        <span class="stage-live">LIVE</span>
+        <span class="stage-grow">· Growing</span>
+      </div>
+    </header>
+    <p class="mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+
+    <!-- hero metric band -->
+    <section class="hero">
+      <div class="hero-top">
+        <span class="eyebrow">Monthly recurring revenue</span>
+        <span class="hero-range">last 6 months</span>
+      </div>
+      <div class="hero-figure">
+        <div class="hero-num"><span class="cur">$</span>180<span class="per">/mo</span></div>
+        <div class="hero-delta">
+          <span class="delta-pill">
+            <svg class="arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+            +88%
+          </span>
+          <span class="delta-sub"><em>+$158</em> this month</span>
+        </div>
+      </div>
+
+      <div class="spark-wrap">
+        <svg class="spark" viewBox="0 0 600 120" role="img" aria-label="MRR trend from 120 to 180 dollars over six months">
+          <path d="M20 108 L132 89 L244 76 L356 60 L468 41 L580 12 L580 120 L20 120 Z" fill="var(--accent-soft)"/>
+          <polyline points="20,108 132,89 244,76 356,60 468,41 580,12" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="580" cy="12" r="9" fill="var(--accent-soft)"/>
+          <circle cx="580" cy="12" r="4.5" fill="var(--accent)"/>
+          <circle cx="580" cy="12" r="1.8" fill="#fff"/>
+        </svg>
+        <div class="spark-axis"><span>$120</span><span class="now">$180 · now</span></div>
+      </div>
+
+      <div class="hero-stats">
+        <span><b>12</b> paying users <em>+3 this week</em></span>
+        <span class="sep">·</span>
+        <span>churn <b>1%</b></span>
+        <span class="sep">·</span>
+        <span>net <em>+$158</em>/mo</span>
+      </div>
+    </section>
+
+    <!-- three loops -->
+    <section class="loops">
+      <div class="loop">
+        <div class="loop-top">
+          <span class="loop-name">BUILD</span>
+          <span class="loop-state run"><i></i>running</span>
+        </div>
+        <div class="loop-desc">Shipping the next slice.</div>
+      </div>
+      <div class="loop attn">
+        <div class="loop-top">
+          <span class="loop-name">GROW</span>
+          <span class="loop-state needs"><i></i>needs you</span>
+        </div>
+        <div class="loop-desc">A post is awaiting your OK.</div>
+      </div>
+      <div class="loop">
+        <div class="loop-top">
+          <span class="loop-name">RUN</span>
+          <span class="loop-state run"><i></i>running</span>
+        </div>
+        <div class="loop-desc">Healthy · 99.6% uptime.</div>
+      </div>
+    </section>
+
+    <!-- current roadmap slice -->
+    <section class="road">
+      <div class="road-head">
+        <span class="eyebrow">Now building</span>
+        <span class="road-tag">Current slice</span>
+      </div>
+      <h3>Daily email digest of top leads</h3>
+      <p class="story">"As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first."</p>
+      <div class="donewhen">
+        <span class="dw-label">Done when</span>
+        <span>A scheduled 8am email lists the day's top 10 leads.</span>
+      </div>
+      <div class="upnext">
+        <span class="up-label">Up next</span>
+        <span class="chip">Lead-source breakdown</span>
+        <span class="chip">Slack notification on hot leads</span>
+        <span class="chip">One-click CSV export</span>
+      </div>
+    </section>
+
+    <!-- recent activity -->
+    <section class="feed">
+      <div class="eyebrow">Recent activity</div>
+      <ul>
+        <li>
+          <span class="fdot g"></span>
+          <span class="ftxt">Scored <b>4 new leads</b> overnight</span>
+          <span class="ftime">7h</span>
+        </li>
+        <li>
+          <span class="fdot b"></span>
+          <span class="ftxt">Sent <b>12 onboarding emails</b></span>
+          <span class="ftime">1d</span>
+        </li>
+        <li>
+          <span class="fdot a"></span>
+          <span class="ftxt">Published an <b>SEO article</b> · indexed</span>
+          <span class="ftime">2d</span>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V5</span><span class="vtitle">Loop forward — LeadSift company page (v5)</span><span class="vblurb">A calm, single-screen company overview built around one idea: the always-on Build → Grow → Run loop is the hero. Three connected status nodes flow forward (green = running, amber = needs you) with a dashed return arc back to Build. Supporting metrics (MRR $180 with a green sparkline, 12 users, 1% churn, +$158/mo net), the current roadmap slice with its user story + done-when, the up-next queue, and an autonomous activity feed sit quietly beneath. Warm cream palette, generous whitespace, ~820px wide.</span></div><div class="vstage"><div class="co-page co-v5">
+  <header class="head">
+    <div class="brand">
+      <div class="mark">L</div>
+      <div class="id">
+        <div class="id-row">
+          <h1 class="name">LeadSift</h1>
+          <span class="online"><span class="odot"></span>online</span>
+        </div>
+        <p class="mission">Scores inbound webform leads <b>0&#8211;100</b> so you call the hot ones first.</p>
+      </div>
+    </div>
+    <div class="stage">
+      <span class="tag-live">LIVE</span>
+      <span class="tag-grow">Growing</span>
+    </div>
+  </header>
+
+  <section class="loop" aria-label="Build, Grow and Run loop">
+    <div class="loop-head">
+      <span class="loop-k">The always-on loop</span>
+      <span class="loop-note">build &#8594; grow &#8594; run, then back to build</span>
+    </div>
+
+    <div class="track">
+      <div class="node on">
+        <div class="n-top"><span class="pulse g"></span><span class="n-name">BUILD</span></div>
+        <span class="n-state g">running</span>
+        <p class="n-desc">Shipping the next slice.</p>
+      </div>
+
+      <div class="conn">
+        <svg class="chev" viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline class="c1" points="6,6 13,12 6,18"/>
+          <polyline class="c2" points="16,6 23,12 16,18"/>
+          <polyline class="c3" points="26,6 33,12 26,18"/>
+        </svg>
+      </div>
+
+      <div class="node need">
+        <div class="n-top"><span class="pulse a"></span><span class="n-name">GROW</span></div>
+        <span class="n-state a">needs you</span>
+        <p class="n-desc">A post is awaiting your OK.</p>
+      </div>
+
+      <div class="conn">
+        <svg class="chev" viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline class="c1" points="6,6 13,12 6,18"/>
+          <polyline class="c2" points="16,6 23,12 16,18"/>
+          <polyline class="c3" points="26,6 33,12 26,18"/>
+        </svg>
+      </div>
+
+      <div class="node on">
+        <div class="n-top"><span class="pulse g"></span><span class="n-name">RUN</span></div>
+        <span class="n-state g">running</span>
+        <p class="n-desc">Healthy &#183; 99.6% uptime.</p>
+      </div>
+    </div>
+
+    <div class="loopback">
+      <svg class="lb" viewBox="0 0 760 26" preserveAspectRatio="none" fill="none" stroke="currentColor" aria-hidden="true">
+        <path d="M752,3 C752,21 560,24 380,24 C200,24 8,21 8,3" stroke-width="1.4" stroke-dasharray="4 5"/>
+      </svg>
+      <span class="lb-lab">run's results feed back into the next build &#8634;</span>
+    </div>
+  </section>
+
+  <section class="metrics">
+    <div class="mrr">
+      <div class="m-k">MRR</div>
+      <div class="m-val">$180<span class="m-per">/mo</span></div>
+      <div class="m-delta">&#9650; +$158 <span class="m-pct">+88%</span><span class="m-when">this month</span></div>
+      <svg class="spark" viewBox="0 0 132 42" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <path d="M2,37 L28,31 L54,27 L80,22 L106,16 L130,7 L130,42 L2,42 Z" fill="var(--green-soft)"/>
+        <polyline points="2,37 28,31 54,27 80,22 106,16 130,7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="130" cy="7" r="3" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="s-val">12</span><span class="s-lab">paying users</span><span class="s-sub">+3 this week</span></div>
+      <div class="stat"><span class="s-val">1%</span><span class="s-lab">churn</span></div>
+      <div class="stat"><span class="s-val g">+$158</span><span class="s-lab">net / mo</span></div>
+    </div>
+  </section>
+
+  <section class="build-row">
+    <div class="card slice">
+      <div class="card-k"><span class="kdot"></span>Building now &#183; <span class="k-b">current slice</span></div>
+      <h3 class="slice-t">Daily email digest of top leads</h3>
+      <div class="story">
+        <span class="story-k">User story</span>
+        <p>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+      </div>
+      <div class="done">
+        <span class="done-k">Done when</span>
+        <p>A scheduled 8am email lists the day's top 10 leads.</p>
+      </div>
+    </div>
+    <div class="card upcoming">
+      <div class="card-k">Up next</div>
+      <ol class="up-list">
+        <li>Lead-source breakdown</li>
+        <li>Slack notification on hot leads</li>
+        <li>One-click CSV export</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card activity">
+    <div class="card-k">Recent activity &#183; autonomous</div>
+    <ul class="feed">
+      <li><span class="fdot g"></span>Scored 4 new leads overnight<span class="ftag">run</span></li>
+      <li><span class="fdot ac"></span>Sent 12 onboarding emails<span class="ftag">grow</span></li>
+      <li><span class="fdot ac"></span>Published an SEO article &#183; indexed<span class="ftag">grow</span></li>
+    </ul>
+  </section>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V6</span><span class="vtitle">Split panel</span><span class="vblurb">A calm two-column company page: identity, MRR with sparkline, and the three always-on loops on the left; the current build slice, upcoming roadmap, and autonomous activity feed on the right — divided by a clean line, balanced and warm.</span></div><div class="vstage"><div class="co-page co-v6">
+  <div class="co6-card">
+
+    <div class="co6-col co6-l">
+      <div class="co6-id">
+        <div class="co6-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15l4-4 4 3 7-8"/><path d="M4 20h16"/></svg>
+        </div>
+        <div class="co6-id-txt">
+          <div class="co6-name"><span>LeadSift</span><span class="co6-dot" aria-hidden="true"></span></div>
+          <div class="co6-stage"><span class="co6-live">Online</span><span class="co6-sep">·</span><span>Growing</span></div>
+        </div>
+      </div>
+
+      <p class="co6-mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+
+      <div class="co6-metric">
+        <div class="co6-metric-head">
+          <span class="co6-metric-label">MRR</span>
+          <svg class="co6-spark" viewBox="0 0 96 30" aria-hidden="true">
+            <path class="a" d="M0,27 L19.2,22.2 38.4,19 57.6,15 76.8,10.2 96,3 L96,30 L0,30 Z"/>
+            <polyline class="l" points="0,27 19.2,22.2 38.4,19 57.6,15 76.8,10.2 96,3"/>
+          </svg>
+        </div>
+        <div class="co6-metric-val">$180<span class="co6-metric-per">/mo</span></div>
+        <div class="co6-metric-trend"><span class="co6-up">▲ +$158</span><span class="co6-pct">+88% this month</span></div>
+      </div>
+
+      <div class="co6-stats">
+        <div class="co6-stat"><span class="co6-stat-n">12</span><span class="co6-stat-l">paying users <em>+3 wk</em></span></div>
+        <div class="co6-stat"><span class="co6-stat-n">1%</span><span class="co6-stat-l">churn</span></div>
+        <div class="co6-stat"><span class="co6-stat-n">+$158</span><span class="co6-stat-l">net / mo</span></div>
+      </div>
+
+      <div class="co6-loops">
+        <div class="co6-eyebrow co6-loops-h">Always-on loops</div>
+        <div class="co6-loop is-run"><span class="co6-loop-dot"></span><span class="co6-loop-name">Build</span><span class="co6-loop-state">running · shipping next slice</span></div>
+        <div class="co6-loop is-need"><span class="co6-loop-dot"></span><span class="co6-loop-name">Grow</span><span class="co6-loop-state">needs you · post awaiting OK</span></div>
+        <div class="co6-loop is-run"><span class="co6-loop-dot"></span><span class="co6-loop-name">Run</span><span class="co6-loop-state">running · 99.6% uptime</span></div>
+      </div>
+    </div>
+
+    <div class="co6-col co6-r">
+      <section class="co6-now">
+        <div class="co6-eyebrow">Now building</div>
+        <h3 class="co6-now-title">Daily email digest of top leads</h3>
+        <p class="co6-story"><span class="co6-k">Story</span>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+        <p class="co6-done"><span class="co6-k">Done when</span>a scheduled 8am email lists the day's top 10 leads.</p>
+      </section>
+
+      <section class="co6-next">
+        <div class="co6-eyebrow">Up next</div>
+        <ul class="co6-next-list">
+          <li><span class="co6-next-i">1</span>Lead-source breakdown</li>
+          <li><span class="co6-next-i">2</span>Slack notification on hot leads</li>
+          <li><span class="co6-next-i">3</span>One-click CSV export</li>
+        </ul>
+      </section>
+
+      <section class="co6-feed">
+        <div class="co6-eyebrow">Recent activity</div>
+        <ul class="co6-feed-list">
+          <li><span class="co6-feed-dot"></span><span class="co6-feed-t">Scored 4 new leads overnight</span></li>
+          <li><span class="co6-feed-dot"></span><span class="co6-feed-t">Sent 12 onboarding emails</span></li>
+          <li><span class="co6-feed-dot"></span><span class="co6-feed-t">Published an SEO article <em>· indexed</em></span></li>
+        </ul>
+      </section>
+    </div>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V7</span><span class="vtitle">Minimal Mono — LeadSift</span><span class="vblurb">A restrained, mono-numeral company overview: hairline rules, small-caps labels, JetBrains Mono figures and a stretched sparkline. Quiet, premium, one calm scannable screen at 820px — LeadSift&#x27;s status, MRR, the three autonomous loops, the current roadmap slice and the recent activity feed.</span></div><div class="vstage"><div class="co-page co-v7">
+  <header class="co-head">
+    <div class="co-id">
+      <span class="co-dot" aria-hidden="true"></span>
+      <h1 class="co-name">LeadSift</h1>
+      <span class="co-stage">LIVE</span>
+    </div>
+    <div class="co-status">
+      <span class="co-online">online</span>
+      <span class="co-sep" aria-hidden="true">/</span>
+      <span>Growing</span>
+    </div>
+  </header>
+
+  <p class="co-mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+
+  <section class="co-sec co-metrics" aria-label="Metrics">
+    <div class="co-mrr">
+      <p class="co-label">Monthly recurring revenue</p>
+      <div class="co-mrr-val">$180<span class="co-mrr-unit">/mo</span></div>
+      <div class="co-mrr-trend">+$158 this month · +88%</div>
+      <svg class="co-spark" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+        <polyline points="0,30 20,24 40,21 60,16 80,10 100,2" fill="none" stroke="currentColor" stroke-width="1.75" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"></polyline>
+      </svg>
+    </div>
+    <div class="co-stats">
+      <div class="co-stat">
+        <span class="co-label">Users</span>
+        <span class="co-stat-r"><b class="co-stat-num">12</b><span class="co-stat-sub">+3 this week</span></span>
+      </div>
+      <div class="co-stat">
+        <span class="co-label">Churn</span>
+        <span class="co-stat-r"><b class="co-stat-num">1%</b><span class="co-stat-sub">steady</span></span>
+      </div>
+      <div class="co-stat">
+        <span class="co-label">Net</span>
+        <span class="co-stat-r"><b class="co-stat-num co-pos">+$158</b><span class="co-stat-sub">/ mo</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="co-sec co-loops-sec" aria-label="Autonomous loops">
+    <div class="co-sec-head">
+      <p class="co-label">Autonomous loops</p>
+      <span class="co-sec-meta">always on</span>
+    </div>
+    <div class="co-loops">
+      <div class="co-loop">
+        <div class="co-loop-name">BUILD</div>
+        <div class="co-loop-state co-run"><span class="co-loop-dot"></span>running</div>
+        <p class="co-loop-note">Shipping the next slice.</p>
+      </div>
+      <div class="co-loop">
+        <div class="co-loop-name">GROW</div>
+        <div class="co-loop-state co-need"><span class="co-loop-dot"></span>needs you</div>
+        <p class="co-loop-note">A post is awaiting your OK.</p>
+      </div>
+      <div class="co-loop">
+        <div class="co-loop-name">RUN</div>
+        <div class="co-loop-state co-run"><span class="co-loop-dot"></span>running</div>
+        <p class="co-loop-note">Healthy · 99.6% uptime.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="co-sec co-roadmap" aria-label="Roadmap">
+    <div class="co-sec-head">
+      <p class="co-label">Current slice</p>
+      <span class="co-slice-idx">01 / 04</span>
+    </div>
+    <h2 class="co-slice-title">Daily email digest of top leads</h2>
+    <div class="co-kv">
+      <span class="co-label">Story</span>
+      <p class="co-kv-text">As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+    </div>
+    <div class="co-kv">
+      <span class="co-label">Done when</span>
+      <p class="co-kv-text">A scheduled 8am email lists the day's top 10 leads.</p>
+    </div>
+
+    <div class="co-upcoming">
+      <p class="co-label">Upcoming</p>
+      <ol class="co-up-list">
+        <li><span class="co-up-num">02</span><span>Lead-source breakdown</span></li>
+        <li><span class="co-up-num">03</span><span>Slack notification on hot leads</span></li>
+        <li><span class="co-up-num">04</span><span>One-click CSV export</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="co-sec co-activity" aria-label="Recent activity">
+    <div class="co-sec-head">
+      <p class="co-label">Recent activity</p>
+      <span class="co-sec-meta">autonomous</span>
+    </div>
+    <ul class="co-feed">
+      <li><span class="co-feed-mark" aria-hidden="true"></span><span>Scored 4 new leads overnight</span></li>
+      <li><span class="co-feed-mark" aria-hidden="true"></span><span>Sent 12 onboarding emails</span></li>
+      <li><span class="co-feed-mark" aria-hidden="true"></span><span>Published an SEO article · indexed</span></li>
+    </ul>
+  </section>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V8</span><span class="vtitle">Roadmap timeline</span><span class="vblurb">LeadSift overview built around a vertical roadmap spine: a compact identity row with an explicit online status and stage, a metrics header with MRR sparkline and the three always-on BUILD/GROW/RUN loops, then the timeline itself — the current slice highlighted with its user story and done-when, upcoming slices queued below, and a calm autonomous activity feed.</span></div><div class="vstage"><div class="co-page co-v8">
+  <div class="v8-card">
+
+    <header class="v8-head">
+      <div class="v8-title-row">
+        <h1 class="v8-name">LeadSift</h1>
+        <span class="v8-online"><span class="v8-dot" aria-hidden="true"></span>Online</span>
+        <span class="v8-stage">Live</span>
+        <span class="v8-growing">Growing</span>
+      </div>
+      <p class="v8-mission">Scores inbound webform leads 0&ndash;100 so you call the hot ones first.</p>
+    </header>
+
+    <section class="v8-metrics">
+      <div class="v8-mrr">
+        <div class="v8-mrr-top">
+          <span class="v8-label">MRR</span>
+          <svg class="v8-spark" width="96" height="32" viewBox="0 0 96 32" fill="none" aria-hidden="true">
+            <polyline points="0,30 19.2,24.4 38.4,20.7 57.6,16 76.8,10.4 96,2"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </div>
+        <div class="v8-mrr-val">$180</div>
+        <div class="v8-mrr-trend">+$158 &middot; +88% this month</div>
+      </div>
+      <div class="v8-stats">
+        <div class="v8-stat">
+          <span class="v8-stat-val">12</span>
+          <span class="v8-stat-lbl">users <span class="v8-up">+3 wk</span></span>
+        </div>
+        <div class="v8-stat">
+          <span class="v8-stat-val">1%</span>
+          <span class="v8-stat-lbl">churn</span>
+        </div>
+        <div class="v8-stat">
+          <span class="v8-stat-val v8-up">+$158</span>
+          <span class="v8-stat-lbl">net / mo</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="v8-loops">
+      <div class="v8-loop v8-loop--run">
+        <span class="v8-loop-name">BUILD</span>
+        <span class="v8-loop-state"><span class="v8-loop-led"></span>running</span>
+        <span class="v8-loop-note">shipping the next slice</span>
+      </div>
+      <div class="v8-loop v8-loop--need">
+        <span class="v8-loop-name">GROW</span>
+        <span class="v8-loop-state"><span class="v8-loop-led"></span>needs you</span>
+        <span class="v8-loop-note">a post is awaiting your OK</span>
+      </div>
+      <div class="v8-loop v8-loop--run">
+        <span class="v8-loop-name">RUN</span>
+        <span class="v8-loop-state"><span class="v8-loop-led"></span>running</span>
+        <span class="v8-loop-note">healthy &middot; 99.6% uptime</span>
+      </div>
+    </section>
+
+    <section class="v8-roadmap">
+      <h2 class="v8-section-title">Roadmap</h2>
+      <ol class="v8-timeline">
+        <li class="v8-node v8-node--current">
+          <span class="v8-node-marker" aria-hidden="true"></span>
+          <div class="v8-node-body">
+            <span class="v8-node-tag">Building now</span>
+            <h3>Daily email digest of top leads</h3>
+            <p class="v8-story">&ldquo;As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.&rdquo;</p>
+            <p class="v8-done"><b>Done when</b> a scheduled 8am email lists the day&rsquo;s top 10 leads.</p>
+          </div>
+        </li>
+        <li class="v8-node v8-node--next v8-first">
+          <span class="v8-node-marker" aria-hidden="true"></span>
+          <div class="v8-node-row">
+            <h3>Lead-source breakdown</h3>
+            <span class="v8-queue">Up next</span>
+          </div>
+        </li>
+        <li class="v8-node v8-node--next">
+          <span class="v8-node-marker" aria-hidden="true"></span>
+          <div class="v8-node-row">
+            <h3>Slack notification on hot leads</h3>
+            <span class="v8-queue">Queued</span>
+          </div>
+        </li>
+        <li class="v8-node v8-node--next">
+          <span class="v8-node-marker" aria-hidden="true"></span>
+          <div class="v8-node-row">
+            <h3>One-click CSV export</h3>
+            <span class="v8-queue">Queued</span>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="v8-activity">
+      <div class="v8-activity-head">
+        <h2 class="v8-section-title">Recent activity</h2>
+        <span class="v8-auto">autonomous</span>
+      </div>
+      <ul class="v8-feed">
+        <li><span class="v8-feed-dot" aria-hidden="true"></span>Scored 4 new leads overnight</li>
+        <li><span class="v8-feed-dot" aria-hidden="true"></span>Sent 12 onboarding emails</li>
+        <li><span class="v8-feed-dot" aria-hidden="true"></span>Published an SEO article &middot; indexed</li>
+      </ul>
+    </section>
+
+  </div>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V9</span><span class="vtitle">Warm magazine</span><span class="vblurb">An editorial, typographic company page: a big Space Grotesk hero MRR stat, a magazine-style mission lead, refined hairline metrics, and understated loops, roadmap and activity — one calm, warm screen.</span></div><div class="vstage"><div class="co-page co-v9">
+  <header class="v9-mast">
+    <div class="v9-brand">
+      <span class="v9-name">LeadSift</span>
+      <span class="v9-dot" aria-hidden="true"></span>
+      <span class="v9-online">online</span>
+    </div>
+    <div class="v9-stage">
+      <span class="v9-stage-live">Live</span>
+      <span class="v9-stage-sep">·</span>
+      <span>Growing</span>
+    </div>
+  </header>
+
+  <section class="v9-hero">
+    <p class="v9-kicker">Monthly recurring revenue</p>
+    <div class="v9-hero-row">
+      <h1 class="v9-stat">$180</h1>
+      <div class="v9-hero-side">
+        <svg class="v9-spark" width="128" height="34" viewBox="0 0 128 34" fill="none" aria-hidden="true">
+          <polyline points="4,31 28,25.4 52,21.7 76,17 100,11.4 124,3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="v9-trend"><span class="v9-trend-up">+$158</span> this month · +88%</p>
+      </div>
+    </div>
+    <p class="v9-mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+  </section>
+
+  <section class="v9-metrics">
+    <div class="v9-metric">
+      <span class="v9-metric-num">12</span>
+      <span class="v9-metric-label">paying users</span>
+      <span class="v9-metric-delta v9-up">+3 this week</span>
+    </div>
+    <div class="v9-metric">
+      <span class="v9-metric-num">1%</span>
+      <span class="v9-metric-label">monthly churn</span>
+      <span class="v9-metric-delta">stable</span>
+    </div>
+    <div class="v9-metric">
+      <span class="v9-metric-num">+$158</span>
+      <span class="v9-metric-label">net / month</span>
+      <span class="v9-metric-delta v9-up">growing</span>
+    </div>
+  </section>
+
+  <section class="v9-section">
+    <h2 class="v9-h2">The three loops</h2>
+    <ul class="v9-loops">
+      <li class="v9-loop">
+        <div class="v9-loop-top">
+          <span class="v9-loop-name">Build</span>
+          <span class="v9-loop-state v9-run">running</span>
+        </div>
+        <p class="v9-loop-desc">Shipping the next slice.</p>
+      </li>
+      <li class="v9-loop">
+        <div class="v9-loop-top">
+          <span class="v9-loop-name">Grow</span>
+          <span class="v9-loop-state v9-needs">needs you</span>
+        </div>
+        <p class="v9-loop-desc">A post is awaiting your OK.</p>
+      </li>
+      <li class="v9-loop">
+        <div class="v9-loop-top">
+          <span class="v9-loop-name">Run</span>
+          <span class="v9-loop-state v9-run">running</span>
+        </div>
+        <p class="v9-loop-desc">Healthy · 99.6% uptime.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="v9-section">
+    <h2 class="v9-h2">Roadmap · now building</h2>
+    <article class="v9-slice">
+      <p class="v9-slice-tag">Current slice</p>
+      <h3 class="v9-slice-title">Daily email digest of top leads</h3>
+      <p class="v9-story">“As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.”</p>
+      <p class="v9-done"><span class="v9-done-tag">Done when</span> a scheduled 8am email lists the day’s top 10 leads.</p>
+    </article>
+    <ol class="v9-upcoming">
+      <li><span class="v9-up-num">02</span>Lead-source breakdown</li>
+      <li><span class="v9-up-num">03</span>Slack notification on hot leads</li>
+      <li><span class="v9-up-num">04</span>One-click CSV export</li>
+    </ol>
+  </section>
+
+  <section class="v9-section">
+    <h2 class="v9-h2">Recent activity</h2>
+    <ul class="v9-feed">
+      <li>Scored 4 new leads overnight</li>
+      <li>Sent 12 onboarding emails</li>
+      <li>Published an SEO article · indexed</li>
+    </ul>
+  </section>
+</div></div></section>
+  <section class="vpanel"><div class="vhead"><span class="vnum">V10</span><span class="vtitle">Compact ops</span><span class="vblurb">A dense-but-clean operator summary for LeadSift: a four-cell KPI strip (MRR + sparkline, users, uptime, net), a one-line loops status bar, then the roadmap and autonomous activity feed. Mono labels, tight grid, warm calm palette — efficient and scannable in one screen.</span></div><div class="vstage"><div class="co-page co-v10">
+  <div class="v10-shell">
+
+    <header class="v10-head">
+      <div class="v10-id">
+        <span class="v10-dot" aria-hidden="true"></span>
+        <h1 class="v10-name">LeadSift</h1>
+        <span class="v10-tag v10-tag-live">Live</span>
+        <span class="v10-tag v10-tag-grow">Growing</span>
+      </div>
+      <p class="v10-mission">Scores inbound webform leads 0–100 so you call the hot ones first.</p>
+    </header>
+
+    <section class="v10-kpis" aria-label="Key metrics">
+      <div class="v10-kpi v10-kpi-mrr">
+        <div class="v10-kpi-top">
+          <span class="v10-kpi-label">MRR</span>
+          <span class="v10-kpi-delta">+$158 · +88%</span>
+        </div>
+        <div class="v10-kpi-main">
+          <span class="v10-kpi-num">$180</span>
+          <svg class="v10-spark" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+            <polyline points="0,30 20,24.4 40,20.7 60,16 80,10.4 100,2" />
+          </svg>
+        </div>
+      </div>
+      <div class="v10-kpi">
+        <div class="v10-kpi-top">
+          <span class="v10-kpi-label">Users</span>
+          <span class="v10-kpi-delta">+3 wk</span>
+        </div>
+        <div class="v10-kpi-main"><span class="v10-kpi-num">12</span></div>
+        <span class="v10-kpi-sub">paying</span>
+      </div>
+      <div class="v10-kpi">
+        <div class="v10-kpi-top">
+          <span class="v10-kpi-label">Uptime</span>
+          <span class="v10-kpi-delta">healthy</span>
+        </div>
+        <div class="v10-kpi-main"><span class="v10-kpi-num">99.6%</span></div>
+        <span class="v10-kpi-sub">churn 1%</span>
+      </div>
+      <div class="v10-kpi">
+        <div class="v10-kpi-top"><span class="v10-kpi-label">Net</span></div>
+        <div class="v10-kpi-main"><span class="v10-kpi-num v10-pos">+$158</span></div>
+        <span class="v10-kpi-sub">per month</span>
+      </div>
+    </section>
+
+    <section class="v10-loops" aria-label="Automation loops">
+      <span class="v10-loops-lead">Loops</span>
+      <span class="v10-loop v10-run">
+        <span class="v10-loop-dot" aria-hidden="true"></span>
+        <span class="v10-loop-name">BUILD</span>
+        <span class="v10-loop-state">running</span>
+        <span class="v10-loop-ctx">shipping slice</span>
+      </span>
+      <span class="v10-loop v10-need">
+        <span class="v10-loop-dot" aria-hidden="true"></span>
+        <span class="v10-loop-name">GROW</span>
+        <span class="v10-loop-state">needs you</span>
+        <span class="v10-loop-ctx">post awaiting OK</span>
+      </span>
+      <span class="v10-loop v10-run">
+        <span class="v10-loop-dot" aria-hidden="true"></span>
+        <span class="v10-loop-name">RUN</span>
+        <span class="v10-loop-state">running</span>
+        <span class="v10-loop-ctx">99.6% uptime</span>
+      </span>
+    </section>
+
+    <section class="v10-road" aria-label="Roadmap">
+      <span class="v10-eyebrow">Building now · slice 1</span>
+      <div class="v10-current">
+        <h2 class="v10-current-title">Daily email digest of top leads</h2>
+        <p class="v10-story"><span class="v10-story-k">Story</span>As a busy founder, I want a daily email of my top-scored leads so I act on the hottest ones first.</p>
+        <p class="v10-done"><span class="v10-done-k">Done when</span>a scheduled 8am email lists the day's top 10 leads.</p>
+      </div>
+      <div class="v10-up">
+        <span class="v10-up-label">Up next</span>
+        <ol class="v10-upcoming">
+          <li><span class="v10-up-i">Next</span>Lead-source breakdown</li>
+          <li><span class="v10-up-i">Then</span>Slack notification on hot leads</li>
+          <li><span class="v10-up-i">Later</span>One-click CSV export</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="v10-activity" aria-label="Recent activity">
+      <span class="v10-eyebrow">Recent · autonomous</span>
+      <ul class="v10-feed">
+        <li>Scored 4 new leads overnight</li>
+        <li>Sent 12 onboarding emails</li>
+        <li>Published an SEO article · indexed</li>
+      </ul>
+    </section>
+
+  </div>
+</div></div></section>
+</div>
+<style>
+.co-v1 {
+  box-sizing: border-box;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 22px 64px;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.co-v1 *,
+.co-v1 *::before,
+.co-v1 *::after {
+  box-sizing: border-box;
+}
+
+.co-v1 .v1-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+/* ---------- Header ---------- */
+.co-v1 .v1-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.co-v1 .v1-id {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.co-v1 .v1-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  flex: none;
+}
+.co-v1 .v1-id-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.co-v1 .v1-name {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.co-v1 .v1-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px var(--green-soft);
+  display: inline-block;
+}
+.co-v1 .v1-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.co-v1 .v1-stage {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-weight: 600;
+}
+.co-v1 .v1-growing {
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.co-v1 .v1-mission {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 17px;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+/* ---------- MRR ---------- */
+.co-v1 .v1-mrr {
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 20px;
+  padding: 24px 26px 20px;
+}
+.co-v1 .v1-mrr-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.co-v1 .v1-mrr-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.co-v1 .v1-mrr-num {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.co-v1 .v1-mrr-big {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+}
+.co-v1 .v1-mrr-trend {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.co-v1 .v1-pct {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  font-size: 11px;
+}
+.co-v1 .v1-chart {
+  margin-top: 14px;
+  color: var(--accent);
+}
+.co-v1 .v1-svg {
+  display: block;
+  width: 100%;
+  height: 120px;
+}
+.co-v1 .v1-area {
+  fill: var(--accent-soft);
+  stroke: none;
+}
+.co-v1 .v1-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.co-v1 .v1-tip {
+  fill: var(--accent);
+  stroke: var(--paper);
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+.co-v1 .v1-months {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- Metrics ---------- */
+.co-v1 .v1-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.co-v1 .v1-metric {
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.co-v1 .v1-m-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.co-v1 .v1-m-lab {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+.co-v1 .v1-m-delta {
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+.co-v1 .v1-up { color: var(--green); }
+.co-v1 .v1-flat { color: var(--ink-faint); }
+
+/* ---------- Blocks ---------- */
+.co-v1 .v1-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.co-v1 .v1-h {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+/* ---------- Loops ---------- */
+.co-v1 .v1-loops {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.co-v1 .v1-loop {
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.co-v1 .v1-loop-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.co-v1 .v1-loop-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.co-v1 .v1-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px 3px 18px;
+  border-radius: 999px;
+  position: relative;
+}
+.co-v1 .v1-state::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.co-v1 .v1-run {
+  color: var(--green);
+  background: var(--green-soft);
+}
+.co-v1 .v1-run::before { background: var(--green); }
+.co-v1 .v1-need {
+  color: var(--amber);
+  background: var(--amber-soft);
+}
+.co-v1 .v1-need::before { background: var(--amber); }
+.co-v1 .v1-loop-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Roadmap ---------- */
+.co-v1 .v1-current {
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.co-v1 .v1-current-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+.co-v1 .v1-current-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.co-v1 .v1-story {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-style: italic;
+  max-width: 58ch;
+}
+.co-v1 .v1-done {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background: var(--cream-2);
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+.co-v1 .v1-done-lab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+  margin-right: 8px;
+}
+.co-v1 .v1-upcoming {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.co-v1 .v1-upcoming li {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 6px 13px 6px 22px;
+  position: relative;
+}
+.co-v1 .v1-upcoming li::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+/* ---------- Activity ---------- */
+.co-v1 .v1-feed {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.co-v1 .v1-feed li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  font-size: 14px;
+  color: var(--ink);
+  border-top: 1px solid var(--line-soft);
+}
+.co-v1 .v1-feed li:first-child {
+  border-top: none;
+}
+.co-v1 .v1-feed-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 620px) {
+  .co-v1 .v1-metrics,
+  .co-v1 .v1-loops {
+    grid-template-columns: 1fr;
+  }
+  .co-v1 .v1-mrr-big { font-size: 40px; }
+}
+
+.co-v2{max-width:820px;margin:0 auto;padding:30px 26px 46px;background:var(--cream);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
+.co-v2 *{box-sizing:border-box;margin:0;padding:0}
+.co-v2 h1,.co-v2 h3{font-family:'Space Grotesk',system-ui,sans-serif;font-weight:600;letter-spacing:-.015em}
+.co-v2 .mono{font-family:'JetBrains Mono',monospace}
+.co-v2 ul{list-style:none}
+
+/* ---- bento grid ---- */
+.co-v2 .bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(84px,auto);gap:14px}
+.co-v2 .tile{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;box-shadow:0 1px 2px var(--line-soft);transition:border-color .18s,box-shadow .18s,transform .18s}
+.co-v2 .tile:hover{border-color:var(--gray);box-shadow:0 8px 22px var(--line-soft);transform:translateY(-1px)}
+.co-v2 .t-id{grid-column:span 4;gap:15px}
+.co-v2 .t-mrr{grid-column:span 2;grid-row:span 2}
+.co-v2 .t-loops{grid-column:span 4}
+.co-v2 .t-road{grid-column:span 4;grid-row:span 2}
+.co-v2 .t-act{grid-column:span 2;grid-row:span 2}
+
+.co-v2 .eyebrow{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;margin-bottom:12px}
+.co-v2 .eyebrow .g{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+
+/* pulse ring */
+.co-v2 .ring{position:relative}
+.co-v2 .ring::after{content:"";position:absolute;inset:0;border-radius:inherit;background:inherit;animation:co-v2-ring 2.6s infinite}
+@keyframes co-v2-ring{0%{transform:scale(1);opacity:.5}70%{transform:scale(2.8);opacity:0}100%{transform:scale(2.8);opacity:0}}
+
+/* ---- identity tile ---- */
+.co-v2 .id-top{display:flex;align-items:center;gap:15px}
+.co-v2 .chip{width:48px;height:48px;border-radius:14px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.02em;flex:0 0 auto}
+.co-v2 .id-main{min-width:0}
+.co-v2 .id-line{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.co-v2 .id-line h1{font-size:25px}
+.co-v2 .online{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--green);background:var(--green-soft);padding:4px 11px 4px 9px;border-radius:20px;font-weight:500}
+.co-v2 .odot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;flex:0 0 auto}
+.co-v2 .id-sub{display:flex;align-items:center;gap:10px;margin-top:9px}
+.co-v2 .stage{font-family:'JetBrains Mono',monospace;letter-spacing:.11em;font-size:10.5px;font-weight:500;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:6px}
+.co-v2 .grw{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.05em;color:var(--ink-faint)}
+.co-v2 .mission{font-size:14.5px;color:var(--ink-soft);line-height:1.5;max-width:52ch}
+.co-v2 .mission b{color:var(--ink);font-weight:600}
+
+/* ---- mrr tile ---- */
+.co-v2 .mrr-num{font-family:'Space Grotesk',sans-serif;font-size:42px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin-top:2px}
+.co-v2 .mrr-trend{display:flex;align-items:center;gap:8px;margin-top:11px}
+.co-v2 .mrr-trend .up{color:var(--green);font-weight:600;font-size:13px}
+.co-v2 .mrr-trend .pct{background:var(--green-soft);color:var(--green);font-size:11px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.co-v2 .mrr-trend .per{color:var(--ink-faint);font-size:12px}
+.co-v2 .spark{width:100%;height:46px;margin:16px 0 4px;display:block;overflow:visible}
+.co-v2 .spark .area{fill:var(--green-soft);stroke:none}
+.co-v2 .spark .line{fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.co-v2 .spark .dot{fill:var(--green)}
+.co-v2 .mrr-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:9px}
+.co-v2 .ff{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft)}
+.co-v2 .ffn{font-size:15px;color:var(--ink);font-weight:600}
+.co-v2 .ffd{margin-left:auto;font-size:10.5px;color:var(--green);background:var(--green-soft);padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+.co-v2 .ff.sub{justify-content:space-between;font-size:12px;color:var(--ink-faint)}
+.co-v2 .ff.sub b{color:var(--ink-soft)}
+
+/* ---- loops tile ---- */
+.co-v2 .loops{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.co-v2 .loop{border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:var(--cream);display:flex;flex-direction:column;gap:5px}
+.co-v2 .loop-head{display:flex;align-items:center;gap:8px}
+.co-v2 .ld{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.co-v2 .loop-name{font-size:10.5px;letter-spacing:.11em;color:var(--ink-soft);font-weight:500}
+.co-v2 .loop-state{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600}
+.co-v2 .loop-note{font-size:11.5px;color:var(--ink-faint);line-height:1.4}
+.co-v2 .loop.run .ld{background:var(--green)}
+.co-v2 .loop.run .loop-state{color:var(--green)}
+.co-v2 .loop.need{background:var(--amber-soft);border-color:var(--amber-soft)}
+.co-v2 .loop.need .ld{background:var(--amber);position:relative}
+.co-v2 .loop.need .ld::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--amber);animation:co-v2-ring 2.6s infinite}
+.co-v2 .loop.need .loop-state{color:var(--amber)}
+.co-v2 .loop.need .loop-note{color:var(--ink-soft)}
+
+/* ---- roadmap tile ---- */
+.co-v2 .road-title{font-size:19px;line-height:1.3;margin-bottom:15px}
+.co-v2 .story{border-left:2px solid var(--accent-soft);padding-left:15px;display:flex;flex-direction:column;gap:12px;margin-bottom:6px}
+.co-v2 .story-row{display:grid;grid-template-columns:78px 1fr;gap:12px;align-items:start}
+.co-v2 .story-row .lab{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);padding-top:3px}
+.co-v2 .story-row p{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+.co-v2 .up{margin-top:auto;padding-top:16px;border-top:1px solid var(--line-soft)}
+.co-v2 .up-lab{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px}
+.co-v2 .up-chips{display:flex;flex-wrap:wrap;gap:8px}
+.co-v2 .up-chips span{font-size:12.5px;color:var(--ink-soft);background:var(--cream);border:1px solid var(--line);padding:6px 11px;border-radius:9px}
+
+/* ---- activity tile ---- */
+.co-v2 .feed li{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:13px;color:var(--ink-soft);line-height:1.4}
+.co-v2 .feed li:last-child{border-bottom:none;padding-bottom:0}
+.co-v2 .feed li:first-child{padding-top:0}
+.co-v2 .feed .fd{width:7px;height:7px;border-radius:50%;margin-top:6px;flex:0 0 auto}
+.co-v2 .feed .fd.a{background:var(--accent)}
+.co-v2 .feed .fd.b{background:var(--blue)}
+.co-v2 .feed .fd.c{background:var(--green)}
+.co-v2 .feed b{color:var(--ink);font-weight:600;font-family:'JetBrains Mono',monospace}
+.co-v2 .feed em{font-style:normal;color:var(--green)}
+
+@media (prefers-reduced-motion:reduce){.co-v2 .ring::after,.co-v2 .loop.need .ld::after{animation:none}}
+@media (max-width:680px){
+  .co-v2 .bento{grid-template-columns:repeat(2,1fr)}
+  .co-v2 .t-id,.co-v2 .t-mrr,.co-v2 .t-loops,.co-v2 .t-road,.co-v2 .t-act{grid-column:span 2;grid-row:auto}
+  .co-v2 .loops{grid-template-columns:1fr}
+}
+
+.co-v3{ background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+.co-v3 *{ box-sizing:border-box; }
+.co-v3 .wrap{ max-width:720px; margin:0 auto; padding:76px 40px 96px; }
+
+/* ---- identity ---- */
+.co-v3 .id-top{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.co-v3 .name{ margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:38px; letter-spacing:-.025em; line-height:1; color:var(--ink); }
+.co-v3 .status{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:500; color:var(--green); }
+.co-v3 .dot-online{ position:relative; width:11px; height:11px; border-radius:50%; background:var(--green); flex:none; }
+.co-v3 .dot-online:after{ content:''; position:absolute; inset:-4px; border-radius:50%; border:1.5px solid var(--green); opacity:.5; animation:cov3pulse 2.6s ease-out infinite; }
+.co-v3 .stage{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.16em; color:var(--green); background:var(--green-soft); padding:5px 10px; border-radius:6px; }
+.co-v3 .grow{ font-size:12px; font-weight:500; color:var(--accent-ink); background:var(--accent-soft); padding:5px 12px; border-radius:20px; }
+.co-v3 .mission{ margin:24px 0 0; font-family:'Space Grotesk',sans-serif; font-weight:400; font-size:22px; line-height:1.5; letter-spacing:-.01em; color:var(--ink-soft); max-width:560px; }
+
+.co-v3 .rule{ border:0; height:1px; background:var(--line); margin:48px 0; }
+
+/* ---- section scaffold ---- */
+.co-v3 .sec{ margin-top:58px; }
+.co-v3 .k{ display:flex; align-items:center; gap:11px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:24px; }
+.co-v3 .kn{ color:var(--accent-ink); background:var(--accent-soft); padding:2px 7px; border-radius:5px; letter-spacing:.05em; }
+.co-v3 .k-note{ margin-left:auto; font-size:10px; letter-spacing:.12em; color:var(--ink-faint); background:var(--cream-2); padding:3px 9px; border-radius:20px; }
+
+/* ---- metrics ---- */
+.co-v3 .mrr{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; }
+.co-v3 .mrr-label{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+.co-v3 .mrr-row{ display:flex; align-items:baseline; gap:16px; margin-top:12px; flex-wrap:wrap; }
+.co-v3 .mrr-num{ font-family:'JetBrains Mono',monospace; font-weight:500; font-size:54px; letter-spacing:-.03em; line-height:.9; color:var(--ink); }
+.co-v3 .cur{ font-size:28px; font-weight:500; color:var(--ink-soft); margin-right:1px; vertical-align:baseline; }
+.co-v3 .mrr-trend{ display:flex; align-items:center; gap:9px; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:500; color:var(--green); }
+.co-v3 .pct{ font-size:12px; background:var(--green-soft); color:var(--green); padding:3px 8px; border-radius:6px; }
+.co-v3 .mrr-sub{ margin-top:14px; font-size:13px; color:var(--ink-faint); }
+.co-v3 .spark{ display:flex; flex-direction:column; align-items:flex-end; gap:9px; color:var(--green); flex:none; }
+.co-v3 .spark svg{ width:132px; height:46px; overflow:visible; display:block; }
+.co-v3 .spark-cap{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+.co-v3 .stats{ display:flex; margin-top:34px; background:var(--paper); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+.co-v3 .stat{ flex:1; padding:20px 22px; border-left:1px solid var(--line-soft); }
+.co-v3 .stat:first-child{ border-left:0; }
+.co-v3 .sv{ display:block; font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:500; letter-spacing:-.01em; color:var(--ink); }
+.co-v3 .sl{ display:block; margin-top:7px; font-size:12.5px; color:var(--ink-faint); }
+.co-v3 .sl em{ font-style:normal; color:var(--green); }
+
+/* ---- loops ---- */
+.co-v3 .loops-card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:6px 24px; }
+.co-v3 .loop{ display:flex; align-items:center; gap:18px; padding:18px 0; border-top:1px solid var(--line-soft); }
+.co-v3 .loop:first-child{ border-top:0; }
+.co-v3 .loop-head{ display:flex; align-items:center; gap:11px; width:118px; flex:none; }
+.co-v3 .loop-dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+.co-v3 .loop-dot.run{ background:var(--green); box-shadow:0 0 0 4px var(--green-soft); }
+.co-v3 .loop-dot.need{ background:var(--amber); box-shadow:0 0 0 4px var(--amber-soft); }
+.co-v3 .loop-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px; color:var(--ink); }
+.co-v3 .loop-desc{ flex:1; font-size:14px; line-height:1.45; color:var(--ink-soft); }
+.co-v3 .loop-state{ flex:none; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; padding:5px 11px; border-radius:20px; }
+.co-v3 .loop-state.run{ color:var(--green); background:var(--green-soft); }
+.co-v3 .loop-state.need{ color:var(--amber); background:var(--amber-soft); }
+
+/* ---- roadmap ---- */
+.co-v3 .slice{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:26px 28px; }
+.co-v3 .slice-tag{ display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:5px 11px; border-radius:6px; }
+.co-v3 .slice-tag i{ width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px var(--green-soft); }
+.co-v3 .slice-title{ margin:17px 0 0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:23px; letter-spacing:-.015em; color:var(--ink); }
+.co-v3 .story{ margin:16px 0 0; padding-left:16px; border-left:2px solid var(--line); font-size:15px; line-height:1.62; color:var(--ink-soft); }
+.co-v3 .donewhen{ display:flex; align-items:baseline; gap:12px; margin-top:22px; padding-top:20px; border-top:1px solid var(--line-soft); font-size:13.5px; line-height:1.55; color:var(--ink-soft); }
+.co-v3 .dw-label{ flex:none; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--green); background:var(--green-soft); padding:4px 9px; border-radius:6px; }
+.co-v3 .upcoming{ margin-top:26px; }
+.co-v3 .up-label{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px; }
+.co-v3 .up-list{ list-style:none; margin:0; padding:0; counter-reset:up; }
+.co-v3 .up-list li{ display:flex; align-items:center; gap:15px; padding:14px 4px; border-top:1px solid var(--line-soft); font-size:14.5px; color:var(--ink-soft); counter-increment:up; }
+.co-v3 .up-list li:before{ content:counter(up); display:flex; align-items:center; justify-content:center; width:24px; height:24px; flex:none; border-radius:50%; background:var(--cream-2); color:var(--ink-faint); font-family:'JetBrains Mono',monospace; font-size:11px; }
+
+/* ---- activity ---- */
+.co-v3 .feed{ list-style:none; margin:0; padding:0; }
+.co-v3 .feed li{ display:flex; align-items:flex-start; gap:14px; padding:15px 0; border-top:1px solid var(--line-soft); }
+.co-v3 .feed li:first-child{ border-top:0; }
+.co-v3 .fdot{ width:7px; height:7px; border-radius:50%; margin-top:6px; flex:none; }
+.co-v3 .fdot.b{ background:var(--blue); }
+.co-v3 .fdot.a{ background:var(--accent); }
+.co-v3 .fdot.g{ background:var(--green); }
+.co-v3 .ftext{ flex:1; font-size:14.5px; line-height:1.4; color:var(--ink-soft); }
+.co-v3 .ftext b{ color:var(--ink); font-weight:600; }
+.co-v3 .ftag{ flex:none; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); background:var(--cream-2); padding:3px 8px; border-radius:5px; margin-top:1px; }
+
+.co-v3 .foot{ margin-top:56px; padding-top:26px; border-top:1px solid var(--line); text-align:center; font-size:12.5px; color:var(--ink-faint); }
+
+@keyframes cov3pulse{ 0%{ transform:scale(.7); opacity:.55; } 100%{ transform:scale(2); opacity:0; } }
+@media (prefers-reduced-motion:reduce){ .co-v3 .dot-online:after{ animation:none; } }
+
+@media (max-width:600px){
+  .co-v3 .wrap{ padding:52px 22px 72px; }
+  .co-v3 .mrr{ flex-direction:column; align-items:flex-start; gap:22px; }
+  .co-v3 .spark{ align-items:flex-start; }
+  .co-v3 .stats{ flex-direction:column; }
+  .co-v3 .stat{ border-left:0; border-top:1px solid var(--line-soft); }
+  .co-v3 .stat:first-child{ border-top:0; }
+  .co-v3 .loop{ flex-wrap:wrap; }
+  .co-v3 .loop-desc{ order:3; flex-basis:100%; }
+}
+
+.co-v4{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding:44px 24px 72px;
+}
+.co-v4 *{box-sizing:border-box;}
+.co-v4 .wrap{max-width:820px;margin:0 auto;}
+
+.co-v4 .eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);
+}
+
+/* ---------- identity ---------- */
+.co-v4 .id{display:flex;align-items:center;gap:16px;}
+.co-v4 .mark{
+  flex:none;width:46px;height:46px;border-radius:13px;
+  background:var(--accent);color:#fff;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;
+  display:grid;place-items:center;
+}
+.co-v4 .id-main{flex:1;min-width:0;}
+.co-v4 .id-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.co-v4 .id-line h1{
+  margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;
+  font-size:25px;letter-spacing:-.01em;color:var(--ink);line-height:1.1;
+}
+.co-v4 .online{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:600;color:var(--green);
+}
+.co-v4 .online i{
+  width:8px;height:8px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 3px var(--green-soft);
+}
+.co-v4 .stage{display:flex;align-items:center;gap:9px;flex:none;}
+.co-v4 .stage-live{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;
+  color:var(--green);background:var(--green-soft);
+  padding:4px 9px;border-radius:7px;
+}
+.co-v4 .stage-grow{font-size:13px;color:var(--ink-soft);font-weight:500;}
+
+.co-v4 .mission{
+  margin:14px 0 0;padding-left:62px;
+  font-size:15px;color:var(--ink-soft);max-width:600px;
+}
+
+/* ---------- hero band ---------- */
+.co-v4 .hero{
+  position:relative;overflow:hidden;
+  margin-top:26px;
+  background:
+    radial-gradient(130% 120% at 100% 0%, var(--accent-soft), var(--paper) 58%),
+    var(--paper);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:26px 30px 22px;
+}
+.co-v4 .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.co-v4 .hero-range{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.04em;color:var(--ink-faint);
+}
+.co-v4 .hero-figure{display:flex;align-items:flex-end;gap:20px;margin-top:12px;}
+.co-v4 .hero-num{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;
+  font-size:76px;line-height:.82;letter-spacing:-.03em;color:var(--ink);
+}
+.co-v4 .hero-num .cur{
+  font-size:.44em;font-weight:600;color:var(--ink-faint);
+  vertical-align:.52em;margin-right:2px;
+}
+.co-v4 .hero-num .per{
+  font-size:.23em;font-weight:500;color:var(--ink-faint);
+  letter-spacing:0;margin-left:5px;
+}
+.co-v4 .hero-delta{display:flex;flex-direction:column;gap:6px;padding-bottom:9px;}
+.co-v4 .delta-pill{
+  display:inline-flex;align-items:center;gap:4px;align-self:flex-start;
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  color:var(--green);background:var(--green-soft);
+  padding:4px 11px;border-radius:999px;
+}
+.co-v4 .delta-pill .arr{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.6;}
+.co-v4 .delta-sub{font-size:12.5px;color:var(--ink-soft);}
+.co-v4 .delta-sub em{color:var(--green);font-style:normal;font-weight:600;}
+
+.co-v4 .spark-wrap{margin-top:16px;}
+.co-v4 .spark{display:block;width:100%;height:auto;}
+.co-v4 .spark-axis{
+  display:flex;justify-content:space-between;margin-top:8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--ink-faint);letter-spacing:.03em;
+}
+.co-v4 .spark-axis .now{color:var(--accent);font-weight:600;}
+
+.co-v4 .hero-stats{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);
+}
+.co-v4 .hero-stats b{color:var(--ink);font-weight:600;}
+.co-v4 .hero-stats em{color:var(--green);font-style:normal;}
+.co-v4 .hero-stats .sep{color:var(--line);}
+
+/* ---------- loops ---------- */
+.co-v4 .loops{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;}
+.co-v4 .loop{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:15px 16px;
+}
+.co-v4 .loop.attn{background:var(--amber-soft);border-color:var(--amber);}
+.co-v4 .loop-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.co-v4 .loop-name{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  letter-spacing:.14em;color:var(--ink-faint);
+}
+.co-v4 .loop-state{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+.co-v4 .loop-state i{width:7px;height:7px;border-radius:50%;}
+.co-v4 .loop-state.run{color:var(--green);}
+.co-v4 .loop-state.run i{background:var(--green);}
+.co-v4 .loop-state.needs{color:var(--amber);}
+.co-v4 .loop-state.needs i{background:var(--amber);}
+.co-v4 .loop-desc{margin-top:9px;font-size:13px;color:var(--ink-soft);line-height:1.42;}
+
+/* ---------- roadmap ---------- */
+.co-v4 .road{
+  margin-top:22px;background:var(--paper);border:1px solid var(--line);
+  border-radius:16px;padding:22px 24px;
+}
+.co-v4 .road-head{display:flex;align-items:center;gap:10px;}
+.co-v4 .road-tag{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  background:var(--accent-soft);padding:3px 9px;border-radius:6px;font-weight:500;
+}
+.co-v4 .road h3{
+  margin:12px 0 0;font-family:'Space Grotesk',sans-serif;font-weight:600;
+  font-size:20px;letter-spacing:-.01em;color:var(--ink);
+}
+.co-v4 .story{
+  margin:10px 0 0;font-size:14.5px;color:var(--ink-soft);line-height:1.55;
+  padding-left:14px;border-left:2px solid var(--line);font-style:italic;
+}
+.co-v4 .donewhen{
+  margin-top:14px;font-size:13.5px;color:var(--ink-soft);
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+}
+.co-v4 .dw-label{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--green);background:var(--green-soft);
+  padding:3px 8px;border-radius:6px;font-weight:600;flex:none;
+}
+.co-v4 .upnext{
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.co-v4 .up-label{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-faint);margin-right:2px;
+}
+.co-v4 .chip{
+  font-size:12.5px;color:var(--ink-soft);background:var(--cream-2);
+  border:1px solid var(--line-soft);border-radius:8px;padding:5px 11px;
+}
+
+/* ---------- activity ---------- */
+.co-v4 .feed{margin-top:22px;}
+.co-v4 .feed .eyebrow{padding-left:2px;}
+.co-v4 .feed ul{
+  list-style:none;margin:12px 0 0;padding:0;
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;
+}
+.co-v4 .feed li{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-top:1px solid var(--line-soft);
+}
+.co-v4 .feed li:first-child{border-top:none;}
+.co-v4 .fdot{width:8px;height:8px;border-radius:50%;flex:none;}
+.co-v4 .fdot.g{background:var(--green);}
+.co-v4 .fdot.b{background:var(--blue);}
+.co-v4 .fdot.a{background:var(--accent);}
+.co-v4 .ftxt{flex:1;font-size:13.5px;color:var(--ink-soft);}
+.co-v4 .ftxt b{color:var(--ink);font-weight:600;}
+.co-v4 .ftime{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  color:var(--ink-faint);flex:none;
+}
+
+@media (max-width:640px){
+  .co-v4{padding:32px 18px 60px;}
+  .co-v4 .loops{grid-template-columns:1fr;}
+  .co-v4 .hero{padding:22px 20px 20px;}
+  .co-v4 .hero-num{font-size:58px;}
+  .co-v4 .mission{padding-left:0;}
+}
+
+.co-v5{ box-sizing:border-box; max-width:820px; margin:0 auto; padding:34px 26px 46px; font-family:'Inter',system-ui,sans-serif; color:var(--ink); line-height:1.5; -webkit-font-smoothing:antialiased; }
+.co-v5 *{ box-sizing:border-box; }
+
+/* ---------- header ---------- */
+.co-v5 .head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px 20px; }
+.co-v5 .brand{ display:flex; align-items:flex-start; gap:13px; min-width:0; }
+.co-v5 .mark{ flex:none; width:44px; height:44px; border-radius:13px; display:grid; place-items:center; color:#fff; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px; background:linear-gradient(145deg,var(--accent),var(--accent-ink)); }
+.co-v5 .id{ min-width:0; }
+.co-v5 .id-row{ display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+.co-v5 .name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:25px; letter-spacing:-.02em; margin:0; }
+.co-v5 .online{ display:inline-flex; align-items:center; gap:5px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--green); }
+.co-v5 .odot{ width:7px; height:7px; border-radius:50%; background:var(--green); animation:cov5pingg 2.4s ease-out infinite; }
+.co-v5 .mission{ margin:8px 0 0; font-size:14.5px; color:var(--ink-soft); line-height:1.5; max-width:52ch; }
+.co-v5 .mission b{ color:var(--ink); font-weight:600; }
+.co-v5 .stage{ flex:none; display:flex; gap:6px; }
+.co-v5 .tag-live,.co-v5 .tag-grow{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.08em; padding:4px 10px; border-radius:8px; white-space:nowrap; }
+.co-v5 .tag-live{ color:#fff; background:var(--green); }
+.co-v5 .tag-grow{ color:var(--accent-ink); background:var(--accent-soft); }
+
+/* ---------- the loop (hero) ---------- */
+.co-v5 .loop{ margin-top:24px; background:linear-gradient(180deg,var(--paper),var(--cream)); border:1px solid var(--line); border-radius:20px; padding:18px 20px 18px; box-shadow:0 2px 12px var(--line-soft); }
+.co-v5 .loop-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.co-v5 .loop-k{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; letter-spacing:-.01em; }
+.co-v5 .loop-note{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); letter-spacing:.02em; }
+
+.co-v5 .track{ display:flex; align-items:stretch; }
+.co-v5 .node{ flex:1 1 0; min-width:0; border:1px solid var(--line); border-radius:14px; background:var(--paper); padding:13px 14px 14px; display:flex; flex-direction:column; gap:8px; }
+.co-v5 .node.need{ border-color:var(--amber); background:var(--amber-soft); box-shadow:0 0 0 3px var(--amber-soft); }
+.co-v5 .n-top{ display:flex; align-items:center; gap:8px; }
+.co-v5 .pulse{ width:9px; height:9px; border-radius:50%; flex:none; }
+.co-v5 .pulse.g{ background:var(--green); animation:cov5pingg 2.4s ease-out infinite; }
+.co-v5 .pulse.a{ background:var(--amber); animation:cov5pinga 2.4s ease-out infinite; }
+.co-v5 .n-name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; letter-spacing:.09em; }
+.co-v5 .n-state{ align-self:flex-start; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+.co-v5 .n-state.g{ color:var(--green); background:var(--green-soft); }
+.co-v5 .n-state.a{ color:var(--amber); background:#fff; border:1px solid var(--amber); }
+.co-v5 .n-desc{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.4; }
+
+.co-v5 .conn{ flex:0 0 44px; display:flex; align-items:center; justify-content:center; color:var(--accent); }
+.co-v5 .chev{ width:34px; height:22px; }
+.co-v5 .chev polyline{ opacity:.28; }
+.co-v5 .chev .c1{ animation:cov5flow 1.5s ease-in-out infinite; }
+.co-v5 .chev .c2{ animation:cov5flow 1.5s ease-in-out .18s infinite; }
+.co-v5 .chev .c3{ animation:cov5flow 1.5s ease-in-out .36s infinite; }
+
+.co-v5 .loopback{ margin-top:12px; color:var(--gray); }
+.co-v5 .lb{ display:block; width:100%; height:26px; }
+.co-v5 .lb-lab{ display:block; text-align:center; margin-top:1px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.03em; color:var(--ink-faint); }
+
+/* ---------- metrics ---------- */
+.co-v5 .metrics{ margin-top:16px; display:grid; grid-template-columns:1.15fr 1fr; gap:14px; }
+.co-v5 .mrr,.co-v5 .stats{ background:var(--paper); border:1px solid var(--line); border-radius:16px; box-shadow:0 2px 10px var(--line-soft); }
+.co-v5 .mrr{ padding:16px 18px 14px; display:flex; flex-direction:column; }
+.co-v5 .m-k{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); }
+.co-v5 .m-val{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:38px; letter-spacing:-.02em; line-height:1.05; margin-top:5px; }
+.co-v5 .m-per{ font-size:15px; font-weight:600; color:var(--ink-faint); margin-left:3px; }
+.co-v5 .m-delta{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; margin-top:6px; color:var(--green); }
+.co-v5 .m-pct{ background:var(--green-soft); padding:2px 7px; border-radius:20px; margin-left:2px; }
+.co-v5 .m-when{ color:var(--ink-faint); font-weight:500; margin-left:2px; }
+.co-v5 .spark{ display:block; width:100%; height:42px; margin-top:12px; color:var(--green); }
+.co-v5 .stats{ padding:4px 18px; display:flex; flex-direction:column; justify-content:center; }
+.co-v5 .stat{ display:flex; align-items:baseline; gap:10px; padding:11px 0; border-top:1px solid var(--line-soft); }
+.co-v5 .stat:first-child{ border-top:none; }
+.co-v5 .s-val{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:22px; letter-spacing:-.01em; min-width:54px; }
+.co-v5 .s-val.g{ color:var(--green); }
+.co-v5 .s-lab{ font-size:12.5px; color:var(--ink-soft); }
+.co-v5 .s-sub{ margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--green); }
+
+/* ---------- build row (slice + upcoming) ---------- */
+.co-v5 .build-row{ margin-top:16px; display:grid; grid-template-columns:1.35fr 1fr; gap:14px; }
+.co-v5 .card{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 2px 10px var(--line-soft); }
+.co-v5 .card-k{ font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 12px; display:flex; align-items:center; gap:7px; }
+.co-v5 .kdot{ width:6px; height:6px; border-radius:50%; background:var(--green); }
+.co-v5 .k-b{ color:var(--green); }
+.co-v5 .slice-t{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px; letter-spacing:-.01em; margin:0 0 13px; }
+.co-v5 .story,.co-v5 .done{ border-left:3px solid var(--line); padding:1px 0 1px 12px; }
+.co-v5 .story{ margin:0 0 11px; }
+.co-v5 .done{ border-left-color:var(--green); }
+.co-v5 .story-k,.co-v5 .done-k{ display:block; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:3px; }
+.co-v5 .done-k{ color:var(--green); }
+.co-v5 .story p,.co-v5 .done p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+.co-v5 .up-list{ list-style:none; margin:0; padding:0; counter-reset:cov5up; }
+.co-v5 .up-list li{ display:flex; align-items:center; gap:11px; padding:10px 0; border-top:1px solid var(--line-soft); font-size:13.5px; color:var(--ink); }
+.co-v5 .up-list li:first-child{ border-top:none; }
+.co-v5 .up-list li::before{ counter-increment:cov5up; content:counter(cov5up); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink-faint); width:22px; height:22px; border-radius:7px; background:var(--cream-2); display:grid; place-items:center; flex:none; }
+
+/* ---------- activity ---------- */
+.co-v5 .activity{ margin-top:16px; }
+.co-v5 .feed{ list-style:none; margin:0; padding:0; }
+.co-v5 .feed li{ display:flex; align-items:center; gap:11px; padding:9px 0; border-top:1px solid var(--line-soft); font-size:13px; color:var(--ink); }
+.co-v5 .feed li:first-child{ border-top:none; }
+.co-v5 .fdot{ width:7px; height:7px; border-radius:50%; flex:none; }
+.co-v5 .fdot.g{ background:var(--green); }
+.co-v5 .fdot.ac{ background:var(--accent); }
+.co-v5 .ftag{ margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:2px 8px; border-radius:20px; background:var(--cream-2); color:var(--ink-faint); }
+
+/* ---------- motion ---------- */
+@keyframes cov5pingg{ 0%{ box-shadow:0 0 0 0 var(--green-soft); } 70%{ box-shadow:0 0 0 7px transparent; } 100%{ box-shadow:0 0 0 0 transparent; } }
+@keyframes cov5pinga{ 0%{ box-shadow:0 0 0 0 var(--amber-soft); } 70%{ box-shadow:0 0 0 7px transparent; } 100%{ box-shadow:0 0 0 0 transparent; } }
+@keyframes cov5flow{ 0%,100%{ opacity:.22; } 45%{ opacity:1; } }
+
+@media (prefers-reduced-motion:reduce){
+  .co-v5 .odot,.co-v5 .pulse.g,.co-v5 .pulse.a,.co-v5 .chev .c1,.co-v5 .chev .c2,.co-v5 .chev .c3{ animation:none; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:680px){
+  .co-v5 .metrics,.co-v5 .build-row{ grid-template-columns:1fr; }
+  .co-v5 .track{ flex-direction:column; }
+  .co-v5 .conn{ flex-basis:auto; padding:5px 0; }
+  .co-v5 .chev{ transform:rotate(90deg); }
+  .co-v5 .loopback{ display:none; }
+  .co-v5 .head{ flex-wrap:wrap; }
+}
+
+.co-v6{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100%;padding:44px 24px;display:flex;justify-content:center;align-items:flex-start;line-height:1.5;-webkit-font-smoothing:antialiased;}
+.co-v6 *{box-sizing:border-box;}
+
+.co-v6 .co6-card{width:100%;max-width:820px;display:grid;grid-template-columns:1fr 1.02fr;background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 5%,transparent),0 26px 60px color-mix(in srgb,var(--ink) 7%,transparent);}
+
+.co-v6 .co6-col{padding:32px 30px;display:flex;flex-direction:column;min-width:0;}
+.co-v6 .co6-r{border-left:1px solid var(--line-soft);background:linear-gradient(180deg,var(--paper),var(--cream-2));}
+
+/* identity */
+.co-v6 .co6-id{display:flex;align-items:center;gap:13px;}
+.co-v6 .co6-logo{width:44px;height:44px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;background:linear-gradient(150deg,var(--accent),color-mix(in srgb,var(--accent) 70%,var(--ink)));box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent);}
+.co-v6 .co6-logo svg{width:23px;height:23px;display:block;}
+.co-v6 .co6-id-txt{min-width:0;}
+.co-v6 .co6-name{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.02em;line-height:1;}
+.co-v6 .co6-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft);animation:co6-breathe 2.6s ease-in-out infinite;}
+@keyframes co6-breathe{0%,100%{opacity:1}50%{opacity:.4}}
+.co-v6 .co6-stage{display:flex;align-items:center;gap:8px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--ink-faint);}
+.co-v6 .co6-live{color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.1em;background:var(--green-soft);padding:2px 7px;border-radius:20px;}
+.co-v6 .co6-sep{opacity:.45;}
+
+.co-v6 .co6-mission{margin-top:18px;font-size:14.5px;line-height:1.5;color:var(--ink-soft);}
+
+/* metric */
+.co-v6 .co6-metric{margin-top:22px;padding:18px 18px 15px;border-radius:16px;background:var(--cream);border:1px solid var(--line-soft);}
+.co-v6 .co6-metric-head{display:flex;align-items:center;justify-content:space-between;}
+.co-v6 .co6-metric-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);}
+.co-v6 .co6-spark{width:104px;height:32px;color:var(--green);display:block;}
+.co-v6 .co6-spark .a{fill:color-mix(in srgb,var(--green) 15%,transparent);stroke:none;}
+.co-v6 .co6-spark .l{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.co-v6 .co6-metric-val{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:38px;letter-spacing:-.02em;line-height:1;margin-top:12px;}
+.co-v6 .co6-metric-per{font-size:16px;color:var(--ink-faint);font-weight:500;margin-left:3px;font-family:'JetBrains Mono',monospace;}
+.co-v6 .co6-metric-trend{display:flex;align-items:baseline;gap:9px;margin-top:10px;}
+.co-v6 .co6-up{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--green);background:var(--green-soft);padding:2px 8px;border-radius:7px;}
+.co-v6 .co6-pct{font-size:12px;color:var(--ink-faint);}
+
+/* stats */
+.co-v6 .co6-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:14px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:14px;overflow:hidden;}
+.co-v6 .co6-stat{background:var(--paper);padding:12px 12px;display:flex;flex-direction:column;gap:3px;}
+.co-v6 .co6-stat-n{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;letter-spacing:-.01em;}
+.co-v6 .co6-stat-l{font-size:11px;color:var(--ink-faint);line-height:1.35;}
+.co-v6 .co6-stat-l em{font-style:normal;color:var(--green);font-weight:600;}
+
+/* loops */
+.co-v6 .co6-loops{margin-top:24px;}
+.co-v6 .co6-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);}
+.co-v6 .co6-loops-h{margin-bottom:11px;}
+.co-v6 .co6-loop{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;border:1px solid var(--line-soft);background:var(--paper);margin-bottom:8px;transition:transform .16s ease;}
+.co-v6 .co6-loop:last-child{margin-bottom:0;}
+.co-v6 .co6-loop:hover{transform:translateX(2px);}
+.co-v6 .co6-loop-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+.co-v6 .co6-loop-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;width:42px;flex:0 0 auto;}
+.co-v6 .co6-loop-state{font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;}
+.co-v6 .co6-loop.is-run .co6-loop-dot{background:var(--green);box-shadow:0 0 0 3px var(--green-soft);}
+.co-v6 .co6-loop.is-need{background:var(--amber-soft);border-color:color-mix(in srgb,var(--amber) 32%,transparent);}
+.co-v6 .co6-loop.is-need .co6-loop-dot{background:var(--amber);box-shadow:0 0 0 3px color-mix(in srgb,var(--amber) 22%,transparent);animation:co6-breathe 2s ease-in-out infinite;}
+.co-v6 .co6-loop.is-need .co6-loop-state{color:var(--amber);font-weight:600;}
+
+/* now building */
+.co-v6 .co6-now{padding:16px 18px;border-radius:16px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);}
+.co-v6 .co6-now .co6-eyebrow{color:var(--accent);}
+.co-v6 .co6-now-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;letter-spacing:-.01em;line-height:1.25;margin-top:8px;color:var(--ink);}
+.co-v6 .co6-story{margin-top:12px;font-size:13px;line-height:1.55;color:var(--ink-soft);}
+.co-v6 .co6-k{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--paper);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);padding:2px 6px;border-radius:6px;margin-right:7px;vertical-align:1px;}
+.co-v6 .co6-done{margin-top:13px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--accent) 28%,transparent);font-size:12.5px;line-height:1.5;color:var(--ink-soft);}
+.co-v6 .co6-done .co6-k{color:var(--ink-faint);border-color:var(--line);background:var(--cream);}
+
+/* up next */
+.co-v6 .co6-next{margin-top:24px;}
+.co-v6 .co6-next-list{list-style:none;margin:0;padding:0;margin-top:12px;}
+.co-v6 .co6-next-list li{display:flex;align-items:center;gap:12px;padding:11px 2px;font-size:13.5px;color:var(--ink);border-bottom:1px solid var(--line-soft);}
+.co-v6 .co6-next-list li:last-child{border-bottom:none;}
+.co-v6 .co6-next-i{width:22px;height:22px;flex:0 0 auto;border-radius:7px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--ink-faint);background:var(--cream-2);border:1px solid var(--line-soft);}
+
+/* activity */
+.co-v6 .co6-feed{margin-top:24px;}
+.co-v6 .co6-feed-list{list-style:none;margin:0;padding:0;margin-top:14px;position:relative;}
+.co-v6 .co6-feed-list::before{content:"";position:absolute;left:3.5px;top:6px;bottom:8px;width:1px;background:var(--line);}
+.co-v6 .co6-feed-list li{display:flex;gap:13px;align-items:flex-start;padding:0 0 15px 0;position:relative;}
+.co-v6 .co6-feed-list li:last-child{padding-bottom:0;}
+.co-v6 .co6-feed-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:0 0 auto;margin-top:5px;box-shadow:0 0 0 3px var(--green-soft);position:relative;z-index:1;}
+.co-v6 .co6-feed-t{font-size:13px;color:var(--ink-soft);line-height:1.45;}
+.co-v6 .co6-feed-t em{font-style:normal;color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px;}
+
+@media (max-width:680px){
+  .co-v6{padding:24px 14px;}
+  .co-v6 .co6-card{grid-template-columns:1fr;}
+  .co-v6 .co6-r{border-left:none;border-top:1px solid var(--line-soft);}
+}
+
+.co-v7 {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 46px 52px 44px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.co-v7 *, .co-v7 *::before, .co-v7 *::after { box-sizing: border-box; }
+
+.co-v7 .co-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+  margin: 0;
+}
+.co-v7 .co-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ---- header ---- */
+.co-v7 .co-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.co-v7 .co-id { display: flex; align-items: center; gap: 13px; }
+.co-v7 .co-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+  flex: none;
+}
+.co-v7 .co-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0;
+  line-height: 1;
+}
+.co-v7 .co-stage {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 4px 8px 3px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.co-v7 .co-status {
+  display: flex; align-items: center; gap: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.co-v7 .co-online { color: var(--green); }
+.co-v7 .co-sep { color: var(--line); }
+
+.co-v7 .co-mission {
+  margin: 18px 0 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 58ch;
+}
+
+/* ---- shared section frame ---- */
+.co-v7 .co-sec {
+  margin-top: 32px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
+}
+.co-v7 .co-sec-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; margin-bottom: 20px;
+}
+.co-v7 .co-sec-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--ink-faint);
+}
+
+/* ---- metrics ---- */
+.co-v7 .co-metrics {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 44px;
+  align-items: start;
+}
+.co-v7 .co-mrr-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  margin-top: 12px;
+  color: var(--ink);
+}
+.co-v7 .co-mrr-unit { font-size: 18px; color: var(--ink-faint); font-weight: 500; letter-spacing: 0; }
+.co-v7 .co-mrr-trend {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--green);
+  margin-top: 12px;
+  letter-spacing: 0.02em;
+}
+.co-v7 .co-spark {
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin-top: 18px;
+  color: var(--green);
+  overflow: visible;
+}
+
+.co-v7 .co-stats { display: flex; flex-direction: column; }
+.co-v7 .co-stat {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.co-v7 .co-stat:first-child { padding-top: 2px; }
+.co-v7 .co-stat:last-child { border-bottom: none; padding-bottom: 0; }
+.co-v7 .co-stat-r { display: flex; align-items: baseline; gap: 12px; }
+.co-v7 .co-stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 600; color: var(--ink); line-height: 1;
+}
+.co-v7 .co-stat-num.co-pos { color: var(--green); }
+.co-v7 .co-stat-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-faint); letter-spacing: 0.02em;
+}
+
+/* ---- loops ---- */
+.co-v7 .co-loops {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.co-v7 .co-loop {
+  padding: 0 26px;
+  border-left: 1px solid var(--line-soft);
+}
+.co-v7 .co-loop:first-child { padding-left: 0; border-left: none; }
+.co-v7 .co-loop:last-child { padding-right: 0; }
+.co-v7 .co-loop-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; color: var(--ink-faint);
+}
+.co-v7 .co-loop-state {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 500;
+  margin-top: 14px;
+}
+.co-v7 .co-loop-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.co-v7 .co-run { color: var(--green); }
+.co-v7 .co-run .co-loop-dot { background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+.co-v7 .co-need { color: var(--amber); }
+.co-v7 .co-need .co-loop-dot { background: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+.co-v7 .co-loop-note {
+  margin-top: 10px; font-size: 13px; color: var(--ink-soft); line-height: 1.45;
+}
+
+/* ---- roadmap ---- */
+.co-v7 .co-slice-idx {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--accent); font-weight: 600;
+}
+.co-v7 .co-slice-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 21px; font-weight: 600; letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.co-v7 .co-kv {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 18px;
+  margin-top: 18px;
+  align-items: baseline;
+}
+.co-v7 .co-kv-text { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; margin: 0; }
+
+.co-v7 .co-upcoming {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px dashed var(--line-soft);
+}
+.co-v7 .co-up-list { list-style: none; margin: 14px 0 0; padding: 0; }
+.co-v7 .co-up-list li {
+  display: flex; align-items: baseline; gap: 16px;
+  font-size: 14.5px; color: var(--ink-soft);
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-soft);
+  transition: color 0.15s ease;
+}
+.co-v7 .co-up-list li:last-child { border-bottom: none; }
+.co-v7 .co-up-list li:hover { color: var(--ink); }
+.co-v7 .co-up-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-faint); flex: none; letter-spacing: 0.04em;
+}
+
+/* ---- activity ---- */
+.co-v7 .co-feed { list-style: none; margin: 0; padding: 0; }
+.co-v7 .co-feed li {
+  display: flex; align-items: baseline; gap: 15px;
+  padding: 10px 0;
+  font-size: 14.5px; color: var(--ink-soft);
+  transition: color 0.15s ease;
+}
+.co-v7 .co-feed li:hover { color: var(--ink); }
+.co-v7 .co-feed-mark {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green);
+  flex: none;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 680px) {
+  .co-v7 { padding: 36px 26px; }
+  .co-v7 .co-metrics { grid-template-columns: 1fr; gap: 30px; }
+  .co-v7 .co-loops { grid-template-columns: 1fr; gap: 22px; }
+  .co-v7 .co-loop { padding: 0 0 0 16px; border-left: 1px solid var(--line-soft); }
+  .co-v7 .co-loop:first-child { padding-left: 16px; border-left: 1px solid var(--line-soft); }
+  .co-v7 .co-kv { grid-template-columns: 1fr; gap: 6px; }
+}
+
+.co-v8 {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  line-height: 1.5;
+}
+.co-v8 * { box-sizing: border-box; }
+
+.co-v8 .v8-card {
+  width: 100%;
+  max-width: 820px;
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 22px;
+  padding: 32px 34px 34px;
+  box-shadow: 0 1px 2px var(--line-soft);
+}
+
+/* header */
+.co-v8 .v8-title-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-wrap: wrap;
+}
+.co-v8 .v8-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.co-v8 .v8-online {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  background: var(--green-soft);
+  padding: 3px 9px 3px 8px;
+  border-radius: 20px;
+}
+.co-v8 .v8-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  flex: none;
+}
+.co-v8 .v8-stage {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--cream-2);
+  border: 1px solid var(--line-soft);
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.co-v8 .v8-growing {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+.co-v8 .v8-mission {
+  margin: 11px 0 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  max-width: 58ch;
+}
+
+/* metrics */
+.co-v8 .v8-metrics {
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding: 20px 22px;
+  background: var(--cream-2);
+  border-radius: 16px;
+}
+.co-v8 .v8-mrr {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.co-v8 .v8-mrr-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.co-v8 .v8-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.co-v8 .v8-spark {
+  color: var(--green);
+  display: block;
+}
+.co-v8 .v8-mrr-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.co-v8 .v8-mrr-trend {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--green);
+}
+.co-v8 .v8-stats {
+  display: flex;
+  gap: 24px;
+  margin-left: auto;
+}
+.co-v8 .v8-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.co-v8 .v8-stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 19px;
+  font-weight: 600;
+}
+.co-v8 .v8-stat-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--ink-faint);
+}
+.co-v8 .v8-up { color: var(--green); }
+
+/* loops */
+.co-v8 .v8-loops {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+.co-v8 .v8-loop {
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: var(--paper);
+}
+.co-v8 .v8-loop-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  color: var(--ink-faint);
+}
+.co-v8 .v8-loop-state {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
+.co-v8 .v8-loop-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.co-v8 .v8-loop--run .v8-loop-led { background: var(--green); }
+.co-v8 .v8-loop--run .v8-loop-state { color: var(--green); }
+.co-v8 .v8-loop--need { border-color: var(--amber-soft); background: var(--amber-soft); }
+.co-v8 .v8-loop--need .v8-loop-led { background: var(--amber); }
+.co-v8 .v8-loop--need .v8-loop-state { color: var(--amber); }
+.co-v8 .v8-loop-note {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* section title */
+.co-v8 .v8-section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--ink-faint);
+  margin: 30px 0 18px;
+}
+
+/* roadmap timeline */
+.co-v8 .v8-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.co-v8 .v8-node {
+  position: relative;
+  padding: 0 0 22px 34px;
+}
+.co-v8 .v8-node:last-child { padding-bottom: 0; }
+.co-v8 .v8-node-marker {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  z-index: 1;
+}
+.co-v8 .v8-node::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 17px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-soft);
+}
+.co-v8 .v8-node:last-child::before { display: none; }
+
+/* current slice */
+.co-v8 .v8-node--current .v8-node-marker {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.co-v8 .v8-node--current .v8-node-body {
+  background: var(--accent-soft);
+  border-radius: 14px;
+  padding: 15px 18px 17px;
+}
+.co-v8 .v8-node-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--accent);
+}
+.co-v8 .v8-node h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 7px 0 0;
+}
+.co-v8 .v8-story {
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin: 10px 0 0;
+}
+.co-v8 .v8-done {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 11px 0 0;
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.co-v8 .v8-done b {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-soft);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+/* upcoming slices */
+.co-v8 .v8-node--next .v8-node-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.co-v8 .v8-node--next h3 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.co-v8 .v8-queue {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.co-v8 .v8-node--next.v8-first .v8-queue { color: var(--accent); }
+
+/* activity */
+.co-v8 .v8-activity {
+  margin-top: 30px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-soft);
+}
+.co-v8 .v8-activity-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.co-v8 .v8-activity-head .v8-section-title { margin: 0; }
+.co-v8 .v8-auto {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  border: 1px solid var(--line-soft);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.co-v8 .v8-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.co-v8 .v8-feed li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.co-v8 .v8-feed-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+.co-v8 .v8-feed li:nth-child(1) .v8-feed-dot { background: var(--green); }
+.co-v8 .v8-feed li:nth-child(2) .v8-feed-dot { background: var(--blue); }
+.co-v8 .v8-feed li:nth-child(3) .v8-feed-dot { background: var(--accent); }
+
+@media (max-width: 640px) {
+  .co-v8 .v8-loops { grid-template-columns: 1fr; }
+  .co-v8 .v8-stats { margin-left: 0; }
+}
+
+.co-v9{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  max-width:820px;
+  margin:0 auto;
+  padding:46px 44px 54px;
+  box-sizing:border-box;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.co-v9 *{box-sizing:border-box;}
+
+/* masthead */
+.co-v9 .v9-mast{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  padding-bottom:16px;
+  border-bottom:1.5px solid var(--ink);
+}
+.co-v9 .v9-brand{display:flex;align-items:center;gap:11px;}
+.co-v9 .v9-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.55rem;
+  font-weight:600;
+  letter-spacing:-.02em;
+}
+.co-v9 .v9-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 4px var(--green-soft);
+}
+.co-v9 .v9-online{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem;text-transform:uppercase;letter-spacing:.16em;
+  color:var(--green);
+}
+.co-v9 .v9-stage{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;
+  color:var(--ink-soft);
+  display:flex;gap:8px;align-items:center;
+}
+.co-v9 .v9-stage-live{color:var(--ink);font-weight:600;}
+.co-v9 .v9-stage-sep{color:var(--ink-faint);}
+
+/* hero */
+.co-v9 .v9-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.64rem;text-transform:uppercase;letter-spacing:.22em;
+  color:var(--ink-faint);
+  margin:36px 0 10px;
+}
+.co-v9 .v9-hero-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:26px;flex-wrap:wrap;
+}
+.co-v9 .v9-stat{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(3.6rem,11vw,5.4rem);
+  font-weight:500;letter-spacing:-.045em;line-height:.88;
+  margin:0;color:var(--ink);
+}
+.co-v9 .v9-hero-side{
+  display:flex;flex-direction:column;gap:9px;align-items:flex-end;
+  padding-bottom:9px;
+}
+.co-v9 .v9-spark{color:var(--accent);display:block;}
+.co-v9 .v9-trend{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.74rem;color:var(--ink-soft);margin:0;
+  letter-spacing:.02em;text-align:right;
+}
+.co-v9 .v9-trend-up{color:var(--green);font-weight:600;}
+.co-v9 .v9-mission{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.36rem;font-weight:400;line-height:1.45;
+  color:var(--ink-soft);
+  margin:24px 0 0;max-width:34ch;
+  letter-spacing:-.01em;
+}
+
+/* metrics */
+.co-v9 .v9-metrics{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  margin:40px 0 0;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.co-v9 .v9-metric{
+  padding:20px 22px 20px 0;
+  border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;gap:5px;
+}
+.co-v9 .v9-metric:last-child{border-right:none;padding-right:0;}
+.co-v9 .v9-metric-num{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:2rem;font-weight:500;letter-spacing:-.02em;line-height:1;
+}
+.co-v9 .v9-metric-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--ink-faint);
+}
+.co-v9 .v9-metric-delta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;color:var(--ink-faint);
+}
+.co-v9 .v9-metric-delta.v9-up{color:var(--green);}
+
+/* sections */
+.co-v9 .v9-section{margin-top:42px;}
+.co-v9 .v9-h2{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.66rem;text-transform:uppercase;letter-spacing:.2em;
+  color:var(--ink-faint);font-weight:500;
+  margin:0 0 18px;
+  padding-bottom:10px;border-bottom:1px solid var(--line-soft);
+}
+
+/* loops */
+.co-v9 .v9-loops{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--line-soft);
+  border:1px solid var(--line-soft);
+  border-radius:12px;overflow:hidden;
+}
+.co-v9 .v9-loop{
+  background:var(--cream);padding:18px 18px 20px;
+  display:flex;flex-direction:column;gap:11px;
+  transition:background .2s ease;
+}
+.co-v9 .v9-loop:hover{background:var(--paper);}
+.co-v9 .v9-loop-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.co-v9 .v9-loop-name{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.02rem;
+  letter-spacing:.005em;
+}
+.co-v9 .v9-loop-state{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;
+  text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;
+}
+.co-v9 .v9-loop-state::before{
+  content:"";width:6px;height:6px;border-radius:50%;background:currentColor;
+}
+.co-v9 .v9-run{color:var(--green);}
+.co-v9 .v9-needs{color:var(--amber);}
+.co-v9 .v9-loop-desc{
+  font-size:.84rem;color:var(--ink-soft);line-height:1.42;margin:0;
+}
+
+/* roadmap slice */
+.co-v9 .v9-slice{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:22px 24px 24px;
+  transition:box-shadow .2s ease;
+}
+.co-v9 .v9-slice:hover{box-shadow:0 10px 28px var(--line-soft);}
+.co-v9 .v9-slice-tag{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  text-transform:uppercase;letter-spacing:.16em;color:var(--accent);
+  margin:0 0 9px;font-weight:600;
+}
+.co-v9 .v9-slice-title{
+  font-family:'Space Grotesk',sans-serif;font-size:1.36rem;font-weight:600;
+  letter-spacing:-.02em;margin:0 0 13px;line-height:1.15;
+}
+.co-v9 .v9-story{
+  font-size:1rem;color:var(--ink-soft);font-style:italic;
+  line-height:1.5;margin:0 0 15px;
+  padding-left:15px;border-left:2px solid var(--accent-soft);
+}
+.co-v9 .v9-done{
+  font-size:.86rem;color:var(--ink-soft);margin:0;
+  display:flex;gap:9px;align-items:baseline;
+}
+.co-v9 .v9-done-tag{
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--green);font-weight:600;flex-shrink:0;
+}
+
+/* upcoming */
+.co-v9 .v9-upcoming{
+  list-style:none;margin:16px 0 0;padding:0;
+  display:flex;flex-direction:column;
+}
+.co-v9 .v9-upcoming li{
+  display:flex;align-items:center;gap:13px;
+  padding:12px 4px;border-bottom:1px solid var(--line-soft);
+  font-size:.95rem;color:var(--ink);
+}
+.co-v9 .v9-upcoming li:last-child{border-bottom:none;}
+.co-v9 .v9-up-num{
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--ink-faint);
+  width:20px;flex-shrink:0;
+}
+
+/* activity feed */
+.co-v9 .v9-feed{list-style:none;margin:0;padding:0;}
+.co-v9 .v9-feed li{
+  display:flex;align-items:baseline;gap:13px;
+  padding:11px 0;border-bottom:1px solid var(--line-soft);
+  font-size:.92rem;color:var(--ink-soft);
+}
+.co-v9 .v9-feed li:last-child{border-bottom:none;}
+.co-v9 .v9-feed li::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;transform:translateY(-2px);
+}
+
+@media (max-width:640px){
+  .co-v9{padding:32px 22px 40px;}
+  .co-v9 .v9-metrics{grid-template-columns:1fr;}
+  .co-v9 .v9-metric{border-right:none;border-bottom:1px solid var(--line-soft);padding:16px 0;}
+  .co-v9 .v9-metric:last-child{border-bottom:none;}
+  .co-v9 .v9-loops{grid-template-columns:1fr;}
+}
+
+.co-v10 {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  padding: 32px 20px 44px;
+  display: flex;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+.co-v10 *, .co-v10 *::before, .co-v10 *::after { box-sizing: border-box; }
+.co-v10 .v10-shell {
+  width: 100%;
+  max-width: 820px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Header */
+.co-v10 .v10-head { display: flex; flex-direction: column; gap: 9px; }
+.co-v10 .v10-id { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.co-v10 .v10-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+  flex: none;
+}
+.co-v10 .v10-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 27px; font-weight: 600; letter-spacing: -0.02em;
+  margin: 0; color: var(--ink); line-height: 1;
+}
+.co-v10 .v10-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; font-weight: 500; line-height: 1.4;
+}
+.co-v10 .v10-tag-live { background: var(--green-soft); color: var(--green); }
+.co-v10 .v10-tag-grow { background: var(--accent-soft); color: var(--accent-ink); }
+.co-v10 .v10-mission {
+  margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+/* KPI strip */
+.co-v10 .v10-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.co-v10 .v10-kpi {
+  padding: 15px 16px 14px;
+  border-left: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition: background .15s ease;
+}
+.co-v10 .v10-kpi:first-child { border-left: none; }
+.co-v10 .v10-kpi:hover { background: var(--cream-2); }
+.co-v10 .v10-kpi-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+.co-v10 .v10-kpi-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.co-v10 .v10-kpi-delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--green); font-weight: 500;
+  white-space: nowrap;
+}
+.co-v10 .v10-kpi-main { display: flex; align-items: flex-end; gap: 8px; min-height: 26px; }
+.co-v10 .v10-kpi-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px; font-weight: 600; letter-spacing: -0.02em;
+  line-height: 1; color: var(--ink);
+}
+.co-v10 .v10-pos { color: var(--green); }
+.co-v10 .v10-kpi-sub {
+  font-size: 11px; color: var(--ink-faint);
+  font-family: 'JetBrains Mono', monospace;
+}
+.co-v10 .v10-kpi-mrr { color: var(--green); }
+.co-v10 .v10-spark {
+  width: 56px; height: 24px; flex: none; display: block;
+  color: var(--green);
+}
+.co-v10 .v10-spark polyline {
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Loops one-liner */
+.co-v10 .v10-loops {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px 13px;
+}
+.co-v10 .v10-loops-lead {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint); margin-right: 4px;
+}
+.co-v10 .v10-loop {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 11px; border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  border: 1px solid var(--line-soft); background: var(--cream-2);
+}
+.co-v10 .v10-loop-name { font-weight: 600; letter-spacing: 0.08em; color: var(--ink); }
+.co-v10 .v10-loop-state { font-weight: 500; }
+.co-v10 .v10-loop-ctx { color: var(--ink-faint); }
+.co-v10 .v10-loop-ctx::before { content: "· "; color: var(--line); }
+.co-v10 .v10-loop-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.co-v10 .v10-run .v10-loop-dot { background: var(--green); }
+.co-v10 .v10-run .v10-loop-state { color: var(--green); }
+.co-v10 .v10-need .v10-loop-dot { background: var(--amber); }
+.co-v10 .v10-need .v10-loop-state { color: var(--amber); }
+.co-v10 .v10-need { background: var(--amber-soft); border-color: var(--amber-soft); }
+
+/* Roadmap */
+.co-v10 .v10-road {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 15px;
+}
+.co-v10 .v10-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent-ink);
+}
+.co-v10 .v10-current {
+  border-left: 2px solid var(--accent);
+  padding-left: 14px;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.co-v10 .v10-current-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 600; margin: 0; color: var(--ink);
+  letter-spacing: -0.01em; line-height: 1.3;
+}
+.co-v10 .v10-story, .co-v10 .v10-done {
+  margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-soft);
+}
+.co-v10 .v10-story-k, .co-v10 .v10-done-k {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-faint);
+  display: inline-block; margin-right: 7px;
+  padding: 2px 6px; border-radius: 5px; background: var(--cream-2);
+  vertical-align: 1.5px;
+}
+.co-v10 .v10-up { display: flex; flex-direction: column; gap: 4px; padding-top: 3px; }
+.co-v10 .v10-up-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint);
+  margin-bottom: 2px;
+}
+.co-v10 .v10-upcoming {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+}
+.co-v10 .v10-upcoming li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; font-size: 13.5px; color: var(--ink);
+  border-bottom: 1px solid var(--line-soft);
+  transition: color .15s ease;
+}
+.co-v10 .v10-upcoming li:last-child { border-bottom: none; }
+.co-v10 .v10-upcoming li:hover { color: var(--accent-ink); }
+.co-v10 .v10-up-i {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint);
+  width: 40px; flex: none;
+}
+
+/* Activity */
+.co-v10 .v10-activity {
+  display: flex; flex-direction: column; gap: 11px;
+  padding: 0 2px;
+}
+.co-v10 .v10-feed {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+}
+.co-v10 .v10-feed li {
+  display: flex; align-items: center; gap: 11px;
+  font-size: 13px; color: var(--ink-soft);
+  padding: 9px 0; border-bottom: 1px solid var(--line-soft);
+}
+.co-v10 .v10-feed li:last-child { border-bottom: none; }
+.co-v10 .v10-feed li::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent); flex: none;
+}
+
+@media (max-width: 560px) {
+  .co-v10 .v10-kpis { grid-template-columns: repeat(2, 1fr); }
+  .co-v10 .v10-kpi:nth-child(3) { border-left: none; }
+  .co-v10 .v10-kpi:nth-child(n+3) { border-top: 1px solid var(--line-soft); }
+}
+</style>
+<script>
+var tb=document.getElementById('themeBtn');
+tb.addEventListener('click',function(){var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');tb.textContent=d?'☾ Dark':'☀ Light';});
+</script>
+</body>
+</html>

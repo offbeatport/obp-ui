@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Board · Swimlanes</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e0d6;
+    --green:#4f8a52; --green-soft:#e3efe1;
+    --blue:#4a72b0; --blue-soft:#e2eaf5;
+    --violet:#7a5ea8; --violet-soft:#ece6f5;
+    --amber:#c08a2e; --amber-soft:#f6ecd4;
+    --red:#b6483f; --red-soft:#f6e0dd;
+    --slate:#8a8579; --slate-soft:#ece8df;
+    --dot: rgba(96,84,68,.16);
+    --shadow: 0 1px 2px rgba(60,50,38,.05), 0 10px 30px rgba(60,50,38,.08);
+    --shadow-lg: 0 2px 8px rgba(60,50,38,.07), 0 26px 64px rgba(60,50,38,.15);
+  }
+  :root[data-theme="dark"]{
+    --cream:#05060a; --cream-2:#080d18; --paper:#10131f;
+    --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --line-soft:#111726;
+    --accent:#e0794e; --accent-soft:rgba(224,121,78,.18);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --slate:#8a93a8; --slate-soft:rgba(120,140,200,.12);
+    --dot: rgba(150,170,215,.13);
+    --shadow: 0 1px 2px rgba(0,0,0,.45), 0 10px 30px rgba(0,0,0,.55);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,.5), 0 26px 64px rgba(0,0,0,.65);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream); color:var(--ink);
+    font-size:15px; line-height:1.5; overflow:hidden;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.005em;
+  }
+  ::selection{ background:var(--accent-soft); }
+
+  /* ---------- board / ground ---------- */
+  .board{
+    position:fixed; inset:0; overflow:hidden;
+    background:var(--cream);
+    cursor:grab; touch-action:none;
+  }
+  .board.grabbing{ cursor:grabbing; }
+  .grid{
+    position:absolute; inset:-2px;
+    background-image:radial-gradient(circle, var(--dot) 1.1px, transparent 1.6px);
+    background-repeat:repeat;
+    pointer-events:none;
+  }
+  .world{
+    position:absolute; left:0; top:0;
+    transform-origin:0 0;
+    will-change:transform;
+  }
+
+  /* ---------- lanes ---------- */
+  .lane-div{
+    position:absolute; height:0;
+    border-top:1px solid var(--line);
+  }
+  .lane-label{ position:absolute; user-select:none; }
+  .ll-word{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:34px; letter-spacing:.02em; color:var(--ink);
+    line-height:1; opacity:.9;
+  }
+  .ll-meta{
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-faint); margin-top:9px;
+  }
+  .ll-count{ color:var(--accent); }
+
+  /* ---------- company nodes ---------- */
+  .node{
+    position:absolute; width:252px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; padding:15px 17px 14px;
+    box-shadow:var(--shadow);
+    transition:box-shadow .16s, border-color .16s, transform .16s;
+    --c:var(--accent); --cs:var(--accent-soft);
+  }
+  .node::before{
+    content:""; position:absolute; left:0; top:14px; bottom:14px;
+    width:3px; border-radius:0 3px 3px 0; background:var(--c); opacity:.9;
+  }
+  .node:hover{ box-shadow:var(--shadow-lg); border-color:var(--c); transform:translateY(-2px); }
+  .node.sel{ border-color:var(--c); box-shadow:var(--shadow-lg), 0 0 0 2px var(--c); }
+  .node.paused{ opacity:.82; }
+
+  .n-top{ display:flex; align-items:center; gap:8px; margin-bottom:9px; }
+  .n-dot{ width:8px; height:8px; border-radius:50%; background:var(--c); flex:0 0 auto; }
+  .n-status{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px;
+    letter-spacing:.13em; text-transform:uppercase; color:var(--c); font-weight:500;
+  }
+  .n-needs{
+    margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9.5px;
+    letter-spacing:.1em; text-transform:uppercase; font-weight:500;
+    color:var(--accent); background:var(--accent-soft);
+    padding:3px 7px; border-radius:6px;
+  }
+  .n-name{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:19px; letter-spacing:-.01em; color:var(--ink); margin-bottom:4px;
+  }
+  .n-action{ font-size:12.5px; color:var(--ink-soft); margin-bottom:13px; }
+  .n-metrics{ display:flex; align-items:baseline; gap:14px; }
+  .n-mrr{ font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:500; color:var(--ink); }
+  .n-delta{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--green); }
+  .n-users{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-faint); margin-left:auto; }
+
+  /* ---------- HUD ---------- */
+  .hud-tl{ position:fixed; top:22px; left:24px; z-index:20; user-select:none; }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .logo-dot{ width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+  .brand span{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; letter-spacing:-.01em; }
+  .pf{ margin-top:9px; display:flex; align-items:center; gap:9px; font-family:'JetBrains Mono',monospace; font-size:11.5px; }
+  .pf b{ color:var(--ink); font-weight:500; }
+  .pf .up{ color:var(--green); }
+  .pf .need{ color:var(--accent); }
+  .pf .sep{ color:var(--line); }
+  .pf .mut{ color:var(--ink-faint); }
+
+  .hud-tr{ position:fixed; top:22px; right:24px; z-index:20; display:flex; gap:9px; }
+  .icon-btn{
+    width:34px; height:34px; border-radius:10px; cursor:pointer;
+    background:var(--paper); border:1px solid var(--line); color:var(--ink-soft);
+    display:grid; place-items:center; transition:color .14s, border-color .14s, background .14s;
+  }
+  .icon-btn:hover{ color:var(--accent); border-color:var(--accent-soft); }
+  .icon-btn svg{ width:16px; height:16px; }
+  .theme-toggle .ic-sun{ display:none; }
+  [data-theme="dark"] .theme-toggle .ic-moon{ display:none; }
+  [data-theme="dark"] .theme-toggle .ic-sun{ display:block; }
+
+  .zoom{
+    position:fixed; bottom:24px; right:24px; z-index:20;
+    display:flex; align-items:center; gap:2px;
+    background:var(--paper); border:1px solid var(--line); border-radius:12px;
+    padding:4px; box-shadow:var(--shadow);
+  }
+  .zoom button{
+    width:32px; height:30px; border:none; background:transparent; color:var(--ink-soft);
+    cursor:pointer; border-radius:8px; display:grid; place-items:center;
+    transition:background .14s, color .14s;
+  }
+  .zoom button:hover{ background:var(--cream-2); color:var(--accent); }
+  .zoom button svg{ width:15px; height:15px; }
+  .zoom .zval{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint);
+    min-width:42px; text-align:center; user-select:none;
+  }
+  .zoom .zdiv{ width:1px; height:18px; background:var(--line); margin:0 3px; }
+
+  .hint{
+    position:fixed; bottom:26px; left:24px; z-index:20;
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.06em;
+    color:var(--ink-faint); user-select:none; pointer-events:none;
+  }
+  .hint b{ color:var(--ink-soft); font-weight:500; }
+
+  /* ---------- detail panel ---------- */
+  .detail{
+    position:fixed; top:16px; right:16px; bottom:16px; width:372px; z-index:40;
+    background:var(--paper); border:1px solid var(--line); border-radius:18px;
+    box-shadow:var(--shadow-lg);
+    padding:26px 26px 24px; overflow:auto;
+    transform:translateX(calc(100% + 24px)); opacity:0;
+    transition:transform .34s cubic-bezier(.4,0,.1,1), opacity .28s;
+    --c:var(--accent); --cs:var(--accent-soft);
+  }
+  .detail.open{ transform:translateX(0); opacity:1; }
+  .d-close{
+    position:absolute; top:20px; right:20px; width:30px; height:30px; border-radius:9px;
+    background:transparent; border:1px solid var(--line); color:var(--ink-faint);
+    cursor:pointer; display:grid; place-items:center; transition:color .14s, border-color .14s;
+  }
+  .d-close:hover{ color:var(--accent); border-color:var(--accent-soft); }
+  .d-close svg{ width:14px; height:14px; }
+  .d-eyebrow{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .d-eyebrow .n-dot{ width:9px; height:9px; }
+  .d-eyebrow .st{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--c); font-weight:500; }
+  .d-name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:28px; letter-spacing:-.02em; color:var(--ink); margin:0 0 4px; }
+  .d-sub{ font-size:13px; color:var(--ink-soft); margin-bottom:22px; }
+  .d-metrics{ display:flex; gap:26px; padding:18px 0; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); margin-bottom:20px; }
+  .d-metric .dm-k{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:6px; }
+  .d-metric .dm-v{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:22px; color:var(--ink); }
+  .d-metric .dm-v .d{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500; color:var(--green); margin-left:6px; }
+  .d-block{ margin-bottom:20px; }
+  .d-k{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
+  .d-v{ font-size:14px; color:var(--ink); }
+  .d-needs{
+    background:var(--accent-soft); border-radius:12px; padding:14px 16px; margin-bottom:20px;
+    display:flex; align-items:flex-start; gap:11px;
+  }
+  .d-needs .nb{ width:7px; height:7px; border-radius:50%; background:var(--accent); margin-top:6px; flex:0 0 auto; box-shadow:0 0 0 4px var(--accent-soft); }
+  .d-needs .nk{ font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--accent); font-weight:500; margin-bottom:3px; }
+  .d-needs .nv{ font-size:13.5px; color:var(--ink); }
+  .d-act{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink-soft); }
+  .d-act .pulse{ width:7px; height:7px; border-radius:50%; background:var(--c); position:relative; flex:0 0 auto; }
+  .d-act .pulse::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--c); opacity:.4; }
+  .d-act .t{ font-family:'JetBrains Mono',monospace; color:var(--ink-faint); margin-left:auto; font-size:11px; }
+</style>
+</head>
+<body>
+
+<div class="board" id="board">
+  <div class="grid" id="grid"></div>
+  <div class="world" id="world"></div>
+</div>
+
+<!-- portfolio HUD -->
+<div class="hud-tl">
+  <div class="brand"><span class="logo-dot"></span><span>C Slop Slop</span></div>
+  <div class="pf">
+    <b>$695</b><span class="mut">MRR</span><span class="up">↑14%</span>
+    <span class="sep">·</span><b>56</b><span class="mut">users</span>
+    <span class="sep">·</span><span class="need">3 need you</span>
+  </div>
+</div>
+
+<!-- theme toggle -->
+<div class="hud-tr">
+  <button class="icon-btn theme-toggle" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+  </button>
+</div>
+
+<!-- zoom cluster -->
+<div class="zoom">
+  <button id="zOut" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+  <span class="zval" id="zVal">100%</span>
+  <button id="zIn" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <span class="zdiv"></span>
+  <button id="zFit" title="Fit to screen" aria-label="Fit to screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+</div>
+
+<div class="hint"><b>Drag</b> to pan · <b>Scroll</b> to zoom · <b>Click</b> a company</div>
+
+<!-- detail panel -->
+<div class="detail" id="detail">
+  <button class="d-close" id="dClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div id="dBody"></div>
+</div>
+
+<script>
+(function(){
+  var NODE_W = 252;
+  var LANE_H = 320;
+
+  var LANES = [
+    { key:'MAKE', y:0,   meta:'build · pre-revenue', count:2 },
+    { key:'GROW', y:320, meta:'grow · scale',        count:2 },
+    { key:'RUN',  y:640, meta:'run · steady',        count:1 }
+  ];
+
+  var COMPANIES = [
+    { id:'translatorbill', name:'TranslatorBill', c:'violet', x:360, y:64,
+      status:'BUILDING', sub:'building · pre-revenue', mrr:'$0', delta:null, users:'0',
+      action:'Building "invoice reformat"', stage:'MAKE',
+      needs:null, act:'Building InvoiceFormatter.tsx', actT:'now', paused:false },
+
+    { id:'redditpainbot', name:'RedditPainBot', c:'slate', x:706, y:96,
+      status:'PAUSED', sub:'paused · blocked', mrr:'$0', delta:null, users:'0',
+      action:'Slice 8 stuck ×3', stage:'MAKE',
+      needs:{ k:'Unblock', v:'RedditPainBot — slice 8 stuck ×3' }, act:'Blocked ×3', actT:'18m', paused:true },
+
+    { id:'leadsift', name:'LeadSift', c:'accent', x:360, y:392,
+      status:'GROWING', sub:'live · growing', mrr:'$180', delta:'+$40', users:'12',
+      action:'Ship "daily digest"', stage:'GROW',
+      needs:{ k:'Ship', v:'Daily digest — passed check ✓' }, act:'Awaiting approval', actT:'2m', paused:false },
+
+    { id:'quietinbox', name:'QuietInbox', c:'blue', x:748, y:418,
+      status:'SCALING', sub:'live · scaling · best', mrr:'$420', delta:null, users:'38',
+      action:'Building "snooze a thread"', stage:'GROW',
+      needs:{ k:'Spend', v:'$40 Product Hunt launch' }, act:'Deployed · checks passed', actT:'12s', paused:false },
+
+    { id:'datadrop', name:'DataDrop', c:'green', x:400, y:712,
+      status:'FLAT', sub:'live · flat', mrr:'$95', delta:null, users:'6',
+      action:'Queued "saved chart views"', stage:'RUN',
+      needs:null, act:'Re-prioritized', actT:'5m', paused:false }
+  ];
+
+  var world = document.getElementById('world');
+  var grid  = document.getElementById('grid');
+  var board = document.getElementById('board');
+
+  /* ---- build lanes ---- */
+  var contentRight = 0;
+  COMPANIES.forEach(function(co){ contentRight = Math.max(contentRight, co.x + NODE_W); });
+  var laneRight = contentRight + 30;
+
+  LANES.forEach(function(l, i){
+    if(i>0){
+      var d = document.createElement('div');
+      d.className = 'lane-div';
+      d.style.left = '30px';
+      d.style.top  = l.y + 'px';
+      d.style.width = (laneRight - 30) + 'px';
+      world.appendChild(d);
+    }
+    var lab = document.createElement('div');
+    lab.className = 'lane-label';
+    lab.style.left = '40px';
+    lab.style.top  = (l.y + LANE_H/2 - 32) + 'px';
+    lab.innerHTML = '<div class="ll-word">'+l.key+'</div>'+
+                    '<div class="ll-meta">'+l.meta+' · <span class="ll-count">'+l.count+'</span></div>';
+    world.appendChild(lab);
+  });
+
+  /* ---- build nodes ---- */
+  COMPANIES.forEach(function(co){
+    var n = document.createElement('div');
+    n.className = 'node' + (co.paused ? ' paused' : '');
+    n.style.left = co.x + 'px';
+    n.style.top  = co.y + 'px';
+    n.style.setProperty('--c', 'var(--'+co.c+')');
+    n.style.setProperty('--cs', 'var(--'+co.c+'-soft)');
+    n.dataset.id = co.id;
+    var needsPill = co.needs ? '<span class="n-needs">Needs you</span>' : '';
+    var delta = co.delta ? '<span class="n-delta">'+co.delta+'</span>' : '';
+    n.innerHTML =
+      '<div class="n-top"><span class="n-dot"></span><span class="n-status">'+co.status+'</span>'+needsPill+'</div>'+
+      '<div class="n-name">'+co.name+'</div>'+
+      '<div class="n-action">'+co.action+'</div>'+
+      '<div class="n-metrics"><span class="n-mrr">'+co.mrr+'</span>'+delta+'<span class="n-users">'+co.users+' users</span></div>';
+    world.appendChild(n);
+  });
+
+  /* ---------- pan + zoom ---------- */
+  var tx=0, ty=0, scale=1;
+  var MIN=0.4, MAX=2.4;
+
+  function apply(){
+    world.style.transform = 'translate('+tx+'px,'+ty+'px) scale('+scale+')';
+    var g = 32 * scale;
+    grid.style.backgroundSize = g+'px '+g+'px';
+    grid.style.backgroundPosition = tx+'px '+ty+'px';
+    document.getElementById('zVal').textContent = Math.round(scale*100)+'%';
+  }
+
+  function contentBounds(){
+    var minX=30, minY=-10, maxX=laneRight, maxY=LANES[LANES.length-1].y + LANE_H;
+    COMPANIES.forEach(function(co){
+      minX=Math.min(minX,co.x); maxX=Math.max(maxX,co.x+NODE_W);
+      minY=Math.min(minY,co.y);
+    });
+    return { minX:minX, minY:minY, maxX:maxX, maxY:maxY };
+  }
+
+  function fit(animate){
+    var b = contentBounds();
+    var pad = 90;
+    var vw = board.clientWidth, vh = board.clientHeight;
+    var bw = (b.maxX-b.minX)+pad*2, bh=(b.maxY-b.minY)+pad*2;
+    var s = Math.min(vw/bw, vh/bh);
+    s = Math.max(MIN, Math.min(1.15, s));
+    var cx = (b.minX+b.maxX)/2, cy=(b.minY+b.maxY)/2;
+    var nx = vw/2 - cx*s, ny = vh/2 - cy*s;
+    tween(nx, ny, s, animate ? 340 : 0);
+  }
+
+  /* smooth tween for buttons / fit — grid follows every frame */
+  var raf=null;
+  function tween(nx, ny, ns, dur){
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    if(dur<=0){ tx=nx; ty=ny; scale=ns; apply(); return; }
+    var sx=tx, sy=ty, ss=scale, t0=performance.now();
+    function step(now){
+      var k=Math.min(1,(now-t0)/dur);
+      var e = 1 - Math.pow(1-k, 3);
+      tx = sx+(nx-sx)*e; ty = sy+(ny-sy)*e; scale = ss+(ns-ss)*e;
+      apply();
+      if(k<1){ raf=requestAnimationFrame(step); } else { raf=null; }
+    }
+    raf=requestAnimationFrame(step);
+  }
+
+  function zoomAt(cx, cy, factor){
+    var ns = Math.max(MIN, Math.min(MAX, scale*factor));
+    if(ns===scale) return;
+    var wx=(cx-tx)/scale, wy=(cy-ty)/scale;
+    tx = cx - wx*ns; ty = cy - wy*ns; scale = ns;
+    apply();
+  }
+
+  /* wheel zoom toward cursor */
+  board.addEventListener('wheel', function(e){
+    e.preventDefault();
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    var r = board.getBoundingClientRect();
+    var f = e.deltaY < 0 ? 1.12 : 1/1.12;
+    zoomAt(e.clientX-r.left, e.clientY-r.top, f);
+  }, { passive:false });
+
+  /* drag to pan + click detection */
+  var down=false, moved=false, sx0=0, sy0=0, tx0=0, ty0=0, downNode=null;
+  board.addEventListener('pointerdown', function(e){
+    if(e.button!==0) return;
+    if(e.target.closest('.detail')) return;
+    down=true; moved=false;
+    sx0=e.clientX; sy0=e.clientY; tx0=tx; ty0=ty;
+    downNode = e.target.closest('.node');
+    board.classList.add('grabbing');
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    board.setPointerCapture(e.pointerId);
+  });
+  board.addEventListener('pointermove', function(e){
+    if(!down) return;
+    var dx=e.clientX-sx0, dy=e.clientY-sy0;
+    if(!moved && Math.abs(dx)+Math.abs(dy) > 5) moved=true;
+    if(moved){ tx=tx0+dx; ty=ty0+dy; apply(); }
+  });
+  board.addEventListener('pointerup', function(e){
+    if(!down) return;
+    down=false; board.classList.remove('grabbing');
+    try{ board.releasePointerCapture(e.pointerId); }catch(_){}
+    if(moved) return;
+    if(downNode){ openDetail(downNode.dataset.id, downNode); }
+    else{ closeDetail(); }
+  });
+
+  /* zoom buttons */
+  document.getElementById('zIn').onclick  = function(){ centerZoom(1.25); };
+  document.getElementById('zOut').onclick = function(){ centerZoom(1/1.25); };
+  document.getElementById('zFit').onclick = function(){ fit(true); closeDetail(); };
+  function centerZoom(f){
+    var ns=Math.max(MIN,Math.min(MAX,scale*f));
+    var vw=board.clientWidth, vh=board.clientHeight;
+    var wx=(vw/2-tx)/scale, wy=(vh/2-ty)/scale;
+    tween(vw/2-wx*ns, vh/2-wy*ns, ns, 200);
+  }
+
+  /* ---------- detail panel ---------- */
+  var detail=document.getElementById('detail');
+  var dBody=document.getElementById('dBody');
+  var selNode=null;
+
+  function openDetail(id, nodeEl){
+    var co=null; for(var i=0;i<COMPANIES.length;i++){ if(COMPANIES[i].id===id){ co=COMPANIES[i]; break; } }
+    if(!co) return;
+    if(selNode) selNode.classList.remove('sel');
+    selNode=nodeEl; if(selNode) selNode.classList.add('sel');
+
+    detail.style.setProperty('--c','var(--'+co.c+')');
+    detail.style.setProperty('--cs','var(--'+co.c+'-soft)');
+
+    var deltaHtml = co.delta ? '<span class="d">'+co.delta+'</span>' : '';
+    var needsHtml = co.needs ?
+      '<div class="d-needs"><span class="nb"></span><div><div class="nk">Needs you · '+co.needs.k+'</div><div class="nv">'+co.needs.v+'</div></div></div>' : '';
+
+    dBody.innerHTML =
+      '<div class="d-eyebrow"><span class="n-dot"></span><span class="st">'+co.status+' · '+co.stage+'</span></div>'+
+      '<h2 class="d-name">'+co.name+'</h2>'+
+      '<div class="d-sub">'+co.sub+'</div>'+
+      '<div class="d-metrics">'+
+        '<div class="d-metric"><div class="dm-k">MRR</div><div class="dm-v">'+co.mrr+deltaHtml+'</div></div>'+
+        '<div class="d-metric"><div class="dm-k">Users</div><div class="dm-v">'+co.users+'</div></div>'+
+        '<div class="d-metric"><div class="dm-k">Lane</div><div class="dm-v">'+co.stage+'</div></div>'+
+      '</div>'+
+      needsHtml+
+      '<div class="d-block"><div class="d-k">Currently</div><div class="d-v">'+co.action+'</div></div>'+
+      '<div class="d-block"><div class="d-k">Latest activity</div>'+
+        '<div class="d-act"><span class="pulse"></span><span>'+co.act+'</span><span class="t">'+co.actT+'</span></div>'+
+      '</div>';
+
+    detail.classList.add('open');
+    detail.style.setProperty('--c','var(--'+co.c+')');
+  }
+  function closeDetail(){
+    detail.classList.remove('open');
+    if(selNode){ selNode.classList.remove('sel'); selNode=null; }
+  }
+  document.getElementById('dClose').onclick = closeDetail;
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDetail(); });
+
+  /* ---------- theme ---------- */
+  document.getElementById('themeBtn').onclick = function(){
+    var dark = document.documentElement.getAttribute('data-theme')==='dark';
+    if(dark){ document.documentElement.removeAttribute('data-theme'); }
+    else{ document.documentElement.setAttribute('data-theme','dark'); }
+    try{ localStorage.setItem('cslopslop-theme', dark ? 'light' : 'dark'); }catch(_){}
+  };
+
+  /* init */
+  window.addEventListener('resize', function(){ /* keep transform; user can re-fit */ });
+  fit(false);
+})();
+</script>
+</body>
+</html>

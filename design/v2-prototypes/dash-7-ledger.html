@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Portfolio Ledger</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e0d6;
+    --green:#4f8a52; --green-soft:#e3efe1;
+    --blue:#4a72b0; --blue-soft:#e2eaf5;
+    --violet:#7a5ea8; --violet-soft:#ece6f5;
+    --amber:#c08a2e; --amber-soft:#f6ecd4;
+    --red:#b6483f; --red-soft:#f6e0dd;
+    --slate:#8a8579; --slate-soft:#ece8df;
+  }
+  :root[data-theme="dark"]{
+    --cream:#05060a; --cream-2:#080d18; --paper:#10131f;
+    --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --line-soft:#111726;
+    --accent:#e0794e; --accent-soft:rgba(224,121,78,.18);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --slate:#8a93a8; --slate-soft:rgba(120,140,200,.12);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream); color:var(--ink);
+    font-size:15px; line-height:1.5; letter-spacing:-.005em;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+
+  .wrap{ max-width:1240px; margin:0 auto; padding:38px 44px 80px; }
+
+  /* ---------- masthead ---------- */
+  .top{ display:flex; align-items:flex-start; gap:20px; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .mark{
+    width:30px; height:30px; border-radius:8px; flex:0 0 auto;
+    background:var(--accent); display:grid; place-items:center;
+    color:#fffdf8; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+  }
+  [data-theme="dark"] .mark{ color:#05060a; }
+  .brand h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:19px; margin:0; letter-spacing:-.01em; line-height:1.15;
+  }
+  .brand .sub{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.13em; color:var(--ink-faint);
+  }
+  .top .spacer{ flex:1; }
+  .theme-toggle{
+    width:34px; height:34px; border-radius:9px; cursor:pointer; flex:0 0 auto;
+    background:var(--paper); border:1px solid var(--line); color:var(--ink-soft);
+    display:grid; place-items:center; font-size:15px; line-height:1;
+    transition:color .16s, border-color .16s, transform .3s;
+  }
+  .theme-toggle:hover{ color:var(--accent); border-color:var(--accent-soft); }
+  .theme-toggle:active{ transform:scale(.92); }
+
+  /* ---------- metric strip ---------- */
+  .metrics{
+    display:flex; margin-top:32px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .metric{ padding:16px 26px 15px; position:relative; flex:1 1 auto; }
+  .metric + .metric::before{
+    content:""; position:absolute; left:0; top:18px; bottom:18px; width:1px; background:var(--line-soft);
+  }
+  .metric:first-child{ padding-left:0; }
+  .m-lab{
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    text-transform:uppercase; letter-spacing:.12em; color:var(--ink-faint);
+  }
+  .m-val{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:26px; letter-spacing:-.02em; margin-top:5px; line-height:1;
+    display:flex; align-items:baseline; gap:7px;
+  }
+  .m-val .u{ font-size:14px; color:var(--ink-faint); font-weight:500; }
+  .m-note{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); margin-top:6px; }
+  .m-note .up{ color:var(--green); }
+  .up{ color:var(--green); } .dn{ color:var(--red); }
+  .metric.hot .m-val{ color:var(--accent); }
+  .m-bar{ height:3px; border-radius:2px; background:var(--line-soft); margin-top:9px; overflow:hidden; }
+  .m-bar i{ display:block; height:100%; border-radius:2px; background:var(--accent); width:43%; }
+
+  /* ---------- ledger ---------- */
+  .sec-lab{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.14em; color:var(--ink-faint);
+    margin:36px 0 4px;
+  }
+  .ledger{ margin-top:8px; }
+  .lgrid{
+    display:grid;
+    grid-template-columns:minmax(168px,1.5fr) 122px 88px 80px 60px minmax(188px,1.75fr) minmax(150px,1.35fr);
+    align-items:center; column-gap:18px;
+    padding-left:16px; border-left:2px solid transparent;
+  }
+  .lh{ padding-bottom:11px; border-bottom:1px solid var(--line); }
+  .lh > div{
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    text-transform:uppercase; letter-spacing:.1em; color:var(--ink-faint);
+  }
+  .lr{
+    padding-top:15px; padding-bottom:15px;
+    border-bottom:1px solid var(--line-soft);
+    position:relative; transition:border-color .3s;
+    opacity:0; transform:translateY(6px); animation:rise .5s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+  .lr:hover{ border-left-color:var(--co); }
+  .lr.need{ border-left-color:var(--co); }
+  .lr:hover .co-name{ color:var(--accent); }
+
+  .num{ text-align:right; font-family:'JetBrains Mono',monospace; font-size:13.5px; font-variant-numeric:tabular-nums; }
+  .lh .num{ text-align:right; }
+
+  /* company cell */
+  .co{ display:flex; align-items:center; gap:11px; min-width:0; }
+  .dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; background:var(--co); }
+  .lr.need .dot{ box-shadow:0 0 0 4px color-mix(in srgb,var(--co) 22%, transparent); }
+  .co-name{ font-weight:600; font-size:14.5px; letter-spacing:-.01em; transition:color .16s; white-space:nowrap; }
+  .co-tag{
+    font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--accent); border:1px solid var(--accent-soft); background:var(--accent-soft);
+    padding:1px 5px; border-radius:5px;
+  }
+  [data-theme="dark"] .co-tag{ background:transparent; }
+
+  /* status cell */
+  .st{ display:flex; align-items:center; gap:7px; font-size:13px; }
+  .st .sdot{ width:6px; height:6px; border-radius:50%; flex:0 0 auto; }
+  .st.growing{ color:var(--green); } .st.growing .sdot{ background:var(--green); }
+  .st.scaling{ color:var(--green); } .st.scaling .sdot{ background:var(--green); }
+  .st.building{ color:var(--amber); } .st.building .sdot{ background:var(--amber); }
+  .st.flat{ color:var(--slate); } .st.flat .sdot{ background:var(--slate); }
+  .st.blocked{ color:var(--red); } .st.blocked .sdot{ background:var(--red); }
+
+  .delta.pos{ color:var(--green); } .delta.zero{ color:var(--ink-faint); }
+
+  /* doing now */
+  .doing{ font-size:13px; color:var(--ink-soft); display:flex; align-items:center; gap:8px; min-width:0; }
+  .doing .txt{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .doing q{ color:var(--ink); font-style:normal; }
+  .doing q::before{ content:"\201C"; } .doing q::after{ content:"\201D"; }
+  .live{ width:7px; height:7px; border-radius:50%; background:var(--green); flex:0 0 auto; position:relative; }
+  .live::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--green); animation:pulse 1.8s ease-out infinite; }
+  @keyframes pulse{ 0%{ transform:scale(.6); opacity:.9; } 100%{ transform:scale(1.5); opacity:0; } }
+
+  /* next gate */
+  .gate{ display:flex; align-items:center; gap:8px; }
+  .gate.muted{ font-size:12.5px; color:var(--ink-faint); font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .gate .chk{ color:var(--green); font-size:12px; }
+  .act{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px;
+    color:var(--accent); background:none; border:1px solid var(--accent-soft);
+    padding:5px 11px; border-radius:8px; cursor:pointer; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:6px;
+    transition:background .16s, border-color .16s, transform .12s, color .16s;
+  }
+  .act:hover{ background:var(--accent-soft); }
+  .act:active{ transform:scale(.95); }
+  .act.danger{ color:var(--red); border-color:var(--red-soft); }
+  .act.danger:hover{ background:var(--red-soft); }
+  .act .arw{ transition:transform .16s; }
+  .act:hover .arw{ transform:translateX(2px); }
+
+  .lr.resolved{ opacity:.5; }
+  .lr.resolved .gate{ color:var(--green); }
+
+  /* totals */
+  .lt{ padding-top:16px; margin-top:2px; border-top:2px solid var(--line); }
+  .lt .co-name{ font-weight:700; }
+  .lt .tsig{
+    width:9px; height:9px; border-radius:2px; background:var(--ink-faint); flex:0 0 auto;
+    display:grid; place-items:center; color:var(--paper); font-size:8px; font-weight:700;
+  }
+  .lt .num{ font-weight:600; font-size:14.5px; }
+  .lt .tstat{ font-size:12.5px; color:var(--ink-faint); }
+  .lt .tdoing{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-faint); }
+  .lt .tgate{ font-weight:600; font-size:13px; color:var(--accent); font-family:'Inter',sans-serif; }
+
+  /* ---------- bottom split ---------- */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:56px; margin-top:48px; }
+  .col-head{ display:flex; align-items:baseline; gap:9px; margin-bottom:6px; }
+  .col-head h2{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; margin:0; letter-spacing:-.01em;
+  }
+  .col-head .ct{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); }
+
+  /* needs-you list */
+  .ny{ margin-top:4px; }
+  .ny-item{
+    display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+    padding:15px 0; border-bottom:1px solid var(--line-soft);
+    transition:opacity .35s, transform .35s;
+  }
+  .ny-kind{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--co); border:1px solid color-mix(in srgb,var(--co) 28%, transparent);
+    padding:3px 8px; border-radius:6px; align-self:center;
+  }
+  .ny-body{ min-width:0; }
+  .ny-title{ font-weight:600; font-size:14px; }
+  .ny-title q{ font-style:normal; }
+  .ny-title q::before{ content:"\201C"; } .ny-title q::after{ content:"\201D"; }
+  .ny-meta{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); margin-top:3px; }
+  .ny-meta .ok{ color:var(--green); }
+  .ny-item.done{ opacity:.42; }
+  .ny-item.done .act{ pointer-events:none; }
+
+  /* activity */
+  .feed{ margin-top:4px; }
+  .fi{ display:grid; grid-template-columns:52px auto 1fr; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--line-soft); }
+  .fi .t{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); text-align:right; }
+  .fi .fd{ width:8px; height:8px; border-radius:50%; background:var(--co); flex:0 0 auto; }
+  .fi .fx{ font-size:13px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fi .fx b{ color:var(--ink); font-weight:600; }
+  .fi .fx code{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); }
+  .fi.now .t{ color:var(--green); }
+  .fi.now .fd{ position:relative; }
+  .fi.now .fd::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--green); animation:pulse 1.8s ease-out infinite; }
+
+  /* toast */
+  .toast{
+    position:fixed; right:26px; bottom:26px; z-index:50;
+    background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--green);
+    border-radius:11px; padding:12px 16px; box-shadow:0 8px 30px rgba(0,0,0,.14);
+    font-size:13.5px; display:flex; align-items:center; gap:10px;
+    opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .3s, transform .3s;
+  }
+  .toast.show{ opacity:1; transform:none; }
+  .toast .ti{ color:var(--green); font-weight:700; }
+
+  @media (prefers-reduced-motion:reduce){
+    .lr{ animation:none; opacity:1; transform:none; }
+    .live::after, .fi.now .fd::after{ animation:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- masthead -->
+    <div class="top">
+      <div class="brand">
+        <div class="mark">C</div>
+        <div>
+          <h1>C Slop Slop</h1>
+          <div class="sub">Portfolio Ledger · Jul 01</div>
+        </div>
+      </div>
+      <div class="spacer" style="flex:1"></div>
+      <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"></button>
+    </div>
+
+    <!-- portfolio metrics -->
+    <div class="metrics">
+      <div class="metric hot">
+        <div class="m-lab">MRR</div>
+        <div class="m-val">$695</div>
+        <div class="m-note"><span class="up">↑14%</span> MoM</div>
+      </div>
+      <div class="metric">
+        <div class="m-lab">Net / mo</div>
+        <div class="m-val up">+$481</div>
+        <div class="m-note">after spend</div>
+      </div>
+      <div class="metric">
+        <div class="m-lab">Users</div>
+        <div class="m-val">56</div>
+        <div class="m-note"><span class="up">+8</span> / wk</div>
+      </div>
+      <div class="metric">
+        <div class="m-lab">Companies</div>
+        <div class="m-val">5</div>
+        <div class="m-note">4 active · 1 paused</div>
+      </div>
+      <div class="metric">
+        <div class="m-lab">Spend</div>
+        <div class="m-val">$214<span class="u">/ $500</span></div>
+        <div class="m-bar"><i></i></div>
+      </div>
+      <div class="metric">
+        <div class="m-lab">Need you</div>
+        <div class="m-val" id="needMetric">3</div>
+        <div class="m-note">open gates</div>
+      </div>
+    </div>
+
+    <!-- ledger table -->
+    <div class="sec-lab">Companies</div>
+    <div class="ledger">
+      <div class="lgrid lh">
+        <div>Company</div>
+        <div>Status</div>
+        <div class="num">MRR</div>
+        <div class="num">Δ MoM</div>
+        <div class="num">Users</div>
+        <div>Doing now</div>
+        <div>Next gate</div>
+      </div>
+
+      <!-- LeadSift -->
+      <div class="lgrid lr need" style="--co:var(--accent); animation-delay:.02s" data-co="leadsift">
+        <div class="co"><span class="dot"></span><span class="co-name">LeadSift</span></div>
+        <div class="st growing"><span class="sdot"></span>Growing</div>
+        <div class="num">$180</div>
+        <div class="num delta pos">+$40</div>
+        <div class="num">12</div>
+        <div class="doing"><span class="txt">Ship <q>daily digest</q></span></div>
+        <div class="gate"><span class="chk">✓</span><button class="act" data-co="leadsift" data-msg="Ship approved · LeadSift daily digest">Approve ship <span class="arw">→</span></button></div>
+      </div>
+
+      <!-- QuietInbox -->
+      <div class="lgrid lr need" style="--co:var(--blue); animation-delay:.08s" data-co="quietinbox">
+        <div class="co"><span class="dot"></span><span class="co-name">QuietInbox</span><span class="co-tag" style="--co:var(--blue)">top</span></div>
+        <div class="st scaling"><span class="sdot"></span>Scaling</div>
+        <div class="num">$420</div>
+        <div class="num delta zero">—</div>
+        <div class="num">38</div>
+        <div class="doing"><span class="txt">Building <q>snooze a thread</q></span></div>
+        <div class="gate"><button class="act" data-co="quietinbox" data-msg="Spend approved · $40 Product Hunt launch">Approve $40 <span class="arw">→</span></button></div>
+      </div>
+
+      <!-- TranslatorBill -->
+      <div class="lgrid lr" style="--co:var(--violet); animation-delay:.14s" data-co="translatorbill">
+        <div class="co"><span class="dot"></span><span class="co-name">TranslatorBill</span></div>
+        <div class="st building"><span class="sdot"></span>Building</div>
+        <div class="num">$0</div>
+        <div class="num delta zero">—</div>
+        <div class="num">0</div>
+        <div class="doing"><span class="live"></span><span class="txt">Building <q>invoice reformat</q></span></div>
+        <div class="gate muted">auto · pre-revenue</div>
+      </div>
+
+      <!-- DataDrop -->
+      <div class="lgrid lr" style="--co:var(--green); animation-delay:.20s" data-co="datadrop">
+        <div class="co"><span class="dot"></span><span class="co-name">DataDrop</span></div>
+        <div class="st flat"><span class="sdot"></span>Flat</div>
+        <div class="num">$95</div>
+        <div class="num delta zero">—</div>
+        <div class="num">6</div>
+        <div class="doing"><span class="txt">Queued <q>saved chart views</q></span></div>
+        <div class="gate muted">queued</div>
+      </div>
+
+      <!-- RedditPainBot -->
+      <div class="lgrid lr need" style="--co:var(--slate); animation-delay:.26s" data-co="redditpainbot">
+        <div class="co"><span class="dot"></span><span class="co-name">RedditPainBot</span></div>
+        <div class="st blocked"><span class="sdot"></span>Blocked</div>
+        <div class="num">$0</div>
+        <div class="num delta zero">—</div>
+        <div class="num">0</div>
+        <div class="doing"><span class="txt">Slice 8 stuck <b>×3</b></span></div>
+        <div class="gate"><button class="act danger" data-co="redditpainbot" data-msg="Unblock requested · RedditPainBot slice 8">Unblock ×3 <span class="arw">→</span></button></div>
+      </div>
+
+      <!-- totals -->
+      <div class="lgrid lt">
+        <div class="co"><span class="tsig">Σ</span><span class="co-name">5 companies</span></div>
+        <div class="tstat">4 active · 1 paused</div>
+        <div class="num">$695</div>
+        <div class="num up">↑14%</div>
+        <div class="num">56</div>
+        <div class="tdoing">22 shipped · net +$481/mo</div>
+        <div class="tgate" id="needTotal">3 need you</div>
+      </div>
+    </div>
+
+    <!-- bottom split: needs you + activity -->
+    <div class="split">
+      <div>
+        <div class="col-head"><h2>Needs you</h2><span class="ct" id="needCount">3 open</span></div>
+        <div class="ny">
+          <div class="ny-item" data-co="leadsift" style="--co:var(--accent)">
+            <span class="ny-kind">Ship</span>
+            <div class="ny-body">
+              <div class="ny-title">LeadSift — <q>daily digest</q></div>
+              <div class="ny-meta"><span class="ok">✓ passed check</span> · ready to deploy</div>
+            </div>
+            <button class="act" data-co="leadsift" data-msg="Ship approved · LeadSift daily digest">Approve</button>
+          </div>
+          <div class="ny-item" data-co="quietinbox" style="--co:var(--blue)">
+            <span class="ny-kind">Spend</span>
+            <div class="ny-body">
+              <div class="ny-title">QuietInbox — $40 Product Hunt launch</div>
+              <div class="ny-meta">under $500/mo cap · best performer</div>
+            </div>
+            <button class="act" data-co="quietinbox" data-msg="Spend approved · $40 Product Hunt launch">Approve</button>
+          </div>
+          <div class="ny-item" data-co="redditpainbot" style="--co:var(--slate)">
+            <span class="ny-kind">Unblock</span>
+            <div class="ny-body">
+              <div class="ny-title">RedditPainBot — slice 8 stuck</div>
+              <div class="ny-meta">failed <b>×3</b> · paused, awaiting call</div>
+            </div>
+            <button class="act danger" data-co="redditpainbot" data-msg="Unblock requested · RedditPainBot slice 8">Unblock</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="col-head"><h2>Live activity</h2><span class="ct">last 20 min</span></div>
+        <div class="feed">
+          <div class="fi now" style="--co:var(--violet)">
+            <span class="t">now</span><span class="fd"></span>
+            <span class="fx"><b>TranslatorBill</b> building <code>InvoiceFormatter.tsx</code></span>
+          </div>
+          <div class="fi" style="--co:var(--blue)">
+            <span class="t">12s</span><span class="fd"></span>
+            <span class="fx"><b>QuietInbox</b> deployed · checks passed</span>
+          </div>
+          <div class="fi" style="--co:var(--accent)">
+            <span class="t">2m</span><span class="fd"></span>
+            <span class="fx"><b>LeadSift</b> awaiting approval</span>
+          </div>
+          <div class="fi" style="--co:var(--green)">
+            <span class="t">5m</span><span class="fd"></span>
+            <span class="fx"><b>DataDrop</b> re-prioritized queue</span>
+          </div>
+          <div class="fi" style="--co:var(--slate)">
+            <span class="t">18m</span><span class="fd"></span>
+            <span class="fx"><b>RedditPainBot</b> blocked ×3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"><span class="ti">✓</span><span id="toastMsg"></span></div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn = document.getElementById('themeBtn');
+  var SUN = '☀', MOON = '☾';
+  function paint(){ btn.textContent = root.getAttribute('data-theme')==='dark' ? SUN : MOON; }
+  paint();
+  btn.addEventListener('click', function(){
+    var dark = root.getAttribute('data-theme')==='dark';
+    if(dark){ root.removeAttribute('data-theme'); } else { root.setAttribute('data-theme','dark'); }
+    try{ localStorage.setItem('cslopslop-theme', dark ? 'light' : 'dark'); }catch(e){}
+    paint();
+  });
+
+  // ---- gate resolution (ledger action + needs-you item stay in sync) ----
+  var open = 3;
+  var needMetric = document.getElementById('needMetric');
+  var needTotal  = document.getElementById('needTotal');
+  var needCount  = document.getElementById('needCount');
+  var toast = document.getElementById('toast');
+  var toastMsg = document.getElementById('toastMsg');
+  var tTimer;
+  var resolved = {};
+
+  function showToast(msg){
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(tTimer);
+    tTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2600);
+  }
+
+  function resolve(co, msg){
+    if(resolved[co]) return;
+    resolved[co] = true;
+
+    // ledger row
+    var row = document.querySelector('.lr[data-co="'+co+'"]');
+    if(row){
+      row.classList.remove('need');
+      row.classList.add('resolved');
+      var gate = row.querySelector('.gate');
+      if(gate){ gate.innerHTML = '<span class="chk">✓</span> resolved'; gate.classList.add('muted'); }
+    }
+    // needs-you item
+    var item = document.querySelector('.ny-item[data-co="'+co+'"]');
+    if(item){
+      item.classList.add('done');
+      var actBtn = item.querySelector('.act');
+      if(actBtn){ actBtn.textContent = '✓ done'; actBtn.style.color = 'var(--green)'; actBtn.style.borderColor = 'var(--green-soft)'; }
+    }
+
+    open = Math.max(0, open - 1);
+    needMetric.textContent = open;
+    needTotal.textContent = open ? open + ' need you' : 'all clear';
+    if(!open){ needTotal.style.color = 'var(--green)'; }
+    needCount.textContent = open ? open + ' open' : 'all clear';
+
+    showToast(msg);
+  }
+
+  document.querySelectorAll('.act[data-co]').forEach(function(b){
+    b.addEventListener('click', function(){ resolve(b.getAttribute('data-co'), b.getAttribute('data-msg')); });
+  });
+})();
+</script>
+</body>
+</html>

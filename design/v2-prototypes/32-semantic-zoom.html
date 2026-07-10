@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Slop Slop · 32 Semantic Zoom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10; --bg2:#0e1117; --panel:#12161e; --panel2:#161b25;
+  --line:#212834; --line2:#2a3340; --text:#e8edf4; --dim:#8b97a8; --faint:#5c6675;
+  --accent:#5b8cff; --accent2:#3d6ae0; --accentglow:rgba(91,140,255,.22);
+  --green:#3fd07f; --blue:#5b8cff; --violet:#b48cff; --amber:#f0b35e; --red:#f0656e; --slate:#727f90;
+  --radius:14px; --shadow:0 18px 50px -18px rgba(0,0,0,.7), 0 2px 8px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text);
+  overflow:hidden; -webkit-font-smoothing:antialiased; letter-spacing:-.01em;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---------- top chrome ---------- */
+.chrome{
+  position:fixed; top:0; left:0; right:0; height:56px; z-index:60;
+  display:flex; align-items:center; gap:18px; padding:0 22px;
+  background:linear-gradient(180deg,rgba(10,12,16,.92),rgba(10,12,16,.72));
+  backdrop-filter:blur(14px); border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;letter-spacing:-.02em}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.crumbs{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--dim);font-weight:500}
+.crumbs .cb{cursor:pointer;padding:4px 10px;border-radius:8px;transition:.15s;border:1px solid transparent}
+.crumbs .cb:hover{color:var(--text);background:var(--panel2)}
+.crumbs .cb.cur{color:var(--text);background:var(--panel2);border-color:var(--line2);font-weight:600}
+.crumbs .sep{color:var(--faint);font-size:11px}
+.chrome-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.zoomind{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.zsteps{display:flex;gap:5px}
+.zstep{width:26px;height:5px;border-radius:3px;background:var(--line2);transition:.35s}
+.zstep.on{background:var(--accent);box-shadow:0 0 10px var(--accentglow)}
+.portfig{display:flex;gap:16px;font-size:12px;color:var(--dim)}
+.portfig b{color:var(--text);font-weight:700}
+.escbtn{font-size:11px;color:var(--dim);border:1px solid var(--line2);border-radius:7px;padding:5px 10px;cursor:pointer;background:var(--panel);transition:.15s;font-weight:600}
+.escbtn:hover{color:var(--text);border-color:var(--accent)}
+
+/* ---------- stage ---------- */
+.stage{
+  position:fixed; top:56px; left:0; right:0; bottom:0;
+  overflow:auto;
+  background:
+    radial-gradient(1100px 700px at 78% -8%, rgba(91,140,255,.07), transparent 60%),
+    radial-gradient(900px 600px at 8% 108%, rgba(180,140,255,.05), transparent 55%),
+    var(--bg);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.035) 1px, transparent 0);
+  background-size:auto, auto, 26px 26px;
+}
+.zoomwrap{
+  transition:transform .55s cubic-bezier(.5,.05,.2,1), opacity .35s ease;
+  transform-origin:var(--ox,50%) var(--oy,30%);
+  will-change:transform,opacity;
+}
+.scene{display:none}
+.scene.active{display:block; animation:fadein .5s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============ PORTFOLIO ============ */
+.pf{max-width:1500px;margin:0 auto;padding:30px 30px 200px}
+.pf-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:6px}
+.pf-title{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.pf-sub{font-size:13px;color:var(--dim);margin-top:3px}
+.pf-grid{display:grid;grid-template-columns:1.55fr .95fr;gap:22px;margin-top:24px;align-items:start}
+@media(max-width:1080px){.pf-grid{grid-template-columns:1fr}}
+
+.sectlabel{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin:0 0 13px 2px;display:flex;align-items:center;gap:8px}
+.sectlabel .pill{font-size:10px;background:var(--panel2);border:1px solid var(--line2);color:var(--dim);padding:2px 8px;border-radius:20px;letter-spacing:.02em}
+
+.cocards{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px}
+.cocard{
+  background:linear-gradient(165deg,var(--panel),var(--bg2));
+  border:1px solid var(--line); border-radius:var(--radius); padding:17px 17px 15px;
+  cursor:pointer; position:relative; transition:transform .2s cubic-bezier(.3,.6,.3,1),border-color .2s,box-shadow .2s;
+  overflow:hidden;
+}
+.cocard::before{content:'';position:absolute;inset:0;background:radial-gradient(420px 200px at 50% -40%,var(--accentglow),transparent 70%);opacity:0;transition:.25s}
+.cocard:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:var(--shadow)}
+.cocard:hover::before{opacity:1}
+.cocard.needs{border-color:rgba(180,140,255,.4)}
+.cc-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cc-name{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.cc-name .stat{width:8px;height:8px;border-radius:50%}
+.needsbadge{font-size:10px;font-weight:700;color:#1a1020;background:var(--violet);padding:3px 8px;border-radius:20px;letter-spacing:.02em;animation:pulseV 2s infinite}
+@keyframes pulseV{0%,100%{box-shadow:0 0 0 0 rgba(180,140,255,.5)}50%{box-shadow:0 0 0 6px rgba(180,140,255,0)}}
+.cc-thesis{font-size:11.5px;color:var(--dim);margin:9px 0 14px;line-height:1.5;min-height:34px}
+.cc-num{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.cc-num small{font-size:13px;color:var(--dim);font-weight:600;margin-left:3px}
+.cc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11px;color:var(--faint)}
+.rung{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:6px;border:1px solid var(--line2);color:var(--dim);background:var(--bg2)}
+.cc-cur{font-size:11px;color:var(--dim);margin-top:11px;display:flex;align-items:center;gap:7px}
+.bdot{width:7px;height:7px;border-radius:50%;flex:none}
+.bdot.building{background:var(--blue);animation:bp 1.3s infinite}
+.bdot.blocked{background:var(--red)}
+.bdot.todo{background:var(--slate)}
+@keyframes bp{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* queue */
+.queue{display:flex;flex-direction:column;gap:11px}
+.qcard{
+  background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  transition:border-color .2s, box-shadow .2s;
+}
+.qcard.gated{border-left:3px solid var(--amber)}
+.qcard.auto{border-left:3px solid var(--green)}
+.qcard:hover{border-color:var(--line2)}
+.qhead{display:flex;gap:12px;padding:13px 14px;cursor:pointer;align-items:flex-start}
+.qglyph{width:34px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font-size:16px;flex:none}
+.qbody{flex:1;min-width:0}
+.qtopline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qkind{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--dim)}
+.qco{font-size:10px;font-weight:600;color:var(--accent);background:var(--accentglow);padding:2px 7px;border-radius:5px}
+.qtitle{font-size:13.5px;font-weight:600;margin:5px 0 4px;line-height:1.35}
+.qev{font-size:11px;color:var(--faint);display:flex;align-items:center;gap:6px;line-height:1.4}
+.qev .erung{color:var(--violet);font-weight:600}
+.qtag{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.03em;white-space:nowrap;flex:none}
+.qtag.must{background:rgba(240,179,94,.16);color:var(--amber);border:1px solid rgba(240,179,94,.3)}
+.qtag.autop{background:rgba(63,208,127,.14);color:var(--green);border:1px solid rgba(63,208,127,.3)}
+.qexpand{max-height:0;overflow:hidden;transition:max-height .4s ease;border-top:0 solid var(--line)}
+.qexpand.open{max-height:1400px;border-top:1px solid var(--line)}
+.qx-inner{padding:15px 15px 16px}
+
+/* gate internals */
+.gate-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+@media(max-width:760px){.gate-grid{grid-template-columns:1fr}}
+.gbox{background:var(--bg2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.gbox-h{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:9px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.diff{font-size:11.5px;line-height:1.65;padding:11px 13px;overflow-x:auto}
+.diff .add{color:var(--green)}
+.diff .ctx{color:var(--dim)}
+.preview-url{padding:11px 13px;font-size:12px}
+.urlbar{display:flex;align-items:center;gap:9px;background:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:8px 11px}
+.urlbar .lock{color:var(--green);font-size:11px}
+.urlbar a{color:var(--accent);text-decoration:none;font-size:12px;word-break:break-all}
+.urlbar a:hover{text-decoration:underline}
+.donewhen{margin-top:11px;background:rgba(63,208,127,.08);border:1px solid rgba(63,208,127,.28);border-radius:8px;padding:10px 12px;font-size:11.5px;color:var(--green);display:flex;gap:9px;align-items:flex-start}
+.donewhen .chk{font-weight:800}
+.donewhen .dw-code{color:var(--dim)}
+.draftbox{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:13px;font-size:12.5px;line-height:1.6;white-space:pre-wrap;color:var(--text);margin-bottom:13px}
+.draftbox .dlabel{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.amt{display:inline-block;background:rgba(240,179,94,.14);color:var(--amber);border:1px solid rgba(240,179,94,.3);font-weight:700;padding:5px 12px;border-radius:8px;font-size:15px;margin-bottom:13px}
+
+.gate-actions{display:flex;gap:9px;align-items:center}
+.btn{font-family:inherit;font-weight:700;font-size:12.5px;border-radius:9px;padding:10px 18px;cursor:pointer;border:1px solid transparent;transition:.15s;letter-spacing:.01em}
+.btn-approve{background:var(--green);color:#06210f}
+.btn-approve:hover{filter:brightness(1.1)}
+.btn-reject{background:transparent;color:var(--red);border-color:rgba(240,101,110,.4)}
+.btn-reject:hover{background:rgba(240,101,110,.1)}
+.rejectform{flex:1;display:none;gap:8px;align-items:center}
+.rejectform.show{display:flex}
+.rejectform input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12.5px}
+.rejectform input:focus{outline:none;border-color:var(--accent)}
+.confirm{font-size:12.5px;font-weight:700;display:none;align-items:center;gap:8px;padding:9px 0}
+.confirm.show{display:flex;animation:fadein .3s}
+.confirm.ok{color:var(--green)}
+.confirm.no{color:var(--amber)}
+
+/* comms summary (portfolio) */
+.commsum{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:18px}
+.csgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:11px}
+.csbox{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:11px}
+.csbox .csn{font-size:22px;font-weight:800}
+.csbox .csl{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-top:2px}
+.csbox .csd{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.4}
+
+/* ladder */
+.ladder{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px}
+.lrow{display:flex;align-items:center;gap:11px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
+.lrow:last-child{border-bottom:0}
+.lrung{width:108px;flex:none;font-weight:700;font-size:11.5px;display:flex;align-items:center;gap:8px}
+.lbar{flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.lcost{width:78px;flex:none;color:var(--faint);font-size:10.5px}
+.litems{display:flex;flex-wrap:wrap;gap:6px}
+.litem{font-size:10.5px;background:var(--bg2);border:1px solid var(--line2);padding:3px 9px;border-radius:20px;color:var(--dim)}
+
+/* ============ COMPANY ============ */
+.co{max-width:1480px;margin:0 auto;padding:28px 30px 200px}
+.co-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.co-id{display:flex;align-items:center;gap:13px}
+.co-mono{width:46px;height:46px;border-radius:12px;background:linear-gradient(150deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff;box-shadow:0 6px 20px var(--accentglow)}
+.co-name{font-size:24px;font-weight:800;letter-spacing:-.03em}
+.co-thesis{font-size:13px;color:var(--dim);margin-top:3px;max-width:480px}
+.co-stats{display:flex;gap:26px}
+.co-stat .n{font-size:24px;font-weight:800}
+.co-stat .l{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+
+.jobtabs{display:flex;gap:7px;margin:24px 0 0;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:0}
+.jtab{font-size:12.5px;font-weight:600;color:var(--dim);padding:10px 15px;cursor:pointer;border-radius:9px 9px 0 0;border:1px solid transparent;border-bottom:0;position:relative;transition:.15s;display:flex;align-items:center;gap:7px}
+.jtab:hover{color:var(--text)}
+.jtab.on{color:var(--text);background:var(--panel);border-color:var(--line)}
+.jtab.on::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent)}
+.jtab .jn{font-size:9px;background:var(--panel2);border:1px solid var(--line2);border-radius:20px;padding:1px 6px;color:var(--dim)}
+
+.co-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-top:22px;align-items:start}
+@media(max-width:1080px){.co-grid{grid-template-columns:1fr}}
+
+.jobpane{background:var(--panel);border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:18px;min-height:340px}
+.slices{display:flex;flex-direction:column;gap:9px}
+.slice{display:flex;align-items:center;gap:13px;padding:12px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;transition:.18s;cursor:default}
+.slice.feat{cursor:pointer}
+.slice.feat:hover{border-color:var(--accent);transform:translateX(3px)}
+.slice .sn{width:26px;height:26px;flex:none;border-radius:7px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--dim)}
+.slice .stitle{flex:1;font-size:13px;font-weight:500}
+.slice .sstat{font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.ss-shipped{background:rgba(63,208,127,.13);color:var(--green)}
+.ss-building{background:rgba(91,140,255,.14);color:var(--blue)}
+.ss-await{background:rgba(180,140,255,.16);color:var(--violet);animation:pulseV 2s infinite}
+.ss-todo{background:var(--panel2);color:var(--slate)}
+.ss-blocked{background:rgba(240,101,110,.14);color:var(--red)}
+.slice .chev{color:var(--faint);font-size:13px}
+.empty-job{color:var(--faint);font-size:12.5px;padding:30px;text-align:center;line-height:1.6}
+
+.co-side{display:flex;flex-direction:column;gap:18px}
+.commstabs{display:flex;gap:6px}
+.ctab{flex:1;text-align:center;font-size:11px;font-weight:700;padding:8px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.15s;letter-spacing:.02em}
+.ctab.on{color:var(--text);border-color:var(--accent);background:var(--panel2)}
+.commsbody{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:200px}
+.cstream{display:none;flex-direction:column;gap:11px}
+.cstream.on{display:flex}
+.chatmsg{display:flex;gap:9px;font-size:12.5px;line-height:1.5}
+.chatmsg .av{width:24px;height:24px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:11px;font-weight:700}
+.av.ai{background:linear-gradient(150deg,var(--accent),var(--accent2));color:#fff}
+.av.me{background:var(--panel2);border:1px solid var(--line2);color:var(--dim)}
+.chatmsg .ct{flex:1;color:var(--text)}
+.chatmsg.user .ct{color:var(--dim)}
+.chatbar{display:flex;gap:8px;margin-top:13px}
+.chatbar input{flex:1;background:var(--bg2);border:1px solid var(--line2);border-radius:9px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:12.5px}
+.chatbar input:focus{outline:none;border-color:var(--accent)}
+.chatbar button{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:0 15px;font-weight:700;cursor:pointer;font-size:13px}
+
+.obitem,.supitem{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;line-height:1.5}
+.ob-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.ob-stat{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:20px}
+.ob-stat.posted{background:rgba(63,208,127,.13);color:var(--green)}
+.ob-stat.draft{background:rgba(240,179,94,.16);color:var(--amber)}
+.ob-stat.needs{background:rgba(240,179,94,.16);color:var(--amber)}
+.ob-stat.answered{background:rgba(63,208,127,.13);color:var(--green)}
+.ob-txt{color:var(--text)}
+.ob-stats{font-size:10.5px;color:var(--faint);margin-top:7px}
+.sig{font-size:10px;color:var(--violet);font-weight:600;margin-top:6px}
+.minibtn{font-size:10.5px;font-weight:700;padding:5px 11px;border-radius:7px;border:1px solid var(--line2);background:var(--panel2);color:var(--dim);cursor:pointer;transition:.15s}
+.minibtn:hover{border-color:var(--accent);color:var(--text)}
+.minibtn.go{margin-top:9px}
+
+/* ============ FEATURE ============ */
+.ft{max-width:1180px;margin:0 auto;padding:28px 30px 200px}
+.ft-head{display:flex;align-items:flex-start;gap:14px}
+.ft-glyph{width:50px;height:50px;border-radius:13px;background:linear-gradient(150deg,var(--violet),#8c5bff);display:grid;place-items:center;font-size:22px;flex:none;box-shadow:0 6px 20px rgba(180,140,255,.25)}
+.ft-title{font-size:23px;font-weight:800;letter-spacing:-.02em}
+.ft-sub{font-size:12.5px;color:var(--dim);margin-top:4px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+.microloop{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:26px 0 10px;position:relative}
+.mlstep{background:var(--panel);border:1px solid var(--line);padding:16px 15px;position:relative;text-align:center}
+.mlstep:first-child{border-radius:12px 0 0 12px}
+.mlstep:last-child{border-radius:0 12px 12px 0}
+.mlstep+.mlstep{border-left:0}
+.mlstep .mli{font-size:22px;margin-bottom:8px}
+.mlstep .mlt{font-size:12.5px;font-weight:700}
+.mlstep .mld{font-size:10.5px;color:var(--faint);margin-top:4px;line-height:1.4}
+.mlstep.done{border-color:rgba(63,208,127,.4)}
+.mlstep.done .mli{filter:none}
+.mlstep.cur{border-color:var(--violet);box-shadow:inset 0 0 0 1px rgba(180,140,255,.4)}
+.mlarrow{position:absolute;top:50%;right:-9px;transform:translateY(-50%);z-index:2;color:var(--faint);font-size:14px;background:var(--bg);width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line)}
+
+.ft-gate{background:var(--panel);border:1px solid rgba(180,140,255,.35);border-radius:14px;padding:20px;margin-top:24px;position:relative;overflow:hidden}
+.ft-gate::before{content:'';position:absolute;inset:0;background:radial-gradient(600px 200px at 50% -30%,rgba(180,140,255,.1),transparent 70%);pointer-events:none}
+.ft-gate-h{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ft-gate-h .gh-t{font-size:15px;font-weight:800}
+.ft-gate-h .gh-tag{font-size:10px;font-weight:700;background:rgba(63,208,127,.14);color:var(--green);border:1px solid rgba(63,208,127,.3);padding:4px 10px;border-radius:20px;letter-spacing:.03em}
+
+/* ---------- live activity ---------- */
+.live{position:fixed;left:0;right:0;bottom:0;z-index:55;font-size:12.5px}
+.live-bar{
+  display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;
+  background:linear-gradient(0deg,rgba(10,12,16,.97),rgba(14,17,23,.93));
+  backdrop-filter:blur(14px);border-top:1px solid var(--line);
+}
+.live-bar:hover{background:rgba(18,22,30,.98)}
+.live-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none;animation:bp 1.3s infinite}
+.live-latest{flex:1;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-latest b{color:var(--text);font-weight:600}
+.live-co{color:var(--accent);font-weight:600}
+.live-toggle{font-size:11px;color:var(--faint);font-weight:600;display:flex;align-items:center;gap:6px}
+.live-stream{
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+  background:rgba(8,10,14,.98);backdrop-filter:blur(14px);border-top:0 solid var(--line);
+}
+.live-stream.open{max-height:340px;overflow-y:auto;border-top:1px solid var(--line)}
+.ls-inner{padding:14px 20px 18px}
+.ls-co{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:13px 0 7px}
+.ls-co:first-child{margin-top:0}
+.lsrow{display:flex;align-items:center;gap:11px;padding:6px 0;color:var(--dim)}
+.lsrow .lsd{width:7px;height:7px;border-radius:50%;flex:none;background:var(--slate)}
+.lsrow .lsd.running{background:var(--blue);animation:bp 1.3s infinite}
+.lsrow .lsd.await{background:var(--violet)}
+.lsrow .lsd.blocked{background:var(--red)}
+.lsrow .lsd.comms{background:var(--amber)}
+.lsrow .lst{flex:1}.lsrow .lst b{color:var(--text)}
+.lsrow .lstime{color:var(--faint);font-size:10.5px;font-family:'JetBrains Mono'}
+.ls-comms-h{display:flex;align-items:center;gap:8px}
+
+/* corner badge */
+.badge{
+  position:fixed;right:18px;bottom:62px;z-index:58;
+  background:rgba(14,17,23,.94);border:1px solid var(--line2);border-radius:11px;
+  padding:9px 13px;display:flex;align-items:center;gap:9px;backdrop-filter:blur(10px);
+  box-shadow:var(--shadow);font-size:12px;
+}
+.badge .bn{font-weight:800;background:var(--accent);color:#fff;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px}
+.badge .bt{font-weight:700;letter-spacing:-.01em}
+.badge .bt small{display:block;color:var(--faint);font-weight:600;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase}
+
+.toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:90;
+  background:var(--panel2);border:1px solid var(--line2);border-radius:11px;padding:11px 18px;
+  font-size:13px;font-weight:600;box-shadow:var(--shadow);opacity:0;transition:.3s;pointer-events:none;
+  display:flex;align-items:center;gap:9px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ti{font-size:15px}
+.hint{position:fixed;bottom:62px;left:18px;z-index:58;font-size:10.5px;color:var(--faint);background:rgba(14,17,23,.85);border:1px solid var(--line);padding:6px 11px;border-radius:8px;backdrop-filter:blur(8px)}
+.hint kbd{background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-family:'JetBrains Mono';font-size:10px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<!-- top chrome -->
+<div class="chrome">
+  <div class="brand"><span class="dot"></span> C Slop Slop</div>
+  <div class="crumbs" id="crumbs"></div>
+  <div class="chrome-right">
+    <div class="portfig">
+      <span><b>$695</b> MRR</span><span><b>56</b> users</span><span><b>22</b> shipped</span>
+    </div>
+    <div class="zoomind">
+      <span id="zlabel">Portfolio</span>
+      <div class="zsteps"><span class="zstep on" id="zs0"></span><span class="zstep" id="zs1"></span><span class="zstep" id="zs2"></span></div>
+    </div>
+    <div class="escbtn" id="escbtn" style="visibility:hidden">Esc · zoom out</div>
+  </div>
+</div>
+
+<!-- stage -->
+<div class="stage" id="stage">
+  <div class="zoomwrap" id="zoomwrap">
+    <!-- PORTFOLIO -->
+    <div class="scene active" id="scene-portfolio">
+      <div class="pf">
+        <div class="pf-head">
+          <div>
+            <div class="pf-title">Portfolio · the same loop at three scales</div>
+            <div class="pf-sub">Zoom into a company → into a feature. Everything you act on is one shape: preview + evidence + approve.</div>
+          </div>
+        </div>
+        <div class="pf-grid">
+          <!-- left: companies + ladder -->
+          <div>
+            <div class="sectlabel">Companies <span class="pill">click a card to zoom in →</span></div>
+            <div class="cocards" id="cocards"></div>
+            <div class="ladder">
+              <div class="sectlabel" style="margin-bottom:11px">Evidence ladder <span class="pill">cheapest validation first</span></div>
+              <div id="ladder"></div>
+            </div>
+          </div>
+          <!-- right: needs-you queue + comms summary -->
+          <div>
+            <div class="sectlabel">Needs you <span class="pill" id="qcount"></span></div>
+            <div class="queue" id="queue-portfolio"></div>
+            <div class="commsum">
+              <div class="sectlabel" style="margin:0 0 4px">Comms · two-way</div>
+              <div class="csgrid">
+                <div class="csbox"><div class="csn" style="color:var(--accent)">3</div><div class="csl">Inward</div><div class="csd">co-founder chat threads</div></div>
+                <div class="csbox"><div class="csn" style="color:var(--amber)">2</div><div class="csl">Outbound</div><div class="csd">1 tweet · 1 cold batch awaiting you</div></div>
+                <div class="csbox"><div class="csn" style="color:var(--violet)">2</div><div class="csl">Support</div><div class="csd">tickets need a reply → evidence</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPANY -->
+    <div class="scene" id="scene-company"><div class="co" id="co-root"></div></div>
+
+    <!-- FEATURE -->
+    <div class="scene" id="scene-feature"><div class="ft" id="ft-root"></div></div>
+  </div>
+</div>
+
+<!-- live activity -->
+<div class="live">
+  <div class="live-bar" id="liveBar">
+    <span class="live-pulse"></span>
+    <span class="live-latest" id="liveLatest"></span>
+    <span class="live-toggle" id="liveToggle">expand stream ▴</span>
+  </div>
+  <div class="live-stream" id="liveStream"><div class="ls-inner" id="lsInner"></div></div>
+</div>
+
+<div class="badge"><span class="bn">32</span><span class="bt">Semantic Zoom<small>portfolio · company · feature</small></span></div>
+<div class="hint">Click to zoom in · <kbd>Esc</kbd> to zoom out · breadcrumb to jump</div>
+<div class="toast" id="toast"><span class="ti"></span><span class="tt"></span></div>
+
+<script>
+/* ============ DATA (verbatim from _BRIEF.md) ============ */
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ============ EXTRA DATA (verbatim from _BRIEF_3.md) ============ */
+const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+  { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
+    evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
+    diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
+  { id:'q2', kind:'tweet', company:'LeadSift', title:'Build-in-public post', gated:true, channel:'content', rung:'adoption',
+    evidence:'last post: 2.2k impressions → 14 likes → 3 signups',
+    draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
+  { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
+    evidence:'batch 1: 25 sent → 36% open → 8% reply',
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+  { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
+    evidence:'3rd request this week → candidate feature',
+    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    evidence:'organic SEO page converts 3.1% → worth a paid test' },
+];
+
+const OUTBOUND = {
+  twitter:[ // build-in-public stream
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
+  ],
+  cold:[ // sequences (per company)
+    { company:'TranslatorBill', segment:'cross-border freelancers · 3+ currencies', size:25, step:'batch 2 of 3', stats:'batch 1 → 36% open · 8% reply', status:'draft awaiting approval' },
+  ],
+};
+
+const SUPPORT = [ // inbound = evidence stream
+  { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
+];
+
+const LADDER = [ // evidence rungs, cheapest first → most committed
+  { rung:'thought',      cost:'free',        items:[{label:'“auto-chapter podcasts”', kind:'opportunity'}] },
+  { rung:'score',        cost:'cents',       items:[{label:'PayoutReconciler · 82', kind:'opportunity'},{label:'ChapterForge · 71', kind:'opportunity'}] },
+  { rung:'live',         cost:'agent-hours', items:[{label:'RedditPainBot · skeleton', kind:'company'}] },
+  { rung:'doneWhen',     cost:'one run',     items:[{label:'LeadSift · digest feature', kind:'feature'}] },
+  { rung:'adoption',     cost:'traffic',     items:[{label:'QuietInbox · snooze', kind:'feature'},{label:'TranslatorBill · cold batch', kind:'campaign'}] },
+  { rung:'test-payment', cost:'a feature',   items:[{label:'DataDrop · ads test', kind:'campaign'},{label:'LeadSift · Stripe test', kind:'feature'}] },
+  { rung:'MRR',          cost:'real money',  items:[{label:'QuietInbox · $420', kind:'company'},{label:'LeadSift · $180', kind:'company'}] },
+];
+
+const ACTION_KIND = { // labels + glyphs for the universal queue
+  ship_feature:    { label:'Ship feature',     glyph:'⚡' },
+  tweet:           { label:'Post (build-in-public)', glyph:'𝕏' },
+  cold_batch:      { label:'Cold outreach',     glyph:'✉' },
+  support_reply:   { label:'Support reply',     glyph:'❝' },
+  authorize_spend: { label:'Authorize spend',   glyph:'$' },
+};
+
+/* ============ helpers ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const statColor={active:'var(--green)',paused:'var(--amber)',archived:'var(--slate)'};
+const escHtml=s=>s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+const coById=id=>DATA.companies.find(c=>c.id===id);
+const handled={}; // queue items resolved
+
+function toast(icon,msg,color){
+  const t=$('#toast'); $('.ti',t).textContent=icon; $('.tt',t).textContent=msg;
+  t.style.color=color||'var(--text)'; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ============ NAVIGATION / ZOOM ============ */
+let level=0, curCo=null, curFeat=null;
+const scenes={0:'#scene-portfolio',1:'#scene-company',2:'#scene-feature'};
+const labels={0:'Portfolio',1:'Company',2:'Feature'};
+
+function setZoom(targetLevel, origin){
+  const wrap=$('#zoomwrap');
+  // animate a quick scale "punch-in/out" before swapping scene
+  const zoomingIn = targetLevel>level;
+  if(origin){ wrap.style.setProperty('--ox',origin.x+'px'); wrap.style.setProperty('--oy',origin.y+'px'); }
+  else { wrap.style.setProperty('--ox','50%'); wrap.style.setProperty('--oy','30%'); }
+  wrap.style.transform = zoomingIn ? 'scale(1.14)' : 'scale(.9)';
+  wrap.style.opacity='0';
+  setTimeout(()=>{
+    $$('.scene').forEach(s=>s.classList.remove('active'));
+    $(scenes[targetLevel]).classList.add('active');
+    level=targetLevel;
+    wrap.style.transition='none';
+    wrap.style.transform = zoomingIn ? 'scale(.92)' : 'scale(1.08)';
+    requestAnimationFrame(()=>{
+      wrap.style.transition='';
+      wrap.style.transform='scale(1)'; wrap.style.opacity='1';
+    });
+    $('#stage').scrollTop=0;
+    syncChrome();
+  },280);
+}
+
+function syncChrome(){
+  for(let i=0;i<3;i++) $('#zs'+i).classList.toggle('on', i<=level);
+  $('#zlabel').textContent=labels[level];
+  $('#escbtn').style.visibility = level>0?'visible':'hidden';
+  // breadcrumbs
+  const cr=$('#crumbs'); cr.innerHTML='';
+  const add=(txt,cur,fn)=>{const b=el('span','cb'+(cur?' cur':''),txt);if(fn)b.onclick=fn;cr.appendChild(b);};
+  const sep=()=>cr.appendChild(el('span','sep','/'));
+  add('Portfolio', level===0, ()=>goPortfolio());
+  if(level>=1&&curCo){ sep(); add(coById(curCo).name, level===1, ()=>goCompany(curCo)); }
+  if(level>=2&&curFeat){ sep(); add('Slice '+curFeat.n, true, null); }
+}
+
+function goPortfolio(){ curCo=null; curFeat=null; setZoom(0); }
+function goCompany(coId, origin){ curCo=coId; renderCompany(coId); setZoom(1, origin); }
+function goFeature(coId, slice, origin){ curCo=coId; curFeat=slice; renderFeature(coId, slice); setZoom(2, origin); }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ if(level===2) goCompany(curCo); else if(level===1) goPortfolio(); }
+});
+$('#escbtn').onclick=()=>{ if(level===2) goCompany(curCo); else if(level===1) goPortfolio(); };
+
+/* ============ PORTFOLIO render ============ */
+function headlineNum(c){
+  if(c.mrr>0) return {n:'$'+c.mrr, s:'MRR'};
+  if(c.users>0) return {n:c.users, s:'users'};
+  return {n:c.slicesShipped||0, s:'shipped'};
+}
+function companyRung(c){
+  if(c.mrr>0) return 'MRR';
+  if(c.id==='leadsift') return 'doneWhen';
+  if(c.status==='paused') return 'live';
+  if(c.users>0) return 'adoption';
+  return 'live';
+}
+function renderCompanies(){
+  const wrap=$('#cocards'); wrap.innerHTML='';
+  DATA.companies.forEach(c=>{
+    const h=headlineNum(c);
+    const card=el('div','cocard'+(c.needsYou?' needs':''));
+    let curLine='';
+    if(c.currentSlice){
+      curLine=`<div class="cc-cur"><span class="bdot ${c.currentSlice.status}"></span>slice ${c.currentSlice.n} · ${escHtml(c.currentSlice.step)}</div>`;
+    } else {
+      const bld=c.slices?c.slices.find(s=>s.status==='building'):null;
+      const aw=c.slices?c.slices.find(s=>s.status==='awaiting_approval'):null;
+      if(aw) curLine=`<div class="cc-cur"><span class="bdot await" style="background:var(--violet)"></span>slice ${aw.n} awaiting your approval</div>`;
+      else if(bld) curLine=`<div class="cc-cur"><span class="bdot building"></span>building slice ${bld.n}</div>`;
+    }
+    card.innerHTML=`
+      <div class="cc-top">
+        <div class="cc-name"><span class="stat" style="background:${statColor[c.status]}"></span>${c.name}</div>
+        ${c.needsYou?'<span class="needsbadge">needs you</span>':''}
+      </div>
+      <div class="cc-thesis">${escHtml(c.thesis)}</div>
+      <div class="cc-num">${h.n}<small>${h.s}</small></div>
+      <div class="cc-meta"><span>${c.domain||'no domain yet'}</span><span class="rung">${companyRung(c)}</span></div>
+      ${curLine}`;
+    card.onclick=e=>goCompany(c.id,{x:e.clientX,y:e.clientY-56});
+    wrap.appendChild(card);
+  });
+}
+
+function renderLadder(){
+  const wrap=$('#ladder'); wrap.innerHTML='';
+  LADDER.forEach(r=>{
+    const row=el('div','lrow');
+    row.innerHTML=`
+      <span class="lrung"><span class="lbar"></span>${r.rung}</span>
+      <span class="lcost">${r.cost}</span>
+      <span class="litems">${r.items.map(i=>`<span class="litem">${escHtml(i.label)}</span>`).join('')}</span>`;
+    wrap.appendChild(row);
+  });
+}
+
+/* ---- queue (contextual) ---- */
+function diffHtml(diff){
+  return diff.split('\n').map(l=>{
+    const cls=l.startsWith('+')?'add':(l.trim().startsWith('//')?'ctx':'ctx');
+    return `<div class="${cls}">${escHtml(l)}</div>`;
+  }).join('');
+}
+function gateInner(q){
+  if(q.kind==='ship_feature'){
+    return `
+      <div class="gate-grid">
+        <div class="gbox">
+          <div class="gbox-h">diff <span style="color:var(--green)">+5</span></div>
+          <div class="diff mono">${diffHtml(q.diff)}</div>
+        </div>
+        <div class="gbox">
+          <div class="gbox-h">live preview</div>
+          <div class="preview-url">
+            <div class="urlbar"><span class="lock">●</span><a href="${q.previewUrl}" target="_blank">${q.previewUrl}</a></div>
+            <div class="donewhen"><span class="chk">✓</span><div><b>doneWhen passed</b> · attempt 2<br><span class="dw-code mono">GET /digest/preview → 200 · body contains "Top leads"</span></div></div>
+          </div>
+        </div>
+      </div>`;
+  }
+  if(q.kind==='authorize_spend'){
+    return `<div class="amt mono">$${q.amountUsd}.00 · Google Ads test</div>
+      <div class="draftbox"><div class="dlabel">what you're authorizing</div>Campaign: keyword "csv to dashboard" · daily cap $50 · auto-pause if CPA &gt; $25. Spends real money — gated to you.</div>`;
+  }
+  // tweet / cold / support → draft
+  return `<div class="draftbox"><div class="dlabel">${q.kind==='tweet'?'draft post':q.kind==='cold_batch'?'draft email (×25)':'draft reply'}</div>${escHtml(q.draft)}</div>`;
+}
+function buildQueueCard(q){
+  const k=ACTION_KIND[q.kind];
+  const card=el('div','qcard '+(q.gated?'gated':(q.autopilot?'auto':'')));
+  card.dataset.id=q.id;
+  const tag = q.gated
+    ? '<span class="qtag must">you must approve</span>'
+    : (q.autopilot?'<span class="qtag autop">autopilot can ship</span>':'');
+  card.innerHTML=`
+    <div class="qhead">
+      <div class="qglyph">${k.glyph}</div>
+      <div class="qbody">
+        <div class="qtopline"><span class="qkind">${k.label}</span><span class="qco">${q.company}</span>${tag}</div>
+        <div class="qtitle">${escHtml(q.title)}</div>
+        <div class="qev">📊 ${escHtml(q.evidence)} <span class="erung">· rung: ${q.rung}</span></div>
+      </div>
+    </div>
+    <div class="qexpand"><div class="qx-inner">
+      ${gateInner(q)}
+      <div class="gate-actions">
+        <button class="btn btn-approve">${q.kind==='ship_feature'?'Approve & ship':q.kind==='authorize_spend'?'Authorize $'+q.amountUsd:q.kind==='tweet'?'Approve & post':q.kind==='cold_batch'?'Approve & send':'Approve & reply'} ✓</button>
+        <button class="btn btn-reject">Reject…</button>
+        <form class="rejectform"><input placeholder="what should change? (feedback to the agent)" /><button class="btn btn-approve" style="background:var(--accent);color:#fff" type="submit">Send</button></form>
+        <span class="confirm ok"></span><span class="confirm no"></span>
+      </div>
+    </div></div>`;
+  // expand toggle
+  $('.qhead',card).onclick=()=>$('.qexpand',card).classList.toggle('open');
+  wireGate(card,q);
+  return card;
+}
+function wireGate(card,q){
+  const ex=$('.qexpand',card);
+  const approve=$('.btn-approve',card), reject=$('.btn-reject',card);
+  const form=$('.rejectform',card), cOk=$('.confirm.ok',card), cNo=$('.confirm.no',card);
+  const verbs={ship_feature:'Shipped',tweet:'Posted',cold_batch:'Batch sent',support_reply:'Reply sent',authorize_spend:'Spend authorized'};
+  approve.onclick=()=>{
+    handled[q.id]='approved';
+    approve.style.display='none'; reject.style.display='none'; form.classList.remove('show');
+    cOk.style.display='flex'; cOk.innerHTML=`✓ ${verbs[q.kind]} — recorded as evidence`;
+    toast('✓',`${verbs[q.kind]} · ${q.company}`,'var(--green)');
+    pushLive(q.company,'comms',`${verbs[q.kind].toLowerCase()} — ${q.title}`);
+    setTimeout(()=>{ ex.classList.remove('open'); card.style.opacity='.5'; },1400);
+  };
+  reject.onclick=()=>{ form.classList.add('show'); reject.style.display='none'; approve.style.display='none'; $('input',form).focus(); };
+  form.onsubmit=e=>{
+    e.preventDefault();
+    const fb=$('input',form).value.trim()||'(no detail)';
+    form.classList.remove('show');
+    cNo.style.display='flex'; cNo.innerHTML=`↩ Rejected · agent will revise: “${escHtml(fb)}”`;
+    toast('↩',`Feedback sent to ${q.company}`,'var(--amber)');
+    pushLive(q.company,'building',`revising after your feedback: “${fb}”`);
+    handled[q.id]='rejected';
+  };
+}
+function renderQueue(container, filterCo){
+  container.innerHTML='';
+  const items=QUEUE.filter(q=>!filterCo||q.company===filterCo);
+  if(!items.length){ container.appendChild(el('div','empty-job','Nothing needs you here right now.')); return; }
+  items.forEach(q=>container.appendChild(buildQueueCard(q)));
+  return items.length;
+}
+
+/* ============ COMPANY render ============ */
+const JOBS=['Build','Deploy','Distribute','Monetize','Measure','Steer'];
+function slicesByJob(c){
+  // map slices/activities to jobs for LeadSift; others get a synthesized set
+  const s=c.slices||[];
+  const map={Build:[],Deploy:[],Distribute:[],Monetize:[],Measure:[],Steer:[]};
+  if(s.length){
+    s.forEach(sl=>{ // crude semantic mapping
+      if(sl.status==='shipped'&&sl.n<=3) map.Build.push(sl);
+      else if(sl.title.toLowerCase().includes('export')||sl.title.toLowerCase().includes('webhook')) map.Deploy.push(sl);
+      else if(sl.title.toLowerCase().includes('digest')||sl.title.toLowerCase().includes('slack')) map.Distribute.push(sl);
+      else map.Build.push(sl);
+    });
+    map.Monetize.push({n:'$',title:'Stripe test payment — gated to you',status:'todo'});
+    map.Measure.push({n:'M',title:'Adoption: 12 users · digest open-rate probe',status:'building',step:'tracking'});
+    map.Steer.push({n:'∿',title:'Keep — MRR climbing, evidence positive',status:'shipped'});
+  } else {
+    const cs=c.currentSlice;
+    map.Build.push({n:cs.n,title:cs.title,status:cs.status,step:cs.step});
+    map.Measure.push({n:'M',title:`${c.slicesShipped} slices shipped · ${c.users} users`,status:'shipped'});
+    map.Steer.push({n:'∿',title:c.status==='paused'?'Paused — no progress, decide keep/kill':'Keep — building',status:c.status==='paused'?'blocked':'building'});
+    if(c.mrr>0) map.Monetize.push({n:'$',title:`$${c.mrr} MRR`,status:'shipped'});
+  }
+  return map;
+}
+function renderCompany(coId){
+  const c=coById(coId); const root=$('#co-root');
+  const jobs=slicesByJob(c);
+  root.innerHTML=`
+    <div class="co-hero">
+      <div class="co-id">
+        <div class="co-mono">${c.name.slice(0,2)}</div>
+        <div>
+          <div class="co-name">${c.name} <span style="font-size:11px;color:${statColor[c.status]};font-weight:700;letter-spacing:.05em;text-transform:uppercase">· ${c.status}</span></div>
+          <div class="co-thesis">${escHtml(c.thesis)}</div>
+        </div>
+      </div>
+      <div class="co-stats">
+        <div class="co-stat"><div class="n">$${c.mrr}</div><div class="l">MRR</div></div>
+        <div class="co-stat"><div class="n">${c.users}</div><div class="l">Users</div></div>
+        <div class="co-stat"><div class="n">${(c.slices?c.slices.filter(s=>s.status==='shipped').length:c.slicesShipped)}</div><div class="l">Shipped</div></div>
+      </div>
+    </div>
+    <div class="jobtabs" id="jobtabs"></div>
+    <div class="co-grid">
+      <div class="jobpane" id="jobpane"></div>
+      <div class="co-side">
+        <div class="sectlabel" style="margin:0">Needs you · ${c.name}</div>
+        <div class="queue" id="queue-company"></div>
+        <div>
+          <div class="commstabs">
+            <div class="ctab on" data-s="chat">Inward chat</div>
+            <div class="ctab" data-s="out">Outbound</div>
+            <div class="ctab" data-s="sup">Support</div>
+          </div>
+          <div class="commsbody" id="commsbody"></div>
+        </div>
+      </div>
+    </div>`;
+  // job tabs
+  const tabs=$('#jobtabs');
+  JOBS.forEach((j,i)=>{
+    const cnt=jobs[j].length;
+    const t=el('div','jtab'+(i===0?' on':''),`${j}${cnt?`<span class="jn">${cnt}</span>`:''}`);
+    t.onclick=()=>{ $$('.jtab',tabs).forEach(x=>x.classList.remove('on')); t.classList.add('on'); renderJob(c,jobs,j); };
+    tabs.appendChild(t);
+  });
+  renderJob(c,jobs,'Build');
+  // contextual queue
+  const n=renderQueue($('#queue-company'),c.name);
+  // comms
+  renderComms(c);
+  $$('.ctab',root).forEach(t=>t.onclick=()=>{
+    $$('.ctab',root).forEach(x=>x.classList.remove('on')); t.classList.add('on');
+    $$('.cstream',root).forEach(s=>s.classList.remove('on'));
+    $('#cstream-'+t.dataset.s,root).classList.add('on');
+  });
+}
+function renderJob(c,jobs,job){
+  const pane=$('#jobpane'); const items=jobs[job];
+  if(!items.length){ pane.innerHTML=`<div class="empty-job">No <b>${job}</b> work for ${c.name} yet.<br>This job activates when the rung below it pays off.</div>`; return; }
+  pane.innerHTML='<div class="slices"></div>';
+  const wrap=$('.slices',pane);
+  items.forEach(sl=>{
+    const isFeat = c.slices && typeof sl.n==='number' && sl.title;
+    const ss={shipped:'ss-shipped',building:'ss-building',awaiting_approval:'ss-await',todo:'ss-todo',blocked:'ss-blocked'}[sl.status]||'ss-todo';
+    const lbl={shipped:'shipped',building:'building',awaiting_approval:'needs you',todo:'todo',blocked:'blocked'}[sl.status]||sl.status;
+    const row=el('div','slice'+(isFeat?' feat':''));
+    row.innerHTML=`<div class="sn">${sl.n}</div><div class="stitle">${escHtml(sl.title)}${sl.step?` <span style="color:var(--faint);font-weight:400">· ${escHtml(sl.step)}</span>`:''}</div><span class="sstat ${ss}">${lbl}</span>${isFeat?'<span class="chev">→</span>':''}`;
+    if(isFeat) row.onclick=e=>goFeature(c.id,sl,{x:e.clientX,y:e.clientY-56});
+    wrap.appendChild(row);
+  });
+}
+function renderComms(c){
+  const body=$('#commsbody');
+  // inward chat
+  const chatMsgs=(c.id==='leadsift'?DATA.chat:[
+    {role:'assistant',text:`${c.name}: ${c.currentSlice?('working slice '+c.currentSlice.n+' — '+c.currentSlice.step):'idle'}.`},
+    {role:'user',text:'what needs me?'},
+    {role:'assistant',text: QUEUE.some(q=>q.company===c.name)?'You have an item in the Needs-you queue for this company.':'Nothing gated right now — autopilot is handling it.'},
+  ]);
+  const out=OUTBOUND.twitter.map(tw=>`
+    <div class="obitem">
+      <div class="ob-head"><b>𝕏 build-in-public · ${tw.t}</b><span class="ob-stat ${tw.status}">${tw.status}</span></div>
+      <div class="ob-txt">${escHtml(tw.text)}</div>
+      <div class="ob-stats">${escHtml(tw.stats)}</div>
+      ${tw.status==='draft'?'<button class="minibtn go">Open in Needs-you →</button>':''}
+    </div>`).join('') +
+    OUTBOUND.cold.filter(x=>!c.slices||x.company===c.name||c.id==='leadsift').map(cm=>`
+    <div class="obitem">
+      <div class="ob-head"><b>✉ cold · ${escHtml(cm.company)}</b><span class="ob-stat draft">${cm.step}</span></div>
+      <div class="ob-txt">${escHtml(cm.segment)} · ${cm.size} contacts</div>
+      <div class="ob-stats">${escHtml(cm.stats)} · ${escHtml(cm.status)}</div>
+    </div>`).join('');
+  const sup=SUPPORT.filter(t=>!c.slices||t.company===c.name||c.id==='leadsift').map(t=>`
+    <div class="supitem">
+      <div class="ob-head"><b>${escHtml(t.subject)}</b><span class="ob-stat ${t.status==='answered'?'answered':'needs'}">${t.status.replace('_',' ')}</span></div>
+      <div class="ob-txt" style="color:var(--dim)">${escHtml(t.user)} — ${escHtml(t.body)}</div>
+      <div class="sig">↳ signal: ${escHtml(t.signal)} (evidence)</div>
+    </div>`).join('')||'<div class="empty-job">No support tickets for this company.</div>';
+
+  body.innerHTML=`
+    <div class="cstream on" id="cstream-chat">
+      ${chatMsgs.map(m=>`<div class="chatmsg ${m.role==='user'?'user':''}"><div class="av ${m.role==='assistant'?'ai':'me'}">${m.role==='assistant'?'AI':'V'}</div><div class="ct">${escHtml(m.text)}</div></div>`).join('')}
+      <div class="chatbar"><input placeholder="direct your co-founder agent…"><button>↑</button></div>
+    </div>
+    <div class="cstream" id="cstream-out">${out||'<div class="empty-job">No outbound for this company.</div>'}</div>
+    <div class="cstream" id="cstream-sup">${sup}</div>`;
+  // chat send
+  const cb=$('.chatbar',body); const inp=$('input',cb);
+  const send=()=>{ const v=inp.value.trim(); if(!v)return;
+    const me=el('div','chatmsg user',`<div class="av me">V</div><div class="ct">${escHtml(v)}</div>`);
+    cb.before(me); inp.value='';
+    setTimeout(()=>{ const ai=el('div','chatmsg',`<div class="av ai">AI</div><div class="ct">On it — I'll surface anything gated in your Needs-you queue.</div>`); cb.before(ai); },500);
+  };
+  $('button',cb).onclick=send; inp.onkeydown=e=>{if(e.key==='Enter')send();};
+  // outbound "open in needs-you"
+  $$('.minibtn.go',body).forEach(b=>b.onclick=()=>{
+    goPortfolio();
+    setTimeout(()=>{ const qc=$('#queue-portfolio .qcard[data-id="q2"]'); if(qc){$('.qexpand',qc).classList.add('open'); qc.scrollIntoView({behavior:'smooth',block:'center'});} },650);
+  });
+}
+
+/* ============ FEATURE render ============ */
+function renderFeature(coId, slice){
+  const c=coById(coId); const root=$('#ft-root');
+  const isDigest = c.id==='leadsift' && slice.n===5;
+  const q1=QUEUE[0];
+  const steps=[
+    {i:'🔨',t:'Build',d:'one new component + scheduler',state:'done'},
+    {i:'📣',t:'Market',d:'build-in-public post queued',state: isDigest?'cur':'done'},
+    {i:'📈',t:'Measure',d:'doneWhen probe → green',state: isDigest?'done':'cur'},
+    {i:'↻',t:'Iterate',d:'feedback loops back here',state:'done'},
+  ];
+  const ss={shipped:'shipped',building:'building',awaiting_approval:'needs you',todo:'todo',blocked:'blocked'}[slice.status];
+  root.innerHTML=`
+    <div class="ft-head">
+      <div class="ft-glyph">${isDigest?'⚡':'◇'}</div>
+      <div>
+        <div class="ft-title">${escHtml(slice.title)}</div>
+        <div class="ft-sub">
+          <span>${c.name} · slice ${slice.n}</span>
+          <span class="rung">rung: ${isDigest?'doneWhen':(slice.status==='shipped'?'adoption':'score')}</span>
+          <span class="sstat ss-${slice.status==='awaiting_approval'?'await':slice.status}">${ss}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sectlabel" style="margin-top:24px">The micro-loop · same shape as company & portfolio, one altitude down</div>
+    <div class="microloop">
+      ${steps.map((s,i)=>`<div class="mlstep ${s.state}"><div class="mli">${s.i}</div><div class="mlt">${s.t}</div><div class="mld">${s.d}</div>${i<3?'<div class="mlarrow">→</div>':''}</div>`).join('')}
+    </div>
+
+    ${isDigest?`
+    <div class="ft-gate">
+      <div class="ft-gate-h"><span class="ft-glyph" style="width:34px;height:34px;font-size:16px;border-radius:9px">⚡</span><span class="gh-t">Approval gate — LeadSift digest</span><span class="gh-tag">autopilot can ship · reversible</span></div>
+      <div id="ft-gate-slot"></div>
+    </div>`:`
+    <div class="ft-gate" style="border-color:var(--line)">
+      <div class="ft-gate-h"><span class="gh-t">No gate open</span></div>
+      <div style="color:var(--dim);font-size:13px;line-height:1.6">This slice is <b>${ss}</b>. It will surface in your Needs-you queue when its <b>doneWhen</b> check passes and a preview is live. Open the digest slice (LeadSift · 5) to see a full gate.</div>
+    </div>`}`;
+  if(isDigest){
+    // embed a real gate card (reuse q1)
+    const slot=$('#ft-gate-slot');
+    slot.innerHTML=gateInner(q1)+`
+      <div class="gate-actions" style="margin-top:14px">
+        <button class="btn btn-approve">Approve &amp; ship ✓</button>
+        <button class="btn btn-reject">Reject…</button>
+        <form class="rejectform"><input placeholder="what should change? (feedback to the agent)"/><button class="btn btn-approve" style="background:var(--accent);color:#fff" type="submit">Send</button></form>
+        <span class="confirm ok"></span><span class="confirm no"></span>
+      </div>`;
+    // wire (standalone, since not a qcard)
+    const approve=$('.btn-approve',slot),reject=$('.btn-reject',slot),form=$('.rejectform',slot),cOk=$('.confirm.ok',slot),cNo=$('.confirm.no',slot);
+    approve.onclick=()=>{ approve.style.display='none';reject.style.display='none';form.classList.remove('show');
+      cOk.style.display='flex';cOk.innerHTML='✓ Shipped — live at localhost:4019, recorded as evidence';
+      toast('✓','Shipped · LeadSift digest','var(--green)'); handled.q1='approved';
+      pushLive('LeadSift','comms','shipped — daily digest of top leads'); };
+    reject.onclick=()=>{ form.classList.add('show');reject.style.display='none';approve.style.display='none';$('input',form).focus(); };
+    form.onsubmit=e=>{e.preventDefault();const fb=$('input',form).value.trim()||'(no detail)';form.classList.remove('show');
+      cNo.style.display='flex';cNo.innerHTML=`↩ Rejected · agent will revise: “${escHtml(fb)}”`;
+      toast('↩','Feedback sent to LeadSift','var(--amber)'); };
+  }
+}
+
+/* ============ LIVE ACTIVITY ============ */
+let liveOpen=false;
+const liveExtra=[]; // appended comms events
+function latestLine(){
+  const a=DATA.activity[0];
+  return `<span class="live-co">${a.co}</span> · <b>${escHtml(a.text)}</b> <span style="color:var(--faint)">${a.t}</span>`;
+}
+function pushLive(co,kind,text){
+  liveExtra.unshift({co,kind,text,t:'now',running:kind==='building'});
+  DATA.activity.unshift({co,kind,text,t:'now',running:kind==='building'});
+  $('#liveLatest').innerHTML=latestLine();
+  if(liveOpen) renderStream();
+}
+function renderStream(){
+  const inner=$('#lsInner'); inner.innerHTML='';
+  const all=[...DATA.activity];
+  const byCo={};
+  all.forEach(a=>{ (byCo[a.co]=byCo[a.co]||[]).push(a); });
+  // comms section header note
+  Object.keys(byCo).forEach(co=>{
+    inner.appendChild(el('div','ls-co',co));
+    byCo[co].forEach(a=>{
+      const dotCls = a.running?'running':(a.kind==='await'?'await':(a.kind==='blocked'?'blocked':(a.kind==='comms'?'comms':'')));
+      const row=el('div','lsrow');
+      row.innerHTML=`<span class="lsd ${dotCls}"></span><span class="lst"><b>${a.kind==='comms'?'comms':a.kind}</b> · ${escHtml(a.text)}</span><span class="lstime">${a.t}</span>`;
+      inner.appendChild(row);
+    });
+  });
+}
+$('#liveBar').onclick=()=>{
+  liveOpen=!liveOpen;
+  $('#liveStream').classList.toggle('open',liveOpen);
+  $('#liveToggle').textContent=liveOpen?'collapse ▾':'expand stream ▴';
+  if(liveOpen) renderStream();
+};
+$('#liveLatest').innerHTML=latestLine();
+
+/* ============ BOOT ============ */
+renderCompanies();
+renderLadder();
+const qn=renderQueue($('#queue-portfolio'),null);
+$('#qcount').textContent=qn+' actions · '+QUEUE.filter(q=>q.gated).length+' gated';
+syncChrome();
+
+// simulate a couple of live ticks for "feels alive"
+setTimeout(()=>pushLive('QuietInbox','comms','reply drafted — “snooze a whole label?”'),3500);
+setTimeout(()=>pushLive('TranslatorBill','comms','cold batch 2 queued — awaiting your approval'),8000);
+</script>
+</body>
+</html>

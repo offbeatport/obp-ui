@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop · 06 Shipping Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f2ea;        /* warm paper */
+    --paper-2:#efe9dd;
+    --ink:#2b2620;          /* near-black warm */
+    --ink-soft:#6b6255;
+    --ink-faint:#a89c89;
+    --line:#e1d8c7;
+    --line-strong:#d2c6b0;
+    --card:#fbf8f2;
+    --accent:#9a6a3c;       /* warm sienna */
+    /* status */
+    --s-shipped:#5f8d4e;
+    --s-shipped-bg:#e7efdf;
+    --s-building:#3a6ea5;
+    --s-building-bg:#dde8f3;
+    --s-await:#8a5cc4;
+    --s-await-bg:#ece0f6;
+    --s-await-warn:#b8862f;
+    --s-todo:#8d8472;
+    --s-todo-bg:#ece6da;
+    --s-blocked:#b4453a;
+    --s-blocked-bg:#f4dedb;
+    --green:#5f8d4e;
+    --green-bg:#e7efdf;
+    --shadow:0 1px 2px rgba(60,48,30,.06), 0 8px 24px rgba(60,48,30,.07);
+    --col-w:108px;          /* width of one time tick column */
+    --lane-h:96px;
+    --label-w:236px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #fbf7ee 0%, transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif; font-weight:600; margin:0; letter-spacing:-.01em}
+  .serif{font-family:'Fraunces',Georgia,serif}
+  button{font-family:inherit; cursor:pointer}
+
+  /* ===== App shell ===== */
+  .app{display:flex; flex-direction:column; height:100vh; overflow:hidden}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    display:flex; align-items:baseline; gap:20px;
+    padding:18px 28px 14px; border-bottom:1px solid var(--line);
+    background:linear-gradient(var(--paper),var(--paper-2));
+    z-index:40;
+  }
+  .brand{display:flex; align-items:baseline; gap:12px}
+  .brand .mark{font-family:'Fraunces',serif; font-size:23px; font-weight:600; letter-spacing:-.02em}
+  .brand .sub{font-size:11px; color:var(--ink-faint); letter-spacing:.14em; text-transform:uppercase}
+  .pf{display:flex; gap:26px; margin-left:auto; align-items:center}
+  .pf .stat{text-align:right}
+  .pf .stat .v{font-family:'Fraunces',serif; font-size:20px; font-weight:600; line-height:1}
+  .pf .stat .k{font-size:10px; color:var(--ink-faint); letter-spacing:.1em; text-transform:uppercase}
+  .pf .needs{
+    background:var(--s-await-bg); color:var(--s-await); border:1px solid #dcc8ef;
+    border-radius:999px; padding:6px 13px; font-size:12px; font-weight:600; display:flex; gap:7px; align-items:center;
+  }
+  .pf .needs .dot{width:7px;height:7px;border-radius:50%;background:var(--s-await);animation:pulse 1.6s infinite}
+
+  /* ===== Command bar (chat spine) ===== */
+  .cmdbar{
+    display:flex; align-items:center; gap:12px; padding:10px 28px;
+    border-bottom:1px solid var(--line); background:var(--card);
+  }
+  .cmdbar .glyph{font-family:'Fraunces',serif; font-style:italic; color:var(--accent); font-size:15px}
+  .cmdbar input{
+    flex:1; border:none; background:transparent; font-size:14.5px; color:var(--ink);
+    padding:8px 4px; outline:none;
+  }
+  .cmdbar input::placeholder{color:var(--ink-faint)}
+  .cmdbar .send{
+    border:1px solid var(--line-strong); background:var(--paper); border-radius:8px;
+    padding:7px 14px; font-size:12.5px; color:var(--ink-soft); font-weight:500;
+  }
+  .cmdbar .send:hover{background:var(--paper-2)}
+
+  /* ===== Layout body ===== */
+  .body{flex:1; display:flex; min-height:0}
+
+  /* ---- Timeline canvas (overview) ---- */
+  .canvas-wrap{flex:1; min-width:0; display:flex; flex-direction:column; position:relative}
+  .canvas{flex:1; overflow:auto; position:relative}
+  /* the timeline grid is wide -> horizontal scroll = future backlog */
+  .timeline{position:relative; min-width:1680px}
+
+  /* time axis (sticky top) */
+  .axis{
+    position:sticky; top:0; z-index:20; height:48px;
+    background:linear-gradient(var(--paper),rgba(246,242,234,.92));
+    backdrop-filter:blur(3px);
+    border-bottom:1px solid var(--line-strong);
+    display:flex; padding-left:var(--label-w);
+  }
+  .axis .corner{
+    position:absolute; left:0; top:0; width:var(--label-w); height:100%;
+    background:var(--paper); border-right:1px solid var(--line-strong);
+    display:flex; align-items:center; padding:0 18px;
+    font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  .tick{
+    width:var(--col-w); flex:0 0 var(--col-w); border-left:1px solid var(--line);
+    padding:8px 0 0 10px; font-size:10.5px; color:var(--ink-faint);
+    position:relative;
+  }
+  .tick .lab{font-weight:500; color:var(--ink-soft)}
+  .tick .sub{font-size:9.5px; letter-spacing:.04em}
+  .tick.future .lab{color:var(--ink-faint)}
+
+  /* lane rows */
+  .lanes{position:relative}
+  /* vertical gridlines behind lanes */
+  .grid{position:absolute; inset:0; left:var(--label-w); z-index:0; pointer-events:none}
+  .grid .gl{position:absolute; top:0; bottom:0; width:1px; background:var(--line)}
+  .grid .gl.future{background:repeating-linear-gradient(var(--line) 0 4px, transparent 4px 9px)}
+
+  /* the NOW line */
+  .nowline{position:absolute; top:0; bottom:0; width:2px; background:var(--accent); z-index:6; pointer-events:none}
+  .nowline::before{
+    content:'NOW'; position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    background:var(--accent); color:#fff; font-size:9px; font-weight:700; letter-spacing:.16em;
+    padding:3px 7px; border-radius:5px; white-space:nowrap;
+  }
+  .nowline::after{
+    content:''; position:absolute; top:0; left:-3px; width:8px; height:8px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 0 4px rgba(154,106,60,.18);
+  }
+
+  .lane{
+    position:relative; height:var(--lane-h); display:flex; align-items:stretch;
+    border-bottom:1px solid var(--line); z-index:2;
+  }
+  .lane:hover{background:rgba(255,255,255,.4)}
+  /* sticky lane header (left) */
+  .lane-head{
+    position:sticky; left:0; z-index:8; width:var(--label-w); flex:0 0 var(--label-w);
+    background:linear-gradient(90deg,var(--card) 86%, rgba(251,248,242,.0));
+    border-right:1px solid var(--line-strong);
+    padding:12px 16px; display:flex; flex-direction:column; justify-content:center; gap:3px;
+    cursor:pointer;
+  }
+  .lane-head:hover{background:linear-gradient(90deg,#fff 86%, rgba(255,255,255,0))}
+  .lane-head .nm{display:flex; align-items:center; gap:8px}
+  .lane-head .nm h3{font-size:16.5px}
+  .lane-head .cs{font-size:11px; color:var(--ink-faint); display:flex; gap:9px; flex-wrap:wrap}
+  .lane-head .cs b{color:var(--ink-soft); font-weight:600}
+  .co-dot{width:8px; height:8px; border-radius:50%; flex:0 0 auto}
+  .co-dot.active{background:var(--green)}
+  .co-dot.paused{background:var(--s-await-warn)}
+  .co-dot.archived{background:var(--ink-faint)}
+  .lane-head .openhint{font-size:10px; color:var(--accent); opacity:0; transition:.15s; letter-spacing:.05em}
+  .lane-head:hover .openhint{opacity:1}
+
+  .lane-track{position:relative; flex:1; min-width:0}
+
+  /* nodes */
+  .node{
+    position:absolute; top:50%; transform:translate(-50%,-50%);
+    display:flex; flex-direction:column; align-items:center; gap:5px; z-index:3;
+    width:max-content; max-width:128px; cursor:default;
+  }
+  .node .dot{
+    width:15px; height:15px; border-radius:50%; border:2px solid var(--paper);
+    box-shadow:var(--shadow); position:relative;
+  }
+  .node .cap{font-size:10px; line-height:1.25; text-align:center; color:var(--ink-soft); max-width:120px}
+  .node .n{font-size:9px; font-weight:700; color:var(--ink-faint); letter-spacing:.04em}
+
+  .node.shipped .dot{background:var(--s-shipped)}
+  .node.building .dot{background:var(--s-building); animation:pulse 1.5s infinite}
+  .node.building .dot::after{content:''; position:absolute; inset:-7px; border-radius:50%; border:1.5px solid var(--s-building); opacity:.4; animation:ring 1.8s infinite}
+  .node.await .dot{background:var(--s-await); box-shadow:0 0 0 4px var(--s-await-bg)}
+  .node.await .cap{color:var(--s-await); font-weight:600}
+  .node.todo .dot{background:var(--paper); border:2px dashed var(--s-todo); box-shadow:none; opacity:.85}
+  .node.todo .cap{color:var(--ink-faint)}
+  .node.todo{opacity:.7}
+  .node.blocked .dot{background:var(--s-blocked)}
+  .node.blocked .cap{color:var(--s-blocked)}
+
+  /* connecting baseline within a lane */
+  .lane-base{position:absolute; top:50%; left:0; height:2px; background:var(--line-strong); z-index:1}
+  .lane-base.future{background:repeating-linear-gradient(90deg,var(--line-strong) 0 5px, transparent 5px 11px); opacity:.7}
+
+  .needsflag{
+    position:absolute; top:6px; left:8px; z-index:9;
+    background:var(--s-await-bg); color:var(--s-await); border:1px solid #dcc8ef;
+    border-radius:999px; padding:2px 9px; font-size:10px; font-weight:600; display:flex; gap:5px; align-items:center;
+  }
+  .needsflag .d{width:5px;height:5px;border-radius:50%;background:var(--s-await);animation:pulse 1.4s infinite}
+
+  /* growth hint at far right / bottom */
+  .grow-r{
+    position:absolute; right:18px; top:50%; transform:translateY(-50%);
+    writing-mode:vertical-rl; font-size:10px; letter-spacing:.2em; color:var(--ink-faint);
+    text-transform:uppercase; z-index:3;
+  }
+  .add-lane{
+    display:flex; align-items:center; gap:10px; padding:18px 16px; color:var(--ink-faint);
+    font-size:13px; border-bottom:1px dashed var(--line-strong); cursor:pointer;
+    width:var(--label-w); position:sticky; left:0; background:var(--paper);
+  }
+  .add-lane:hover{color:var(--accent)}
+  .add-lane .plus{width:22px;height:22px;border:1px dashed var(--line-strong);border-radius:6px;display:grid;place-items:center;font-size:15px}
+
+  /* ===== Right rail (overview): opportunities + next moves ===== */
+  .rail{
+    width:320px; flex:0 0 320px; border-left:1px solid var(--line); background:var(--card);
+    overflow:auto; padding:18px 18px 90px;
+  }
+  .rail h2{font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin:6px 2px 12px}
+  .rail h2.serif{font-family:'Fraunces',serif; font-size:18px; letter-spacing:-.01em; text-transform:none; color:var(--ink)}
+  .move{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:13px}
+  .move .num{font-family:'Fraunces',serif; font-style:italic; color:var(--accent); font-size:14px; flex:0 0 auto}
+  .opp{
+    background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:12px 13px; margin-bottom:11px;
+  }
+  .opp .top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px}
+  .opp h4{font-size:15px}
+  .opp .thought{font-size:11.5px; color:var(--ink-faint); font-style:italic; margin:3px 0 6px}
+  .opp .thesis{font-size:12px; color:var(--ink-soft); margin-bottom:10px}
+  .score{
+    font-family:'Fraunces',serif; font-weight:600; font-size:15px; flex:0 0 auto;
+    display:flex; flex-direction:column; align-items:flex-end; line-height:1;
+  }
+  .score .lab{font-family:'Inter'; font-size:8.5px; letter-spacing:.12em; color:var(--ink-faint); font-weight:600; text-transform:uppercase}
+  .score.hi{color:var(--s-shipped)} .score.mid{color:var(--s-await-warn)} .score.lo{color:var(--ink-faint)}
+  .promote{
+    width:100%; border:1px solid var(--accent); color:var(--accent); background:transparent;
+    border-radius:8px; padding:7px; font-size:12px; font-weight:600;
+  }
+  .promote:hover{background:var(--accent); color:#fff}
+  .opp.killed{opacity:.5}
+  .opp.killed .promote{border-style:dashed; color:var(--ink-faint); border-color:var(--line-strong)}
+  .killtag{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--s-blocked); font-weight:600}
+
+  /* ===== ZOOM view ===== */
+  .zoom{position:absolute; inset:0; background:var(--paper); z-index:50; display:none; flex-direction:column}
+  .zoom.on{display:flex}
+  .zoom-top{
+    display:flex; align-items:center; gap:16px; padding:16px 28px; border-bottom:1px solid var(--line-strong);
+    background:linear-gradient(var(--paper),var(--paper-2));
+  }
+  .back{
+    border:1px solid var(--line-strong); background:var(--paper); border-radius:9px; padding:8px 14px;
+    font-size:13px; color:var(--ink-soft); font-weight:500; display:flex; gap:8px; align-items:center;
+  }
+  .back:hover{background:#fff}
+  .zoom-top h1{font-size:26px}
+  .zoom-top .domain{color:var(--accent); font-size:13px}
+  .zoom-top .meta{margin-left:auto; display:flex; gap:24px; align-items:center}
+  .zoom-top .meta .stat .v{font-family:'Fraunces',serif; font-size:18px; font-weight:600}
+  .zoom-top .meta .stat .k{font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
+
+  .zoom-body{flex:1; display:flex; min-height:0}
+  .zoom-left{flex:1; min-width:0; display:flex; flex-direction:column; border-right:1px solid var(--line)}
+  .zoom-tl-wrap{flex:1; overflow:auto; padding:26px 0 30px}
+  .ztl-title{font-family:'Fraunces',serif; font-size:14px; color:var(--ink-faint); letter-spacing:.05em; padding:0 28px 14px}
+
+  /* detailed expanded timeline (vertical list w/ horizontal connector) */
+  .ztl{position:relative; padding:0 28px; min-width:1180px}
+  .ztl-axis{display:flex; padding-left:0; margin-bottom:6px; border-bottom:1px solid var(--line); padding-bottom:6px}
+  .ztl-axis .t{flex:0 0 150px; font-size:10px; color:var(--ink-faint); letter-spacing:.08em; text-transform:uppercase}
+  .zslice{
+    display:flex; align-items:center; gap:0; min-width:1120px; padding:0;
+  }
+  .zrow{
+    display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:11px;
+    margin-bottom:8px; border:1px solid transparent; cursor:default; position:relative;
+  }
+  .zrow:hover{background:#fff; border-color:var(--line)}
+  .zrow.sel{background:var(--s-await-bg); border-color:#dcc8ef}
+  .zrow .mark{width:14px; height:14px; border-radius:50%; flex:0 0 auto; position:relative}
+  .zrow.shipped .mark{background:var(--s-shipped)}
+  .zrow.building .mark{background:var(--s-building); animation:pulse 1.5s infinite}
+  .zrow.await .mark{background:var(--s-await); box-shadow:0 0 0 4px var(--s-await-bg)}
+  .zrow.todo .mark{background:var(--paper); border:2px dashed var(--s-todo)}
+  .zrow.blocked .mark{background:var(--s-blocked)}
+  .zrow .sn{font-family:'Fraunces',serif; font-size:13px; color:var(--ink-faint); width:34px; flex:0 0 auto}
+  .zrow .stitle{flex:1; font-size:14px}
+  .zrow .badge{
+    font-size:10px; font-weight:600; padding:3px 9px; border-radius:999px; letter-spacing:.03em; flex:0 0 auto;
+  }
+  .b-shipped{background:var(--s-shipped-bg); color:var(--s-shipped)}
+  .b-building{background:var(--s-building-bg); color:var(--s-building)}
+  .b-await{background:var(--s-await-bg); color:var(--s-await)}
+  .b-todo{background:var(--s-todo-bg); color:var(--s-todo)}
+  .b-blocked{background:var(--s-blocked-bg); color:var(--s-blocked)}
+  .zrow .pr{font-size:10.5px; color:var(--ink-faint); flex:0 0 auto; width:62px; text-align:right}
+  .zrow .note{font-size:11px; color:var(--s-blocked); font-style:italic}
+  .timeline-connector{position:absolute; left:51px; top:0; bottom:0; width:2px; background:var(--line); z-index:0}
+
+  /* zoom right: approval gate / chat */
+  .zoom-right{width:430px; flex:0 0 430px; display:flex; flex-direction:column; background:var(--card); min-height:0}
+  .gate{flex:1; overflow:auto; padding:20px}
+  .gate h2{font-family:'Fraunces',serif; font-size:19px; margin-bottom:3px}
+  .gate .gsub{font-size:12px; color:var(--ink-faint); margin-bottom:16px}
+  .gate .await-pill{
+    display:inline-flex; gap:7px; align-items:center; background:var(--s-await-bg); color:var(--s-await);
+    border:1px solid #dcc8ef; border-radius:999px; padding:4px 11px; font-size:11px; font-weight:600; margin-bottom:14px;
+  }
+  .gate .await-pill .d{width:6px;height:6px;border-radius:50%;background:var(--s-await);animation:pulse 1.4s infinite}
+  .panel{background:var(--paper); border:1px solid var(--line); border-radius:11px; margin-bottom:14px; overflow:hidden}
+  .panel .ph{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); padding:10px 13px 8px; font-weight:600}
+  .preview-row{display:flex; align-items:center; gap:10px; padding:0 13px 13px}
+  .preview-row a{color:var(--s-building); font-size:12.5px; text-decoration:none; font-family:'Inter'; word-break:break-all}
+  .preview-row a:hover{text-decoration:underline}
+  .openbtn{margin-left:auto; border:1px solid var(--line-strong); background:var(--paper); border-radius:7px; padding:5px 11px; font-size:11px; color:var(--ink-soft); flex:0 0 auto}
+  .openbtn:hover{background:#fff}
+  .donewhen{padding:0 13px 13px; font-size:12px; color:var(--ink-soft); font-family:ui-monospace,Menlo,monospace; line-height:1.5}
+  .checkres{
+    display:flex; align-items:center; gap:8px; margin:0 13px 13px; padding:9px 11px;
+    background:var(--green-bg); border:1px solid #cfe0c2; border-radius:8px;
+    color:var(--green); font-size:12.5px; font-weight:600;
+  }
+  .checkres .tick-i{width:18px;height:18px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+  .diff{font-family:ui-monospace,Menlo,monospace; font-size:11.5px; line-height:1.65; padding:4px 0 12px}
+  .diff .ln{padding:1px 13px; white-space:pre-wrap; word-break:break-word}
+  .diff .add{background:rgba(95,141,78,.1); color:#3f6a2f}
+  .diff .ctx{color:var(--ink-faint)}
+  .gate-actions{display:flex; gap:10px; padding:14px 20px; border-top:1px solid var(--line); background:var(--paper)}
+  .btn-approve{flex:1; background:var(--green); color:#fff; border:none; border-radius:9px; padding:12px; font-size:14px; font-weight:600}
+  .btn-approve:hover{filter:brightness(1.06)}
+  .btn-reject{flex:1; background:var(--paper); color:var(--s-blocked); border:1px solid #e2bdb8; border-radius:9px; padding:12px; font-size:14px; font-weight:600}
+  .btn-reject:hover{background:var(--s-blocked-bg)}
+  .gate-confirm{
+    display:none; align-items:center; gap:9px; padding:11px 20px; font-size:13px; font-weight:600;
+    border-top:1px solid var(--line);
+  }
+  .gate-confirm.show{display:flex; animation:flash .4s}
+  .gate-confirm.approved{background:var(--green-bg); color:var(--green)}
+  .gate-confirm.rejected{background:var(--s-blocked-bg); color:var(--s-blocked)}
+  .reject-box{display:none; padding:0 20px 14px; gap:8px; flex-direction:column}
+  .reject-box.show{display:flex}
+  .reject-box textarea{
+    width:100%; border:1px solid var(--line-strong); border-radius:8px; padding:9px; font-family:inherit; font-size:12.5px;
+    resize:vertical; min-height:58px; background:var(--paper); color:var(--ink);
+  }
+  .reject-box .send-fb{align-self:flex-end; background:var(--s-blocked); color:#fff; border:none; border-radius:8px; padding:8px 15px; font-size:12.5px; font-weight:600}
+
+  /* company chat (non-LeadSift zoom) */
+  .cochat{flex:1; display:flex; flex-direction:column; min-height:0}
+  .cochat .stream{flex:1; overflow:auto; padding:18px; display:flex; flex-direction:column; gap:12px}
+  .msg{max-width:88%; padding:10px 13px; border-radius:13px; font-size:13px; line-height:1.5}
+  .msg.assistant{background:var(--paper); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:4px}
+  .msg.user{background:var(--ink); color:var(--paper); align-self:flex-end; border-bottom-right-radius:4px}
+  .cochat .cbar{display:flex; gap:10px; padding:13px 18px; border-top:1px solid var(--line); background:var(--paper)}
+  .cochat .cbar input{flex:1; border:1px solid var(--line-strong); border-radius:9px; padding:9px 12px; font-family:inherit; font-size:13px; background:var(--card); color:var(--ink); outline:none}
+  .cochat .cbar input:focus{border-color:var(--accent)}
+  .zoom-right .rhead{padding:14px 20px 0; display:flex; gap:8px}
+  .rtab{font-size:12px; padding:7px 13px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink-soft); font-weight:500}
+  .rtab.on{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+
+  /* ===== Live activity strip (collapsible, bottom) ===== */
+  .activity{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    background:rgba(43,38,32,.97); color:#efe7d8;
+    backdrop-filter:blur(6px); border-top:1px solid #4a4036;
+    transition:height .22s ease; height:42px; overflow:hidden;
+  }
+  .activity.open{height:300px}
+  .act-bar{height:42px; display:flex; align-items:center; gap:13px; padding:0 22px; cursor:pointer}
+  .act-bar .live{font-size:9.5px; letter-spacing:.18em; color:#cdbfa6; font-weight:700; display:flex; gap:6px; align-items:center; text-transform:uppercase}
+  .act-bar .live .d{width:7px;height:7px;border-radius:50%;background:#7fb36a;animation:pulse 1.3s infinite}
+  .act-line{font-size:12.5px; color:#e8dfcd; display:flex; gap:9px; align-items:center; overflow:hidden; white-space:nowrap; text-overflow:ellipsis}
+  .act-line .co{color:#d6b78a; font-weight:600}
+  .act-line .rdot{width:6px;height:6px;border-radius:50%;background:#5e8fc4;animation:pulse 1.2s infinite; flex:0 0 auto}
+  .act-bar .chev{margin-left:auto; color:#a89579; font-size:12px; display:flex; gap:9px; align-items:center}
+  .act-bar .chev .hint{font-size:10px; letter-spacing:.05em}
+  .act-stream{padding:6px 22px 18px; overflow:auto; height:calc(300px - 42px)}
+  .act-group{margin-bottom:16px}
+  .act-group .gh{font-family:'Fraunces',serif; font-size:13px; color:#d6b78a; padding:8px 0 5px; border-bottom:1px solid #4a4036; margin-bottom:6px}
+  .act-item{display:flex; gap:11px; align-items:center; padding:6px 0; font-size:12.5px; color:#ddd2bd}
+  .act-item .t{color:#8f8064; font-size:10.5px; width:42px; flex:0 0 auto; font-variant-numeric:tabular-nums}
+  .act-item .k{
+    font-size:9px; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:5px; flex:0 0 auto; font-weight:600;
+  }
+  .k-building{background:rgba(94,143,196,.25); color:#9cc2ec}
+  .k-deploy{background:rgba(127,179,106,.22); color:#a9d493}
+  .k-await{background:rgba(154,124,205,.25); color:#c4abe6}
+  .k-check{background:rgba(127,179,106,.22); color:#a9d493}
+  .k-reprioritize{background:rgba(214,183,138,.2); color:#dcc196}
+  .k-blocked{background:rgba(180,69,58,.28); color:#e6a59c}
+  .act-item .rdot{width:6px;height:6px;border-radius:50%;background:#7fb36a;animation:pulse 1.2s infinite; flex:0 0 auto}
+
+  /* corner badge */
+  .badge{
+    position:fixed; right:16px; top:14px; z-index:70;
+    background:var(--ink); color:var(--paper); font-family:'Fraunces',serif; font-style:italic;
+    font-size:12px; padding:6px 13px; border-radius:999px; box-shadow:var(--shadow); pointer-events:none;
+  }
+
+  /* toast */
+  .toast{
+    position:fixed; left:50%; bottom:60px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--paper); padding:11px 20px; border-radius:10px; font-size:13px;
+    z-index:90; opacity:0; transition:.25s; pointer-events:none; box-shadow:var(--shadow);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes ring{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+  @keyframes flash{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:translateY(0)}}
+
+  .canvas::-webkit-scrollbar,.rail::-webkit-scrollbar,.zoom-tl-wrap::-webkit-scrollbar,.gate::-webkit-scrollbar,.act-stream::-webkit-scrollbar,.stream::-webkit-scrollbar{height:10px;width:10px}
+  .canvas::-webkit-scrollbar-thumb,.rail::-webkit-scrollbar-thumb,.zoom-tl-wrap::-webkit-scrollbar-thumb,.gate::-webkit-scrollbar-thumb,.stream::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:6px}
+</style>
+</head>
+<body>
+<div class="badge">06 · Shipping Timeline</div>
+
+<div class="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">C Slop Slop</span>
+      <span class="sub">Founder Command Center</span>
+    </div>
+    <div class="pf" id="pf"></div>
+  </div>
+
+  <!-- COMMAND BAR (chat spine, overview) -->
+  <div class="cmdbar">
+    <span class="glyph">→</span>
+    <input id="cmd" placeholder="Direct your portfolio…  e.g. “approve LeadSift slice 5”, “promote PayoutReconciler”, “why is RedditPainBot blocked?”">
+    <button class="send" onclick="runCmd()">Send</button>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+    <!-- TIMELINE CANVAS -->
+    <div class="canvas-wrap">
+      <div class="canvas" id="canvas">
+        <div class="timeline" id="timeline">
+          <!-- axis -->
+          <div class="axis" id="axis">
+            <div class="corner">Build&nbsp;timeline →</div>
+          </div>
+          <!-- gridlines + nowline injected -->
+          <div class="lanes" id="lanes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT RAIL: next moves + opportunities -->
+    <div class="rail">
+      <h2 class="serif">Next moves</h2>
+      <div id="moves"></div>
+      <h2 style="margin-top:24px">Opportunities</h2>
+      <div id="opps"></div>
+    </div>
+  </div>
+
+  <!-- ===== ZOOM OVERLAY ===== -->
+  <div class="zoom" id="zoom">
+    <div class="zoom-top">
+      <button class="back" onclick="closeZoom()">← All companies</button>
+      <h1 id="zname"></h1>
+      <span class="domain" id="zdomain"></span>
+      <div class="meta" id="zmeta"></div>
+    </div>
+    <div class="zoom-body">
+      <!-- expanded company timeline -->
+      <div class="zoom-left">
+        <div class="zoom-tl-wrap">
+          <div class="ztl-title" id="ztltitle"></div>
+          <div class="ztl">
+            <div class="timeline-connector"></div>
+            <div id="zslices"></div>
+          </div>
+        </div>
+      </div>
+      <!-- right: approval gate OR company chat -->
+      <div class="zoom-right" id="zoomright"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE ACTIVITY STRIP -->
+<div class="activity" id="activity">
+  <div class="act-bar" onclick="toggleActivity()">
+    <span class="live"><span class="d"></span>Live activity</span>
+    <span class="act-line" id="actCollapsed"></span>
+    <span class="chev"><span class="hint" id="actHint">expand stream</span><span id="actChev">▴</span></span>
+  </div>
+  <div class="act-stream" id="actStream"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
+  companies: [
+    { id:'leadsift', name:'LeadSift', thesis:'Scrape + score inbound leads from any webform.',
+      status:'active', domain:'leadsift.app', previewUrl:'http://localhost:4019',
+      mrr:180, users:12, needsYou:true,
+      slices:[
+        {n:1, title:'A visitor can submit the lead webform',       status:'shipped',           check:'green'},
+        {n:2, title:'Leads are stored and shown in a table',       status:'shipped',           check:'green'},
+        {n:3, title:'Each lead gets an auto score 0–100',          status:'shipped',           check:'green'},
+        {n:4, title:'User can filter leads by score',              status:'shipped',           check:'green'},
+        {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
+        {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
+        {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+      ],
+      approval:{
+        slice:5, title:'User gets a daily email digest of top leads',
+        previewUrl:'http://localhost:4019/digest/preview',
+        doneWhen:'GET /digest/preview → 200 and body contains "Top leads"',
+        checkResult:'passed', attempt:2,
+        diff:[
+          "+ export function DailyDigest({ leads }: { leads: Lead[] }) {",
+          "+   const top = leads.filter(l => l.score >= 70).slice(0, 10)",
+          "+   return <DigestEmail subject=\"Your top leads today\" leads={top} />",
+          "+ }",
+          "  // schedule: cron 08:00, per-user timezone",
+          "+ scheduleDailyDigest(userId, \"08:00\")",
+        ].join("\n"),
+      },
+    },
+    { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
+      status:'active', domain:'quietinbox.io', previewUrl:'http://localhost:4021', mrr:420, users:38, needsYou:false,
+      currentSlice:{n:9, title:'Snooze a thread until tomorrow', status:'building', step:'deploying to local container'}, slicesShipped:8 },
+    { id:'translatorbill', name:'TranslatorBill', thesis:'Auto-translate + reformat invoices for cross-border freelancers.',
+      status:'active', domain:null, previewUrl:'http://localhost:4023', mrr:0, users:0, needsYou:false,
+      currentSlice:{n:6, title:'Digest scheduler UI', status:'building', step:'writing DigestScheduler.tsx'}, slicesShipped:4 },
+    { id:'datadrop', name:'DataDrop', thesis:'CSV intake → clean → instant dashboard.',
+      status:'active', domain:'datadrop.sh', previewUrl:'http://localhost:4025', mrr:95, users:6, needsYou:false,
+      currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
+    { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
+      status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+  ],
+  opportunities: [
+    { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
+    { id:'o2', thought:'podcasters spend hours adding chapter markers',       title:'ChapterForge',     thesis:'Auto-generate chapter markers from a transcript.', score:71, status:'candidate' },
+    { id:'o3', thought:'designers waste time renaming layers',                title:'LayerTidy',        thesis:'One-click layer naming for Figma.',                score:54, status:'candidate' },
+    { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
+  ],
+  activity: [
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+  ],
+  nextMoves: [
+    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Unblock RedditPainBot slice 8, or pause the company',
+    'Promote “PayoutReconciler” (score 82) to a company',
+  ],
+  chat: [
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'user',      text:'show me the diff first' },
+    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+  ],
+};
+
+/* ---------- timeline geometry ---------- */
+// Build a synthetic time axis. Each "tick" = a build day; column width fixed.
+const COL = 108;
+const NOW_TICK = 8;          // the now line sits after 8 historical ticks
+const TOTAL_TICKS = 14;      // extends right into future backlog
+const TICK_LABELS = [
+  ['Jun 9','wk 23'],['Jun 11','wk 23'],['Jun 13','wk 24'],['Jun 16','wk 24'],
+  ['Jun 18','wk 25'],['Jun 20','wk 25'],['Jun 23','wk 25'],['Today','Jun 24'],
+  ['next','queued'],['+1','backlog'],['+2','backlog'],['+3','backlog'],['+4','backlog'],['+5','backlog'],
+];
+
+// status -> overview node class
+function nodeClass(st){
+  return st==='shipped'?'shipped':st==='building'?'building':st==='awaiting_approval'?'await':st==='blocked'?'blocked':'todo';
+}
+function badgeClass(st){
+  return st==='shipped'?'b-shipped':st==='building'?'b-building':st==='awaiting_approval'?'b-await':st==='blocked'?'b-blocked':'b-todo';
+}
+function badgeLabel(st){
+  return st==='awaiting_approval'?'NEEDS YOU':st.toUpperCase();
+}
+
+// Map each company's slices onto timeline ticks.
+// shipped -> spread across history; building -> at NOW; awaiting -> at NOW; todo/blocked -> future.
+function laneNodes(co){
+  const out=[];
+  if(co.slices){ // LeadSift full detail
+    const shipped = co.slices.filter(s=>s.status==='shipped');
+    shipped.forEach((s,i)=>{
+      // spread shipped across the first NOW_TICK columns
+      const tick = Math.round((i+0.6)/(shipped.length) * (NOW_TICK-1));
+      out.push({...s, tick});
+    });
+    const live = co.slices.find(s=>s.status==='awaiting_approval'||s.status==='building');
+    if(live) out.push({...live, tick:NOW_TICK});
+    const fut = co.slices.filter(s=>s.status==='todo'||s.status==='blocked');
+    fut.forEach((s,i)=> out.push({...s, tick:NOW_TICK+1+i*1.5}));
+  } else {
+    // shorthand companies: show a few shipped dots + current slice
+    const n = co.slicesShipped||0;
+    const show = Math.min(n,5);
+    for(let i=0;i<show;i++){
+      const tick = Math.round((i+0.7)/show * (NOW_TICK-1));
+      out.push({n:(n-show+i+1), title:'shipped slice', status:'shipped', tick});
+    }
+    const cs=co.currentSlice;
+    if(cs){
+      const t = cs.status==='todo' ? NOW_TICK+1 : NOW_TICK;
+      out.push({n:cs.n, title:cs.title, status: cs.status==='blocked'?'blocked':cs.status==='todo'?'todo':cs.status, tick:t, step:cs.step});
+    }
+  }
+  return out;
+}
+
+/* ---------- render portfolio ---------- */
+function renderPortfolio(){
+  const p=DATA.portfolio;
+  document.getElementById('pf').innerHTML = `
+    <div class="stat"><div class="v">$${p.mrr}</div><div class="k">MRR</div></div>
+    <div class="stat"><div class="v">${p.users}</div><div class="k">Users</div></div>
+    <div class="stat"><div class="v">${p.activeCompanies}</div><div class="k">Active</div></div>
+    <div class="stat"><div class="v">${p.slicesShipped}</div><div class="k">Shipped</div></div>
+    <div class="needs" onclick="openZoom('leadsift')" style="cursor:pointer">
+      <span class="dot"></span>${p.needsYou} needs you
+    </div>`;
+}
+
+/* ---------- render time axis + grid + nowline ---------- */
+function renderAxis(){
+  const axis=document.getElementById('axis');
+  // remove old ticks (keep corner)
+  axis.querySelectorAll('.tick').forEach(e=>e.remove());
+  for(let i=0;i<TOTAL_TICKS;i++){
+    const t=document.createElement('div');
+    t.className='tick'+(i>=NOW_TICK?' future':'');
+    t.innerHTML = `<div class="lab">${TICK_LABELS[i][0]}</div><div class="sub">${TICK_LABELS[i][1]}</div>`;
+    axis.appendChild(t);
+  }
+}
+
+/* ---------- render lanes ---------- */
+function renderLanes(){
+  const lanes=document.getElementById('lanes');
+  const LABEL_W=236;
+  // gridlines layer
+  let grid='<div class="grid">';
+  for(let i=0;i<TOTAL_TICKS;i++){
+    grid+=`<div class="gl${i>=NOW_TICK?' future':''}" style="left:${i*COL}px"></div>`;
+  }
+  grid+='</div>';
+  // now line
+  const nowX = NOW_TICK*COL;
+  const nowEl = `<div class="nowline" style="left:${LABEL_W+nowX}px"></div>`;
+
+  let html = grid + nowEl;
+
+  DATA.companies.forEach(co=>{
+    const nodes = laneNodes(co);
+    // baseline split at now
+    const shippedMaxX = nowX;
+    let lane = `<div class="lane" data-co="${co.id}">`;
+    // sticky header
+    const stats = co.slices
+      ? `<b>${co.mrr?('$'+co.mrr):'pre-rev'}</b> · <b>${co.users}</b> users · slice ${co.slices.find(s=>s.status!=='shipped')?co.slices.find(s=>s.status!=='shipped').n:co.slices.length}`
+      : `<b>${co.mrr?('$'+co.mrr):'pre-rev'}</b> · <b>${co.users}</b> users · ${co.slicesShipped} shipped`;
+    lane += `<div class="lane-head" onclick="openZoom('${co.id}')">
+        <div class="nm"><span class="co-dot ${co.status}"></span><h3>${co.name}</h3></div>
+        <div class="cs">${stats}</div>
+        <div class="openhint">open lane →</div>
+      </div>`;
+    lane += `<div class="lane-track">`;
+    // baselines
+    lane += `<div class="lane-base" style="left:0; width:${shippedMaxX}px"></div>`;
+    lane += `<div class="lane-base future" style="left:${shippedMaxX}px; right:0"></div>`;
+    if(co.needsYou) lane += `<div class="needsflag"><span class="d"></span>NEEDS YOU · slice ${co.approval.slice}</div>`;
+    // nodes
+    nodes.forEach(nd=>{
+      const cls=nodeClass(nd.status);
+      const x = nd.tick*COL;
+      lane += `<div class="node ${cls}" style="left:${x}px">
+          <div class="dot"></div>
+          <div class="n">#${nd.n}</div>
+          <div class="cap">${truncate(nd.title,34)}</div>
+        </div>`;
+    });
+    lane += `<div class="grow-r">backlog →</div>`;
+    lane += `</div></div>`;
+    html += lane;
+  });
+
+  // infinite-grow bottom hint: add-company affordance
+  html += `<div class="add-lane" onclick="toast('New companies are promoted from Opportunities →')">
+      <span class="plus">+</span> add a company
+    </div>`;
+
+  // wrap lanes; set min width so it scrolls right (future backlog)
+  lanes.style.minWidth = (LABEL_W + TOTAL_TICKS*COL + 40)+'px';
+  lanes.innerHTML = html;
+  document.getElementById('timeline').style.minWidth = (LABEL_W + TOTAL_TICKS*COL + 40)+'px';
+}
+function truncate(s,n){return s.length>n? s.slice(0,n-1)+'…':s;}
+
+/* ---------- right rail ---------- */
+function renderRail(){
+  const moves=document.getElementById('moves');
+  moves.innerHTML = DATA.nextMoves.map((m,i)=>
+    `<div class="move"><span class="num">${String(i+1).padStart(2,'0')}</span><span>${m}</span></div>`).join('');
+
+  const opps=document.getElementById('opps');
+  opps.innerHTML = DATA.opportunities.map(o=>{
+    const killed = o.status==='killed';
+    const cls = o.score>=72?'hi':o.score>=50?'mid':'lo';
+    return `<div class="opp ${killed?'killed':''}">
+      <div class="top">
+        <div><h4>${o.title}</h4></div>
+        <div class="score ${cls}"><span>${o.score}</span><span class="lab">score</span></div>
+      </div>
+      <div class="thought">“${o.thought}”</div>
+      <div class="thesis">${o.thesis}</div>
+      ${killed
+        ? `<button class="promote" onclick="toast('“${o.title}” was killed — revive from inbox')"><span class="killtag">killed</span></button>`
+        : `<button class="promote" onclick="promote('${o.title}')">Promote to company →</button>`}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- ZOOM ---------- */
+let zoomCo=null;
+function openZoom(id){
+  const co = DATA.companies.find(c=>c.id===id);
+  if(!co) return;
+  zoomCo=co;
+  document.getElementById('zname').textContent = co.name;
+  document.getElementById('zdomain').textContent = co.domain ? co.domain : 'pre-domain';
+  document.getElementById('zmeta').innerHTML = `
+    <div class="stat"><div class="v">${co.mrr?('$'+co.mrr):'$0'}</div><div class="k">MRR</div></div>
+    <div class="stat"><div class="v">${co.users}</div><div class="k">Users</div></div>
+    <div class="stat"><div class="v" style="color:var(--${co.status==='active'?'green':'s-await-warn'})">${co.status}</div><div class="k">Status</div></div>`;
+  document.getElementById('ztltitle').textContent = co.thesis;
+
+  renderZoomSlices(co);
+  renderZoomRight(co);
+  document.getElementById('zoom').classList.add('on');
+}
+function closeZoom(){ document.getElementById('zoom').classList.remove('on'); zoomCo=null; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeZoom(); });
+
+function renderZoomSlices(co){
+  const wrap=document.getElementById('zslices');
+  let slices;
+  if(co.slices){ slices=co.slices; }
+  else {
+    // synthesize from shorthand
+    slices=[];
+    for(let i=1;i<=co.slicesShipped;i++) slices.push({n:i,title:`shipped slice ${i}`,status:'shipped',check:'green'});
+    if(co.currentSlice) slices.push({n:co.currentSlice.n,title:co.currentSlice.title,status:co.currentSlice.status,step:co.currentSlice.step});
+  }
+  wrap.innerHTML = slices.map(s=>{
+    const cls=nodeClass(s.status);
+    const sel = (co.id==='leadsift'&&s.status==='awaiting_approval')?' sel':'';
+    let right='';
+    if(s.priority) right=`<span class="pr">pri ${s.priority}</span>`;
+    if(s.note) right=`<span class="note">${s.note}</span>`;
+    if(s.step) right=`<span class="pr" style="width:auto;color:var(--s-building)">${s.step}</span>`;
+    return `<div class="zrow ${cls}${sel}">
+      <span class="mark"></span>
+      <span class="sn">#${s.n}</span>
+      <span class="stitle">${s.title}</span>
+      ${right}
+      <span class="badge ${badgeClass(s.status)}">${badgeLabel(s.status)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderZoomRight(co){
+  const r=document.getElementById('zoomright');
+  if(co.id==='leadsift' && co.approval){
+    renderGate(co, r);
+  } else {
+    renderCompanyChat(co, r);
+  }
+}
+
+/* ---- APPROVAL GATE (LeadSift) ---- */
+function renderGate(co, r){
+  const a=co.approval;
+  const diffHtml = a.diff.split('\n').map(l=>{
+    const cls = l.startsWith('+')?'add': (l.trim().startsWith('//')||!l.startsWith('+'))?'ctx':'';
+    return `<div class="ln ${cls}">${escapeHtml(l)}</div>`;
+  }).join('');
+  r.innerHTML = `
+    <div class="gate">
+      <span class="await-pill"><span class="d"></span>Awaiting your approval · attempt ${a.attempt}</span>
+      <h2>Slice ${a.slice} — Approval gate</h2>
+      <div class="gsub">${a.title}</div>
+
+      <div class="panel">
+        <div class="ph">Live preview</div>
+        <div class="preview-row">
+          <a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a>
+          <button class="openbtn" onclick="toast('Opening preview (mock)…')">Open ↗</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">doneWhen check</div>
+        <div class="donewhen">${escapeHtml(a.doneWhen)}</div>
+        <div class="checkres"><span class="tick-i">✓</span> ${a.checkResult} — check is green</div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">Diff · DigestScheduler</div>
+        <div class="diff">${diffHtml}</div>
+      </div>
+    </div>
+
+    <div class="reject-box" id="rejectBox">
+      <textarea id="rejectFb" placeholder="What should change? e.g. “only digest leads scored ≥ 80, send at 07:00”"></textarea>
+      <button class="send-fb" onclick="sendReject()">Send feedback & re-queue ↻</button>
+    </div>
+
+    <div class="gate-confirm" id="gateConfirm"></div>
+
+    <div class="gate-actions" id="gateActions">
+      <button class="btn-approve" onclick="approveSlice()">Approve & ship ✓</button>
+      <button class="btn-reject" onclick="toggleReject()">Reject with feedback</button>
+    </div>
+  `;
+}
+function approveSlice(){
+  const c=document.getElementById('gateConfirm');
+  c.className='gate-confirm approved show';
+  c.innerHTML='✓ Approved — slice 5 is shipping live to localhost:4019';
+  document.getElementById('gateActions').style.display='none';
+  document.getElementById('rejectBox').classList.remove('show');
+  toast('LeadSift slice 5 approved ✓');
+}
+function toggleReject(){
+  document.getElementById('rejectBox').classList.toggle('show');
+}
+function sendReject(){
+  const fb=document.getElementById('rejectFb').value.trim();
+  const c=document.getElementById('gateConfirm');
+  c.className='gate-confirm rejected show';
+  c.innerHTML='↻ Rejected — re-queued with your feedback'+(fb?': “'+escapeHtml(fb)+'”':'');
+  document.getElementById('gateActions').style.display='none';
+  document.getElementById('rejectBox').classList.remove('show');
+  toast('Feedback sent — slice re-queued ↻');
+}
+
+/* ---- COMPANY CHAT (non-LeadSift) ---- */
+function renderCompanyChat(co, r){
+  const seed = [
+    {role:'assistant', text:`${co.name}: ${co.currentSlice? ('slice '+co.currentSlice.n+' is '+co.currentSlice.status+' — '+(co.currentSlice.step||'')) : 'idle'}.`},
+    {role:'assistant', text: co.previewUrl? `Live preview: ${co.previewUrl}` : 'No live preview yet (pre-deploy).'},
+  ];
+  r.innerHTML = `
+    <div class="rhead"><span class="rtab on">Chat</span><span class="rtab" onclick="toast('Artifacts: preview, diffs, checks')">Artifacts</span></div>
+    <div class="cochat">
+      <div class="stream" id="coStream">
+        ${seed.map(m=>`<div class="msg ${m.role}">${escapeHtml(m.text)}</div>`).join('')}
+      </div>
+      <div class="cbar">
+        <input id="coInput" placeholder="Message ${co.name}…">
+        <button class="send" onclick="coSend()">Send</button>
+      </div>
+    </div>`;
+  const inp=document.getElementById('coInput');
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') coSend(); });
+}
+function coSend(){
+  const inp=document.getElementById('coInput'); const v=inp.value.trim(); if(!v) return;
+  const s=document.getElementById('coStream');
+  s.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(v)}</div>`);
+  inp.value='';
+  setTimeout(()=>{
+    s.insertAdjacentHTML('beforeend', `<div class="msg assistant">On it — re-prioritizing and reporting back as the next slice ships.</div>`);
+    s.scrollTop=s.scrollHeight;
+  },420);
+  s.scrollTop=s.scrollHeight;
+}
+
+/* ---------- global command bar ---------- */
+function runCmd(){
+  const inp=document.getElementById('cmd'); const v=inp.value.trim(); if(!v) return;
+  const low=v.toLowerCase();
+  inp.value='';
+  if(low.includes('leadsift')||low.includes('approve')||low.includes('slice 5')||low.includes('digest')){
+    toast('Opening LeadSift approval gate…'); openZoom('leadsift'); return;
+  }
+  if(low.includes('promote')||low.includes('payout')){ promote('PayoutReconciler'); return; }
+  if(low.includes('reddit')||low.includes('block')){ openZoom('redditpainbot'); toast('RedditPainBot — slice 8 blocked (same failure ×3)'); return; }
+  const m=DATA.companies.find(c=>low.includes(c.name.toLowerCase()));
+  if(m){ openZoom(m.id); return; }
+  toast('Routing “'+truncate(v,40)+'” to the portfolio…');
+}
+document.getElementById('cmd').addEventListener('keydown',e=>{ if(e.key==='Enter') runCmd(); });
+
+function promote(title){ toast('Promoted “'+title+'” → new company spun up (slice 1 walking skeleton queued)'); }
+
+/* ---------- live activity strip ---------- */
+function actKindClass(k){ return 'k-'+k; }
+function renderActivity(){
+  // collapsed line = single latest current (running) line, else first
+  const latest = DATA.activity.find(a=>a.running) || DATA.activity[0];
+  document.getElementById('actCollapsed').innerHTML =
+    `${latest.running?'<span class="rdot"></span>':''}<span class="co">${latest.co}</span>${latest.text}`;
+
+  // expanded = grouped by company
+  const groups={};
+  DATA.activity.forEach(a=>{ (groups[a.co]=groups[a.co]||[]).push(a); });
+  let html='';
+  for(const co in groups){
+    html+=`<div class="act-group"><div class="gh">${co}</div>`;
+    groups[co].forEach(a=>{
+      html+=`<div class="act-item">
+        <span class="t">${a.t}</span>
+        <span class="k ${actKindClass(a.kind)}">${a.kind}</span>
+        ${a.running?'<span class="rdot"></span>':''}
+        <span>${escapeHtml(a.text)}</span>
+      </div>`;
+    });
+    html+='</div>';
+  }
+  document.getElementById('actStream').innerHTML=html;
+}
+function toggleActivity(){
+  const el=document.getElementById('activity');
+  const open=el.classList.toggle('open');
+  document.getElementById('actChev').textContent = open?'▾':'▴';
+  document.getElementById('actHint').textContent = open?'collapse':'expand stream';
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ---------- init ---------- */
+renderPortfolio();
+renderAxis();
+renderLanes();
+renderRail();
+renderActivity();
+</script>
+</body>
+</html>

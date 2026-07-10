@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Portfolio · Rail</title>
+<script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#f7f3ec; --cream-2:#f1ebe0; --paper:#fffdf8;
+    --ink:#2c2926; --ink-soft:#635c52; --ink-faint:#7b7368;
+    --line:#e6ddce; --line-soft:#efe8da;
+    --accent:#c8643c; --accent-soft:#f4e0d6;
+    --green:#4f8a52; --green-soft:#e3efe1;
+    --blue:#4a72b0; --blue-soft:#e2eaf5;
+    --violet:#7a5ea8; --violet-soft:#ece6f5;
+    --amber:#c08a2e; --amber-soft:#f6ecd4;
+    --red:#b6483f; --red-soft:#f6e0dd;
+    --slate:#8a8579; --slate-soft:#ece8df;
+  }
+  :root[data-theme="dark"]{
+    --cream:#05060a; --cream-2:#080d18; --paper:#10131f;
+    --ink:#e6ebf5; --ink-soft:#aab4c8; --ink-faint:#7c8499;
+    --line:#1c2233; --line-soft:#111726;
+    --accent:#e0794e; --accent-soft:rgba(224,121,78,.18);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --blue:#60a5fa; --blue-soft:rgba(96,165,250,.15);
+    --violet:#a78bfa; --violet-soft:rgba(167,139,250,.16);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.15);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --slate:#8a93a8; --slate-soft:rgba(120,140,200,.12);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; }
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream); color:var(--ink);
+    font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-.005em;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  .disp{ font-family:'Space Grotesk','Inter',sans-serif; }
+
+  /* company accent tokens */
+  .c-leadsift{ --c:var(--accent); --cs:var(--accent-soft); }
+  .c-quietinbox{ --c:var(--blue); --cs:var(--blue-soft); }
+  .c-translatorbill{ --c:var(--violet); --cs:var(--violet-soft); }
+  .c-datadrop{ --c:var(--green); --cs:var(--green-soft); }
+  .c-redditpainbot{ --c:var(--slate); --cs:var(--slate-soft); }
+
+  /* ---------- shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:322px minmax(0,1fr);
+    min-height:100vh;
+    max-width:1240px;
+    margin:0 auto;
+  }
+
+  /* ================= RAIL ================= */
+  .rail{
+    border-right:1px solid var(--line);
+    padding:34px 34px 40px;
+    display:flex; flex-direction:column;
+    position:sticky; top:0; align-self:start;
+    min-height:100vh;
+  }
+  .brand{ display:flex; align-items:center; gap:11px; margin-bottom:38px; }
+  .logo-dot{
+    width:28px; height:28px; border-radius:9px;
+    background:radial-gradient(circle at 32% 28%, #e08458, var(--accent));
+    display:grid; place-items:center; color:#fff; font-weight:700; font-size:13px;
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.4), 0 2px 6px rgba(200,100,60,.28);
+    flex:0 0 auto;
+  }
+  .brand .bm{ display:flex; align-items:baseline; gap:5px; }
+  .brand .brace{ font-family:'Space Grotesk',sans-serif; font-size:20px; color:var(--accent); opacity:.45; }
+  .brand .word{ font-weight:600; font-size:16px; letter-spacing:-.01em; }
+  .brand .tag{ display:block; font-size:10.5px; color:var(--ink-faint); letter-spacing:.04em; margin-top:2px; }
+  .theme-toggle{
+    margin-left:auto; width:31px; height:31px; border-radius:9px; cursor:pointer;
+    background:transparent; border:1px solid var(--line); color:var(--ink-soft);
+    display:grid; place-items:center; font-size:14px; line-height:1;
+    transition:color .15s, border-color .15s, background .15s;
+  }
+  .theme-toggle:hover{ color:var(--accent); border-color:var(--accent); }
+
+  /* MRR hero */
+  .hero-lab{ font-size:10.5px; letter-spacing:.16em; color:var(--ink-faint); text-transform:uppercase; }
+  .hero-val{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:52px; line-height:1; letter-spacing:-.02em; margin:8px 0 6px; }
+  .hero-sub{ display:flex; align-items:center; gap:9px; font-size:12.5px; }
+  .up{ color:var(--green); font-weight:600; }
+  .up .car{ font-size:10px; }
+  .hero-sep{ color:var(--line); }
+  .muted{ color:var(--ink-faint); }
+
+  /* metric list */
+  .m-list{ margin:32px 0 6px; }
+  .m-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:13px 0; border-top:1px solid var(--line-soft);
+  }
+  .m-row:first-child{ border-top:0; }
+  .m-lab{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; color:var(--ink-faint); text-transform:uppercase; }
+  .m-val{ font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:16px; }
+  .m-val small{ font-family:'Inter',sans-serif; font-weight:500; font-size:11.5px; margin-left:6px; }
+  .m-val small.g{ color:var(--green); }
+  /* spend meter */
+  .spend{ padding:14px 0 4px; border-top:1px solid var(--line-soft); }
+  .spend-top{ display:flex; align-items:baseline; justify-content:space-between; }
+  .spend-val{ font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:16px; }
+  .spend-val em{ font-style:normal; color:var(--ink-faint); font-weight:400; }
+  .meter{ height:5px; border-radius:4px; background:var(--line-soft); margin-top:10px; overflow:hidden; }
+  .meter > i{ display:block; height:100%; width:43%; border-radius:4px; background:var(--accent); }
+
+  /* needs you */
+  .nu{ margin-top:34px; }
+  .nu-head{ display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+  .nu-title{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); }
+  .nu-count{
+    font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500;
+    background:var(--accent-soft); color:var(--accent); border-radius:20px; padding:1px 8px;
+  }
+  .nu-item{
+    display:flex; gap:11px; padding:13px 0; border-top:1px solid var(--line-soft);
+    cursor:pointer; text-align:left; width:100%; background:none; border-left:0; border-right:0; border-bottom:0;
+    font:inherit; color:inherit; align-items:flex-start;
+    transition:transform .16s ease;
+  }
+  .nu-item:hover{ transform:translateX(3px); }
+  .nu-dot{ width:8px; height:8px; border-radius:50%; background:var(--c); margin-top:5px; flex:0 0 auto; }
+  .nu-body{ min-width:0; }
+  .nu-verb{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.09em; text-transform:uppercase; font-weight:500; }
+  .nu-verb.ship{ color:var(--green); } .nu-verb.spend{ color:var(--amber); } .nu-verb.unblock{ color:var(--red); }
+  .nu-verb .ck{ margin-left:5px; }
+  .nu-text{ font-size:13.5px; color:var(--ink-soft); margin-top:2px; transition:color .16s; }
+  .nu-item:hover .nu-text{ color:var(--ink); }
+  .nu-text b{ font-weight:600; color:var(--ink); }
+  .nu-x{ color:var(--red); font-weight:600; }
+  .rail-spacer{ flex:1 1 auto; min-height:24px; }
+  .rail-foot{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); letter-spacing:.04em; display:flex; align-items:center; gap:8px; }
+  .live{ width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 var(--green-soft); animation:pulse 2.4s infinite; }
+
+  /* ================= MAIN ================= */
+  .main{ padding:40px 46px 60px; min-width:0; }
+  .main-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:6px; }
+  .h1{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:30px; letter-spacing:-.02em; }
+  .h1-sub{ font-size:13px; color:var(--ink-faint); margin-top:4px; }
+  .net-tag{ text-align:right; }
+  .net-tag .nl{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); }
+  .net-tag .nv{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:20px; color:var(--green); margin-top:2px; }
+
+  /* filter */
+  .filter{ display:flex; align-items:center; gap:4px; margin:28px 0 4px; }
+  .seg{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.03em;
+    padding:6px 13px; border-radius:20px; cursor:pointer; border:0; background:none;
+    color:var(--ink-faint); transition:color .15s, background .15s;
+  }
+  .seg:hover{ color:var(--ink); }
+  .seg.on{ background:var(--accent-soft); color:var(--accent); font-weight:500; }
+  .seg .n{ opacity:.6; margin-left:4px; }
+
+  /* company rows */
+  .co-list{ margin-top:6px; }
+  .co{
+    display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+    gap:20px; align-items:center;
+    padding:20px 8px 20px 18px;
+    border-top:1px solid var(--line-soft);
+    position:relative; cursor:pointer;
+    transition:background .18s;
+  }
+  .co:hover{ background:var(--cs); border-radius:12px; }
+  .co::before{
+    content:""; position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:3px; height:0; border-radius:3px; background:var(--c);
+    transition:height .22s ease;
+  }
+  .co:hover::before, .co.flash::before{ height:64%; }
+  .co.needs::before{ height:34%; }
+  .co-dot{ width:11px; height:11px; border-radius:50%; background:var(--c); position:relative; }
+  .co.building .co-dot::after{
+    content:""; position:absolute; inset:-4px; border-radius:50%;
+    border:1.5px solid var(--c); opacity:.4; animation:ring 1.9s infinite;
+  }
+  .co-main{ min-width:0; }
+  .co-l1{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .co-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; letter-spacing:-.01em; }
+  .pill{
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+    padding:2px 8px; border-radius:20px; background:var(--slate-soft); color:var(--ink-soft); font-weight:500;
+  }
+  .pill.live{ all:unset; }
+  .pill-live{ background:var(--green-soft); color:var(--green); }
+  .pill-build{ background:var(--cs); color:var(--c); }
+  .pill-paused{ background:var(--red-soft); color:var(--red); }
+  .pill-best{ background:var(--blue-soft); color:var(--blue); }
+  .needs-chip{
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; text-transform:uppercase; font-weight:600;
+    padding:2px 8px; border-radius:20px; background:var(--accent-soft); color:var(--accent);
+  }
+  .co-work{ font-size:13px; color:var(--ink-faint); margin-top:5px; }
+  .co-work b{ color:var(--ink-soft); font-weight:500; }
+  .co-work q{ color:var(--ink-soft); font-style:normal; }
+  .co-work q::before{ content:"“"; } .co-work q::after{ content:"”"; }
+  .co-metrics{ text-align:right; white-space:nowrap; }
+  .co-mrr{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px; letter-spacing:-.01em; }
+  .co-mrr .d{ font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600; color:var(--green); margin-left:6px; }
+  .co-users{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); margin-top:4px; letter-spacing:.02em; }
+  .co.dim{ display:none; }
+
+  /* activity */
+  .act{ margin-top:46px; }
+  .act-head{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:4px; }
+  .act-row{ display:flex; align-items:center; gap:13px; padding:11px 4px; border-top:1px solid var(--line-soft); }
+  .act-dot{ width:7px; height:7px; border-radius:50%; background:var(--c); flex:0 0 auto; position:relative; }
+  .act-row.now .act-dot{ box-shadow:0 0 0 0 var(--c); animation:pulse 2.2s infinite; }
+  .act-txt{ font-size:13.5px; color:var(--ink-soft); min-width:0; flex:1; }
+  .act-txt b{ color:var(--c); font-weight:600; }
+  .act-time{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); }
+  .act-row.now .act-time{ color:var(--green); }
+
+  @keyframes pulse{ 0%{ box-shadow:0 0 0 0 var(--green-soft); } 70%{ box-shadow:0 0 0 7px transparent; } 100%{ box-shadow:0 0 0 0 transparent; } }
+  @keyframes ring{ 0%{ transform:scale(.7); opacity:.5; } 100%{ transform:scale(1.5); opacity:0; } }
+  @keyframes flash{ 0%{ background:var(--cs); } 100%{ background:transparent; } }
+  .co.flash{ animation:flash 1.4s ease; }
+
+  @media (max-width:900px){
+    .shell{ grid-template-columns:1fr; }
+    .rail{ position:static; min-height:0; border-right:0; border-bottom:1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ SUMMARY RAIL ============ -->
+  <aside class="rail">
+    <div class="brand">
+      <div class="logo-dot">C</div>
+      <div>
+        <div class="bm"><span class="brace">{</span><span class="word">slop slop</span><span class="brace">}</span></div>
+        <span class="tag">PORTFOLIO</span>
+      </div>
+      <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">☾</button>
+    </div>
+
+    <div>
+      <div class="hero-lab">Monthly recurring</div>
+      <div class="hero-val">$695</div>
+      <div class="hero-sub">
+        <span class="up"><span class="car">▲</span> 14% MoM</span>
+        <span class="hero-sep">·</span>
+        <span class="muted">56 users, +8/wk</span>
+      </div>
+    </div>
+
+    <div class="m-list">
+      <div class="m-row"><span class="m-lab">Companies</span><span class="m-val">5<small class="muted">4 active · 1 paused</small></span></div>
+      <div class="m-row"><span class="m-lab">Net / mo</span><span class="m-val">+$481<small class="g">profit</small></span></div>
+      <div class="m-row"><span class="m-lab">Shipped</span><span class="m-val">22<small class="muted">all-time</small></span></div>
+      <div class="spend">
+        <div class="spend-top"><span class="m-lab">Spend cap</span><span class="spend-val">$214 <em>/ $500</em></span></div>
+        <div class="meter"><i></i></div>
+      </div>
+    </div>
+
+    <div class="nu">
+      <div class="nu-head">
+        <span class="nu-title">Needs you</span>
+        <span class="nu-count">3</span>
+      </div>
+      <button class="nu-item c-leadsift" data-co="leadsift">
+        <span class="nu-dot"></span>
+        <span class="nu-body">
+          <span class="nu-verb ship">Ship<span class="ck">✓</span></span>
+          <div class="nu-text"><b>LeadSift</b> — daily digest, passed check</div>
+        </span>
+      </button>
+      <button class="nu-item c-quietinbox" data-co="quietinbox">
+        <span class="nu-dot"></span>
+        <span class="nu-body">
+          <span class="nu-verb spend">Spend</span>
+          <div class="nu-text"><b>QuietInbox</b> — $40 Product Hunt launch</div>
+        </span>
+      </button>
+      <button class="nu-item c-redditpainbot" data-co="redditpainbot">
+        <span class="nu-dot"></span>
+        <span class="nu-body">
+          <span class="nu-verb unblock">Unblock</span>
+          <div class="nu-text"><b>RedditPainBot</b> — slice 8 stuck <span class="nu-x">×3</span></div>
+        </span>
+      </button>
+    </div>
+
+    <div class="rail-spacer"></div>
+    <div class="rail-foot"><span class="live"></span> agent live · updated just now</div>
+  </aside>
+
+  <!-- ============ MAIN OVERVIEW ============ -->
+  <main class="main">
+    <div class="main-head">
+      <div>
+        <div class="h1">Portfolio</div>
+        <div class="h1-sub">5 companies building, growing and running themselves — 3 want a decision from you.</div>
+      </div>
+      <div class="net-tag">
+        <div class="nl">Net / month</div>
+        <div class="nv">+$481</div>
+      </div>
+    </div>
+
+    <div class="filter" id="filter">
+      <button class="seg on" data-f="all">All<span class="n">5</span></button>
+      <button class="seg" data-f="needs">Needs you<span class="n">3</span></button>
+      <button class="seg" data-f="active">Active<span class="n">4</span></button>
+      <button class="seg" data-f="paused">Paused<span class="n">1</span></button>
+    </div>
+
+    <div class="co-list" id="coList">
+
+      <div class="co c-quietinbox building needs" data-id="quietinbox" data-tags="active needs">
+        <span class="co-dot"></span>
+        <div class="co-main">
+          <div class="co-l1">
+            <span class="co-name">QuietInbox</span>
+            <span class="pill pill-live">Live · scaling</span>
+            <span class="pill pill-best">Best</span>
+            <span class="needs-chip">Needs you</span>
+          </div>
+          <div class="co-work">Building <q>snooze a thread</q> · $40 Product Hunt launch awaiting go</div>
+        </div>
+        <div class="co-metrics">
+          <div class="co-mrr">$420</div>
+          <div class="co-users">38 users</div>
+        </div>
+      </div>
+
+      <div class="co c-leadsift needs" data-id="leadsift" data-tags="active needs">
+        <span class="co-dot"></span>
+        <div class="co-main">
+          <div class="co-l1">
+            <span class="co-name">LeadSift</span>
+            <span class="pill pill-live">Live · growing</span>
+            <span class="needs-chip">Needs you</span>
+          </div>
+          <div class="co-work">Ship <q>daily digest</q> · <b>passed check ✓</b> — awaiting approval</div>
+        </div>
+        <div class="co-metrics">
+          <div class="co-mrr">$180<span class="d">▲ $40</span></div>
+          <div class="co-users">12 users</div>
+        </div>
+      </div>
+
+      <div class="co c-datadrop" data-id="datadrop" data-tags="active">
+        <span class="co-dot"></span>
+        <div class="co-main">
+          <div class="co-l1">
+            <span class="co-name">DataDrop</span>
+            <span class="pill pill-live">Live · flat</span>
+          </div>
+          <div class="co-work">Queued <q>saved chart views</q></div>
+        </div>
+        <div class="co-metrics">
+          <div class="co-mrr">$95</div>
+          <div class="co-users">6 users</div>
+        </div>
+      </div>
+
+      <div class="co c-translatorbill building" data-id="translatorbill" data-tags="active">
+        <span class="co-dot"></span>
+        <div class="co-main">
+          <div class="co-l1">
+            <span class="co-name">TranslatorBill</span>
+            <span class="pill pill-build">Building</span>
+          </div>
+          <div class="co-work">Building <q>invoice reformat</q> · pre-revenue</div>
+        </div>
+        <div class="co-metrics">
+          <div class="co-mrr muted">$0</div>
+          <div class="co-users">0 users</div>
+        </div>
+      </div>
+
+      <div class="co c-redditpainbot needs" data-id="redditpainbot" data-tags="paused needs">
+        <span class="co-dot"></span>
+        <div class="co-main">
+          <div class="co-l1">
+            <span class="co-name">RedditPainBot</span>
+            <span class="pill pill-paused">Paused · blocked</span>
+            <span class="needs-chip">Needs you</span>
+          </div>
+          <div class="co-work">Slice 8 stuck <span class="nu-x" style="font-weight:600">×3</span> — needs unblock</div>
+        </div>
+        <div class="co-metrics">
+          <div class="co-mrr muted">$0</div>
+          <div class="co-users">0 users</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="act">
+      <div class="act-head">Live activity</div>
+      <div class="act-row now c-translatorbill">
+        <span class="act-dot"></span>
+        <span class="act-txt"><b>TranslatorBill</b> building InvoiceFormatter.tsx</span>
+        <span class="act-time">now</span>
+      </div>
+      <div class="act-row c-quietinbox">
+        <span class="act-dot"></span>
+        <span class="act-txt"><b>QuietInbox</b> deployed · checks passing</span>
+        <span class="act-time">12s</span>
+      </div>
+      <div class="act-row c-leadsift">
+        <span class="act-dot"></span>
+        <span class="act-txt"><b>LeadSift</b> awaiting your approval</span>
+        <span class="act-time">2m</span>
+      </div>
+      <div class="act-row c-datadrop">
+        <span class="act-dot"></span>
+        <span class="act-txt"><b>DataDrop</b> re-prioritized backlog</span>
+        <span class="act-time">5m</span>
+      </div>
+      <div class="act-row c-redditpainbot">
+        <span class="act-dot"></span>
+        <span class="act-txt"><b>RedditPainBot</b> blocked ×3</span>
+        <span class="act-time">18m</span>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  // ---- theme toggle ----
+  (function(){
+    var btn = document.getElementById('themeBtn');
+    function sync(){ btn.textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '☀' : '☾'; }
+    sync();
+    btn.addEventListener('click', function(){
+      var dark = document.documentElement.getAttribute('data-theme')==='dark';
+      if(dark){ document.documentElement.removeAttribute('data-theme'); }
+      else{ document.documentElement.setAttribute('data-theme','dark'); }
+      try{ localStorage.setItem('cslopslop-theme', dark ? 'light' : 'dark'); }catch(e){}
+      sync();
+    });
+  })();
+
+  // ---- filter ----
+  (function(){
+    var segs = document.querySelectorAll('#filter .seg');
+    var cos = document.querySelectorAll('#coList .co');
+    segs.forEach(function(s){
+      s.addEventListener('click', function(){
+        segs.forEach(function(x){ x.classList.remove('on'); });
+        s.classList.add('on');
+        var f = s.dataset.f;
+        cos.forEach(function(c){
+          var show = f==='all' || (c.dataset.tags||'').indexOf(f) > -1;
+          c.classList.toggle('dim', !show);
+        });
+      });
+    });
+  })();
+
+  // ---- needs-you → highlight company row ----
+  (function(){
+    document.querySelectorAll('.nu-item').forEach(function(item){
+      item.addEventListener('click', function(){
+        var id = item.dataset.co;
+        // make sure a filter isn't hiding it
+        document.querySelector('#filter .seg[data-f="all"]').click();
+        var row = document.querySelector('.co[data-id="'+id+'"]');
+        if(!row) return;
+        row.scrollIntoView({ behavior:'smooth', block:'center' });
+        row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
+      });
+    });
+  })();
+
+  // ---- company row click ----
+  (function(){
+    document.querySelectorAll('#coList .co').forEach(function(c){
+      c.addEventListener('click', function(){
+        c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

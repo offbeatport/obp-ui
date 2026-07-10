@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C Slop Slop — Portfolio Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06080c;
+    --panel:#0b0f16;
+    --panel-2:#0e1420;
+    --row:#0a0e15;
+    --row-alt:#0c1219;
+    --line:#1a2331;
+    --line-soft:#141b27;
+    --ink:#cdd6e4;
+    --ink-dim:#7e8aa0;
+    --ink-faint:#4d5870;
+    --amber:#f5a623;
+    --amber-2:#f59e0b;
+    --cyan:#22d3ee;
+    --cyan-2:#38bdf8;
+    --green:#34d399;
+    --red:#fb5b6d;
+    --violet:#a78bfa;
+    --rose:#fb7185;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --sp:6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #0c1422 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--mono);
+    font-size:12px;
+    line-height:1.35;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:.1px;
+  }
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .amber{color:var(--amber)} .cyan{color:var(--cyan)} .dim{color:var(--ink-dim)} .faint{color:var(--ink-faint)}
+
+  /* ===== TOP BAR ===== */
+  .topbar{
+    display:flex;align-items:center;gap:16px;
+    height:38px;padding:0 12px;
+    background:linear-gradient(180deg,#0d1320,#090d15);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:30;
+  }
+  .brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+  .brand .logo{
+    font-weight:700;font-size:13px;letter-spacing:.5px;color:var(--bg);
+    background:var(--amber);padding:2px 7px;border-radius:2px;
+  }
+  .brand .sub{color:var(--ink-faint);font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+  .tabs{display:flex;gap:2px;margin-left:6px}
+  .tab{
+    padding:6px 14px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;
+    color:var(--ink-dim);border:1px solid transparent;border-bottom:none;cursor:pointer;
+    border-radius:3px 3px 0 0;background:transparent;font-family:var(--mono);
+  }
+  .tab.active{color:var(--amber);background:var(--panel-2);border-color:var(--line);box-shadow:inset 0 -2px 0 var(--amber)}
+  .tab:hover:not(.active){color:var(--ink)}
+  .spacer{flex:1}
+  .clock{color:var(--cyan);font-size:11px;letter-spacing:1px}
+  .acct{
+    display:flex;align-items:center;gap:8px;font-size:11px;
+  }
+  .btn{
+    font-family:var(--mono);font-size:11px;letter-spacing:.5px;text-transform:uppercase;
+    padding:5px 11px;border-radius:3px;border:1px solid var(--line);background:var(--panel-2);
+    color:var(--ink);cursor:pointer;white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--ink-dim);background:#121a28}
+  .btn.amber{background:var(--amber);color:#1a1206;border-color:var(--amber);font-weight:600}
+  .btn.amber:hover{background:#ffb733}
+  .btn.ghost{background:transparent}
+
+  /* ===== TICKER ===== */
+  .ticker{
+    height:26px;overflow:hidden;white-space:nowrap;
+    background:#070a10;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;position:relative;
+  }
+  .ticker .lbl{
+    position:absolute;left:0;top:0;bottom:0;z-index:2;
+    display:flex;align-items:center;padding:0 10px;
+    background:linear-gradient(90deg,#0a0f18 70%,transparent);
+    color:var(--amber);font-size:10px;letter-spacing:1.5px;font-weight:600;
+  }
+  .ticker-track{display:inline-flex;align-items:center;animation:scroll 42s linear infinite;padding-left:120px}
+  .ticker:hover .ticker-track{animation-play-state:paused}
+  .tk{display:inline-flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--line-soft);font-size:11px}
+  .tk b{color:var(--ink);font-weight:600}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ===== STATS STRIP ===== */
+  .stats{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+    background:var(--line);border-bottom:1px solid var(--line);
+  }
+  .stat{background:var(--panel);padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+  .stat .k{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-faint)}
+  .stat .v{font-size:18px;font-weight:600;letter-spacing:.5px}
+  .stat .d{font-size:10px}
+
+  /* ===== LAYOUT ===== */
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:1px;background:var(--line);
+    min-height:calc(100vh - 38px - 26px - 56px);
+  }
+  .col{display:flex;flex-direction:column;gap:1px;background:var(--line)}
+
+  .pane{background:var(--panel);display:flex;flex-direction:column}
+  .pane-hd{
+    display:flex;align-items:center;gap:8px;
+    padding:6px 10px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#0d131e,#0a0e16);
+  }
+  .pane-hd h2{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:600}
+  .pane-hd .meta{margin-left:auto;font-size:10px;color:var(--ink-faint);letter-spacing:.5px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+
+  /* ===== COMPANY TABLE ===== */
+  table{width:100%;border-collapse:collapse}
+  thead th{
+    font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);
+    text-align:right;padding:6px 10px;border-bottom:1px solid var(--line);font-weight:600;
+    background:#0a0e16;position:sticky;top:0;
+  }
+  thead th.l{text-align:left}
+  tbody tr{border-bottom:1px solid var(--line-soft);cursor:default}
+  tbody tr:nth-child(odd){background:var(--row)}
+  tbody tr:nth-child(even){background:var(--row-alt)}
+  tbody tr:hover{background:#10182600;outline:1px solid var(--line);background:#101a28}
+  td{padding:7px 10px;text-align:right;vertical-align:middle;font-size:11.5px}
+  td.l{text-align:left}
+  .co{display:flex;align-items:center;gap:9px}
+  .swatch{width:9px;height:22px;border-radius:1px;flex:none}
+  .co-name{font-weight:600;color:var(--ink);font-family:var(--sans);letter-spacing:.2px;font-size:12.5px}
+  .co-mission{font-size:10px;color:var(--ink-dim);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--sans)}
+  .ver{font-size:10px;color:var(--cyan);letter-spacing:.5px}
+
+  /* stage pipeline */
+  .stage{display:flex;align-items:center;gap:0;justify-content:flex-end}
+  .seg{
+    width:13px;height:5px;background:var(--line);margin-left:2px;border-radius:1px;position:relative;
+  }
+  .seg.on{background:var(--cyan)}
+  .seg.on.amber{background:var(--amber)}
+  .stage-lbl{font-size:9px;color:var(--ink-dim);letter-spacing:.6px;margin-left:7px;min-width:62px;text-align:left;text-transform:uppercase}
+
+  .pill{
+    display:inline-block;padding:2px 7px;border-radius:2px;font-size:9px;font-weight:600;
+    letter-spacing:.8px;text-transform:uppercase;border:1px solid;white-space:nowrap;
+  }
+  .pill.live{color:var(--green);border-color:#1c4a3a;background:#0c2018}
+  .pill.build{color:var(--cyan);border-color:#1a4554;background:#08222a}
+  .pill.approve{color:var(--amber);border-color:#5a4416;background:#241a08;animation:blink 2s ease-in-out infinite}
+  .pill.blocked{color:var(--red);border-color:#5a2128;background:#240c10}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.55}}
+
+  /* ===== QUEUE LISTS ===== */
+  .qlist{display:flex;flex-direction:column}
+  .qitem{
+    display:flex;gap:9px;padding:8px 10px;border-bottom:1px solid var(--line-soft);align-items:flex-start;
+  }
+  .qitem:hover{background:#0f1622}
+  .qbar{width:3px;align-self:stretch;border-radius:2px;flex:none;background:var(--ink-faint)}
+  .qbar.amber{background:var(--amber)} .qbar.red{background:var(--red)} .qbar.cyan{background:var(--cyan)} .qbar.green{background:var(--green)} .qbar.violet{background:var(--violet)}
+  .qbody{flex:1;min-width:0}
+  .qtop{display:flex;align-items:center;gap:7px;margin-bottom:2px;flex-wrap:wrap}
+  .qco{font-size:10px;letter-spacing:.6px;font-weight:600;text-transform:uppercase}
+  .qtag{font-size:8px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-faint);border:1px solid var(--line);padding:1px 5px;border-radius:2px}
+  .qtxt{font-size:11px;color:var(--ink);font-family:var(--sans);line-height:1.4}
+  .qact{display:flex;gap:5px;margin-top:6px}
+  .minibtn{font-family:var(--mono);font-size:9px;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid var(--line);background:transparent;color:var(--ink-dim);cursor:pointer}
+  .minibtn:hover{color:var(--ink);border-color:var(--ink-dim)}
+  .minibtn.go{color:var(--amber);border-color:#5a4416;background:#1c1505}
+  .minibtn.go:hover{background:#2a2008}
+
+  /* ===== AGENT CONSOLE ===== */
+  .console{
+    flex:1;overflow:auto;font-size:10.5px;padding:4px 0;background:#070a10;min-height:170px;max-height:280px;
+  }
+  .logline{display:flex;gap:8px;padding:2px 10px;white-space:nowrap;align-items:baseline}
+  .logline:hover{background:#0e1622}
+  .lt{color:var(--ink-faint);font-size:10px}
+  .lv{font-weight:600;font-size:9px;letter-spacing:.5px;min-width:46px}
+  .lv.BUILD{color:var(--cyan)} .lv.DEPLOY{color:var(--green)} .lv.SCAN{color:var(--violet)} .lv.GTM{color:var(--amber)} .lv.WARN{color:var(--red)}
+  .lmsg{color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;font-family:var(--sans);font-size:11px}
+  .lmsg b{color:var(--ink);font-weight:600}
+
+  /* agent chat */
+  .chat{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .chat-body{padding:8px 10px;display:flex;flex-direction:column;gap:7px;max-height:160px;overflow:auto}
+  .msg{display:flex;gap:7px;align-items:flex-start}
+  .msg .who{font-size:8px;letter-spacing:.8px;text-transform:uppercase;padding:2px 5px;border-radius:2px;flex:none;margin-top:1px}
+  .who.ai{background:#0a2a30;color:var(--cyan);border:1px solid #143b44}
+  .who.you{background:#241a08;color:var(--amber);border:1px solid #4a3812}
+  .msg .mtxt{font-family:var(--sans);font-size:11px;color:var(--ink);line-height:1.4}
+  .chat-input{display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--line);background:#0a0e16}
+  .chat-input input{
+    flex:1;background:#06090f;border:1px solid var(--line);border-radius:3px;color:var(--ink);
+    font-family:var(--mono);font-size:11px;padding:6px 9px;outline:none;
+  }
+  .chat-input input:focus{border-color:var(--cyan)}
+  .chat-input input::placeholder{color:var(--ink-faint)}
+
+  .scrollwrap{overflow:auto;max-height:none}
+
+  /* ===== TABS PANEL (opportunities) ===== */
+  .panel-view{display:none}
+  .panel-view.active{display:grid}
+  #opps.active{display:block}
+  .opps-wrap{padding:1px;background:var(--line)}
+  .empty{padding:40px 20px;text-align:center;color:var(--ink-dim);background:var(--panel)}
+  .empty h3{color:var(--amber);font-size:12px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+
+  /* footer status bar */
+  .statusbar{
+    display:flex;align-items:center;gap:18px;height:24px;padding:0 12px;
+    background:#070a10;border-top:1px solid var(--line);font-size:10px;color:var(--ink-faint);
+    letter-spacing:.5px;position:sticky;bottom:0;z-index:20;
+  }
+  .statusbar .s{display:flex;align-items:center;gap:6px}
+  .led{width:6px;height:6px;border-radius:50%}
+  .led.g{background:var(--green);box-shadow:0 0 5px var(--green)}
+  .led.a{background:var(--amber);box-shadow:0 0 5px var(--amber)}
+  .led.c{background:var(--cyan);box-shadow:0 0 5px var(--cyan)}
+
+  @media (max-width:1100px){
+    .grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .stat:nth-child(4),.stat:nth-child(5){grid-column:auto}
+  }
+  @media (max-width:768px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .co-mission{display:none}
+    .ver,.tabs .tab{display:inline-block}
+    table{font-size:10px}
+    td,thead th{padding:6px 6px}
+    .hide-sm{display:none}
+    .brand .sub{display:none}
+    .clock{display:none}
+  }
+  @media (max-width:520px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stage-lbl{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <span class="logo">C·SLOP·SLOP</span>
+    <span class="sub">Autonomous Studio Terminal</span>
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-tab="portfolio" onclick="showTab(this,'portfolio')">Portfolio</button>
+    <button class="tab" data-tab="opps" onclick="showTab(this,'opps')">Opportunities</button>
+  </div>
+  <div class="spacer"></div>
+  <span class="clock num" id="clock">--:--:-- UTC</span>
+  <div class="acct">
+    <button class="btn ghost">Sign in</button>
+    <button class="btn amber">Register</button>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="lbl">PORTFOLIO ▸</span>
+  <div class="ticker-track">
+    <span class="tk"><b>LEADSIFT</b> <span class="cyan">v1.2</span> <span class="num up">$312</span> <span class="up">▲</span></span>
+    <span class="tk"><b>DOCHOUND</b> <span class="cyan">v1.0</span> <span class="num up">$148</span> <span class="up">▲</span></span>
+    <span class="tk"><b>TRANSLATORBILL</b> <span class="cyan">v0.6</span> <span class="num amber">PRE-REV</span> <span class="amber">●</span></span>
+    <span class="tk"><b>QUIETINBOX</b> <span class="cyan">v0.4</span> <span class="num dim">$0</span> <span class="cyan">⟳</span></span>
+    <span class="tk"><b>REDDITPAINBOT</b> <span class="cyan">v0.3</span> <span class="num down">BLOCKED</span> <span class="down">▼</span></span>
+    <span class="tk">TOTAL MRR <span class="num up">$9,210</span></span>
+    <span class="tk">USERS <span class="num">2,418</span></span>
+    <span class="tk">COMPANIES <span class="num">5</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="tk"><b>LEADSIFT</b> <span class="cyan">v1.2</span> <span class="num up">$312</span> <span class="up">▲</span></span>
+    <span class="tk"><b>DOCHOUND</b> <span class="cyan">v1.0</span> <span class="num up">$148</span> <span class="up">▲</span></span>
+    <span class="tk"><b>TRANSLATORBILL</b> <span class="cyan">v0.6</span> <span class="num amber">PRE-REV</span> <span class="amber">●</span></span>
+    <span class="tk"><b>QUIETINBOX</b> <span class="cyan">v0.4</span> <span class="num dim">$0</span> <span class="cyan">⟳</span></span>
+    <span class="tk"><b>REDDITPAINBOT</b> <span class="cyan">v0.3</span> <span class="num down">BLOCKED</span> <span class="down">▼</span></span>
+    <span class="tk">TOTAL MRR <span class="num up">$9,210</span></span>
+    <span class="tk">USERS <span class="num">2,418</span></span>
+    <span class="tk">COMPANIES <span class="num">5</span></span>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats">
+  <div class="stat">
+    <span class="k">Total Users</span>
+    <span class="v num">2,418</span>
+    <span class="d up">▲ +124 7d</span>
+  </div>
+  <div class="stat">
+    <span class="k">Total MRR</span>
+    <span class="v num amber">$9,210</span>
+    <span class="d up">▲ +5.2% 30d</span>
+  </div>
+  <div class="stat">
+    <span class="k">Companies</span>
+    <span class="v num">5</span>
+    <span class="d dim">2 live · 3 dev</span>
+  </div>
+  <div class="stat">
+    <span class="k">Needs You</span>
+    <span class="v num down">3</span>
+    <span class="d amber">action required</span>
+  </div>
+  <div class="stat">
+    <span class="k">Go-To-Market</span>
+    <span class="v num cyan">4</span>
+    <span class="d dim">queued items</span>
+  </div>
+</div>
+
+<!-- PORTFOLIO VIEW -->
+<div class="panel-view active" id="portfolio">
+<div class="grid">
+
+  <!-- LEFT COLUMN -->
+  <div class="col">
+
+    <!-- COMPANIES TABLE -->
+    <div class="pane">
+      <div class="pane-hd">
+        <span class="dot"></span>
+        <h2>Portfolio · Companies</h2>
+        <span class="meta">5 ROWS · LIFECYCLE: BUILD▸FEATURES▸DEPLOY▸ADS▸LIVE</span>
+      </div>
+      <div class="scrollwrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="l">Company</th>
+            <th>Ver</th>
+            <th class="num">Users</th>
+            <th class="num">MRR</th>
+            <th>Stage</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- TranslatorBill -->
+          <tr>
+            <td class="l">
+              <div class="co">
+                <span class="swatch" style="background:#f59e0b"></span>
+                <div>
+                  <div class="co-name">TranslatorBill</div>
+                  <div class="co-mission">Translate invoices line-by-line for cross-border sellers.</div>
+                </div>
+              </div>
+            </td>
+            <td class="ver">v0.6</td>
+            <td class="num">1,240</td>
+            <td class="num amber">PRE-REV</td>
+            <td>
+              <div class="stage">
+                <span class="seg on amber"></span><span class="seg on amber"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+                <span class="stage-lbl">Features 2/5</span>
+              </div>
+            </td>
+            <td><span class="pill approve">Approve</span></td>
+          </tr>
+          <!-- RedditPainBot -->
+          <tr>
+            <td class="l">
+              <div class="co">
+                <span class="swatch" style="background:#fb7185"></span>
+                <div>
+                  <div class="co-name">RedditPainBot</div>
+                  <div class="co-mission">Surface real product pain from Reddit threads daily.</div>
+                </div>
+              </div>
+            </td>
+            <td class="ver">v0.3</td>
+            <td class="num">320</td>
+            <td class="num dim">$0</td>
+            <td>
+              <div class="stage">
+                <span class="seg on"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+                <span class="stage-lbl">Build 1/5</span>
+              </div>
+            </td>
+            <td><span class="pill blocked">Blocked</span></td>
+          </tr>
+          <!-- QuietInbox -->
+          <tr>
+            <td class="l">
+              <div class="co">
+                <span class="swatch" style="background:#a78bfa"></span>
+                <div>
+                  <div class="co-name">QuietInbox</div>
+                  <div class="co-mission">Auto-triage and summarize your support inbox.</div>
+                </div>
+              </div>
+            </td>
+            <td class="ver">v0.4</td>
+            <td class="num">880</td>
+            <td class="num dim">$0</td>
+            <td>
+              <div class="stage">
+                <span class="seg on"></span><span class="seg on"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+                <span class="stage-lbl">Features 2/5</span>
+              </div>
+            </td>
+            <td><span class="pill build">Building</span></td>
+          </tr>
+          <!-- LeadSift -->
+          <tr>
+            <td class="l">
+              <div class="co">
+                <span class="swatch" style="background:#34d399"></span>
+                <div>
+                  <div class="co-name">LeadSift</div>
+                  <div class="co-mission">Score and route inbound leads automatically.</div>
+                </div>
+              </div>
+            </td>
+            <td class="ver">v1.2</td>
+            <td class="num">2,100</td>
+            <td class="num up">$312</td>
+            <td>
+              <div class="stage">
+                <span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span>
+                <span class="stage-lbl">Live 5/5</span>
+              </div>
+            </td>
+            <td><span class="pill live">Live</span></td>
+          </tr>
+          <!-- DocHound -->
+          <tr>
+            <td class="l">
+              <div class="co">
+                <span class="swatch" style="background:#38bdf8"></span>
+                <div>
+                  <div class="co-name">DocHound</div>
+                  <div class="co-mission">Answer questions over your internal docs instantly.</div>
+                </div>
+              </div>
+            </td>
+            <td class="ver">v1.0</td>
+            <td class="num">1,460</td>
+            <td class="num up">$148</td>
+            <td>
+              <div class="stage">
+                <span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg"></span>
+                <span class="stage-lbl">Ads 4/5</span>
+              </div>
+            </td>
+            <td><span class="pill live">Live</span></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- TWO QUEUES SIDE BY SIDE -->
+    <div class="col" style="display:grid;grid-template-columns:1fr 1fr;gap:1px">
+
+      <!-- NEEDS YOU -->
+      <div class="pane">
+        <div class="pane-hd">
+          <span class="dot" style="background:var(--amber);box-shadow:0 0 6px var(--amber)"></span>
+          <h2>Needs You</h2>
+          <span class="meta">3 PENDING</span>
+        </div>
+        <div class="qlist">
+          <div class="qitem">
+            <span class="qbar amber"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco amber">TranslatorBill</span><span class="qtag">Feature 6/10</span></div>
+              <div class="qtxt">Approve feature 6 — per-line invoice translation, ready to ship on staging.</div>
+              <div class="qact"><button class="minibtn go">Approve</button><button class="minibtn">Diff</button><button class="minibtn">Defer</button></div>
+            </div>
+          </div>
+          <div class="qitem">
+            <span class="qbar red"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco" style="color:var(--rose)">RedditPainBot</span><span class="qtag">Blocked</span></div>
+              <div class="qtxt">Reddit API key expired — agent is stalled at Build stage.</div>
+              <div class="qact"><button class="minibtn go">Add Key</button><button class="minibtn">Logs</button></div>
+            </div>
+          </div>
+          <div class="qitem">
+            <span class="qbar green"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco up">LeadSift</span><span class="qtag">Pricing</span></div>
+              <div class="qtxt">Confirm pricing change — $29 → $39/mo.</div>
+              <div class="qact"><button class="minibtn go">Confirm</button><button class="minibtn">Reject</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GO TO MARKET -->
+      <div class="pane">
+        <div class="pane-hd">
+          <span class="dot"></span>
+          <h2>Go-To-Market</h2>
+          <span class="meta">4 QUEUED</span>
+        </div>
+        <div class="qlist">
+          <div class="qitem">
+            <span class="qbar amber"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco amber">TranslatorBill</span><span class="qtag">Launch</span></div>
+              <div class="qtxt">Approve launch tweet — drafted by GTM agent.</div>
+              <div class="qact"><button class="minibtn go">Approve</button><button class="minibtn">Edit</button></div>
+            </div>
+          </div>
+          <div class="qitem">
+            <span class="qbar violet"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco" style="color:var(--violet)">QuietInbox</span><span class="qtag">Support</span></div>
+              <div class="qtxt">3 support messages awaiting reply.</div>
+              <div class="qact"><button class="minibtn go">Open</button></div>
+            </div>
+          </div>
+          <div class="qitem">
+            <span class="qbar green"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco up">LeadSift</span><span class="qtag">Investor</span></div>
+              <div class="qtxt">Reply to investor email.</div>
+              <div class="qact"><button class="minibtn go">Reply</button></div>
+            </div>
+          </div>
+          <div class="qitem">
+            <span class="qbar cyan"></span>
+            <div class="qbody">
+              <div class="qtop"><span class="qco cyan">DocHound</span><span class="qtag">Posted</span></div>
+              <div class="qtxt">LinkedIn update posted — <b class="num">1.2k</b> impressions.</div>
+              <div class="qact"><button class="minibtn">View</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: AGENT LAYER -->
+  <div class="col">
+    <div class="pane" style="flex:none">
+      <div class="pane-hd">
+        <span class="dot"></span>
+        <h2>Agent Activity</h2>
+        <span class="meta" id="feedmeta">LIVE · 06 EVT/MIN</span>
+      </div>
+      <div class="console" id="console">
+        <div class="logline"><span class="lt num">14:02:51</span><span class="lv DEPLOY">DEPLOY</span><span class="lmsg"><b>DocHound</b> ads campaign #3 pushed live</span></div>
+        <div class="logline"><span class="lt num">14:02:18</span><span class="lv BUILD">BUILD</span><span class="lmsg"><b>QuietInbox</b> compiled triage v0.4.2 · 0 err</span></div>
+        <div class="logline"><span class="lt num">14:01:44</span><span class="lv GTM">GTM</span><span class="lmsg"><b>TranslatorBill</b> drafted launch tweet → review</span></div>
+        <div class="logline"><span class="lt num">14:01:09</span><span class="lv WARN">WARN</span><span class="lmsg"><b>RedditPainBot</b> auth 401 · key expired</span></div>
+        <div class="logline"><span class="lt num">14:00:32</span><span class="lv SCAN">SCAN</span><span class="lmsg"><b>RedditPainBot</b> scanned 4,210 threads · 38 pains</span></div>
+        <div class="logline"><span class="lt num">13:59:50</span><span class="lv BUILD">BUILD</span><span class="lmsg"><b>TranslatorBill</b> feature 6 staged for approval</span></div>
+        <div class="logline"><span class="lt num">13:59:11</span><span class="lv DEPLOY">DEPLOY</span><span class="lmsg"><b>LeadSift</b> hotfix routing rule v1.2.4</span></div>
+        <div class="logline"><span class="lt num">13:58:27</span><span class="lv SCAN">SCAN</span><span class="lmsg"><b>QuietInbox</b> summarized 142 inbound tickets</span></div>
+        <div class="logline"><span class="lt num">13:57:40</span><span class="lv GTM">GTM</span><span class="lmsg"><b>DocHound</b> LinkedIn post · 1.2k impressions</span></div>
+        <div class="logline"><span class="lt num">13:57:02</span><span class="lv BUILD">BUILD</span><span class="lmsg"><b>LeadSift</b> nightly test suite 312/312 pass</span></div>
+      </div>
+    </div>
+
+    <!-- AGENT CHAT -->
+    <div class="pane" style="flex:1">
+      <div class="pane-hd">
+        <span class="dot" style="background:var(--cyan)"></span>
+        <h2>Build Agent</h2>
+        <span class="meta">CLAUDE CLI · IDLE</span>
+      </div>
+      <div class="chat" style="flex:1;border-top:none">
+        <div class="chat-body" id="chatbody">
+          <div class="msg"><span class="who ai">AI</span><span class="mtxt">TranslatorBill feature 6 is staged. Want me to ship it once you approve, or run another regression pass first?</span></div>
+          <div class="msg"><span class="who you">YOU</span><span class="mtxt">Run the regression, then ship.</span></div>
+          <div class="msg"><span class="who ai">AI</span><span class="mtxt">On it. Queuing regression for TranslatorBill · ~4 min. RedditPainBot still blocked on the Reddit key — add it from Needs You and I'll resume Build.</span></div>
+        </div>
+        <form class="chat-input" onsubmit="sendMsg(event)">
+          <input id="chatin" placeholder="› build, fix, or ask the agent…" autocomplete="off">
+          <button class="btn amber" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- OPPORTUNITIES VIEW -->
+<div class="panel-view" id="opps">
+  <div class="opps-wrap">
+    <div class="pane">
+      <div class="pane-hd">
+        <span class="dot" style="background:var(--violet)"></span>
+        <h2>Opportunities · Idea Pipeline</h2>
+        <span class="meta">SCANNED BY OPP AGENT</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th class="l">Opportunity</th><th>Source</th><th class="num">Signal</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="l"><div class="co-name">Contract clause checker</div><div class="co-mission">Flag risky clauses in vendor contracts.</div></td><td class="ver">r/legaltech</td><td class="num up">88</td><td><span class="pill build">Scoring</span></td></tr>
+          <tr><td class="l"><div class="co-name">Shopify refund triage</div><div class="co-mission">Auto-classify and route refund requests.</div></td><td class="ver">r/ecommerce</td><td class="num up">81</td><td><span class="pill build">Scoring</span></td></tr>
+          <tr><td class="l"><div class="co-name">Standup digest bot</div><div class="co-mission">Summarize Slack standups into a daily brief.</div></td><td class="ver">HN Ask</td><td class="num amber">64</td><td><span class="pill approve">Review</span></td></tr>
+          <tr><td class="l"><div class="co-name">Podcast clip finder</div><div class="co-mission">Find quotable clips from long episodes.</div></td><td class="ver">r/podcasting</td><td class="num dim">52</td><td><span class="pill blocked">Parked</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span class="s"><span class="led g"></span>AGENTS ONLINE 5/5</span>
+  <span class="s hide-sm"><span class="led c"></span>BUILD QUEUE 2</span>
+  <span class="s"><span class="led a"></span>AWAITING APPROVAL 3</span>
+  <span class="s hide-sm">PROVIDER: CLAUDE CLI</span>
+  <span class="spacer" style="flex:1"></span>
+  <span class="s hide-sm">v3 · TEST-MODE</span>
+  <span class="s num" id="uptime">UPTIME 99.98%</span>
+</div>
+
+<script>
+  // tab switching
+  function showTab(el,id){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.panel-view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // clock
+  function tick(){
+    const d=new Date();
+    const p=n=>String(n).padStart(2,'0');
+    document.getElementById('clock').textContent=`${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())} UTC`;
+  }
+  tick();setInterval(tick,1000);
+
+  // chat send
+  function sendMsg(e){
+    e.preventDefault();
+    const i=document.getElementById('chatin');
+    const v=i.value.trim();
+    if(!v)return;
+    const body=document.getElementById('chatbody');
+    const m=document.createElement('div');m.className='msg';
+    m.innerHTML='<span class="who you">YOU</span><span class="mtxt"></span>';
+    m.querySelector('.mtxt').textContent=v;
+    body.appendChild(m);
+    i.value='';
+    body.scrollTop=body.scrollHeight;
+    setTimeout(()=>{
+      const r=document.createElement('div');r.className='msg';
+      r.innerHTML='<span class="who ai">AI</span><span class="mtxt">Queued. I’ll log progress to the activity feed and flag anything that needs your approval.</span>';
+      body.appendChild(r);body.scrollTop=body.scrollHeight;
+    },600);
+  }
+
+  // live-ish agent feed: prepend synthetic events
+  const evts=[
+    ['BUILD','<b>QuietInbox</b> rebuilt classifier · 0 err'],
+    ['SCAN','<b>RedditPainBot</b> queued · awaiting key'],
+    ['DEPLOY','<b>DocHound</b> CDN cache purged'],
+    ['GTM','<b>LeadSift</b> investor reply drafted → review'],
+    ['BUILD','<b>TranslatorBill</b> regression 41% · running'],
+    ['SCAN','<b>QuietInbox</b> triaged 17 new tickets'],
+  ];
+  let ei=0;
+  setInterval(()=>{
+    const c=document.getElementById('console');
+    const d=new Date();const p=n=>String(n).padStart(2,'0');
+    const [lv,msg]=evts[ei%evts.length];ei++;
+    const row=document.createElement('div');row.className='logline';
+    row.innerHTML=`<span class="lt num">${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}</span><span class="lv ${lv}">${lv}</span><span class="lmsg">${msg}</span>`;
+    c.insertBefore(row,c.firstChild);
+    while(c.children.length>40)c.removeChild(c.lastChild);
+  },3800);
+</script>
+</body>
+</html>

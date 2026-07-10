@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C Slop Slop · Product Map 3 · The Operator's Console</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   C SLOP SLOP — PRODUCT MAP 3 · "The Operator's Console"
+   A believable product cockpit that doubles as a
+   what's-built-vs-missing coverage map. Warm cream theme.
+   ============================================================ */
+:root{
+  --cream:#f7f3ec;  --cream-2:#f1ebe0;  --paper:#fffdf8;
+  --ink:#2c2926;  --ink-soft:#635c52;  --ink-faint:#7b7368;
+  --line:#e6ddce;  --line-soft:#efe8da;
+  --make:#4f8a52;   /* MAKE ring — green */
+  --grow:#c8643c;   /* GROW ring — terracotta / brand accent */
+  --run:#4a72b0;    /* RUN ring — blue */
+  --gate:#7a5ea8;   /* human gates — violet */
+  --amber:#c08a2e;  --red:#b6483f;
+  --shadow:0 1px 2px rgba(60,50,38,.04), 0 8px 28px rgba(60,50,38,.07);
+  --radius:18px; --radius-sm:12px;
+  --sans:'Inter', system-ui, sans-serif;
+  --display:'Space Grotesk', system-ui, sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+body{
+  background:var(--cream);
+  background-image:
+    radial-gradient(1100px 700px at 84% -8%, rgba(200,100,60,.05), transparent 60%),
+    radial-gradient(900px 600px at -6% 108%, rgba(74,114,176,.045), transparent 60%);
+  color:var(--ink); font-family:var(--sans); font-size:14px; line-height:1.5;
+  padding:26px 22px 40px;
+}
+.wrap{ max-width:1340px; margin:0 auto; }
+.mono{ font-family:var(--mono); }
+
+/* generic helpers ------------------------------------------------ */
+.kicker{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-faint); }
+.card{ background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); }
+.dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+
+/* ============ HEADER ============ */
+header.top{
+  display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap;
+  padding:4px 8px 22px; border-bottom:1px solid var(--line); margin-bottom:22px;
+}
+.brand-block{ flex:1 1 auto; min-width:300px; }
+.brand-mark{ display:flex; align-items:center; gap:11px; margin-bottom:13px; }
+.brand-logo{
+  width:30px; height:30px; border-radius:9px; flex:0 0 auto;
+  background:linear-gradient(145deg, var(--grow), #a94e2c);
+  display:grid; place-items:center; color:#fff; font-family:var(--mono);
+  font-weight:700; font-size:14px; box-shadow:0 4px 12px rgba(168,78,44,.28);
+}
+.brand-mark .name{ font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--ink-soft); }
+.brand-mark .tag{ font-family:var(--mono); font-size:9.5px; letter-spacing:.16em;
+  text-transform:uppercase; color:#fff; background:var(--make);
+  padding:2px 8px; border-radius:20px; font-weight:600; }
+h1.title{ font-family:var(--display); font-size:36px; font-weight:700; letter-spacing:-.02em;
+  line-height:1.02; color:var(--ink); }
+.subtitle{ font-family:var(--display); font-size:15.5px; font-weight:500; color:var(--ink-soft);
+  margin-top:7px; }
+.subtitle b{ color:var(--grow); font-weight:600; }
+
+.legend{ display:flex; gap:9px; flex-wrap:wrap; align-items:center; padding-bottom:3px; }
+.lg{ display:inline-flex; align-items:center; gap:7px; font-family:var(--mono);
+  font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-soft); background:var(--paper); border:1px solid var(--line);
+  border-radius:20px; padding:6px 11px; box-shadow:var(--shadow); }
+
+/* ============ MAIN 3-COLUMN GRID ============ */
+.console{ display:grid; grid-template-columns:248px minmax(0,1fr) 312px; gap:18px; align-items:start; }
+.panel-head{ display:flex; align-items:center; gap:10px; padding:15px 17px 12px; }
+.panel-head .h-title{ font-family:var(--display); font-size:14px; font-weight:600; color:var(--ink); }
+.panel-head .h-count{ margin-left:auto; font-family:var(--mono); font-size:10px;
+  color:var(--ink-faint); letter-spacing:.04em; }
+
+/* ---- LEFT · PORTFOLIO ---- */
+.portfolio{ overflow:hidden; }
+.portfolio .panel-head{ border-bottom:1px solid var(--line-soft); }
+.co{ display:flex; gap:11px; padding:12px 16px; border-bottom:1px solid var(--line-soft);
+  cursor:default; transition:background .15s ease; position:relative; }
+.co:last-child{ border-bottom:0; }
+.co:hover{ background:var(--cream); }
+.co .dot{ margin-top:5px; box-shadow:0 0 0 3px var(--paper), 0 0 0 4px currentColor; color:inherit; }
+.co .co-body{ min-width:0; }
+.co .co-name{ font-family:var(--display); font-size:13.5px; font-weight:600; color:var(--ink); }
+.co .co-now{ font-size:11.5px; color:var(--ink-soft); line-height:1.35; margin-top:2px; }
+.co .co-ring{ font-family:var(--mono); font-weight:600; }
+.co .co-meta{ display:flex; align-items:center; gap:6px; margin-top:5px; }
+.rtag{ font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; padding:1.5px 6px; border-radius:5px; }
+.co .gflag{ margin-left:auto; font-family:var(--mono); font-size:9px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--gate);
+  background:color-mix(in srgb, var(--gate) 12%, var(--paper));
+  border:1px solid color-mix(in srgb, var(--gate) 30%, transparent);
+  padding:1.5px 6px; border-radius:5px; }
+.portfolio-foot{ padding:11px 16px; border-top:1px solid var(--line-soft);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:var(--ink-faint);
+  display:flex; align-items:center; gap:7px; }
+
+/* ring color utilities */
+.c-make{ color:var(--make); } .c-grow{ color:var(--grow); }
+.c-run{ color:var(--run); } .c-gate{ color:var(--gate); }
+.bg-make{ background:var(--make); } .bg-grow{ background:var(--grow); }
+.bg-run{ background:var(--run); } .bg-gate{ background:var(--gate); }
+.rtag.t-make{ color:var(--make); background:color-mix(in srgb,var(--make) 13%,var(--paper)); }
+.rtag.t-grow{ color:var(--grow); background:color-mix(in srgb,var(--grow) 13%,var(--paper)); }
+.rtag.t-run{ color:var(--run); background:color-mix(in srgb,var(--run) 13%,var(--paper)); }
+
+/* ---- CENTER · GATE QUEUE (the hero) ---- */
+.queue{ overflow:hidden; }
+.queue-head{ padding:17px 20px 14px; border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, color-mix(in srgb,var(--gate) 7%,var(--paper)), var(--paper)); }
+.queue-head .qrow{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+.queue-head h2{ font-family:var(--display); font-size:21px; font-weight:700; letter-spacing:-.01em;
+  color:var(--ink); display:flex; align-items:center; gap:9px; }
+.queue-head h2 .hex{ color:var(--gate); font-size:18px; }
+.queue-head .qbadge{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.06em;
+  color:#fff; background:var(--gate); border-radius:20px; padding:3px 10px; }
+.queue-cap{ font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--gate);
+  font-weight:600; margin-top:7px; text-transform:uppercase; }
+.northstar{ margin-top:11px; padding:10px 13px; border-radius:var(--radius-sm);
+  background:color-mix(in srgb,var(--grow) 9%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--grow) 26%,transparent);
+  font-family:var(--display); font-size:13px; font-weight:500; color:var(--ink); line-height:1.4; }
+.northstar .ns-k{ font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--grow); display:block; margin-bottom:3px; }
+.northstar b{ color:var(--grow); font-weight:600; }
+
+.gate-list{ padding:13px 14px; display:flex; flex-direction:column; gap:11px; }
+.gitem{ border:1px solid var(--line); border-left-width:4px; border-radius:var(--radius-sm);
+  background:var(--paper); padding:13px 15px 13px 14px; transition:box-shadow .15s ease, transform .15s ease; }
+.gitem:hover{ box-shadow:var(--shadow); transform:translateY(-1px); }
+.gitem.g-ship{ border-left-color:var(--make); }
+.gitem.g-spend{ border-left-color:var(--amber); }
+.gitem.g-post{ border-left-color:var(--grow); }
+.gitem.g-sign{ border-left-color:var(--gate); }
+.gitem.g-unblock{ border-left-color:var(--red); }
+
+.gitem-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.gpill{ font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; padding:3px 9px; border-radius:6px; color:#fff; }
+.gpill.g-ship{ background:var(--make); } .gpill.g-spend{ background:var(--amber); }
+.gpill.g-post{ background:var(--grow); } .gpill.g-sign{ background:var(--gate); }
+.gpill.g-unblock{ background:var(--red); }
+.from{ font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:var(--ink-faint);
+  display:inline-flex; align-items:center; gap:5px; }
+.from .dot{ width:7px; height:7px; }
+.gitem-top .prio{ margin-left:auto; font-family:var(--mono); font-size:9.5px; color:var(--ink-faint);
+  letter-spacing:.04em; }
+.gitem-top .prio b{ color:var(--ink-soft); }
+
+.gtitle{ font-family:var(--display); font-size:15px; font-weight:600; color:var(--ink);
+  margin:9px 0 4px; line-height:1.3; }
+.gtitle .check{ color:var(--make); font-weight:700; }
+.gmeta{ font-size:12px; color:var(--ink-soft); line-height:1.4; }
+.gmeta code{ font-family:var(--mono); font-size:11px; background:var(--cream-2);
+  padding:1px 5px; border-radius:5px; color:var(--ink-soft); }
+
+.authrow{ display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.authrow .alabel{ font-family:var(--mono); font-size:8.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-faint); }
+.achip{ font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.02em;
+  padding:2.5px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:5px;
+  border:1px solid currentColor; }
+.achip .an{ width:14px; height:14px; border-radius:50%; display:grid; place-items:center;
+  font-size:8px; font-weight:700; color:#fff; }
+.ac1{ color:var(--ink-faint); } .ac1 .an{ background:var(--ink-faint); }
+.ac2{ color:var(--run); } .ac2 .an{ background:var(--run); }
+.ac3{ color:var(--amber); } .ac3 .an{ background:var(--amber); }
+.ac4{ color:var(--grow); } .ac4 .an{ background:var(--grow); }
+.ac5{ color:var(--gate); } .ac5 .an{ background:var(--gate); }
+.achip.ghost{ opacity:.75; }
+
+.gactions{ display:flex; align-items:center; gap:9px; margin-top:12px; }
+.btn{ font-family:var(--sans); font-weight:600; font-size:12.5px; border-radius:9px;
+  padding:8px 16px; cursor:pointer; border:1px solid transparent; transition:.15s; }
+.btn-approve{ background:var(--make); color:#fff; box-shadow:0 2px 8px rgba(79,138,82,.25); }
+.btn-approve:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+.btn-hold{ background:var(--paper); color:var(--ink-soft); border-color:var(--line); }
+.btn-hold:hover{ border-color:var(--ink-faint); color:var(--ink); }
+.btn-review{ margin-left:auto; font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+  color:var(--ink-faint); background:none; border:0; cursor:pointer; text-transform:uppercase; }
+.btn-review:hover{ color:var(--grow); }
+.gitem.done{ opacity:.62; }
+.gitem.done .gactions{ display:none; }
+.resolved{ display:none; font-family:var(--mono); font-size:11px; font-weight:600;
+  margin-top:11px; padding:7px 11px; border-radius:8px; letter-spacing:.02em; }
+.gitem.done .resolved{ display:block; }
+.resolved.ok{ color:var(--make); background:color-mix(in srgb,var(--make) 12%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--make) 30%,transparent); }
+.resolved.held{ color:var(--amber); background:color-mix(in srgb,var(--amber) 12%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--amber) 30%,transparent); }
+
+/* ---- RIGHT · STACK ---- */
+.right-stack{ display:flex; flex-direction:column; gap:18px; }
+.right-stack .card .panel-head{ border-bottom:1px solid var(--line-soft); }
+
+/* autonomy dials */
+.dials{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:13px; }
+.dial{ }
+.dial-top{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.dial-top .rname{ font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; }
+.dial-top .rdesc{ margin-left:auto; font-size:10.5px; color:var(--ink-faint); }
+.seg{ display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+  border:1px solid var(--line); border-radius:9px; overflow:hidden; background:var(--cream); }
+.seg button{ font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.04em;
+  padding:7px 4px; border:0; background:transparent; color:var(--ink-faint); cursor:pointer;
+  border-right:1px solid var(--line); transition:.14s; }
+.seg button:last-child{ border-right:0; }
+.seg button .lvl{ display:block; font-size:8px; font-weight:600; opacity:.7; margin-top:1px; }
+.seg button:hover{ background:var(--paper); color:var(--ink-soft); }
+.seg button.on{ color:#fff; }
+.dial.r-make .seg button.on{ background:var(--make); }
+.dial.r-grow .seg button.on{ background:var(--grow); }
+.dial.r-run .seg button.on{ background:var(--run); }
+.testmode{ display:flex; align-items:center; gap:10px; margin-top:3px; padding:10px 12px;
+  border-radius:var(--radius-sm); background:color-mix(in srgb,var(--grow) 8%,var(--paper));
+  border:1px dashed color-mix(in srgb,var(--grow) 36%,transparent); }
+.testmode .tm-txt{ min-width:0; }
+.testmode .tm-title{ font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grow); }
+.testmode .tm-sub{ font-size:10.5px; color:var(--ink-soft); line-height:1.3; margin-top:2px; }
+.toggle{ margin-left:auto; width:38px; height:22px; border-radius:20px; border:0; cursor:pointer;
+  background:var(--grow); position:relative; flex:0 0 auto; transition:.18s; }
+.toggle::after{ content:""; position:absolute; top:2px; left:18px; width:18px; height:18px;
+  border-radius:50%; background:#fff; transition:.18s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+.toggle.off{ background:var(--line); }
+.toggle.off::after{ left:2px; }
+
+/* rails status */
+.rails{ padding:8px 8px 10px; }
+.rail{ display:flex; align-items:center; gap:10px; padding:9px 9px; border-radius:10px; }
+.rail:hover{ background:var(--cream); }
+.rail .ricon{ width:24px; height:24px; border-radius:7px; flex:0 0 auto; display:grid;
+  place-items:center; font-family:var(--mono); font-size:11px; font-weight:700; }
+.rail .rbody{ min-width:0; flex:1 1 auto; }
+.rail .rl{ font-size:12px; font-weight:600; color:var(--ink); line-height:1.25; }
+.rail .rs{ font-family:var(--mono); font-size:9.5px; color:var(--ink-faint); letter-spacing:.02em; margin-top:1px; }
+.rstate{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; padding:3px 9px; border-radius:20px; flex:0 0 auto; cursor:default; }
+.rstate.ok{ color:var(--make); background:color-mix(in srgb,var(--make) 13%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--make) 30%,transparent); }
+.rstate.part{ color:var(--amber); background:color-mix(in srgb,var(--amber) 13%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--amber) 30%,transparent); }
+.rstate.connect{ color:var(--grow); background:var(--paper);
+  border:1px solid color-mix(in srgb,var(--grow) 45%,transparent); cursor:pointer; }
+.rstate.connect:hover{ background:color-mix(in srgb,var(--grow) 10%,var(--paper)); }
+.ricon.ok{ background:color-mix(in srgb,var(--make) 14%,var(--paper)); color:var(--make); }
+.ricon.part{ background:color-mix(in srgb,var(--amber) 14%,var(--paper)); color:var(--amber); }
+.ricon.connect{ background:var(--cream-2); color:var(--ink-faint); }
+
+/* activity feed */
+.feed{ padding:10px 16px 14px; }
+.fitem{ display:flex; gap:10px; padding:7px 0; border-bottom:1px solid var(--line-soft); }
+.fitem:last-child{ border-bottom:0; }
+.fitem .ftime{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); flex:0 0 auto;
+  width:38px; padding-top:1px; }
+.fitem .fbar{ width:3px; border-radius:3px; flex:0 0 auto; }
+.fitem .ftxt{ font-size:11.5px; color:var(--ink-soft); line-height:1.35; min-width:0; }
+.fitem .ftxt b{ color:var(--ink); font-weight:600; }
+.feed-live{ display:flex; align-items:center; gap:7px; margin-top:9px; font-family:var(--mono);
+  font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); }
+.feed-live .ping{ width:7px; height:7px; border-radius:50%; background:var(--make);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--make) 22%,transparent); animation:ping 2.2s ease-out infinite; }
+@keyframes ping{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+/* ============ BOTTOM · COVERAGE MAP ============ */
+.coverage{ margin-top:20px; overflow:hidden; }
+.cov-head{ display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap;
+  padding:16px 20px 14px; border-bottom:1px solid var(--line); }
+.cov-head h2{ font-family:var(--display); font-size:18px; font-weight:700; letter-spacing:-.01em; }
+.cov-head .cov-sub{ font-size:12px; color:var(--ink-soft); max-width:560px; }
+.cov-legend{ margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+.cl{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px;
+  font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); }
+.cl .sw{ width:11px; height:11px; border-radius:4px; flex:0 0 auto; }
+.sw.built{ background:var(--make); }
+.sw.partial{ background:var(--amber); }
+.sw.missing{ background:var(--paper); border:1.5px dashed var(--line); }
+
+.cov-grid{ width:100%; border-collapse:collapse; }
+.cov-grid th, .cov-grid td{ text-align:left; padding:0; }
+.cov-grid thead th{ font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint); padding:12px 14px; border-bottom:1px solid var(--line);
+  background:var(--cream); }
+.cov-grid thead th.ring-h{ text-align:center; }
+.cov-grid thead th.rh-make{ color:var(--make); } .cov-grid thead th.rh-grow{ color:var(--grow); }
+.cov-grid thead th.rh-run{ color:var(--run); }
+.cov-grid tbody tr{ border-bottom:1px solid var(--line-soft); }
+.cov-grid tbody tr:last-child{ border-bottom:0; }
+.cov-grid tbody tr:hover{ background:var(--cream); }
+.cov-grid td.surface{ padding:12px 14px; vertical-align:middle; }
+.cov-grid td.surface .s-name{ font-family:var(--display); font-size:13px; font-weight:600; color:var(--ink); }
+.cov-grid td.surface .s-note{ font-size:10.5px; color:var(--ink-faint); margin-top:1px; }
+.cov-grid td.cell{ text-align:center; vertical-align:middle; padding:10px 8px;
+  border-left:1px solid var(--line-soft); width:148px; }
+.cell-chip{ display:inline-flex; flex-direction:column; align-items:center; gap:3px; }
+.cell-chip .mk{ font-family:var(--mono); font-size:12px; font-weight:700; line-height:1; }
+.cell-chip .pf{ font-family:var(--mono); font-size:9px; color:var(--ink-faint); letter-spacing:.01em; }
+.mk.built{ color:var(--make); } .mk.partial{ color:var(--amber); } .mk.missing{ color:var(--line); }
+.cell-chip .pf.gap{ color:var(--red); font-weight:600; }
+.cov-foot{ padding:13px 20px; border-top:1px solid var(--line); background:var(--cream);
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.cov-foot .cf-k{ font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-faint); }
+.cov-foot .cf-t{ font-size:12px; color:var(--ink-soft); }
+.cov-foot .cf-t b.gapn{ color:var(--red); font-weight:600; }
+.cov-foot .cf-t b.builtn{ color:var(--make); font-weight:600; }
+
+/* footer note */
+.foot{ margin-top:22px; text-align:center; font-family:var(--mono); font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); }
+.foot .sep{ color:var(--line); margin:0 8px; }
+
+@media (max-width:1080px){
+  .console{ grid-template-columns:1fr; }
+  .cov-grid td.cell{ width:auto; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <header class="top">
+    <div class="brand-block">
+      <div class="brand-mark">
+        <div class="brand-logo">C</div>
+        <span class="name">C&nbsp;Slop&nbsp;Slop</span>
+        <span class="tag">Operator Console</span>
+      </div>
+      <h1 class="title">The Operator's Console</h1>
+      <p class="subtitle">One operator. The whole portfolio. <b>Only the gates.</b></p>
+    </div>
+    <div class="legend">
+      <span class="lg"><span class="dot bg-make"></span>Make</span>
+      <span class="lg"><span class="dot bg-grow"></span>Grow</span>
+      <span class="lg"><span class="dot bg-run"></span>Run</span>
+      <span class="lg"><span class="dot bg-gate"></span>Human gate</span>
+    </div>
+  </header>
+
+  <!-- ============ MAIN 3-COLUMN COCKPIT ============ -->
+  <div class="console">
+
+    <!-- LEFT · PORTFOLIO -->
+    <aside class="card portfolio">
+      <div class="panel-head">
+        <span class="kicker">Portfolio</span>
+        <span class="h-count">5 live</span>
+      </div>
+
+      <div class="co">
+        <span class="dot c-make bg-make"></span>
+        <div class="co-body">
+          <div class="co-name">LeadSift</div>
+          <div class="co-now"><span class="co-ring c-make">MAKE</span> · building slice 5 — daily digest</div>
+          <div class="co-meta"><span class="rtag t-make">slice 5/8</span><span class="gflag">Ship ›</span></div>
+        </div>
+      </div>
+
+      <div class="co">
+        <span class="dot c-grow bg-grow"></span>
+        <div class="co-body">
+          <div class="co-name">QuietInbox</div>
+          <div class="co-now"><span class="co-ring c-grow">GROW</span> · PH launch prepping, awaiting ad spend</div>
+          <div class="co-meta"><span class="rtag t-grow">pre-launch</span><span class="gflag">Spend·Sign ›</span></div>
+        </div>
+      </div>
+
+      <div class="co">
+        <span class="dot c-run bg-run"></span>
+        <div class="co-body">
+          <div class="co-name">TranslatorBill</div>
+          <div class="co-now"><span class="co-ring c-run">RUN</span> · live &amp; paid · 12 users, all green</div>
+          <div class="co-meta"><span class="rtag t-run">$108 MRR</span></div>
+        </div>
+      </div>
+
+      <div class="co">
+        <span class="dot c-grow bg-grow"></span>
+        <div class="co-body">
+          <div class="co-name">DataDrop</div>
+          <div class="co-now"><span class="co-ring c-grow">GROW</span> · launch thread drafted for r/SaaS</div>
+          <div class="co-meta"><span class="rtag t-grow">test-mode</span><span class="gflag">Post ›</span></div>
+        </div>
+      </div>
+
+      <div class="co">
+        <span class="dot c-gate bg-gate"></span>
+        <div class="co-body">
+          <div class="co-name">RedditPainBot</div>
+          <div class="co-now"><span class="co-ring c-make">MAKE</span> · slice 8 stuck ×3 — needs you</div>
+          <div class="co-meta"><span class="rtag t-make">blocked</span><span class="gflag">Unblock ›</span></div>
+        </div>
+      </div>
+
+      <div class="portfolio-foot">
+        <span class="dot bg-make" style="width:7px;height:7px;"></span>
+        4 autonomous · 1 waiting on you
+      </div>
+    </aside>
+
+    <!-- CENTER · GATE QUEUE (HERO) -->
+    <main class="card queue">
+      <div class="queue-head">
+        <div class="qrow">
+          <h2><span class="hex">⬡</span> Gate Queue</h2>
+          <span class="qbadge">5 awaiting you</span>
+        </div>
+        <div class="queue-cap">This queue IS the product — the only decisions a human makes</div>
+        <div class="northstar">
+          <span class="ns-k">North star</span>
+          Can <b>one operator</b> run 5–20 companies by touching <b>only the gate queue</b>?
+        </div>
+      </div>
+
+      <div class="gate-list">
+
+        <!-- 1 · SHIP -->
+        <div class="gitem g-ship">
+          <div class="gitem-top">
+            <span class="gpill g-ship">Ship</span>
+            <span class="from"><span class="dot bg-make"></span>from MAKE</span>
+            <span class="prio">priority <b>#1</b> · 3m ago</span>
+          </div>
+          <div class="gtitle">LeadSift · slice 5 — daily digest <span class="check">doneWhen&nbsp;✓</span></div>
+          <div class="gmeta">Built, tested, deployed to staging. Checks green. <code>digest.cron</code> fires 08:00, email renders, 2 sample sends passed. Approve to ship to production.</div>
+          <div class="authrow">
+            <span class="alabel">Auth class</span>
+            <span class="achip ac1"><span class="an">1</span>Pure software</span>
+            <span class="achip ac1 ghost"><span class="an">·</span>runs silently when approved</span>
+          </div>
+          <div class="gactions">
+            <button class="btn btn-approve" data-act="ok">Approve &amp; ship</button>
+            <button class="btn btn-hold" data-act="held">Hold</button>
+            <button class="btn-review">Review diff</button>
+          </div>
+          <div class="resolved ok">✓ Shipped to production — MAKE resumes slice 6</div>
+          <div class="resolved held">⏸ Held — slice stays on staging</div>
+        </div>
+
+        <!-- 2 · SPEND -->
+        <div class="gitem g-spend">
+          <div class="gitem-top">
+            <span class="gpill g-spend">Spend</span>
+            <span class="from"><span class="dot bg-grow"></span>from GROW</span>
+            <span class="prio">priority <b>#2</b> · 11m ago</span>
+          </div>
+          <div class="gtitle">QuietInbox · $40 Product&nbsp;Hunt launch ads</div>
+          <div class="gmeta">Budget guardrail: <code>$40 / $150 wk</code> remaining. Charges your connected <b>Stripe + ad account</b>. Targets 3 keywords, 4-day flight, auto-pauses at cap.</div>
+          <div class="authrow">
+            <span class="alabel">Auth class</span>
+            <span class="achip ac3"><span class="an">3</span>Spends money</span>
+            <span class="achip ac2"><span class="an">2</span>Connected account</span>
+          </div>
+          <div class="gactions">
+            <button class="btn btn-approve" data-act="ok">Approve spend</button>
+            <button class="btn btn-hold" data-act="held">Hold</button>
+            <button class="btn-review">Edit budget</button>
+          </div>
+          <div class="resolved ok">✓ $40 authorized — campaign live, auto-pause at cap</div>
+          <div class="resolved held">⏸ Held — no spend authorized</div>
+        </div>
+
+        <!-- 3 · POST -->
+        <div class="gitem g-post">
+          <div class="gitem-top">
+            <span class="gpill g-post">Post</span>
+            <span class="from"><span class="dot bg-grow"></span>from GROW</span>
+            <span class="prio">priority <b>#3</b> · 24m ago</span>
+          </div>
+          <div class="gtitle">DataDrop · launch thread to r/SaaS</div>
+          <div class="gmeta">Drafted &amp; rehearsed in <code>test-mode</code>. Publishes <b>under your identity</b> → reputation / spam / ban risk. Currently at <b>record-intent</b>; approve to go real.</div>
+          <div class="authrow">
+            <span class="alabel">Auth class</span>
+            <span class="achip ac4"><span class="an">4</span>Acts under identity</span>
+            <span class="achip ac4 ghost"><span class="an">→</span>test · record-intent · real</span>
+          </div>
+          <div class="gactions">
+            <button class="btn btn-approve" data-act="ok">Approve &amp; post</button>
+            <button class="btn btn-hold" data-act="held">Hold</button>
+            <button class="btn-review">Read draft</button>
+          </div>
+          <div class="resolved ok">✓ Posted to r/SaaS under your account</div>
+          <div class="resolved held">⏸ Held — stays in record-intent</div>
+        </div>
+
+        <!-- 4 · SIGN -->
+        <div class="gitem g-sign">
+          <div class="gitem-top">
+            <span class="gpill g-sign">Sign</span>
+            <span class="from"><span class="dot bg-run"></span>from RUN</span>
+            <span class="prio">priority <b>#4</b> · 1h ago</span>
+          </div>
+          <div class="gtitle">QuietInbox · ToS + privacy policy for entity</div>
+          <div class="gmeta">Entity path drafted the docs. <b>Needs your signature</b> — legal authority can't be automated. Blocks taking real payments. <code>entity: QuietInbox LLC</code>.</div>
+          <div class="authrow">
+            <span class="alabel">Auth class</span>
+            <span class="achip ac5"><span class="an">5</span>Needs a signature</span>
+            <span class="achip ac5 ghost"><span class="an">⚑</span>human / legal authority</span>
+          </div>
+          <div class="gactions">
+            <button class="btn btn-approve" data-act="ok">Review &amp; sign</button>
+            <button class="btn btn-hold" data-act="held">Hold</button>
+            <button class="btn-review">Open docs</button>
+          </div>
+          <div class="resolved ok">✓ Signed — billing path unblocked</div>
+          <div class="resolved held">⏸ Held — payments stay blocked</div>
+        </div>
+
+        <!-- 5 · UNBLOCK -->
+        <div class="gitem g-unblock">
+          <div class="gitem-top">
+            <span class="gpill g-unblock">Unblock</span>
+            <span class="from"><span class="dot bg-make"></span>from MAKE</span>
+            <span class="prio">priority <b>#5</b> · 2h ago</span>
+          </div>
+          <div class="gtitle">RedditPainBot · slice 8 stuck ×3</div>
+          <div class="gmeta">Agent retried <code>oauth: reddit</code> 3× and stalled — scope mismatch on read API. Decide: grant scope, swap approach, or drop the slice.</div>
+          <div class="authrow">
+            <span class="alabel">Auth class</span>
+            <span class="achip ac2"><span class="an">2</span>Connected account</span>
+            <span class="achip ac1 ghost"><span class="an">!</span>any ring · stuck slice</span>
+          </div>
+          <div class="gactions">
+            <button class="btn btn-approve" data-act="ok">Grant scope</button>
+            <button class="btn btn-hold" data-act="held">Drop slice</button>
+            <button class="btn-review">See log</button>
+          </div>
+          <div class="resolved ok">✓ Scope granted — MAKE retries slice 8</div>
+          <div class="resolved held">⏸ Slice dropped from plan</div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- RIGHT · STACK -->
+    <aside class="right-stack">
+
+      <!-- 1 · AUTONOMY DIALS -->
+      <section class="card">
+        <div class="panel-head">
+          <span class="kicker">Autonomy</span>
+          <span class="h-count">per ring · L0→L2</span>
+        </div>
+        <div class="dials">
+
+          <div class="dial r-make">
+            <div class="dial-top"><span class="rname c-make">Make</span>
+              <span class="rdesc">you just see results</span></div>
+            <div class="seg" data-ring="make">
+              <button>L0<span class="lvl">propose</span></button>
+              <button>L1<span class="lvl">autopilot</span></button>
+              <button class="on">L2<span class="lvl">autonomous</span></button>
+            </div>
+          </div>
+
+          <div class="dial r-grow">
+            <div class="dial-top"><span class="rname c-grow">Grow</span>
+              <span class="rdesc">spot-check</span></div>
+            <div class="seg" data-ring="grow">
+              <button>L0<span class="lvl">propose</span></button>
+              <button class="on">L1<span class="lvl">autopilot</span></button>
+              <button>L2<span class="lvl">autonomous</span></button>
+            </div>
+          </div>
+
+          <div class="dial r-run">
+            <div class="dial-top"><span class="rname c-run">Run</span>
+              <span class="rdesc">approve each</span></div>
+            <div class="seg" data-ring="run">
+              <button class="on">L0<span class="lvl">propose</span></button>
+              <button>L1<span class="lvl">autopilot</span></button>
+              <button>L2<span class="lvl">autonomous</span></button>
+            </div>
+          </div>
+
+          <div class="testmode">
+            <div class="tm-txt">
+              <div class="tm-title">Test-mode</div>
+              <div class="tm-sub">Real-world actions rehearse, then <b>record-intent</b> before going live.</div>
+            </div>
+            <button class="toggle" id="tmToggle" aria-label="test mode"></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 · RAILS STATUS -->
+      <section class="card">
+        <div class="panel-head">
+          <span class="kicker">Rails · Substrate</span>
+          <span class="h-count">4 / 6 live</span>
+        </div>
+        <div class="rails">
+          <div class="rail">
+            <span class="ricon part">⊞</span>
+            <div class="rbody"><div class="rl">Connected-accounts hub</div><div class="rs">OAuth · 3 of 6 services linked</div></div>
+            <span class="rstate part">Partial</span>
+          </div>
+          <div class="rail">
+            <span class="ricon connect">$</span>
+            <div class="rbody"><div class="rl">Budget + spend guardrails</div><div class="rs">caps per company / week</div></div>
+            <span class="rstate connect">Connect</span>
+          </div>
+          <div class="rail">
+            <span class="ricon ok">🔑</span>
+            <div class="rbody"><div class="rl">Credential vault</div><div class="rs">per-tool scopes · encrypted</div></div>
+            <span class="rstate ok">Live</span>
+          </div>
+          <div class="rail">
+            <span class="ricon connect">§</span>
+            <div class="rbody"><div class="rl">Payments / legal-entity path</div><div class="rs">Stripe + entity formation</div></div>
+            <span class="rstate connect">Connect</span>
+          </div>
+          <div class="rail">
+            <span class="ricon ok">◉</span>
+            <div class="rbody"><div class="rl">Per-company memory / state</div><div class="rs">thesis · history · context</div></div>
+            <span class="rstate ok">Live</span>
+          </div>
+          <div class="rail">
+            <span class="ricon ok">⚙</span>
+            <div class="rbody"><div class="rl">Autonomy engine</div><div class="rs">L0→L2 · gate routing</div></div>
+            <span class="rstate ok">Live</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · ACTIVITY FEED -->
+      <section class="card">
+        <div class="panel-head">
+          <span class="kicker">Activity</span>
+          <span class="h-count">ambient</span>
+        </div>
+        <div class="feed">
+          <div class="fitem"><span class="ftime">09:42</span><span class="fbar bg-make"></span>
+            <span class="ftxt"><b>LeadSift</b> slice 5 checks green → queued for <b>Ship</b></span></div>
+          <div class="fitem"><span class="ftime">09:31</span><span class="fbar bg-run"></span>
+            <span class="ftxt"><b>TranslatorBill</b> Stripe payment <b>$9</b> captured</span></div>
+          <div class="fitem"><span class="ftime">09:18</span><span class="fbar bg-grow"></span>
+            <span class="ftxt"><b>DataDrop</b> drafted r/SaaS launch thread <code style="font-family:var(--mono);font-size:10px;">(test-mode)</code></span></div>
+          <div class="fitem"><span class="ftime">09:04</span><span class="fbar bg-grow"></span>
+            <span class="ftxt"><b>QuietInbox</b> brand kit + landing generated</span></div>
+          <div class="fitem"><span class="ftime">08:57</span><span class="fbar bg-make"></span>
+            <span class="ftxt"><b>RedditPainBot</b> slice 8 retry failed ×3 → <b>Unblock</b></span></div>
+          <div class="feed-live"><span class="ping"></span>6 agents working · last event 38s ago</div>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+
+  <!-- ============ BOTTOM · COVERAGE MAP ============ -->
+  <section class="card coverage">
+    <div class="cov-head">
+      <div>
+        <span class="kicker">Coverage map · what's built vs missing</span>
+        <h2 style="margin-top:6px;">Product surfaces × the 3 rings</h2>
+        <div class="cov-sub">Every surface the console needs, scored per ring. Cells name the prototype that already covers them — and expose the gaps still to build.</div>
+      </div>
+      <div class="cov-legend">
+        <span class="cl"><span class="sw built"></span>Built</span>
+        <span class="cl"><span class="sw partial"></span>Partial</span>
+        <span class="cl"><span class="sw missing"></span>Missing</span>
+      </div>
+    </div>
+
+    <table class="cov-grid">
+      <thead>
+        <tr>
+          <th style="width:30%;">Surface</th>
+          <th class="ring-h rh-make">Make</th>
+          <th class="ring-h rh-grow">Grow</th>
+          <th class="ring-h rh-run">Run</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="surface"><div class="s-name">Portfolio</div><div class="s-note">all companies + what each is doing now</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">dock-layouts</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">dock-layouts</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">dock-layouts</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Company view</div><div class="s-note">at-a-glance / chat / in-progress</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">08-chat-spine</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk partial">◐</span><span class="pf">16-text-only</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk partial">◐</span><span class="pf">16-text-only</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Gate queue · Waiting room</div><div class="s-note">ship / spend / post / sign / unblock</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk partial">◐</span><span class="pf">waiting-room</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">spend·post</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">sign</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Guardrails &amp; autonomy</div><div class="s-note">raise functions L0 → L1 → L2</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk partial">◐</span><span class="pf">spin guardrails</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">to build</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">to build</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Activity / console</div><div class="s-note">ambient proof it's running</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">agent console</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">agent console</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk built">✓</span><span class="pf">agent console</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Connected-accounts hub</div><div class="s-note">OAuth: Stripe · registrar · ESP · social · ads · host</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Budget / spend controls</div><div class="s-note">caps + spend authorization</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf">n/a</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Finance / billing</div><div class="s-note">revenue · payouts · invoices</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf">n/a</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf">n/a</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+        </tr>
+        <tr>
+          <td class="surface"><div class="s-name">Legal / entity</div><div class="s-note">entity · ToS · contracts · signatures</div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf">n/a</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf">n/a</span></div></td>
+          <td class="cell"><div class="cell-chip"><span class="mk missing">—</span><span class="pf gap">gap</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cov-foot">
+      <span class="cf-k">Gap analysis</span>
+      <span class="cf-t"><b class="builtn">Built:</b> portfolio · company view · console.
+        <b style="color:var(--amber);">Partial:</b> gate queue · guardrails.
+        <b class="gapn">Missing:</b> connected-accounts hub · budget/spend · finance/billing · legal/entity — the rails that make GROW &amp; RUN gates real.</span>
+    </div>
+  </section>
+
+  <div class="foot">
+    C Slop Slop <span class="sep">·</span> Product Map 3 / 3 <span class="sep">·</span> The Operator's Console
+    <span class="sep">·</span> Make → Grow → Run → analytics → Make
+  </div>
+
+</div>
+
+<script>
+/* minimal interactivity — keeps the cockpit feeling real */
+// gate item Approve / Hold
+document.querySelectorAll('.gitem .gactions button[data-act]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var item = btn.closest('.gitem');
+    item.classList.remove('show-ok','show-held');
+    item.querySelectorAll('.resolved').forEach(function(r){ r.style.display='none'; });
+    item.classList.add('done');
+    var which = btn.getAttribute('data-act'); // ok | held
+    var tgt = item.querySelector('.resolved.' + (which === 'ok' ? 'ok' : 'held'));
+    if(tgt) tgt.style.display='block';
+  });
+});
+// autonomy segmented controls
+document.querySelectorAll('.seg').forEach(function(seg){
+  seg.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){
+      seg.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+    });
+  });
+});
+// test-mode toggle
+var tm = document.getElementById('tmToggle');
+if(tm) tm.addEventListener('click', function(){ tm.classList.toggle('off'); });
+// rails connect buttons (cosmetic)
+document.querySelectorAll('.rstate.connect').forEach(function(c){
+  c.addEventListener('click', function(){
+    c.classList.remove('connect'); c.classList.add('part'); c.textContent='Linking…';
+  });
+});
+</script>
+</body>
+</html>
