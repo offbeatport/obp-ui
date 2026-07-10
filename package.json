@@ -9,8 +9,6 @@
     "dev": "vite dev",
     "build": "vite build",
     "start": "vite start",
-    "db:push": "drizzle-kit push --config=drizzle.config.ts",
-    "db:generate": "drizzle-kit generate --config=drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config=drizzle.config.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
