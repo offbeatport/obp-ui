@@ -85,8 +85,21 @@ export function renewLease(runId: string): void {
   RENEW_LEASE.run(Date.now() + config.leaseMs, runId);
 }
 
+// Kill the process groups of all in-flight runs (used on graceful shutdown so detached
+// children — which don't receive the terminal's SIGINT — don't run on orphaned, burning
+// tokens with no wall-clock cap until the next boot reap). DB reclaim happens on next boot.
+export function killInFlight(): number {
+  const rows = SELECT_RUNNING_ALL.all() as RunRow[];
+  for (const r of rows) {
+    const cp: Checkpoint = r.checkpoint ? JSON.parse(r.checkpoint) : {};
+    killPgid(cp.agentPgid);
+    killPgid(cp.deployPgid);
+  }
+  return rows.length;
+}
+
 function killPgid(pgid?: number): void {
-  if (!pgid) return;
+  if (!pgid || pgid <= 0) return; // never let -pgid become a positive PID (e.g. kill(1))
   try {
     process.kill(-pgid, "SIGKILL");
   } catch {

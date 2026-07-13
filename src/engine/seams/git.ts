@@ -53,10 +53,21 @@ export class LocalGitProvider implements Git {
     return git(this.dir(companyId), "rev-parse", "HEAD");
   }
 
-  // Commit the run's work on a per-run branch, so unapproved work never lands on `main`.
+  // Start a run on a fresh branch cut from committed `main`, with a CLEAN tree — so the
+  // agent never inherits a prior (failed/unapproved) run's files, and run branches are
+  // true siblings off main (not a linear stack that an ff-only promote would ship through).
+  async prepareRun(workdir: string, runId: string): Promise<void> {
+    await rm(join(workdir, ".git", "index.lock"), { force: true });
+    await gitTry(workdir, "merge", "--abort");
+    await gitTry(workdir, "rebase", "--abort");
+    await git(workdir, "checkout", "-q", "-B", `run/${runId}`, "main");
+    await git(workdir, "reset", "-q", "--hard", "main");
+    await git(workdir, "clean", "-fdx");
+  }
+
+  // Commit the run's work on its (already-checked-out) per-run branch, parented at main.
   // --allow-empty so a no-op run still produces a checkpoint sha.
-  async commitAll(workdir: string, runId: string, msg: string): Promise<string> {
-    await git(workdir, "checkout", "-q", "-B", `run/${runId}`);
+  async commitAll(workdir: string, _runId: string, msg: string): Promise<string> {
     await git(workdir, "add", "-A");
     await git(workdir, "commit", "-q", "--allow-empty", "-m", msg);
     return git(workdir, "rev-parse", "HEAD");
