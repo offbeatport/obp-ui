@@ -43,6 +43,23 @@ function isDrivable(x: string | undefined): x is HarnessKind {
     return !!x && (DRIVABLE_HARNESSES as readonly string[]).includes(x);
 }
 
+// OpenRouter namespaces every model as `vendor/model`. Brand providers store bare native
+// IDs (e.g. anthropic → "claude-3.7-sonnet"), so prepend the OpenRouter vendor slug when we
+// fall back to routing through OpenRouter. Already-namespaced models pass through untouched.
+const OPENROUTER_VENDOR: Record<string, string> = {
+    anthropic: "anthropic",
+    openai: "openai",
+    perplexity: "perplexity",
+    xai: "x-ai",
+    google: "google",
+    zai: "z-ai",
+};
+function toOpenRouterModel(provider: string, model: string): string {
+    if (!model || model.includes("/")) return model;
+    const vendor = OPENROUTER_VENDOR[provider];
+    return vendor ? `${vendor}/${model}` : model;
+}
+
 /** Raw (unvalidated) provider selection for a task — what the UI shows/edits. */
 export function taskProvider(task: AiTask): string {
     return (
@@ -126,12 +143,13 @@ export function resolveTaskModel(task: AiTask, env: NodeJS.ProcessEnv = process.
             baseUrl: DIRECT_BASE[provider] ?? OPENROUTER_BASE,
         };
     }
-    // OpenRouter fallback — a brand model routed through OpenRouter (this is "Perplexity via OpenRouter").
+    // OpenRouter fallback — a brand model routed through OpenRouter (this is "Perplexity via
+    // OpenRouter"). Re-namespace the bare native model to OpenRouter's vendor/model form.
     return {
         kind: "model",
         task,
         provider,
-        model,
+        model: toOpenRouterModel(provider, model),
         via: "openrouter",
         apiKey: keyForProvider("openrouter", env),
         baseUrl: OPENROUTER_BASE,
