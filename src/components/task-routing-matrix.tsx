@@ -24,10 +24,11 @@ export function TaskRoutingMatrix({
     keys: Record<string, string | null>;
     onSave: (key: string, value: unknown, secret?: boolean) => void;
 }) {
-    // providers referenced across the model tasks → the keys they need
-    const used = [
-        ...new Set(MODEL_TASKS.map((t) => tasks[t]?.provider).filter(Boolean)),
-    ] as string[];
+    // providers referenced across the model tasks → the keys they need. claude (subscription)
+    // needs no key, so it never shows a key field.
+    const used = (
+        [...new Set(MODEL_TASKS.map((t) => tasks[t]?.provider).filter(Boolean))] as string[]
+    ).filter((p) => p !== "claude");
 
     return (
         <TooltipProvider>
@@ -39,7 +40,7 @@ export function TaskRoutingMatrix({
                         return (
                             <div
                                 key={t}
-                                className="grid items-center gap-3 rounded-xl border bg-card p-3 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)_minmax(0,1.2fr)]"
+                                className="grid items-center gap-3 rounded-xl border bg-card p-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1.15fr)_minmax(0,1fr)]"
                             >
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-1.5 text-[13px] font-semibold">
@@ -73,14 +74,14 @@ export function TaskRoutingMatrix({
                                     <SelectContent>
                                         {PROVIDERS.map((p) => (
                                             <SelectItem key={p.id} value={p.id}>
-                                                <span className="flex items-center gap-2">
+                                                <span className="flex min-w-0 items-center gap-2">
                                                     {p.id !== "custom" && (
                                                         <ProviderLogo
-                                                            id={p.id as ProviderId}
-                                                            className="size-3.5"
+                                                            id={(p.logo ?? p.id) as ProviderId}
+                                                            className="size-3.5 flex-none"
                                                         />
                                                     )}
-                                                    {p.label}
+                                                    <span className="truncate">{p.label}</span>
                                                 </span>
                                             </SelectItem>
                                         ))}

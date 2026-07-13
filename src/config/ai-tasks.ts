@@ -1,5 +1,6 @@
 import {
     type AiTask,
+    CLAUDE_TASK_MODEL,
     DEFAULT_TASK_ROUTING,
     DIRECT_API_PROVIDERS,
     DRIVABLE_HARNESSES,
@@ -24,7 +25,8 @@ export type ResolvedTask =
           task: AiTask;
           provider: string;
           model: string;
-          via: "direct" | "openrouter";
+          // "claude-cli" = driven through the Claude CLI on the subscription (no API key).
+          via: "direct" | "openrouter" | "claude-cli";
           apiKey?: string;
           baseUrl: string;
       };
@@ -114,8 +116,20 @@ export function resolveTaskModel(task: AiTask, env: NodeJS.ProcessEnv = process.
         };
     }
 
-    const provider = taskProvider(task);
-    const model = taskModel(task);
+    // The DEFAULT thinking route keys on OpenRouter-key presence: with a key, route via
+    // OpenRouter (cheaper models + Perplexity research); without, run on the Claude
+    // subscription via the CLI. An explicit per-task provider always wins.
+    const orKey = keyForProvider("openrouter", env);
+    const explicitProvider = getConfig<string>(`ai.task.${task}.provider`);
+    const provider = explicitProvider ?? (orKey ? "openrouter" : "claude");
+    const model =
+        getConfig<string>(`ai.task.${task}.model`) ??
+        (provider === "claude" ? CLAUDE_TASK_MODEL[task] : DEFAULT_TASK_ROUTING[task].model);
+
+    // Claude subscription (CLI) — the keyless default. No HTTP base/key.
+    if (provider === "claude") {
+        return { kind: "model", task, provider, model, via: "claude-cli", baseUrl: "" };
+    }
 
     // Direct if a direct-API provider AND its own key exists; otherwise route via OpenRouter.
     const directKey = DIRECT_API_PROVIDERS.has(provider)
