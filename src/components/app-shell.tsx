@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { Logo, LogoMark } from "~/components/logo";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { cn } from "~/lib/utils";
 
@@ -27,7 +28,16 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
       style={{ gridTemplateColumns: collapsed ? "60px 1fr" : "264px 1fr" }}
     >
       <Rail active={active} collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
-      <main className="min-w-0 overflow-y-auto bg-background">{children}</main>
+      <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
+        <div className="flex-1">{children}</div>
+        <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
+          <span>
+            <span className="text-primary">{"{"}</span> C Slop Slop{" "}
+            <span className="text-primary">{"}"}</span> — from a thought to bag.
+          </span>
+          <ThemeToggle />
+        </footer>
+      </main>
     </div>
   );
 }
@@ -62,29 +72,9 @@ function Rail({
         <ChevronLeft className={cn("size-3.5 transition-transform", collapsed && "rotate-180")} />
       </button>
 
-      {/* logo wordmark: { C slop slop } */}
-      <div
-        className={cn(
-          "flex items-center gap-2.5 px-4 pb-3.5 pt-5",
-          collapsed && "justify-center px-0",
-        )}
-      >
-        <div className="grid size-[26px] flex-none place-items-center rounded-lg bg-gradient-to-br from-[#e08458] to-primary text-[13px] font-bold text-white shadow-[inset_0_1px_1px_rgba(255,255,255,.4),0_2px_6px_rgba(200,100,60,.3)]">
-          C
-        </div>
-        {!collapsed && (
-          <div className="flex items-center gap-1.5">
-            <span className="text-[23px] font-normal leading-none text-primary opacity-40">
-              {"{"}
-            </span>
-            <span className="whitespace-nowrap text-[17px] font-semibold tracking-tight">
-              slop slop
-            </span>
-            <span className="text-[23px] font-normal leading-none text-primary opacity-40">
-              {"}"}
-            </span>
-          </div>
-        )}
+      {/* Glow-C wordmark (V7) */}
+      <div className={cn("flex items-center px-4 pb-3.5 pt-5", collapsed && "justify-center px-0")}>
+        {collapsed ? <LogoMark /> : <Logo />}
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
@@ -161,11 +151,6 @@ function Rail({
             </>
           )}
         </div>
-        {!collapsed && (
-          <div className="mt-1 flex justify-end">
-            <ThemeToggle />
-          </div>
-        )}
       </div>
     </aside>
   );
