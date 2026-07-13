@@ -38,11 +38,8 @@ export function TaskRoutingMatrix({
                         const row = tasks[t] ?? { provider: "openrouter", model: "" };
                         const prov = PROVIDERS.find((p) => p.id === row.provider);
                         return (
-                            <div
-                                key={t}
-                                className="grid items-center gap-3 rounded-xl border bg-card p-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1.15fr)_minmax(0,1fr)]"
-                            >
-                                <div className="min-w-0">
+                            <div key={t} className="rounded-xl border bg-card p-3.5">
+                                <div className="mb-3 min-w-0">
                                     <div className="flex items-center gap-1.5 text-[13px] font-semibold">
                                         {TASK_META[t].label}
                                         <Tooltip>
@@ -60,38 +57,40 @@ export function TaskRoutingMatrix({
                                             </TooltipContent>
                                         </Tooltip>
                                     </div>
-                                    <div className="truncate text-xs text-muted-foreground">
+                                    <div className="text-xs text-muted-foreground">
                                         {TASK_META[t].purpose}
                                     </div>
                                 </div>
-                                <Select
-                                    value={row.provider}
-                                    onValueChange={(v) => onSave(`ai.task.${t}.provider`, v)}
-                                >
-                                    <SelectTrigger className="min-w-0">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {PROVIDERS.map((p) => (
-                                            <SelectItem key={p.id} value={p.id}>
-                                                <span className="flex min-w-0 items-center gap-2">
-                                                    {p.id !== "custom" && (
-                                                        <ProviderLogo
-                                                            id={(p.logo ?? p.id) as ProviderId}
-                                                            className="size-3.5 flex-none"
-                                                        />
-                                                    )}
-                                                    <span className="truncate">{p.label}</span>
-                                                </span>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <ModelControl
-                                    models={prov?.models ?? []}
-                                    value={row.model}
-                                    onChange={(v) => onSave(`ai.task.${t}.model`, v)}
-                                />
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    <Select
+                                        value={row.provider}
+                                        onValueChange={(v) => onSave(`ai.task.${t}.provider`, v)}
+                                    >
+                                        <SelectTrigger className="w-full min-w-0">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {PROVIDERS.map((p) => (
+                                                <SelectItem key={p.id} value={p.id}>
+                                                    <span className="flex min-w-0 items-center gap-2">
+                                                        {p.id !== "custom" && (
+                                                            <ProviderLogo
+                                                                id={(p.logo ?? p.id) as ProviderId}
+                                                                className="size-3.5 flex-none"
+                                                            />
+                                                        )}
+                                                        <span className="truncate">{p.label}</span>
+                                                    </span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <ModelControl
+                                        models={prov?.models ?? []}
+                                        value={row.model}
+                                        onChange={(v) => onSave(`ai.task.${t}.model`, v)}
+                                    />
+                                </div>
                             </div>
                         );
                     })}
@@ -147,6 +146,7 @@ function ModelControl({
             <Input
                 defaultValue={value}
                 placeholder="model slug"
+                className="w-full"
                 onBlur={(e) => onChange(e.target.value)}
             />
         );
@@ -158,7 +158,7 @@ function ModelControl({
     const items = current && !models.includes(current) ? [current, ...models] : models;
     return (
         <Select value={current || models[0]} onValueChange={onChange}>
-            <SelectTrigger className="min-w-0">
+            <SelectTrigger className="w-full min-w-0">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -1,11 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { AgentsProvidersPanel } from "~/components/agents-panel";
+import { AgentsProvidersPanel, type PanelReady } from "~/components/agents-panel";
 import { Logo } from "~/components/logo";
 import { Button } from "~/components/ui/button";
-import { completeOnboarding, type discoverAgents, saveConfig } from "~/server/agents";
-
-type Discovery = Awaited<ReturnType<typeof discoverAgents>>;
+import { completeOnboarding, saveConfig } from "~/server/agents";
 
 // Chromeless first-run gate (self-host). Reuses the SAME AgentsProvidersPanel as Settings.
 export const Route = createFileRoute("/onboarding")({
@@ -15,10 +13,10 @@ export const Route = createFileRoute("/onboarding")({
 function Onboarding() {
     const router = useRouter();
     const [finishing, setFinishing] = useState(false);
-    const [disc, setDisc] = useState<Discovery | null>(null);
+    const [ready, setReady] = useState<PanelReady>({ claudeReady: false, canFinish: false });
 
-    // Claude is one-click ready when it's installed AND logged in on this host.
-    const claudeReady = !!disc?.agents.find((a) => a.id === "claude" && a.authState === "authed");
+    // The app is useless without a builder or a key, so entry is gated: no dead "skip".
+    const { claudeReady, canFinish } = ready;
 
     const finish = async () => {
         setFinishing(true);
@@ -53,29 +51,26 @@ function Onboarding() {
                 </p>
 
                 <div className="mt-10">
-                    <AgentsProvidersPanel mode="onboarding" onReady={setDisc} />
+                    <AgentsProvidersPanel mode="onboarding" onReady={setReady} />
                 </div>
 
                 <div className="mt-10 flex items-center justify-between gap-4 border-t pt-6">
-                    <div className="text-xs text-muted-foreground">
+                    <div className="max-w-md text-xs text-muted-foreground">
                         {claudeReady
                             ? "Claude is detected & logged in — one click and you're ready."
-                            : "Log in to Claude on this host, or add an OpenRouter key above, to run anything."}
+                            : canFinish
+                              ? "Your OpenRouter key is set — you're ready."
+                              : "Log in to Claude Code on this host, or add an OpenRouter key above. C~Slop~Slop can't run without one."}
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" onClick={finish} disabled={finishing}>
-                            Set up later
+                    {claudeReady ? (
+                        <Button onClick={useClaude} disabled={finishing}>
+                            Use Claude Code
                         </Button>
-                        {claudeReady ? (
-                            <Button onClick={useClaude} disabled={finishing}>
-                                Use Claude Code
-                            </Button>
-                        ) : (
-                            <Button onClick={finish} disabled={finishing}>
-                                Finish
-                            </Button>
-                        )}
-                    </div>
+                    ) : (
+                        <Button onClick={finish} disabled={finishing || !canFinish}>
+                            Finish
+                        </Button>
+                    )}
                 </div>
             </div>
         </div>
