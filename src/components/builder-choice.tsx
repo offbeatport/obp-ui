@@ -7,8 +7,15 @@ type Detected = { installed: boolean; version?: string; authState: string } | un
 // The simple path: two big provider tiles for the BUILD (hands) task. Claude is live/active;
 // Codex is shown but disabled ("coming soon").
 const OPTIONS = [
-    { id: "claude", label: "Claude Code", logo: "anthropic", enabled: true },
-    { id: "codex", label: "Codex", logo: "openai", enabled: false },
+    {
+        id: "claude",
+        label: "Claude Code",
+        logo: "anthropic",
+        enabled: true,
+        chip: "bg-accent text-accent-foreground",
+    },
+    // OpenAI brand: white mark on black chip.
+    { id: "codex", label: "Codex", logo: "openai", enabled: false, chip: "bg-black text-white" },
 ] as const;
 
 export function BuilderChoice({
@@ -41,7 +48,12 @@ export function BuilderChoice({
                             active && "border-primary ring-2 ring-primary/30",
                         )}
                     >
-                        <span className="grid size-12 flex-none place-items-center rounded-xl bg-accent text-accent-foreground">
+                        <span
+                            className={cn(
+                                "grid size-12 flex-none place-items-center rounded-xl",
+                                o.chip,
+                            )}
+                        >
                             <ProviderLogo id={o.logo} className="size-6" />
                         </span>
                         <span className="min-w-0 flex-1">
