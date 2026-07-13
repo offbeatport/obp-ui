@@ -150,9 +150,13 @@ function ModelControl({
             />
         );
     }
-    const items = value && !models.includes(value) ? [value, ...models] : models;
+    // A legacy value may carry an OpenRouter "vendor/model" prefix; if the bare tail matches a
+    // preset for this (direct) provider, show the bare form instead of a stray prefixed entry.
+    const bare = value.includes("/") ? value.slice(value.indexOf("/") + 1) : value;
+    const current = models.includes(bare) ? bare : value;
+    const items = current && !models.includes(current) ? [current, ...models] : models;
     return (
-        <Select value={value || models[0]} onValueChange={onChange}>
+        <Select value={current || models[0]} onValueChange={onChange}>
             <SelectTrigger className="min-w-0">
                 <SelectValue />
             </SelectTrigger>
