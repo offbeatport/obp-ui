@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-// C Slop Slop — data model (SPEC.md · the whole schema is 5 tables).
+// C Slop Slop — data model (docs/SPEC.md · the whole schema is 5 tables).
 // One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing, run.checkpoint).
 import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
@@ -30,7 +30,14 @@ export type CodePayload = { doneWhen: string; diff?: string; previewUrl?: string
 export type MessagePayload = { channel: string; draft: string; recipients?: string[] };
 export type MoneyPayload = { amountUsd: number; target: string };
 export type ActionPayload = CodePayload | MessagePayload | MoneyPayload;
-export type Checkpoint = { gitSha?: string; lastStep?: string };
+export type Checkpoint = {
+  gitSha?: string;
+  lastStep?: string;
+  sessionId?: string; // harness session id (e.g. claude --session-id) — best-effort in-run resume
+  agentPgid?: number; // process-group id of the agent subprocess, so the reaper can kill(-pgid)
+  deployPgid?: number; // process-group id of the deployed app subprocess
+  instanceId?: string; // executor instance that owns this run (single-executor invariant)
+};
 
 // ---- opportunity — a cheap scored candidate from a thought ----
 export const opportunities = sqliteTable("opportunity", {
@@ -79,7 +86,12 @@ export const actions = sqliteTable("action", {
   title: text("title").notNull(),
   evidence: text("evidence", { mode: "json" }).$type<Record<string, unknown>>(),
   reversible: integer("reversible", { mode: "boolean" }).notNull().default(false),
-  status: text("status", { enum: ["queued", "running", "awaiting_approval", "done", "blocked"] })
+  // approved = you clicked Approve; the executor's ship driver then promotes the
+  // checkpoint sha and flips it to done. (Splitting approved/done keeps the ship
+  // crash-durable — see src/engine/loop.ts ship driver.)
+  status: text("status", {
+    enum: ["queued", "running", "awaiting_approval", "approved", "done", "blocked"],
+  })
     .notNull()
     .default("queued"),
   priority: real("priority").notNull().default(0), // impact × confidence ÷ effort

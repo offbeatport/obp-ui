@@ -6,9 +6,12 @@
   "description": "C Slop Slop — an agent fleet that turns hunches into autonomously-run companies.",
   "packageManager": "pnpm@10.30.3",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "vite dev",
+    "dev:engine": "tsx src/engine/index.ts",
     "build": "vite build",
     "start": "vite start",
+    "typecheck": "tsc --noEmit",
     "db:studio": "drizzle-kit studio --config=drizzle.config.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
