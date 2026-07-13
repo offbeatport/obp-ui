@@ -1,7 +1,9 @@
-import { Loader2, Settings2 } from "lucide-react";
+import { Check, Loader2, Settings2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { BuilderChoice } from "~/components/builder-choice";
+import { ProviderLogo } from "~/components/provider-logos";
 import { TaskRoutingMatrix } from "~/components/task-routing-matrix";
+import { Input } from "~/components/ui/input";
 import { discoverAgents, getTaskRouting, saveConfig } from "~/server/agents";
 
 type Discovery = Awaited<ReturnType<typeof discoverAgents>>;
@@ -55,7 +57,7 @@ export function AgentsProvidersPanel({
     const claude = disc.agents.find((a) => a.id === "claude");
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-12">
             <section>
                 <SectionHead
                     title="Builder"
@@ -77,6 +79,14 @@ export function AgentsProvidersPanel({
             </section>
 
             <section>
+                <SectionHead
+                    title="Thinking"
+                    hint="Planning, research & scoring run on your Claude subscription by default — no key needed. Add an OpenRouter key to use cheaper models and live web research (Perplexity)."
+                />
+                <OpenRouterKeyField last4={routing.keys.openrouter} onSave={save} />
+            </section>
+
+            <section>
                 <button
                     type="button"
                     onClick={() => setAdvanced((a) => !a)}
@@ -90,8 +100,8 @@ export function AgentsProvidersPanel({
                     <div className="mt-4">
                         <p className="mb-4 max-w-xl text-xs text-muted-foreground">
                             Route each thinking task to a specific provider + model (e.g. Research →
-                            Perplexity, Orchestrate → Grok). Defaults route via OpenRouter. The
-                            Builder above is the hands.
+                            Perplexity, Orchestrate → Grok). Tasks default to Claude, or to
+                            OpenRouter once you add a key above. The Builder is the hands.
                         </p>
                         <TaskRoutingMatrix
                             tasks={routing.tasks}
@@ -101,6 +111,42 @@ export function AgentsProvidersPanel({
                     </div>
                 )}
             </section>
+        </div>
+    );
+}
+
+// Optional OpenRouter key. Its PRESENCE flips thinking tasks from the Claude subscription to
+// OpenRouter routing — no separate toggle needed.
+function OpenRouterKeyField({
+    last4,
+    onSave,
+}: {
+    last4: string | null;
+    onSave: (key: string, value: unknown, secret?: boolean) => void;
+}) {
+    const [saved, setSaved] = useState(false);
+    return (
+        <div className="flex items-center gap-2.5 rounded-xl border bg-card p-3">
+            <span className="grid size-9 flex-none place-items-center rounded-lg bg-accent text-accent-foreground">
+                <ProviderLogo id="openrouter" className="size-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-semibold">OpenRouter key (optional)</div>
+                <div className="text-xs text-muted-foreground">
+                    {last4 ? `Active · •••• ${last4}` : "sk-or-…  — leave blank to stay on Claude"}
+                </div>
+            </div>
+            <Input
+                type="password"
+                placeholder={last4 ? "replace key" : "sk-or-…"}
+                className="max-w-[220px]"
+                onBlur={(e) => {
+                    if (!e.target.value) return;
+                    onSave("ai.key.openrouter", e.target.value, true);
+                    setSaved(true);
+                }}
+            />
+            {saved && <Check className="size-4 flex-none text-primary" />}
         </div>
     );
 }

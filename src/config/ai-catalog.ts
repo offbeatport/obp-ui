@@ -43,10 +43,17 @@ export const TASK_META: Record<AiTask, { label: string; purpose: string }> = {
     },
 };
 
-// Provider (brand/route). `logo` maps to provider-logos; "custom" has no glyph.
-export type ProviderId = LogoId | "custom";
+// Provider (brand/route). `logo` overrides the glyph (else the id is used); "custom"/"claude"
+// have no own mark. "claude" = the Claude subscription driven via the CLI (no API key).
+export type ProviderId = LogoId | "custom" | "claude";
 
-export const PROVIDERS: { id: ProviderId; label: string; models: string[] }[] = [
+export const PROVIDERS: { id: ProviderId; label: string; models: string[]; logo?: LogoId }[] = [
+    {
+        id: "claude",
+        label: "Claude (subscription)",
+        logo: "anthropic",
+        models: ["claude-3.7-sonnet", "claude-3.5-haiku"],
+    },
     {
         id: "openrouter",
         label: "OpenRouter",
@@ -79,7 +86,7 @@ export function providerLabel(id: string): string {
     return PROVIDERS.find((p) => p.id === id)?.label ?? id;
 }
 
-// Per-task system defaults (model tasks route via OpenRouter with a sane model).
+// OpenRouter model per task — used when an OpenRouter key is present (the "preferred" mode).
 export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: string }> = {
     build: { provider: "noop", model: "" },
     opportunities: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
@@ -88,6 +95,19 @@ export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: str
     write: { provider: "openrouter", model: "anthropic/claude-3.7-sonnet" },
     chat: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
     orchestrate: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
+};
+
+// Claude-subscription model per task — the DEFAULT when no OpenRouter key is set. Cheap
+// high-volume tasks get Haiku; heavier reasoning gets Sonnet. (No live web research here —
+// that's the reason to add an OpenRouter key and route research to Perplexity.)
+export const CLAUDE_TASK_MODEL: Record<AiTask, string> = {
+    build: "",
+    opportunities: "claude-3.5-haiku",
+    research: "claude-3.7-sonnet",
+    plan: "claude-3.7-sonnet",
+    write: "claude-3.7-sonnet",
+    chat: "claude-3.5-haiku",
+    orchestrate: "claude-3.5-haiku",
 };
 
 // The two-button simple choice seeds the build (hands) harness. Thinking tasks use the

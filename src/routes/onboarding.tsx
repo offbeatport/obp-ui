@@ -3,7 +3,9 @@ import { useState } from "react";
 import { AgentsProvidersPanel } from "~/components/agents-panel";
 import { Logo } from "~/components/logo";
 import { Button } from "~/components/ui/button";
-import { completeOnboarding } from "~/server/agents";
+import { completeOnboarding, type discoverAgents, saveConfig } from "~/server/agents";
+
+type Discovery = Awaited<ReturnType<typeof discoverAgents>>;
 
 // Chromeless first-run gate (self-host). Reuses the SAME AgentsProvidersPanel as Settings.
 export const Route = createFileRoute("/onboarding")({
@@ -13,6 +15,10 @@ export const Route = createFileRoute("/onboarding")({
 function Onboarding() {
     const router = useRouter();
     const [finishing, setFinishing] = useState(false);
+    const [disc, setDisc] = useState<Discovery | null>(null);
+
+    // Claude is one-click ready when it's installed AND logged in on this host.
+    const claudeReady = !!disc?.agents.find((a) => a.id === "claude" && a.authState === "authed");
 
     const finish = async () => {
         setFinishing(true);
@@ -20,33 +26,56 @@ function Onboarding() {
         router.navigate({ to: "/" });
     };
 
+    // Adopt the Claude subscription for build + thinking (the keyless default), then finish.
+    const useClaude = async () => {
+        setFinishing(true);
+        await Promise.all([
+            saveConfig({ data: { key: "ai.simple", value: "claude" } }),
+            saveConfig({ data: { key: "ai.task.build.provider", value: "claude" } }),
+        ]);
+        await completeOnboarding();
+        router.navigate({ to: "/" });
+    };
+
     return (
         <div className="min-h-screen bg-background">
-            <div className="mx-auto max-w-2xl px-6 py-16">
+            <div className="mx-auto max-w-3xl px-6 py-16">
                 <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-faint">
                     Welcome
                 </div>
-                <Logo />
+                <Logo className="py-3" />
                 <h1 className="mt-6 font-display text-4xl font-light tracking-tight">
                     Pick your coding agent
                 </h1>
                 <p className="mt-3 max-w-xl font-serif text-[17px] italic text-muted-foreground">
-                    cslopslop builds with a coding agent on your machine — or with CSlopSlop credits
-                    via OpenRouter. Choose what runs the work; you can change this anytime in
-                    Settings.
+                    C~Slop~Slop builds companies with a coding agent on your machine. Choose what
+                    runs the work; you can change this anytime in Settings.
                 </p>
 
                 <div className="mt-10">
-                    <AgentsProvidersPanel mode="onboarding" />
+                    <AgentsProvidersPanel mode="onboarding" onReady={setDisc} />
                 </div>
 
                 <div className="mt-10 flex items-center justify-between gap-4 border-t pt-6">
-                    <Button variant="ghost" onClick={finish} disabled={finishing}>
-                        Skip for now
-                    </Button>
-                    <Button onClick={finish} disabled={finishing}>
-                        Finish
-                    </Button>
+                    <div className="text-xs text-muted-foreground">
+                        {claudeReady
+                            ? "Claude is detected & logged in — one click and you're ready."
+                            : "Log in to Claude on this host, or add an OpenRouter key above, to run anything."}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" onClick={finish} disabled={finishing}>
+                            Set up later
+                        </Button>
+                        {claudeReady ? (
+                            <Button onClick={useClaude} disabled={finishing}>
+                                Use Claude Code
+                            </Button>
+                        ) : (
+                            <Button onClick={finish} disabled={finishing}>
+                                Finish
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
