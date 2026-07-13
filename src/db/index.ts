@@ -3,17 +3,37 @@ import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "./schema.js";
 
+// Two OS processes (web + executor) each open their OWN connection over the same
+// WAL file and coordinate only through rows. Everything a connection needs
+// (WAL, foreign_keys, busy_timeout) is set here so BOTH processes get it.
+//
+// busy_timeout MUST be set before the boot DDL and before the first cross-process
+// write: better-sqlite3 is synchronous, so a SQLITE_BUSY without a timeout throws
+// immediately instead of serializing. We keep it modest — it's a synchronous
+// busy-wait, so a long value would freeze the web/SSR event loop under contention.
 const dbPath = process.env.DATABASE_URL || resolve(process.cwd(), "cslopslop.db");
-const sqlite = new Database(dbPath);
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("foreign_keys = ON");
 
-// Boot-time CREATE TABLE — greenfield, no migrations yet (SPEC). Idempotent.
-createTables(sqlite);
+// Singleton on globalThis so Vite dev HMR (which re-evaluates this module) can't
+// leak file descriptors / duplicate connections in the web process.
+const g = globalThis as typeof globalThis & { __cslopslop_sqlite?: Database.Database };
+
+export const sqlite: Database.Database = g.__cslopslop_sqlite ?? openDatabase();
+if (!g.__cslopslop_sqlite) g.__cslopslop_sqlite = sqlite;
 
 export const db = drizzle(sqlite, { schema });
 export * from "./schema.js";
 
+function openDatabase(): Database.Database {
+  const s = new Database(dbPath);
+  s.pragma("journal_mode = WAL");
+  s.pragma("foreign_keys = ON");
+  s.pragma("busy_timeout = 2000");
+  createTables(s);
+  return s;
+}
+
+// Boot-time CREATE TABLE — greenfield, no migrations yet (SPEC). Idempotent, so it
+// running in both processes is fine.
 function createTables(s: Database.Database) {
   s.exec(`
     CREATE TABLE IF NOT EXISTS opportunity (
@@ -79,8 +99,10 @@ function createTables(s: Database.Database) {
     );
 
     CREATE INDEX IF NOT EXISTS action_company_status ON action(company_id, status);
+    CREATE INDEX IF NOT EXISTS action_status_priority ON action(status, priority);
     CREATE INDEX IF NOT EXISTS run_action            ON run(action_id);
     CREATE INDEX IF NOT EXISTS run_company_status     ON run(company_id, status);
+    CREATE INDEX IF NOT EXISTS run_status             ON run(status);
     CREATE INDEX IF NOT EXISTS message_company        ON message(company_id);
   `);
 }

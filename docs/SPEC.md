@@ -106,7 +106,7 @@ thought  →  opportunities  →  company  →  action → action → action
 > **Reversible `code` actions can auto-run on a green check. Every `message` and `money` action always waits for you.**
 
 - Per-company **`autopilot: off|on`**, **default off** until you trust the company; chat-steerable; flip back to L0 anytime.
-- **Guarded by:** the budget cap (pauses autopilot when hit) + the kill-switch. **Single-user, local only** — agent **sandboxing stays gated to multi-user** (autopilot never runs against a shared host).
+- **Guarded by:** the budget cap (pauses autopilot when hit) + the kill-switch. On **self-host/local**, agents run on the user's own machine; on **hosted (multi-tenant)**, every agent run is isolated in a **per-user sandbox** (microVM/container) — that isolation is *core to hosted*, and autopilot never runs against a shared host un-sandboxed.
 - **Why bounded:** autonomous spend and autonomous human-facing messages are where the trust moat dies. Keeping `message`/`money` behind the gate is what keeps "reliable" honest.
 
 ## Interface — one screen, chat is the spine
@@ -115,18 +115,24 @@ thought  →  opportunities  →  company  →  action → action → action
 - **Zoom for context:** click a company or an action to expand its context inline — backlog, metrics, comms history, the **thesis + opportunity score + opportunity report** (`slop/research/`). The old jobs (Build · Distribute · Monetize · Measure · Steer) are **lenses/filters on the one queue**, not separate screens.
 - No agent screen. No run-kind picker. You chat; the system decides what to run. *(Keep autonomy legible — surface per-action status + preview + what autopilot did.)*
 
+## Deployment model — open-core local + hosted-default
+Two placements of **one engine**, not two products:
+- **Open-core (self-host, local):** the OSS core runs on your machine — the run executor spawns the coding agent as a local subprocess, companies are bare local git repos, apps deploy to `localhost`, your own keys/subscription. Zero infra, maximum portability — the wedge + credibility.
+- **Hosted (the default most people use):** the same engine in the cloud, multi-tenant — each user's builds run in a **per-user sandbox** (microVM/container), repos live in a hosted git backend, apps deploy to our infra. This is the business, so **untrusted-agent isolation + multi-tenant are core, not deferred.**
+- **What makes it one system — two seams:** a **Sandbox** seam abstracts *where the agent subprocess runs* (`LocalShell` ↔ `CloudSandbox`); a **Credentials** seam abstracts *whose keys* — **BYOK** (user's OpenRouter/Anthropic key or Claude subscription; **no token-burn markup → anti-Bolt even hosted**) or **managed + metered** as the frictionless default. Build local first (cheap loop validation); the cloud path is the same call in a different box. Managed sandbox providers (e2b / Modal / Fly Machines / Daytona) mean you rent isolation, not build it.
+
 ## Engine
-- **Run executor** — one uniform background runner: spawns a CLI agent (`claude -p` / `codex`) or API for `code` actions, streams logs (SSE), writes `checkpoint` (gitSha + step), records `costUsd`, resumes by replay, enforces kill-switch + budget cap, applies the one autopilot rule.
-- **Deploy (v1 = real but minimal):** each company runs in a **real local container with a real `localhost` URL** — `doneWhen` hits it. (Remote hosting — Coolify/Fly — is a later swap behind the deploy seam.)
+- **Run executor** — one uniform background runner: spawns a **pluggable coding-agent harness** (`claude -p` · `codex` · `aider`/`opencode`) inside a **Sandbox** (`LocalShell` self-host · `CloudSandbox` microVM/container hosted) for `code` actions, streams logs (SSE), writes `checkpoint` (gitSha + step), records `costUsd`, resumes by replay, enforces kill-switch + budget cap, applies the one autopilot rule. The harness supplies the *hands* (edits files, runs commands, iterates to green `doneWhen`); the AI proxy supplies the *brain*.
+- **Deploy (v1 = real but minimal):** each company runs in a **real local container with a real `localhost` URL** — `doneWhen` hits it. (Hosted deploys to our infra — Fly/Coolify/containers — behind the same deploy seam.)
 - **Payments / ads / domain seams** — Stripe **test-mode**, recorded ad channels, record-intent domains; each an interface so the real provider swaps in later with no rewrite.
-- **AI proxy** — per-task model/tool routing; swappable as models improve.
+- **AI proxy** — per-task model/tool routing for the *thinking* tasks (scoring, planning, drafting, research); **default OpenRouter** (model-agnostic), **BYOK or managed-metered** keys. Distinct from the build harness (above): OpenRouter/Anthropic/OpenAI supply the model behind whichever harness runs. Swappable as models improve.
 - **Design system (engine, invisible) — v1 = one style + one archetype.** Each company gets an in-repo, agent-readable design spec (tokens + component conventions, e.g. `slop/design/` or a dev-only `/design` route) that the builder reads throughout the app's evolution so the UI stays coherent — the antidote to LLM slop, and it *raises* `doneWhen` pass-rate by shrinking the decision space. v1 ships exactly what BurningDemand needs (one shadcn-based style, one archetype); the library is **extracted from real shipped apps, not invented up front.** User-switchable styles are cheap (swap a shadcn CSS-variable token file). Kept in the engine — not a screen.
 - **Stack** — TanStack Start + SQLite + Drizzle + Tailwind, single app at repo root. **Boot-time `CREATE TABLE`** (greenfield; no migrations yet).
 
 ## Git backbone (v1: simplest thing that works)
 - **v1 = bare local git**, one repo per company, with a **`slop/` folder** inside it. `company.gitRemote` + a **git-provider interface** is the seam.
 - **Sovereignty:** each repo has a short, provider-agnostic **`AGENTS.md`** (`CLAUDE.md`/`CODEX.md` point to it): read `slop` first, ship one validated feature, persist back. So **`git clone + claude` continues a company with no platform** — the platform is just that loop, automated and prioritized.
-- *Deferred behind the same seam:* Gitea, multi-repo (`app`/`site`/`slop`), per-repo visibility, GitHub export.
+- **The seam serves both placements:** `LocalGitProvider` (bare local git) for self-host; **Gitea** (open-source → the *same* backend for hosted *and* advanced self-host) or GitHub orgs for the hosted default — **one org per user**. *Still deferred behind the same seam:* multi-repo (`app`/`site`/`slop`), per-repo visibility, GitHub export.
 
 ## `slop` — the company brain
 Prose only. Agents read it to resume; humans read it to understand the company.
@@ -147,7 +153,7 @@ The "agents run a company" space is real and funded — closest is **Polsia** (�
 3. **Honest & reliable** — one approval gate + **bounded** autopilot (message/money always gated); slower, but it actually ships.
 
 ## Deferred (named, not built)
-**L2 fully-unattended** autonomy · **real money** — live Stripe, real domain purchase, real ad-spend (v1 = test-mode + record-intent) · multi-tenant auth + isolation + agent **sandboxing** (mandatory *before* multi-user; autopilot is single-user/local until then) · Gitea + multi-repo + GitHub export · sub-runs / recursive decomposition · **granular** token metering (v1 has only a coarse USD cap) · scheduler fairness · `slop` compaction · `roadmap.md` projection · remote deploy · Postgres/scale · **design-system library** (a growing set of shadcn styles × app archetypes — directory / dashboard / generic — that CSlopSlop auto-picks and the user can switch; grown from real shipped apps, v1 has only one of each). Each stays a one-line forward-reference behind a seam.
+**L2 fully-unattended** autonomy · **real money** — live Stripe, real domain purchase, real ad-spend (v1 = test-mode + record-intent) · **hosted multi-tenant + per-user sandbox isolation + BYOK/managed keys** — *the core of the hosted product (the default most users pick), built right after the local open-core proves the loop; not a nice-to-have* · multi-repo + GitHub export · sub-runs / recursive decomposition · **granular** token metering (v1 has only a coarse USD cap) · scheduler fairness · `slop` compaction · `roadmap.md` projection · remote deploy · Postgres/scale · **design-system library** (a growing set of shadcn styles × app archetypes — directory / dashboard / generic — that CSlopSlop auto-picks and the user can switch; grown from real shipped apps, v1 has only one of each). Each stays a one-line forward-reference behind a seam.
 
 ## Autonomy ladder
 - **L0 (v1):** chat-driven; you approve each action.
@@ -158,7 +164,7 @@ The "agents run a company" space is real and funded — closest is **Polsia** (�
 v1's **target is the full loop**: build + distribute + monetize + autopilot, end-to-end, on a real (local) deploy. The only discipline is **build order, not scope**:
 1. Prove the spine: one hardcoded `code` action end-to-end — *a visitor can sign up on a live local URL* (agent builds → local container → `doneWhen` hits the URL → approval gate). **Cold-run ≈≥7/10 over ~10 runs** before widening.
 2. Then the real loop on one company: thought → opportunities → promote → planning run → priority queue of `code` actions → a **monetize** action ("user can pay", test-mode) → **distribute** actions (SEO features + build-in-public/cold `message` actions + channels) → flip **autopilot** on.
-Single-user, local. Auth / Gitea / remote-deploy / real-money slot in later behind their seams.
+v1 = the **local open-core** — proves the loop cheaply, no infra. **Hosted multi-tenant is the default product, built next** behind the Sandbox / Credentials / Git / deploy seams (per-user sandbox, BYOK-or-managed keys, Gitea/GitHub org-per-user); real-money slots in later too.
 
 ## Scope stance
 - **Architecture forecloses nothing** — a Snowflake-for-a-niche is a valid company (just more actions).
