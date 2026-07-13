@@ -20,6 +20,9 @@ export type HarnessTask = {
 };
 export type HarnessIO = {
   onLine: (msg: string, stream?: "stdout" | "stderr") => void;
+  // fired once the agent subprocess is live, so the runner can persist its pgid into
+  // run.checkpoint (the reaper kill(-pgid)s it on a crash).
+  onSpawn?: (proc: { pid: number; pgid: number }) => void;
   signal: AbortSignal;
 };
 export type HarnessResult = { ok: boolean; sessionId?: string; costUsd: number };
