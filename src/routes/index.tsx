@@ -1,298 +1,71 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { enqueueDemo, listQueue, resetDemo } from "../server/actions";
+import { ArrowUp, ShieldCheck } from "lucide-react";
+import { AppShell } from "~/components/app-shell";
+import { Textarea } from "~/components/ui/textarea";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
-type QueueState = Awaited<ReturnType<typeof listQueue>>;
-type LogLine = { t: number; type: string; msg?: string; status?: string; error?: string };
-
-const STATUS_COLOR: Record<string, string> = {
-  queued: "var(--muted-foreground)",
-  running: "var(--primary)",
-  awaiting_approval: "var(--warning)",
-  approved: "var(--approval)",
-  done: "var(--success)",
-  blocked: "var(--destructive)",
-  succeeded: "var(--success)",
-  failed: "var(--destructive)",
-  cancelled: "var(--muted-foreground)",
-};
+const SIGNALS = [
+  "Chase late freelancer invoices on autopilot",
+  "Branded 'pay now' link for freelancers",
+  "Collect a deposit before client work starts",
+];
 
 function Home() {
-  const [state, setState] = useState<QueueState | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [activeRunId, setActiveRunId] = useState<string | null>(null);
-  const [logs, setLogs] = useState<LogLine[]>([]);
-  const logBoxRef = useRef<HTMLDivElement | null>(null);
-
-  const refresh = useCallback(async () => {
-    setState(await listQueue());
-  }, []);
-
-  // Poll the queue every second.
-  useEffect(() => {
-    void refresh();
-    const iv = setInterval(refresh, 1000);
-    return () => clearInterval(iv);
-  }, [refresh]);
-
-  // Latch onto the newest live run for log streaming.
-  useEffect(() => {
-    const newest = state?.runs[0]?.id ?? null;
-    if (newest && newest !== activeRunId) setActiveRunId(newest);
-  }, [state, activeRunId]);
-
-  // Stream the active run's logs over SSE; resumes from offset on reconnect.
-  useEffect(() => {
-    if (!activeRunId) return;
-    setLogs([]);
-    const es = new EventSource(`/api/runs/${activeRunId}/logs`);
-    es.onmessage = (e) => {
-      try {
-        const line = JSON.parse(e.data) as LogLine;
-        setLogs((prev) => [...prev, line]);
-        if (line.type === "end") es.close();
-      } catch {
-        /* ignore */
-      }
-    };
-    es.onerror = () => {
-      /* EventSource auto-reconnects with Last-Event-ID */
-    };
-    return () => es.close();
-  }, [activeRunId]);
-
-  useEffect(() => {
-    const el = logBoxRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, []);
-
-  const doEnqueue = async () => {
-    setBusy(true);
-    try {
-      await enqueueDemo();
-      await refresh();
-    } finally {
-      setBusy(false);
-    }
-  };
-  const doReset = async () => {
-    setBusy(true);
-    try {
-      await resetDemo();
-      setActiveRunId(null);
-      setLogs([]);
-      await refresh();
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const companyName = (id: string) =>
-    state?.companies.find((c) => c.id === id)?.name ?? id.slice(0, 8);
-
   return (
-    <div style={{ maxWidth: 920, margin: "0 auto", padding: "40px 24px 80px" }}>
-      <header
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        <div>
-          <h2 style={{ margin: 0 }}>Action Queue</h2>
-          <p style={{ margin: "6px 0 0", color: "var(--muted-foreground)", fontSize: 12 }}>
-            run-executor spine · control plane (NO-OP harness)
-          </p>
+    <AppShell active="home">
+      <div className="mx-auto flex min-h-full max-w-4xl flex-col justify-center px-6 py-16">
+        <div className="mb-2 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
+          {"// Thought → Company"}
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <Btn onClick={doEnqueue} disabled={busy} kind="primary">
-            + Enqueue demo action
-          </Btn>
-          <Btn onClick={doReset} disabled={busy}>
-            Reset
-          </Btn>
-        </div>
-      </header>
+        <h1 className="text-center font-display text-6xl font-light tracking-tight">
+          Start your new AI company
+        </h1>
+        <p className="mt-4 text-center text-lg text-muted-foreground">
+          I'll find the opportunities
+        </p>
 
-      <Section title="Actions">
-        {state?.actions.length ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {state.actions.map((a) => (
-              <Row key={a.id}>
-                <Pill status={a.status} />
-                <span style={{ flex: 1, color: "var(--foreground)" }}>{a.title}</span>
-                <span style={{ color: "var(--muted-foreground)", fontSize: 11 }}>{a.type}</span>
-                <span
-                  style={{
-                    color: "var(--muted-foreground)",
-                    fontSize: 11,
-                    width: 90,
-                    textAlign: "right",
-                  }}
-                >
-                  {companyName(a.companyId)}
-                </span>
-              </Row>
-            ))}
+        {/* composer */}
+        <div className="mt-9 rounded-[1.25rem] border bg-card p-2 shadow-e1 transition focus-within:ring-3 focus-within:ring-primary/25">
+          <Textarea
+            placeholder="What are you passionate about?"
+            className="min-h-24 resize-none border-0 bg-transparent px-4 py-3 text-base shadow-none focus-visible:ring-0 dark:bg-transparent"
+          />
+          <div className="flex items-center justify-between px-2 pb-1">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold">
+              <ShieldCheck className="size-4 text-primary" /> Lean &amp; safe
+            </span>
+            <button
+              type="button"
+              aria-label="Find opportunities"
+              className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground transition hover:scale-105 active:scale-95"
+            >
+              <ArrowUp className="size-5" />
+            </button>
           </div>
-        ) : (
-          <Empty>Queue empty — enqueue the demo action to drive the executor.</Empty>
-        )}
-      </Section>
-
-      <Section title="Live runs">
-        {state?.runs.length ? (
-          state.runs.map((r) => (
-            <Row key={r.id}>
-              <Pill status={r.status} />
-              <span style={{ flex: 1, color: "var(--muted-foreground)", fontSize: 11 }}>
-                {r.id}
-              </span>
-              <span style={{ color: "var(--muted-foreground)", fontSize: 11 }}>
-                attempt {r.attempt}
-              </span>
-            </Row>
-          ))
-        ) : (
-          <Empty>No active runs.</Empty>
-        )}
-      </Section>
-
-      <Section title={activeRunId ? `Run log · ${activeRunId.slice(0, 8)}` : "Run log"}>
-        <div
-          ref={logBoxRef}
-          style={{
-            background: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            padding: 12,
-            height: 220,
-            overflowY: "auto",
-            fontSize: 12,
-            lineHeight: 1.6,
-          }}
-        >
-          {logs.length ? (
-            logs.map((l, i) => (
-              <div key={`${l.t}-${i}`} style={{ color: logColor(l), whiteSpace: "pre-wrap" }}>
-                <span style={{ color: "var(--faint)", marginRight: 8 }}>
-                  {new Date(l.t).toLocaleTimeString()}
-                </span>
-                {l.type === "end" ? `▪ run ${l.status}${l.error ? `: ${l.error}` : ""}` : l.msg}
-              </div>
-            ))
-          ) : (
-            <span style={{ color: "var(--faint)" }}>waiting for a run…</span>
-          )}
         </div>
-      </Section>
-    </div>
-  );
-}
 
-function logColor(l: LogLine): string {
-  if (l.type === "status") return "var(--primary)";
-  if (l.type === "end") return STATUS_COLOR[l.status ?? ""] ?? "var(--foreground)";
-  return "var(--muted-foreground)";
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section style={{ marginTop: 28 }}>
-      <div
-        style={{
-          fontSize: 11,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          color: "var(--muted-foreground)",
-          marginBottom: 10,
-        }}
-      >
-        {title}
+        {/* today's signals */}
+        <p className="mt-12 text-center text-lg text-muted-foreground">
+          Or pick one of today's signals
+        </p>
+        <div className="mt-3">
+          {SIGNALS.map((s, i) => (
+            <button
+              type="button"
+              key={s}
+              className="flex w-full items-center gap-4 border-t px-2 py-4 text-left transition hover:bg-primary/[0.04] first:border-t-0"
+            >
+              <span className="grid size-6 flex-none place-items-center font-mono text-xs text-faint">
+                {i + 1}
+              </span>
+              <span className="text-[15px]">{s}</span>
+            </button>
+          ))}
+        </div>
       </div>
-      {children}
-    </section>
-  );
-}
-
-function Row({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "9px 12px",
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "var(--radius)",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Pill({ status }: { status: string }) {
-  const color = STATUS_COLOR[status] ?? "var(--muted-foreground)";
-  const live = status === "running";
-  return (
-    <span
-      className={live ? "pulse" : undefined}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        color,
-        fontSize: 11,
-        width: 132,
-      }}
-    >
-      <span style={{ width: 7, height: 7, borderRadius: "50%", background: color }} />
-      {status}
-    </span>
-  );
-}
-
-function Empty({ children }: { children: React.ReactNode }) {
-  return <div style={{ color: "var(--faint)", fontSize: 12, padding: "8px 2px" }}>{children}</div>;
-}
-
-function Btn({
-  children,
-  onClick,
-  disabled,
-  kind,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  disabled?: boolean;
-  kind?: "primary";
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        fontFamily: "var(--font-mono)",
-        fontSize: 12,
-        padding: "7px 12px",
-        borderRadius: "var(--radius)",
-        cursor: disabled ? "default" : "pointer",
-        opacity: disabled ? 0.5 : 1,
-        color: kind === "primary" ? "var(--primary-foreground)" : "var(--foreground)",
-        background: kind === "primary" ? "var(--primary)" : "transparent",
-        border: `1px solid ${kind === "primary" ? "var(--primary)" : "var(--border)"}`,
-      }}
-    >
-      {children}
-    </button>
+    </AppShell>
   );
 }

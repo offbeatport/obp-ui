@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { ThemeToggle } from "../components/theme-toggle";
 import globalsCss from "../styles/globals.css?url";
 
 export const Route = createRootRoute({
@@ -48,32 +47,14 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body
         style={{
           margin: 0,
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
           fontFamily: "var(--font-sans)",
           background: "var(--background)",
           color: "var(--foreground)",
         }}
       >
-        <div style={{ flex: 1 }}>{children}</div>
-        <Footer />
+        {children}
         <Scripts />
       </body>
     </html>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4 text-xs text-muted-foreground">
-        <span>
-          <span className="text-primary">{"{"}</span> C Slop Slop{" "}
-          <span className="text-primary">{"}"}</span> — from a thought to bag.
-        </span>
-        <ThemeToggle />
-      </div>
-    </footer>
   );
 }
