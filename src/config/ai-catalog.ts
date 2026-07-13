@@ -52,12 +52,14 @@ export const PROVIDERS: { id: ProviderId; label: string; models: string[] }[] = 
         label: "OpenRouter",
         models: ["anthropic/claude-3.7-sonnet", "openai/gpt-4o", "perplexity/sonar"],
     },
+    // Direct-API providers use their native model IDs — NO "provider/" prefix (that's an
+    // OpenRouter-only routing convention).
     {
         id: "anthropic",
         label: "Anthropic",
-        models: ["anthropic/claude-3.7-sonnet", "anthropic/claude-3.5-haiku"],
+        models: ["claude-3.7-sonnet", "claude-3.5-haiku"],
     },
-    { id: "openai", label: "OpenAI", models: ["openai/gpt-4o", "openai/o3-mini"] },
+    { id: "openai", label: "OpenAI", models: ["gpt-4o", "o3-mini"] },
     {
         id: "perplexity",
         label: "Perplexity",
