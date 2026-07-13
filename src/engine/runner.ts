@@ -97,10 +97,13 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
 
   try {
     // Real harness builds inside the company's git worktree; the NO-OP runs in place.
+    // prepareRun cuts a fresh run branch from a CLEAN main, so the agent never inherits a
+    // prior/failed run's files (also covers in-session retry cleanup the boot reaper can't).
     let workdir = process.cwd();
     if (real) {
       const repo = await ctx.git.ensureRepo(claim.companyId);
       workdir = repo.workdir;
+      await ctx.git.prepareRun(workdir, claim.runId);
     }
 
     const res = await ctx.harness.run(
@@ -115,11 +118,18 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
       },
       {
         onLine: (msg, stream) => log.write({ type: "log", stream, msg }),
-        onSpawn: ({ pgid }) => patchCheckpoint(claim.runId, { agentPgid: pgid }),
+        // only persist a real pgid — a failed spawn reports -1, which must never reach the reaper
+        onSpawn: ({ pgid }) => {
+          if (pgid > 0) patchCheckpoint(claim.runId, { agentPgid: pgid });
+        },
         signal: ac.signal,
       },
     );
 
+    // KNOWN GAP (apikey mode only): a wall-clock SIGKILL abort kills claude before it emits
+    // its final result event, so costUsd is 0 and the spend goes un-metered against the budget
+    // cap. Fix when metering matters = accumulate per-message token usage. Subscription mode
+    // (default) reports ~$0 anyway, so the cap is informational there regardless.
     if (res.costUsd > 0) SET_COST.run(res.costUsd, claim.runId);
     if (!res.ok) throw new Error("harness reported failure / aborted");
 

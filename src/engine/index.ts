@@ -1,7 +1,7 @@
 import { config } from "./config.js";
 import { buildEngineContext } from "./context.js";
 import { startLoop } from "./loop.js";
-import { bootReclaim } from "./reaper.js";
+import { bootReclaim, killInFlight } from "./reaper.js";
 
 // The executor daemon — a standalone long-lived process (run via tsx) beside `vite dev`.
 // It owns the whole run lifecycle and coordinates with the web process only through the
@@ -19,8 +19,20 @@ function main(): void {
     `[engine] loop running — poll ${config.pollMs}ms, concurrency ${config.maxConcurrentRuns}, harness ${ctx.harness.kind}`,
   );
 
+  // Safety net: a single stray subprocess/async error must never take down the whole
+  // executor (all concurrent runs). Log and keep the loop alive; DB state stays durable.
+  process.on("uncaughtException", (e) =>
+    console.error("[engine] uncaughtException (kept alive):", e),
+  );
+  process.on("unhandledRejection", (e) =>
+    console.error("[engine] unhandledRejection (kept alive):", e),
+  );
+
   const shutdown = (sig: string) => {
-    console.log(`[engine] ${sig} — stopping loop (in-flight runs reclaimed on next boot)`);
+    const killed = killInFlight();
+    console.log(
+      `[engine] ${sig} — killed ${killed} in-flight child group(s); stopping loop (runs reclaimed on next boot)`,
+    );
     stop();
     process.exit(0);
   };

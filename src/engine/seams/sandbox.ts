@@ -15,6 +15,14 @@ export class LocalShell implements Sandbox {
       detached: true, // new process group → pgid === pid on POSIX
       stdio: ["pipe", "pipe", "pipe"],
     });
+    // Never let an async 'error' (ENOENT/EACCES — binary missing / not on the daemon's
+    // PATH) become an unhandled event: that would crash the whole executor instead of
+    // failing one run. Capture it and surface it through wait() as a failed exit.
+    let spawnErr: Error | undefined;
+    child.on("error", (e) => {
+      spawnErr = e;
+    });
+    child.stdin?.on("error", () => {}); // swallow EPIPE if the child exits before we finish writing
     if (spec.stdin != null) {
       child.stdin?.write(spec.stdin);
       child.stdin?.end();
@@ -28,11 +36,17 @@ export class LocalShell implements Sandbox {
       pgid: pid,
       stdout: child.stdout,
       stderr: child.stderr,
-      wait: () => new Promise((resolve) => child.on("close", (code) => resolve({ code }))),
+      wait: () =>
+        new Promise((resolve) => {
+          if (spawnErr) return resolve({ code: -1 });
+          child.on("error", () => resolve({ code: -1 }));
+          child.on("close", (code) => resolve({ code }));
+        }),
     };
   }
 
   async kill(pgid: number): Promise<void> {
+    if (!pgid || pgid <= 0) return; // never let -pgid become a positive PID (e.g. kill(1))
     try {
       process.kill(-pgid, "SIGKILL");
     } catch {

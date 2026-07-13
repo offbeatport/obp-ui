@@ -72,6 +72,9 @@ export interface Git {
   kind: string;
   ensureRepo(companyId: string): Promise<{ workdir: string }>;
   seedSha(companyId: string): Promise<string>;
+  // start a run on a CLEAN branch cut from main, so the agent never inherits a prior
+  // (possibly failed/unapproved) run's tree and run branches are siblings off main.
+  prepareRun(workdir: string, runId: string): Promise<void>;
   commitAll(workdir: string, runId: string, msg: string): Promise<string>;
   resetClean(workdir: string, sha: string): Promise<void>;
   promote(companyId: string, sha: string): Promise<void>;
