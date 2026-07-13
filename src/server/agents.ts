@@ -1,8 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { resolveAgentConfig } from "~/config/agent";
+import { AI_TASKS } from "~/config/ai-catalog";
+import { resolveTaskModel, taskProvider } from "~/config/ai-tasks";
 import { getConfig, secretLast4, setConfig, setSecret } from "~/config/store";
 import { deploymentMode } from "~/lib/deployment";
 import { detectAgents } from "./detect";
+
+const PROVIDER_IDS = [
+    "openrouter",
+    "anthropic",
+    "openai",
+    "perplexity",
+    "xai",
+    "google",
+    "zai",
+    "custom",
+];
 
 // Boot state — drives the onboarding gate + which tabs show.
 export const getBootState = createServerFn({ method: "GET" }).handler(async () => {
@@ -98,3 +111,35 @@ export const testBrainConnection = createServerFn({ method: "POST" })
             return { ok: false, detail: e instanceof Error ? e.message : "Request failed" };
         }
     });
+
+// Per-task routing state for the Advanced matrix: each task's provider+model (resolved) + the
+// builder (build/hands) choice + per-provider key last4. Writes go through saveConfig.
+export const getTaskRouting = createServerFn({ method: "GET" }).handler(async () => {
+    const tasks: Record<string, { provider: string; model: string; via?: string }> = {};
+    for (const t of AI_TASKS) {
+        const r = resolveTaskModel(t);
+        tasks[t] =
+            r.kind === "model"
+                ? { provider: r.provider, model: r.model, via: r.via }
+                : {
+                      provider: taskProvider("build"),
+                      model: getConfig<string>("ai.task.build.model") ?? "",
+                  };
+    }
+    const keys: Record<string, string | null> = {};
+    for (const p of PROVIDER_IDS) {
+        keys[p] =
+            secretLast4(`ai.key.${p}`) ??
+            (p === "openrouter"
+                ? (secretLast4("agent.openrouter_api_key") ?? null)
+                : p === "anthropic"
+                  ? (secretLast4("agent.anthropic_api_key") ?? null)
+                  : null);
+    }
+    return {
+        builder: taskProvider("build"),
+        simple: getConfig<string>("ai.simple") ?? null,
+        tasks,
+        keys,
+    };
+});
