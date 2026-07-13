@@ -10,15 +10,15 @@ type QueueState = Awaited<ReturnType<typeof listQueue>>;
 type LogLine = { t: number; type: string; msg?: string; status?: string; error?: string };
 
 const STATUS_COLOR: Record<string, string> = {
-  queued: "var(--muted)",
-  running: "var(--accent)",
+  queued: "var(--muted-foreground)",
+  running: "var(--primary)",
   awaiting_approval: "var(--warning)",
-  approved: "var(--purple)",
+  approved: "var(--approval)",
   done: "var(--success)",
-  blocked: "var(--danger)",
+  blocked: "var(--destructive)",
   succeeded: "var(--success)",
-  failed: "var(--danger)",
-  cancelled: "var(--muted)",
+  failed: "var(--destructive)",
+  cancelled: "var(--muted-foreground)",
 };
 
 function Home() {
@@ -106,7 +106,7 @@ function Home() {
       >
         <div>
           <h2 style={{ margin: 0 }}>Action Queue</h2>
-          <p style={{ margin: "6px 0 0", color: "var(--fg-subtle)", fontSize: 12 }}>
+          <p style={{ margin: "6px 0 0", color: "var(--muted-foreground)", fontSize: 12 }}>
             run-executor spine · control plane (NO-OP harness)
           </p>
         </div>
@@ -126,10 +126,15 @@ function Home() {
             {state.actions.map((a) => (
               <Row key={a.id}>
                 <Pill status={a.status} />
-                <span style={{ flex: 1, color: "var(--fg-muted)" }}>{a.title}</span>
-                <span style={{ color: "var(--fg-dim)", fontSize: 11 }}>{a.type}</span>
+                <span style={{ flex: 1, color: "var(--foreground)" }}>{a.title}</span>
+                <span style={{ color: "var(--muted-foreground)", fontSize: 11 }}>{a.type}</span>
                 <span
-                  style={{ color: "var(--fg-dim)", fontSize: 11, width: 90, textAlign: "right" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: 11,
+                    width: 90,
+                    textAlign: "right",
+                  }}
                 >
                   {companyName(a.companyId)}
                 </span>
@@ -146,8 +151,12 @@ function Home() {
           state.runs.map((r) => (
             <Row key={r.id}>
               <Pill status={r.status} />
-              <span style={{ flex: 1, color: "var(--fg-dim)", fontSize: 11 }}>{r.id}</span>
-              <span style={{ color: "var(--fg-dim)", fontSize: 11 }}>attempt {r.attempt}</span>
+              <span style={{ flex: 1, color: "var(--muted-foreground)", fontSize: 11 }}>
+                {r.id}
+              </span>
+              <span style={{ color: "var(--muted-foreground)", fontSize: 11 }}>
+                attempt {r.attempt}
+              </span>
             </Row>
           ))
         ) : (
@@ -159,7 +168,7 @@ function Home() {
         <div
           ref={logBoxRef}
           style={{
-            background: "var(--bg-elevated)",
+            background: "var(--card)",
             border: "1px solid var(--border)",
             borderRadius: "var(--radius)",
             padding: 12,
@@ -172,14 +181,14 @@ function Home() {
           {logs.length ? (
             logs.map((l, i) => (
               <div key={`${l.t}-${i}`} style={{ color: logColor(l), whiteSpace: "pre-wrap" }}>
-                <span style={{ color: "var(--fg-faint)", marginRight: 8 }}>
+                <span style={{ color: "var(--faint)", marginRight: 8 }}>
                   {new Date(l.t).toLocaleTimeString()}
                 </span>
                 {l.type === "end" ? `▪ run ${l.status}${l.error ? `: ${l.error}` : ""}` : l.msg}
               </div>
             ))
           ) : (
-            <span style={{ color: "var(--fg-faint)" }}>waiting for a run…</span>
+            <span style={{ color: "var(--faint)" }}>waiting for a run…</span>
           )}
         </div>
       </Section>
@@ -188,9 +197,9 @@ function Home() {
 }
 
 function logColor(l: LogLine): string {
-  if (l.type === "status") return "var(--accent)";
-  if (l.type === "end") return STATUS_COLOR[l.status ?? ""] ?? "var(--fg-muted)";
-  return "var(--fg-subtle)";
+  if (l.type === "status") return "var(--primary)";
+  if (l.type === "end") return STATUS_COLOR[l.status ?? ""] ?? "var(--foreground)";
+  return "var(--muted-foreground)";
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -201,7 +210,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
           fontSize: 11,
           textTransform: "uppercase",
           letterSpacing: "0.1em",
-          color: "var(--fg-dim)",
+          color: "var(--muted-foreground)",
           marginBottom: 10,
         }}
       >
@@ -220,7 +229,7 @@ function Row({ children }: { children: React.ReactNode }) {
         alignItems: "center",
         gap: 12,
         padding: "9px 12px",
-        background: "var(--bg-elevated)",
+        background: "var(--card)",
         border: "1px solid var(--border)",
         borderRadius: "var(--radius)",
       }}
@@ -231,7 +240,7 @@ function Row({ children }: { children: React.ReactNode }) {
 }
 
 function Pill({ status }: { status: string }) {
-  const color = STATUS_COLOR[status] ?? "var(--muted)";
+  const color = STATUS_COLOR[status] ?? "var(--muted-foreground)";
   const live = status === "running";
   return (
     <span
@@ -252,9 +261,7 @@ function Pill({ status }: { status: string }) {
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ color: "var(--fg-faint)", fontSize: 12, padding: "8px 2px" }}>{children}</div>
-  );
+  return <div style={{ color: "var(--faint)", fontSize: 12, padding: "8px 2px" }}>{children}</div>;
 }
 
 function Btn({
@@ -280,9 +287,9 @@ function Btn({
         borderRadius: "var(--radius)",
         cursor: disabled ? "default" : "pointer",
         opacity: disabled ? 0.5 : 1,
-        color: kind === "primary" ? "#050d1e" : "var(--fg-muted)",
-        background: kind === "primary" ? "var(--accent)" : "transparent",
-        border: `1px solid ${kind === "primary" ? "var(--accent)" : "var(--border-strong)"}`,
+        color: kind === "primary" ? "var(--primary-foreground)" : "var(--foreground)",
+        background: kind === "primary" ? "var(--primary)" : "transparent",
+        border: `1px solid ${kind === "primary" ? "var(--primary)" : "var(--border)"}`,
       }}
     >
       {children}
