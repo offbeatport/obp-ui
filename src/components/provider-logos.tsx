@@ -1,7 +1,9 @@
 import type { ReactElement, SVGProps } from "react";
 
 // Provider marks. anthropic (Claude) + openai use the official brand SVGs; the rest are
-// simple original geometric glyphs. All use currentColor so they inherit the tile color.
+// simple original geometric glyphs. Each mark draws in its brand color (see BRAND); the
+// monochrome brands (OpenAI, xAI, OpenRouter) fall back to currentColor so they stay
+// legible in both light and dark themes.
 export type ProviderId =
     | "anthropic"
     | "openai"
@@ -75,7 +77,19 @@ const MARKS: Record<ProviderId, (p: SVGProps<SVGSVGElement>) => ReactElement> = 
     ),
 };
 
+// Official brand colors. undefined = monochrome brand → inherits currentColor (theme-safe).
+const BRAND: Record<ProviderId, string | undefined> = {
+    anthropic: "#D97757", // Claude clay
+    openai: undefined, // monochrome
+    perplexity: "#20B8CD", // Perplexity turquoise
+    xai: undefined, // monochrome (Grok / X)
+    google: "#4285F4", // Google blue (Gemini)
+    openrouter: undefined, // monochrome
+    zai: "#3B5CFF", // Z.ai blue
+};
+
 export function ProviderLogo({ id, className }: { id: ProviderId; className?: string }) {
     const Mark = MARKS[id];
-    return <Mark className={className} />;
+    const brand = BRAND[id];
+    return <Mark className={className} style={brand ? { color: brand } : undefined} />;
 }
