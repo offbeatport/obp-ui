@@ -8,232 +8,284 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
-   cslopslop design system — editorial "paper" theme
+   cslopslop design system - editorial "paper" theme
    Grounded in design/v2-prototypes/08-chat-spine-pro-v7.html.
-   This is the ONE style + archetype (SPEC "design system — engine, invisible").
+   This is the ONE style + archetype (SPEC "design system - engine, invisible").
    Branding a company = override these token VALUES; components never change.
    ========================================================================== */
 
 :root {
-  --radius: 0.75rem; /* 12px — buttons, inputs, badges */
-  --radius-card: 1.125rem; /* 18px — cards, surfaces, dialogs */
-  --measure: 42rem; /* 672px editorial column */
+    --radius: 0.75rem; /* 12px - buttons, inputs, badges */
+    --radius-card: 1.125rem; /* 18px - cards, surfaces, dialogs */
+    --measure: 42rem; /* 672px editorial column */
 
-  /* surfaces */
-  --background: #f7f3ec; /* cream — page */
-  --foreground: #2c2926; /* ink */
-  --card: #fffdf8; /* paper — cards/popovers */
-  --card-foreground: #2c2926;
-  --popover: #fffdf8;
-  --popover-foreground: #2c2926;
-  --secondary: #f1ebe0; /* cream-2 — rails, subtle fills */
-  --secondary-foreground: #2c2926;
-  --muted: #f1ebe0;
-  --muted-foreground: #635c52; /* ink-soft */
-  --faint: #7b7368; /* ink-faint — ~4.5:1 on paper (WCAG AA) */
+    /* surfaces */
+    --background: #f7f3ec; /* cream - page */
+    --foreground: #2c2926; /* ink */
+    --card: #fffdf8; /* paper - cards/popovers */
+    --card-foreground: #2c2926;
+    --popover: #fffdf8;
+    --popover-foreground: #2c2926;
+    --secondary: #f1ebe0; /* cream-2 - rails, subtle fills */
+    --secondary-foreground: #2c2926;
+    --muted: #f1ebe0;
+    --muted-foreground: #635c52; /* ink-soft */
+    --faint: #7b7368; /* ink-faint - ~4.5:1 on paper (WCAG AA) */
 
-  /* brand — warm terracotta */
-  --primary: #c8643c;
-  --primary-foreground: #ffffff;
-  --accent: #f4e0d6; /* accent-soft — subtle hover surface */
-  --accent-foreground: #a04a28; /* accent-ink */
+    /* brand - warm terracotta */
+    --primary: #c8643c;
+    --primary-foreground: #ffffff;
+    --accent: #f4e0d6; /* accent-soft - subtle hover surface */
+    --accent-foreground: #a04a28; /* accent-ink */
 
-  /* lines · inputs · focus */
-  --border: #e6ddce; /* line */
-  --border-soft: #efe8da; /* line-soft */
-  --input: #e6ddce;
-  --ring: #c8643c;
+    /* lines · inputs · focus */
+    --border: #e6ddce; /* line */
+    --border-soft: #efe8da; /* line-soft */
+    --input: #e6ddce;
+    --ring: #c8643c;
 
-  /* status / semantic — chips, dots, kickers (soft = tinted fill) */
-  --success: #4f8a52;
-  --success-foreground: #ffffff;
-  --success-soft: #e3efe1; /* shipped / done */
-  --warning: #c08a2e;
-  --warning-foreground: #ffffff;
-  --warning-soft: #f6ecd4; /* reject / caution */
-  --info: #4a72b0;
-  --info-foreground: #ffffff;
-  --info-soft: #e2eaf5; /* building / status */
-  --approval: #7a5ea8;
-  --approval-foreground: #ffffff;
-  --approval-soft: #ece6f5; /* awaiting approval */
-  --neutral: #8a8579;
-  --neutral-foreground: #ffffff;
-  --neutral-soft: #ece8df; /* todo / idle */
-  --destructive: #b6483f;
-  --destructive-foreground: #ffffff;
-  --destructive-soft: #f6e0dd; /* blocked / kill */
+    /* status / semantic - chips, dots, kickers (soft = tinted fill) */
+    --success: #4f8a52;
+    --success-foreground: #ffffff;
+    --success-soft: #e3efe1; /* shipped / done */
+    --warning: #c08a2e;
+    --warning-foreground: #ffffff;
+    --warning-soft: #f6ecd4; /* reject / caution */
+    --info: #4a72b0;
+    --info-foreground: #ffffff;
+    --info-soft: #e2eaf5; /* building / status */
+    --approval: #7a5ea8;
+    --approval-foreground: #ffffff;
+    --approval-soft: #ece6f5; /* awaiting approval */
+    --neutral: #8a8579;
+    --neutral-foreground: #ffffff;
+    --neutral-soft: #ece8df; /* todo / idle */
+    --destructive: #b6483f;
+    --destructive-foreground: #ffffff;
+    --destructive-soft: #f6e0dd; /* blocked / kill */
 
-  /* elevation */
-  --shadow-e1: 0 1px 2px rgba(60, 50, 38, 0.04), 0 8px 28px rgba(60, 50, 38, 0.07);
-  --shadow-e2: 0 2px 6px rgba(60, 50, 38, 0.06), 0 22px 60px rgba(60, 50, 38, 0.13);
+    /* elevation */
+    --shadow-e1: 0 1px 2px rgba(60, 50, 38, 0.04), 0 8px 28px rgba(60, 50, 38, 0.07);
+    --shadow-e2: 0 2px 6px rgba(60, 50, 38, 0.06), 0 22px 60px rgba(60, 50, 38, 0.13);
 
-  /* fonts (loaded in __root.tsx) */
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-serif: "Spectral", Georgia, serif;
+    /* fonts (loaded in __root.tsx) */
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-display: "Space Grotesk", "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --font-serif: "Spectral", Georgia, serif;
 }
 
 .dark {
-  --background: #05060a;
-  --foreground: #e6ebf5;
-  --card: #10131f;
-  --card-foreground: #e6ebf5;
-  --popover: #10131f;
-  --popover-foreground: #e6ebf5;
-  --secondary: #080d18;
-  --secondary-foreground: #e6ebf5;
-  --muted: #080d18;
-  --muted-foreground: #aab4c8;
-  --faint: #7c8499; /* ~5:1 on dark paper (WCAG AA) */
+    --background: #05060a;
+    --foreground: #e6ebf5;
+    --card: #10131f;
+    --card-foreground: #e6ebf5;
+    --popover: #10131f;
+    --popover-foreground: #e6ebf5;
+    --secondary: #080d18;
+    --secondary-foreground: #e6ebf5;
+    --muted: #080d18;
+    --muted-foreground: #969fb0;
+    --faint: #7c8499; /* ~5:1 on dark paper (WCAG AA) */
 
-  --primary: #e0794e; /* terracotta, brightened for dark */
-  --primary-foreground: #180d07;
-  --accent: #201814; /* subtle terracotta-tinted hover */
-  --accent-foreground: #f0a07e;
+    --primary: #e0794c; /* terracotta, brightened for dark */
+    --primary-foreground: #180d07;
+    --accent: rgba(224, 121, 78, 0.18); /* accent-soft — terracotta tint (matches prototype) */
+    --accent-foreground: #f0a07e;
 
-  --border: #1c2233;
-  --border-soft: #111726;
-  --input: #1c2233;
-  --ring: #e0794e;
+    --border: #1c2233;
+    --border-soft: #111726;
+    --input: #1c2233;
+    --ring: #e0794e;
 
-  --success: #34d399;
-  --success-soft: rgba(52, 211, 153, 0.15);
-  --warning: #fbbf24;
-  --warning-soft: rgba(251, 191, 36, 0.15);
-  --info: #60a5fa;
-  --info-soft: rgba(96, 165, 250, 0.15);
-  --approval: #a78bfa;
-  --approval-soft: rgba(167, 139, 250, 0.16);
-  --neutral: #8a93a8;
-  --neutral-soft: rgba(120, 140, 200, 0.12);
-  --destructive: #f87171;
-  --destructive-soft: rgba(248, 113, 113, 0.15);
+    --success: #34d399;
+    --success-soft: rgba(52, 211, 153, 0.15);
+    --warning: #fbbf24;
+    --warning-soft: rgba(251, 191, 36, 0.15);
+    --info: #60a5fa;
+    --info-soft: rgba(96, 165, 250, 0.15);
+    --approval: #a78bfa;
+    --approval-soft: rgba(167, 139, 250, 0.16);
+    --neutral: #8a93a8;
+    --neutral-soft: rgba(120, 140, 200, 0.12);
+    --destructive: #f87171;
+    --destructive-soft: rgba(248, 113, 113, 0.15);
 
-  --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.55);
-  --shadow-e2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65);
+    --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.55);
+    --shadow-e2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65);
 }
 
 /* map tokens into Tailwind's theme so utilities exist (bg-primary, text-success, …) */
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: var(--radius-card);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: var(--radius-card);
 
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-border-soft: var(--border-soft);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-faint: var(--faint);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-border-soft: var(--border-soft);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-faint: var(--faint);
 
-  /* status */
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-success-soft: var(--success-soft);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-warning-soft: var(--warning-soft);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-info-soft: var(--info-soft);
-  --color-approval: var(--approval);
-  --color-approval-foreground: var(--approval-foreground);
-  --color-approval-soft: var(--approval-soft);
-  --color-neutral: var(--neutral);
-  --color-neutral-foreground: var(--neutral-foreground);
-  --color-neutral-soft: var(--neutral-soft);
-  --color-destructive-soft: var(--destructive-soft);
+    /* status */
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-success-soft: var(--success-soft);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-warning-soft: var(--warning-soft);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-info-soft: var(--info-soft);
+    --color-approval: var(--approval);
+    --color-approval-foreground: var(--approval-foreground);
+    --color-approval-soft: var(--approval-soft);
+    --color-neutral: var(--neutral);
+    --color-neutral-foreground: var(--neutral-foreground);
+    --color-neutral-soft: var(--neutral-soft);
+    --color-destructive-soft: var(--destructive-soft);
 
-  --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+    --font-sans: var(--font-sans);
+    --font-display: var(--font-display);
+    --font-mono: var(--font-mono);
+    --font-serif: var(--font-serif);
 }
 
 @layer base {
-  * {
-    border-color: var(--border);
-  }
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.55;
-    letter-spacing: -0.005em;
-    -webkit-font-smoothing: antialiased;
-    font-feature-settings: "liga" 1, "calt" 1;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-display);
-    letter-spacing: -0.02em;
-  }
-  ::selection {
-    background: var(--accent);
-    color: var(--accent-foreground);
-  }
-  /* soft editorial scrollbars */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--foreground) 18%, transparent);
-    border-radius: 10px;
-    border: 3px solid var(--background);
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--foreground) 30%, transparent);
-  }
+    * {
+        border-color: var(--border);
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.55;
+        letter-spacing: -0.005em;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: "liga" 1, "calt" 1;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-display);
+        letter-spacing: -0.02em;
+    }
+    ::selection {
+        background: var(--accent);
+        color: var(--accent-foreground);
+    }
+    /* soft editorial scrollbars */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--foreground) 18%, transparent);
+        border-radius: 10px;
+        border: 3px solid var(--background);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: color-mix(in srgb, var(--foreground) 30%, transparent);
+    }
 }
 
 /* elevation utilities matching the prototype's soft shadows */
 @utility shadow-e1 {
-  box-shadow: var(--shadow-e1);
+    box-shadow: var(--shadow-e1);
 }
 @utility shadow-e2 {
-  box-shadow: var(--shadow-e2);
+    box-shadow: var(--shadow-e2);
+}
+
+/* logo "Glow C" mark — terracotta C block with a glow. Dark mode gets a brighter, larger
+   halo (brightened terracotta) so it actually reads on the near-black background. */
+.logo-mark {
+    background: radial-gradient(circle at 32% 28%, #e08458, var(--primary));
+    box-shadow: 0 0 0 4px rgba(200, 100, 60, 0.13), 0 4px 16px rgba(200, 100, 60, 0.5), inset 0 1px
+        1px rgba(255, 255, 255, 0.4);
+}
+.dark .logo-mark {
+    box-shadow: 0 0 0 5px rgba(224, 121, 78, 0.15), 0 0 22px rgba(224, 121, 78, 0.95), 0 6px 28px
+        rgba(224, 121, 78, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+/* Instant hover feedback — buttons, links, and menu/tab items snap their hover
+   color/background with no fade. Everything else (sidebar collapse slide, the new-company
+   spring icon, keyframe @animations) keeps its timing. Applies to all future ones too. */
+button,
+a,
+[role="menuitem"],
+[role="menuitemcheckbox"],
+[role="menuitemradio"],
+[role="tab"],
+summary {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+}
+
+/* Interactive elements get the pointer cursor (Tailwind v4 preflight no longer sets it). */
+button:not(:disabled),
+a[href],
+[role="button"]:not([aria-disabled="true"]),
+[role="menuitem"],
+[role="tab"],
+label[for],
+summary {
+    cursor: pointer;
+}
+
+/* new-company icon — the ONE hover kept animated, exactly like the prototype (.nav-newco):
+   transform spring-rotates over .22s, background/color ease over .15s. Higher specificity +
+   !important so it survives the global instant-transition rule above. */
+.newco-ic {
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s, color
+        0.15s !important;
+}
+/* Direct transform (not Tailwind's var-based rotate, which can't interpolate) so the spring
+   actually plays — the tile rotates 90° through a diamond, filling terracotta with a white +. */
+.nav-newco:hover .newco-ic {
+    transform: rotate(90deg);
+    background-color: var(--primary);
+    color: #fff;
 }
 
 /* live/running indicator pulse */
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
 }
 .pulse {
-  animation: pulse 1.4s ease-in-out infinite;
+    animation: pulse 1.4s ease-in-out infinite;
 }
