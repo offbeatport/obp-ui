@@ -1,0 +1,22 @@
+Functional Source License, Version 1.1, Apache 2.0 Future License (FSL-1.1-Apache-2.0)
+
+Licensor:       C Slop Slop
+Change License: Apache License, Version 2.0
+Change Date:    Two years after the publication date of each released version.
+
+Summary (non-binding — the full terms govern):
+  You may use, copy, modify, and redistribute this software and self-host it for any
+  purpose EXCEPT a "Competing Use" (offering it, or a substantially similar product, as a
+  hosted/managed service to third parties). Two years after a version is published, that
+  version becomes available under the Apache License, Version 2.0.
+
+  See docs/LICENSING.md for the rationale.
+
+  ── ACTION REQUIRED ────────────────────────────────────────────────────────────────────
+  This is a placeholder notice. Replace everything below this line with the canonical
+  Functional Source License 1.1 (Apache 2.0 Future License) text, obtained from:
+
+      https://fsl.software/
+
+  Fill in the Licensor, Change License (Apache 2.0), and Change Date fields as above.
+  ────────────────────────────────────────────────────────────────────────────────────────
