@@ -1,0 +1,54 @@
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { AgentsProvidersPanel } from "~/components/agents-panel";
+import { Logo } from "~/components/logo";
+import { Button } from "~/components/ui/button";
+import { completeOnboarding } from "~/server/agents";
+
+// Chromeless first-run gate (self-host). Reuses the SAME AgentsProvidersPanel as Settings.
+export const Route = createFileRoute("/onboarding")({
+    component: Onboarding,
+});
+
+function Onboarding() {
+    const router = useRouter();
+    const [finishing, setFinishing] = useState(false);
+
+    const finish = async () => {
+        setFinishing(true);
+        await completeOnboarding();
+        router.navigate({ to: "/" });
+    };
+
+    return (
+        <div className="min-h-screen bg-background">
+            <div className="mx-auto max-w-2xl px-6 py-16">
+                <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-faint">
+                    Welcome
+                </div>
+                <Logo />
+                <h1 className="mt-6 font-display text-4xl font-light tracking-tight">
+                    Pick your coding agent
+                </h1>
+                <p className="mt-3 max-w-xl font-serif text-[17px] italic text-muted-foreground">
+                    cslopslop builds with a coding agent on your machine — or with CSlopSlop credits
+                    via OpenRouter. Choose what runs the work; you can change this anytime in
+                    Settings.
+                </p>
+
+                <div className="mt-10">
+                    <AgentsProvidersPanel mode="onboarding" />
+                </div>
+
+                <div className="mt-10 flex items-center justify-between gap-4 border-t pt-6">
+                    <Button variant="ghost" onClick={finish} disabled={finishing}>
+                        Skip for now
+                    </Button>
+                    <Button onClick={finish} disabled={finishing}>
+                        Finish
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}

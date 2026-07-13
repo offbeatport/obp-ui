@@ -9,7 +9,7 @@ import * as schema from "./schema.js";
 //
 // busy_timeout MUST be set before the boot DDL and before the first cross-process
 // write: better-sqlite3 is synchronous, so a SQLITE_BUSY without a timeout throws
-// immediately instead of serializing. We keep it modest — it's a synchronous
+// immediately instead of serializing. We keep it modest - it's a synchronous
 // busy-wait, so a long value would freeze the web/SSR event loop under contention.
 const dbPath = process.env.DATABASE_URL || resolve(process.cwd(), "cslopslop.db");
 
@@ -24,18 +24,18 @@ export const db = drizzle(sqlite, { schema });
 export * from "./schema.js";
 
 function openDatabase(): Database.Database {
-  const s = new Database(dbPath);
-  s.pragma("journal_mode = WAL");
-  s.pragma("foreign_keys = ON");
-  s.pragma("busy_timeout = 2000");
-  createTables(s);
-  return s;
+    const s = new Database(dbPath);
+    s.pragma("journal_mode = WAL");
+    s.pragma("foreign_keys = ON");
+    s.pragma("busy_timeout = 2000");
+    createTables(s);
+    return s;
 }
 
-// Boot-time CREATE TABLE — greenfield, no migrations yet (SPEC). Idempotent, so it
+// Boot-time CREATE TABLE - greenfield, no migrations yet (SPEC). Idempotent, so it
 // running in both processes is fine.
 function createTables(s: Database.Database) {
-  s.exec(`
+    s.exec(`
     CREATE TABLE IF NOT EXISTS opportunity (
       id          text PRIMARY KEY NOT NULL,
       thought     text NOT NULL,
@@ -96,6 +96,25 @@ function createTables(s: Database.Database) {
       role        text NOT NULL,
       content     text NOT NULL,
       created_at  integer NOT NULL DEFAULT (unixepoch() * 1000)
+    );
+
+    -- config: non-secret key-value (agent/guardrail/account/onboarding settings)
+    CREATE TABLE IF NOT EXISTS app_config (
+      scope       text NOT NULL DEFAULT 'global',
+      key         text NOT NULL,
+      value       text NOT NULL,
+      updated_at  integer NOT NULL DEFAULT (unixepoch() * 1000),
+      PRIMARY KEY (scope, key)
+    );
+
+    -- secret: server-only key store (client only ever sees last4)
+    CREATE TABLE IF NOT EXISTS secret (
+      scope       text NOT NULL DEFAULT 'global',
+      key         text NOT NULL,
+      value       text NOT NULL,
+      last4       text,
+      updated_at  integer NOT NULL DEFAULT (unixepoch() * 1000),
+      PRIMARY KEY (scope, key)
     );
 
     CREATE INDEX IF NOT EXISTS action_company_status ON action(company_id, status);
