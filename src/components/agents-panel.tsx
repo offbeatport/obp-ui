@@ -1,8 +1,7 @@
-import { Loader2, Settings2, TerminalSquare } from "lucide-react";
+import { Loader2, Settings2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { BuilderChoice } from "~/components/builder-choice";
 import { TaskRoutingMatrix } from "~/components/task-routing-matrix";
-import { Badge } from "~/components/ui/badge";
 import { discoverAgents, getTaskRouting, saveConfig } from "~/server/agents";
 
 type Discovery = Awaited<ReturnType<typeof discoverAgents>>;
@@ -75,40 +74,6 @@ export function AgentsProvidersPanel({
                     }
                     onPick={pickBuilder}
                 />
-
-                {disc.agents.length > 0 && (
-                    <div className="mt-4">
-                        <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-faint">
-                            Detected on this host
-                        </div>
-                        <div className="grid gap-1.5 sm:grid-cols-2">
-                            {disc.agents.map((a) => (
-                                <div
-                                    key={a.id}
-                                    className="flex items-center gap-2.5 rounded-lg border bg-card px-3 py-2 text-sm"
-                                >
-                                    <TerminalSquare className="size-4 flex-none text-faint" />
-                                    <span className="flex-1 truncate font-medium">{a.name}</span>
-                                    {a.installed ? (
-                                        <>
-                                            <span className="font-mono text-[11px] text-faint">
-                                                v{a.version ?? "?"}
-                                            </span>
-                                            <AuthBadge state={a.authState} />
-                                            {!a.drivable && (
-                                                <Badge variant="neutral" className="text-[10px]">
-                                                    soon
-                                                </Badge>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <span className="text-xs text-faint">not found</span>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
             </section>
 
             <section>
@@ -137,26 +102,6 @@ export function AgentsProvidersPanel({
                 )}
             </section>
         </div>
-    );
-}
-
-function AuthBadge({ state }: { state: "authed" | "unauthed" | "unknown" }) {
-    if (state === "authed")
-        return (
-            <Badge variant="success" className="text-[10px]">
-                logged in
-            </Badge>
-        );
-    if (state === "unauthed")
-        return (
-            <Badge variant="warning" className="text-[10px]">
-                not logged in
-            </Badge>
-        );
-    return (
-        <Badge variant="neutral" className="text-[10px]">
-            unknown
-        </Badge>
     );
 }
 
