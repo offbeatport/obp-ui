@@ -11,12 +11,15 @@ type Routing = Awaited<ReturnType<typeof getTaskRouting>>;
 
 // Shared Agents/Providers panel — the ONE source for /onboarding and /settings/agents.
 // Simple: two big builder tiles (Claude/Codex). Advanced: per-task provider+model matrix.
+// Readiness the onboarding gate needs: is there a usable AI config yet?
+export type PanelReady = { claudeReady: boolean; canFinish: boolean };
+
 export function AgentsProvidersPanel({
     mode = "settings",
     onReady,
 }: {
     mode?: "settings" | "onboarding";
-    onReady?: (d: Discovery) => void;
+    onReady?: (r: PanelReady) => void;
 }) {
     const [disc, setDisc] = useState<Discovery | null>(null);
     const [routing, setRouting] = useState<Routing | null>(null);
@@ -26,12 +29,21 @@ export function AgentsProvidersPanel({
         const [d, r] = await Promise.all([discoverAgents(), getTaskRouting()]);
         setDisc(d);
         setRouting(r);
-        onReady?.(d);
-    }, [onReady]);
+    }, []);
 
     useEffect(() => {
         void load();
     }, [load]);
+
+    // Re-emit readiness on every disc/routing change (initial load, key added, builder picked).
+    useEffect(() => {
+        if (!disc || !routing || !onReady) return;
+        const c = disc.agents.find((a) => a.id === "claude");
+        const claudeReady = !!c?.installed && c.authState === "authed";
+        const hasKey = !!routing.keys.openrouter;
+        const managed = disc.deployment === "hosted" && disc.managedAvailable;
+        onReady({ claudeReady, canFinish: claudeReady || hasKey || managed });
+    }, [disc, routing, onReady]);
 
     const save = useCallback(async (key: string, value: unknown, secret = false) => {
         await saveConfig({ data: { key, value, secret } });
