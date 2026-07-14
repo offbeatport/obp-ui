@@ -8,6 +8,24 @@ import { actions, companies, db, runs } from "../db/index.js";
 
 const DEMO_NAME = "Demo Co";
 
+// Create a real company from a typed thought (the New-company composer). Name = the
+// first few words; the full text is the thesis. First real row the console renders.
+export const createCompany = createServerFn({ method: "POST" })
+    .validator((d: { thought: string }) => d)
+    .handler(async ({ data }) => {
+        const thought = data.thought.trim();
+        if (!thought) throw new Error("Describe the company first.");
+        const name =
+            thought
+                .split(/\s+/)
+                .slice(0, 4)
+                .join(" ")
+                .replace(/[^\w\s-]/g, "")
+                .slice(0, 40) || "New Company";
+        const company = db.insert(companies).values({ name, thesis: thought }).returning().get();
+        return { id: company.id, name: company.name };
+    });
+
 // Enqueue the hardcoded spine action: "a visitor can sign up on a live URL".
 // Creates the demo company on first use.
 export const enqueueDemo = createServerFn({ method: "POST" }).handler(async () => {
