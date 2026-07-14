@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Check, type LucideIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConsoleTabToggle } from "~/components/console-tab-toggle";
-import { getThemePref, onThemeChange, setThemePref, type ThemePref } from "~/lib/theme";
+import { type ThemePref, getThemePref, onThemeChange, setThemePref } from "~/lib/theme";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/settings/appearance")({
@@ -70,8 +70,8 @@ function Appearance() {
                 <div>
                     <div className="text-[13px] font-semibold">Agent console button</div>
                     <div className="text-xs text-muted-foreground">
-                        The <span className="font-mono">agents</span> tab pinned to the bottom-right.
-                        Hide it to declutter — <kbd className="font-mono">Ctrl</kbd>+
+                        The <span className="font-mono">agents</span> tab pinned to the
+                        bottom-right. Hide it to declutter — <kbd className="font-mono">Ctrl</kbd>+
                         <kbd className="font-mono">`</kbd> still opens the console.
                     </div>
                 </div>
