@@ -26,7 +26,7 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                 <button
                     type="button"
                     className={cn(
-                        "flex w-full items-center gap-2.5 rounded-xl p-2 text-left hover:bg-primary/[0.06]",
+                        "flex w-full items-center gap-2.5 rounded-lg p-1 pb-2 px-3 mt-2 text-left hover:bg-primary/[0.1] hover:text-foreground",
                         collapsed && "justify-center",
                     )}
                 >
@@ -46,7 +46,7 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                     )}
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" side="top" className="w-56">
+            <DropdownMenuContent align="start" side="top" className="w-60">
                 <DropdownMenuItem asChild>
                     <Link to="/">
                         <Plus /> New company

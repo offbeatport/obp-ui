@@ -89,7 +89,7 @@
     --faint: #7c8499; /* ~5:1 on dark paper (WCAG AA) */
 
     --primary: #e0794c; /* terracotta, brightened for dark */
-    --primary-foreground: #180d07;
+    --primary-foreground: #ffffff;
     --accent: rgba(224, 121, 78, 0.18); /* accent-soft — terracotta tint (matches prototype) */
     --accent-foreground: #f0a07e;
 
