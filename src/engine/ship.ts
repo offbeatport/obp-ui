@@ -54,7 +54,14 @@ export async function shipApproved(ctx: EngineContext, shipping: Set<string>): P
     const rows = SELECT_APPROVED.all() as ApprovedRow[];
     for (const row of rows) {
         if (shipping.has(row.action_id)) continue;
-        const cp: Checkpoint = row.checkpoint ? JSON.parse(row.checkpoint) : {};
+        // Parse defensively: a malformed checkpoint must skip this row, not throw out of a
+        // fire-and-forget shipApproved (which would surface as an unhandledRejection).
+        let cp: Checkpoint;
+        try {
+            cp = row.checkpoint ? (JSON.parse(row.checkpoint) as Checkpoint) : {};
+        } catch {
+            continue;
+        }
         if (!cp.gitSha) continue; // nothing to promote (shouldn't happen post-validate)
         shipping.add(row.action_id);
         void shipOne(ctx, row, cp.gitSha).finally(() => shipping.delete(row.action_id));
