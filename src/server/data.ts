@@ -160,7 +160,7 @@ export function sliceState(status: Action["status"]): SliceState {
 
 // The "current slice" = what's happening now: in-flight first, else blocked, else the next
 // queued, else the most recently shipped.
-function pickCurrent(code: Action[]): Action | undefined {
+export function pickCurrent(code: Action[]): Action | undefined {
     return (
         code.find(
             (a) =>
