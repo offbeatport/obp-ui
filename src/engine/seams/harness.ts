@@ -155,8 +155,22 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
                 nl = buf.indexOf("\n");
             }
         });
-        stream.on("close", () => resolve());
-        stream.on("end", () => resolve());
+        // Flush a final object not terminated by a trailing newline (some CLIs don't emit one)
+        // before resolving, so the last result event is never silently dropped.
+        const flush = () => {
+            const line = buf.trim();
+            buf = "";
+            if (line) {
+                try {
+                    onEvent(JSON.parse(line) as StreamEvent);
+                } catch {
+                    /* non-JSON tail — ignore */
+                }
+            }
+            resolve();
+        };
+        stream.on("close", flush);
+        stream.on("end", flush);
     });
 }
 

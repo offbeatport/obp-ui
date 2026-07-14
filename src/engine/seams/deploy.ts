@@ -16,6 +16,9 @@ type Live = Deployment & { runId?: string };
 export class LocalDeploy implements Deploy {
     kind = "local-deploy";
     private readonly live = new Map<string, Live>();
+    // Ports picked but not yet in `live` — bridges the probe→spawn gap so two concurrent
+    // up() calls (maxConcurrentRuns) can't both claim the same "free" port (TOCTOU).
+    private readonly reserved = new Set<number>();
 
     constructor(
         private readonly sandbox: Sandbox,
@@ -30,43 +33,54 @@ export class LocalDeploy implements Deploy {
 
     async up(spec: DeploySpec): Promise<Deployment> {
         await this.down(spec.companyId); // supersede any prior deploy for this company
-        const port = await findFreePort(preferredPort(spec.companyId, this.range), this.range);
-
-        const [cmd, ...args] = spec.startCmd.split(" ");
-        const proc = this.sandbox.spawn({
-            cmd,
-            args,
-            cwd: spec.workdir,
-            env: { PORT: String(port) },
-        });
-
-        // Drain stdio: an unread pipe fills at ~64KB and blocks the child. Keep a bounded
-        // stderr tail so a crash-on-boot surfaces a useful reason instead of a bare timeout.
-        proc.stdout.on("data", () => {});
-        let errTail = "";
-        proc.stderr.on("data", (b: Buffer) => {
-            errTail = (errTail + b.toString()).slice(-800);
-        });
-        let exited = false;
-        void proc.wait().then(() => {
-            exited = true;
-        });
-
-        const url = `http://127.0.0.1:${port}`;
-        const healthy = await waitForHealth(
-            url + (spec.healthPath || "/"),
-            () => exited,
-            this.healthTimeoutMs,
+        const taken = new Set<number>(this.reserved);
+        for (const d of this.live.values()) taken.add(d.port);
+        const port = await findFreePort(
+            preferredPort(spec.companyId, this.range),
+            this.range,
+            taken,
         );
-        if (!healthy) {
-            await this.sandbox.kill(proc.pgid);
-            const why = exited ? "process exited before serving" : "health check timed out";
-            throw new Error(`deploy failed: ${why}${errTail ? ` — ${errTail.trim()}` : ""}`);
-        }
+        this.reserved.add(port); // hold the port across the async spawn/health window
+        try {
+            const [cmd, ...args] = spec.startCmd.split(" ");
+            const proc = this.sandbox.spawn({
+                cmd,
+                args,
+                cwd: spec.workdir,
+                env: { PORT: String(port) },
+            });
 
-        const dep: Live = { url, pid: proc.pid, pgid: proc.pgid, port, runId: spec.runId };
-        this.live.set(spec.companyId, dep);
-        return { url, pid: proc.pid, pgid: proc.pgid, port };
+            // Drain stdio: an unread pipe fills at ~64KB and blocks the child. Keep a bounded
+            // stderr tail so a crash-on-boot surfaces a useful reason instead of a bare timeout.
+            proc.stdout.on("data", () => {});
+            let errTail = "";
+            proc.stderr.on("data", (b: Buffer) => {
+                errTail = (errTail + b.toString()).slice(-800);
+            });
+            let exited = false;
+            void proc.wait().then(() => {
+                exited = true;
+            });
+
+            const url = `http://127.0.0.1:${port}`;
+            const healthy = await waitForHealth(
+                url + (spec.healthPath || "/"),
+                () => exited,
+                this.healthTimeoutMs,
+            );
+            if (!healthy) {
+                await this.sandbox.kill(proc.pgid);
+                const why = exited ? "process exited before serving" : "health check timed out";
+                throw new Error(`deploy failed: ${why}${errTail ? ` — ${errTail.trim()}` : ""}`);
+            }
+
+            const dep: Live = { url, pid: proc.pid, pgid: proc.pgid, port, runId: spec.runId };
+            this.live.set(spec.companyId, dep);
+            return { url, pid: proc.pid, pgid: proc.pgid, port };
+        } finally {
+            // Once in `live` (success) or torn down (failure), the reservation is redundant.
+            this.reserved.delete(port);
+        }
     }
 
     async down(companyId: string): Promise<void> {
@@ -104,12 +118,17 @@ function preferredPort(companyId: string, [lo, hi]: [number, number]): number {
     return lo + (Math.abs(h) % (hi - lo + 1));
 }
 
-// First free TCP port at/after `start`, wrapping within [lo,hi]. Probes by binding.
-async function findFreePort(start: number, [lo, hi]: [number, number]): Promise<number> {
+// First free TCP port at/after `start`, wrapping within [lo,hi]. Skips ports already
+// reserved/live in-process, then probes the rest by binding.
+async function findFreePort(
+    start: number,
+    [lo, hi]: [number, number],
+    taken: Set<number>,
+): Promise<number> {
     const span = hi - lo + 1;
     for (let i = 0; i < span; i++) {
         const port = lo + ((((start - lo + i) % span) + span) % span);
-        if (await portFree(port)) return port;
+        if (!taken.has(port) && (await portFree(port))) return port;
     }
     throw new Error(`deploy: no free port in [${lo}, ${hi}]`);
 }
