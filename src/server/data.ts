@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { desc, eq, isNull, sql } from "drizzle-orm";
+import type { Branding, Candidate, CompanySpec, SpinStatus } from "../config/spin.js";
 import {
     type Action,
     type Company,
@@ -7,6 +8,7 @@ import {
     actions,
     companies,
     db,
+    drafts,
     messages,
     opportunities,
     runs,
@@ -97,6 +99,20 @@ export type PortfolioMetrics = {
 };
 
 export type ChatSummary = { slug: string; title: string; ago: string };
+
+// The whole spin session projected for the chat UI (polled while the engine fills it).
+export type DraftView = {
+    id: string;
+    thought: string;
+    status: SpinStatus;
+    preset: string;
+    candidates: Candidate[];
+    pickedId?: string;
+    spec?: CompanySpec;
+    branding?: Branding;
+    companyId?: string; // set once committed → the UI routes to /companies/<id>
+    ago: string;
+};
 
 // ---------------------------------------------------------------------------
 // Projection helpers — pure row → view-model mapping (no DB access).
@@ -392,6 +408,27 @@ export const listChats = createServerFn({ method: "GET" }).handler(
             .filter((m) => m.role === "user")
             .map((m) => ({ slug: m.id, title: m.content.slice(0, 80), ago: ago(m.createdAt) })),
 );
+
+// One read for the whole spin chat (polled). An empty/missing draft → null → the UI shows
+// the composer. All the shape-y bits live in draft.data (JSON), projected 1:1 here.
+export const getDraft = createServerFn({ method: "GET" })
+    .validator((id: string) => id)
+    .handler(async ({ data: id }): Promise<DraftView | null> => {
+        const d = db.select().from(drafts).where(eq(drafts.id, id)).get();
+        if (!d) return null;
+        return {
+            id: d.id,
+            thought: d.thought,
+            status: d.status,
+            preset: d.guardrails?.preset ?? "balanced",
+            candidates: d.data.candidates ?? [],
+            pickedId: d.data.pickedId,
+            spec: d.data.spec,
+            branding: d.data.branding,
+            companyId: d.companyId ?? undefined,
+            ago: ago(d.createdAt),
+        };
+    });
 
 export const getPortfolioMetrics = createServerFn({ method: "GET" }).handler(
     async (): Promise<PortfolioMetrics> => {

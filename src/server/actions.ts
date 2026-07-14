@@ -1,12 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
+import { scoreTotal } from "../config/spin.js";
 import {
     type ActionPayload,
     actions,
     appConfig,
     companies,
     db,
+    drafts,
     messages,
+    opportunities,
     runs,
 } from "../db/index.js";
 
@@ -40,6 +43,143 @@ export const createCompany = createServerFn({ method: "POST" })
             .returning()
             .get();
         return { id: company.id, name: company.name };
+    });
+
+// ============================================================================
+// SPIN — the "spin up a company" flow (thought → scored candidates → pick → spec+branding →
+// commit). Every handler is a TINY write only; the heavy AI runs in the engine's spin passes
+// (src/engine/spin.ts), which the UI observes by polling getDraft. Statuses gate each step so
+// a double-click / stale poll is a harmless no-op.
+// ============================================================================
+
+// Start a spin session: record the thought + guardrail preset and hand it to the engine
+// (status 'scouting' → spinScout generates candidates). Returns the draft id to route to.
+export const startSpin = createServerFn({ method: "POST" })
+    .validator((d: { thought: string; preset?: string }) => d)
+    .handler(async ({ data }) => {
+        const thought = data.thought.trim();
+        if (!thought) throw new Error("Describe the idea first.");
+        const draft = db
+            .insert(drafts)
+            .values({
+                thought,
+                status: "scouting",
+                guardrails: { preset: data.preset || "balanced" },
+                data: {},
+            })
+            .returning()
+            .get();
+        return { id: draft.id };
+    });
+
+// Pick one candidate to spec out. Records pickedId and flips to 'specing' so spinSpec drafts
+// the full company spec + branding. Guarded to 'proposals' (can't pick before candidates land
+// or after a pick), and the candidate must actually exist in the draft.
+export const pickOpportunity = createServerFn({ method: "POST" })
+    .validator((d: { draftId: string; candidateId: string }) => d)
+    .handler(async ({ data }) => {
+        const draft = db.select().from(drafts).where(eq(drafts.id, data.draftId)).get();
+        if (!draft || draft.status !== "proposals") return { ok: false };
+        if (!(draft.data.candidates ?? []).some((c) => c.id === data.candidateId))
+            return { ok: false };
+        db.update(drafts)
+            .set({ status: "specing", data: { ...draft.data, pickedId: data.candidateId } })
+            .where(and(eq(drafts.id, data.draftId), eq(drafts.status, "proposals")))
+            .run();
+        return { ok: true };
+    });
+
+// Re-roll: throw the current candidates away and scout again (the "shuffle / surprise me"
+// button). Allowed from 'proposals' (didn't like the set) or 'failed' (retry after an error).
+export const reSpin = createServerFn({ method: "POST" })
+    .validator((d: { draftId: string }) => d)
+    .handler(async ({ data }) => {
+        const draft = db.select().from(drafts).where(eq(drafts.id, data.draftId)).get();
+        if (!draft || (draft.status !== "proposals" && draft.status !== "failed"))
+            return { ok: false };
+        db.update(drafts)
+            .set({ status: "scouting", data: {} })
+            .where(eq(drafts.id, draft.id))
+            .run();
+        return { ok: true };
+    });
+
+// Commit the spec to a REAL company. Because the spin flow already did the scoping (the user
+// chose the bet and reviewed the spec), this creates the company already-scoped: it inserts
+// the promoted opportunity, the founding narration, the first buildable action (forced to the
+// http-signup archetype — the only doneWhen HttpValidator certifies), and the scope.done
+// marker so the engine's scope pass SKIPS it and the runner goes straight to building.
+export const commitDraft = createServerFn({ method: "POST" })
+    .validator((d: { draftId: string }) => d)
+    .handler(async ({ data }) => {
+        const draft = db.select().from(drafts).where(eq(drafts.id, data.draftId)).get();
+        if (!draft || draft.status !== "spec") return { ok: false };
+        if (draft.companyId) return { ok: true, id: draft.companyId }; // already committed
+        const spec = draft.data.spec;
+        if (!spec) return { ok: false };
+        const branding = draft.data.branding;
+        const picked = (draft.data.candidates ?? []).find((c) => c.id === draft.data.pickedId);
+
+        const company = db
+            .insert(companies)
+            .values({
+                name: spec.product.slice(0, 48),
+                thesis: draft.thought,
+                autopilot: "on",
+                domain: branding?.domain,
+                pricing: { plan: "Pro", priceUsd: spec.pricingUsd, interval: "month" },
+            })
+            .returning()
+            .get();
+
+        const at = company.createdAt; // narration back-dated here so it never outranks a user turn
+        const demand = picked ? Math.round(scoreTotal(picked.scores) * 10) : 72;
+        db.insert(opportunities)
+            .values({
+                thought: draft.thought,
+                title: spec.product.slice(0, 60),
+                thesis: (spec.tagline || picked?.pain || draft.thought).slice(0, 240),
+                score: demand,
+                status: "promoted",
+            })
+            .run();
+        const firstTitle = spec.slices[0]?.title ?? "A visitor can sign up on a live URL";
+        db.insert(messages)
+            .values([
+                {
+                    companyId: company.id,
+                    role: "assistant",
+                    content: `${spec.product} — ${spec.tagline} Building the first slice now.`,
+                    createdAt: at,
+                },
+                {
+                    companyId: company.id,
+                    role: "assistant",
+                    content: `First slice: ${firstTitle}. I'll ship it once it passes the live check.`,
+                    createdAt: new Date(at.getTime() + 1),
+                },
+            ])
+            .run();
+        db.insert(actions)
+            .values({
+                companyId: company.id,
+                type: "code",
+                title: firstTitle,
+                reversible: true,
+                status: "queued",
+                priority: 1,
+                payload: { doneWhen: "http-signup" },
+            })
+            .run();
+        db.insert(appConfig)
+            .values({ scope: "global", key: `scope.done.${company.id}`, value: true })
+            .onConflictDoNothing()
+            .run();
+        db.update(drafts)
+            .set({ status: "committed", companyId: company.id })
+            .where(eq(drafts.id, draft.id))
+            .run();
+        return { ok: true, id: company.id };
     });
 
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
