@@ -68,9 +68,13 @@ export function GuardrailMenu() {
                                         </span>
                                     )}
                                 </span>
-                                <span className="mt-0.5 block text-xs text-muted-foreground">{p.desc}</span>
+                                <span className="mt-0.5 block text-xs text-muted-foreground">
+                                    {p.desc}
+                                </span>
                             </span>
-                            {sel === p.key && <Check className="mt-1 size-4 flex-none text-primary" />}
+                            {sel === p.key && (
+                                <Check className="mt-1 size-4 flex-none text-primary" />
+                            )}
                         </DropdownMenuItem>
                     );
                 })}
