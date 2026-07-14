@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
-// C Slop Slop - data model (docs/SPEC.md · the whole schema is 5 tables).
-// One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing, run.checkpoint).
+// C Slop Slop - data model (docs/SPEC.md).
+// One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing, run.checkpoint, draft.data).
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import type { DraftData, SpinGuardrails } from "../config/spin.js";
 
 // shared column helpers
 const pk = () =>
@@ -132,7 +133,24 @@ export const messages = sqliteTable("message", {
     createdAt: createdAt(),
 });
 
+// ---- draft — a "spin up a company" session (thought → candidates → spec+branding → commit) --
+export const drafts = sqliteTable("draft", {
+    id: pk(),
+    thought: text("thought").notNull(),
+    status: text("status", {
+        enum: ["scouting", "proposals", "specing", "spec", "committed", "failed"],
+    })
+        .notNull()
+        .default("scouting"),
+    guardrails: text("guardrails", { mode: "json" }).$type<SpinGuardrails>(),
+    data: text("data", { mode: "json" }).$type<DraftData>().notNull().default({}),
+    companyId: text("company_id").references(() => companies.id),
+    createdAt: createdAt(),
+});
+
 // ---- inferred row types ----
+export type Draft = typeof drafts.$inferSelect;
+export type NewDraft = typeof drafts.$inferInsert;
 export type Opportunity = typeof opportunities.$inferSelect;
 export type NewOpportunity = typeof opportunities.$inferInsert;
 export type Company = typeof companies.$inferSelect;
