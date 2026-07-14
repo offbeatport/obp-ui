@@ -113,8 +113,8 @@ describe("scopeNext", () => {
         expect(actions(cid)).toBe(0);
     });
 
-    it("uses real AI output when dispatch succeeds", async () => {
-        makeCompany("meeting summaries");
+    it("uses real AI output when dispatch succeeds and renames the company to the title", async () => {
+        const cid = makeCompany("meeting summaries");
         mockAI
             .mockResolvedValueOnce({
                 text: '{"title":"TaskThread","thesis":"meeting-to-actions","score":6}',
@@ -135,5 +135,9 @@ describe("scopeNext", () => {
         };
         expect(opp.title).toBe("TaskThread");
         expect(opp.score).toBe(6);
+        const name = (
+            sqlite.prepare("SELECT name FROM company WHERE id=?").get(cid) as { name: string }
+        ).name;
+        expect(name).toBe("TaskThread");
     });
 });
