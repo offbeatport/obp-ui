@@ -1,10 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
+import { desc, eq, isNull } from "drizzle-orm";
+import {
+    type Action,
+    type Company,
+    type Message,
+    actions,
+    companies,
+    db,
+    messages,
+    opportunities,
+    runs,
+} from "../db/index.js";
 
 // ============================================================================
 // DATA CONTRACT — the read seam between the `engine` lane (fills bodies from the
-// DB) and the `ui` lane (renders these shapes). Bodies return MOCK data today so
-// UI can build against the real prototype layout; engine swaps them for actual
-// DB reads without changing a single type.
+// DB) and the `ui` lane (renders these shapes). Bodies now read the REAL DB and
+// project rows into these view-models; the exported TYPES are frozen — the seam.
 //
 // RULE: don't change a shape without coordinating both lanes — this is the seam.
 // View-models are flattened/enriched for display (derived from src/db/schema.ts):
@@ -86,216 +97,309 @@ export type PortfolioMetrics = {
 export type ChatSummary = { slug: string; title: string; ago: string };
 
 // ---------------------------------------------------------------------------
-// MOCK fixtures (faithful to design/v2-prototypes/08-chat-spine-pro-v7.html).
-// Engine lane deletes these and reads the DB instead.
+// Projection helpers — pure row → view-model mapping (no DB access).
 // ---------------------------------------------------------------------------
 
-const COMPANIES: CompanySummary[] = [
-    {
-        slug: "leadsift",
-        name: "LeadSift",
-        tone: "green",
-        status: "active",
-        mrr: 180,
-        users: 12,
-        shipped: 4,
-        needsYou: true,
-        slice: { n: 5, title: "Daily email digest of top leads", state: "awaiting_approval" },
-    },
-    {
-        slug: "quietinbox",
-        name: "QuietInbox",
-        tone: "blue",
-        status: "active",
-        mrr: 420,
-        users: 38,
-        shipped: 8,
-        slice: { n: 9, title: "Snooze a thread until tomorrow", state: "building" },
-    },
-    {
-        slug: "translatorbill",
-        name: "TranslatorBill",
-        tone: "violet",
-        status: "active",
-        mrr: 0,
-        users: 0,
-        shipped: 4,
-        slice: { n: 6, title: "Digest scheduler UI", state: "building" },
-    },
-    {
-        slug: "datadrop",
-        name: "DataDrop",
-        tone: "slate",
-        status: "active",
-        mrr: 95,
-        users: 6,
-        shipped: 5,
-        slice: { n: 6, title: "Saved chart views", state: "todo" },
-    },
-    {
-        slug: "redditpainbot",
-        name: "RedditPainBot",
-        tone: "amber",
-        status: "paused",
-        mrr: 0,
-        users: 0,
-        shipped: 1,
-        slice: { n: 8, title: "Dedupe near-identical pains", state: "blocked" },
-    },
-];
+const TONES: Tone[] = ["green", "blue", "violet", "slate", "amber", "red"];
 
-const DETAILS: Record<string, CompanyDetail> = {
-    leadsift: {
-        ...(COMPANIES[0] as CompanySummary),
-        thesis: "Freelancers drown in inbound; surface the few leads worth replying to.",
-        domain: "leadsift.app",
-        liveUrl: "http://localhost:4019",
-        messages: [
-            {
-                id: "m1",
-                role: "assistant",
-                content: "Slice 5 is live and the doneWhen check passed. Approve to ship?",
-                ago: "2m",
-            },
-        ],
-    },
+// URL key from the company name; getCompany reverses it by re-slugifying candidates.
+// Readable + stable for the few companies a local instance has (collisions resolve to
+// the first match — acceptable at v1's scale).
+function slugify(name: string): string {
+    return (
+        name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "") || "company"
+    );
+}
+
+// Stable avatar tint from the company id (deterministic, no stored column).
+function toneFor(id: string): Tone {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+    return TONES[h % TONES.length];
+}
+
+function ago(ts: Date | number | null | undefined): string {
+    if (ts == null) return "";
+    const ms = Date.now() - (ts instanceof Date ? ts.getTime() : ts);
+    const s = Math.max(0, Math.floor(ms / 1000));
+    if (s < 5) return "now";
+    if (s < 60) return `${s}s`;
+    const m = Math.floor(s / 60);
+    if (m < 60) return `${m}m`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h`;
+    return `${Math.floor(h / 24)}d`;
+}
+
+const byCreated = (a: Action, b: Action) => a.createdAt.getTime() - b.createdAt.getTime();
+
+function previewUrlOf(a: Action): string | undefined {
+    return (a.payload as { previewUrl?: string })?.previewUrl;
+}
+
+// action.status → the UI's slice lifecycle. approved = shipping imminently (still "building").
+function sliceState(status: Action["status"]): SliceState {
+    switch (status) {
+        case "running":
+        case "approved":
+            return "building";
+        case "awaiting_approval":
+            return "awaiting_approval";
+        case "blocked":
+            return "blocked";
+        case "done":
+            return "shipped";
+        default:
+            return "todo"; // queued
+    }
+}
+
+// The "current slice" = what's happening now: in-flight first, else blocked, else the next
+// queued, else the most recently shipped.
+function pickCurrent(code: Action[]): Action | undefined {
+    return (
+        code.find(
+            (a) =>
+                a.status === "running" ||
+                a.status === "awaiting_approval" ||
+                a.status === "approved",
+        ) ??
+        code.find((a) => a.status === "blocked") ??
+        code.find((a) => a.status === "queued") ??
+        [...code].reverse().find((a) => a.status === "done")
+    );
+}
+
+function toSummary(c: Company, acts: Action[]): CompanySummary {
+    const code = acts.filter((a) => a.type === "code").sort(byCreated);
+    const current = pickCurrent(code);
+    const metrics = c.metrics ?? {};
+    const needsYou = acts.some((a) => a.status === "awaiting_approval" || a.status === "blocked");
+    return {
+        slug: slugify(c.name),
+        name: c.name,
+        tone: toneFor(c.id),
+        status: c.status,
+        mrr: metrics.mrr ?? 0,
+        users: metrics.users ?? 0,
+        shipped: code.filter((a) => a.status === "done").length,
+        slice: current
+            ? {
+                  n: code.indexOf(current) + 1,
+                  title: current.title,
+                  state: sliceState(current.status),
+              }
+            : undefined,
+        needsYou: needsYou || undefined,
+    };
+}
+
+function toChatMessage(m: Message): ChatMessage {
+    return { id: m.id, role: m.role, content: m.content, ago: ago(m.createdAt) };
+}
+
+const RUN_TONE: Record<string, Tone> = {
+    running: "blue",
+    succeeded: "green",
+    awaiting_approval: "violet",
+    failed: "red",
+    cancelled: "slate",
+    queued: "slate",
 };
 
-const ACTIVITY: ActivityItem[] = [
-    {
-        id: "a1",
-        tone: "blue",
-        companySlug: "translatorbill",
-        companyName: "TranslatorBill",
-        text: "building slice 6 · writing DigestScheduler.tsx",
-        ago: "now",
-    },
-    {
-        id: "a2",
-        tone: "green",
-        companySlug: "quietinbox",
-        companyName: "QuietInbox",
-        text: "deployed to localhost:4021",
-        ago: "12s",
-    },
-    {
-        id: "a3",
-        tone: "violet",
-        companySlug: "leadsift",
-        companyName: "LeadSift",
-        text: "slice 5 awaiting approval",
-        ago: "2m",
-    },
-    {
-        id: "a4",
-        tone: "green",
-        companySlug: "leadsift",
-        companyName: "LeadSift",
-        text: "doneWhen passed",
-        ago: "2m",
-    },
-    {
-        id: "a5",
-        tone: "slate",
-        companySlug: "datadrop",
-        companyName: "DataDrop",
-        text: "re-prioritized backlog",
-        ago: "5m",
-    },
-    {
-        id: "a6",
-        tone: "red",
-        companySlug: "redditpainbot",
-        companyName: "RedditPainBot",
-        text: "slice 8 blocked · no progress ×3",
-        ago: "18m",
-    },
-];
+function runText(status: string, title: string, error: string | null): string {
+    switch (status) {
+        case "running":
+            return `building · ${title}`;
+        case "awaiting_approval":
+            return `${title} · awaiting approval`;
+        case "succeeded":
+            return `shipped · ${title}`;
+        case "failed":
+            return `run failed${error ? ` · ${error}` : ""}`;
+        case "cancelled":
+            return `run cancelled · ${title}`;
+        default:
+            return `queued · ${title}`;
+    }
+}
 
-const OPPORTUNITIES: OpportunityItem[] = [
-    {
-        id: "o1",
-        title: "PayoutReconciler",
-        thesis: "Match Stripe payouts to invoices for agencies.",
-        score: 82,
-        status: "candidate",
-    },
-    {
-        id: "o2",
-        title: "ChurnPing",
-        thesis: "Alert when a paying account goes quiet.",
-        score: 74,
-        status: "candidate",
-    },
-    {
-        id: "o3",
-        title: "DeckDiff",
-        thesis: "Track what changed between pitch-deck versions.",
-        score: 61,
-        status: "candidate",
-    },
-];
-
-const INBOX: InboxItem[] = [
-    {
-        id: "i1",
-        kind: "approval",
-        companySlug: "leadsift",
-        companyName: "LeadSift",
-        tone: "green",
-        title: "Approve slice 5 — daily email digest of top leads",
-        sub: "Check is green and it's live · approve to ship.",
-        sliceN: 5,
-        liveUrl: "http://localhost:4019",
-    },
-    {
-        id: "i2",
-        kind: "blocked",
-        companySlug: "redditpainbot",
-        companyName: "RedditPainBot",
-        tone: "amber",
-        title: "Unblock slice 8, or pause the company",
-        sub: "No progress ×3 — needs a decision.",
-        sliceN: 8,
-    },
-];
-
-const CHATS: ChatSummary[] = [
-    { slug: "portfolio-health", title: "How is my portfolio doing?", ago: "3d ago" },
-    { slug: "solo-saas-ideas", title: "Ideas for a solo-founder SaaS", ago: "yesterday" },
-    { slug: "double-down", title: "Which company should I double down on?", ago: "2h ago" },
-];
-
-const METRICS: PortfolioMetrics = { mrr: 695, users: 56, active: 5, shipped: 22, needsYou: 1 };
+// 1-based slice number per action (its position among its company's code actions).
+function sliceIndex(all: Action[]): Map<string, number> {
+    const byCompany = new Map<string, Action[]>();
+    for (const a of all) {
+        if (a.type !== "code") continue;
+        const list = byCompany.get(a.companyId) ?? [];
+        list.push(a);
+        byCompany.set(a.companyId, list);
+    }
+    const idx = new Map<string, number>();
+    for (const list of byCompany.values()) {
+        list.sort(byCreated).forEach((a, i) => idx.set(a.id, i + 1));
+    }
+    return idx;
+}
 
 // ---------------------------------------------------------------------------
-// Read server-fns (the contract surface). Engine fills bodies from the DB.
+// Read server-fns (the contract surface) — real DB reads. An empty DB yields
+// empty collections, which the UI renders as its empty states.
 // ---------------------------------------------------------------------------
 
 export const listCompanies = createServerFn({ method: "GET" }).handler(
-    async (): Promise<CompanySummary[]> => COMPANIES,
+    async (): Promise<CompanySummary[]> => {
+        const comps = db.select().from(companies).all();
+        const acts = db.select().from(actions).all();
+        return comps.map((c) =>
+            toSummary(
+                c,
+                acts.filter((a) => a.companyId === c.id),
+            ),
+        );
+    },
 );
 
 export const getCompany = createServerFn({ method: "GET" })
     .validator((slug: string) => slug)
-    .handler(async ({ data: slug }): Promise<CompanyDetail | null> => DETAILS[slug] ?? null);
+    .handler(async ({ data: slug }): Promise<CompanyDetail | null> => {
+        const c = db
+            .select()
+            .from(companies)
+            .all()
+            .find((x) => slugify(x.name) === slug);
+        if (!c) return null;
+        const acts = db.select().from(actions).where(eq(actions.companyId, c.id)).all();
+        const msgs = db
+            .select()
+            .from(messages)
+            .where(eq(messages.companyId, c.id))
+            .orderBy(messages.createdAt)
+            .all();
+        const liveUrl = acts.slice().sort(byCreated).map(previewUrlOf).filter(Boolean).pop();
+        return {
+            ...toSummary(c, acts),
+            thesis: c.thesis,
+            domain: c.domain ?? undefined,
+            liveUrl: liveUrl ?? undefined,
+            messages: msgs.map(toChatMessage),
+        };
+    });
 
 export const listActivity = createServerFn({ method: "GET" }).handler(
-    async (): Promise<ActivityItem[]> => ACTIVITY,
+    async (): Promise<ActivityItem[]> => {
+        const rs = db.select().from(runs).orderBy(desc(runs.createdAt)).limit(30).all();
+        const actById = new Map(
+            db
+                .select()
+                .from(actions)
+                .all()
+                .map((a) => [a.id, a]),
+        );
+        const compById = new Map(
+            db
+                .select()
+                .from(companies)
+                .all()
+                .map((c) => [c.id, c]),
+        );
+        return rs.map((r) => {
+            const c = compById.get(r.companyId);
+            const title = actById.get(r.actionId)?.title ?? "action";
+            return {
+                id: r.id,
+                tone: RUN_TONE[r.status] ?? "slate",
+                companySlug: c ? slugify(c.name) : undefined,
+                companyName: c?.name,
+                text: runText(r.status, title, r.error),
+                ago: ago(r.createdAt),
+            };
+        });
+    },
 );
 
 export const listOpportunities = createServerFn({ method: "GET" }).handler(
-    async (): Promise<OpportunityItem[]> => OPPORTUNITIES,
+    async (): Promise<OpportunityItem[]> =>
+        db
+            .select()
+            .from(opportunities)
+            .orderBy(desc(opportunities.score))
+            .all()
+            .map((o) => ({
+                id: o.id,
+                title: o.title,
+                thesis: o.thesis,
+                score: Math.round(o.score ?? 0),
+                status: o.status,
+            })),
 );
 
 export const listInbox = createServerFn({ method: "GET" }).handler(
-    async (): Promise<InboxItem[]> => INBOX,
+    async (): Promise<InboxItem[]> => {
+        const all = db.select().from(actions).all();
+        const idx = sliceIndex(all);
+        const compById = new Map(
+            db
+                .select()
+                .from(companies)
+                .all()
+                .map((c) => [c.id, c]),
+        );
+        return all
+            .filter((a) => a.status === "awaiting_approval" || a.status === "blocked")
+            .map((a) => {
+                const c = compById.get(a.companyId);
+                const blocked = a.status === "blocked";
+                const kind: InboxKind = blocked
+                    ? "blocked"
+                    : a.type === "code"
+                      ? "approval"
+                      : "decision";
+                return {
+                    id: a.id,
+                    kind,
+                    companySlug: c ? slugify(c.name) : "",
+                    companyName: c?.name ?? "",
+                    tone: c ? toneFor(c.id) : "slate",
+                    title: blocked
+                        ? `Unblock "${a.title}", or pause the company`
+                        : a.type === "code"
+                          ? `Approve "${a.title}"`
+                          : `Authorize "${a.title}"`,
+                    sub: blocked
+                        ? "No progress — needs a decision."
+                        : "Check is green and it's live · approve to ship.",
+                    sliceN: idx.get(a.id),
+                    liveUrl: previewUrlOf(a),
+                };
+            });
+    },
 );
 
 export const listChats = createServerFn({ method: "GET" }).handler(
-    async (): Promise<ChatSummary[]> => CHATS,
+    async (): Promise<ChatSummary[]> =>
+        db
+            .select()
+            .from(messages)
+            .where(isNull(messages.companyId))
+            .orderBy(desc(messages.createdAt))
+            .all()
+            .filter((m) => m.role === "user")
+            .map((m) => ({ slug: m.id, title: m.content.slice(0, 80), ago: ago(m.createdAt) })),
 );
 
 export const getPortfolioMetrics = createServerFn({ method: "GET" }).handler(
-    async (): Promise<PortfolioMetrics> => METRICS,
+    async (): Promise<PortfolioMetrics> => {
+        const comps = db.select().from(companies).all();
+        const acts = db.select().from(actions).all();
+        return {
+            mrr: comps.reduce((n, c) => n + (c.metrics?.mrr ?? 0), 0),
+            users: comps.reduce((n, c) => n + (c.metrics?.users ?? 0), 0),
+            active: comps.filter((c) => c.status === "active").length,
+            shipped: acts.filter((a) => a.type === "code" && a.status === "done").length,
+            needsYou: acts.filter((a) => a.status === "awaiting_approval" || a.status === "blocked")
+                .length,
+        };
+    },
 );
