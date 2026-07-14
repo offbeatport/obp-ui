@@ -387,7 +387,10 @@ summary {
     right: 0;
     bottom: 0;
     z-index: 92;
-    height: 84vh;
+    /* Hug the panes' height; only grow to 84vh (then the grid scrolls) so a small
+       portfolio doesn't leave an empty band of panel below the last row. */
+    height: auto;
+    max-height: 84vh;
     background: var(--card);
     color: var(--foreground);
     border-top: 1px solid var(--border);
