@@ -6,6 +6,9 @@ import { TONE } from "~/components/command-center/tone";
 import { getBootState } from "~/server/agents";
 import type { CompanySummary, InboxItem } from "~/server/data";
 import { listActivity, listCompanies, listInbox } from "~/server/data";
+// The .cc / .home-simple stylesheet this port relies on. parts.tsx (its only other importer)
+// isn't in the homepage's module graph, so load it here or the page renders unstyled.
+import "~/components/command-center/proto.css";
 
 export const Route = createFileRoute("/")({
     // Self-host first-run gate → onboarding (until an agent is picked).
