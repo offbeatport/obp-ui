@@ -28,7 +28,7 @@ export const Route = createRootRoute({
         scripts: [
             {
                 children:
-                    "try{var t=localStorage.getItem('cslopslop-theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}",
+                    "try{var d=document.documentElement;var t=localStorage.getItem('cslopslop-theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))d.classList.add('dark');if(localStorage.getItem('cslopslop-console-tab')==='off')d.classList.add('console-tab-off')}catch(e){}",
             },
         ],
     }),
