@@ -123,13 +123,15 @@ export class ClaudeCliHarness implements Harness {
     }
 }
 
+type ToolInput = Record<string, unknown>;
+type ContentBlock = { type?: string; text?: string; name?: string; input?: ToolInput };
 type StreamEvent = {
     type?: string;
     subtype?: string;
     is_error?: boolean;
     total_cost_usd?: number;
     session_id?: string;
-    message?: { content?: Array<{ type?: string; text?: string; name?: string }> };
+    message?: { content?: ContentBlock[] };
     [k: string]: unknown;
 };
 
@@ -158,11 +160,19 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
     });
 }
 
-// Compact a stream event into one readable log line.
+// Compact a stream event into one readable log line. Tool calls show WHAT they did (the
+// command / file / target), not just the tool name — so the log reads like a build narration
+// (`→ Bash: node server.js`, `→ Write server.js`) instead of a wall of bare `→ Bash`.
 function summarizeEvent(evt: StreamEvent): string | null {
     if (evt.type === "assistant" && evt.message?.content) {
         const parts = evt.message.content
-            .map((c) => (c.type === "text" ? c.text : c.name ? `→ ${c.name}` : ""))
+            .map((c) =>
+                c.type === "text"
+                    ? c.text
+                    : c.type === "tool_use" || c.name
+                      ? summarizeTool(c.name, c.input)
+                      : "",
+            )
             .filter(Boolean)
             .join(" ");
         return parts ? parts.slice(0, 500) : null;
@@ -173,4 +183,23 @@ function summarizeEvent(evt: StreamEvent): string | null {
         }`;
     }
     return null;
+}
+
+// `→ <Tool>: <the salient argument>` — the command for Bash, the file for Write/Edit/Read,
+// the query for a search, the URL for a fetch. Falls back to the bare tool name.
+function summarizeTool(name?: string, input?: ToolInput): string {
+    const tool = name ?? "tool";
+    if (!input) return `→ ${tool}`;
+    const salient =
+        input.command ??
+        input.file_path ??
+        input.path ??
+        input.pattern ??
+        input.query ??
+        input.url ??
+        input.description;
+    if (typeof salient === "string" && salient.trim()) {
+        return `→ ${tool}: ${salient.replace(/\s+/g, " ").trim().slice(0, 140)}`;
+    }
+    return `→ ${tool}`;
 }
