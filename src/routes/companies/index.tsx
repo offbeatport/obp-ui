@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AppShell } from "~/components/app-shell";
-import { Avatar, Sbadge } from "~/components/command-center/parts";
+import { CompanyCard } from "~/components/command-center/company-card";
 import { TONE } from "~/components/command-center/tone";
 import { listActivity, listCompanies } from "~/server/data";
 
@@ -13,120 +13,92 @@ export const Route = createFileRoute("/companies/")({
     component: Portfolio,
 });
 
-// Portfolio grid — one co-card per company (brandmark · metrics · current slice · live feed).
-// Card anatomy from design/v2-prototypes/08-chat-spine-pro-v7.html (.co-card), fed by the contract.
+// Portfolio — the live prototype's renderAllCompanies() / .allco-view:
+// heading · full company grid · oversight ledger ("what the AI did on your behalf").
+// design/v2-prototypes/08-chat-spine-pro-v7.html.
 function Portfolio() {
     const { companies, activity } = Route.useLoaderData();
+    const n = companies.length;
     return (
         <AppShell active="companies">
-            <div className="mx-auto w-full max-w-[1120px] px-6 py-9">
-                <header className="mb-8 flex items-end justify-between gap-4">
-                    <div>
-                        <div className="font-mono text-[11.5px] uppercase tracking-[0.12em] text-faint">
-                            {"// Portfolio"}
-                        </div>
-                        <h1 className="mt-1.5 font-display text-3xl font-light tracking-tight">
-                            Companies
-                        </h1>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Every company you've started — status, MRR, current slice.
+            <div className="cc px-5 pb-24">
+                <div className="allco">
+                    <div className="allco-head">
+                        <Link to="/" className="home-back">
+                            <ArrowLeft className="size-3.5" /> Home
+                        </Link>
+                        <h1 className="allco-h">All companies</h1>
+                        <p className="home-hero-sub">
+                            {n} {n === 1 ? "company" : "companies"} in your portfolio
                         </p>
                     </div>
-                    <Link
-                        to="/companies/new"
-                        className="inline-flex flex-none items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-[13px] font-semibold text-primary-foreground transition hover:brightness-105"
-                    >
-                        <Plus className="size-4" /> New company
-                    </Link>
-                </header>
 
-                <div className="grid gap-[22px] [grid-template-columns:repeat(auto-fill,minmax(320px,1fr))]">
-                    {companies.map((c) => {
-                        const feed = activity.filter((a) => a.companySlug === c.slug).slice(0, 4);
-                        return (
-                            <Link
-                                key={c.slug}
-                                to="/companies/$slug"
-                                params={{ slug: c.slug }}
-                                className={`group flex flex-col gap-4 rounded-[18px] border bg-card p-[22px] shadow-e1 transition duration-200 hover:-translate-y-0.5 hover:border-current hover:shadow-e2 ${
-                                    TONE[c.tone].text
-                                }`}
-                            >
-                                {/* head — brandmark · name · needs-you */}
-                                <div className="flex items-center gap-2.5 text-foreground">
-                                    <Avatar
-                                        name={c.name}
-                                        tone={c.tone}
-                                        className="size-11 rounded-xl text-base"
-                                    />
-                                    <div className="min-w-0 flex-1">
-                                        <h3 className="truncate font-display text-lg font-semibold tracking-[-0.01em]">
-                                            {c.name}
-                                        </h3>
-                                        <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[10.5px] text-faint">
-                                            <span
-                                                className={`size-[7px] rounded-full ${
-                                                    c.status === "active"
-                                                        ? "bg-success"
-                                                        : "bg-warning"
-                                                }`}
-                                            />
-                                            ${c.mrr} · {c.users}u · {c.shipped} shipped
-                                        </div>
-                                    </div>
-                                    {c.needsYou && (
-                                        <span className="inline-flex flex-none items-center gap-1.5 rounded-full bg-primary px-2 py-[3px] font-mono text-[10px] font-semibold tracking-[0.03em] text-primary-foreground">
-                                            <span className="size-1.5 rounded-full bg-white pulse" />
-                                            needs you
+                    <div className="home-cos pro-wide">
+                        <div className="co-grid">
+                            {companies.map((c) => (
+                                <CompanyCard
+                                    key={c.slug}
+                                    c={c}
+                                    feed={activity.filter((a) => a.companySlug === c.slug)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {activity.length > 0 && (
+                        <div className="pro-wide">
+                            <section className="pc">
+                                <div className="pc-head">
+                                    <span className="pc-kicker k-auto">Oversight</span>
+                                    <h3>What the AI did on your behalf</h3>
+                                    <span className="pc-sub">last 7 days</span>
+                                </div>
+                                <div className="pc-body">
+                                    <div className="ov-intro">
+                                        <span
+                                            className="grid size-[26px] flex-none place-items-center rounded-lg bg-accent text-accent-foreground"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                width="15"
+                                                height="15"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="M3 12a9 9 0 0 1 18 0" />
+                                                <circle cx="12" cy="12" r="2.4" />
+                                            </svg>
                                         </span>
-                                    )}
-                                </div>
-
-                                {/* current slice */}
-                                {c.slice && (
-                                    <div className="text-foreground">
-                                        <Sbadge state={c.slice.state} />
-                                        <div className="text-[13px] leading-[1.45] text-muted-foreground">
-                                            <b className="font-mono text-[11px] font-medium text-faint">
-                                                S{c.slice.n}
-                                            </b>{" "}
-                                            {c.slice.title}
-                                        </div>
+                                        <span>
+                                            <b>{activity.length} actions</b> recently — each company
+                                            runs its own build loop on autopilot.
+                                        </span>
                                     </div>
-                                )}
-
-                                {/* live activity feed */}
-                                <div className="flex flex-col gap-2 border-t pt-3">
-                                    <div className="flex items-center gap-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-faint">
-                                        <span className="size-[5px] rounded-full bg-success pulse" />
-                                        live activity
-                                    </div>
-                                    <div className="flex min-h-[72px] flex-col gap-1.5">
-                                        {feed.length > 0 ? (
-                                            feed.map((a) => (
-                                                <div
-                                                    key={a.id}
-                                                    className="flex items-center gap-2 overflow-hidden font-mono text-[11.5px] text-muted-foreground"
-                                                >
-                                                    <span
-                                                        className={`size-[5px] flex-none rounded-full ${TONE[a.tone].solid}`}
-                                                    />
-                                                    <span className="truncate">{a.text}</span>
-                                                    <span className="ml-auto flex-none text-faint">
-                                                        {a.ago}
-                                                    </span>
+                                    <div className="ov-card">
+                                        {activity.map((a) => (
+                                            <div key={a.id} className="ov-row">
+                                                <span className={`ov-av ${TONE[a.tone].solid}`}>
+                                                    {(a.companyName ?? "?").charAt(0)}
+                                                </span>
+                                                <div className="ov-bd">
+                                                    <div className="ov-t">{a.text}</div>
+                                                    <div className="ov-m">
+                                                        <b>{a.companyName}</b>
+                                                    </div>
                                                 </div>
-                                            ))
-                                        ) : (
-                                            <div className="font-mono text-[11.5px] text-faint">
-                                                idle · no recent activity
+                                                <span className="ov-time">{a.ago}</span>
                                             </div>
-                                        )}
+                                        ))}
                                     </div>
                                 </div>
-                            </Link>
-                        );
-                    })}
+                            </section>
+                        </div>
+                    )}
                 </div>
             </div>
         </AppShell>
