@@ -28,7 +28,7 @@ export const Route = createRootRoute({
         scripts: [
             {
                 children:
-                    "try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}",
+                    "try{var t=localStorage.getItem('cslopslop-theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}",
             },
         ],
     }),
