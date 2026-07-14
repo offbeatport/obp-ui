@@ -1,8 +1,10 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { ArrowUp } from "lucide-react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { ArrowUp, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { GuardrailMenu } from "~/components/guardrail-menu";
 import { Textarea } from "~/components/ui/textarea";
+import { createCompany } from "~/server/actions";
 import { getBootState } from "~/server/agents";
 
 export const Route = createFileRoute("/companies/new")({
@@ -17,6 +19,22 @@ export const Route = createFileRoute("/companies/new")({
 
 // The thought → company composer (was the old home). Lane: home.
 function NewCompany() {
+    const navigate = useNavigate();
+    const [thought, setThought] = useState("");
+    const [busy, setBusy] = useState(false);
+
+    const submit = async () => {
+        const t = thought.trim();
+        if (!t || busy) return;
+        setBusy(true);
+        try {
+            await createCompany({ data: { thought: t } });
+            navigate({ to: "/companies" });
+        } finally {
+            setBusy(false);
+        }
+    };
+
     return (
         <AppShell active="companies">
             <div className="mx-auto flex min-h-full max-w-3xl flex-col justify-center px-6 py-16">
@@ -33,6 +51,14 @@ function NewCompany() {
                 {/* composer */}
                 <div className="mt-9 rounded-[1.25rem] border bg-card p-2 shadow-e1 transition focus-within:ring-2 focus-within:ring-primary/50">
                     <Textarea
+                        value={thought}
+                        onChange={(e) => setThought(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                void submit();
+                            }
+                        }}
                         placeholder="What are you passionate about?"
                         className="min-h-24 resize-none border-0 bg-transparent px-4 py-3 text-base shadow-none focus-visible:ring-0 dark:bg-transparent"
                     />
@@ -40,10 +66,16 @@ function NewCompany() {
                         <GuardrailMenu />
                         <button
                             type="button"
-                            aria-label="Find opportunities"
-                            className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground transition hover:scale-105 active:scale-95"
+                            onClick={() => void submit()}
+                            disabled={busy || !thought.trim()}
+                            aria-label="Create company"
+                            className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground transition hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
                         >
-                            <ArrowUp className="size-5" />
+                            {busy ? (
+                                <Loader2 className="size-5 animate-spin" />
+                            ) : (
+                                <ArrowUp className="size-5" />
+                            )}
                         </button>
                     </div>
                 </div>
