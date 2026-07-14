@@ -6,6 +6,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 // The composer's guardrail-preset selector (prototype .spin-hero-guard): the founder picks how
 // aggressive/safe the agent should be before it spins up a company.
@@ -41,13 +42,10 @@ export function GuardrailMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <button
-                    type="button"
-                    className="inline-flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-sm font-semibold hover:bg-secondary"
-                >
+                <Button variant="outline">
                     <ShieldCheck className="size-4 text-primary" />
                     {current.name}
-                </button>
+                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-80">
                 {PRESETS.map((p) => {
@@ -70,13 +68,9 @@ export function GuardrailMenu() {
                                         </span>
                                     )}
                                 </span>
-                                <span className="mt-0.5 block text-xs text-muted-foreground">
-                                    {p.desc}
-                                </span>
+                                <span className="mt-0.5 block text-xs text-muted-foreground">{p.desc}</span>
                             </span>
-                            {sel === p.key && (
-                                <Check className="mt-1 size-4 flex-none text-primary" />
-                            )}
+                            {sel === p.key && <Check className="mt-1 size-4 flex-none text-primary" />}
                         </DropdownMenuItem>
                     );
                 })}
