@@ -58,11 +58,17 @@ const FAIL_DRAFT = sqlite.prepare("UPDATE draft SET status = 'failed' WHERE id =
 // Atomic status advance: re-read the row inside the txn, bail unless it's still in `from`
 // (an earlier tick / another pass may have moved it), then merge `patch` into data + flip to
 // `to`. Returns nothing; the guarded UPDATE makes a lost race a harmless no-op.
+//
+// `expectPickedId` (spinSpec only): also bail unless the CURRENT pick still matches the one the
+// spec was drafted for. Closes the re-pick race — if the founder chose a different angle (reset
+// + re-pick) while the AI ran, an in-flight spec for the old candidate must NOT overwrite it.
 const advance = sqlite.transaction(
-    (id: string, from: string, to: string, patch: Partial<DraftData>) => {
+    (id: string, from: string, to: string, patch: Partial<DraftData>, expectPickedId?: string) => {
         const row = READ_STATUS.get(id) as { status: string; data: string | null } | undefined;
         if (!row || row.status !== from) return;
-        const merged = { ...parseData(row.data), ...patch };
+        const current = parseData(row.data);
+        if (expectPickedId !== undefined && current.pickedId !== expectPickedId) return;
+        const merged = { ...current, ...patch };
         WRITE_DRAFT.run(to, JSON.stringify(merged), id, from);
     },
 );
@@ -101,7 +107,9 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
             return;
         }
         const { spec, branding } = await draftSpecAndBranding(picked, row.thought);
-        advance.immediate(row.id, "specing", "spec", { spec, branding });
+        // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
+        // discard this now-stale spec. Undefined (defensive candidates[0] fallback) → no guard.
+        advance.immediate(row.id, "specing", "spec", { spec, branding }, data.pickedId);
     } catch {
         try {
             FAIL_DRAFT.run(row.id, "specing");

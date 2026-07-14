@@ -193,4 +193,24 @@ describe("spinSpec", () => {
         await spinSpec(new Set());
         expect(read(id).status).toBe("scouting");
     });
+
+    it("discards a stale spec when the pick changed mid-flight (re-pick race)", async () => {
+        // spinSpec starts drafting for pick A; while the AI runs, the founder re-picks B (a
+        // concurrent web write). The pickedId guard must drop A's now-stale spec, not overwrite B.
+        const candA = randomUUID();
+        const id = makeDraft({ status: "specing", data: oneCandidate(candA) });
+        // The AI "resolving" is when the concurrent re-pick lands: flip pickedId to a new value
+        // (still 'specing') right before returning a spec for A.
+        mockAI.mockImplementationOnce(async () => {
+            sqlite
+                .prepare("UPDATE draft SET data=? WHERE id=?")
+                .run(JSON.stringify({ ...oneCandidate(randomUUID()) }), id);
+            return aiOk(JSON.stringify({ product: "StaleSpecForA", pricingUsd: 20, trialDays: 7 }));
+        });
+        await spinSpec(new Set());
+        const after = read(id);
+        // guard bailed: still awaiting a spec for the CURRENT pick, no stale spec written.
+        expect(after.status).toBe("specing");
+        expect(after.data.spec).toBeUndefined();
+    });
 });
