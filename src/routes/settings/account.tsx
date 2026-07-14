@@ -1,17 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check } from "lucide-react";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { Button } from "~/components/ui/button";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { resetDemo } from "~/server/actions";
@@ -80,14 +71,14 @@ function Account() {
                 <div className="mb-1 text-[13px] font-semibold text-destructive">Danger zone</div>
                 <p className="mb-3 text-xs text-muted-foreground">These can't be undone.</p>
                 <div className="flex flex-wrap gap-2">
-                    <Confirm
+                    <ConfirmDialog
                         trigger={<Button variant="outline">Reset onboarding</Button>}
                         title="Reset onboarding?"
                         description="You'll be sent back through the first-run agent setup. Your saved config and keys are kept."
                         confirmLabel="Reset onboarding"
                         onConfirm={() => resetOnboarding()}
                     />
-                    <Confirm
+                    <ConfirmDialog
                         trigger={<Button variant="destructive">Clear demo data</Button>}
                         title="Clear demo data?"
                         description="Permanently deletes all companies, opportunities, actions and runs. This cannot be undone."
@@ -107,53 +98,5 @@ function Stat({ v, l }: { v: string; l: string }) {
             <div className="font-display text-xl font-semibold">{v}</div>
             <div className="text-xs text-faint">{l}</div>
         </div>
-    );
-}
-
-// Confirm-before-acting wrapper for destructive settings actions.
-function Confirm({
-    trigger,
-    title,
-    description,
-    confirmLabel,
-    destructive,
-    onConfirm,
-}: {
-    trigger: ReactNode;
-    title: string;
-    description: string;
-    confirmLabel: string;
-    destructive?: boolean;
-    onConfirm: () => Promise<unknown>;
-}) {
-    const [open, setOpen] = useState(false);
-    const [busy, setBusy] = useState(false);
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className="max-w-md">
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>{description}</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button
-                        variant={destructive ? "destructive" : "default"}
-                        disabled={busy}
-                        onClick={async () => {
-                            setBusy(true);
-                            await onConfirm();
-                            setBusy(false);
-                            setOpen(false);
-                        }}
-                    >
-                        {confirmLabel}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     );
 }
