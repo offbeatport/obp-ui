@@ -25,23 +25,32 @@ import { cn } from "~/lib/utils";
 export function AppShell({ active, children }: { active?: NavKey; children: ReactNode }) {
     const [collapsed, setCollapsed] = useState(false);
     return (
-        <div
-            className="grid h-screen overflow-hidden transition-[grid-template-columns] duration-300"
-            style={{ gridTemplateColumns: collapsed ? "60px 1fr" : "264px 1fr" }}
-        >
-            <Rail active={active} collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
-            <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
-                <div className="flex-1">{children}</div>
-                <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
-                    <span>
-                        <span className="text-primary">{"{"}</span> C Slop Slop{" "}
-                        <span className="text-primary">{"}"}</span> - from a thought to bag.
-                    </span>
-                    <ThemeToggle />
-                </footer>
-            </main>
+        <>
+            {/* grid-rows-1 (minmax(0,1fr)) pins the single row to the viewport so the rail
+                and main each scroll internally instead of growing the page past 100vh. */}
+            <div
+                className="grid grid-rows-1 h-screen overflow-hidden transition-[grid-template-columns] duration-300"
+                style={{ gridTemplateColumns: collapsed ? "60px 1fr" : "264px 1fr" }}
+            >
+                <Rail
+                    active={active}
+                    collapsed={collapsed}
+                    onToggle={() => setCollapsed((c) => !c)}
+                />
+                <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
+                    <div className="flex-1">{children}</div>
+                    <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
+                        <span>
+                            <span className="text-primary">{"{"}</span> C Slop Slop{" "}
+                            <span className="text-primary">{"}"}</span> - from a thought to bag.
+                        </span>
+                        <ThemeToggle />
+                    </footer>
+                </main>
+            </div>
+            {/* Global overlay — kept OUT of the grid so its root div can't take a grid cell. */}
             <AgentConsole />
-        </div>
+        </>
     );
 }
 
