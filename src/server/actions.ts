@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, desc, eq, inArray } from "drizzle-orm";
-import { actions, companies, db, messages, runs } from "../db/index.js";
+import { and, desc, eq, inArray, like } from "drizzle-orm";
+import { actions, appConfig, companies, db, messages, runs } from "../db/index.js";
 
 // Web-side server functions. Deliberately WRITE-MINIMAL - every handler does tiny DB
 // writes only, never subprocess/agent work. That keeps the synchronous better-sqlite3
@@ -213,5 +213,8 @@ export const resetDemo = createServerFn({ method: "POST" }).handler(async () => 
     db.delete(runs).run(); // runs FK-reference actions, so delete them first
     db.delete(actions).run();
     db.update(companies).set({ lockedByRunId: null }).run();
+    // Clear scope markers too, else scope.ts (which skips marked companies) never regenerates
+    // a first action → cleared companies would sit "Nothing building" forever.
+    db.delete(appConfig).where(like(appConfig.key, "scope.done.%")).run();
     return { ok: true };
 });

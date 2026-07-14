@@ -6,9 +6,10 @@ import { dispatchAI } from "./dispatch.js";
 // notes (grounded in the pre-impl critique):
 //   • SCOPED companies only (must have a scope.done marker) → never races/duplicates
 //     scope.ts's founding narration; the founding thought is scope's, not chat's.
-//   • "Unanswered user" = a user message with NO assistant message strictly after it by
-//     (created_at, rowid) — the rowid tiebreak survives same-millisecond inserts, and
-//     system messages (ship notices) do NOT count as a reply / do NOT suppress the trigger.
+//   • "Unanswered user" = a user turn that is the LAST user-or-assistant message (rowid
+//     tiebreak survives same-ms inserts); system ship-notices don't count. Keying off "no
+//     later user OR assistant" (see LAST_NON_SYSTEM) means a follow-up sent mid-reply is
+//     answered next tick with full context rather than silently swallowed.
 //   • company_id IS NOT NULL excludes global chats.
 //   • ONE company per tick (bounded fan-out). ALWAYS inserts a reply (deterministic
 //     fallback on AI error) so a message is never left pending → no 1Hz claude spawn storm.
@@ -16,7 +17,18 @@ import { dispatchAI } from "./dispatch.js";
 
 const DISPATCH_MS = 90_000;
 
-// Oldest unanswered user turn in a scoped company.
+// A user turn is answerable iff it is the LAST user-or-assistant message in a scoped company
+// (system ship-notices don't count, so they neither suppress nor get re-answered). Keying off
+// "no later user OR assistant message" (not just assistant) means a follow-up the founder
+// sends while a reply is in flight makes the earlier turn no longer answerable — the in-flight
+// reply is then dropped by STILL_UNANSWERED and the newer turn is answered next tick WITH the
+// full transcript, so no message is ever silently swallowed.
+const LAST_NON_SYSTEM = `
+  NOT EXISTS (
+    SELECT 1 FROM message x
+    WHERE x.company_id = m.company_id AND x.role IN ('user','assistant')
+      AND (x.created_at, x.rowid) > (m.created_at, m.rowid)
+  )`;
 const PICK = sqlite.prepare(`
   SELECT m.company_id AS companyId, m.id AS msgId
   FROM message m
@@ -26,22 +38,13 @@ const PICK = sqlite.prepare(`
       SELECT 1 FROM app_config a
       WHERE a.scope = 'global' AND a.key = 'scope.done.' || m.company_id
     )
-    AND NOT EXISTS (
-      SELECT 1 FROM message r
-      WHERE r.company_id = m.company_id AND r.role = 'assistant'
-        AND (r.created_at, r.rowid) > (m.created_at, m.rowid)
-    )
-  ORDER BY m.created_at ASC, m.rowid ASC
+    AND ${LAST_NON_SYSTEM}
+  ORDER BY m.created_at DESC, m.rowid DESC
   LIMIT 1
 `);
-const STILL_UNANSWERED = sqlite.prepare(`
-  SELECT 1 FROM message m
-  WHERE m.id = ? AND NOT EXISTS (
-    SELECT 1 FROM message r
-    WHERE r.company_id = m.company_id AND r.role = 'assistant'
-      AND (r.created_at, r.rowid) > (m.created_at, m.rowid)
-  )
-`);
+const STILL_UNANSWERED = sqlite.prepare(
+    `SELECT 1 FROM message m WHERE m.id = ? AND ${LAST_NON_SYSTEM}`,
+);
 const GET_THESIS = sqlite.prepare("SELECT thesis FROM company WHERE id = ?");
 const RECENT = sqlite.prepare(
     "SELECT role, content FROM message WHERE company_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 12",
@@ -62,7 +65,13 @@ export async function answerNext(inflight: Set<string>): Promise<void> {
     if (!row || inflight.has(row.companyId)) return;
     inflight.add(row.companyId);
     try {
-        reply(row.companyId, row.msgId, await answer(row.companyId));
+        const text = await answer(row.companyId);
+        // .immediate() + catch: the guarded insert is atomic and idempotent, so a transient
+        // SQLITE_BUSY under web contention is swallowed and the turn is retried next tick
+        // (matches scopeNext/claimNext) instead of surfacing as an unhandledRejection.
+        reply.immediate(row.companyId, row.msgId, text);
+    } catch {
+        /* transient DB busy or dispatch hiccup — next tick re-picks the turn */
     } finally {
         inflight.delete(row.companyId);
     }

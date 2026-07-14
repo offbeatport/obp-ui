@@ -56,10 +56,12 @@ function CompanyWorkspace() {
         const t = text.trim();
         if (!t || sending || !companyId) return;
         setSending(true);
-        setText("");
         try {
             await messageCompany({ data: { companyId, text: t } });
+            setText(""); // clear only after the write succeeds — don't lose text on failure
             await router.invalidate();
+        } catch {
+            /* keep the text so the founder can retry; a transient RPC failure isn't data loss */
         } finally {
             setSending(false);
         }
