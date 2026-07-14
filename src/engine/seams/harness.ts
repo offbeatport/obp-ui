@@ -30,14 +30,26 @@ export class NoopHarness implements Harness {
 // drops the reference `server.js` into the workdir, letting the WHOLE spine be proven
 // end-to-end without a `claude` login or a single token spent. Opt in with
 // CSLOP_HARNESS=fixture (engine test seam only — never a user-selectable harness).
+//
+// `flaky` mode drops a BUGGY server on the first build per run (fails the doneWhen), then
+// the correct one on every retry — so the iterate-to-green loop can be proven too.
 export class FixtureHarness implements Harness {
     kind = "fixture";
+    private readonly calls = new Map<string, number>();
+
+    constructor(private readonly flaky = false) {}
 
     async run(task: HarnessTask, io: HarnessIO): Promise<HarnessResult> {
         if (io.signal.aborted) return { ok: false, costUsd: 0 };
-        io.onLine("fixture build: writing reference signup server.js");
+        const n = (this.calls.get(task.runId) ?? 0) + 1;
+        this.calls.set(task.runId, n);
+        const buggy = this.flaky && n === 1;
+        const file = buggy ? "signup-server-broken.js" : "signup-server.js";
+        io.onLine(
+            `fixture build (attempt ${n}): writing ${buggy ? "a BUGGY" : "the reference"} server.js`,
+        );
         const here = dirname(fileURLToPath(import.meta.url));
-        copyFileSync(join(here, "fixtures", "signup-server.js"), join(task.workdir, "server.js"));
+        copyFileSync(join(here, "fixtures", file), join(task.workdir, "server.js"));
         io.onLine("fixture build: complete");
         return { ok: true, sessionId: task.runId, costUsd: 0 };
     }
@@ -65,9 +77,11 @@ export class ClaudeCliHarness implements Harness {
             "stream-json",
             "--verbose",
             "--dangerously-skip-permissions",
-            "--session-id",
-            task.runId,
         ];
+        // First turn creates the session (id = runId); iterate-to-green retries RESUME it so
+        // the agent keeps the full context of what it already built + why the check failed.
+        if (task.sessionId) args.push("--resume", task.sessionId);
+        else args.push("--session-id", task.runId);
         if (task.systemPrompt) args.push("--append-system-prompt", task.systemPrompt);
         if (task.maxTurns > 0) args.push("--max-turns", String(task.maxTurns));
 

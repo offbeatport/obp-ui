@@ -32,12 +32,15 @@ export function buildEngineContext(): EngineContext {
     const validator = new HttpValidator();
     const noop = new NoopHarness();
     const fixture = new FixtureHarness();
+    const fixtureFlaky = new FixtureHarness(true);
 
     // Default = NO-OP (zero setup). Set agent.harness='claude' (Settings/onboarding) or
     // CSLOP_HARNESS=claude to build for real — resolved fresh each run. CSLOP_HARNESS=fixture
-    // is the engine's own zero-cost e2e seam (real build path, canned artifact).
+    // is the engine's own zero-cost e2e seam (real build path, canned artifact); fixture-flaky
+    // fails the first build then fixes it, to exercise the iterate-to-green loop.
     const resolveHarness = (): Harness => {
         if (process.env.CSLOP_HARNESS === "fixture") return fixture;
+        if (process.env.CSLOP_HARNESS === "fixture-flaky") return fixtureFlaky;
         const cfg = resolveAgentConfig();
         return cfg.harnessKind === "claude"
             ? new ClaudeCliHarness(sandbox, credentials, cfg.harnessBin)
