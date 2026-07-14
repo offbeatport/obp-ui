@@ -76,8 +76,9 @@ export type OpportunityItem = {
 
 export type InboxKind = "approval" | "blocked" | "decision";
 export type InboxItem = {
-    id: string;
+    id: string; // the action id (approve/reject target)
     kind: InboxKind;
+    companyId: string; // immutable routing key
     companySlug: string;
     companyName: string;
     tone: Tone;
@@ -361,6 +362,7 @@ export const listInbox = createServerFn({ method: "GET" }).handler(
                 return {
                     id: a.id,
                     kind,
+                    companyId: a.companyId,
                     companySlug: c ? slugify(c.name) : "",
                     companyName: c?.name ?? "",
                     tone: c ? toneFor(c.id) : "slate",

@@ -76,7 +76,7 @@ export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem
     return (
         <Link
             to="/companies/$slug"
-            params={{ slug: c.slug }}
+            params={{ slug: c.id }}
             className={`co-card ${STAGE_CLASS[c.tone]}${dead ? " co-dead" : ""}`}
             style={{ "--co-bc": TONE_VAR[c.tone] } as CSSProperties}
         >

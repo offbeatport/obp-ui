@@ -119,7 +119,7 @@ function Home() {
                         <div className="co-grid">
                             {shown.map((c) => (
                                 <CompanyCard
-                                    key={c.slug}
+                                    key={c.id}
                                     c={c}
                                     feed={activity.filter((a) => a.companySlug === c.slug)}
                                 />
@@ -165,7 +165,7 @@ function GateRow({ item }: { item: InboxItem }) {
     const g = GATE[item.kind];
     const t = TONE[item.tone];
     return (
-        <Link to="/companies/$slug" params={{ slug: item.companySlug }} className="gate">
+        <Link to="/companies/$slug" params={{ slug: item.companyId }} className="gate">
             <span className={`gate-av ${t.solid}`}>{item.companyName.charAt(0)}</span>
             <div className="gate-main">
                 <div className="gate-top">
@@ -213,7 +213,7 @@ function UpNext({ companies }: { companies: CompanySummary[] }) {
                 {groups.map(({ c, loop }) => {
                     const live = c.status === "active" && (c.mrr > 0 || c.shipped > 0);
                     return (
-                        <section key={c.slug} className="uq-co">
+                        <section key={c.id} className="uq-co">
                             <div className="uq-co-head">
                                 <span className={`uq-avatar ${TONE[c.tone].solid}`}>
                                     {c.name.charAt(0)}

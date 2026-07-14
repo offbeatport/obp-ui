@@ -52,6 +52,9 @@ const SET_MARK = sqlite.prepare(`
   INSERT INTO app_config (scope, key, value, updated_at) VALUES ('global', ?, 'true', ?)
   ON CONFLICT(scope, key) DO UPDATE SET value = 'true', updated_at = excluded.updated_at
 `);
+// Give the company its real (AI-picked) name. Safe now that routing is id-first — the slug
+// changing doesn't break any link (createCompany navigates by id; cards/inbox link by id).
+const SET_NAME = sqlite.prepare("UPDATE company SET name = ? WHERE id = ?");
 
 type Opp = { title: string; thesis: string; score: number };
 
@@ -85,6 +88,7 @@ const emit = sqlite.transaction(
             JSON.stringify({ doneWhen: "http-signup" }),
             now,
         );
+        SET_NAME.run(opp.title.slice(0, 48), companyId);
         SET_MARK.run(markKey(companyId), now);
     },
 );
