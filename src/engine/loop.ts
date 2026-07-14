@@ -6,6 +6,7 @@ import { renewLease, sweepExpiredLeases } from "./reaper.js";
 import { runOne } from "./runner.js";
 import { scopeNext } from "./scope.js";
 import { shipApproved } from "./ship.js";
+import { spinScout, spinSpec } from "./spin.js";
 
 // The continuous priority loop. Poll (not events) to eliminate the missed-wakeup bug
 // class; an in-memory `active` set bounds concurrency. claimNext is synchronous
@@ -16,6 +17,8 @@ export function startLoop(ctx: EngineContext): () => void {
     const shipping = new Set<string>();
     const scoping = new Set<string>();
     const chatting = new Set<string>();
+    const scouting = new Set<string>();
+    const specing = new Set<string>();
 
     const tick = () => {
         // Ship first: promote any action you (or autopilot) approved since last tick, which
@@ -26,6 +29,8 @@ export function startLoop(ctx: EngineContext): () => void {
         // guard Sets and do all AI outside any DB transaction.
         void scopeNext(scoping); // fresh company thought → opportunity + spec + first action
         void answerNext(chatting); // an unanswered user turn in a scoped company's chat
+        void spinScout(scouting); // a 'scouting' draft → 3 scored opportunity candidates
+        void spinSpec(specing); // a 'specing' draft (picked) → full company spec + branding
         while (active.size < config.maxConcurrentRuns) {
             const claim = claimNext(ctx.instanceId);
             if (!claim) break;
