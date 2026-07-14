@@ -55,6 +55,7 @@ export interface Sandbox {
 // ---- Deploy: how the built app gets a live URL doneWhen can hit ----
 export type DeploySpec = {
     companyId: string;
+    runId: string; // ties the deploy to its run so reconcile() can reap orphaned in-progress ones
     workdir: string;
     startCmd: string;
     healthPath: string;

@@ -1,5 +1,8 @@
+import { copyFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import type { Readable } from "node:stream";
 import { setTimeout as sleep } from "node:timers/promises";
+import { fileURLToPath } from "node:url";
 import type { Credentials } from "./credentials.js";
 import type { Harness, HarnessIO, HarnessResult, HarnessTask, Sandbox } from "./types.js";
 
@@ -19,6 +22,24 @@ export class NoopHarness implements Harness {
         }
         io.onLine("noop build: complete");
         return { ok: true, costUsd: 0 };
+    }
+}
+
+// FixtureHarness — a deterministic, zero-cost builder (kind "fixture", NOT "noop", so the
+// runner treats it as a real build and runs the deploy → validate → ship path). It just
+// drops the reference `server.js` into the workdir, letting the WHOLE spine be proven
+// end-to-end without a `claude` login or a single token spent. Opt in with
+// CSLOP_HARNESS=fixture (engine test seam only — never a user-selectable harness).
+export class FixtureHarness implements Harness {
+    kind = "fixture";
+
+    async run(task: HarnessTask, io: HarnessIO): Promise<HarnessResult> {
+        if (io.signal.aborted) return { ok: false, costUsd: 0 };
+        io.onLine("fixture build: writing reference signup server.js");
+        const here = dirname(fileURLToPath(import.meta.url));
+        copyFileSync(join(here, "fixtures", "signup-server.js"), join(task.workdir, "server.js"));
+        io.onLine("fixture build: complete");
+        return { ok: true, sessionId: task.runId, costUsd: 0 };
     }
 }
 
