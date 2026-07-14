@@ -57,6 +57,16 @@ export const TONE_VAR: Record<Tone, string> = {
     red: "var(--destructive)",
 };
 
+// Tone → the underlying soft-tint CSS custom property (chips, tags).
+export const TONE_SOFT_VAR: Record<Tone, string> = {
+    green: "var(--success-soft)",
+    blue: "var(--info-soft)",
+    violet: "var(--approval-soft)",
+    slate: "var(--neutral-soft)",
+    amber: "var(--warning-soft)",
+    red: "var(--destructive-soft)",
+};
+
 // Tone → the prototype's stage class on `.co-card` (drives hover tint / area tone).
 export const STAGE_CLASS: Record<Tone, string> = {
     green: "co-s-growing",
