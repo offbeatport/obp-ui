@@ -48,15 +48,16 @@ type NavKey =
     | "inbox"
     | "guardrails"
     | "opportunities"
-    | "portfolio"
+    | "companies"
+    | "chats"
     | "admin"
     | "settings";
 const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "home", label: "Home", icon: Home, to: "/" },
-    { key: "inbox", label: "Inbox", icon: Inbox },
+    { key: "inbox", label: "Inbox", icon: Inbox, to: "/inbox" },
     { key: "guardrails", label: "Guardrails", icon: SlidersHorizontal },
-    { key: "opportunities", label: "Opportunities", icon: Diamond },
-    { key: "portfolio", label: "Portfolio", icon: LayoutGrid },
+    { key: "opportunities", label: "Opportunities", icon: Diamond, to: "/opportunities" },
+    { key: "companies", label: "Companies", icon: LayoutGrid, to: "/companies" },
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
 ];
 
@@ -95,9 +96,9 @@ function Rail({
                 <NavItem
                     icon={Plus}
                     label="New company"
+                    to="/companies/new"
                     collapsed={collapsed}
                     tint
-                    onClick={() => {}}
                 />
 
                 <SectionLabel collapsed={collapsed}>Overview</SectionLabel>
@@ -120,12 +121,12 @@ function Rail({
                         <p className="mx-auto mt-1 max-w-[15rem] text-[12px] leading-relaxed text-faint">
                             You bring the ideas - I build, launch and run them.
                         </p>
-                        <button
-                            type="button"
+                        <Link
+                            to="/companies/new"
                             className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-[12.5px] font-semibold text-accent-foreground transition hover:brightness-105"
                         >
                             <Plus className="size-3.5" /> Start your first company
-                        </button>
+                        </Link>
                     </div>
                 )}
 
@@ -149,12 +150,12 @@ function Rail({
             </div>
 
             {/* foot: credit · user menu */}
-            <div className="border-t px-3 py-2">
+            <div className="px-3 py-2">
                 {!collapsed && (
-                    <div className="mb-1 flex items-center gap-2 px-2.5 py-1.5">
+                    <div className="mb-1 flex items-center gap-2 px-2.5 py-1.5 border-b hover:border-b-primary transition duration-300">
                         <CreditCard className="size-4 text-primary" />
-                        <span className="text-[11.5px] text-faint">Credit</span>
-                        <span className="ml-auto font-mono text-[12.5px] font-bold">$100.00</span>
+                        <span className="text-sm text-faint">Credit</span>
+                        <span className="ml-auto font-mono text-sm font-bold">$100.00</span>
                     </div>
                 )}
                 <UserMenu collapsed={collapsed} />
@@ -211,7 +212,7 @@ function NavItem({
     const cls = cn(
         "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13.5px] font-medium transition",
         active && "bg-card text-foreground shadow-e1",
-        !active && !locked && "text-muted-foreground hover:bg-primary/[0.15] hover:text-foreground",
+        !locked && "text-muted-foreground hover:bg-primary/[0.15] hover:text-foreground",
         // locked = disabled: dimmed, no hover, not interactive
         locked && "cursor-default text-muted-foreground opacity-40",
         tint && "nav-newco mb-1.5",
