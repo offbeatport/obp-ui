@@ -174,7 +174,7 @@ async function dispatchOpenAICompat(
 
 // Map a configured model to a `claude` CLI alias. Accepts our slugs ("claude-3.5-haiku"),
 // bare aliases ("haiku"), or anything containing the tier word; unknown → undefined (CLI default).
-function toClaudeCliModel(model?: string): string | undefined {
+export function toClaudeCliModel(model?: string): string | undefined {
     if (!model) return undefined;
     const s = model.toLowerCase();
     if (s.includes("opus")) return "opus";

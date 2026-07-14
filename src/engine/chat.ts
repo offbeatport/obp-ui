@@ -29,6 +29,8 @@ const LAST_NON_SYSTEM = `
     WHERE x.company_id = m.company_id AND x.role IN ('user','assistant')
       AND (x.created_at, x.rowid) > (m.created_at, m.rowid)
   )`;
+// A few candidate companies (at most one pending turn each) so answerNext can skip any that
+// are already in flight — one company's slow dispatch never head-of-line-blocks the others.
 const PICK = sqlite.prepare(`
   SELECT m.company_id AS companyId, m.id AS msgId
   FROM message m
@@ -40,7 +42,7 @@ const PICK = sqlite.prepare(`
     )
     AND ${LAST_NON_SYSTEM}
   ORDER BY m.created_at DESC, m.rowid DESC
-  LIMIT 1
+  LIMIT 8
 `);
 const STILL_UNANSWERED = sqlite.prepare(
     `SELECT 1 FROM message m WHERE m.id = ? AND ${LAST_NON_SYSTEM}`,
@@ -61,8 +63,9 @@ const reply = sqlite.transaction((companyId: string, msgId: string, text: string
 });
 
 export async function answerNext(inflight: Set<string>): Promise<void> {
-    const row = PICK.get() as { companyId: string; msgId: string } | undefined;
-    if (!row || inflight.has(row.companyId)) return;
+    const rows = PICK.all() as { companyId: string; msgId: string }[];
+    const row = rows.find((r) => !inflight.has(r.companyId));
+    if (!row) return;
     inflight.add(row.companyId);
     try {
         const text = await answer(row.companyId);
