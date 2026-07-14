@@ -47,5 +47,31 @@ export const SLICE: Record<SliceState, { tone: Tone; label: string }> = {
     blocked: { tone: "red", label: "Blocked" },
 };
 
+// Tone → the underlying app CSS custom property (for inline `--co-bc` brand tints etc).
+export const TONE_VAR: Record<Tone, string> = {
+    green: "var(--success)",
+    blue: "var(--info)",
+    violet: "var(--approval)",
+    slate: "var(--neutral)",
+    amber: "var(--warning)",
+    red: "var(--destructive)",
+};
+
+// Tone → the prototype's stage class on `.co-card` (drives hover tint / area tone).
+export const STAGE_CLASS: Record<Tone, string> = {
+    green: "co-s-growing",
+    blue: "co-s-building",
+    violet: "co-s-ejected",
+    slate: "co-s-idea",
+    amber: "co-s-testing",
+    red: "co-s-killed",
+};
+
+// Company initials (up to 2 caps), matching the prototype's initials().
+export const initials = (name: string) => {
+    const caps = name.replace(/[^A-Z]/g, "").slice(0, 2);
+    return caps || name.slice(0, 1).toUpperCase();
+};
+
 // First letter for an avatar tile.
 export const initial = (name: string) => name.charAt(0).toUpperCase();
