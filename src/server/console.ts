@@ -120,31 +120,34 @@ const snapCache = new Map<string, Snapshot>();
 async function buildSnapshot(): Promise<Snapshot> {
     const [cos, activity] = await Promise.all([listCompanies(), listActivity()]);
 
-    // active runs keyed by company NAME (the read-contract's stable handle across lanes)
-    const active = new Map<string, string>(); // name -> runId
+    // Latest run keyed by company NAME. `running` means genuinely live; an awaiting_approval
+    // run is idle (waiting on a human) — we still show its log tail but it must NOT count as
+    // "working" (no pulse, and it doesn't force the fast poll interval).
+    const active = new Map<string, { runId: string; running: boolean }>(); // name -> run
     try {
         const rows = db
-            .select({ runId: runs.id, name: companies.name })
+            .select({ runId: runs.id, name: companies.name, status: runs.status })
             .from(runs)
             .innerJoin(companies, eq(runs.companyId, companies.id))
             .where(inArray(runs.status, ["running", "awaiting_approval"]))
             .all();
-        for (const r of rows) if (r.name) active.set(r.name, r.runId);
+        for (const r of rows)
+            if (r.name) active.set(r.name, { runId: r.runId, running: r.status === "running" });
     } catch {
         /* no runs yet — fall back to activity lines below */
     }
 
     const panes: ConsolePane[] = cos.map((co) => {
-        const runId = active.get(co.name);
+        const run = active.get(co.name);
         const state: ConsolePaneState = co.slice?.state ?? "todo";
-        if (runId) {
-            const { lines, size } = tailLog(runId);
+        if (run) {
+            const { lines, size } = tailLog(run.runId);
             return {
                 slug: co.slug,
                 name: co.name,
                 tone: co.tone,
                 state,
-                active: true,
+                active: run.running,
                 cursor: size,
                 lines,
             };
