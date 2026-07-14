@@ -11,6 +11,11 @@ export const Route = createRootRoute({
             { title: "C Slop Slop" },
         ],
         links: [
+            {
+                rel: "icon",
+                type: "image/svg+xml",
+                href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c8643c'/%3E%3Ctext x='16' y='23' font-size='21' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3EC%3C/text%3E%3C/svg%3E",
+            },
             { rel: "stylesheet", href: globalsCss },
             { rel: "preconnect", href: "https://fonts.googleapis.com" },
             { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -40,7 +45,7 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <HeadContent />
             </head>
