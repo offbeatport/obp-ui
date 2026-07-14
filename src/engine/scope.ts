@@ -157,7 +157,7 @@ async function draftSpec(opp: Opp): Promise<string> {
 }
 
 // Defensive parse: strip code fences, take the first balanced {...}, JSON.parse or null.
-function extractJson(text: string): Record<string, unknown> | null {
+export function extractJson(text: string): Record<string, unknown> | null {
     let t = text
         .trim()
         .replace(/^```(?:json)?/i, "")

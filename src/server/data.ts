@@ -106,7 +106,7 @@ const TONES: Tone[] = ["green", "blue", "violet", "slate", "amber", "red"];
 // URL key from the company name; getCompany reverses it by re-slugifying candidates.
 // Readable + stable for the few companies a local instance has (collisions resolve to
 // the first match — acceptable at v1's scale).
-function slugify(name: string): string {
+export function slugify(name: string): string {
     return (
         name
             .toLowerCase()
@@ -142,7 +142,7 @@ function previewUrlOf(a: Action): string | undefined {
 }
 
 // action.status → the UI's slice lifecycle. approved = shipping imminently (still "building").
-function sliceState(status: Action["status"]): SliceState {
+export function sliceState(status: Action["status"]): SliceState {
     switch (status) {
         case "running":
         case "approved":
