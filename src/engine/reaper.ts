@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { sqlite } from "../db/index.js";
 import type { Checkpoint } from "../db/schema.js";
 import { config } from "./config.js";
@@ -98,8 +99,25 @@ export function killInFlight(): number {
     return rows.length;
 }
 
+// The processes we ever spawn: the `claude` agent and the deployed `node server.js`.
+const KILLABLE = /claude|node/i;
+
 function killPgid(pgid?: number): void {
     if (!pgid || pgid <= 0) return; // never let -pgid become a positive PID (e.g. kill(1))
+    // Verify the group leader is still one of OUR processes before the group SIGKILL. After a
+    // crash/reboot the OS recycles pids, so a checkpointed pgid can belong to an unrelated
+    // process group — and `-pgid` would kill the whole group. If ps can't confirm it's a
+    // claude/node process, skip (it's gone or not ours).
+    let cmd = "";
+    try {
+        cmd = execFileSync("ps", ["-o", "command=", "-p", String(pgid)], {
+            encoding: "utf8",
+            timeout: 2000,
+        }).trim();
+    } catch {
+        return; // process no longer exists (ps exits non-zero) or ps unavailable
+    }
+    if (!KILLABLE.test(cmd)) return; // recycled pid owned by something else — do NOT kill
     try {
         process.kill(-pgid, "SIGKILL");
     } catch {

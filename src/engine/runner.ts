@@ -173,6 +173,10 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
         if (real) {
             const repo = await ctx.git.ensureRepo(claim.companyId);
             workdir = repo.workdir;
+            // Stop any previously-shipped app for this company BEFORE prepareRun mutates their
+            // shared working tree — otherwise it would serve out of a half-reset/cleaned tree.
+            // (down() is idempotent.) A later up() re-serves the newly-built slice.
+            await ctx.deploy.down(claim.companyId).catch(() => {});
             await ctx.git.prepareRun(workdir, claim.runId);
         }
 
@@ -303,6 +307,9 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
         });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
+        // Tear down any preview this run brought up, so a failed/aborted run never leaks a
+        // live server holding its port (down() is idempotent — no-op if nothing was deployed).
+        await ctx.deploy.down(claim.companyId).catch(() => {});
         finishFail.immediate(claim, msg);
         log.write({ type: "end", status: "failed", error: msg });
     } finally {
