@@ -145,11 +145,13 @@ export function AgentConsole() {
     useEffect(() => {
         if (!open) return;
         let stopped = false;
+        let inFlight = false;
         let timer: ReturnType<typeof setTimeout> | undefined;
 
         const tick = async () => {
             if (stopped) return;
             if (document.visibilityState === "visible") {
+                inFlight = true;
                 try {
                     const resp = await getConsoleDigest({ data: { cursors: cursorsRef.current } });
                     if (stopped) return;
@@ -176,6 +178,8 @@ export function AgentConsole() {
                     anyActiveRef.current = resp.anyActive;
                 } catch {
                     /* transient — retry next tick */
+                } finally {
+                    inFlight = false;
                 }
             }
             if (stopped) return;
@@ -183,8 +187,10 @@ export function AgentConsole() {
         };
 
         void tick();
+        // Only relaunch on re-focus if no tick is mid-fetch — otherwise a tab flip during an
+        // in-flight poll would spawn a second self-perpetuating chain and multiply the rate.
         const onVis = () => {
-            if (document.visibilityState === "visible" && !stopped) {
+            if (document.visibilityState === "visible" && !stopped && !inFlight) {
                 if (timer) clearTimeout(timer);
                 void tick();
             }
@@ -214,6 +220,7 @@ export function AgentConsole() {
                 className="console-panel"
                 aria-label="Agent console"
                 aria-hidden={!open}
+                inert={!open}
                 style={heightPx ? { height: `${heightPx}px` } : undefined}
             >
                 <div
