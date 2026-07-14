@@ -1,6 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
-import { actions, appConfig, companies, db, messages, runs } from "../db/index.js";
+import {
+    type ActionPayload,
+    actions,
+    appConfig,
+    companies,
+    db,
+    messages,
+    runs,
+} from "../db/index.js";
 
 // Web-side server functions. Deliberately WRITE-MINIMAL - every handler does tiny DB
 // writes only, never subprocess/agent work. That keeps the synchronous better-sqlite3
@@ -125,7 +133,10 @@ export const rejectAction = createServerFn({ method: "POST" })
                 .where(eq(runs.id, run.id))
                 .run();
         }
-        const payload = { ...action.payload, feedback: data.feedback ?? "" };
+        // Drop previewUrl: the deploy behind it was just SIGKILLed above, so leaving it would
+        // make getCompany/listActionRuns project a dead link until the next deploy overwrites it.
+        const { previewUrl: _dead, ...rest } = (action.payload ?? {}) as Record<string, unknown>;
+        const payload = { ...rest, feedback: data.feedback ?? "" } as unknown as ActionPayload;
         db.update(actions)
             .set({ status: "queued", payload })
             .where(eq(actions.id, data.actionId))

@@ -152,10 +152,13 @@ function useGreeting() {
     return g;
 }
 
+// The home strip is a glanceable shortcut: the row links to the company, where the real
+// Approve/Reject controls live (and the /inbox page). Labels read as navigation, not fake
+// action buttons.
 const GATE: Record<InboxItem["kind"], { label: string; act: string; primary: boolean }> = {
-    approval: { label: "SHIP", act: "Approve & ship", primary: true },
-    blocked: { label: "UNBLOCK", act: "Unblock", primary: false },
-    decision: { label: "DECIDE", act: "Decide", primary: false },
+    approval: { label: "SHIP", act: "Review & ship →", primary: true },
+    blocked: { label: "UNBLOCK", act: "Review →", primary: false },
+    decision: { label: "DECIDE", act: "Review →", primary: false },
 };
 
 function GateRow({ item }: { item: InboxItem }) {
@@ -186,7 +189,8 @@ function GateRow({ item }: { item: InboxItem }) {
 // Up next — one queued task per company (its current slice), matching upcomingTasksHTML().
 function UpNext({ companies }: { companies: CompanySummary[] }) {
     const groups = companies
-        .filter((c) => c.slice)
+        // only genuinely-pending slices — a finished (shipped) slice is not "up next"
+        .filter((c) => c.slice && c.slice.state !== "shipped")
         .map((c) => ({
             c,
             loop: c.slice?.state === "building" ? "build" : c.mrr > 0 ? "run" : "build",

@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { desc, eq, isNull } from "drizzle-orm";
+import { desc, eq, isNull, sql } from "drizzle-orm";
 import {
     type Action,
     type Company,
@@ -28,7 +28,7 @@ export type Tone = "green" | "blue" | "violet" | "slate" | "amber" | "red";
 export type CompanyStatus = "active" | "paused" | "archived";
 export type SliceState = "building" | "awaiting_approval" | "blocked" | "todo" | "shipped";
 
-export type Slice = { n: number; title: string; state: SliceState };
+export type Slice = { n: number; title: string; state: SliceState; actionId: string };
 
 export type CompanySummary = {
     id: string; // immutable company id — the collision-proof routing key
@@ -193,6 +193,7 @@ function toSummary(c: Company, acts: Action[]): CompanySummary {
                   n: code.indexOf(current) + 1,
                   title: current.title,
                   state: sliceState(current.status),
+                  actionId: current.id,
               }
             : undefined,
         needsYou: needsYou || undefined,
@@ -276,7 +277,7 @@ export const getCompany = createServerFn({ method: "GET" })
             .select()
             .from(messages)
             .where(eq(messages.companyId, c.id))
-            .orderBy(messages.createdAt, messages.id)
+            .orderBy(messages.createdAt, sql`rowid`)
             .all();
         const liveUrl = acts.slice().sort(byCreated).map(previewUrlOf).filter(Boolean).pop();
         return {
