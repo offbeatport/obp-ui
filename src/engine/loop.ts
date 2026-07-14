@@ -3,6 +3,7 @@ import { config } from "./config.js";
 import type { EngineContext } from "./context.js";
 import { renewLease, sweepExpiredLeases } from "./reaper.js";
 import { runOne } from "./runner.js";
+import { shipApproved } from "./ship.js";
 
 // The continuous priority loop. Poll (not events) to eliminate the missed-wakeup bug
 // class; an in-memory `active` set bounds concurrency. claimNext is synchronous
@@ -10,9 +11,12 @@ import { runOne } from "./runner.js";
 // HTTP/SSR event loop.
 export function startLoop(ctx: EngineContext): () => void {
     const active = new Set<string>();
+    const shipping = new Set<string>();
 
     const tick = () => {
-        // ship driver for 'approved' actions lands in build step 6.
+        // Ship first: promote any action you (or autopilot) approved since last tick, which
+        // also releases the company lock so its next queued action becomes claimable below.
+        void shipApproved(ctx, shipping);
         while (active.size < config.maxConcurrentRuns) {
             const claim = claimNext(ctx.instanceId);
             if (!claim) break;

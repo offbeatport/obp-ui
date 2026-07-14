@@ -1,5 +1,8 @@
+import { copyFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import type { Readable } from "node:stream";
 import { setTimeout as sleep } from "node:timers/promises";
+import { fileURLToPath } from "node:url";
 import type { Credentials } from "./credentials.js";
 import type { Harness, HarnessIO, HarnessResult, HarnessTask, Sandbox } from "./types.js";
 
@@ -19,6 +22,36 @@ export class NoopHarness implements Harness {
         }
         io.onLine("noop build: complete");
         return { ok: true, costUsd: 0 };
+    }
+}
+
+// FixtureHarness — a deterministic, zero-cost builder (kind "fixture", NOT "noop", so the
+// runner treats it as a real build and runs the deploy → validate → ship path). It just
+// drops the reference `server.js` into the workdir, letting the WHOLE spine be proven
+// end-to-end without a `claude` login or a single token spent. Opt in with
+// CSLOP_HARNESS=fixture (engine test seam only — never a user-selectable harness).
+//
+// `flaky` mode drops a BUGGY server on the first build per run (fails the doneWhen), then
+// the correct one on every retry — so the iterate-to-green loop can be proven too.
+export class FixtureHarness implements Harness {
+    kind = "fixture";
+    private readonly calls = new Map<string, number>();
+
+    constructor(private readonly flaky = false) {}
+
+    async run(task: HarnessTask, io: HarnessIO): Promise<HarnessResult> {
+        if (io.signal.aborted) return { ok: false, costUsd: 0 };
+        const n = (this.calls.get(task.runId) ?? 0) + 1;
+        this.calls.set(task.runId, n);
+        const buggy = this.flaky && n === 1;
+        const file = buggy ? "signup-server-broken.js" : "signup-server.js";
+        io.onLine(
+            `fixture build (attempt ${n}): writing ${buggy ? "a BUGGY" : "the reference"} server.js`,
+        );
+        const here = dirname(fileURLToPath(import.meta.url));
+        copyFileSync(join(here, "fixtures", file), join(task.workdir, "server.js"));
+        io.onLine("fixture build: complete");
+        return { ok: true, sessionId: task.runId, costUsd: 0 };
     }
 }
 
@@ -44,9 +77,11 @@ export class ClaudeCliHarness implements Harness {
             "stream-json",
             "--verbose",
             "--dangerously-skip-permissions",
-            "--session-id",
-            task.runId,
         ];
+        // First turn creates the session (id = runId); iterate-to-green retries RESUME it so
+        // the agent keeps the full context of what it already built + why the check failed.
+        if (task.sessionId) args.push("--resume", task.sessionId);
+        else args.push("--session-id", task.runId);
         if (task.systemPrompt) args.push("--append-system-prompt", task.systemPrompt);
         if (task.maxTurns > 0) args.push("--max-turns", String(task.maxTurns));
 
@@ -88,13 +123,15 @@ export class ClaudeCliHarness implements Harness {
     }
 }
 
+type ToolInput = Record<string, unknown>;
+type ContentBlock = { type?: string; text?: string; name?: string; input?: ToolInput };
 type StreamEvent = {
     type?: string;
     subtype?: string;
     is_error?: boolean;
     total_cost_usd?: number;
     session_id?: string;
-    message?: { content?: Array<{ type?: string; text?: string; name?: string }> };
+    message?: { content?: ContentBlock[] };
     [k: string]: unknown;
 };
 
@@ -123,11 +160,19 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
     });
 }
 
-// Compact a stream event into one readable log line.
+// Compact a stream event into one readable log line. Tool calls show WHAT they did (the
+// command / file / target), not just the tool name — so the log reads like a build narration
+// (`→ Bash: node server.js`, `→ Write server.js`) instead of a wall of bare `→ Bash`.
 function summarizeEvent(evt: StreamEvent): string | null {
     if (evt.type === "assistant" && evt.message?.content) {
         const parts = evt.message.content
-            .map((c) => (c.type === "text" ? c.text : c.name ? `→ ${c.name}` : ""))
+            .map((c) =>
+                c.type === "text"
+                    ? c.text
+                    : c.type === "tool_use" || c.name
+                      ? summarizeTool(c.name, c.input)
+                      : "",
+            )
             .filter(Boolean)
             .join(" ");
         return parts ? parts.slice(0, 500) : null;
@@ -138,4 +183,23 @@ function summarizeEvent(evt: StreamEvent): string | null {
         }`;
     }
     return null;
+}
+
+// `→ <Tool>: <the salient argument>` — the command for Bash, the file for Write/Edit/Read,
+// the query for a search, the URL for a fetch. Falls back to the bare tool name.
+function summarizeTool(name?: string, input?: ToolInput): string {
+    const tool = name ?? "tool";
+    if (!input) return `→ ${tool}`;
+    const salient =
+        input.command ??
+        input.file_path ??
+        input.path ??
+        input.pattern ??
+        input.query ??
+        input.url ??
+        input.description;
+    if (typeof salient === "string" && salient.trim()) {
+        return `→ ${tool}: ${salient.replace(/\s+/g, " ").trim().slice(0, 140)}`;
+    }
+    return `→ ${tool}`;
 }
