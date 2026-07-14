@@ -126,6 +126,34 @@ export const listQueue = createServerFn({ method: "GET" }).handler(async () => {
     };
 });
 
+// Run history for one action — every attempt, newest first (incl. completed/failed runs,
+// which drop off listQueue). Lets the UI list an action's runs and open any one's log via
+// the existing SSE route `/api/runs/<id>/logs`. `previewUrl` (the deployed URL, set on the
+// action payload) is included so a shipped/awaiting run links straight to the live app.
+export const listActionRuns = createServerFn({ method: "GET" })
+    .validator((actionId: string) => actionId)
+    .handler(async ({ data: actionId }) => {
+        const rows = db
+            .select()
+            .from(runs)
+            .where(eq(runs.actionId, actionId))
+            .orderBy(desc(runs.createdAt))
+            .all();
+        const action = db.select().from(actions).where(eq(actions.id, actionId)).get();
+        const previewUrl = (action?.payload as { previewUrl?: string } | undefined)?.previewUrl;
+        return {
+            previewUrl: previewUrl ?? null,
+            runs: rows.map((r) => ({
+                id: r.id,
+                status: r.status,
+                attempt: r.attempt,
+                costUsd: r.costUsd,
+                error: r.error,
+                createdAt: r.createdAt.getTime(),
+            })),
+        };
+    });
+
 // Dev convenience: clear the queue and unlock companies so the spine can be re-run. Also
 // kills any live deploy/agent process groups the runs left behind, so re-running the demo
 // doesn't leak an orphaned app holding its port.
