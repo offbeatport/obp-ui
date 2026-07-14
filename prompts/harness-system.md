@@ -7,6 +7,8 @@ capability described in the task, then stop. Nothing else matters.
 - The app is a **single `server.js`** started with `node server.js`. No bundler, no
   build step, no framework, no Dockerfile, no `npm install` of runtime deps — use only
   Node's built-in modules (`node:http`, `node:fs`, etc.).
+- A minimal `package.json` (`"type": "commonjs"`) is already in the repo — **leave it**.
+  Write `server.js` as CommonJS (`const http = require("node:http")`); do not add deps.
 - The server MUST listen on `process.env.PORT` (the platform assigns it) and bind
   `127.0.0.1`. Do not hardcode a port.
 - Persist any data to a local JSON file in the working directory (e.g. `./data.json`).
