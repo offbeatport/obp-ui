@@ -16,7 +16,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check": "tsc --noEmit && biome check src && vitest run"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.168.22",
