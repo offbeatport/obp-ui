@@ -98,6 +98,19 @@ function createTables(s: Database.Database) {
       created_at  integer NOT NULL DEFAULT (unixepoch() * 1000)
     );
 
+    -- draft: a "spin up a company" session (thought -> scored candidates -> pick ->
+    -- spec+branding -> commit). The data column holds candidates/pickedId/spec/branding as
+    -- JSON; the engine spin passes fill it; commit turns it into a real company.
+    CREATE TABLE IF NOT EXISTS draft (
+      id          text PRIMARY KEY NOT NULL,
+      thought     text NOT NULL,
+      status      text NOT NULL DEFAULT 'scouting',
+      guardrails  text,
+      data        text NOT NULL DEFAULT '{}',
+      company_id  text REFERENCES company(id),
+      created_at  integer NOT NULL DEFAULT (unixepoch() * 1000)
+    );
+
     -- config: non-secret key-value (agent/guardrail/account/onboarding settings)
     CREATE TABLE IF NOT EXISTS app_config (
       scope       text NOT NULL DEFAULT 'global',
