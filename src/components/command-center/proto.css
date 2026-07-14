@@ -1166,3 +1166,366 @@
     font-size: 10.5px;
     color: var(--ink-faint);
 }
+
+/* ---- company workspace · left co-pilot chat (cpg-chat) ---- */
+.cc .cpg-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 8px 6px 10px;
+}
+.cc .cpg-chat .day {
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 2px 0;
+}
+.cc .cpg-chat .msg {
+    display: flex;
+    gap: 11px;
+    max-width: 100%;
+    align-items: flex-start;
+}
+.cc .cpg-chat .msg .av {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+}
+.cc .cpg-chat .bubble {
+    background: none;
+    border: none;
+    border-radius: 5px 14px 14px 14px;
+    padding: 2px 0 3px;
+    box-shadow: none;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    max-width: 440px;
+}
+.cc .cpg-chat .bubble b {
+    font-weight: 600;
+}
+.cc .cpg-chat .bubble .t {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 7px;
+    display: block;
+}
+.cc .cpg-chat .msg.me {
+    flex-direction: row-reverse;
+}
+.cc .cpg-chat .msg.me .av {
+    background: var(--cream-2);
+    color: var(--ink-soft);
+}
+.cc .cpg-chat .msg.me .bubble {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 14px 5px 14px 14px;
+    padding: 10px 14px;
+    max-width: 300px;
+}
+.cc .cpg-chat .msg.me .bubble .t {
+    color: rgba(255, 255, 255, 0.7);
+}
+.cc .cpg-chat .sys {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 1px 6px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+}
+.cc .cpg-chat .sys .sd {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--green-soft);
+}
+.cc .cpg-chat .sys .sx {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cc .cpg-chat .sys .st {
+    margin-left: auto;
+    opacity: 0.65;
+}
+
+/* ---- company workspace · center tabs + overview ---- */
+.cc .cows {
+    display: flex;
+    flex-direction: column;
+}
+.cc .co-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    padding: 8px 0 0;
+    margin-bottom: 18px;
+    background: linear-gradient(var(--cream) 68%, transparent);
+    border-bottom: 1px solid var(--line);
+}
+.cc .co-tab {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    padding: 9px 15px 13px;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: color 0.16s;
+}
+.cc .co-tab:hover {
+    color: var(--ink-soft);
+}
+.cc .co-tab.on {
+    color: var(--ink);
+    font-weight: 600;
+}
+.cc .co-tab::after {
+    content: "";
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: var(--primary);
+    opacity: 0;
+    transform: scaleX(0.35);
+    transition: opacity 0.2s, transform 0.2s;
+}
+.cc .co-tab.on::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+.cc .co-tab .cb {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: var(--violet-soft);
+    color: var(--violet);
+}
+.cc .cpg-wstools {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    align-self: center;
+    margin-bottom: 6px;
+}
+.cc .preview-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: 0.15s;
+}
+.cc .preview-link:hover {
+    background: var(--paper);
+    color: var(--ink-soft);
+}
+.cc .preview-link svg {
+    width: 13px;
+    height: 13px;
+}
+.cc .co-ov3 {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4px 26px 46px;
+    color: var(--ink);
+}
+.cc .co-ov3 .ov3-stats {
+    display: flex;
+    align-items: flex-end;
+    gap: 26px 40px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+.cc .co-ov3 .ov3-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.cc .co-ov3 .ov3-v {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+}
+.cc .co-ov3 .ov3-v.mono {
+    font-family: "JetBrains Mono", monospace;
+}
+.cc .co-ov3 .ov3-l {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+}
+.cc .co-ov3 .ov3-d {
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-family: "JetBrains Mono", monospace;
+    min-height: 14px;
+}
+.cc .co-ov3 .ov3-d.up {
+    color: var(--green);
+}
+.cc .co-ov3 .ov3-mission {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 60ch;
+    margin: 16px 0 8px;
+}
+.cc .co-ov3 .ov3-sec {
+    margin-top: 26px;
+}
+.cc .co-ov3 .ov3-sec-h {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+}
+.cc .co-ov3 .ov3-sec-n {
+    font-size: 10px;
+    color: var(--ink-faint);
+}
+.cc .co-ov3 .ov3-dot-a {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+.cc .co-ov3 .ov3-tasks {
+    display: flex;
+    flex-direction: column;
+}
+.cc .co-ov3 .ov3-task {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-family: inherit;
+    transition: background 0.14s;
+}
+.cc .co-ov3 .ov3-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gray);
+    flex: none;
+}
+.cc .co-ov3 .ov3-task.is-building .ov3-dot {
+    background: var(--amber);
+}
+.cc .co-ov3 .ov3-task.is-awaiting_approval .ov3-dot {
+    background: var(--violet);
+}
+.cc .co-ov3 .ov3-task.is-blocked .ov3-dot {
+    background: var(--red);
+}
+.cc .co-ov3 .ov3-tid {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    flex: none;
+    min-width: 40px;
+}
+.cc .co-ov3 .ov3-tmain {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+.cc .co-ov3 .ov3-ttitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cc .co-ov3 .ov3-tstatus {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex: none;
+    color: var(--ink-faint);
+}
+.cc .co-ov3 .ov3-tstatus.st-building {
+    color: var(--amber);
+}
+.cc .co-ov3 .ov3-empty {
+    font-size: 13px;
+    color: var(--ink-faint);
+    padding: 8px 12px;
+}
+.cc .co-ov3 .ov3-feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.cc .co-ov3 .ov3-feed li {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+}
+.cc .co-ov3 .ov3-feed .fd {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex: none;
+}
