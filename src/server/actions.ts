@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { actions, companies, db, runs } from "../db/index.js";
+import { actions, companies, db, messages, runs } from "../db/index.js";
 
 // Web-side server functions. Deliberately WRITE-MINIMAL - every handler does tiny DB
 // writes only, never subprocess/agent work. That keeps the synchronous better-sqlite3
@@ -8,8 +8,12 @@ import { actions, companies, db, runs } from "../db/index.js";
 
 const DEMO_NAME = "Demo Co";
 
-// Create a real company from a typed thought (the New-company composer). Name = the
-// first few words; the full text is the thesis. First real row the console renders.
+// Create a real company from a typed thought (the New-company composer). Tiny write only:
+// insert the company (autopilot on so its first slice ships autonomously) and return its
+// immutable id — the UI routes to /companies/<id> (collision-proof). The engine's scope
+// pass (src/engine/scope.ts) then turns company.thesis into an opportunity + spec + first
+// action. Deliberately does NOT write a chat message: the founding thought is scope's
+// exclusive input, so the chat pass never races it.
 export const createCompany = createServerFn({ method: "POST" })
     .validator((d: { thought: string }) => d)
     .handler(async ({ data }) => {
@@ -22,8 +26,27 @@ export const createCompany = createServerFn({ method: "POST" })
                 .join(" ")
                 .replace(/[^\w\s-]/g, "")
                 .slice(0, 40) || "New Company";
-        const company = db.insert(companies).values({ name, thesis: thought }).returning().get();
+        const company = db
+            .insert(companies)
+            .values({ name, thesis: thought, autopilot: "on" })
+            .returning()
+            .get();
         return { id: company.id, name: company.name };
+    });
+
+// Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
+// engine's chat pass (src/engine/chat.ts) picks it up and inserts the assistant reply.
+export const messageCompany = createServerFn({ method: "POST" })
+    .validator((d: { companyId: string; text: string }) => d)
+    .handler(async ({ data }) => {
+        const text = data.text.trim();
+        if (!text) return { ok: false };
+        const exists = db.select().from(companies).where(eq(companies.id, data.companyId)).get();
+        if (!exists) return { ok: false };
+        db.insert(messages)
+            .values({ companyId: data.companyId, role: "user", content: text })
+            .run();
+        return { ok: true };
     });
 
 // Enqueue the hardcoded spine action: "a visitor can sign up on a live URL".
