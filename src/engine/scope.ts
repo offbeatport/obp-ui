@@ -19,15 +19,19 @@ const DISPATCH_MS = 90_000;
 const SIGNUP_TITLE = "A visitor can sign up on a live URL";
 const markKey = (companyId: string) => `scope.done.${companyId}`;
 
-// One active company with NO scope marker yet, oldest first.
+// One un-scoped thought to turn into a company: active, no scope marker, AND an EMPTY action
+// queue. The empty-queue precondition stops scope from injecting a duplicate opportunity +
+// second signup action into companies that already have a backlog — enqueueDemo's "Demo Co"
+// (its own http-signup action, no marker) and any company that predates this feature.
 const PICK = sqlite.prepare(`
-  SELECT c.id AS id, c.thesis AS thesis
+  SELECT c.id AS id, c.thesis AS thesis, c.created_at AS createdAt
   FROM company c
   WHERE c.status = 'active'
     AND NOT EXISTS (
       SELECT 1 FROM app_config a
       WHERE a.scope = 'global' AND a.key = 'scope.done.' || c.id
     )
+    AND NOT EXISTS (SELECT 1 FROM action ac WHERE ac.company_id = c.id)
   ORDER BY c.created_at ASC
   LIMIT 1
 `);
@@ -52,42 +56,49 @@ const SET_MARK = sqlite.prepare(`
 type Opp = { title: string; thesis: string; score: number };
 
 // Atomic emission — re-checks marker + active INSIDE the txn, then writes opportunity +
-// narration + first action + marker as one unit (staggered created_at keeps order stable).
-const emit = sqlite.transaction((companyId: string, thought: string, opp: Opp, spec: string) => {
-    if (HAS_MARK.get(markKey(companyId))) return;
-    if (!IS_ACTIVE.get(companyId)) return;
-    const now = Date.now();
-    INS_OPP.run(randomUUID(), thought, opp.title, opp.thesis, opp.score, now);
-    INS_MSG.run(
-        randomUUID(),
-        companyId,
-        `Found an opportunity — ${opp.title}. ${opp.thesis} (demand ${opp.score}/100).`,
-        now,
-    );
-    INS_MSG.run(
-        randomUUID(),
-        companyId,
-        `${spec} I'll build a signup page and ship it once it passes the live check.`,
-        now + 1,
-    );
-    INS_ACTION.run(
-        randomUUID(),
-        companyId,
-        SIGNUP_TITLE,
-        JSON.stringify({ doneWhen: "http-signup" }),
-        now + 2,
-    );
-    SET_MARK.run(markKey(companyId), now);
-});
+// narration + first action + marker as one unit. The two narration messages are stamped at
+// the COMPANY's created_at (which always precedes any chat turn), so they can never outrank
+// — and thus never falsely "answer" — a user message the founder types during the scope
+// window (chat.ts keys unanswered-ness off created_at).
+const emit = sqlite.transaction(
+    (companyId: string, createdAt: number, thought: string, opp: Opp, spec: string) => {
+        if (HAS_MARK.get(markKey(companyId))) return;
+        if (!IS_ACTIVE.get(companyId)) return;
+        const now = Date.now();
+        INS_OPP.run(randomUUID(), thought, opp.title, opp.thesis, opp.score, now);
+        INS_MSG.run(
+            randomUUID(),
+            companyId,
+            `Found an opportunity — ${opp.title}. ${opp.thesis} (demand ${opp.score}/100).`,
+            createdAt,
+        );
+        INS_MSG.run(
+            randomUUID(),
+            companyId,
+            `${spec} I'll build a signup page and ship it once it passes the live check.`,
+            createdAt + 1,
+        );
+        INS_ACTION.run(
+            randomUUID(),
+            companyId,
+            SIGNUP_TITLE,
+            JSON.stringify({ doneWhen: "http-signup" }),
+            now,
+        );
+        SET_MARK.run(markKey(companyId), now);
+    },
+);
 
 export async function scopeNext(inflight: Set<string>): Promise<void> {
-    const row = PICK.get() as { id: string; thesis: string } | undefined;
+    const row = PICK.get() as { id: string; thesis: string; createdAt: number } | undefined;
     if (!row || inflight.has(row.id)) return;
     inflight.add(row.id); // synchronous, before any await — closes the double-claim window
     try {
         const opp = await scoreOpportunity(row.thesis);
         const spec = await draftSpec(opp);
-        emit(row.id, row.thesis, opp, spec);
+        // .immediate() takes the write lock up front (matches claim/ship/runner) instead of a
+        // deferred read-then-write that can throw SQLITE_BUSY_SNAPSHOT under web contention.
+        emit.immediate(row.id, row.createdAt, row.thesis, opp, spec);
     } catch {
         // emit is atomic (rolls back on error) → nothing partial committed; next tick retries.
     } finally {
