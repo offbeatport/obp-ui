@@ -31,7 +31,8 @@ export type SliceState = "building" | "awaiting_approval" | "blocked" | "todo" |
 export type Slice = { n: number; title: string; state: SliceState };
 
 export type CompanySummary = {
-    slug: string; // URL key (engine maps from company id/name)
+    id: string; // immutable company id — the collision-proof routing key
+    slug: string; // human URL key (slugify(name)); may collide, so prefer id for routing
     name: string;
     tone: Tone; // avatar tint
     status: CompanyStatus;
@@ -179,6 +180,7 @@ function toSummary(c: Company, acts: Action[]): CompanySummary {
     const metrics = c.metrics ?? {};
     const needsYou = acts.some((a) => a.status === "awaiting_approval" || a.status === "blocked");
     return {
+        id: c.id,
         slug: slugify(c.name),
         name: c.name,
         tone: toneFor(c.id),
@@ -264,18 +266,17 @@ export const listCompanies = createServerFn({ method: "GET" }).handler(
 export const getCompany = createServerFn({ method: "GET" })
     .validator((slug: string) => slug)
     .handler(async ({ data: slug }): Promise<CompanyDetail | null> => {
-        const c = db
-            .select()
-            .from(companies)
-            .all()
-            .find((x) => slugify(x.name) === slug);
+        // Resolve by immutable id FIRST (createCompany navigates by id → collision-proof),
+        // then fall back to slugify(name) for human/portfolio links.
+        const all = db.select().from(companies).all();
+        const c = all.find((x) => x.id === slug) ?? all.find((x) => slugify(x.name) === slug);
         if (!c) return null;
         const acts = db.select().from(actions).where(eq(actions.companyId, c.id)).all();
         const msgs = db
             .select()
             .from(messages)
             .where(eq(messages.companyId, c.id))
-            .orderBy(messages.createdAt)
+            .orderBy(messages.createdAt, messages.id)
             .all();
         const liveUrl = acts.slice().sort(byCreated).map(previewUrlOf).filter(Boolean).pop();
         return {

@@ -28,8 +28,11 @@ function NewCompany() {
         if (!t || busy) return;
         setBusy(true);
         try {
-            await createCompany({ data: { thought: t } });
-            navigate({ to: "/companies" });
+            // Route by immutable id (getCompany resolves id-first) — collision-proof, so
+            // create → open always lands on the just-created company. The engine's scope
+            // pass fills in the opportunity + spec + first slice on the page that opens.
+            const { id } = await createCompany({ data: { thought: t } });
+            navigate({ to: "/companies/$slug", params: { slug: id } });
         } finally {
             setBusy(false);
         }

@@ -1,7 +1,8 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { type CSSProperties, useState } from "react";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { TONE, TONE_VAR } from "~/components/command-center/tone";
+import { messageCompany } from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies } from "~/server/data";
 // The .cc command-center stylesheet this page relies on — load it here so a direct
@@ -10,13 +11,21 @@ import "~/components/command-center/proto.css";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
+        // params.slug is usually the immutable company id (create navigates by id), but may
+        // be a human slug from a portfolio link — resolve either.
         const [detail, companies, activity] = await Promise.all([
             getCompany({ data: params.slug }),
             listCompanies(),
             listActivity(),
         ]);
-        const summary = companies.find((c) => c.slug === params.slug) ?? null;
-        return { detail, summary, activity: activity.filter((a) => a.companySlug === params.slug) };
+        const summary =
+            companies.find((c) => c.id === params.slug || c.slug === params.slug) ?? null;
+        const co = detail ?? summary;
+        return {
+            detail,
+            summary,
+            activity: co ? activity.filter((a) => a.companySlug === co.slug) : [],
+        };
     },
     component: CompanyWorkspace,
 });
@@ -28,9 +37,33 @@ const CO_TABS = ["Overview", "Pipeline", "Workspace", "Product", "Growth", "Setu
 // design/v2-prototypes/08-chat-spine-pro-v7.html.
 function CompanyWorkspace() {
     const { slug } = Route.useParams();
+    const router = useRouter();
     const { detail, summary, activity } = Route.useLoaderData();
     const base = detail ?? summary;
+    const companyId = base?.id;
     const [tab, setTab] = useState("Overview");
+    const [text, setText] = useState("");
+    const [sending, setSending] = useState(false);
+
+    // Poll the loader so the engine's scope narration, chat replies and build/run status
+    // stream in without a manual reload.
+    useEffect(() => {
+        const t = setInterval(() => void router.invalidate(), 2500);
+        return () => clearInterval(t);
+    }, [router]);
+
+    const send = useCallback(async () => {
+        const t = text.trim();
+        if (!t || sending || !companyId) return;
+        setSending(true);
+        setText("");
+        try {
+            await messageCompany({ data: { companyId, text: t } });
+            await router.invalidate();
+        } finally {
+            setSending(false);
+        }
+    }, [text, sending, companyId, router]);
 
     if (!base) {
         return (
@@ -109,13 +142,23 @@ function CompanyWorkspace() {
                     <div className="relative px-3.5 pb-3.5 pt-2">
                         <textarea
                             rows={1}
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    void send();
+                                }
+                            }}
                             placeholder={`Message ${co.name}…`}
                             className="block max-h-[260px] min-h-[92px] w-full resize-none rounded-xl border bg-card px-3.5 py-3 pr-12 text-sm leading-relaxed outline-none focus:border-primary"
                         />
                         <button
                             type="button"
                             aria-label="Send"
-                            className="absolute bottom-6 right-6 grid size-[30px] place-items-center rounded-full bg-primary text-[15px] text-primary-foreground active:scale-95"
+                            onClick={() => void send()}
+                            disabled={sending || !text.trim()}
+                            className="absolute right-6 bottom-6 grid size-[30px] place-items-center rounded-full bg-primary text-[15px] text-primary-foreground active:scale-95 disabled:opacity-40"
                         >
                             ↑
                         </button>
