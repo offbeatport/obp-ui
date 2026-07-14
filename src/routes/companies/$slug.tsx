@@ -4,6 +4,9 @@ import { AppShell } from "~/components/app-shell";
 import { TONE, TONE_VAR } from "~/components/command-center/tone";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies } from "~/server/data";
+// The .cc command-center stylesheet this page relies on — load it here so a direct
+// /companies/<slug> visit is styled (its route chunk doesn't include the home chunk).
+import "~/components/command-center/proto.css";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
