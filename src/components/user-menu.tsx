@@ -10,14 +10,24 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { getTheme, onThemeChange, toggleTheme } from "~/lib/theme";
 import { cn } from "~/lib/utils";
+import { getPortfolioMetrics } from "~/server/data";
+import { type Identity, getIdentity } from "~/server/identity";
 
 // Rail-foot user button → dropdown (New company · theme · Settings · Sign out) per prototype.
 export function UserMenu({ collapsed }: { collapsed?: boolean }) {
     const [dark, setDark] = useState(false);
+    const [me, setMe] = useState<Identity | null>(null);
+    const [sub, setSub] = useState("");
+
     useEffect(() => {
         const sync = () => setDark(getTheme() === "dark");
         sync();
         return onThemeChange(sync);
+    }, []);
+
+    useEffect(() => {
+        void getIdentity().then(setMe);
+        void getPortfolioMetrics().then((m) => setSub(`$${m.mrr} MRR · ${m.users} users`));
     }, []);
 
     return (
@@ -26,20 +36,20 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                 <button
                     type="button"
                     className={cn(
-                        "flex w-full items-center gap-2.5 rounded-lg p-1 pb-2 px-3 mt-2 text-left hover:bg-primary/[0.1] hover:text-foreground",
+                        "mt-2 flex w-full items-center gap-2.5 rounded-lg p-1 px-3 pb-2 text-left hover:bg-primary/[0.1] hover:text-foreground",
                         collapsed && "justify-center",
                     )}
                 >
                     <span className="grid size-8 flex-none place-items-center rounded-[9px] bg-primary text-[13px] font-bold text-primary-foreground">
-                        V
+                        {me?.initial ?? "C"}
                     </span>
                     {!collapsed && (
                         <>
                             <span className="min-w-0 flex-1">
-                                <span className="block text-[13px] font-semibold">Vlad</span>
-                                <span className="block truncate text-[11px] text-faint">
-                                    $0 MRR · 0 users
+                                <span className="block text-[13px] font-semibold">
+                                    {me?.name ?? "You"}
                                 </span>
+                                <span className="block truncate text-[11px] text-faint">{sub}</span>
                             </span>
                             <ChevronUp className="size-4 flex-none text-faint" />
                         </>
@@ -48,7 +58,7 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" side="top" className="w-60">
                 <DropdownMenuItem asChild>
-                    <Link to="/">
+                    <Link to="/companies/new">
                         <Plus /> New company
                     </Link>
                 </DropdownMenuItem>
@@ -61,10 +71,15 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                         <Settings2 /> Settings
                     </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    <LogOut /> Sign out
-                </DropdownMenuItem>
+                {/* Self-host is a single local principal — nothing to sign out of. */}
+                {me?.deployment === "hosted" && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <LogOut /> Sign out
+                        </DropdownMenuItem>
+                    </>
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );
