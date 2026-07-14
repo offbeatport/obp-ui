@@ -14,6 +14,7 @@ import {
     Wrench,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { AgentConsole } from "~/components/agent-console";
 import { Logo, LogoMark } from "~/components/logo";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { UserMenu } from "~/components/user-menu";
@@ -39,6 +40,7 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
                     <ThemeToggle />
                 </footer>
             </main>
+            <AgentConsole />
         </div>
     );
 }
