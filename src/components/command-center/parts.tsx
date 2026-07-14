@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "~/lib/utils";
 import type { SliceState, Tone } from "~/server/data";
+import "./proto.css";
 import { SLICE, TONE, initial } from "./tone";
 
 // Section header — mono kicker · hairline rule · optional count. (.dash1 .sec-head)
