@@ -104,6 +104,22 @@ export const reSpin = createServerFn({ method: "POST" })
         return { ok: true };
     });
 
+// Go back to the candidate list from a drafted spec (the "choose a different angle" button).
+// Keeps the scouted candidates, drops the pick + drafted spec/branding, and re-flips to
+// 'proposals'. Allowed from 'specing' (change your mind mid-draft) or 'spec' (reviewed it, want
+// another). A no-op once committed.
+export const resetPick = createServerFn({ method: "POST" })
+    .validator((d: { draftId: string }) => d)
+    .handler(async ({ data }) => {
+        const draft = db.select().from(drafts).where(eq(drafts.id, data.draftId)).get();
+        if (!draft || (draft.status !== "specing" && draft.status !== "spec")) return { ok: false };
+        db.update(drafts)
+            .set({ status: "proposals", data: { candidates: draft.data.candidates ?? [] } })
+            .where(eq(drafts.id, draft.id))
+            .run();
+        return { ok: true };
+    });
+
 // Commit the spec to a REAL company. Because the spin flow already did the scoping (the user
 // chose the bet and reviewed the spec), this creates the company already-scoped: it inserts
 // the promoted opportunity, the founding narration, the first buildable action (forced to the

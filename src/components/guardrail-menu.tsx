@@ -35,8 +35,21 @@ const PRESETS: Preset[] = [
     },
 ];
 
-export function GuardrailMenu() {
-    const [sel, setSel] = useState("lean");
+// Optionally controlled: pass value+onChange to read the picked preset (the composer routes it
+// into startSpin); omit both and it self-manages (the standalone menu on other screens).
+export function GuardrailMenu({
+    value,
+    onChange,
+}: {
+    value?: string;
+    onChange?: (key: string) => void;
+} = {}) {
+    const [internal, setInternal] = useState("lean");
+    const sel = value ?? internal;
+    const setSel = (key: string) => {
+        if (onChange) onChange(key);
+        else setInternal(key);
+    };
     const current = PRESETS.find((p) => p.key === sel) ?? PRESETS[0];
 
     return (
