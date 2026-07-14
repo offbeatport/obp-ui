@@ -2,7 +2,7 @@ import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { TONE, TONE_VAR } from "~/components/command-center/tone";
-import { messageCompany } from "~/server/actions";
+import { approveAction, messageCompany, rejectAction } from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies } from "~/server/data";
 // The .cc command-center stylesheet this page relies on — load it here so a direct
@@ -66,6 +66,23 @@ function CompanyWorkspace() {
             setSending(false);
         }
     }, [text, sending, companyId, router]);
+
+    const approve = useCallback(
+        async (actionId: string) => {
+            await approveAction({ data: actionId });
+            await router.invalidate();
+        },
+        [router],
+    );
+    const reject = useCallback(
+        async (actionId: string) => {
+            const feedback =
+                window.prompt("Reject — what should change on the next attempt?") ?? "";
+            await rejectAction({ data: { actionId, feedback } });
+            await router.invalidate();
+        },
+        [router],
+    );
 
     if (!base) {
         return (
@@ -209,7 +226,13 @@ function CompanyWorkspace() {
 
                         <div className="co-tabwrap">
                             {tab === "Overview" ? (
-                                <Overview co={co} thesis={detail?.thesis} activity={activity} />
+                                <Overview
+                                    co={co}
+                                    thesis={detail?.thesis}
+                                    activity={activity}
+                                    onApprove={approve}
+                                    onReject={reject}
+                                />
                             ) : (
                                 <div className="co-ov3">
                                     <div className="ov3-empty">
@@ -240,7 +263,15 @@ function Overview({
     co,
     thesis,
     activity,
-}: { co: CompanyDetail; thesis?: string; activity: ActivityItem[] }) {
+    onApprove,
+    onReject,
+}: {
+    co: CompanyDetail;
+    thesis?: string;
+    activity: ActivityItem[];
+    onApprove: (actionId: string) => Promise<void>;
+    onReject: (actionId: string) => Promise<void>;
+}) {
     const slice = co.slice;
     const building =
         slice &&
@@ -249,7 +280,8 @@ function Overview({
             slice.state === "blocked")
             ? slice
             : null;
-    const queued = slice && (slice.state === "todo" || slice.state === "shipped") ? slice : null;
+    // "Up next" is only genuinely-pending work — never a finished (shipped) slice.
+    const queued = slice && slice.state === "todo" ? slice : null;
 
     return (
         <div className="co-page co-ov3">
@@ -294,9 +326,28 @@ function Overview({
                             <span className="ov3-tmain">
                                 <span className="ov3-ttitle">{building.title}</span>
                             </span>
-                            <span className={`ov3-tstatus st-${building.state}`}>
-                                {building.state.replace("_", " ")}
-                            </span>
+                            {building.state === "awaiting_approval" ? (
+                                <span className="flex flex-none gap-1.5">
+                                    <button
+                                        type="button"
+                                        onClick={() => void onReject(building.actionId)}
+                                        className="rounded-md border px-2.5 py-1 text-xs font-medium hover:border-destructive hover:text-destructive"
+                                    >
+                                        Reject
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => void onApprove(building.actionId)}
+                                        className="rounded-md bg-success px-2.5 py-1 text-xs font-semibold text-success-foreground hover:brightness-105"
+                                    >
+                                        Approve &amp; ship
+                                    </button>
+                                </span>
+                            ) : (
+                                <span className={`ov3-tstatus st-${building.state}`}>
+                                    {building.state.replace("_", " ")}
+                                </span>
+                            )}
                         </div>
                     ) : (
                         <div className="ov3-empty">
