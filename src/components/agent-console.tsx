@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 import type { ConsoleLine, ConsolePaneState } from "~/server/console";
 import { getConsoleDigest } from "~/server/console";
@@ -15,6 +15,10 @@ import type { Tone } from "~/server/data";
 const ACTIVE_MS = 750;
 const IDLE_MS = 4000;
 const MAX_LINES = 80;
+const HEIGHT_KEY = "cslopslop-console-h";
+const MIN_H = 160; // px
+const STEP = 28; // px per arrow-key nudge
+const clampH = (h: number) => Math.max(MIN_H, Math.min(h, window.innerHeight - 40));
 
 type PaneMeta = {
     slug: string;
@@ -57,6 +61,69 @@ export function AgentConsole() {
     const [lines, setLines] = useState<Record<string, ConsoleLine[]>>({});
     const cursorsRef = useRef<Record<string, number>>({});
     const anyActiveRef = useRef(false);
+    // Panel height: null = CSS default (70vh); a number overrides it (in px). Loaded
+    // from localStorage after mount so SSR/hydration match on the CSS default.
+    const [heightPx, setHeightPx] = useState<number | null>(null);
+    const heightRef = useRef<number | null>(null);
+
+    const setHeight = useCallback((h: number) => {
+        const c = clampH(h);
+        heightRef.current = c;
+        setHeightPx(c);
+    }, []);
+    const persistHeight = useCallback(() => {
+        if (heightRef.current) {
+            try {
+                localStorage.setItem(HEIGHT_KEY, String(Math.round(heightRef.current)));
+            } catch {
+                /* storage unavailable */
+            }
+        }
+    }, []);
+
+    // Restore a saved height, and re-clamp if the window shrinks below it.
+    useEffect(() => {
+        const saved = Number(localStorage.getItem(HEIGHT_KEY));
+        if (Number.isFinite(saved) && saved > 0) setHeight(saved);
+        const onResize = () => {
+            if (heightRef.current) setHeight(heightRef.current);
+        };
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, [setHeight]);
+
+    // Drag the top handle to resize; height = distance from pointer to viewport bottom.
+    const onResizePointerDown = useCallback(
+        (e: React.PointerEvent) => {
+            e.preventDefault();
+            document.body.style.userSelect = "none";
+            const move = (ev: PointerEvent) => setHeight(window.innerHeight - ev.clientY);
+            const up = () => {
+                document.body.style.userSelect = "";
+                window.removeEventListener("pointermove", move);
+                window.removeEventListener("pointerup", up);
+                persistHeight();
+            };
+            window.addEventListener("pointermove", move);
+            window.addEventListener("pointerup", up);
+        },
+        [setHeight, persistHeight],
+    );
+    const onResizeKeyDown = useCallback(
+        (e: React.KeyboardEvent) => {
+            const cur = heightRef.current ?? Math.round(window.innerHeight * 0.7);
+            if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setHeight(cur + STEP);
+                persistHeight();
+            } else if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setHeight(cur - STEP);
+                persistHeight();
+            }
+        },
+        [setHeight, persistHeight],
+    );
 
     // Global keybinds: Ctrl+` (or ~) toggles, Esc closes. Active even while closed
     // so the shortcut opens the console.
@@ -143,7 +210,21 @@ export function AgentConsole() {
                 <span className="ct-kbd">⌃`</span>
             </button>
 
-            <section className="console-panel" aria-label="Agent console" aria-hidden={!open}>
+            <section
+                className="console-panel"
+                aria-label="Agent console"
+                aria-hidden={!open}
+                style={heightPx ? { height: `${heightPx}px` } : undefined}
+            >
+                <div
+                    className="console-resize"
+                    role="separator"
+                    aria-orientation="horizontal"
+                    aria-label="Resize console (drag, or arrow keys)"
+                    tabIndex={0}
+                    onPointerDown={onResizePointerDown}
+                    onKeyDown={onResizeKeyDown}
+                />
                 <div className="console-head">
                     <div className="console-title">
                         <span className="ct-dot" /> Agent console{" "}

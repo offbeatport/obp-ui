@@ -387,10 +387,9 @@ summary {
     right: 0;
     bottom: 0;
     z-index: 92;
-    /* Hug the panes' height; only grow to 84vh (then the grid scrolls) so a small
-       portfolio doesn't leave an empty band of panel below the last row. */
-    height: auto;
-    max-height: 84vh;
+    /* Default 70% of the viewport; drag the top handle to resize (JS sets an inline
+       px height that overrides this, persisted to localStorage). */
+    height: 70vh;
     background: var(--card);
     color: var(--foreground);
     border-top: 1px solid var(--border);
@@ -402,6 +401,33 @@ summary {
 }
 .console.open .console-panel {
     transform: translateY(0);
+}
+/* drag handle along the panel's top edge — resize taller/shorter */
+.console-resize {
+    flex: 0 0 auto;
+    height: 8px;
+    cursor: ns-resize;
+    position: relative;
+    touch-action: none;
+}
+.console-resize::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--border);
+    transition: background 0.12s;
+}
+.console-resize:hover::after,
+.console-resize:focus-visible::after {
+    background: var(--muted-foreground);
+}
+.console-resize:focus-visible {
+    outline: none;
 }
 .console-head {
     flex: 0 0 auto;
