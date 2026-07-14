@@ -40,6 +40,11 @@ export class LocalGitProvider implements Git {
             await git(workdir, "config", "user.email", "agent@cslopslop.local");
             await git(workdir, "config", "user.name", "cslopslop agent");
             await writeFile(join(workdir, "AGENTS.md"), AGENTS_MD);
+            // A minimal package.json makes the repo SELF-CONTAINED: without it, `node server.js`
+            // walks up to a parent package.json (this platform's is "type":"module") and treats
+            // the app's CommonJS server.js as ESM → `require is not defined`. "type":"commonjs"
+            // pins it so a company runs the same wherever its repo lives (repo/, VPS, hosted).
+            await writeFile(join(workdir, "package.json"), PACKAGE_JSON);
             await writeFile(join(workdir, "slop", "spec.md"), "# Spec\n\n(seeded at promotion)\n");
             await writeFile(join(workdir, "slop", "decisions.md"), "# Decisions\n\n");
             await writeFile(join(workdir, ".gitignore"), "node_modules\n.env\ndata.json\n");
@@ -98,6 +103,12 @@ export class LocalGitProvider implements Git {
         await gitTry(this.dir(companyId), "worktree", "prune");
     }
 }
+
+const PACKAGE_JSON = `${JSON.stringify(
+    { name: "cslopslop-company", private: true, type: "commonjs" },
+    null,
+    2,
+)}\n`;
 
 const AGENTS_MD = `# AGENTS.md
 

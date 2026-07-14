@@ -1,11 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { resolveAgentConfig } from "../config/agent.js";
+import { config } from "./config.js";
 import type { Credentials } from "./seams/credentials.js";
 import { DbBackedCredentials } from "./seams/credentials.js";
+import { LocalDeploy } from "./seams/deploy.js";
 import { LocalGitProvider } from "./seams/git.js";
-import { ClaudeCliHarness, NoopHarness } from "./seams/harness.js";
+import { ClaudeCliHarness, FixtureHarness, NoopHarness } from "./seams/harness.js";
 import { LocalShell } from "./seams/sandbox.js";
-import type { Git, Harness, Sandbox } from "./seams/types.js";
+import type { Deploy, Git, Harness, Sandbox, Validator } from "./seams/types.js";
+import { HttpValidator } from "./seams/validator.js";
 
 // DI root: wire the seams once at boot. A fresh instanceId stamps every run this
 // executor owns (single-executor invariant + crash-recovery ownership).
@@ -17,23 +20,40 @@ export type EngineContext = {
     sandbox: Sandbox;
     git: Git;
     credentials: Credentials;
-    // deploy / validator wired in build step 5.
+    deploy: LocalDeploy;
+    validator: Validator;
 };
 
 export function buildEngineContext(): EngineContext {
     const credentials = new DbBackedCredentials();
     const sandbox = new LocalShell();
     const git = new LocalGitProvider();
+    const deploy = new LocalDeploy(sandbox, config.portRange);
+    const validator = new HttpValidator();
     const noop = new NoopHarness();
+    const fixture = new FixtureHarness();
+    const fixtureFlaky = new FixtureHarness(true);
 
     // Default = NO-OP (zero setup). Set agent.harness='claude' (Settings/onboarding) or
-    // CSLOP_HARNESS=claude to build for real — resolved fresh each run.
+    // CSLOP_HARNESS=claude to build for real — resolved fresh each run. CSLOP_HARNESS=fixture
+    // is the engine's own zero-cost e2e seam (real build path, canned artifact); fixture-flaky
+    // fails the first build then fixes it, to exercise the iterate-to-green loop.
     const resolveHarness = (): Harness => {
+        if (process.env.CSLOP_HARNESS === "fixture") return fixture;
+        if (process.env.CSLOP_HARNESS === "fixture-flaky") return fixtureFlaky;
         const cfg = resolveAgentConfig();
         return cfg.harnessKind === "claude"
             ? new ClaudeCliHarness(sandbox, credentials, cfg.harnessBin)
             : noop;
     };
 
-    return { instanceId: randomUUID(), resolveHarness, sandbox, git, credentials };
+    return {
+        instanceId: randomUUID(),
+        resolveHarness,
+        sandbox,
+        git,
+        credentials,
+        deploy,
+        validator,
+    };
 }
