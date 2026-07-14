@@ -47,7 +47,11 @@ function dispatchClaudeCli(
 ): Promise<DispatchResult> {
     const bin = env.CSLOP_HARNESS_BIN ?? "claude";
     const args = ["-p", "--output-format", "json"];
-    if (r.model) args.push("--model", r.model);
+    // The `claude` CLI takes short aliases (haiku/sonnet/opus), NOT OpenRouter-style slugs
+    // like "claude-3.5-haiku" (which 404 with is_error). Map any configured model to an
+    // alias; unknown → omit --model and let the CLI's default pick.
+    const cliModel = toClaudeCliModel(r.model);
+    if (cliModel) args.push("--model", cliModel);
     if (input.system) args.push("--append-system-prompt", input.system);
 
     return new Promise((resolve, reject) => {
@@ -75,9 +79,16 @@ function dispatchClaudeCli(
             try {
                 const j = JSON.parse(out) as {
                     result?: string;
+                    is_error?: boolean;
                     total_cost_usd?: number;
                     session_id?: string;
                 };
+                // The CLI exits 0 even on an API error (e.g. bad model → 404) and puts the
+                // error prose in `result`. Treat is_error as a failure so callers fall back
+                // to their deterministic path instead of surfacing the error as an answer.
+                if (j.is_error) {
+                    return reject(new Error(`claude -p: ${(j.result ?? "api error").trim()}`));
+                }
                 resolve({
                     text: (j.result ?? "").trim(),
                     model: r.model || "claude",
@@ -159,6 +170,17 @@ async function dispatchOpenAICompat(
         via: r.via,
         costUsd: 0,
     };
+}
+
+// Map a configured model to a `claude` CLI alias. Accepts our slugs ("claude-3.5-haiku"),
+// bare aliases ("haiku"), or anything containing the tier word; unknown → undefined (CLI default).
+function toClaudeCliModel(model?: string): string | undefined {
+    if (!model) return undefined;
+    const s = model.toLowerCase();
+    if (s.includes("opus")) return "opus";
+    if (s.includes("haiku")) return "haiku";
+    if (s.includes("sonnet")) return "sonnet";
+    return undefined;
 }
 
 async function snippet(res: Response): Promise<string> {
