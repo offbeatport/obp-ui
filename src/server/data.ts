@@ -183,11 +183,23 @@ export function pickCurrent(code: Action[]): Action | undefined {
     );
 }
 
+// An action that's waiting on the founder (approval or a blocked decision).
+const needsAttention = (a: Action) => a.status === "awaiting_approval" || a.status === "blocked";
+// Every company keyed by id (rebuilt per read; a local instance has few companies).
+const companiesById = () =>
+    new Map(
+        db
+            .select()
+            .from(companies)
+            .all()
+            .map((c) => [c.id, c]),
+    );
+
 function toSummary(c: Company, acts: Action[]): CompanySummary {
     const code = acts.filter((a) => a.type === "code").sort(byCreated);
     const current = pickCurrent(code);
     const metrics = c.metrics ?? {};
-    const needsYou = acts.some((a) => a.status === "awaiting_approval" || a.status === "blocked");
+    const needsYou = acts.some(needsAttention);
     return {
         id: c.id,
         slug: slugify(c.name),
@@ -320,13 +332,7 @@ export const listActivity = createServerFn({ method: "GET" }).handler(
                 .all()
                 .map((a) => [a.id, a]),
         );
-        const compById = new Map(
-            db
-                .select()
-                .from(companies)
-                .all()
-                .map((c) => [c.id, c]),
-        );
+        const compById = companiesById();
         return rs.map((r) => {
             const c = compById.get(r.companyId);
             const title = actById.get(r.actionId)?.title ?? "action";
@@ -362,42 +368,34 @@ export const listInbox = createServerFn({ method: "GET" }).handler(
     async (): Promise<InboxItem[]> => {
         const all = db.select().from(actions).all();
         const idx = sliceIndex(all);
-        const compById = new Map(
-            db
-                .select()
-                .from(companies)
-                .all()
-                .map((c) => [c.id, c]),
-        );
-        return all
-            .filter((a) => a.status === "awaiting_approval" || a.status === "blocked")
-            .map((a) => {
-                const c = compById.get(a.companyId);
-                const blocked = a.status === "blocked";
-                const kind: InboxKind = blocked
-                    ? "blocked"
+        const compById = companiesById();
+        return all.filter(needsAttention).map((a) => {
+            const c = compById.get(a.companyId);
+            const blocked = a.status === "blocked";
+            const kind: InboxKind = blocked
+                ? "blocked"
+                : a.type === "code"
+                  ? "approval"
+                  : "decision";
+            return {
+                id: a.id,
+                kind,
+                companyId: a.companyId,
+                companySlug: c ? slugify(c.name) : "",
+                companyName: c?.name ?? "",
+                tone: c ? toneFor(c.id) : "slate",
+                title: blocked
+                    ? `Unblock "${a.title}", or pause the company`
                     : a.type === "code"
-                      ? "approval"
-                      : "decision";
-                return {
-                    id: a.id,
-                    kind,
-                    companyId: a.companyId,
-                    companySlug: c ? slugify(c.name) : "",
-                    companyName: c?.name ?? "",
-                    tone: c ? toneFor(c.id) : "slate",
-                    title: blocked
-                        ? `Unblock "${a.title}", or pause the company`
-                        : a.type === "code"
-                          ? `Approve "${a.title}"`
-                          : `Authorize "${a.title}"`,
-                    sub: blocked
-                        ? "No progress - needs a decision."
-                        : "Check is green and it's live · approve to ship.",
-                    sliceN: idx.get(a.id),
-                    liveUrl: previewUrlOf(a),
-                };
-            });
+                      ? `Approve "${a.title}"`
+                      : `Authorize "${a.title}"`,
+                sub: blocked
+                    ? "No progress - needs a decision."
+                    : "Check is green and it's live · approve to ship.",
+                sliceN: idx.get(a.id),
+                liveUrl: previewUrlOf(a),
+            };
+        });
     },
 );
 
@@ -410,8 +408,7 @@ export const getPortfolioMetrics = createServerFn({ method: "GET" }).handler(
             users: comps.reduce((n, c) => n + (c.metrics?.users ?? 0), 0),
             active: comps.filter((c) => c.status === "active").length,
             shipped: acts.filter((a) => a.type === "code" && a.status === "done").length,
-            needsYou: acts.filter((a) => a.status === "awaiting_approval" || a.status === "blocked")
-                .length,
+            needsYou: acts.filter(needsAttention).length,
         };
     },
 );

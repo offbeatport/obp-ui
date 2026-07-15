@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { sqlite } from "../db/index.js";
 import { extractJson, str } from "./coerce.js";
 import { dispatchAI } from "./dispatch.js";
+import { singleFlight } from "./single-flight.js";
 
 // Re-exported so scope.test.ts (and other callers) can keep importing it from here.
 export { extractJson } from "./coerce.js";
@@ -99,19 +100,18 @@ const emit = sqlite.transaction(
 
 export async function scopeNext(inflight: Set<string>): Promise<void> {
     const row = PICK.get() as { id: string; thesis: string; createdAt: number } | undefined;
-    if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id); // synchronous, before any await - closes the double-claim window
-    try {
-        const opp = await scoreOpportunity(row.thesis);
-        const spec = await draftSpec(opp);
-        // .immediate() takes the write lock up front (matches claim/ship/runner) instead of a
-        // deferred read-then-write that can throw SQLITE_BUSY_SNAPSHOT under web contention.
-        emit.immediate(row.id, row.createdAt, row.thesis, opp, spec);
-    } catch {
-        // emit is atomic (rolls back on error) → nothing partial committed; next tick retries.
-    } finally {
-        inflight.delete(row.id);
-    }
+    if (!row) return;
+    await singleFlight(inflight, row.id, async () => {
+        try {
+            const opp = await scoreOpportunity(row.thesis);
+            const spec = await draftSpec(opp);
+            // .immediate() takes the write lock up front (matches claim/ship/runner) instead of a
+            // deferred read-then-write that can throw SQLITE_BUSY_SNAPSHOT under web contention.
+            emit.immediate(row.id, row.createdAt, row.thesis, opp, spec);
+        } catch {
+            // emit is atomic (rolls back on error) → nothing partial committed; next tick retries.
+        }
+    });
 }
 
 // ---- AI drivers (never throw - internal deterministic fallback) -------------------------
