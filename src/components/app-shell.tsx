@@ -62,7 +62,7 @@ const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "inbox", label: "Inbox", icon: Inbox, to: "/inbox" },
     { key: "guardrails", label: "Guardrails", icon: SlidersHorizontal, to: "/guardrails" },
     { key: "opportunities", label: "Opportunities", icon: Diamond, to: "/opportunities" },
-    { key: "companies", label: "Companies", icon: LayoutGrid, to: "/companies" },
+    { key: "companies", label: "Portfolio", icon: LayoutGrid, to: "/companies" },
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
 ];
 
