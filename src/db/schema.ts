@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 // C Slop Slop - data model (docs/SPEC.md).
 // One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing/spin, run.checkpoint).
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { SpinData, SpinStatus } from "../config/spin.js";
+import type { Branding, CompanySpec, Guardrails, SpinData, SpinStatus } from "../config/spin.js";
 
 // shared column helpers
 const pk = () =>
@@ -70,6 +70,12 @@ export const companies = sqliteTable("company", {
     }).$type<SpinStatus>(),
     spin: text("spin", { mode: "json" }).$type<SpinData>(),
     domain: text("domain"),
+    // Generated brand identity (logo mark + gradient palette + voice) + the reviewed spec + the
+    // chosen guardrails - persisted at graduation so they survive `spin` being cleared, and power
+    // the company logo everywhere + the Product/Setup tabs.
+    branding: text("branding", { mode: "json" }).$type<Branding>(),
+    spec: text("spec", { mode: "json" }).$type<CompanySpec>(),
+    guardrails: text("guardrails", { mode: "json" }).$type<Guardrails>(),
     pricing: text("pricing", { mode: "json" }).$type<Pricing>(),
     channels: text("channels", { mode: "json" })
         .$type<Channel[]>()

@@ -1,11 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import {
+    type Branding,
     type Candidate,
     type Guardrails,
     type OppScores,
     SCORE_KEYS,
     type SpinData,
+    paletteFor,
     scoreTotal,
 } from "../config/spin.js";
 import { actions, appConfig, companies, db, messages, opportunities } from "../db/index.js";
@@ -156,19 +158,31 @@ export function graduateCompany(companyId: string): { ok: boolean; id?: string; 
     const spin = c.spin ?? {};
     const spec = spin.spec;
     if (!spec) return { ok: false };
-    const branding = spin.branding;
     const picked = (spin.candidates ?? []).find((x) => x.id === spin.pickedId);
 
     // Name the live company from the spec's product, made unique platform-wide (excluding this
     // draft itself) so its slug is a collision-free route key.
     const name = uniqueName(spec.product.slice(0, 48), companyId);
+    // PERSIST the generated identity before `spin` is nulled: branding (logo mark + palette),
+    // the reviewed spec, and the guardrails all move onto their own columns so the live company
+    // keeps its logo everywhere + can render the Product/Setup tabs. Branding always resolves
+    // (deterministic fallback) so even an AI-less run has a logo.
+    const branding: Branding = spin.branding ?? {
+        mark: (spec.product.trim()[0] ?? "C").toUpperCase(),
+        palette: paletteFor(spec.product),
+        domain: `${slugify(spec.product)}.app`,
+        style: "",
+    };
     db.update(companies)
         .set({
             status: "active",
             spinStatus: null,
             spin: null,
             name,
-            domain: branding?.domain,
+            domain: branding.domain,
+            branding,
+            spec,
+            guardrails: spin.guardrails,
             pricing: { plan: "Pro", priceUsd: spec.pricingUsd, interval: "month" },
             autopilot: "on",
         })
