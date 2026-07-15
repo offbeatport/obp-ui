@@ -11,6 +11,7 @@ import {
 } from "../db/index.js";
 import {
     commitDraftLogic,
+    messageDraftLogic,
     pickOpportunityLogic,
     reSpinLogic,
     resetPickLogic,
@@ -81,6 +82,11 @@ export const resetPick = createServerFn({ method: "POST" })
 export const commitDraft = createServerFn({ method: "POST" })
     .validator((d: { draftId: string }) => d)
     .handler(async ({ data }) => commitDraftLogic(data.draftId));
+
+// Send a chat message in the spin conversation; the engine's spinChat pass replies + acts.
+export const messageDraft = createServerFn({ method: "POST" })
+    .validator((d: { draftId: string; text: string }) => d)
+    .handler(async ({ data }) => messageDraftLogic(data.draftId, data.text));
 
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
 // engine's chat pass (src/engine/chat.ts) picks it up and inserts the assistant reply.

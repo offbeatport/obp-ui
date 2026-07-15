@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { desc, eq, isNull, sql } from "drizzle-orm";
-import type { Branding, Candidate, CompanySpec, SpinStatus } from "../config/spin.js";
+import type { Branding, Candidate, CompanySpec, SpinMessage, SpinStatus } from "../config/spin.js";
 import {
     type Action,
     type Company,
@@ -111,6 +111,8 @@ export type DraftView = {
     spec?: CompanySpec;
     branding?: Branding;
     companyId?: string; // set once committed → the UI routes to /companies/<id>
+    messages: SpinMessage[]; // the chat transcript
+    working: boolean; // engine is mid-pass (scouting/specing) → UI shows a typing indicator
     ago: string;
 };
 
@@ -416,6 +418,12 @@ export const getDraft = createServerFn({ method: "GET" })
     .handler(async ({ data: id }): Promise<DraftView | null> => {
         const d = db.select().from(drafts).where(eq(drafts.id, id)).get();
         if (!d) return null;
+        const msgs = db
+            .select()
+            .from(messages)
+            .where(eq(messages.draftId, id))
+            .orderBy(messages.createdAt, sql`rowid`)
+            .all();
         return {
             id: d.id,
             thought: d.thought,
@@ -426,6 +434,15 @@ export const getDraft = createServerFn({ method: "GET" })
             spec: d.data.spec,
             branding: d.data.branding,
             companyId: d.companyId ?? undefined,
+            messages: msgs
+                .filter((m) => m.role !== "system")
+                .map((m) => ({
+                    id: m.id,
+                    role: m.role as "user" | "assistant",
+                    content: m.content,
+                    ago: ago(m.createdAt),
+                })),
+            working: d.status === "scouting" || d.status === "specing",
             ago: ago(d.createdAt),
         };
     });

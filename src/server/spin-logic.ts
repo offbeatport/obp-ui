@@ -2,6 +2,18 @@ import { and, eq } from "drizzle-orm";
 import { scoreTotal } from "../config/spin.js";
 import { actions, appConfig, companies, db, drafts, messages, opportunities } from "../db/index.js";
 
+// Post a message into the spin chat (the "start your company" conversation). Tiny write only:
+// insert the user turn; the engine's spinChat pass replies + routes the intent. No-op on a
+// missing/committed draft.
+export function messageDraftLogic(draftId: string, text: string): { ok: boolean } {
+    const t = text.trim();
+    if (!t) return { ok: false };
+    const draft = db.select().from(drafts).where(eq(drafts.id, draftId)).get();
+    if (!draft || draft.status === "committed") return { ok: false };
+    db.insert(messages).values({ draftId, role: "user", content: t }).run();
+    return { ok: true };
+}
+
 // The spin flow's DB logic, extracted from the createServerFn wrappers in actions.ts so it's
 // unit-testable without the Start request runtime. Every function is a TINY write only (the
 // heavy AI lives in the engine's spin passes) and is status-gated so a double-click / stale

@@ -11,12 +11,25 @@ vi.mock("./dispatch.js", () => ({
 import { SCORE_KEYS } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
 import { dispatchAI } from "./dispatch.js";
-import { spinScout, spinSpec } from "./spin.js";
+import { spinChat, spinScout, spinSpec } from "./spin.js";
 
 const mockAI = vi.mocked(dispatchAI);
 
 function clearAll() {
-    sqlite.exec("DELETE FROM draft; DELETE FROM company;");
+    sqlite.exec(
+        "DELETE FROM run; DELETE FROM action; DELETE FROM message; DELETE FROM opportunity; DELETE FROM draft; DELETE FROM company; DELETE FROM app_config;",
+    );
+}
+
+function addMsg(draftId: string, role: "user" | "assistant", content: string) {
+    sqlite
+        .prepare("INSERT INTO message (id,draft_id,role,content,created_at) VALUES (?,?,?,?,?)")
+        .run(randomUUID(), draftId, role, content, Date.now());
+}
+function msgs(draftId: string) {
+    return sqlite
+        .prepare("SELECT role, content FROM message WHERE draft_id=? ORDER BY created_at, rowid")
+        .all(draftId) as { role: string; content: string }[];
 }
 
 type DraftInit = { thought?: string; status?: string; data?: unknown; preset?: string };
@@ -212,5 +225,79 @@ describe("spinSpec", () => {
         // guard bailed: still awaiting a spec for the CURRENT pick, no stale spec written.
         expect(after.status).toBe("specing");
         expect(after.data.spec).toBeUndefined();
+    });
+});
+
+describe("spinChat (offline heuristic routing)", () => {
+    const cand = (id: string, name: string) => ({
+        id,
+        name,
+        icp: "x",
+        wedge: "w",
+        pain: "p",
+        scores: Object.fromEntries(SCORE_KEYS.map((k) => [k, 6])),
+        evidence: [{ kind: "demand", text: "t", source: "s" }],
+        firstSlice: { title: "signup", doneWhen: "live" },
+    });
+    const aId = "cand-a";
+    const bId = "cand-b";
+    const proposalsData = { candidates: [cand(aId, "Alpha"), cand(bId, "Beta")] };
+    const specData = {
+        candidates: [cand(aId, "Alpha")],
+        pickedId: aId,
+        spec: {
+            product: "Alpha",
+            tagline: "t",
+            icp: "x",
+            pricingUsd: 12,
+            trialDays: 14,
+            stack: ["Next"],
+            slices: [{ title: "A visitor can sign up on a live URL", sub: "s", doneWhen: "d" }],
+            market: { persona: "p", mrrLow: 100, mrrHigh: 900, wtpQuote: "q", competitors: [] },
+        },
+        branding: { mark: "A", palette: ["#e0794c", "#c05a2f"], domain: "alpha.app", style: "s" },
+    };
+
+    it("always replies to a user turn", async () => {
+        const id = makeDraft({ status: "proposals", data: proposalsData });
+        addMsg(id, "user", "why is Alpha better than Beta?");
+        await spinChat(new Set());
+        const m = msgs(id);
+        expect(m.at(-1)?.role).toBe("assistant"); // answered
+        expect(read(id).status).toBe("proposals"); // pure question → no state change
+    });
+
+    it("routes 'go with 1' → picks the candidate + specing", async () => {
+        const id = makeDraft({ status: "proposals", data: proposalsData });
+        addMsg(id, "user", "go with option 1");
+        await spinChat(new Set());
+        const { status, data } = read(id);
+        expect(status).toBe("specing");
+        expect(data.pickedId).toBe(aId);
+    });
+
+    it("routes 'different, target agencies' → re-scout with criteria", async () => {
+        const id = makeDraft({ status: "proposals", data: proposalsData });
+        addMsg(id, "user", "different — target agencies instead");
+        await spinChat(new Set());
+        const { status, data } = read(id);
+        expect(status).toBe("scouting");
+        expect(typeof data.criteria).toBe("string");
+        expect(data.candidates).toBeUndefined(); // cleared for the re-scout
+    });
+
+    it("routes 'create it' on a spec → commits to a real company", async () => {
+        const id = makeDraft({ status: "spec", data: specData });
+        addMsg(id, "user", "looks great, create it");
+        await spinChat(new Set());
+        expect(read(id).status).toBe("committed");
+        expect((sqlite.prepare("SELECT COUNT(*) n FROM company").get() as { n: number }).n).toBe(1);
+    });
+
+    it("skips a draft in the in-flight set", async () => {
+        const id = makeDraft({ status: "proposals", data: proposalsData });
+        addMsg(id, "user", "go with 1");
+        await spinChat(new Set([id]));
+        expect(read(id).status).toBe("proposals"); // untouched
     });
 });

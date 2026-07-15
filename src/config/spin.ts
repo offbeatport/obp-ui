@@ -99,7 +99,14 @@ export type DraftData = {
     pickedId?: string;
     spec?: CompanySpec;
     branding?: Branding;
+    // Chat-driven refinement: extra criteria the scout must honor on the next re-scout, and an
+    // edit note the spec pass must apply on the next re-draft. Cleared once consumed.
+    criteria?: string;
+    editNote?: string;
 };
+
+// A message in the spin chat (the "start your company" conversation).
+export type SpinMessage = { id: string; role: "user" | "assistant"; content: string; ago: string };
 
 // Guardrails chosen inline in the composer (same presets as the run guardrails).
 export type SpinGuardrails = { preset: string };

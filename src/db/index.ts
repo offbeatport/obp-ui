@@ -93,6 +93,7 @@ function createTables(s: Database.Database) {
     CREATE TABLE IF NOT EXISTS message (
       id          text PRIMARY KEY NOT NULL,
       company_id  text REFERENCES company(id),
+      draft_id    text,
       role        text NOT NULL,
       content     text NOT NULL,
       created_at  integer NOT NULL DEFAULT (unixepoch() * 1000)
@@ -137,4 +138,14 @@ function createTables(s: Database.Database) {
     CREATE INDEX IF NOT EXISTS run_status             ON run(status);
     CREATE INDEX IF NOT EXISTS message_company        ON message(company_id);
   `);
+    // Lightweight forward-migration for pre-existing DBs (no migration system): add columns that
+    // CREATE TABLE IF NOT EXISTS won't retro-add. Ignore "duplicate column" on already-migrated DBs.
+    for (const stmt of ["ALTER TABLE message ADD COLUMN draft_id text"]) {
+        try {
+            s.exec(stmt);
+        } catch {
+            /* column already exists */
+        }
+    }
+    s.exec("CREATE INDEX IF NOT EXISTS message_draft ON message(draft_id);");
 }
