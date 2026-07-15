@@ -40,19 +40,55 @@ function topLevelBlocks(src) {
 
 // A class token belongs to the spin flow if it EXACTLY equals or is prefixed (`fam-`) by one of
 // these. Token-level matching avoids false hits like `.spine-head` (center chat) ⊄ `.spin`.
+// Only the families the React port actually RENDERS are here (the sp-/sr-/cco/dr-/rsrc/rk
+// prototype-only widgets — 5-pip modal, score chart, community grid, daily list, receipts — are
+// deliberately absent, so their CSS isn't copied). co-brandmark/btn-approve stay in proto.css.
 const FAMILIES = new Set([
-    "spin", "spinner", "ql", "host", "exc", "sig", "sp", "sr", "bf", "cc", "cco",
-    "co-brandmark", "btn-scout", "btn-primary", "btn-link", "btn-approve", "btn-back",
-    "btn-refine", "btn-choose", "rsrc", "rk", "proof", "ctx", "wedge", "dr", "market",
-    "signals", "cta", "hdr",
+    "spin",
+    "spinner",
+    "ql",
+    "host",
+    "exc",
+    "sig",
+    "bf",
+    "cc",
+    "btn-scout",
+    "btn-primary",
+    "btn-link",
+    "btn-approve",
+    "btn-back",
+    "btn-refine",
+    "btn-choose",
+    "proof",
+    "ctx",
+    "wedge",
+    "market",
+    "signals",
+    "cta",
+    "hdr",
 ]);
-const tokenInFamily = (t) => {
-    for (const f of FAMILIES) if (t === f || t.startsWith(`${f}-`)) return true;
+// Dead spin-* sub-families the "spin" prefix would otherwise re-capture (composer daily/community
+// list, the custom-guardrail editor, the legacy static proposals). Excluded by leading token.
+const EXCLUDE = new Set([
+    "spin-daily",
+    "spin-community",
+    "spin-guard",
+    "spin-guards",
+    "spin-guard-add",
+    "spin-constraints",
+    "spin-presets",
+    "spin-preset",
+    "spin-prop-stack",
+    "spin-lucky",
+]);
+const inSet = (set, t) => {
+    for (const f of set) if (t === f || t.startsWith(`${f}-`)) return true;
     return false;
 };
 function selectorMatches(sel) {
     const tokens = [...sel.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]);
-    return tokens.some(tokenInFamily);
+    if (tokens.length && inSet(EXCLUDE, tokens[0])) return false; // dead sub-family
+    return tokens.some((t) => inSet(FAMILIES, t));
 }
 
 // Prefix each comma-separated selector with `.cc ` (proto.css convention).
