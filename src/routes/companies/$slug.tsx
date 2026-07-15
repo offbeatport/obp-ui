@@ -2,13 +2,15 @@ import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { type CSSProperties, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { TONE, TONE_VAR } from "~/components/command-center/tone";
+import { SpinChat } from "~/components/spin-chat";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { approveAction, messageCompany, rejectAction } from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies } from "~/server/data";
-// The .cc command-center stylesheet this page relies on - load it here so a direct
+// The .cc command-center + spin stylesheets this page relies on - load here so a direct
 // /companies/<slug> visit is styled (its route chunk doesn't include the home chunk).
 import "~/components/command-center/proto.css";
+import "~/components/command-center/spin-proto.css";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
@@ -99,6 +101,19 @@ function CompanyWorkspace() {
     }
 
     const co = base as CompanyDetail;
+
+    // A draft company is still incubating: render the spin-up chat (scout → proposals → spec →
+    // approve) as its page. Approving graduates it and this same page becomes the workspace below.
+    if (co.status === "draft" && detail) {
+        return (
+            <AppShell active="companies">
+                <div className="cc dash-mode h-full">
+                    <SpinChat detail={detail} />
+                </div>
+            </AppShell>
+        );
+    }
+
     const messages = detail?.messages ?? [];
     const url = co.domain ?? co.liveUrl?.replace(/^https?:\/\//, "") ?? "not deployed";
     const href = co.domain ? `https://${co.domain}` : (co.liveUrl ?? "#");

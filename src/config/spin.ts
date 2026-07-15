@@ -1,13 +1,14 @@
-// CLIENT-SAFE spin-up model (no sqlite) - the "thought → company" flow: scout scored
-// opportunity candidates, pick one, generate its company spec + branding, then commit it to a
-// real company. Shapes mirror design/v2-prototypes/08-chat-spine-pro-v7.html (SPIN flow).
+// CLIENT-SAFE spin-up model (no sqlite) - the "thought → company" flow. A company is created
+// immediately in status 'draft'; its spin sub-stage (company.spinStatus) walks scouting →
+// proposals → specing → spec, then approving graduates it to an 'active' company. Shapes mirror
+// design/v2-prototypes/08-chat-spine-pro-v7.html (SPIN flow).
 
+// The draft company's incubation sub-stage (company.spinStatus; null once graduated to active).
 export const SPIN_STATUSES = [
     "scouting", // engine is generating opportunity candidates
     "proposals", // candidates ready - pick one
     "specing", // engine is drafting the picked company's spec + branding
-    "spec", // spec + branding ready - review & commit
-    "committed", // a real company was created from this draft
+    "spec", // spec + branding ready - review & approve to build
     "failed",
 ] as const;
 export type SpinStatus = (typeof SPIN_STATUSES)[number];
@@ -88,8 +89,9 @@ export type Branding = {
     style: string; // one-line brand style / voice
 };
 
-// The whole spin session's payload (stored as draft.data JSON).
-export type DraftData = {
+// The draft company's incubation payload (stored as company.spin JSON).
+export type SpinData = {
+    preset?: string; // guardrail preset chosen in the composer
     candidates?: Candidate[];
     pickedId?: string;
     spec?: CompanySpec;
@@ -102,9 +104,6 @@ export type DraftData = {
 
 // A message in the spin chat (the "start your company" conversation).
 export type SpinMessage = { id: string; role: "user" | "assistant"; content: string; ago: string };
-
-// Guardrails chosen inline in the composer (same presets as the run guardrails).
-export type SpinGuardrails = { preset: string };
 
 // avg of the 8 scores (0-10) - the ranking signal for a candidate.
 export function scoreTotal(s: OppScores): number {

@@ -10,8 +10,7 @@ import {
     runs,
 } from "../db/index.js";
 import {
-    commitDraftLogic,
-    messageDraftLogic,
+    graduateCompany,
     pickOpportunityLogic,
     reSpinLogic,
     resetPickLogic,
@@ -24,69 +23,38 @@ import {
 
 const DEMO_NAME = "Demo Co";
 
-// Create a real company from a typed thought (the New-company composer). Tiny write only:
-// insert the company (autopilot on so its first slice ships autonomously) and return its
-// immutable id — the UI routes to /companies/<id> (collision-proof). The engine's scope
-// pass (src/engine/scope.ts) then turns company.thesis into an opportunity + spec + first
-// action. Deliberately does NOT write a chat message: the founding thought is scope's
-// exclusive input, so the chat pass never races it.
-export const createCompany = createServerFn({ method: "POST" })
-    .validator((d: { thought: string }) => d)
-    .handler(async ({ data }) => {
-        const thought = data.thought.trim();
-        if (!thought) throw new Error("Describe the company first.");
-        const name =
-            thought
-                .split(/\s+/)
-                .slice(0, 4)
-                .join(" ")
-                .replace(/[^\w\s-]/g, "")
-                .slice(0, 40) || "New Company";
-        const company = db
-            .insert(companies)
-            .values({ name, thesis: thought, autopilot: "on" })
-            .returning()
-            .get();
-        return { id: company.id, name: company.name };
-    });
-
 // ============================================================================
-// SPIN — the "spin up a company" flow (thought → scored candidates → pick → spec+branding →
-// commit). Every handler is a TINY write only; the heavy AI runs in the engine's spin passes
-// (src/engine/spin.ts), which the UI observes by polling getDraft. Statuses gate each step so
-// a double-click / stale poll is a harmless no-op.
+// SPIN - the "spin up a company" flow. "Spin up" creates a DRAFT company (startSpin); the engine
+// spin passes fill it (scout → proposals → spec) and the incubation chat is the company's own
+// messages. Approving graduates it to an active company. Every handler is a TINY write only;
+// statuses gate each step so a double-click / stale poll is a harmless no-op.
 // ============================================================================
 
-// Start a spin session: record the thought + guardrail preset and hand it to the engine
-// (status 'scouting' → spinScout generates candidates). Returns the draft id to route to.
+// "Spin up" — create the draft company from a thought + guardrail preset. Returns its id; the UI
+// routes to /companies/<id> where the incubation chat lives.
 export const startSpin = createServerFn({ method: "POST" })
     .validator((d: { thought: string; preset?: string }) => d)
     .handler(async ({ data }) => startSpinLogic(data.thought, data.preset ?? ""));
 
 // Pick one candidate to spec out → 'specing' so spinSpec drafts the company spec + branding.
 export const pickOpportunity = createServerFn({ method: "POST" })
-    .validator((d: { draftId: string; candidateId: string }) => d)
-    .handler(async ({ data }) => pickOpportunityLogic(data.draftId, data.candidateId));
+    .validator((d: { companyId: string; candidateId: string }) => d)
+    .handler(async ({ data }) => pickOpportunityLogic(data.companyId, data.candidateId));
 
 // Re-roll: throw the current candidates away and scout again ("shuffle / try another set").
 export const reSpin = createServerFn({ method: "POST" })
-    .validator((d: { draftId: string }) => d)
-    .handler(async ({ data }) => reSpinLogic(data.draftId));
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => reSpinLogic(data.companyId));
 
-// Back to the candidate list from a drafted spec ("choose a different angle") — keeps candidates.
+// Back to the candidate list from a drafted spec ("choose a different angle") - keeps candidates.
 export const resetPick = createServerFn({ method: "POST" })
-    .validator((d: { draftId: string }) => d)
-    .handler(async ({ data }) => resetPickLogic(data.draftId));
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => resetPickLogic(data.companyId));
 
-// Commit the spec to a REAL, already-scoped company (see commitDraftLogic).
-export const commitDraft = createServerFn({ method: "POST" })
-    .validator((d: { draftId: string }) => d)
-    .handler(async ({ data }) => commitDraftLogic(data.draftId));
-
-// Send a chat message in the spin conversation; the engine's spinChat pass replies + acts.
-export const messageDraft = createServerFn({ method: "POST" })
-    .validator((d: { draftId: string; text: string }) => d)
-    .handler(async ({ data }) => messageDraftLogic(data.draftId, data.text));
+// Approve the reviewed spec → graduate the draft company to a live, building one.
+export const approveCompany = createServerFn({ method: "POST" })
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => graduateCompany(data.companyId));
 
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
 // engine's chat pass (src/engine/chat.ts) picks it up and inserts the assistant reply.
@@ -118,7 +86,7 @@ export const enqueueDemo = createServerFn({ method: "POST" }).handler(async () =
             .get();
     }
     // Demo company runs on autopilot so the spine ships fully autonomously: a reversible
-    // `code` action auto-approves on a green doneWhen (the L1 rule) — no human click needed
+    // `code` action auto-approves on a green doneWhen (the L1 rule) - no human click needed
     // to see one run go thought → built → deployed → validated → shipped end to end.
     db.update(companies).set({ autopilot: "on" }).where(eq(companies.id, company.id)).run();
     const action = db
@@ -137,7 +105,7 @@ export const enqueueDemo = createServerFn({ method: "POST" }).handler(async () =
     return { actionId: action.id, companyId: company.id };
 });
 
-// L0 approval gate — you approve a green action; the executor's ship driver then promotes
+// L0 approval gate - you approve a green action; the executor's ship driver then promotes
 // its checkpoint sha to main and flips it done. Guarded to the resting state so a stray
 // double-click (or an autopilot race) is a harmless no-op.
 export const approveAction = createServerFn({ method: "POST" })
@@ -224,7 +192,7 @@ export const listQueue = createServerFn({ method: "GET" }).handler(async () => {
     };
 });
 
-// Run history for one action — every attempt, newest first (incl. completed/failed runs,
+// Run history for one action - every attempt, newest first (incl. completed/failed runs,
 // which drop off listQueue). Lets the UI list an action's runs and open any one's log via
 // the existing SSE route `/api/runs/<id>/logs`. `previewUrl` (the deployed URL, set on the
 // action payload) is included so a shipped/awaiting run links straight to the live app.

@@ -3,90 +3,88 @@ import {
     type Branding,
     type Candidate,
     type CompanySpec,
-    type DraftData,
     type Evidence,
     type EvidenceKind,
     type OppScores,
     SCORE_KEYS,
     type SpecSlice,
+    type SpinData,
     paletteFor,
     scoreTotal,
 } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
-import { commitDraftLogic } from "../server/spin-logic.js";
+import { graduateCompany } from "../server/spin-logic.js";
 import { dispatchAI } from "./dispatch.js";
 import { extractJson } from "./scope.js";
 
-// spin.ts — the two engine passes behind the "spin up a company" chat. A `draft` row is one
-// spin session; the web fns only ever do tiny status flips (startSpin sets 'scouting',
-// pickOpportunity sets 'specing'). The heavy AI lives HERE, in the executor, mirroring
-// scope.ts's discipline:
-//   • ONE draft per tick per pass (bounded fan-out — no claude-subprocess thundering herd).
+// spin.ts - the engine passes behind the "spin up a company" chat. A DRAFT COMPANY (company row,
+// status='draft') is one spin session: company.thesis is the thought, company.spinStatus the
+// sub-stage, company.spin the payload (candidates/pickedId/spec/branding), and the incubation
+// chat is the company's own messages. Web fns only do tiny status flips; the heavy AI lives
+// HERE, in the executor, mirroring scope.ts's discipline:
+//   • ONE draft company per tick per pass (bounded fan-out - no claude thundering herd).
 //   • All dispatchAI runs OUTSIDE the DB txn, under an AbortSignal timeout.
-//   • The emit is ONE atomic sqlite.transaction that re-reads + re-checks the draft's status
-//     INSIDE the txn (closes the check-then-act gap so a Set bypass / mid-pass restart yields
-//     0 or 1 write, never a partial merge).
-//   • Every AI driver has a deterministic fallback and NEVER throws — an offline host still
+//   • The emit is ONE atomic sqlite.transaction that re-reads + re-checks spinStatus INSIDE the
+//     txn (closes the check-then-act gap so a Set bypass / mid-pass restart yields 0 or 1 write).
+//   • Every AI driver has a deterministic fallback and NEVER throws - an offline host still
 //     produces a usable set of candidates / a spec, so the flow always completes.
 //
 // Lifecycle:  scouting --spinScout--> proposals --(pickOpportunity)--> specing
-//             specing --spinSpec--> spec --(commitDraft)--> committed
+//             specing --spinSpec--> spec --(approve = graduateCompany)--> active company
 
 const DISPATCH_MS = 90_000;
 
-type DraftRow = {
-    id: string;
-    thought: string;
-    guardrails: string | null;
-    data: string | null;
-    status: string;
-};
+type DraftRow = { id: string; thought: string; spin: string | null };
 
 const PICK_SCOUTING = sqlite.prepare(`
-  SELECT id, thought, guardrails, data, status FROM draft
-  WHERE status = 'scouting' ORDER BY created_at ASC LIMIT 1
+  SELECT id, thesis AS thought, spin FROM company
+  WHERE status = 'draft' AND spin_status = 'scouting' ORDER BY created_at ASC LIMIT 1
 `);
 const PICK_SPECING = sqlite.prepare(`
-  SELECT id, thought, guardrails, data, status FROM draft
-  WHERE status = 'specing' ORDER BY created_at ASC LIMIT 1
+  SELECT id, thesis AS thought, spin FROM company
+  WHERE status = 'draft' AND spin_status = 'specing' ORDER BY created_at ASC LIMIT 1
 `);
-const READ_STATUS = sqlite.prepare("SELECT status, data FROM draft WHERE id = ?");
-const WRITE_DRAFT = sqlite.prepare(
-    "UPDATE draft SET status = ?, data = ? WHERE id = ? AND status = ?",
+const READ_STATUS = sqlite.prepare("SELECT spin_status AS status, spin FROM company WHERE id = ?");
+const WRITE_SPIN = sqlite.prepare(
+    "UPDATE company SET spin_status = ?, spin = ? WHERE id = ? AND spin_status = ?",
 );
-const FAIL_DRAFT = sqlite.prepare("UPDATE draft SET status = 'failed' WHERE id = ? AND status = ?");
+const FAIL_SPIN = sqlite.prepare(
+    "UPDATE company SET spin_status = 'failed' WHERE id = ? AND spin_status = ?",
+);
 
-// Atomic status advance: re-read the row inside the txn, bail unless it's still in `from`
-// (an earlier tick / another pass may have moved it), then merge `patch` into data + flip to
+// Atomic spinStatus advance: re-read the row inside the txn, bail unless it's still in `from`
+// (an earlier tick / another pass may have moved it), then merge `patch` into spin + flip to
 // `to`. Returns nothing; the guarded UPDATE makes a lost race a harmless no-op.
 //
 // `expectPickedId` (spinSpec only): also bail unless the CURRENT pick still matches the one the
-// spec was drafted for. Closes the re-pick race — if the founder chose a different angle (reset
+// spec was drafted for. Closes the re-pick race - if the founder chose a different angle (reset
 // + re-pick) while the AI ran, an in-flight spec for the old candidate must NOT overwrite it.
 const advance = sqlite.transaction(
-    (id: string, from: string, to: string, patch: Partial<DraftData>, expectPickedId?: string) => {
-        const row = READ_STATUS.get(id) as { status: string; data: string | null } | undefined;
+    (id: string, from: string, to: string, patch: Partial<SpinData>, expectPickedId?: string) => {
+        const row = READ_STATUS.get(id) as
+            | { status: string | null; spin: string | null }
+            | undefined;
         if (!row || row.status !== from) return;
-        const current = parseData(row.data);
+        const current = parseData(row.spin);
         if (expectPickedId !== undefined && current.pickedId !== expectPickedId) return;
         const merged = { ...current, ...patch };
-        WRITE_DRAFT.run(to, JSON.stringify(merged), id, from);
+        WRITE_SPIN.run(to, JSON.stringify(merged), id, from);
     },
 );
 
-// ---- pass 1: scout — a fresh thought → 3 scored opportunity candidates -------------------
+// ---- pass 1: scout - a fresh thought → 3 scored opportunity candidates -------------------
 export async function spinScout(inflight: Set<string>): Promise<void> {
     const row = PICK_SCOUTING.get() as DraftRow | undefined;
     if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id); // sync, before any await — closes the double-claim window
+    inflight.add(row.id); // sync, before any await - closes the double-claim window
     try {
-        const criteria = parseData(row.data).criteria;
-        const candidates = await scoutCandidates(row.thought, presetOf(row.guardrails), criteria);
+        const spin = parseData(row.spin);
+        const candidates = await scoutCandidates(row.thought, presetOf(spin.preset), spin.criteria);
         // clear criteria once consumed (undefined drops from the merged JSON)
         advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
         // Open the chat with the result so it reads as a conversation.
         if ((READ_STATUS.get(row.id) as { status: string })?.status === "proposals") {
-            INSERT_DRAFT_MSG.run(
+            INSERT_MSG.run(
                 randomUUID(),
                 row.id,
                 "assistant",
@@ -98,25 +96,25 @@ export async function spinScout(inflight: Set<string>): Promise<void> {
         // scoutCandidates never throws (has a fallback); only a DB error lands here. Mark the
         // draft failed so the UI shows an error state instead of polling 'scouting' forever.
         try {
-            FAIL_DRAFT.run(row.id, "scouting");
+            FAIL_SPIN.run(row.id, "scouting");
         } catch {
-            /* give up — next boot's operator can inspect */
+            /* give up - next boot's operator can inspect */
         }
     } finally {
         inflight.delete(row.id);
     }
 }
 
-// ---- pass 2: spec — the picked candidate → full company spec + branding -------------------
+// ---- pass 2: spec - the picked candidate → full company spec + branding -------------------
 export async function spinSpec(inflight: Set<string>): Promise<void> {
     const row = PICK_SPECING.get() as DraftRow | undefined;
     if (!row || inflight.has(row.id)) return;
     inflight.add(row.id);
     try {
-        const data = parseData(row.data);
+        const data = parseData(row.spin);
         const picked = data.candidates?.find((c) => c.id === data.pickedId) ?? data.candidates?.[0];
         if (!picked) {
-            FAIL_DRAFT.run(row.id, "specing"); // pick lost — shouldn't happen, fail loudly
+            FAIL_SPIN.run(row.id, "specing"); // pick lost - shouldn't happen, fail loudly
             return;
         }
         const { spec, branding } = await draftSpecAndBranding(picked, row.thought, data.editNote);
@@ -131,17 +129,17 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
             data.pickedId,
         );
         if ((READ_STATUS.get(row.id) as { status: string })?.status === "spec") {
-            INSERT_DRAFT_MSG.run(
+            INSERT_MSG.run(
                 randomUUID(),
                 row.id,
                 "assistant",
-                `Here's the ${spec.product} spec — $${spec.pricingUsd}/mo, ${spec.slices.length} slices. Want any changes (price, stack, slices), or should I create the company?`,
+                `Here's the ${spec.product} spec - $${spec.pricingUsd}/mo, ${spec.slices.length} slices. Want any changes (price, stack, slices), or should I build the company?`,
                 Date.now(),
             );
         }
     } catch {
         try {
-            FAIL_DRAFT.run(row.id, "specing");
+            FAIL_SPIN.run(row.id, "specing");
         } catch {
             /* give up */
         }
@@ -150,32 +148,34 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
     }
 }
 
-// ---- pass 3: chat — a ChatGPT-style conversation that also DRIVES the flow ----------------
+// ---- pass 3: chat - a ChatGPT-style conversation that also DRIVES the flow ----------------
 // The founder can ask anything ("why is the WTP score low?") and steer it ("re-scout but target
 // agencies", "go with #2", "make it cheaper", "create it"). The model returns a reply + ONE
 // optional intent, which we route to the existing scout/spec/commit machinery.
 
-const INSERT_DRAFT_MSG = sqlite.prepare(
-    "INSERT INTO message (id, draft_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)",
+const INSERT_MSG = sqlite.prepare(
+    "INSERT INTO message (id, company_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)",
 );
-// A draft whose latest message is an unanswered user turn (mirrors chat.ts). Excludes committed.
+// A draft company whose latest message is an unanswered user turn (mirrors chat.ts).
 const PICK_CHAT = sqlite.prepare(`
-  SELECT d.id AS id, d.thought AS thought, d.status AS status, d.data AS data
-  FROM draft d
-  WHERE d.status != 'committed'
-    AND (SELECT m.role FROM message m WHERE m.draft_id = d.id
+  SELECT c.id AS id, c.thesis AS thought, c.spin_status AS status, c.spin AS spin
+  FROM company c
+  WHERE c.status = 'draft'
+    AND (SELECT m.role FROM message m WHERE m.company_id = c.id
          ORDER BY m.created_at DESC, m.rowid DESC LIMIT 1) = 'user'
-  ORDER BY d.created_at ASC LIMIT 1
+  ORDER BY c.created_at ASC LIMIT 1
 `);
 const READ_TRANSCRIPT = sqlite.prepare(
-    "SELECT role, content FROM message WHERE draft_id = ? ORDER BY created_at ASC, rowid ASC LIMIT 24",
+    "SELECT role, content FROM message WHERE company_id = ? ORDER BY created_at ASC, rowid ASC LIMIT 24",
 );
-// Non-commit intents mutate data + status in one guarded write (status re-checked inside).
+// Non-commit intents mutate spin + spinStatus in one guarded write (status re-checked inside).
 const APPLY_CHAT = sqlite.transaction(
-    (id: string, patch: Partial<DraftData>, to: string, allowed: string[]) => {
-        const row = READ_STATUS.get(id) as { status: string; data: string | null } | undefined;
-        if (!row || !allowed.includes(row.status)) return false;
-        WRITE_DRAFT.run(to, JSON.stringify({ ...parseData(row.data), ...patch }), id, row.status);
+    (id: string, patch: Partial<SpinData>, to: string, allowed: string[]) => {
+        const row = READ_STATUS.get(id) as
+            | { status: string | null; spin: string | null }
+            | undefined;
+        if (!row || !row.status || !allowed.includes(row.status)) return false;
+        WRITE_SPIN.run(to, JSON.stringify({ ...parseData(row.spin), ...patch }), id, row.status);
         return true;
     },
 );
@@ -190,26 +190,31 @@ type ChatAction =
 
 export async function spinChat(inflight: Set<string>): Promise<void> {
     const row = PICK_CHAT.get() as
-        | { id: string; thought: string; status: string; data: string | null }
+        | { id: string; thought: string; status: string | null; spin: string | null }
         | undefined;
     if (!row || inflight.has(row.id)) return;
     inflight.add(row.id);
     try {
-        const data = parseData(row.data);
+        const data = parseData(row.spin);
         const transcript = READ_TRANSCRIPT.all(row.id) as ChatMsg[];
-        const { reply, action } = await chatTurn(row.thought, row.status, data, transcript);
+        const { reply, action } = await chatTurn(
+            row.thought,
+            row.status ?? "spec",
+            data,
+            transcript,
+        );
         // Always answer; then route the intent (status-gated so it can't corrupt a working pass).
         const now = Date.now();
-        INSERT_DRAFT_MSG.run(randomUUID(), row.id, "assistant", reply, now);
+        INSERT_MSG.run(randomUUID(), row.id, "assistant", reply, now);
         applyChatAction(row.id, action, data);
     } catch {
-        // never leave the turn unanswered — drop a graceful fallback line.
+        // never leave the turn unanswered - drop a graceful fallback line.
         try {
-            INSERT_DRAFT_MSG.run(
+            INSERT_MSG.run(
                 randomUUID(),
                 row.id,
                 "assistant",
-                "I hit a snag on that — try rephrasing, or use the buttons.",
+                "I hit a snag on that - try rephrasing, or use the buttons.",
                 Date.now(),
             );
         } catch {
@@ -220,7 +225,7 @@ export async function spinChat(inflight: Set<string>): Promise<void> {
     }
 }
 
-function applyChatAction(id: string, action: ChatAction, data: DraftData): void {
+function applyChatAction(id: string, action: ChatAction, data: SpinData): void {
     switch (action.type) {
         case "rescout":
             // wipe the drafted results, remember the new criteria, re-scout from scratch
@@ -247,11 +252,11 @@ function applyChatAction(id: string, action: ChatAction, data: DraftData): void 
             APPLY_CHAT(id, { editNote: action.note }, "specing", ["spec"]);
             break;
         case "commit":
-            // commitDraftLogic runs its own txn (idempotent, status-gated to 'spec').
-            commitDraftLogic(id);
+            // graduateCompany runs its own txn (idempotent, gated to a draft company at 'spec').
+            graduateCompany(id);
             break;
         default:
-            break; // "none" — chat only
+            break; // "none" - chat only
     }
 }
 
@@ -269,7 +274,7 @@ function resolveCandidate(ref: string, candidates: Candidate[]): Candidate | und
 async function chatTurn(
     thought: string,
     status: string,
-    data: DraftData,
+    data: SpinData,
     transcript: ChatMsg[],
 ): Promise<{ reply: string; action: ChatAction }> {
     const state = describeState(thought, status, data);
@@ -312,14 +317,14 @@ async function chatTurn(
 }
 
 // One-paragraph state summary the model reasons over.
-function describeState(thought: string, status: string, data: DraftData): string {
+function describeState(thought: string, status: string, data: SpinData): string {
     const parts = [`thought: "${thought}"`, `stage: ${status}`];
     if (data.candidates?.length) {
         parts.push(
             `candidates:\n${data.candidates
                 .map(
                     (c, i) =>
-                        `  ${i + 1}. ${c.name} — ${c.wedge} (score ${scoreTotal(c.scores).toFixed(1)}/10)`,
+                        `  ${i + 1}. ${c.name} - ${c.wedge} (score ${scoreTotal(c.scores).toFixed(1)}/10)`,
                 )
                 .join("\n")}`,
         );
@@ -330,7 +335,7 @@ function describeState(thought: string, status: string, data: DraftData): string
     }
     if (data.spec) {
         parts.push(
-            `spec: ${data.spec.product} — ${data.spec.tagline} · $${data.spec.pricingUsd}/mo · stack ${data.spec.stack.join(", ")} · ${data.spec.slices.length} slices`,
+            `spec: ${data.spec.product} - ${data.spec.tagline} · $${data.spec.pricingUsd}/mo · stack ${data.spec.stack.join(", ")} · ${data.spec.slices.length} slices`,
         );
     }
     return parts.join("\n");
@@ -354,8 +359,8 @@ function coerceAction(v: unknown): ChatAction {
 }
 
 function fallbackReply(status: string): string {
-    if (status === "scouting") return "Scouting opportunities now — one moment.";
-    if (status === "specing") return "Drafting the company spec — one moment.";
+    if (status === "scouting") return "Scouting opportunities now - one moment.";
+    if (status === "specing") return "Drafting the company spec - one moment.";
     return "Got it.";
 }
 
@@ -385,7 +390,7 @@ function heuristicTurn(
         const c = wantsPick ? matchCandidate(t, candidates) : undefined;
         if (c) {
             return {
-                reply: `Great — drafting the ${c.name} spec.`,
+                reply: `Great - drafting the ${c.name} spec.`,
                 action: { type: "pick", candidate: c.id },
             };
         }
@@ -433,7 +438,7 @@ function matchCandidate(text: string, candidates: Candidate[]): Candidate | unde
     return bestHits > 0 ? best : undefined;
 }
 
-// ---- AI drivers (never throw — deterministic fallback) -----------------------------------
+// ---- AI drivers (never throw - deterministic fallback) -----------------------------------
 
 async function scoutCandidates(
     thought: string,
@@ -446,7 +451,7 @@ async function scoutCandidates(
         const r = await dispatchAI("research", {
             system:
                 "You are a startup scout finding small, solo-buildable SaaS bets. Return ONLY a " +
-                "minified JSON array of exactly 3 objects — no prose, no code fences. Each object: " +
+                "minified JSON array of exactly 3 objects - no prose, no code fences. Each object: " +
                 '{"name":string,"icp":string,"wedge":string,"pain":string,"scores":' +
                 '{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
                 '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
@@ -461,7 +466,7 @@ async function scoutCandidates(
             .map((raw, i) => toCandidate(raw, fb[i % fb.length]))
             .filter((c): c is Candidate => c !== null);
         if (parsed.length === 0) return fb;
-        // Rank by average score (best bet first) — the UI leads with the strongest candidate.
+        // Rank by average score (best bet first) - the UI leads with the strongest candidate.
         return parsed.sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
     } catch {
         return fb;
@@ -478,7 +483,7 @@ async function draftSpecAndBranding(
     try {
         const r = await dispatchAI("plan", {
             system:
-                "Return ONLY minified JSON — no prose, no code fences: " +
+                "Return ONLY minified JSON - no prose, no code fences: " +
                 '{"product":string,"tagline":string,"icp":string,"pricingUsd":int,"trialDays":int,' +
                 '"stack":[string],"slices":[{"title":string,"sub":string,"doneWhen":string}],' +
                 '"market":{"persona":string,"mrrLow":int,"mrrHigh":int,"wtpQuote":string,' +
@@ -594,7 +599,7 @@ function toCompetitors(v: unknown, fb: CompanySpec["market"]["competitors"]) {
             if (!name) return null;
             return {
                 name,
-                price: str(o.price, "—", 24),
+                price: str(o.price, "-", 24),
                 weakness: str(o.weakness, "", 120),
             };
         })
@@ -629,7 +634,7 @@ function fallbackCandidates(thought: string): Candidate[] {
     const angles: { name: string; wedge: string; bias: number }[] = [
         {
             name: `${base} Pro`,
-            wedge: "The fastest path to the core outcome — nothing else.",
+            wedge: "The fastest path to the core outcome - nothing else.",
             bias: 1,
         },
         { name: `${base} Flow`, wedge: "Automates the busywork around it end to end.", bias: 0 },
@@ -714,28 +719,22 @@ function fallbackSpec(
             mark: (product[0] ?? "C").toUpperCase(),
             palette,
             domain: `${slugForDomain(product)}.app`,
-            style: "Clean, confident, a little playful — indie SaaS.",
+            style: "Clean, confident, a little playful - indie SaaS.",
         },
     };
 }
 
 // ---- small pure helpers -------------------------------------------------------------------
 
-function presetOf(guardrails: string | null): string {
-    if (!guardrails) return "balanced";
-    try {
-        const j = JSON.parse(guardrails) as { preset?: string };
-        return typeof j.preset === "string" && j.preset ? j.preset : "balanced";
-    } catch {
-        return "balanced";
-    }
+function presetOf(preset: string | undefined): string {
+    return preset || "balanced";
 }
 
-function parseData(data: string | null): DraftData {
-    if (!data) return {};
+function parseData(spin: string | null): SpinData {
+    if (!spin) return {};
     try {
-        const j = JSON.parse(data);
-        return j && typeof j === "object" ? (j as DraftData) : {};
+        const j = JSON.parse(spin);
+        return j && typeof j === "object" ? (j as SpinData) : {};
     } catch {
         return {};
     }

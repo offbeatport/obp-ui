@@ -7,7 +7,9 @@ import {
     SCORE_META,
     type SpinMessage,
 } from "~/config/spin";
-import type { DraftView } from "~/server/data";
+import type { CompanyDetail } from "~/server/data";
+
+type Spin = NonNullable<CompanyDetail["spin"]>;
 
 // The spin-flow view surfaces, ported to the design prototype's EXACT markup + classes
 // (08-chat-spine-pro-v7.html). Styling lives in command-center/spin-proto.css (verbatim rules
@@ -320,20 +322,20 @@ function BrandLogo({ branding, size }: { branding: Branding; size: number }) {
 }
 
 export function SpecView({
-    draft,
+    spin,
     onCreate,
     onBack,
     busy,
 }: {
-    draft: DraftView;
+    spin: Spin;
     onCreate: () => void;
     onBack: () => void;
     busy: boolean;
 }) {
-    const spec = draft.spec;
-    const branding = draft.branding;
+    const spec = spin.spec;
+    const branding = spin.branding;
     if (!spec || !branding) return null;
-    const picked = draft.candidates.find((c) => c.id === draft.pickedId);
+    const picked = spin.candidates.find((c) => c.id === spin.pickedId);
     const slug = spec.product.toLowerCase().replace(/[^a-z0-9]/g, "");
     const brandVars = {
         "--draft-brand": branding.palette[0],

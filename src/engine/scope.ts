@@ -2,18 +2,18 @@ import { randomUUID } from "node:crypto";
 import { sqlite } from "../db/index.js";
 import { dispatchAI } from "./dispatch.js";
 
-// scope.ts — the engine pass that turns a freshly-created company (just a thought on
+// scope.ts - the engine pass that turns a freshly-created company (just a thought on
 // company.thesis) into a real opportunity + first buildable slice. Design notes (grounded
 // in the pre-impl critique):
-//   • ONE company per tick (bounded fan-out — never a claude-subprocess thundering herd).
+//   • ONE company per tick (bounded fan-out - never a claude-subprocess thundering herd).
 //   • Idempotent via a DURABLE app_config marker `scope.done.<id>` (survives restart AND
-//     resetDemo, which only clears actions/runs) — not the fragile "zero actions" heuristic.
+//     resetDemo, which only clears actions/runs) - not the fragile "zero actions" heuristic.
 //   • All AI (dispatchAI, may spawn `claude -p`) runs OUTSIDE the DB transaction, under an
 //     AbortSignal timeout so a hung child can't pin the guard Set. The emit is ONE atomic
 //     sqlite.transaction that re-checks the marker + active status inside (closes the
 //     check-then-act gap → a Set bypass or mid-scope restart yields 0 or 1 emission).
-//   • The first slice is FORCED to the signup archetype (payload.doneWhen "http-signup") —
-//     the only thing HttpValidator can certify — so "green → ships" actually fires.
+//   • The first slice is FORCED to the signup archetype (payload.doneWhen "http-signup") -
+//     the only thing HttpValidator can certify - so "green → ships" actually fires.
 
 const DISPATCH_MS = 90_000;
 const SIGNUP_TITLE = "A visitor can sign up on a live URL";
@@ -21,7 +21,7 @@ const markKey = (companyId: string) => `scope.done.${companyId}`;
 
 // One un-scoped thought to turn into a company: active, no scope marker, AND an EMPTY action
 // queue. The empty-queue precondition stops scope from injecting a duplicate opportunity +
-// second signup action into companies that already have a backlog — enqueueDemo's "Demo Co"
+// second signup action into companies that already have a backlog - enqueueDemo's "Demo Co"
 // (its own http-signup action, no marker) and any company that predates this feature.
 const PICK = sqlite.prepare(`
   SELECT c.id AS id, c.thesis AS thesis, c.created_at AS createdAt
@@ -52,16 +52,16 @@ const SET_MARK = sqlite.prepare(`
   INSERT INTO app_config (scope, key, value, updated_at) VALUES ('global', ?, 'true', ?)
   ON CONFLICT(scope, key) DO UPDATE SET value = 'true', updated_at = excluded.updated_at
 `);
-// Give the company its real (AI-picked) name. Safe now that routing is id-first — the slug
-// changing doesn't break any link (createCompany navigates by id; cards/inbox link by id).
+// Give the company its real (AI-picked) name. Safe now that routing is id-first - the slug
+// changing doesn't break any link (the spin/graduate flow navigates by id).
 const SET_NAME = sqlite.prepare("UPDATE company SET name = ? WHERE id = ?");
 
 type Opp = { title: string; thesis: string; score: number };
 
-// Atomic emission — re-checks marker + active INSIDE the txn, then writes opportunity +
+// Atomic emission - re-checks marker + active INSIDE the txn, then writes opportunity +
 // narration + first action + marker as one unit. The two narration messages are stamped at
 // the COMPANY's created_at (which always precedes any chat turn), so they can never outrank
-// — and thus never falsely "answer" — a user message the founder types during the scope
+// - and thus never falsely "answer" - a user message the founder types during the scope
 // window (chat.ts keys unanswered-ness off created_at).
 const emit = sqlite.transaction(
     (companyId: string, createdAt: number, thought: string, opp: Opp, spec: string) => {
@@ -72,7 +72,7 @@ const emit = sqlite.transaction(
         INS_MSG.run(
             randomUUID(),
             companyId,
-            `Found an opportunity — ${opp.title}. ${opp.thesis} (demand ${opp.score}/100).`,
+            `Found an opportunity - ${opp.title}. ${opp.thesis} (demand ${opp.score}/100).`,
             createdAt,
         );
         INS_MSG.run(
@@ -96,7 +96,7 @@ const emit = sqlite.transaction(
 export async function scopeNext(inflight: Set<string>): Promise<void> {
     const row = PICK.get() as { id: string; thesis: string; createdAt: number } | undefined;
     if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id); // synchronous, before any await — closes the double-claim window
+    inflight.add(row.id); // synchronous, before any await - closes the double-claim window
     try {
         const opp = await scoreOpportunity(row.thesis);
         const spec = await draftSpec(opp);
@@ -110,7 +110,7 @@ export async function scopeNext(inflight: Set<string>): Promise<void> {
     }
 }
 
-// ---- AI drivers (never throw — internal deterministic fallback) -------------------------
+// ---- AI drivers (never throw - internal deterministic fallback) -------------------------
 
 function fallbackOpp(thought: string): Opp {
     const title =
@@ -145,7 +145,7 @@ async function scoreOpportunity(thought: string): Promise<Opp> {
 }
 
 async function draftSpec(opp: Opp): Promise<string> {
-    const fb = "First slice: a landing page with an email signup — enough to prove demand.";
+    const fb = "First slice: a landing page with an email signup - enough to prove demand.";
     try {
         const r = await dispatchAI("plan", {
             system: "Reply with ONE short sentence (max 22 words) naming the first buildable slice. No preamble, no list.",

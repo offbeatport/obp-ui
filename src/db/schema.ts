@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 // C Slop Slop - data model (docs/SPEC.md).
-// One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing, run.checkpoint, draft.data).
+// One flat schema; JSON columns hold the shape-y bits (action.payload, company.channels/metrics/pricing/spin, run.checkpoint).
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { DraftData, SpinGuardrails } from "../config/spin.js";
+import type { SpinData, SpinStatus } from "../config/spin.js";
 
 // shared column helpers
 const pk = () =>
@@ -53,15 +53,22 @@ export const opportunities = sqliteTable("opportunity", {
     createdAt: createdAt(),
 });
 
-// ---- company - the primitive: one committed bet = one product ----
+// ---- company - the primitive: one bet = one product. Created in status 'draft' during the
+// spin-up incubation (spinStatus + spin hold the chat/opportunity/spec), then graduates to
+// 'active' on approve. ----
 export const companies = sqliteTable("company", {
     id: pk(),
     name: text("name").notNull(),
     gitRemote: text("git_remote"),
     thesis: text("thesis").notNull(),
-    status: text("status", { enum: ["active", "paused", "archived"] })
+    status: text("status", { enum: ["draft", "active", "paused", "archived"] })
         .notNull()
         .default("active"),
+    // Incubation sub-stage while status='draft' (null once active); the spin session payload.
+    spinStatus: text("spin_status", {
+        enum: ["scouting", "proposals", "specing", "spec", "failed"],
+    }).$type<SpinStatus>(),
+    spin: text("spin", { mode: "json" }).$type<SpinData>(),
     domain: text("domain"),
     pricing: text("pricing", { mode: "json" }).$type<Pricing>(),
     channels: text("channels", { mode: "json" })
@@ -124,35 +131,17 @@ export const runs = sqliteTable("run", {
     createdAt: createdAt(),
 });
 
-// ---- message - chat (companyId null = global) ----
+// ---- message - chat (companyId null = global). A draft company's incubation chat is just its
+// company messages - the same thread carries through to the active company. ----
 export const messages = sqliteTable("message", {
     id: pk(),
     companyId: text("company_id").references(() => companies.id),
-    // draft chat (the "spin up a company" conversation); mutually exclusive with companyId.
-    draftId: text("draft_id"),
     role: text("role", { enum: ["user", "assistant", "system"] }).notNull(),
     content: text("content").notNull(),
     createdAt: createdAt(),
 });
 
-// ---- draft — a "spin up a company" session (thought → candidates → spec+branding → commit) --
-export const drafts = sqliteTable("draft", {
-    id: pk(),
-    thought: text("thought").notNull(),
-    status: text("status", {
-        enum: ["scouting", "proposals", "specing", "spec", "committed", "failed"],
-    })
-        .notNull()
-        .default("scouting"),
-    guardrails: text("guardrails", { mode: "json" }).$type<SpinGuardrails>(),
-    data: text("data", { mode: "json" }).$type<DraftData>().notNull().default({}),
-    companyId: text("company_id").references(() => companies.id),
-    createdAt: createdAt(),
-});
-
 // ---- inferred row types ----
-export type Draft = typeof drafts.$inferSelect;
-export type NewDraft = typeof drafts.$inferInsert;
 export type Opportunity = typeof opportunities.$inferSelect;
 export type NewOpportunity = typeof opportunities.$inferInsert;
 export type Company = typeof companies.$inferSelect;
@@ -164,7 +153,7 @@ export type NewRun = typeof runs.$inferInsert;
 export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 
-// ---- app_config — non-secret key-value settings (agent/guardrail/account/onboarding) ----
+// ---- app_config - non-secret key-value settings (agent/guardrail/account/onboarding) ----
 export const appConfig = sqliteTable(
     "app_config",
     {
@@ -178,7 +167,7 @@ export const appConfig = sqliteTable(
     (t) => ({ pk: primaryKey({ columns: [t.scope, t.key] }) }),
 );
 
-// ---- secret — server-only key store; client only ever sees last4 ----
+// ---- secret - server-only key store; client only ever sees last4 ----
 export const secrets = sqliteTable(
     "secret",
     {
