@@ -12,6 +12,7 @@ import {
     opportunities,
     runs,
 } from "../db/index.js";
+import { slugify } from "../lib/slug.js";
 
 // ============================================================================
 // DATA CONTRACT - the read seam between the `engine` lane (fills bodies from the
@@ -34,7 +35,7 @@ export type Slice = { n: number; title: string; state: SliceState; actionId: str
 
 export type CompanySummary = {
     id: string; // immutable company id - the collision-proof routing key
-    slug: string; // human URL key (slugify(name)); may collide, so prefer id for routing
+    slug: string; // human URL key (slugify(name)) - unique platform-wide; the default routing key
     name: string;
     tone: Tone; // avatar tint
     status: CompanyStatus;
@@ -112,17 +113,9 @@ export type PortfolioMetrics = {
 
 const TONES: Tone[] = ["green", "blue", "violet", "slate", "amber", "red"];
 
-// URL key from the company name; getCompany reverses it by re-slugifying candidates.
-// Readable + stable for the few companies a local instance has (collisions resolve to
-// the first match - acceptable at v1's scale).
-export function slugify(name: string): string {
-    return (
-        name
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "") || "company"
-    );
-}
+// slugify (pure) lives in lib/slug.ts; re-exported here for existing importers/tests. It's a
+// company's unique default route key (uniqueness enforced at write time in server/naming.ts).
+export { slugify };
 
 // Stable avatar tint from the company id (deterministic, no stored column).
 function toneFor(id: string): Tone {
@@ -288,10 +281,11 @@ export const listCompanies = createServerFn({ method: "GET" }).handler(
 export const getCompany = createServerFn({ method: "GET" })
     .validator((slug: string) => slug)
     .handler(async ({ data: slug }): Promise<CompanyDetail | null> => {
-        // Resolve by immutable id FIRST (the spin flow navigates by id - collision-proof),
-        // then fall back to slugify(name) for human/portfolio links.
+        // Resolve by the unique name-slug FIRST (the default routing key), then by immutable id
+        // (always accepted too - the volatile draft flow navigates by id). Names are unique
+        // platform-wide (uniqueName), so the slug lookup is unambiguous.
         const all = db.select().from(companies).all();
-        const c = all.find((x) => x.id === slug) ?? all.find((x) => slugify(x.name) === slug);
+        const c = all.find((x) => slugify(x.name) === slug) ?? all.find((x) => x.id === slug);
         if (!c) return null;
         const acts = db.select().from(actions).where(eq(actions.companyId, c.id)).all();
         const msgs = db

@@ -67,7 +67,7 @@ function Inbox() {
                                     <div className="flex items-center gap-2">
                                         <Link
                                             to="/companies/$slug"
-                                            params={{ slug: item.companyId }}
+                                            params={{ slug: item.companySlug || item.companyId }}
                                             className="truncate text-sm font-semibold hover:underline"
                                         >
                                             {item.companyName}
@@ -100,7 +100,7 @@ function Inbox() {
                                     ) : (
                                         <Link
                                             to="/companies/$slug"
-                                            params={{ slug: item.companyId }}
+                                            params={{ slug: item.companySlug || item.companyId }}
                                             className="rounded-md border px-2.5 py-1.5 text-xs font-medium hover:border-primary hover:text-primary"
                                         >
                                             Review →

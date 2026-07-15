@@ -76,11 +76,15 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
         if (creating) return;
         setCreating(true);
         // Let the 5-step create animation (~3.6s) play while the (instant) graduate write runs.
-        await Promise.all([
+        // Land on the graduated company's NAME slug (id still resolves as a fallback).
+        const [res] = await Promise.all([
             approveCompany({ data: { companyId } }),
             new Promise((r) => setTimeout(r, 3700)),
         ]);
-        await navigate({ to: "/companies/$slug", params: { slug: companyId } });
+        await navigate({
+            to: "/companies/$slug",
+            params: { slug: res?.slug ?? companyId },
+        });
         await router.invalidate();
         setCreating(false);
     }, [creating, companyId, navigate, router]);

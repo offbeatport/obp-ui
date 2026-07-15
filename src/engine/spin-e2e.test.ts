@@ -113,6 +113,19 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
         ).toBe(1);
     });
 
+    it("gives same-named spins distinct, unique name slugs", async () => {
+        const a = startSpinLogic("a scheduling tool for tutors", LEAN);
+        const b = startSpinLogic("a scheduling tool for tutors", LEAN);
+        expect(a.slug).toBeTruthy();
+        expect(b.slug).toBeTruthy();
+        expect(a.slug).not.toBe(b.slug); // second one got a " 2" suffix → different slug
+        const names = sqlite
+            .prepare("SELECT name FROM company")
+            .all()
+            .map((r) => (r as { name: string }).name);
+        expect(new Set(names).size).toBe(names.length); // all names unique
+    });
+
     it("continue without research: skips scouting straight to a spec from the idea", async () => {
         const { id } = startSpinLogic("a CRM for plumbers", LEAN);
         expect(readDraft(id)?.spinStatus).toBe("scouting");
