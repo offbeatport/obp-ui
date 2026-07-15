@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { sqlite } from "../db/index.js";
+import { extractJson, str } from "./coerce.js";
 import { dispatchAI } from "./dispatch.js";
+
+// Re-exported so scope.test.ts (and other callers) can keep importing it from here.
+export { extractJson } from "./coerce.js";
 
 // scope.ts - the engine pass that turns a freshly-created company (just a thought on
 // company.thesis) into a real opportunity + first buildable slice. Design notes (grounded
@@ -160,27 +164,6 @@ async function draftSpec(opp: Opp): Promise<string> {
     }
 }
 
-// Defensive parse: strip code fences, take the first balanced {...}, JSON.parse or null.
-export function extractJson(text: string): Record<string, unknown> | null {
-    let t = text
-        .trim()
-        .replace(/^```(?:json)?/i, "")
-        .replace(/```$/, "")
-        .trim();
-    const i = t.indexOf("{");
-    const j = t.lastIndexOf("}");
-    if (i >= 0 && j > i) t = t.slice(i, j + 1);
-    try {
-        const v = JSON.parse(t);
-        return v && typeof v === "object" ? (v as Record<string, unknown>) : null;
-    } catch {
-        return null;
-    }
-}
-
-function str(v: unknown, fb: string, max: number): string {
-    return typeof v === "string" && v.trim() ? v.trim().slice(0, max) : fb;
-}
 function num(v: unknown, fb: number): number {
     return typeof v === "number" && Number.isFinite(v)
         ? Math.max(0, Math.min(100, Math.round(v)))
