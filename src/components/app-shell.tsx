@@ -60,7 +60,7 @@ type NavKey =
 const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "home", label: "Home", icon: Home, to: "/" },
     { key: "inbox", label: "Inbox", icon: Inbox, to: "/inbox" },
-    { key: "guardrails", label: "Guardrails", icon: SlidersHorizontal },
+    { key: "guardrails", label: "Guardrails", icon: SlidersHorizontal, to: "/guardrails" },
     { key: "opportunities", label: "Opportunities", icon: Diamond, to: "/opportunities" },
     { key: "companies", label: "Companies", icon: LayoutGrid, to: "/companies" },
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
