@@ -14,8 +14,8 @@ import {
 } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
 import { graduateCompany } from "../server/spin-logic.js";
+import { extractJson, extractJsonArray, str } from "./coerce.js";
 import { dispatchAI } from "./dispatch.js";
-import { extractJson } from "./scope.js";
 
 // spin.ts - the engine passes behind the "spin up a company" chat. A DRAFT COMPANY (company row,
 // status='draft') is one spin session: company.thesis is the thought, company.spinStatus the
@@ -770,28 +770,6 @@ function seededScores(seed: string, bias: number): OppScores {
         out[k] = clampN(4 + (h % 6) + bias, 3, 9);
     }
     return out;
-}
-
-// Extract the first balanced JSON array from a model reply (strips fences / prose around it).
-function extractJsonArray(text: string): unknown[] {
-    let t = text
-        .trim()
-        .replace(/^```(?:json)?/i, "")
-        .replace(/```$/, "")
-        .trim();
-    const i = t.indexOf("[");
-    const j = t.lastIndexOf("]");
-    if (i >= 0 && j > i) t = t.slice(i, j + 1);
-    try {
-        const v = JSON.parse(t);
-        return Array.isArray(v) ? v : [];
-    } catch {
-        return [];
-    }
-}
-
-function str(v: unknown, fb: string, max: number): string {
-    return typeof v === "string" && v.trim() ? v.trim().slice(0, max) : fb;
 }
 function clamp10(v: unknown, fb: number): number {
     return typeof v === "number" && Number.isFinite(v) ? clampN(Math.round(v), 0, 10) : fb;
