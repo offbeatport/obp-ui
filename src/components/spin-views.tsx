@@ -62,6 +62,9 @@ const SCOUT_LOG = [
 ];
 export function ScoutingView({ thought }: { thought: string }) {
     const [tick, setTick] = useState(0);
+    // The "thinking" detail is collapsible (prototype default: collapsed) — the headline line is a
+    // toggle button, the sources/log/progress live in .spin-scout-more[hidden].
+    const [open, setOpen] = useState(false);
     useEffect(() => {
         const t = setInterval(() => setTick((x) => x + 1), 1300);
         return () => clearInterval(t);
@@ -75,7 +78,12 @@ export function ScoutingView({ thought }: { thought: string }) {
             </div>
             <article className="spin-card spin-scout">
                 <div className="spin-card-body">
-                    <div className="spin-scout-line">
+                    <button
+                        type="button"
+                        className="spin-scout-line"
+                        aria-expanded={open}
+                        onClick={() => setOpen((o) => !o)}
+                    >
                         <span className="spinner" />
                         <span className="spin-scout-headline">
                             Scouting around <b>{clip(thought, 46)}</b> · scanning{" "}
@@ -84,8 +92,11 @@ export function ScoutingView({ thought }: { thought: string }) {
                         <span className="spin-scout-meta mono">
                             {done} / {SCOUT_SOURCES.length}
                         </span>
-                    </div>
-                    <div className="spin-scout-more">
+                        <span className="spin-scout-cv" aria-hidden="true">
+                            ▾
+                        </span>
+                    </button>
+                    <div className="spin-scout-more" hidden={!open}>
                         <div className="spin-sources">
                             {SCOUT_SOURCES.map((s, i) => (
                                 <span
