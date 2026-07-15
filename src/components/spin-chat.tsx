@@ -239,7 +239,7 @@ function ChatComposer({
     };
 
     return (
-        <div className="px-5 pb-5 pt-2">
+        <div className="px-5 pb-10 pt-2">
             <div className="relative rounded-2xl border bg-card shadow-e1 transition focus-within:ring-2 focus-within:ring-primary/40">
                 <textarea
                     ref={ref}
@@ -253,14 +253,16 @@ function ChatComposer({
                         }
                     }}
                     placeholder={HINTS[stage ?? ""] ?? "Message…"}
-                    className="block max-h-40 min-h-11 w-full resize-none rounded-2xl bg-transparent px-4 py-3 pr-12 font-display text-base outline-none placeholder:font-display placeholder:text-muted-foreground/70"
+                    // Big Space Grotesk title input (echoes the .spin-hero-q hero: display font,
+                    // light weight, tight tracking).
+                    className="block max-h-48 min-h-14 w-full resize-none rounded-2xl bg-transparent px-5 py-4 pr-14 font-display text-2xl font-light leading-snug tracking-tight outline-none placeholder:text-muted-foreground/45"
                 />
                 <button
                     type="button"
                     onClick={() => void submit()}
                     disabled={sending || !text.trim()}
                     aria-label="Send"
-                    className="absolute right-2.5 bottom-2.5 grid size-8 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40"
+                    className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40"
                 >
                     {sending ? <Loader2 className="size-4 animate-spin" /> : "↑"}
                 </button>
