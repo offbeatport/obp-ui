@@ -131,7 +131,6 @@ function createTables(s: Database.Database) {
     CREATE INDEX IF NOT EXISTS run_company_status     ON run(company_id, status);
     CREATE INDEX IF NOT EXISTS run_status             ON run(status);
     CREATE INDEX IF NOT EXISTS message_company        ON message(company_id);
-    CREATE INDEX IF NOT EXISTS company_status          ON company(status, spin_status);
   `);
     // Lightweight forward-migration for pre-existing DBs (no migration system): add columns that
     // CREATE TABLE IF NOT EXISTS won't retro-add. Ignore "duplicate column" on already-migrated DBs.
@@ -145,4 +144,7 @@ function createTables(s: Database.Database) {
             /* column already exists */
         }
     }
+    // Index on the just-migrated columns - MUST run after the ALTERs above (an existing DB won't
+    // have spin_status until they've applied).
+    s.exec("CREATE INDEX IF NOT EXISTS company_status ON company(status, spin_status);");
 }
