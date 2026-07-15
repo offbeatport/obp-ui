@@ -13,10 +13,10 @@ import {
 import type { DraftView } from "~/server/data";
 import { Button } from "./ui/button";
 
-// The spin-flow view surfaces (scouting → proposals → spec → creating). Pure presentation —
+// The spin-flow view surfaces (scouting → proposals → spec → creating). Pure presentation -
 // the route (companies/new.tsx) owns state + server calls and passes them as callbacks. Built
 // from design tokens per DESIGN.md; the only inline colors are the AI-generated brand palette
-// (data, like an avatar tint — not UI chrome).
+// (data, like an avatar tint - not UI chrome).
 
 // ---- score band → semantic token family --------------------------------------------------
 type Band = "hi" | "mid" | "lo";
@@ -35,46 +35,75 @@ const BAND_PIP: Record<Band, string> = {
 };
 
 // ---- scouting: the scout is scanning for demand -------------------------------------------
-const SCAN_SOURCES = [
-    "internet communities",
-    "search-volume trends",
-    "competitor pricing pages",
-    "indie forums & Discords",
-    "willingness-to-pay signals",
-    "product-gap scans",
+
+// The phases the scout narrates while it works. It cycles until the engine returns candidates.
+const SCOUT_PHASES = [
+    "Scanning communities for demand signals",
+    "Reading competitor pricing pages",
+    "Measuring willingness to pay",
+    "Spotting gaps the incumbents miss",
+    "Scoring the strongest bets",
 ];
+const SCOUT_SOURCES = ["reddit", "search trends", "pricing pages", "forums", "review sites"];
+
 export function ScoutingView({ thought }: { thought: string }) {
-    const [n, setN] = useState(1);
+    const [phase, setPhase] = useState(0);
     useEffect(() => {
-        const t = setInterval(() => setN((x) => Math.min(SCAN_SOURCES.length, x + 1)), 700);
+        const t = setInterval(() => setPhase((p) => p + 1), 1600);
         return () => clearInterval(t);
     }, []);
+    const step = phase % SCOUT_PHASES.length;
+    // Sources "light up" progressively as the scout advances through phases.
+    const lit = Math.min(SCOUT_SOURCES.length, phase + 1);
+
     return (
-        <div className="rounded-[var(--radius-card)] border bg-card p-5 shadow-e1">
-            <div className="flex items-center gap-3">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border bg-card shadow-e1">
+            <div className="flex items-center gap-3 px-5 pt-5">
                 <span className="grid size-9 flex-none place-items-center rounded-xl bg-accent text-accent-foreground">
                     <Search className="size-4" />
                 </span>
-                <div className="min-w-0">
-                    <p className="text-sm font-semibold">Scouting the opportunity</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                        Scanning demand signals around “{thought}”
-                    </p>
+                <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">Scouting opportunities</p>
+                    <p className="truncate text-xs text-muted-foreground">around “{thought}”</p>
                 </div>
-                <Loader2 className="ml-auto size-4 flex-none animate-spin text-primary" />
+                <Loader2 className="size-4 flex-none animate-spin text-primary" />
             </div>
-            <ul className="mt-4 space-y-1.5">
-                {SCAN_SOURCES.map((s, i) => (
-                    <li key={s} className="flex items-center gap-2.5 text-[13px]">
-                        {i < n ? (
-                            <Check className="size-3.5 flex-none text-success" />
-                        ) : (
-                            <span className="size-3.5 flex-none rounded-full border border-border-soft" />
-                        )}
-                        <span className={i < n ? "text-foreground" : "text-faint"}>{s}</span>
-                    </li>
+
+            {/* cycling status line */}
+            <div className="px-5 py-3.5">
+                <div className="flex items-center gap-2.5 text-[13px]">
+                    <span className="relative flex size-2 flex-none">
+                        <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary/60" />
+                        <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                    </span>
+                    {/* key on step so React remounts → the fade/slide re-triggers each phase */}
+                    <span
+                        key={step}
+                        className="animate-in fade-in slide-in-from-bottom-1 duration-300"
+                    >
+                        {SCOUT_PHASES[step]}…
+                    </span>
+                </div>
+            </div>
+
+            {/* indeterminate shimmer bar */}
+            <div className="mx-5 h-1 overflow-hidden rounded-full bg-muted">
+                <div className="h-full w-1/3 rounded-full bg-primary animate-[scout-slide_1.4s_ease-in-out_infinite]" />
+            </div>
+
+            {/* sources lighting up */}
+            <div className="flex flex-wrap gap-1.5 px-5 pt-3.5 pb-5">
+                {SCOUT_SOURCES.map((s, i) => (
+                    <span
+                        key={s}
+                        className={`rounded-full px-2 py-0.5 font-mono text-[10px] transition-colors duration-500 ${
+                            i < lit ? "bg-accent text-accent-foreground" : "bg-muted text-faint"
+                        }`}
+                    >
+                        {s}
+                    </span>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 }
@@ -296,7 +325,7 @@ export function SpecView({
     return (
         <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-                Here’s the full company spec. Create it and I’ll start the build loop — the first
+                Here’s the full company spec. Create it and I’ll start the build loop - the first
                 slice is your one sanity-check.
             </p>
             <article className="overflow-hidden rounded-[var(--radius-card)] border bg-card shadow-e1">
@@ -327,7 +356,7 @@ export function SpecView({
                             label="Est. MRR"
                             value={`$${fmtK(spec.market.mrrLow)}–${fmtK(spec.market.mrrHigh)}`}
                         />
-                        <Fact label="Domain" value={brand?.domain ?? "—"} mono />
+                        <Fact label="Domain" value={brand?.domain ?? "-"} mono />
                     </div>
 
                     <Field label="Who it’s for">{spec.icp}</Field>

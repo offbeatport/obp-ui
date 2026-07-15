@@ -90,7 +90,7 @@
 
     --primary: #e0794c; /* terracotta, brightened for dark */
     --primary-foreground: #ffffff;
-    --accent: rgba(224, 121, 78, 0.18); /* accent-soft — terracotta tint (matches prototype) */
+    --accent: rgba(224, 121, 78, 0.18); /* accent-soft - terracotta tint (matches prototype) */
     --accent-foreground: #f0a07e;
 
     --border: #1c2233;
@@ -224,19 +224,8 @@
     box-shadow: var(--shadow-e2);
 }
 
-/* logo "Glow C" mark — terracotta C block with a glow. Dark mode gets a brighter, larger
-   halo (brightened terracotta) so it actually reads on the near-black background. */
-.logo-mark {
-    background: radial-gradient(circle at 32% 28%, #e08458, var(--primary));
-    box-shadow: 0 0 0 4px rgba(200, 100, 60, 0.13), 0 4px 16px rgba(200, 100, 60, 0.5), inset 0 1px
-        1px rgba(255, 255, 255, 0.4);
-}
-.dark .logo-mark {
-    box-shadow: 0 0 0 5px rgba(224, 121, 78, 0.15), 0 0 22px rgba(224, 121, 78, 0.95), 0 6px 28px
-        rgba(224, 121, 78, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-}
 
-/* Instant hover feedback — buttons, links, and menu/tab items snap their hover
+/* Instant hover feedback - buttons, links, and menu/tab items snap their hover
    color/background with no fade. Everything else (sidebar collapse slide, the new-company
    spring icon, keyframe @animations) keeps its timing. Applies to all future ones too. */
 button,
@@ -261,7 +250,7 @@ summary {
     cursor: pointer;
 }
 
-/* new-company icon — the ONE hover kept animated, exactly like the prototype (.nav-newco):
+/* new-company icon - the ONE hover kept animated, exactly like the prototype (.nav-newco):
    transform spring-rotates over .22s, background/color ease over .15s. Higher specificity +
    !important so it survives the global instant-transition rule above. */
 .newco-ic {
@@ -269,7 +258,7 @@ summary {
         0.15s !important;
 }
 /* Direct transform (not Tailwind's var-based rotate, which can't interpolate) so the spring
-   actually plays — the tile rotates 90° through a diamond, filling terracotta with a white +. */
+   actually plays - the tile rotates 90° through a diamond, filling terracotta with a white +. */
 .nav-newco:hover .newco-ic {
     transform: rotate(90deg);
     background-color: var(--primary);
@@ -290,10 +279,20 @@ summary {
     animation: pulse 1.4s ease-in-out infinite;
 }
 
+/* indeterminate progress sweep (the scouting loader bar) */
+@keyframes scout-slide {
+    0% {
+        transform: translateX(-110%);
+    }
+    100% {
+        transform: translateX(410%);
+    }
+}
+
 /* ============================================================================
-   AGENT CONSOLE — bottom-docked "one agent per company, live" panel, ported
+   AGENT CONSOLE - bottom-docked "one agent per company, live" panel, ported
    from design/v2-prototypes/08-chat-spine-pro-v7.html. Follows the global
-   light/dark theme via the shared design tokens (tokens only — no bare hex);
+   light/dark theme via the shared design tokens (tokens only - no bare hex);
    log-line + state colors reuse the status language. Live dot uses the Sonar
    pulse (steady core + expanding ring). See src/components/agent-console.tsx.
    ============================================================================ */
@@ -334,7 +333,7 @@ summary {
     transform: translateY(-2px);
     color: var(--foreground);
 }
-/* "skirt" pinned beneath the tab — moves up with the hover lift so the raised
+/* "skirt" pinned beneath the tab - moves up with the hover lift so the raised
    button never exposes a sliver of page background below it. */
 .console-tab::after {
     content: "";
@@ -402,7 +401,7 @@ summary {
 .console.open .console-panel {
     transform: translateY(0);
 }
-/* drag handle along the panel's top edge — resize taller/shorter */
+/* drag handle along the panel's top edge - resize taller/shorter */
 .console-resize {
     flex: 0 0 auto;
     height: 8px;
