@@ -133,10 +133,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     return (
         <div className="flex h-full flex-col">
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-                <div
-                    className="spin mx-auto w-full"
-                    style={{ maxWidth: 840, padding: "22px 20px 8px" }}
-                >
+                <div className="mx-auto w-full" style={{ maxWidth: 840, padding: "22px 20px 8px" }}>
                     {thread}
                     {showTyping && <Typing />}
 
@@ -184,12 +181,13 @@ function announcementId(messages: CompanyDetail["messages"], stage?: string): st
     return undefined;
 }
 
+// Assistant "typing" turn — matches spin-views' AssistantTurn (hidden avatar + flat stream body).
 function Typing() {
     return (
-        <div className="spin-msg assistant">
-            <div className="spin-av">C</div>
-            <div className="spin-stream-body">
-                <div className="spin-bubble">
+        <div className="flex items-start gap-[12px]">
+            <div className="hidden">C</div>
+            <div className="flex min-w-0 flex-1 flex-col gap-[11px]">
+                <div className="py-[2px]">
                     <span className="inline-flex items-center gap-1">
                         {[0, 1, 2].map((i) => (
                             <span

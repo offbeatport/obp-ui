@@ -287,3 +287,66 @@ summary {
         transform: translateX(410%);
     }
 }
+
+/* ============================================================================
+   Animation keyframes for the inline-Tailwind ports (were in the deleted
+   command-center/*.css). Components reference these via arbitrary utilities,
+   e.g. animate-[spin-rot_0.7s_linear_infinite]. Keyframes are the one thing
+   that cannot be a utility, so they live here centrally.
+   ========================================================================== */
+@keyframes spin-rot {
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes spin-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+@keyframes spin-blink {
+    50% {
+        opacity: 0;
+    }
+}
+@keyframes spin-shimmer {
+    to {
+        transform: translateX(100%);
+    }
+}
+@keyframes cc-rot {
+    to {
+        stroke-dashoffset: -150;
+    }
+}
+@keyframes co-halo {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+}
+@keyframes co-blink {
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+    50% {
+        opacity: 0.85;
+    }
+}
+@keyframes co-pip {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+    }
+}

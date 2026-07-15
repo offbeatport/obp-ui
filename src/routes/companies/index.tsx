@@ -4,8 +4,6 @@ import { AppShell } from "~/components/app-shell";
 import { CompanyCard } from "~/components/command-center/company-card";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { getPortfolioMetrics, listActivity, listCompanies } from "~/server/data";
-// CompanyCard's .co-card visuals live in proto.css (scoped under .cc); load it here.
-import "~/components/command-center/proto.css";
 
 // The Portfolio — every company you've started, as a card grid, with a portfolio stats strip.
 // Reuses the prototype-faithful CompanyCard; the wrapper is inline Tailwind.
