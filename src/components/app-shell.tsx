@@ -13,11 +13,13 @@ import {
     SlidersHorizontal,
     Wrench,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { AgentConsole } from "~/components/agent-console";
+import { TONE } from "~/components/command-center/tone";
 import { Logo, LogoMark } from "~/components/logo";
 import { UserMenu } from "~/components/user-menu";
 import { cn } from "~/lib/utils";
+import { type CompanySummary, listCompanies } from "~/server/data";
 
 // The app shell - left rail + main workspace - reproducing
 // design/v2-prototypes/08-chat-spine-pro-v7.html. Follow that prototype for all shell work.
@@ -118,20 +120,7 @@ function Rail({
                 ))}
 
                 <SectionHead collapsed={collapsed}>Companies</SectionHead>
-                {!collapsed && (
-                    <div className="mx-1 mt-1 rounded-md border border-dashed p-4 text-center">
-                        <div className="text-[13px] font-semibold">No companies yet</div>
-                        <p className="mx-auto mt-1 max-w-[15rem] text-[12px] leading-relaxed text-faint">
-                            You bring the ideas - I build, launch and run them.
-                        </p>
-                        <Link
-                            to="/companies/new"
-                            className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-[12.5px] font-semibold text-accent-foreground transition hover:brightness-105"
-                        >
-                            <Plus className="size-3.5" /> Start your first company
-                        </Link>
-                    </div>
-                )}
+                {!collapsed && <CompaniesNav />}
 
                 <SectionHead collapsed={collapsed}>Chats</SectionHead>
                 {!collapsed &&
@@ -173,6 +162,98 @@ const CHATS = [
     { title: "Which company should I double down on?", ago: "2h ago" },
 ];
 
+function initials(name: string): string {
+    const caps = name.match(/[A-Z]/g);
+    if (caps && caps.length >= 2) return caps.slice(0, 2).join("");
+    return name.slice(0, 2).toUpperCase();
+}
+
+// Live company list in the rail. Self-fetches + polls (5s) so a just-spun-up DRAFT company
+// (created by /companies/new before it navigates) shows here without a manual refresh. Shows the
+// empty-state prompt only when there are genuinely no companies.
+function CompaniesNav() {
+    const [companies, setCompanies] = useState<CompanySummary[] | null>(null);
+
+    useEffect(() => {
+        let stopped = false;
+        const load = () => {
+            listCompanies()
+                .then((c) => {
+                    if (!stopped) setCompanies(c);
+                })
+                .catch(() => {
+                    /* transient - keep the last list, retry next tick */
+                });
+        };
+        load();
+        const timer = setInterval(load, 5000);
+        const onFocus = () => load();
+        window.addEventListener("focus", onFocus);
+        return () => {
+            stopped = true;
+            clearInterval(timer);
+            window.removeEventListener("focus", onFocus);
+        };
+    }, []);
+
+    // First load not back yet: render nothing (avoids flashing the empty-state, then the list).
+    if (companies === null) return null;
+
+    if (companies.length === 0) {
+        return (
+            <div className="mx-1 mt-1 rounded-md border border-dashed p-4 text-center">
+                <div className="text-[13px] font-semibold">No companies yet</div>
+                <p className="mx-auto mt-1 max-w-[15rem] text-[12px] leading-relaxed text-faint">
+                    You bring the ideas - I build, launch and run them.
+                </p>
+                <Link
+                    to="/companies/new"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-[12.5px] font-semibold text-accent-foreground transition hover:brightness-105"
+                >
+                    <Plus className="size-3.5" /> Start your first company
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="mt-1 space-y-0.5">
+            {companies.map((c) => (
+                <Link
+                    key={c.id}
+                    to="/companies/$slug"
+                    params={{ slug: c.id }}
+                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition hover:bg-primary/[0.06]"
+                >
+                    <span
+                        className={cn(
+                            "grid size-6 flex-none place-items-center rounded-md text-[10px] font-bold text-primary-foreground",
+                            TONE[c.tone].solid,
+                        )}
+                    >
+                        {initials(c.name)}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
+                        {c.name}
+                    </span>
+                    {c.status === "draft" ? (
+                        <span className="flex-none rounded bg-neutral-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.05em] text-neutral">
+                            draft
+                        </span>
+                    ) : (
+                        c.needsYou && (
+                            <span
+                                className="size-1.5 flex-none rounded-full bg-primary"
+                                aria-label="Needs you"
+                            />
+                        )
+                    )}
+                </Link>
+            ))}
+        </div>
+    );
+}
+
 function NavItem({
     icon: Icon,
     label,
@@ -196,10 +277,7 @@ function NavItem({
         <>
             <span
                 className={cn(
-                    "grid size-8 flex-none place-items-center rounded-md",
-                    tint || active
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-accent text-accent-foreground",
+                    "grid size-8 flex-none place-items-center rounded-md bg-accent text-primary",
                     // New-company: spring-rotate the plus + fill terracotta on hover. The hover
                     // state lives in globals.css (.nav-newco:hover .newco-ic) with a DIRECT transform
                     // so the .22s spring actually interpolates (Tailwind's var-based rotate can't).
@@ -213,7 +291,7 @@ function NavItem({
         </>
     );
     const cls = cn(
-        "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13.5px] font-medium transition",
+        "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13.5px] font-semibold transition",
         active && "bg-card text-foreground shadow-e1",
         !locked && "text-muted-foreground hover:bg-primary/[0.15] hover:text-foreground",
         // locked = disabled: dimmed, no hover, not interactive
