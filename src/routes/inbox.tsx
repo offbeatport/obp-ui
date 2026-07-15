@@ -1,12 +1,12 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { AppShell } from "~/components/app-shell";
 import { TONE_VAR } from "~/components/command-center/tone";
+import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { approveAction, rejectAction } from "~/server/actions";
 import { type InboxItem, listInbox } from "~/server/data";
 import "~/components/command-center/proto.css";
 
-// The needs-you inbox — every action awaiting your call. Wired to listInbox() with real
+// The needs-you inbox - every action awaiting your call. Wired to listInbox() with real
 // Approve/Reject controls (was a dead placeholder). Lane: surfaces.
 export const Route = createFileRoute("/inbox")({
     loader: async () => ({ items: await listInbox() }),
@@ -22,19 +22,15 @@ const KIND: Record<InboxItem["kind"], string> = {
 function Inbox() {
     const { items } = Route.useLoaderData();
     const router = useRouter();
-
     // Poll so shipped/blocked items clear (and new ones arrive) without a manual reload.
-    useEffect(() => {
-        const t = setInterval(() => void router.invalidate(), 3000);
-        return () => clearInterval(t);
-    }, [router]);
+    usePollInvalidate(3000);
 
     const approve = async (id: string) => {
         await approveAction({ data: id });
         await router.invalidate();
     };
     const reject = async (id: string) => {
-        const feedback = window.prompt("Reject — what should change on the next attempt?") ?? "";
+        const feedback = window.prompt("Reject - what should change on the next attempt?") ?? "";
         await rejectAction({ data: { actionId: id, feedback } });
         await router.invalidate();
     };
@@ -52,7 +48,7 @@ function Inbox() {
 
                 {items.length === 0 ? (
                     <div className="mt-8 rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                        Nothing needs you right now — the agents are running clear.
+                        Nothing needs you right now - the agents are running clear.
                     </div>
                 ) : (
                     <div className="mt-6 space-y-2.5">

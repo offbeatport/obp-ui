@@ -1,6 +1,6 @@
 import type { ProviderId as LogoId } from "~/components/provider-logos";
 
-// CLIENT-SAFE catalog (no sqlite import) — the taxonomy of coarse AI tasks, the provider
+// CLIENT-SAFE catalog (no sqlite import) - the taxonomy of coarse AI tasks, the provider
 // catalog, per-task defaults, and the two-button simple presets. The resolver that reads
 // config lives in ai-tasks.ts (server-only).
 
@@ -25,10 +25,10 @@ export type AiTask = (typeof AI_TASKS)[number];
 export const MODEL_TASKS = AI_TASKS.filter((t) => t !== "build") as Exclude<AiTask, "build">[];
 
 export const TASK_META: Record<AiTask, { label: string; purpose: string }> = {
-    build: { label: "Build", purpose: "Writes & ships code — the coding agent (hands)." },
+    build: { label: "Build", purpose: "Writes & ships code - the coding agent (hands)." },
     opportunities: {
         label: "Opportunities",
-        purpose: "Scores thoughts into ranked bets — cheap, high-volume.",
+        purpose: "Scores thoughts into ranked bets - cheap, high-volume.",
     },
     research: {
         label: "Research",
@@ -59,7 +59,7 @@ export const PROVIDERS: { id: ProviderId; label: string; models: string[]; logo?
         label: "OpenRouter",
         models: ["anthropic/claude-3.7-sonnet", "openai/gpt-4o", "perplexity/sonar"],
     },
-    // Direct-API providers use their native model IDs — NO "provider/" prefix (that's an
+    // Direct-API providers use their native model IDs - NO "provider/" prefix (that's an
     // OpenRouter-only routing convention).
     {
         id: "anthropic",
@@ -82,11 +82,7 @@ export const PROVIDERS: { id: ProviderId; label: string; models: string[]; logo?
     { id: "custom", label: "Custom…", models: [] },
 ];
 
-export function providerLabel(id: string): string {
-    return PROVIDERS.find((p) => p.id === id)?.label ?? id;
-}
-
-// OpenRouter model per task — used when an OpenRouter key is present (the "preferred" mode).
+// OpenRouter model per task - used when an OpenRouter key is present (the "preferred" mode).
 export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: string }> = {
     build: { provider: "noop", model: "" },
     opportunities: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
@@ -97,8 +93,8 @@ export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: str
     orchestrate: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
 };
 
-// Claude-subscription model per task — the DEFAULT when no OpenRouter key is set. Cheap
-// high-volume tasks get Haiku; heavier reasoning gets Sonnet. (No live web research here —
+// Claude-subscription model per task - the DEFAULT when no OpenRouter key is set. Cheap
+// high-volume tasks get Haiku; heavier reasoning gets Sonnet. (No live web research here -
 // that's the reason to add an OpenRouter key and route research to Perplexity.)
 export const CLAUDE_TASK_MODEL: Record<AiTask, string> = {
     build: "",

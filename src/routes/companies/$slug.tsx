@@ -1,18 +1,19 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
-import { type CSSProperties, useCallback, useEffect, useState } from "react";
+import { type CSSProperties, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { TONE, TONE_VAR } from "~/components/command-center/tone";
+import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { approveAction, messageCompany, rejectAction } from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies } from "~/server/data";
-// The .cc command-center stylesheet this page relies on — load it here so a direct
+// The .cc command-center stylesheet this page relies on - load it here so a direct
 // /companies/<slug> visit is styled (its route chunk doesn't include the home chunk).
 import "~/components/command-center/proto.css";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
         // params.slug is usually the immutable company id (create navigates by id), but may
-        // be a human slug from a portfolio link — resolve either.
+        // be a human slug from a portfolio link - resolve either.
         const [detail, companies, activity] = await Promise.all([
             getCompany({ data: params.slug }),
             listCompanies(),
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/companies/$slug")({
 
 const CO_TABS = ["Overview", "Pipeline", "Workspace", "Product", "Growth", "Setup", "Source Code"];
 
-// Company workspace — the live prototype: left co-pilot chat (renderCompanyLeft / .cpg-chat)
+// Company workspace - the live prototype: left co-pilot chat (renderCompanyLeft / .cpg-chat)
 // + center tabbed company view (renderCompanyView / .co-tabs + .co-ov3 Overview).
 // design/v2-prototypes/08-chat-spine-pro-v7.html.
 function CompanyWorkspace() {
@@ -47,10 +48,7 @@ function CompanyWorkspace() {
 
     // Poll the loader so the engine's scope narration, chat replies and build/run status
     // stream in without a manual reload.
-    useEffect(() => {
-        const t = setInterval(() => void router.invalidate(), 2500);
-        return () => clearInterval(t);
-    }, [router]);
+    usePollInvalidate(2500);
 
     const send = useCallback(async () => {
         const t = text.trim();
@@ -58,7 +56,7 @@ function CompanyWorkspace() {
         setSending(true);
         try {
             await messageCompany({ data: { companyId, text: t } });
-            setText(""); // clear only after the write succeeds — don't lose text on failure
+            setText(""); // clear only after the write succeeds - don't lose text on failure
             await router.invalidate();
         } catch {
             /* keep the text so the founder can retry; a transient RPC failure isn't data loss */
@@ -77,7 +75,7 @@ function CompanyWorkspace() {
     const reject = useCallback(
         async (actionId: string) => {
             const feedback =
-                window.prompt("Reject — what should change on the next attempt?") ?? "";
+                window.prompt("Reject - what should change on the next attempt?") ?? "";
             await rejectAction({ data: { actionId, feedback } });
             await router.invalidate();
         },
@@ -151,7 +149,7 @@ function CompanyWorkspace() {
                                 </span>
                                 <p className="mt-3 text-sm font-medium">Message {co.name}</p>
                                 <p className="mt-1 text-xs text-faint">
-                                    Steer this company — ask for changes, approve slices, set
+                                    Steer this company - ask for changes, approve slices, set
                                     direction.
                                 </p>
                             </div>
@@ -258,7 +256,7 @@ const FD: Record<string, string> = {
     red: "a",
 };
 
-// Overview tab (co-ov3) — stats · mission · now-building · up-next · recent activity.
+// Overview tab (co-ov3) - stats · mission · now-building · up-next · recent activity.
 function Overview({
     co,
     thesis,
@@ -280,7 +278,7 @@ function Overview({
             slice.state === "blocked")
             ? slice
             : null;
-    // "Up next" is only genuinely-pending work — never a finished (shipped) slice.
+    // "Up next" is only genuinely-pending work - never a finished (shipped) slice.
     const queued = slice && slice.state === "todo" ? slice : null;
 
     return (
@@ -351,7 +349,7 @@ function Overview({
                         </div>
                     ) : (
                         <div className="ov3-empty">
-                            Nothing building right now — the queue is clear.
+                            Nothing building right now - the queue is clear.
                         </div>
                     )}
                 </div>
@@ -393,7 +391,7 @@ function Overview({
                     ) : (
                         <li>
                             <i className="fd a" style={{ background: TONE_VAR.violet }} />
-                            <span>Agent is warming up — first activity soon.</span>
+                            <span>Agent is warming up - first activity soon.</span>
                         </li>
                     )}
                 </ul>
