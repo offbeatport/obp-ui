@@ -247,7 +247,7 @@
   .orbit-svg { position: absolute; inset: 0; width: 260px; height: 260px; overflow: visible; }
   .orbit { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 2 6; }
 
-  /* feedback particles (the hero — flow backward: Run -> Grow -> Build) */
+  /* feedback particles (the hero - flow backward: Run -> Grow -> Build) */
   .flow { position: absolute; inset: 0; width: 260px; height: 260px; pointer-events: none; z-index: 1; }
   .fp {
     position: absolute; top: 0; left: 0; width: 7px; height: 7px; border-radius: 50%;
@@ -409,7 +409,7 @@
     <div class="intro-in">
       <span class="eyebrow">the build loop</span>
       <h1>Every company runs three functions <em>at once</em>.</h1>
-      <p class="sub"><b>Build</b>, <b>Grow</b> and <b>Run</b> aren't steps — they're parallel, always-on. Each unlocks as a company matures, then runs concurrently. The loop's heart: what <b>Run</b> learns flows <em>backward</em> through <b>Grow</b> into <b>Build</b>.</p>
+      <p class="sub"><b>Build</b>, <b>Grow</b> and <b>Run</b> aren't steps - they're parallel, always-on. Each unlocks as a company matures, then runs concurrently. The loop's heart: what <b>Run</b> learns flows <em>backward</em> through <b>Grow</b> into <b>Build</b>.</p>
       <div class="legend">
         <span class="lg a-build"><i></i> Build · product</span>
         <span class="lg a-grow"><i></i> Grow · GTM</span>
@@ -429,7 +429,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>the build loop</b> — Build · Grow · Run, always on</span>
+    <span>C Slop Slop · <b>the build loop</b> - Build · Grow · Run, always on</span>
     <span>the AI runs it · <b>you oversee</b></span>
   </footer>
 
@@ -459,7 +459,7 @@
   var COMPANIES = [
     { name: 'LeadSift', stage: 'Growing', areas: {
         build: { state: 'active', aut: 'L1', task: 'CSV export', log: ['wrote the exporter', 'ran tests ✓', 'deployed to staging'] },
-        grow:  { state: 'needs',  aut: 'L0', task: 'Product Hunt launch — $40 gated', log: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
+        grow:  { state: 'needs',  aut: 'L0', task: 'Product Hunt launch - $40 gated', log: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
         run:   { state: 'active', aut: 'L1', task: 'onboarding + support', log: ['sent 3 onboarding emails', 'answered a ticket'] }
     } },
     { name: 'QuietInbox', stage: 'Growing', areas: {
@@ -470,15 +470,15 @@
     { name: 'DataDrop', stage: 'Testing', areas: {
         build: { state: 'active', aut: 'L1', task: 'Saved chart views', log: ['re-prioritized backlog', 'cleaning CSV parser'] },
         grow:  { state: 'needs',  aut: 'L0', task: 'r/SaaS launch thread', log: ['drafted the thread + 3 replies', 'awaiting your post'] },
-        run:   { state: 'idle',   aut: 'L1', task: 'quiet — 1 open ticket', log: ['checked uptime · 200 OK'] }
+        run:   { state: 'idle',   aut: 'L1', task: 'quiet - 1 open ticket', log: ['checked uptime · 200 OK'] }
     } },
     { name: 'TranslatorBill', stage: 'Building', areas: {
         build: { state: 'active', aut: 'L1', task: 'InvoiceFormatter.tsx', log: ['translating a sample invoice', 'ran tests · green'] },
-        grow:  { state: 'off', aut: 'off', task: 'blocked — no domain', unlock: 'unlocks at Testing' },
+        grow:  { state: 'off', aut: 'off', task: 'blocked - no domain', unlock: 'unlocks at Testing' },
         run:   { state: 'off', aut: 'off', task: 'pre-revenue', unlock: 'unlocks when live' }
     } },
     { name: 'PricePeek', stage: 'Idea', areas: {
-        build: { state: 'idle', aut: 'L0', task: 'validating — 15 interviews', log: ['drafted interview script', 'listed 15 targets'] },
+        build: { state: 'idle', aut: 'L0', task: 'validating - 15 interviews', log: ['drafted interview script', 'listed 15 targets'] },
         grow:  { state: 'off', aut: 'off', task: '', unlock: 'unlocks at Testing' },
         run:   { state: 'off', aut: 'off', task: '', unlock: 'unlocks when live' }
     } },
@@ -523,7 +523,7 @@
       lbl = '<span class="node-lbl"><b>' + m.label + '</b>' + esc(autTxt) + '</span>';
     }
     var aria = a.state === 'off'
-      ? m.label + ' area off — ' + (a.unlock || '')
+      ? m.label + ' area off - ' + (a.unlock || '')
       : m.label + ' area ' + a.state + ', autonomy ' + autTxt + ', ' + a.task;
     return '<div class="node-wrap" style="left:' + x[0] + 'px;top:' + x[1] + 'px">' +
       '<button class="node ' + m.cls + ' st-' + a.state + '" aria-label="' + esc(aria) + '"' + (a.state === 'off' ? ' tabindex="-1"' : '') + '>' +
@@ -574,7 +574,7 @@
         nodeHTML(co, 'build') + nodeHTML(co, 'grow') + nodeHTML(co, 'run') +
         hubHTML(co) +
       '</div>' +
-      '<div class="fb-note" aria-hidden="true">↺ <b>feedback</b> — what Run learns loops back into Build</div>' +
+      '<div class="fb-note" aria-hidden="true">↺ <b>feedback</b> - what Run learns loops back into Build</div>' +
       feed +
     '</div>';
   }
@@ -594,7 +594,7 @@
 
   function cardHTML(co, i) {
     return '<article class="co ' + STAGECLS[co.stage] + (co.dead ? ' dead' : '') +
-      '" style="animation-delay:' + Math.min(i * 55, 400) + 'ms" aria-label="' + esc(co.name) + ' — ' + esc(co.stage) + '">' +
+      '" style="animation-delay:' + Math.min(i * 55, 400) + 'ms" aria-label="' + esc(co.name) + ' - ' + esc(co.stage) + '">' +
       ringViewHTML(co) + compactHTML(co) +
     '</article>';
   }

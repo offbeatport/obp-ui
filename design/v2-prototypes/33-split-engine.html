@@ -294,7 +294,7 @@
   <div class="queue-head">
     <span class="ttl">Needs you</span>
     <span class="pill-count" id="qCount">0</span>
-    <span class="sub">— every action is the same shape: preview · evidence · approve / reject. Spans both engines.</span>
+    <span class="sub">- every action is the same shape: preview · evidence · approve / reject. Spans both engines.</span>
   </div>
   <div class="queue-row" id="queueRow"></div>
 </section>
@@ -380,7 +380,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -408,7 +408,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -417,27 +417,27 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
 /* ═══════════════ EXTRA DATA (verbatim from _BRIEF_3.md) ═══════════════ */
-const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+const QUEUE = [ // universal "Needs you" - heterogeneous proposed real-world actions
   { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
     evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
     diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
@@ -446,17 +446,17 @@ const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world a
     draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
   { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
     evidence:'batch 1: 25 sent → 36% open → 8% reply',
-    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} - you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? - V' },
   { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
     evidence:'3rd request this week → candidate feature',
-    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
-  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    draft:'Great question - today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test - “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
     evidence:'organic SEO page converts 3.1% → worth a paid test' },
 ];
 
 const OUTBOUND = {
   twitter:[ // build-in-public stream
-    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it - lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
     { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
   ],
   cold:[ // sequences (per company)
@@ -466,7 +466,7 @@ const OUTBOUND = {
 
 const SUPPORT = [ // inbound = evidence stream
   { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
-  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am - I’m in PST, expected 8am local.' },
   { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
 ];
 
@@ -667,12 +667,12 @@ function renderGtm() {
   // Channels
   const channels = [
     {name:'seo',      status:'live',    budget:'organic · 3.1% conversion'},
-    {name:'ads',      status:'testing', budget:'$50 Google test — pending your authorize'},
+    {name:'ads',      status:'testing', budget:'$50 Google test - pending your authorize'},
     {name:'content',  status:'live',    budget:'build-in-public · 2.2k impressions'},
     {name:'outbound', status:'testing', budget:'cold email · batch 2 of 3'},
     {name:'referral', status:'idle',    budget:'not started'},
   ];
-  // Inward co-founder chat (the spine) — you ⇄ co-founder agent, where you direct the build
+  // Inward co-founder chat (the spine) - you ⇄ co-founder agent, where you direct the build
   let cfBlock = groupHeader('Co-founder · inward', DATA.chat.length)
     + `<div style="display:flex;flex-direction:column;gap:8px;margin:2px 0 12px;">`
     + DATA.chat.map(m=>`<div style="align-self:${m.role==='user'?'flex-end':'flex-start'};max-width:84%;background:${m.role==='user'?'var(--build)':'#fff'};color:${m.role==='user'?'#fff':'#0f172a'};border:1px solid var(--line);padding:8px 11px;border-radius:13px;font-size:12.5px;line-height:1.45;">${m.text}</div>`).join('')
@@ -734,7 +734,7 @@ function renderGtm() {
   if(cfSend){
     const send=()=>{ const v=cfInput.value.trim(); if(!v) return;
       DATA.chat.push({role:'user',text:v});
-      DATA.chat.push({role:'assistant',text:'Got it — re-prioritizing the backlog around that. The next action will surface in your queue.'});
+      DATA.chat.push({role:'assistant',text:'Got it - re-prioritizing the backlog around that. The next action will surface in your queue.'});
       pushActivity(scope||'Portfolio','reprioritize','you steered the co-founder → backlog re-scored',false);
       renderGtm();
     };
@@ -757,7 +757,7 @@ function renderMeasure() {
   const mrr = view==='portfolio'? DATA.portfolio.mrr : co(view).mrr;
   const users = view==='portfolio'? DATA.portfolio.users : co(view).users;
   const shipped = view==='portfolio'? DATA.portfolio.slicesShipped : (co(view).slices? co(view).slices.filter(s=>s.status==='shipped').length : co(view).slicesShipped);
-  const adoption = view==='portfolio'? '3.1%' : (co(view).id==='datadrop'?'3.1%':co(view).id==='leadsift'?'4.4%':'—');
+  const adoption = view==='portfolio'? '3.1%' : (co(view).id==='datadrop'?'3.1%':co(view).id==='leadsift'?'4.4%':'-');
   const currentRung = view==='portfolio'? 'test-payment' : (co(view).id==='leadsift'?'doneWhen':co(view).id==='quietinbox'?'MRR':co(view).id==='datadrop'?'test-payment':'adoption');
 
   let h = `<div class="mlabel"><div class="t">Measure</div><div class="s">fed by both engines</div></div>`;
@@ -766,7 +766,7 @@ function renderMeasure() {
   h += mstat(shipped, 'slices shipped', 'build');
   h += mstat(adoption, 'adoption', 'build');
   // ladder
-  h += `<div class="mladder"><div class="lt">Evidence ladder — current rung highlighted (climbs only when the rung below pays off)</div><div class="ladder-track">`;
+  h += `<div class="mladder"><div class="lt">Evidence ladder - current rung highlighted (climbs only when the rung below pays off)</div><div class="ladder-track">`;
   LADDER.forEach((r,i)=>{
     h += `<span class="rung-chip ${r.rung===currentRung?'now':''}" title="${r.cost}">${r.rung}</span>`;
     if(i<LADDER.length-1) h += `<span class="rung-arrow">›</span>`;
@@ -781,7 +781,7 @@ let activityLog = DATA.activity.slice();
 const ACT_COLOR = { building:'var(--blue)', deploy:'var(--blue)', await:'var(--violet)', check:'var(--green)', reprioritize:'var(--slate)', blocked:'var(--red)', posted:'#0f172a', sent:'var(--gtm)', reply:'var(--violet)', spend:'var(--amber)' };
 function renderActivity() {
   const latest = activityLog[0];
-  document.getElementById('actLatest').innerHTML = `<span class="live-dot"></span><b>${latest.co}</b> — ${latest.text} <span class="tt">· ${latest.t}</span>`;
+  document.getElementById('actLatest').innerHTML = `<span class="live-dot"></span><b>${latest.co}</b> - ${latest.text} <span class="tt">· ${latest.t}</span>`;
   const stream = document.getElementById('actStream');
   stream.innerHTML = activityLog.map(a=>`
     <div class="act-line ${a.running?'run':''}">
@@ -814,7 +814,7 @@ scrim.onclick=closeDrawer; document.getElementById('drClose').onclick=closeDrawe
 
 function flash(ok,msg){ drFlash.className='confirm-flash show '+(ok?'ok':'no'); drFlash.innerHTML=(ok?'✓ ':'✕ ')+msg; }
 
-/* — queue item drawer (full gate for ship_feature, draft for comms) — */
+/* - queue item drawer (full gate for ship_feature, draft for comms) - */
 function openQueueDrawer(id, rejectMode) {
   const q = QUEUE.find(x=>x.id===id); if(!q) return;
   currentDrawer={type:'queue', id};
@@ -822,13 +822,13 @@ function openQueueDrawer(id, rejectMode) {
   drKind.textContent = k.label + ' · ' + q.company;
   drTitle.textContent = q.title;
   let body='';
-  body += `<div class="dr-sec"><div class="sl">Why this needs you</div>${q.gated?'<div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Gated — this talks to a real human or spends real money. Always your call.</div>':'<div class="donewhen"><span class="chk">↺</span>Reversible & non-spend — autopilot could ship this, but here it is to inspect.</div>'}</div>`;
+  body += `<div class="dr-sec"><div class="sl">Why this needs you</div>${q.gated?'<div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Gated - this talks to a real human or spends real money. Always your call.</div>':'<div class="donewhen"><span class="chk">↺</span>Reversible & non-spend - autopilot could ship this, but here it is to inspect.</div>'}</div>`;
   body += `<div class="dr-sec"><div class="sl">Evidence · rung: ${q.rung}</div><div class="preview-url"><span class="glove"></span><span>${q.evidence}</span></div></div>`;
 
   if (q.kind==='ship_feature') {
     const a = DATA.companies[0].approval;
     body += `<div class="dr-sec"><div class="sl">Live preview</div><div class="preview-url"><span class="glove"></span><a href="${q.previewUrl}" target="_blank">${q.previewUrl}</a><span class="hint" style="margin-left:auto;">open ↗</span></div></div>`;
-    body += `<div class="dr-sec"><div class="sl">doneWhen check</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} — <b>${a.checkResult}</b> (attempt ${a.attempt})</span></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">doneWhen check</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} - <b>${a.checkResult}</b> (attempt ${a.attempt})</span></div></div>`;
     body += `<div class="dr-sec"><div class="sl">Diff</div><div class="diff">${diffHtml(q.diff)}</div></div>`;
   } else if (q.draft) {
     body += `<div class="dr-sec"><div class="sl">Draft (agent wrote · you approve before it goes out)</div><div class="draft-box" contenteditable="true">${escapeHtml(q.draft)}</div></div>`;
@@ -837,7 +837,7 @@ function openQueueDrawer(id, rejectMode) {
   }
   drBody.innerHTML = body;
   drActions.innerHTML = `<button class="btn primary" id="drAp">${q.kind==='ship_feature'?'Approve & ship':q.kind==='authorize_spend'?'Authorize $'+q.amountUsd:q.kind==='tweet'?'Approve & post':'Approve & send'}</button><button class="btn" id="drRj">Reject with feedback</button>`;
-  document.getElementById('drAp').onclick=()=>{ approveQueue(id); flash(true, 'Approved — '+commsApprovedText(q)); setTimeout(closeDrawer,1100); };
+  document.getElementById('drAp').onclick=()=>{ approveQueue(id); flash(true, 'Approved - '+commsApprovedText(q)); setTimeout(closeDrawer,1100); };
   document.getElementById('drRj').onclick=()=>showReject(()=>{ resolved[id]='rejected'; pushActivity(q.company,'reprioritize','feedback sent to co-founder agent → re-drafting',false); renderQueue(); flash(false,'Sent back with your feedback'); setTimeout(closeDrawer,1100); });
   drReject.style.display='none'; drFlash.classList.remove('show');
   openDrawer();
@@ -849,7 +849,7 @@ function showReject(onSend){
   document.getElementById('drRejectCancel').onclick=()=>{drReject.style.display='none';};
 }
 
-/* — feature detail — */
+/* - feature detail - */
 function openFeature(cid, n) {
   const c=co(cid); const s = c.slices ? c.slices.find(x=>x.n===n) : c.currentSlice;
   if(!s) return;
@@ -862,7 +862,7 @@ function openFeature(cid, n) {
   if (s.status==='awaiting_approval' && c.approval && c.approval.slice===s.n) {
     const a=c.approval;
     body += `<div class="dr-sec"><div class="sl">Gate preview</div><div class="preview-url"><span class="glove"></span><a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a></div></div>`;
-    body += `<div class="dr-sec"><div class="sl">doneWhen</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} — <b>${a.checkResult}</b></span></div></div>`;
+    body += `<div class="dr-sec"><div class="sl">doneWhen</div><div class="donewhen"><span class="chk">✓</span><span>${a.doneWhen} - <b>${a.checkResult}</b></span></div></div>`;
     body += `<div class="dr-sec"><div class="sl">Diff</div><div class="diff">${diffHtml(a.diff)}</div></div>`;
     drActions.innerHTML = `<button class="btn primary" id="drApF">Approve & ship</button><button class="btn" id="drRjF">Reject with feedback</button>`;
     document.getElementById('drApF').onclick=()=>{ resolved['q1']='approved'; s.status='shipped'; pushActivity(c.name,'deploy','slice '+s.n+' approved → shipping daily digest',true); renderAll(); flash(true,'Approved & shipping ✓'); setTimeout(closeDrawer,1100); };
@@ -879,7 +879,7 @@ function openFeature(cid, n) {
   openDrawer();
 }
 
-/* — outbound stream detail — */
+/* - outbound stream detail - */
 function openOutbound(ref, rejectMode) {
   const [type,i]=ref.split('|');
   const item = type==='tw'?OUTBOUND.twitter[i]:OUTBOUND.cold[i];
@@ -887,8 +887,8 @@ function openOutbound(ref, rejectMode) {
   drKind.textContent = type==='tw'?'Build-in-public · LeadSift':'Cold sequence · '+item.company;
   drTitle.textContent = type==='tw'?'𝕏 post':'Cold email batch';
   const draft = type==='tw'? item.status==='draft' : true;
-  let body = `<div class="dr-sec"><div class="sl">Why gated</div><div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Outbound to real humans — always your call before it sends.</div></div>`;
-  if(type==='tw') body += `<div class="dr-sec"><div class="sl">Draft (editable)</div><div class="draft-box" contenteditable="true">${escapeHtml(item.text)}</div></div><div class="dr-sec"><div class="sl">Evidence — replies come back as adoption signal</div><div class="preview-url"><span class="glove"></span><span>${item.stats}</span></div></div>`;
+  let body = `<div class="dr-sec"><div class="sl">Why gated</div><div class="donewhen" style="background:var(--amber-soft);border-color:var(--amber);color:#8a5300;"><span class="chk" style="background:var(--amber);">!</span>Outbound to real humans - always your call before it sends.</div></div>`;
+  if(type==='tw') body += `<div class="dr-sec"><div class="sl">Draft (editable)</div><div class="draft-box" contenteditable="true">${escapeHtml(item.text)}</div></div><div class="dr-sec"><div class="sl">Evidence - replies come back as adoption signal</div><div class="preview-url"><span class="glove"></span><span>${item.stats}</span></div></div>`;
   else body += `<div class="dr-sec"><div class="sl">Segment</div><div class="draft-box">${item.segment} · ${item.size} contacts · ${item.step}</div></div><div class="dr-sec"><div class="sl">Evidence</div><div class="preview-url"><span class="glove"></span><span>${item.stats}</span></div></div>`;
   drBody.innerHTML=body;
   if(draft){
@@ -901,7 +901,7 @@ function openOutbound(ref, rejectMode) {
   if(rejectMode && draft) showReject(()=>{ pushActivity(type==='tw'?'LeadSift':item.company,'reprioritize','feedback sent → re-drafting outbound',false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });
 }
 
-/* — support ticket detail (thread + draftable reply) — */
+/* - support ticket detail (thread + draftable reply) - */
 function openTicket(id) {
   const t = SUPPORT.find(x=>x.id===id); if(!t) return;
   currentDrawer={type:'ticket'};
@@ -911,9 +911,9 @@ function openTicket(id) {
   let body='';
   body += `<div class="dr-sec"><div class="sl">From</div><div class="hint">${t.user}</div></div>`;
   body += `<div class="dr-sec"><div class="sl">Message</div><div class="draft-box">${escapeHtml(t.body)}</div></div>`;
-  body += `<div class="dr-sec"><div class="sl">Signal → candidate feature</div><div class="preview-url" style="background:#e6f6f4;border-color:#bfe6df;"><span class="glove"></span><span>${t.signal} — this seeds the build backlog</span></div></div>`;
+  body += `<div class="dr-sec"><div class="sl">Signal → candidate feature</div><div class="preview-url" style="background:#e6f6f4;border-color:#bfe6df;"><span class="glove"></span><span>${t.signal} - this seeds the build backlog</span></div></div>`;
   if(t.status==='needs_reply'){
-    body += `<div class="dr-sec"><div class="sl">Drafted reply (you approve before it sends)</div><div class="draft-box" contenteditable="true">${escapeHtml(matched? matched.draft : 'Thanks for the note — looking into it now.')}</div></div>`;
+    body += `<div class="dr-sec"><div class="sl">Drafted reply (you approve before it sends)</div><div class="draft-box" contenteditable="true">${escapeHtml(matched? matched.draft : 'Thanks for the note - looking into it now.')}</div></div>`;
     drActions.innerHTML = `<button class="btn primary" id="drApT">Approve & send reply</button><button class="btn" id="drRjT">Reject with feedback</button>`;
     document.getElementById('drApT').onclick=()=>{ t.status='answered'; if(matched) resolved[matched.id]='approved'; pushActivity(t.company,'reply','support reply approved → sent to '+t.user,false); renderAll(); flash(true,'Reply sent ✓'); setTimeout(closeDrawer,1100); };
     document.getElementById('drRjT').onclick=()=>showReject(()=>{ pushActivity(t.company,'reprioritize','feedback sent → re-drafting support reply',false); flash(false,'Sent back with feedback'); setTimeout(closeDrawer,1100); });

@@ -385,7 +385,7 @@
         <div class="sec-label" style="margin-top:26px">Ask the portfolio</div>
         <div class="card" style="padding:6px">
           <div class="chat-in" style="border-top:none;padding:8px">
-            <input id="gchat" placeholder="e.g. approve LeadSift slice 5 — it's green" />
+            <input id="gchat" placeholder="e.g. approve LeadSift slice 5 - it's green" />
             <button class="send">→</button>
           </div>
         </div>
@@ -474,7 +474,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -502,7 +502,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -511,22 +511,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -664,11 +664,11 @@ function cardHTML(card){
         <span class="dc-kind" style="color:${card.kindColor};background:${card.kindBg}">${card.kind}</span>
       </div>
       <div class="pad" style="flex:1">
-        <div class="dc-title">Slice ${cs.n} — ${cs.title}</div>
-        <div class="dc-desc">This slice has made <b>no progress</b> across 3 attempts — the same failure each time. The company is paused. Decide whether to unblock it (agents retry from a fresh state) or pause the bet.</div>
+        <div class="dc-title">Slice ${cs.n} - ${cs.title}</div>
+        <div class="dc-desc">This slice has made <b>no progress</b> across 3 attempts - the same failure each time. The company is paused. Decide whether to unblock it (agents retry from a fresh state) or pause the bet.</div>
         <div class="check" style="background:var(--red-soft);border-color:#f1cdcd">
           <div class="ico" style="background:var(--red)">!</div>
-          <div class="txt" style="color:#b53a3a"><b>blocked</b> · <span class="mono" style="color:#c14545">slice 8 — stopped, same failure ×3</span></div>
+          <div class="txt" style="color:#b53a3a"><b>blocked</b> · <span class="mono" style="color:#c14545">slice 8 - stopped, same failure ×3</span></div>
         </div>
       </div>
       <div class="dc-actions">
@@ -687,10 +687,10 @@ function cardHTML(card){
     <div class="pad" style="flex:1">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
         <div class="mono" style="width:62px;height:62px;border-radius:16px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:24px">${o.score}</div>
-        <div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)">opportunity score</div><div style="font-size:13px;color:var(--ink-2);margin-top:4px">High signal — top of the inbox</div></div>
+        <div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)">opportunity score</div><div style="font-size:13px;color:var(--ink-2);margin-top:4px">High signal - top of the inbox</div></div>
       </div>
       <div class="dc-title">${o.thesis}</div>
-      <div class="dc-desc">From the thought: “${o.thought}”. Promoting turns this into a committed company — agents will spin up a walking skeleton and ship the first validated slice.</div>
+      <div class="dc-desc">From the thought: “${o.thought}”. Promoting turns this into a committed company - agents will spin up a walking skeleton and ship the first validated slice.</div>
     </div>
     <div class="dc-actions">
       <button class="act reject" onclick="reject()">Skip</button>
@@ -868,13 +868,13 @@ function flashBtn(btn, text, color, bg){
 }
 function zoomApprove(btn){
   flashBtn(btn,'Approved ✓','#fff','var(--green)');
-  addZoomMsg('user','Approved slice 5 — ship it.');
-  setTimeout(()=>addZoomMsg('assistant','Shipped ✓ Daily digest is live. Re-prioritizing the backlog — slice 6 (CSV export) is next.'),500);
+  addZoomMsg('user','Approved slice 5 - ship it.');
+  setTimeout(()=>addZoomMsg('assistant','Shipped ✓ Daily digest is live. Re-prioritizing the backlog - slice 6 (CSV export) is next.'),500);
 }
 function zoomReject(btn){
   flashBtn(btn,'Feedback sent ↺','#fff','var(--ink)');
-  addZoomMsg('user','Reject — make the digest send at 7am, not 8.');
-  setTimeout(()=>addZoomMsg('assistant','Got it — adjusting the cron to 07:00 and re-running the doneWhen check.'),500);
+  addZoomMsg('user','Reject - make the digest send at 7am, not 8.');
+  setTimeout(()=>addZoomMsg('assistant','Got it - adjusting the cron to 07:00 and re-running the doneWhen check.'),500);
 }
 function addZoomMsg(role,text){
   const feed=document.getElementById('zoomChat');
@@ -884,7 +884,7 @@ function addZoomMsg(role,text){
 function sendZoom(){
   const inp=document.getElementById('zchat'); if(!inp.value.trim())return;
   addZoomMsg('user',inp.value.trim()); const v=inp.value.trim(); inp.value='';
-  setTimeout(()=>addZoomMsg('assistant','On it — '+v.toLowerCase()+'.'),450);
+  setTimeout(()=>addZoomMsg('assistant','On it - '+v.toLowerCase()+'.'),450);
 }
 document.getElementById('zchat').addEventListener('keydown',e=>{if(e.key==='Enter')sendZoom();});
 
@@ -913,8 +913,8 @@ document.getElementById('navOverview').onclick=showOverview;
 
 document.getElementById('gchat').addEventListener('keydown',e=>{
   if(e.key==='Enter' && e.target.value.trim()){
-    e.target.placeholder='Sent ✓ — '+e.target.value.trim(); e.target.value='';
-    setTimeout(()=>e.target.placeholder="e.g. approve LeadSift slice 5 — it's green",2200);
+    e.target.placeholder='Sent ✓ - '+e.target.value.trim(); e.target.value='';
+    setTimeout(()=>e.target.placeholder="e.g. approve LeadSift slice 5 - it's green",2200);
   }
 });
 

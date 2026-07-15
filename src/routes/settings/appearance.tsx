@@ -71,7 +71,7 @@ function Appearance() {
                     <div className="text-[13px] font-semibold">Agent console button</div>
                     <div className="text-xs text-muted-foreground">
                         The <span className="font-mono">agents</span> tab pinned to the
-                        bottom-right. Hide it to declutter — <kbd className="font-mono">Ctrl</kbd>+
+                        bottom-right. Hide it to declutter - <kbd className="font-mono">Ctrl</kbd>+
                         <kbd className="font-mono">`</kbd> still opens the console.
                     </div>
                 </div>

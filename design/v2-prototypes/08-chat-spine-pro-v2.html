@@ -93,7 +93,7 @@
   /* ---------- shell ---------- */
   .app {
     display: grid;
-    /* sidebar · company chat · center workspace  (right "needs-you" rail retired — it lives in the chat now) */
+    /* sidebar · company chat · center workspace  (right "needs-you" rail retired - it lives in the chat now) */
     grid-template-columns: var(--rail-w, 264px) 0px minmax(0,1fr);
     height: 100vh;
     transition: grid-template-columns .42s cubic-bezier(.4,.0,.1,1);
@@ -1218,7 +1218,7 @@
 .btn-scout:hover{ filter:brightness(1.04); transform:translateY(-1px); }
 .btn-scout:active{ transform:translateY(0); }
 .btn-scout svg{ width:16px; height:16px; }
-/* quiet ghost alt to "Research the market" — skip straight to the spec */
+/* quiet ghost alt to "Research the market" - skip straight to the spec */
 .btn-skip-spec{
   flex:0 0 auto; font-family:inherit; font-size:13px; font-weight:550;
   color:var(--ink-soft); background:transparent; border:1px solid var(--line);
@@ -1304,7 +1304,7 @@
   color:var(--ink-faint);
 }
 
-/* — scouting reads as ambient "agent thinking", not a card to read —
+/* - scouting reads as ambient "agent thinking", not a card to read -
    strip the card chrome and mute everything to low contrast.        */
 .spin-scout{ background:transparent; border:none; box-shadow:none; border-radius:0; opacity:.9; }
 .spin-scout .spin-card-head{ border-bottom:none; padding:2px 2px 8px; }
@@ -1612,7 +1612,7 @@
 .ql-row-choose:hover{ transform:none; }
 .ql .host:hover .ql-row-choose, .ql-row-choose:focus-visible,
 .ql .host.open .ql-row-choose{ opacity:1; pointer-events:auto; }
-/* opportunity #6 · "skip research" — none of these fit, build from your thought */
+/* opportunity #6 · "skip research" - none of these fit, build from your thought */
 .ql-skip{ display:flex; align-items:center; gap:13px; width:100%; padding:14px 16px; border-top:1px dashed var(--line); background:none; cursor:pointer; text-align:left; }
 .ql-skip:hover{ background:var(--cream-2); }
 .ql-skip-ic{ width:30px; height:30px; flex:0 0 auto; border-radius:9px; display:grid; place-items:center; background:var(--cream-2); color:var(--ink-faint); border:1px dashed var(--line); }
@@ -1899,7 +1899,7 @@
   .spin{ --spin-measure:100%; }
 }
 @media (max-width:960px){
-  /* company view: center workspace only — the chat collapses */
+  /* company view: center workspace only - the chat collapses */
   .app.zoomed{ grid-template-columns: var(--rail-w,264px) 0px minmax(0,1fr); }
   .zoomed .company-left{ display:none; }
 }
@@ -1970,7 +1970,7 @@
   .card{ margin-left:0; }
 
   /* ===================== AGENT CONSOLE (live, split per company) ===================== */
-  /* intentionally dark in both app themes — terminal convention */
+  /* intentionally dark in both app themes - terminal convention */
   .console{
     --con-bg:#14181b; --con-pane:#191d21; --con-line:#2a3137;
     --con-fg:#cbd5dd; --con-dim:#6f7c85; --con-time:#525e67;
@@ -2384,7 +2384,7 @@
   .src-monaco .monaco-editor .margin,
   .src-monaco .monaco-editor, .src-monaco .monaco-editor-background{ background:transparent; }
 
-  /* health strip — the "is it live + numbers" glance */
+  /* health strip - the "is it live + numbers" glance */
   .co-health{ display:flex; gap:10px; margin-top:15px; flex-wrap:wrap; }
   .co-health .ch{ flex:1 1 0; min-width:96px; background:none; border:0; border-radius:0; padding:2px 14px 2px 0; }
   .co-health .ch-v{ display:flex; align-items:baseline; gap:6px; font-size:17px; font-weight:700; letter-spacing:-.01em; color:var(--ink); }
@@ -2510,7 +2510,7 @@
 
   /* ---- Source tab · VS Code-style IDE ---- */
   .src-ide{ display:grid; grid-template-columns:186px minmax(0,1fr); border:1px solid var(--line); border-radius:var(--radius-sm); overflow:hidden; background:var(--paper); height:min(640px, 72vh); }
-  /* focus / maximize mode for the Source tab — collapse the two inner sidebars so the editor gets full width */
+  /* focus / maximize mode for the Source tab - collapse the two inner sidebars so the editor gets full width */
   .app.zoomed.src-max{ grid-template-columns: var(--rail-w,264px) 0px minmax(0,1fr); }
   .app.src-max .col-resizer{ display:none; }
   .app.src-max .co-tabwrap{ padding-bottom:0; }
@@ -2596,7 +2596,7 @@
   .cgrp.user .cbub code{ background:rgba(255,255,255,.22); color:#fff; }
   .cmeta{ font-size:10px; color:var(--ink-faint); padding:0 4px; }
 
-  /* system / activity line — the company's live feed, inline */
+  /* system / activity line - the company's live feed, inline */
   .cact{ display:flex; align-items:center; gap:8px; padding:5px 8px; margin:9px 4px 1px; border-radius:9px; background:transparent; }
   .cact-dot{ width:6px; height:6px; border-radius:50%; flex:0 0 auto; box-shadow:0 0 0 3px var(--cream-2); }
   .cact-tx{ min-width:0; font-size:11.5px; color:var(--ink-faint); line-height:1.4; }
@@ -2795,7 +2795,7 @@
   /* ============================================================
      DEMO-STATE TOGGLE + FIRST-RUN ONBOARDING  (additive)
      ============================================================ */
-  /* prototype/dev demo pill — fixed, above app + console + modals, legible in both themes */
+  /* prototype/dev demo pill - fixed, above app + console + modals, legible in both themes */
   .demo-pill{
     position:fixed; right:16px; bottom:54px; z-index:200;
     display:flex; align-items:center; gap:5px;
@@ -2814,7 +2814,7 @@
   .demo-pill .dp-seg.on{ background:var(--accent); color:#fff; }
   [data-theme="dark"] .demo-pill .dp-seg.on{ color:#05060a; }
 
-  /* fresh mode — lock the dashboards that only exist once you have a company */
+  /* fresh mode - lock the dashboards that only exist once you have a company */
   body.demo-fresh .nav-item[data-nav="needs"],
   body.demo-fresh .nav-item[data-nav="manage"],
   body.demo-fresh .nav-item[data-nav="opportunities"]{
@@ -2823,7 +2823,7 @@
   body.demo-fresh .nav-item[data-nav="needs"] .ni-count,
   body.demo-fresh .nav-item[data-nav="manage"] .ni-count,
   body.demo-fresh .nav-item[data-nav="opportunities"] .ni-count{ display:none; }
-  /* tiny padlock glyph (currentColor mask — themes for free), tooltip via title="" */
+  /* tiny padlock glyph (currentColor mask - themes for free), tooltip via title="" */
   body.demo-fresh .nav-item[data-nav="needs"]::after,
   body.demo-fresh .nav-item[data-nav="manage"]::after,
   body.demo-fresh .nav-item[data-nav="opportunities"]::after{
@@ -3322,7 +3322,7 @@
             <button class="ghg-opt custom" type="button" data-gpreset="custom"><span class="o-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span><span class="o-tx"><span class="o-nm">Custom…</span><span class="o-desc">Set each guardrail yourself</span></span></button>
           </div>
         </div>
-        <button class="spin-lucky" id="spin-lucky" type="button" title="No input needed — I’ll scan the latest trends and spin up the best solo-founder bet.">
+        <button class="spin-lucky" id="spin-lucky" type="button" title="No input needed - I’ll scan the latest trends and spin up the best solo-founder bet.">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>
           Surprise me
         </button>
@@ -3350,27 +3350,27 @@
     </div>
     <div class="spin-daily-grid">
         <button class="spin-daily-card" type="button" data-daily="0" data-title="Chase late freelancer invoices on autopilot">
-          <span class="dr-score" title="Demand score — not a blend"><span class="n">84</span><span class="k">demand</span></span>
+          <span class="dr-score" title="Demand score - not a blend"><span class="n">84</span><span class="k">demand</span></span>
           <span class="dr-body"><span class="dr-title">Chase late freelancer invoices on autopilot</span><span class="dr-why">Solos bill on Stripe/Wave, then lose hours nagging clients to pay.</span><span class="dr-meta">r/freelance · 142 asks/mo · Chaser targets agencies · software-only</span></span>
           <span class="dr-go" aria-hidden="true">→</span>
         </button>
         <button class="spin-daily-card" type="button" data-daily="1" data-title="Branded ‘pay now’ link for freelancers">
-          <span class="dr-score" title="Demand score — not a blend"><span class="n">78</span><span class="k">demand</span></span>
+          <span class="dr-score" title="Demand score - not a blend"><span class="n">78</span><span class="k">demand</span></span>
           <span class="dr-body"><span class="dr-title">Branded ‘pay now’ link for freelancers</span><span class="dr-why">Emailing a PDF invoice gives clients no easy way to just click &amp; pay.</span><span class="dr-meta">9.9k “get clients to pay”/mo · Stripe Links lack reminders</span></span>
           <span class="dr-go" aria-hidden="true">→</span>
         </button>
         <button class="spin-daily-card" type="button" data-daily="2" data-title="Collect a deposit before client work starts">
-          <span class="dr-score mid" title="Demand score — not a blend"><span class="n">71</span><span class="k">demand</span></span>
+          <span class="dr-score mid" title="Demand score - not a blend"><span class="n">71</span><span class="k">demand</span></span>
           <span class="dr-body"><span class="dr-title">Collect a deposit before client work starts</span><span class="dr-why">Freelancers start unpaid and eat the loss when a client ghosts.</span><span class="dr-meta">r/freelance · 64 asks/mo · no solo-friendly tool · software-only</span></span>
           <span class="dr-go" aria-hidden="true">→</span>
         </button>
         <button class="spin-daily-card" type="button" data-daily="3" data-title="Cash-flow radar for solo freelancers">
-          <span class="dr-score mid" title="Demand score — not a blend"><span class="n">69</span><span class="k">demand</span></span>
+          <span class="dr-score mid" title="Demand score - not a blend"><span class="n">69</span><span class="k">demand</span></span>
           <span class="dr-body"><span class="dr-title">Cash-flow radar for solo freelancers</span><span class="dr-why">No early view of which invoices are about to slip late this month.</span><span class="dr-meta">avg invoice paid 23d late · Stripe + Wave · GDPR-light</span></span>
           <span class="dr-go" aria-hidden="true">→</span>
         </button>
         <button class="spin-daily-card" type="button" data-daily="4" data-title="Auto-add late fees to overdue invoices">
-          <span class="dr-score mid" title="Demand score — not a blend"><span class="n">66</span><span class="k">demand</span></span>
+          <span class="dr-score mid" title="Demand score - not a blend"><span class="n">66</span><span class="k">demand</span></span>
           <span class="dr-body"><span class="dr-title">Auto-add late fees to overdue invoices</span><span class="dr-why">Late fees are in the contract, but nobody enforces them politely.</span><span class="dr-meta">r/freelance · 88 asks/mo · Stripe metadata · software-only</span></span>
           <span class="dr-go" aria-hidden="true">→</span>
         </button>
@@ -3439,7 +3439,7 @@
     <div class="spin-av">C</div>
     <div class="spin-stream-body">
       <div class="spin-bubble">
-        <p class="spin-prop-leadline" style="margin:0 0 6px;">Done · <b>11 receipts</b> across 6 sources. The pain is real and software-only. Here are <b>5 opportunities</b>, scored on <b>8 signals</b> across three lenses — demand, buildability &amp; distribution. Expand any one for the breakdown, then pick the opportunity you want and I'll draft the company spec from it.</p>
+        <p class="spin-prop-leadline" style="margin:0 0 6px;">Done · <b>11 receipts</b> across 6 sources. The pain is real and software-only. Here are <b>5 opportunities</b>, scored on <b>8 signals</b> across three lenses - demand, buildability &amp; distribution. Expand any one for the breakdown, then pick the opportunity you want and I'll draft the company spec from it.</p>
       </div>
 
       <div class="spin-prop-lead">
@@ -3818,9 +3818,9 @@ const DATA = {
       liveFeatures:['Webform capture','Lead table','Auto-score 0–100','Filter by score'],
       nextFeature:'Daily email digest of top leads',
       docs:{
-        mission:{ title:'Mission', body:`# LeadSift — Mission
+        mission:{ title:'Mission', body:`# LeadSift - Mission
 
-Turn every webform submission into a scored, ranked sales lead — automatically.
+Turn every webform submission into a scored, ranked sales lead - automatically.
 
 Most small teams collect leads in a form and let them rot in a spreadsheet. LeadSift captures each submission, enriches it, and scores it 0–100 so the best leads rise to the top the moment they arrive.
 
@@ -3851,7 +3851,7 @@ Zapier plus a spreadsheet (fragile) or a full CRM (overkill, $99+/mo). LeadSift 
 - Daily digest email of the top leads.
 
 ## Scoring
-Score is a weighted blend of company-size signal, message intent, and reply speed. Kept explainable — every score shows its top 2 reasons.
+Score is a weighted blend of company-size signal, message intent, and reply speed. Kept explainable - every score shows its top 2 reasons.
 
 ## Guardrails
 - No outreach on the user's behalf without approval.
@@ -3887,7 +3887,7 @@ Bet: retention beats acquisition at this stage.` }
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>LeadSift — rank your leads</title>
+  <title>LeadSift - rank your leads</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -3910,7 +3910,7 @@ Bet: retention beats acquisition at this stage.` }
     await api.post('/leads', Object.fromEntries(data))
     setSent(true)
   }
-  if (sent) return <p>Thanks — we will be in touch.</p>
+  if (sent) return <p>Thanks - we will be in touch.</p>
   return (
     <form action={submit}>
       <input name="email" type="email" required />
@@ -3930,7 +3930,7 @@ Bet: retention beats acquisition at this stage.` }
 export function reasons(lead: Lead): string[] {
   return rankFactors(lead).slice(0, 2)
 }` },
-          { type:'file', name:'DigestJob.ts', lang:'ts', body:`// slice 5 — daily digest of the top leads (awaiting approval)
+          { type:'file', name:'DigestJob.ts', lang:'ts', body:`// slice 5 - daily digest of the top leads (awaiting approval)
 export function DailyDigest({ leads }: { leads: Lead[] }) {
   const top = leads.filter(l => l.score >= 70).slice(0, 10)
   return <DigestEmail subject="Your top leads today" leads={top} />
@@ -3989,16 +3989,16 @@ export const leads = pgTable('leads', {
     },
     { id:'quietinbox', name:'QuietInbox', thesis:'Email triage that auto-drafts replies you can approve.',
       logo:`<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/></svg>`,
-      mission:'Clear your inbox — triaged, with replies pre-drafted.',
+      mission:'Clear your inbox - triaged, with replies pre-drafted.',
       version:'v2.3.0',
       liveFeatures:['Inbox triage','Auto-draft replies','One-tap approve','Priority sorting'],
       nextFeature:'Snooze a thread until tomorrow',
       docs:{
-        mission:{ title:'Mission', body:`# QuietInbox — Mission
+        mission:{ title:'Mission', body:`# QuietInbox - Mission
 
 Clear the inbox for you: triage every thread, draft the reply, and wait for one tap of approval.
 
-Email is where small teams drown. QuietInbox reads, sorts, and pre-writes — you skim and approve.
+Email is where small teams drown. QuietInbox reads, sorts, and pre-writes - you skim and approve.
 
 ## The promise
 Open the app, tap through pre-drafted replies, close the app. Inbox at zero.` }
@@ -4041,7 +4041,7 @@ Clear the inbox: triage every thread, pre-draft the reply, wait for one tap.` },
       liveFeatures:['Invoice parsing','Auto-translate'],
       nextFeature:'Reformat an invoice into the buyer locale',
       docs:{
-        mission:{ title:'Mission', body:`# TranslatorBill — Mission
+        mission:{ title:'Mission', body:`# TranslatorBill - Mission
 
 Cross-border invoices, auto-translated and reformatted into the buyer's locale.
 
@@ -4075,7 +4075,7 @@ Cross-border invoices, auto-translated and reformatted into the buyer's locale.`
       connected:{ stripe:0, domain:0, esp:0, producthunt:0, x:0, ads:0, analytics:0 },
       grow:{
         launches:[],
-        blocked:'Not launched — no domain, and Stripe needs a legal entity + ToS (a SIGN gate) before it can take payments.',
+        blocked:'Not launched - no domain, and Stripe needs a legal entity + ToS (a SIGN gate) before it can take payments.',
         funnel:[], funnelRate:null, traffic:[],
         distribution:[ {l:'Domain registrar', ok:0, blocks:'register a domain to launch'}, {l:'Stripe + entity / ToS', ok:0, blocks:'SIGN to take payments'} ]
       },
@@ -4088,14 +4088,14 @@ Cross-border invoices, auto-translated and reformatted into the buyer's locale.`
       liveFeatures:['CSV upload','Auto-clean','Instant charts','Shareable link'],
       nextFeature:'Saved chart views',
       docs:{
-        mission:{ title:'Mission', body:`# DataDrop — Mission
+        mission:{ title:'Mission', body:`# DataDrop - Mission
 
 Drop a CSV, get a clean, shareable dashboard in seconds.
 
 No setup, no schema wrangling. DataDrop infers columns, cleans the mess, and renders charts you can send.
 
 ## Where it's stuck
-Live but flat — low traffic. Next growth move is an r/SaaS launch thread (a POST gate).` }
+Live but flat - low traffic. Next growth move is an r/SaaS launch thread (a POST gate).` }
       },
       source:{ tree:[
         { type:'folder', name:'slop', children:[
@@ -4121,7 +4121,7 @@ Drop a CSV, get a clean dashboard in seconds. No schema wrangling.` }
         funnel:[ {l:'Visits', v:120}, {l:'Signup', v:18}, {l:'Trial', v:9}, {l:'Paid', v:6} ],
         funnelRate:5,
         traffic:[ {l:'Directory listing', v:'~80 / mo', tone:'slate'}, {l:'Direct', v:'40 / mo', tone:'slate'} ],
-        distribution:[ {l:'Directory listing', ok:1}, {l:'r/SaaS launch thread', ok:0, blocks:'POST gate — needs your OK'}, {l:'SEO', ok:0, blocks:'not started'} ]
+        distribution:[ {l:'Directory listing', ok:1}, {l:'r/SaaS launch thread', ok:0, blocks:'POST gate - needs your OK'}, {l:'SEO', ok:0, blocks:'not started'} ]
       },
       run:{ ticketsOpen:1, respTime:'~6h', uptime:'99.7%', refunds:0, billing:'healthy' },
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
@@ -4132,14 +4132,14 @@ Drop a CSV, get a clean dashboard in seconds. No schema wrangling.` }
       liveFeatures:['Subreddit crawl','Pain extraction'],
       nextFeature:'Dedupe near-identical pains',
       docs:{
-        mission:{ title:'Mission', body:`# RedditPainBot — Mission
+        mission:{ title:'Mission', body:`# RedditPainBot - Mission
 
-Mine Reddit for real, buildable pains — ranked by how often and how loudly people complain.
+Mine Reddit for real, buildable pains - ranked by how often and how loudly people complain.
 
 Turns raw threads into a shortlist of micro-SaaS ideas worth a weekend.
 
 ## Status
-Paused while slice 8 (dedupe near-identical pains) is blocked — stopped, no progress ×3.` }
+Paused while slice 8 (dedupe near-identical pains) is blocked - stopped, no progress ×3.` }
       },
       source:{ tree:[
         { type:'folder', name:'slop', children:[
@@ -4159,7 +4159,7 @@ Mine Reddit for real, buildable pains, ranked by frequency and intensity.` }
       cost:{ infra:4, email:0, domain:0, apis:0, total:4 }, net:-4,
       autonomy:null,
       connected:{ stripe:0, domain:0, esp:0, producthunt:0, x:0, ads:0, analytics:0 },
-      grow:{ launches:[], blocked:'Never launched — paused while slice 8 is blocked.', funnel:[], funnelRate:null, traffic:[], distribution:[] },
+      grow:{ launches:[], blocked:'Never launched - paused while slice 8 is blocked.', funnel:[], funnelRate:null, traffic:[], distribution:[] },
       run:null,
       currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped · no progress'}, slicesShipped:2 },
   ],
@@ -4175,7 +4175,7 @@ Mine Reddit for real, buildable pains, ranked by frequency and intensity.` }
       detail:'Dedupe near-identical pains · stopped, no progress ×3. Retry differently or kill it.', action:'Open' },
     { id:'g4', type:'SIGN',    co:'translatorbill', status:'upcoming',
       title:'Form an entity + ToS so TranslatorBill can take payments', sub:'entity + ToS',
-      detail:'Blocks launch — Stripe needs a legal entity and terms of service before it can charge.', action:'Review' },
+      detail:'Blocks launch - Stripe needs a legal entity and terms of service before it can charge.', action:'Review' },
     { id:'g5', type:'POST',    co:'datadrop',       status:'upcoming',
       title:'Approve the r/SaaS launch thread for DataDrop', sub:'r/SaaS draft',
       detail:'Distribution push for a flat product. The draft thread is ready to publish.', action:'Review draft' },
@@ -4188,7 +4188,7 @@ Mine Reddit for real, buildable pains, ranked by frequency and intensity.` }
   ],
   strategy: [
     { kind:'double', co:'quietinbox',    label:'Double down', title:'QuietInbox',       detail:'Best net ROI · +$372/mo on $48 cost. Raise GROW to L2 so it can run paid acquisition without asking each time.', action:'Raise GROW → L2' },
-    { kind:'watch',  co:'datadrop',      label:'Push / watch', title:'DataDrop',         detail:'Flat at $95 for a month. Approve the r/SaaS post to test distribution — or it becomes a kill candidate.', action:'Approve POST' },
+    { kind:'watch',  co:'datadrop',      label:'Push / watch', title:'DataDrop',         detail:'Flat at $95 for a month. Approve the r/SaaS post to test distribution - or it becomes a kill candidate.', action:'Approve POST' },
     { kind:'kill',   co:'redditpainbot', label:'Kill',        title:'RedditPainBot',    detail:'0 traction, slice 8 stuck ×3, −$4/mo. Archive it and free the build loop.', action:'Archive' },
     { kind:'spin',   opp:'o1',           label:'Spin up',     title:'PayoutReconciler', detail:'Highest demand in the inbox (82). Same freelancer buyer as your other tools.', action:'Spin up' },
   ],
@@ -4201,7 +4201,7 @@ Mine Reddit for real, buildable pains, ranked by frequency and intensity.` }
     { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked · no progress (same failure ×3)',       t:'18m' },
   ],
   oversight: [
-    { co:'quietinbox',     ring:'run',  text:'Drafted 9 reply suggestions for support threads', t:'6h ago',  real:true,  undo:true,  detail:'Held in your outbox — nothing sent yet.' },
+    { co:'quietinbox',     ring:'run',  text:'Drafted 9 reply suggestions for support threads', t:'6h ago',  real:true,  undo:true,  detail:'Held in your outbox - nothing sent yet.' },
     { co:'quietinbox',     ring:'grow', text:'Scheduled 1 tweet · ships tomorrow 9:00am',     t:'9h ago',  real:true,  undo:true,  detail:'“QuietInbox now snoozes threads. Inbox zero, on your terms.”' },
     { co:'leadsift',       ring:'run',  text:'Sent 12 onboarding emails to new signups',       t:'1d ago',  real:true,  undo:false, detail:'Welcome sequence, day 0.' },
     { co:'datadrop',       ring:'run',  text:'Sent 3 transactional emails',                    t:'2d ago',  real:true,  undo:false, detail:'CSV-ready notifications.' },
@@ -4257,7 +4257,7 @@ function renderRail(){
     document.getElementById('coList').innerHTML =
       '<div class="co-empty-cta">'
       + '<div class="cec-t">No companies yet</div>'
-      + '<div class="cec-s">You bring the ideas — I build, launch and run them.</div>'
+      + '<div class="cec-s">You bring the ideas - I build, launch and run them.</div>'
       + '<button class="cec-btn" type="button" data-onb-open="1"><span aria-hidden="true">＋</span> Start your first company</button>'
       + '</div>';
   } else
@@ -4294,7 +4294,7 @@ function oppCardHTML(){
     const circ = 2*Math.PI*18; const off = circ*(1-o.score/100);
     return `<div class="opp-card ${killed?'killed':''}">
       <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto">
-        <div class="opp-ring" title="Demand score — a single lens, not a blend">
+        <div class="opp-ring" title="Demand score - a single lens, not a blend">
           <svg width="46" height="46"><circle cx="23" cy="23" r="18" fill="none" stroke="var(--line)" stroke-width="4"/>
           <circle cx="23" cy="23" r="18" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg>
           <div class="num" style="color:${col}">${o.score}</div>
@@ -4459,7 +4459,7 @@ function spinBackToProposals(){
     const wrap = document.getElementById('streamWrap');
     requestAnimationFrame(()=>{ wrap.scrollTop = wrap.scrollHeight; });
   } else {
-    renderSpin('proposals');   // auto / skip path never built a list — surface the full set now
+    renderSpin('proposals');   // auto / skip path never built a list - surface the full set now
   }
 }
 function spinSend(text){
@@ -4468,7 +4468,7 @@ function spinSend(text){
   // guardrails are chosen inline in the input box now (preset dropdown / Custom editor) → straight to research
   renderSpin('scouting');
 }
-/* "Surprise me" · no input — scan trends, score, auto-pick the best solo-founder bet, draft it */
+/* "Surprise me" · no input - scan trends, score, auto-pick the best solo-founder bet, draft it */
 function spinLucky(){
   clearSpinTimer(); closeValMenus();
   spinAuto = true; spinPreset = 'lean'; spinState = 'scouting';
@@ -4481,7 +4481,7 @@ function spinLucky(){
   var seg = stream.querySelector('.spin');
   if(seg){
     var ue = seg.querySelector('.spin-msg.user'); if(ue) ue.remove();                 // auto = no user turn
-    var bub = seg.querySelector('.spin-msg.assistant .spin-bubble'); if(bub) bub.innerHTML = 'No input needed — scanning the <b>latest trends</b> and scoring solo-buildable opportunities. I’ll spin up the one with the best shot for a solo founder.';
+    var bub = seg.querySelector('.spin-msg.assistant .spin-bubble'); if(bub) bub.innerHTML = 'No input needed - scanning the <b>latest trends</b> and scoring solo-buildable opportunities. I’ll spin up the one with the best shot for a solo founder.';
     var hl = seg.querySelector('.spin-scout-headline'); if(hl) hl.innerHTML = 'Scanning trends for a <b>solo-founder bet</b> · 6 sources';
     Array.from(seg.children).forEach(function(n){ if(n.nodeType===1) n.setAttribute('data-spin-seg','scouting'); });
   }
@@ -4524,14 +4524,14 @@ function approveSpin(){
   var p = propById(spinPick);
   var first = p.spec.slices[0].t;
   var seedLine = p.noResearch
-    ? `built straight from your thought — <b>no research</b>, we'll learn by shipping`
+    ? `built straight from your thought - <b>no research</b>, we'll learn by shipping`
     : `seeded from the <b>${esc(p.name)}</b> opportunity`;
   document.getElementById('stream').innerHTML = `
     <div class="spin">
       <div class="spin-msg assistant">
         <div class="spin-av">C</div>
         <div class="spin-stream-body">
-          <div class="spin-bubble"><b>${esc(p.spec.product)}</b> is live as a company — ${seedLine}. Slice 1 (${esc(first)}) is queued. I'll build it and surface it under <b>Needs you</b> the moment it needs you.</div>
+          <div class="spin-bubble"><b>${esc(p.spec.product)}</b> is live as a company - ${seedLine}. Slice 1 (${esc(first)}) is queued. I'll build it and surface it under <b>Needs you</b> the moment it needs you.</div>
           <button class="btn-scout" id="spin-done-home" style="align-self:flex-start">Go to Home →</button>
         </div>
       </div>
@@ -4608,7 +4608,7 @@ const PROPOSALS = [
       {k:'G', html:'<b>no tool automates it</b><br><span class="rsrc">competitor scan · open gap</span>'},
     ],
     firstSlice:{label:'First slice', html:'Attach a late-fee rule to an invoice + notify client ·', code:'overdue invoice shows accrued fee.'},
-    specIntro:'Open gap · nobody automates this yet. Note the lighter legal-safety score — fee rules vary by jurisdiction. Here’s the full company spec; the first slice is your one sanity-check.',
+    specIntro:'Open gap · nobody automates this yet. Note the lighter legal-safety score - fee rules vary by jurisdiction. Here’s the full company spec; the first slice is your one sanity-check.',
     spec:{ logo:'F', product:'FeeFlow', tagline:'Auto-apply and communicate contract late fees, politely.',
       icp:'Freelancers who work from <b>contracts</b> with late-fee clauses · reachable in freelancer subreddits &amp; Discords.',
       pricing:'$10', pricingSub:' / mo solo', trial:'14',
@@ -4631,7 +4631,7 @@ const PROPOSALS = [
     ],
     firstSlice:{label:'First slice', html:'Import invoices + show a 30-day expected-cash timeline ·', code:'timeline renders from test data.'},
     specIntro:'Quietly painful problem · no solo-priced tool exists. Lower willingness-to-pay, so price it gently. Here’s the full company spec; the first slice is your one sanity-check.',
-    spec:{ logo:'C', product:'CashRadar', tagline:'See when you’ll actually get paid — before the gap hits.',
+    spec:{ logo:'C', product:'CashRadar', tagline:'See when you’ll actually get paid - before the gap hits.',
       icp:'Freelancers with <b>lumpy, project-based income</b> who worry about the next gap · reachable in freelancer subreddits &amp; Discords.',
       pricing:'$8', pricingSub:' / mo solo', trial:'14',
       stack:['Next.js','Stripe API','Resend · email','Postgres / Supabase'],
@@ -4668,16 +4668,16 @@ const PROPOSALS = [
 /* full "anatomy of an opportunity" per angle · drives the expanded card + the full-brief modal */
 const OPP = {
   1:{ title:'Invoice-Chasing Autopilot for Solo Freelancers on Stripe', sector:'freelancer-finance',
-    pain:'Solo freelancers on Stripe/Wave watch invoices slide 3+ weeks overdue but dread the awkward “just following up” email — so they delay, and the cash slips further.',
+    pain:'Solo freelancers on Stripe/Wave watch invoices slide 3+ weeks overdue but dread the awkward “just following up” email - so they delay, and the cash slips further.',
     persona:'Solo freelancer / consultant, $40–120k/yr, billing through Stripe or Wave, chasing payments by hand in Gmail. Trigger: a client crosses 2 weeks past due.',
     community:{ name:'r/freelance', url:'https://reddit.com/r/freelance', members:'480k' },
     mrr:{ low:2400, high:14000, avg:7200 },
     mrrMath:'600 solo users × $12/mo ≈ $7.2k. Floor 200 users ($2.4k); ceiling with a late-fee add-on + team seats ≈ $14k.',
     wtp:{ type:'paid workaround', source:'reddit', quote:'I literally pay my VA $80/mo just to chase invoices for me' },
-    hiddenNeed:'The step that breaks is the follow-up itself. People pay to never write the awkward reminder again — not for another “invoicing” tool.',
+    hiddenNeed:'The step that breaks is the follow-up itself. People pay to never write the awkward reminder again - not for another “invoicing” tool.',
     selfGrowth:'Every reminder email carries a quiet “sent on time via NudgePay” footer the client sees. Clients are often freelancers too → they sign up to use it themselves.',
     competitors:[
-      {name:'Chaser', url:'https://www.chaserhq.com', price:'$40/mo', weakness:'built for agency AR teams — overkill and overpriced for a solo'},
+      {name:'Chaser', url:'https://www.chaserhq.com', price:'$40/mo', weakness:'built for agency AR teams - overkill and overpriced for a solo'},
       {name:'Stripe (native)', url:'https://stripe.com', price:'included', weakness:'no escalating ladder, no tone control, easy to ignore'},
       {name:'Upflow', url:'https://upflow.io', price:'sales-led', weakness:'enterprise motion, no self-serve, no solo tier'}
     ],
@@ -4688,16 +4688,16 @@ const OPP = {
       {risk:'Email lands in spam', mitigation:'send from the user’s own domain via Resend with an SPF/DKIM wizard'},
       {risk:'Churn once invoices clear', mitigation:'recurring value via the weekly digest + a late-fee add-on'}
     ],
-    distribution:{ primary:'r/freelance (480k) — a “what I built to stop chasing invoices” build-in-public post', secondary:'IndieHackers + 3–4 freelance Discords', firstPost:'I got tired of writing the same awkward “any update on that invoice?” email, so I built something that sends them for me — escalating but polite. It cut my average days-to-paid from 23 to 9.' },
-    demandProof:['avg freelance invoice paid 23 days late — Fundbox report','“I literally pay my VA to chase invoices” — r/freelance','~142 “chasing invoices” posts per month in r/freelance'] },
+    distribution:{ primary:'r/freelance (480k) - a “what I built to stop chasing invoices” build-in-public post', secondary:'IndieHackers + 3–4 freelance Discords', firstPost:'I got tired of writing the same awkward “any update on that invoice?” email, so I built something that sends them for me - escalating but polite. It cut my average days-to-paid from 23 to 9.' },
+    demandProof:['avg freelance invoice paid 23 days late - Fundbox report','“I literally pay my VA to chase invoices” - r/freelance','~142 “chasing invoices” posts per month in r/freelance'] },
   2:{ title:'Branded Pay-Now Page with Built-in Nudges for PDF Invoicers', sector:'freelancer-finance',
-    pain:'Freelancers who invoice by emailed PDF have no “pay now” button — clients say “send me a link” and they scramble, then have no way to nudge.',
+    pain:'Freelancers who invoice by emailed PDF have no “pay now” button - clients say “send me a link” and they scramble, then have no way to nudge.',
     persona:'Freelancer billing via email/PDF, no billing tool, $30–90k/yr. Trigger: a client asks “can you send a payment link?”',
     community:{ name:'r/freelance', url:'https://reddit.com/r/freelance', members:'480k' },
     mrr:{ low:1800, high:11000, avg:5400 },
     mrrMath:'600 users × $9/mo ≈ $5.4k. Floor 200 ($1.8k); ceiling with branded pages + team seats ≈ $11k.',
     wtp:{ type:'searching', source:'google', quote:'“how to get clients to pay” ≈ 9.9k searches/mo' },
-    hiddenNeed:'The break is at “send me a link.” They need a payable link in 10 seconds that also chases on its own — not a full invoicing migration.',
+    hiddenNeed:'The break is at “send me a link.” They need a payable link in 10 seconds that also chases on its own - not a full invoicing migration.',
     selfGrowth:'The hosted pay page is public and branded; every client who pays sees a “make your own” mark → signups from the paying side.',
     competitors:[
       {name:'Stripe Payment Links', url:'https://stripe.com/payments/payment-links', price:'included', weakness:'no reminder layer, no branding, no status page'},
@@ -4711,10 +4711,10 @@ const OPP = {
       {risk:'Low switching urgency', mitigation:'enter at the “send me a link” moment, not a migration'},
       {risk:'Processor fees confuse buyers', mitigation:'transparent fee preview before send'}
     ],
-    distribution:{ primary:'r/freelance + r/smallbusiness — “a pay-now link that chases for you” post', secondary:'Twitter freelance niche, Gumroad seller groups', firstPost:'Clients kept asking me for a “payment link” and I had nothing good, so I built one that is branded and quietly chases the invoice if it goes unpaid.' },
-    demandProof:['“how to get clients to pay” ≈ 9.9k searches/mo','Stripe Payment Links have no reminder layer — competitor scan','pay-link templates sell for $19 — WTP signal'] },
+    distribution:{ primary:'r/freelance + r/smallbusiness - “a pay-now link that chases for you” post', secondary:'Twitter freelance niche, Gumroad seller groups', firstPost:'Clients kept asking me for a “payment link” and I had nothing good, so I built one that is branded and quietly chases the invoice if it goes unpaid.' },
+    demandProof:['“how to get clients to pay” ≈ 9.9k searches/mo','Stripe Payment Links have no reminder layer - competitor scan','pay-link templates sell for $19 - WTP signal'] },
   3:{ title:'Contract Late-Fee Enforcer for Freelancers Who Never Charge Them', sector:'freelancer-finance',
-    pain:'Most freelancers write a late-fee clause into contracts but never enforce it — applying and explaining the fee feels confrontational, so it stays theoretical.',
+    pain:'Most freelancers write a late-fee clause into contracts but never enforce it - applying and explaining the fee feels confrontational, so it stays theoretical.',
     persona:'Contract-based freelancer (design, dev, consulting), $50–150k/yr, using a contract template with a late-fee clause they have never invoked.',
     community:{ name:'r/freelance', url:'https://reddit.com/r/freelance', members:'480k' },
     mrr:{ low:1500, high:9000, avg:4800 },
@@ -4724,7 +4724,7 @@ const OPP = {
     selfGrowth:'Fee notices are sent to clients with a transparent breakdown page → freelancers who get billed late adopt it defensively.',
     competitors:[
       {name:'Bonsai', url:'https://www.hellobonsai.com', price:'$25/mo', weakness:'bundles everything; late fees buried, not the wedge'},
-      {name:'Contract clause', url:null, price:'free', weakness:'never enforced — purely theoretical'},
+      {name:'Contract clause', url:null, price:'free', weakness:'never enforced - purely theoretical'},
       {name:'Accounting tools', url:null, price:'varies', weakness:'no automated, communicated late-fee workflow'}
     ],
     gaps:'No tool automates apply-and-communicate for late fees. It’s a clause everyone has and no one uses.',
@@ -4734,8 +4734,8 @@ const OPP = {
       {risk:'Buyers fear looking aggressive', mitigation:'lead with polite, optional, waivable framing'},
       {risk:'Narrow standalone need', mitigation:'expand into the broader reminder ladder over time'}
     ],
-    distribution:{ primary:'r/freelance — “I finally started charging late fees (automatically)” post', secondary:'contract-template communities, r/consulting', firstPost:'I’ve had a late-fee clause for years and never once used it. So I built something that applies it and sends a calm, clear explanation for me.' },
-    demandProof:['~61% of freelancers never enforce late fees — Bonsai survey','late-fee clause templates trend on r/freelance','no tool automates it — competitor scan'] },
+    distribution:{ primary:'r/freelance - “I finally started charging late fees (automatically)” post', secondary:'contract-template communities, r/consulting', firstPost:'I’ve had a late-fee clause for years and never once used it. So I built something that applies it and sends a calm, clear explanation for me.' },
+    demandProof:['~61% of freelancers never enforce late fees - Bonsai survey','late-fee clause templates trend on r/freelance','no tool automates it - competitor scan'] },
   4:{ title:'Pay-Date Predictor and Cash-Gap Alert for Lumpy Freelance Income', sector:'freelancer-finance',
     pain:'Freelancers with project-based income can’t see when money will actually land, so they lurch between “rich” and “rent is due” without warning.',
     persona:'Established freelancer with 3–8 active clients, $60–160k/yr but lumpy, eyeballing a spreadsheet. Trigger: a big invoice slips and a bill is due.',
@@ -4744,7 +4744,7 @@ const OPP = {
     mrrMath:'500 users × $8/mo ≈ $4k. Floor 150 ($1.2k); ceiling with multi-account + forecasting ≈ $8k.',
     wtp:{ type:'venting', source:'reddit', quote:'every month I have no idea if I can pay myself until the money randomly shows up' },
     hiddenNeed:'The break is forecasting the gap before it hits. They’ll pay for a 30-day “will I be okay?” answer, not another dashboard.',
-    selfGrowth:'A shareable “expected cash” snapshot freelancers post when ranting about income — each carries the tool’s mark.',
+    selfGrowth:'A shareable “expected cash” snapshot freelancers post when ranting about income - each carries the tool’s mark.',
     competitors:[
       {name:'Float', url:'https://www.floatapp.com', price:'$$$/mo', weakness:'SMB/agency-priced and complex for a solo'},
       {name:'Pulse', url:'https://pulseapp.com', price:'$$/mo', weakness:'team cash-flow, not solo project income'},
@@ -4757,15 +4757,15 @@ const OPP = {
       {risk:'Needs invoice/bank data', mitigation:'start with manual/CSV import; add Plaid later'},
       {risk:'Prediction accuracy doubts', mitigation:'show confidence + let users adjust pay-date estimates'}
     ],
-    distribution:{ primary:'r/freelance + r/digitalnomad — “I finally know when I’ll get paid” post', secondary:'freelance finance newsletters, IndieHackers', firstPost:'My income is lumpy and I never knew if I could pay myself this month. So I built a 30-day cash radar that predicts when each invoice actually lands and warns me before a gap.' },
-    demandProof:['recurring “income anxiety” threads — r/freelance','Float / Pulse are SMB/enterprise-priced','0 solo-priced cash-flow tools — open gap'] },
+    distribution:{ primary:'r/freelance + r/digitalnomad - “I finally know when I’ll get paid” post', secondary:'freelance finance newsletters, IndieHackers', firstPost:'My income is lumpy and I never knew if I could pay myself this month. So I built a 30-day cash radar that predicts when each invoice actually lands and warns me before a gap.' },
+    demandProof:['recurring “income anxiety” threads - r/freelance','Float / Pulse are SMB/enterprise-priced','0 solo-priced cash-flow tools - open gap'] },
   5:{ title:'Upfront-Deposit Gate That Unlocks Project Kickoff on Payment', sector:'freelancer-finance',
-    pain:'“Always get a deposit” is the #1 freelance advice, yet no tool actually enforces it — so freelancers start work unpaid and get burned.',
+    pain:'“Always get a deposit” is the #1 freelance advice, yet no tool actually enforces it - so freelancers start work unpaid and get burned.',
     persona:'Freelancer who’s been stiffed before, project-based, $40–130k/yr. Trigger: a new client wants to “start now, pay later.”',
     community:{ name:'r/freelance', url:'https://reddit.com/r/freelance', members:'480k' },
     mrr:{ low:1500, high:9500, avg:5000 },
     mrrMath:'500 users × $10/mo ≈ $5k. Floor 150 ($1.5k); ceiling with split deposits + contracts ≈ $9.5k.',
-    wtp:{ type:'paid workaround', source:'reddit', quote:'I lost $3k to a non-payer — now I refuse to start without a deposit' },
+    wtp:{ type:'paid workaround', source:'reddit', quote:'I lost $3k to a non-payer - now I refuse to start without a deposit' },
     hiddenNeed:'The break is enforcement. They believe in deposits but have no mechanism that blocks kickoff until paid.',
     selfGrowth:'The gated kickoff link is sent to every new client → clients who later freelance copy the workflow.',
     competitors:[
@@ -4780,19 +4780,19 @@ const OPP = {
       {risk:'Clients resist paying first', mitigation:'professional framing + a small default % lowers friction'},
       {risk:'Overlaps with contract tools', mitigation:'stay the sharp single-purpose gate, integrate later'}
     ],
-    distribution:{ primary:'r/freelance — “stop starting work without a deposit (here’s how I enforce it)” post', secondary:'r/forhire, freelance Discords', firstPost:'I lost $3k to a client who ghosted after I delivered. Now nothing starts until the deposit clears — so I built a link that literally gates the kickoff on payment.' },
-    demandProof:['“always get a deposit” = #1 r/freelance advice','no tool enforces it — competitor scan','Bonsai bundles deposits at $25/mo — price wedge'] }
+    distribution:{ primary:'r/freelance - “stop starting work without a deposit (here’s how I enforce it)” post', secondary:'r/forhire, freelance Discords', firstPost:'I lost $3k to a client who ghosted after I delivered. Now nothing starts until the deposit clears - so I built a link that literally gates the kickoff on payment.' },
+    demandProof:['“always get a deposit” = #1 r/freelance advice','no tool enforces it - competitor scan','Bonsai bundles deposits at $25/mo - price wedge'] }
 };
 function oppOf(p){ return OPP[p.id] || {}; }
 function fmtK(n){ return n>=1000 ? (Math.round(n/100)/10)+'k' : ''+n; }
 function scoreTotal(p){ var s=p.scores; return Math.round(((s.buyer+s.pain+s.wtp*2+s.timing+s.build+s.legal+s.distro+s.pricing)/9)*10)/10; }
-/* opportunity #6 · "Skip research": the research still ran, but none of the 5 fit —
+/* opportunity #6 · "Skip research": the research still ran, but none of the 5 fit -
    build straight from the original thought, no receipts behind it. */
 const SKIP_PROP = {
   id:'skip', name:'your thought', noResearch:true,
-  specIntro:'Okay — skipping the research. I’ll draft a starting company straight from your thought. There are no demand receipts behind it, so we treat the first slice as a real-world test and learn by shipping.',
+  specIntro:'Okay - skipping the research. I’ll draft a starting company straight from your thought. There are no demand receipts behind it, so we treat the first slice as a real-world test and learn by shipping.',
   spec:{ logo:'•', product:'Untitled co.', tagline:'',
-    icp:'Defined straight from your thought — <b>no market research</b> has been run. We’ll sharpen the ICP from the first real users.',
+    icp:'Defined straight from your thought - <b>no market research</b> has been run. We’ll sharpen the ICP from the first real users.',
     pricing:'TBD', pricingSub:' · set after launch', trial:'14',
     stack:['Agent’s choice','Next.js','Postgres / Supabase'],
     slices:[
@@ -4857,13 +4857,13 @@ function renderCompare(mount){
   }).join('');
   var skip = '<div class="ql-skip" data-pick="skip" role="button" tabindex="0">'+
     '<span class="ql-skip-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h8.5M7.5 4.5L11 8l-3.5 3.5"/><path d="M13.5 3.5v9"/></svg></span>'+
-    '<span class="ql-skip-tx"><span class="ql-skip-t">Skip research</span><span class="ql-skip-d">None of these fit? Build straight from your thought — no receipts, we learn by shipping.</span></span>'+
+    '<span class="ql-skip-tx"><span class="ql-skip-t">Skip research</span><span class="ql-skip-d">None of these fit? Build straight from your thought - no receipts, we learn by shipping.</span></span>'+
     '<span class="ql-skip-go">Build from my thought →</span>'+
   '</div>';
   mount.innerHTML = '<div class="ql">'+rows+skip+'</div>';
   var body = mount.closest('.spin-stream-body') || document;
   var leadLine = body.querySelector('.spin-prop-leadline');
-  if(leadLine && spinThought){ leadLine.innerHTML = 'Done · I scouted <b>'+esc(spinClip(spinThought,52))+'</b> and the demand around it — <b>11 receipts</b> across 6 sources. Here are the <b>5 strongest software-only opportunities</b> I found, scored on <b>8 signals</b> across three lenses — demand, buildability &amp; distribution. Expand any one, then pick the one you want and I’ll draft the company spec.'; }
+  if(leadLine && spinThought){ leadLine.innerHTML = 'Done · I scouted <b>'+esc(spinClip(spinThought,52))+'</b> and the demand around it - <b>11 receipts</b> across 6 sources. Here are the <b>5 strongest software-only opportunities</b> I found, scored on <b>8 signals</b> across three lenses - demand, buildability &amp; distribution. Expand any one, then pick the one you want and I’ll draft the company spec.'; }
   var lead = body.querySelector('.spin-prop-sortlabel');
   if(lead){ lead.textContent = 'ranked by overall score · 11 receipts'; }
 }
@@ -4924,10 +4924,10 @@ function specCardHTML(p){
   // letterhead ref + §1 prose, differ for the no-research path
   var ref = p.noResearch ? 'From your thought · no research' : ('Seeded from '+esc(p.name)+' · Opportunity #'+p.id);
   var company = p.noResearch
-    ? '<b>'+esc(s.product)+'</b> is drafted straight from your thought. There is no market research behind it yet — we treat the first slice as a real-world test and learn by shipping.'
-    : '<b>'+esc(s.product)+'</b> grew from the <em>'+esc(p.name)+'</em> opportunity'+(o.hiddenNeed?' — '+o.hiddenNeed:'.')+' <button type="button" class="bf-link" data-brief="'+p.id+'">View the full opportunity →</button>';
+    ? '<b>'+esc(s.product)+'</b> is drafted straight from your thought. There is no market research behind it yet - we treat the first slice as a real-world test and learn by shipping.'
+    : '<b>'+esc(s.product)+'</b> grew from the <em>'+esc(p.name)+'</em> opportunity'+(o.hiddenNeed?' - '+o.hiddenNeed:'.')+' <button type="button" class="bf-link" data-brief="'+p.id+'">View the full opportunity →</button>';
   var note = p.noResearch
-    ? 'By approving, you authorise building v1 straight from your thought, in test mode — unresearched.'
+    ? 'By approving, you authorise building v1 straight from your thought, in test mode - unresearched.'
     : 'By approving, you authorise the operator to build v1 in test mode.';
   return '<article class="spin-card spin-spec spin-spec-card">'+
     '<header class="bf-lh">'+
@@ -4938,11 +4938,11 @@ function specCardHTML(p){
     '<hr class="bf-rule" />'+
     bfSec(1, 'The company', '<p>'+company+'</p>')+
     bfSec(2, 'Who it’s for', '<p>'+s.icp+'</p>')+
-    bfSec(3, 'What we’ll build<sup class="bf-fn-ref">†</sup>', '<p>A first version in five slices. The first is your single sanity-check — proof the core loop works before anything else is built.</p><ol class="bf-slices">'+slices+'</ol>')+
+    bfSec(3, 'What we’ll build<sup class="bf-fn-ref">†</sup>', '<p>A first version in five slices. The first is your single sanity-check - proof the core loop works before anything else is built.</p><ol class="bf-slices">'+slices+'</ol>')+
     bfSec(4, 'Terms', '<dl class="bf-terms">'+
       '<div class="bf-term"><dt>Price</dt><dd>'+s.pricing+'<span class="bf-term-sub">'+s.pricingSub+'</span></dd></div>'+
       '<div class="bf-term"><dt>Trial</dt><dd>'+s.trial+' days, free</dd></div>'+
-      '<div class="bf-term"><dt>Mode</dt><dd>Begins in <span class="bf-test">test mode</span> — no real charges until you take it live.</dd></div>'+
+      '<div class="bf-term"><dt>Mode</dt><dd>Begins in <span class="bf-test">test mode</span> - no real charges until you take it live.</dd></div>'+
     '</dl>')+
     '<p class="bf-footnote"><span class="bf-fn-mark">†</span> Built with '+s.stack.join(', ')+'.</p>'+
     '<footer class="bf-sign">'+
@@ -4959,11 +4959,11 @@ function hydrateSpec(){
   var echo = lastOf('.spin-pick-echo');
   if(echo){
     if(spinAuto){ var um = echo.closest('.spin-msg'); if(um) um.style.display = 'none'; }   // auto = no user pick turn
-    else echo.textContent = (spinPick==='skip') ? 'None of these fit — skip the research, build straight from my thought.' : ('Go with #'+p.id+' · '+p.name+'.');
+    else echo.textContent = (spinPick==='skip') ? 'None of these fit - skip the research, build straight from my thought.' : ('Go with #'+p.id+' · '+p.name+'.');
   }
   var intro = lastOf('.spin-spec-intro');
   if(intro) intro.innerHTML = spinAuto
-    ? ('Trends scanned. The strongest <b>solo-founder bet</b> right now is <b>'+esc(p.spec.product)+'</b> — from the '+esc(p.name)+' opportunity (overall score '+scoreTotal(p)+'). Here’s the draft.')
+    ? ('Trends scanned. The strongest <b>solo-founder bet</b> right now is <b>'+esc(p.spec.product)+'</b> - from the '+esc(p.name)+' opportunity (overall score '+scoreTotal(p)+'). Here’s the draft.')
     : p.specIntro;
   var card = lastOf('.spin-spec-card'); if(card) card.outerHTML = specCardHTML(p);
   spinAuto = false;
@@ -5244,7 +5244,7 @@ function approvalCardHTML(co){
 
 /* ============================================================
    LEFT panel · company chat  (the live agent conversation)
-   Approvals + activity now live INSIDE this stream — the right
+   Approvals + activity now live INSIDE this stream - the right
    "needs-you" rail is retired.
    ============================================================ */
 var coChats = {};
@@ -5272,13 +5272,13 @@ function decisionFor(co){
 function seedChat(co){
   if(coChats[co.id]) return coChats[co.id];
   var m=[];
-  m.push({role:'assistant', text:'**'+co.name+'** — '+(co.mission||co.thesis), t:'9:01am'});
+  m.push({role:'assistant', text:'**'+co.name+'** - '+(co.mission||co.thesis), t:'9:01am'});
   if(co.mrr){
     m.push({role:'assistant', text:'We’re at **$'+co.mrr+'/mo** from '+(co.users||0)+' users'+(co.mrrDelta>0?' · up $'+co.mrrDelta+' this month':'')+'. Ask me anything about build, growth, or the numbers.', t:'9:01am'});
   } else {
-    m.push({role:'assistant', text:'Pre-revenue so far — I’m focused on shipping the walking skeleton and landing the first users. Ask me anything.', t:'9:01am'});
+    m.push({role:'assistant', text:'Pre-revenue so far - I’m focused on shipping the walking skeleton and landing the first users. Ask me anything.', t:'9:01am'});
   }
-  /* surface a few recent activity lines as the live feed (skip the "awaiting you" line — the decision card covers it) */
+  /* surface a few recent activity lines as the live feed (skip the "awaiting you" line - the decision card covers it) */
   DATA.activity.filter(function(a){ return a.co===co.name && a.kind!=='await'; })
     .slice(0,3).reverse().forEach(function(a){ m.push({kind:'activity', act:a}); });
   /* the thing that needs a call → inline decision card, newest, right above the composer */
@@ -5315,10 +5315,10 @@ function clDecisionHTML(co, m, idx){
   var d=m.dec;
   if(m.resolved){
     var C={
-      approved: d.type==='SPEND' ? ['✓','Approved — spend authorized 💸','I’ll run it and report back.','']
-                                 : ['✓','Shipped — it’s live 🎉', co.name+' users have it now.',''],
-      rejected: ['↺','Sent back — I’ll rebuild it.','Re-running the check · I’ll surface it again.','rej'],
-      retry:    ['↻','Retrying — a different approach.','I’ll surface a diff the moment it goes green.',''],
+      approved: d.type==='SPEND' ? ['✓','Approved - spend authorized 💸','I’ll run it and report back.','']
+                                 : ['✓','Shipped - it’s live 🎉', co.name+' users have it now.',''],
+      rejected: ['↺','Sent back - I’ll rebuild it.','Re-running the check · I’ll surface it again.','rej'],
+      retry:    ['↻','Retrying - a different approach.','I’ll surface a diff the moment it goes green.',''],
       paused:   ['‖','Paused '+co.name+'.','The build loop won’t touch it until you resume.','rej']
     }[m.resolved];
     return '<div class="cdec done '+C[3]+'"><div class="cdec-conf"><span class="ok">'+C[0]+'</span>'
@@ -5326,7 +5326,7 @@ function clDecisionHTML(co, m, idx){
   }
   var badge, msg, ctx='', acts, fb='';
   if(d.type==='SHIP'){
-    badge='SHIP'; msg='I finished <b>'+esc(d.feature)+'</b> and it passed its check ✓ — want me to ship it live?';
+    badge='SHIP'; msg='I finished <b>'+esc(d.feature)+'</b> and it passed its check ✓ - want me to ship it live?';
     if(d.doneWhen) ctx+='<div class="cdec-chk"><span class="ic">✓</span><code>'+esc(d.doneWhen)+'</code></div>';
     var links='';
     if(d.previewUrl) links+='<a class="cdec-link" href="'+esc(d.previewUrl)+'" target="_blank" rel="noopener">preview ↗</a>';
@@ -5336,13 +5336,13 @@ function clDecisionHTML(co, m, idx){
         +'<button class="cdec-btn" data-cl-dec="'+idx+'" data-cl-act="review">Review</button>'
         +'<button class="cdec-btn" data-cl-dec="'+idx+'" data-cl-act="reject">Reject</button>';
   } else if(d.type==='SPEND'){
-    badge='SPEND'; msg='<b>'+esc(d.title)+'</b>'+(d.amount?' · <b style="color:var(--amber)">'+esc(d.amount)+'</b>':'')+' — want me to go ahead?';
+    badge='SPEND'; msg='<b>'+esc(d.title)+'</b>'+(d.amount?' · <b style="color:var(--amber)">'+esc(d.amount)+'</b>':'')+' - want me to go ahead?';
     if(d.detail) ctx+='<div class="cdec-chk"><span>'+esc(d.detail)+'</span></div>';
     acts='<button class="cdec-btn primary amber" data-cl-dec="'+idx+'" data-cl-act="approve">Approve spend</button>'
         +'<button class="cdec-btn" data-cl-dec="'+idx+'" data-cl-act="review">Review</button>'
         +'<button class="cdec-btn" data-cl-dec="'+idx+'" data-cl-act="reject">Reject</button>';
   } else {
-    badge='BLOCKED'; msg='<b>'+esc(d.title)+'</b> — '+esc(d.detail||'')+'. Want me to retry differently, or pause?';
+    badge='BLOCKED'; msg='<b>'+esc(d.title)+'</b> - '+esc(d.detail||'')+'. Want me to retry differently, or pause?';
     acts='<button class="cdec-btn primary accent" data-cl-dec="'+idx+'" data-cl-act="retry">Retry differently</button>'
         +'<button class="cdec-btn" data-cl-dec="'+idx+'" data-cl-act="pause">Pause '+esc(co.name)+'</button>';
   }
@@ -5422,18 +5422,18 @@ function clResolveDecision(idx, act){
   if(act==='fbsend'){
     var ta=document.querySelector('[data-cl-fb="'+idx+'"]'); var note=ta?(ta.value||'').trim():'';
     m.fbText=note; m.fbOpen=false; m.resolved='rejected'; clClearGate(d.gateId); renderCompanyChat(co);
-    clAgentSay(co, 'Got it — sending '+(d.slice?'slice '+d.slice:'that slice')+' back to rebuild'+(note?(' with your note: “'+note+'”'):'')+'. I’ll re-run the check and surface it again.');
+    clAgentSay(co, 'Got it - sending '+(d.slice?'slice '+d.slice:'that slice')+' back to rebuild'+(note?(' with your note: “'+note+'”'):'')+'. I’ll re-run the check and surface it again.');
     return;
   }
   if(act==='approve'){
     m.resolved='approved'; clClearGate(d.gateId); renderCompanyChat(co);
     clAgentSay(co, d.type==='SPEND'
-      ? 'Spend authorized — running it now. I’ll report results back here as they come in.'
-      : 'Shipped ✓ — **'+co.name+'**’s '+(d.feature?('“'+d.feature+'”'):'latest slice')+' is live for everyone. Pulling the next top slice now.');
+      ? 'Spend authorized - running it now. I’ll report results back here as they come in.'
+      : 'Shipped ✓ - **'+co.name+'**’s '+(d.feature?('“'+d.feature+'”'):'latest slice')+' is live for everyone. Pulling the next top slice now.');
     return;
   }
   if(act==='retry'){ m.resolved='retry'; clClearGate(d.gateId); renderCompanyChat(co);
-    clAgentSay(co, 'Retrying the blocked slice with a different approach — I’ll surface a diff the moment it goes green.'); return; }
+    clAgentSay(co, 'Retrying the blocked slice with a different approach - I’ll surface a diff the moment it goes green.'); return; }
   if(act==='pause'){ m.resolved='paused'; clClearGate(d.gateId); renderCompanyChat(co);
     clAgentSay(co, 'Paused **'+co.name+'**. Say the word and I’ll resume the build loop.'); return; }
 }
@@ -5444,26 +5444,26 @@ function clAnswer(co, q){
   if(/block|stuck|wrong|problem/.test(s)){
     var blocked = st==='blocked' || DATA.gates.some(function(g){ return g.co===co.id && g.type==='UNBLOCK' && g.status==='now'; });
     return blocked
-      ? 'Right now '+(co.currentSlice?('slice '+co.currentSlice.n+' · “'+co.currentSlice.title+'”'):'one slice')+' is stuck — I put the decision above. Retry differently, or pause?'
-      : 'Nothing’s blocking **'+co.name+'** — the build loop is moving. I’ll surface anything that needs your call right here.';
+      ? 'Right now '+(co.currentSlice?('slice '+co.currentSlice.n+' · “'+co.currentSlice.title+'”'):'one slice')+' is stuck - I put the decision above. Retry differently, or pause?'
+      : 'Nothing’s blocking **'+co.name+'** - the build loop is moving. I’ll surface anything that needs your call right here.';
   }
   if(/number|mrr|revenue|money|metric|churn|user/.test(s)){
     return co.mrr
-      ? 'We’re at **$'+co.mrr+'/mo** from '+(co.users||0)+' users'+(co.mrrDelta>0?(' (up $'+co.mrrDelta+' this month)'):'')+'. Net '+(co.net>=0?('+$'+co.net):('−$'+Math.abs(co.net)))+'/mo — full breakdown’s in the Money tab.'
-      : 'Still pre-revenue — focused on the walking skeleton and first users. I’ll surface pricing the moment there’s signal.';
+      ? 'We’re at **$'+co.mrr+'/mo** from '+(co.users||0)+' users'+(co.mrrDelta>0?(' (up $'+co.mrrDelta+' this month)'):'')+'. Net '+(co.net>=0?('+$'+co.net):('−$'+Math.abs(co.net)))+'/mo - full breakdown’s in the Money tab.'
+      : 'Still pre-revenue - focused on the walking skeleton and first users. I’ll surface pricing the moment there’s signal.';
   }
   if(/ship|built|done|feature|release/.test(s)){
     var f=(co.liveFeatures||[]);
     return f.length
       ? 'Latest live: '+f.slice(-3).join(', ')+'.'+(co.nextFeature?(' Next up: **'+co.nextFeature+'**.'):'')
-      : 'Nothing shipped yet — still building the walking skeleton.';
+      : 'Nothing shipped yet - still building the walking skeleton.';
   }
   if(/next|plan|roadmap|coming/.test(s)){
     return co.nextFeature
       ? 'Next I’m '+((st==='awaiting_approval'||co.approval)?'waiting on your ship decision, then moving to':'building')+' **'+co.nextFeature+'**. The Build tab has the full backlog.'
-      : 'Lining up the next slice now — I’ll surface it in the Build tab.';
+      : 'Lining up the next slice now - I’ll surface it in the Build tab.';
   }
-  return 'On it — I’ll fold that into **'+co.name+'**’s build loop and surface anything that needs your call right here.';
+  return 'On it - I’ll fold that into **'+co.name+'**’s build loop and surface anything that needs your call right here.';
 }
 function sendCompanyChat(preset){
   var ta=document.getElementById('clComposerInput');
@@ -5522,12 +5522,12 @@ function nyCardHTML(g){
 }
 function coActivityHTML(co){
   var acts=DATA.activity.filter(function(a){ return a.co===co.name; });
-  if(!acts.length) return '<div class="art-block"><div class="lbl">Recent activity</div><div class="ip-empty">Quiet right now — updates post here as '+esc(co.name)+' works.</div></div>';
+  if(!acts.length) return '<div class="art-block"><div class="lbl">Recent activity</div><div class="ip-empty">Quiet right now - updates post here as '+esc(co.name)+' works.</div></div>';
   var rows=acts.map(function(a){ var k=ACT[a.kind]||{c:'var(--slate)'};
     return '<div class="ny-act"><span class="ny-act-dot" style="background:'+k.c+'"></span><div class="ny-act-bd"><div class="ny-act-tx">'+esc(a.text)+'</div><div class="ny-act-t">'+esc((k.lbl?k.lbl+' · ':''))+esc(a.t)+'</div></div></div>'; }).join('');
   return '<div class="art-block"><div class="lbl">Recent activity</div>'+rows+'</div>';
 }
-/* RETIRED · the right "needs-you" rail is gone — approvals + activity now live in the company chat.
+/* RETIRED · the right "needs-you" rail is gone - approvals + activity now live in the company chat.
    Kept as a no-op so any stray caller can't throw. */
 function renderCompanyRight(co){ /* no-op */ }
 function _retired_renderCompanyRight(co){
@@ -5562,7 +5562,7 @@ function resolveNy(id, action, btn){
   if(card){
     var fl=card.querySelector('[data-ny-flash]');
     if(fl){ fl.className='ny-flash show '+(action==='approve'?'ok':'rej');
-      fl.textContent=action==='approve'?('✓ Approved — '+(g.type==='SHIP'?'shipping live now':'spend authorized')):'↺ Sent back to rebuild with your note'; }
+      fl.textContent=action==='approve'?('✓ Approved - '+(g.type==='SHIP'?'shipping live now':'spend authorized')):'↺ Sent back to rebuild with your note'; }
     card.classList.add('done');
     card.querySelectorAll('.ny-btn').forEach(function(b){ b.disabled=true; });
   }
@@ -5604,7 +5604,7 @@ function wireBlocker(co){
   const stream = document.getElementById('stream');
   const retry = stream.querySelector('[data-block-retry]');
   const pause = stream.querySelector('[data-block-pause]');
-  if(retry) retry.onclick = ()=> appendCompanyMsg('Retrying the blocked slice with a different approach — I’ll surface a diff the moment it goes green.');
+  if(retry) retry.onclick = ()=> appendCompanyMsg('Retrying the blocked slice with a different approach - I’ll surface a diff the moment it goes green.');
   if(pause) pause.onclick = ()=> appendCompanyMsg(`Paused ${co.name}. The build loop won’t touch it until you resume.`);
 }
 
@@ -5925,7 +5925,7 @@ function wireGlobal(){
   var backBtnEl = document.getElementById('backBtn'); if(backBtnEl) backBtnEl.onclick = unzoom;
   // live pill
   document.getElementById('livePill').onclick = ()=>toggleLive();
-  // widen (right rail retired — guard in case the element is gone)
+  // widen (right rail retired - guard in case the element is gone)
   var artWidenEl = document.getElementById('artWiden'); if(artWidenEl) artWidenEl.onclick = cycleWidth;
   // composer
   const ta = document.getElementById('composerInput');
@@ -6092,7 +6092,7 @@ function wireGlobal(){
 
 
 /* ============================================================
-   PRO · operator console — Home(Q1-Q4), Money, Autonomy,
+   PRO · operator console - Home(Q1-Q4), Money, Autonomy,
    Oversight, and the company Build/Grow/Run/Money tabs.
    ============================================================ */
 const RING_META = {
@@ -6183,7 +6183,7 @@ function gateCardHTML(){
 }
 function healthRowHTML(co){
   var d=trendDelta(co);
-  var churn=(co.churn==null)?'—':co.churn+'%';
+  var churn=(co.churn==null)?'-':co.churn+'%';
   var spc=co.mrrDelta>0?'var(--green)':(co.mrrDelta<0?'var(--red)':'var(--slate)');
   return '<div class="hrow" data-co="'+co.id+'">'
     +'<span class="hrow-av" style="background:'+avc(co.id)+'">'+initials(co.name)+'</span>'
@@ -6209,7 +6209,7 @@ function autopilotCardHTML(){
    +'<div class="spend-bar"><i style="width:'+pct+'%"></i><span class="spend-cap-mark" style="left:100%"></span></div>'
    +'<div class="spend-foot"><span>'+pct+'% of cap used</span><span>$'+(p.spendCap-p.spend)+' headroom</span></div>'
    +'<div class="auto-line"><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>'
-     +'<span><b>'+DATA.oversight.length+' actions</b> taken on your behalf in the last 7 days — within autonomy. '+(l2.length?'<b>'+l2.join(', ')+'</b> run full-auto (L2).':'')+'</span></div>'
+     +'<span><b>'+DATA.oversight.length+' actions</b> taken on your behalf in the last 7 days - within autonomy. '+(l2.length?'<b>'+l2.join(', ')+'</b> run full-auto (L2).':'')+'</span></div>'
    +'<div class="auto-chips">'
      +'<span class="achip"><span class="rd" style="background:var(--green)"></span><b>15</b> emails sent</span>'
      +'<span class="achip"><span class="rd" style="background:var(--accent)"></span><b>1</b> article · <b>1</b> tweet</span>'
@@ -6288,14 +6288,14 @@ function tcard(title, body, sub){
 function moneyTableHTML(){
   var rows=DATA.companies.slice().sort(function(a,b){return b.net-a.net;}).map(function(co){
     var marginPct=co.mrr?Math.max(0,Math.round(co.net/co.mrr*100)):0;
-    var bar=co.mrr?'<span class="barcell"><span class="minibar"><i style="width:'+marginPct+'%;background:'+(co.net>=0?'var(--green)':'var(--red)')+'"></i></span>'+marginPct+'%</span>':'—';
+    var bar=co.mrr?'<span class="barcell"><span class="minibar"><i style="width:'+marginPct+'%;background:'+(co.net>=0?'var(--green)':'var(--red)')+'"></i></span>'+marginPct+'%</span>':'-';
     return '<tr class="clickable" data-co="'+co.id+'"><td><div class="co-cell"><span class="av" style="background:'+avc(co.id)+'">'+initials(co.name)+'</span>'+esc(co.name)+'</div></td>'
       +'<td>$'+(co.mrr||0)+'</td><td class="cost">$'+co.cost.total+'</td>'
       +'<td class="net '+(co.net>=0?'pos':'neg')+'">'+(co.net>=0?'+$'+co.net:'−$'+Math.abs(co.net))+'</td>'
       +'<td>'+bar+'</td></tr>';
   }).join('');
   var plat=DATA.platform;
-  var platRow='<tr class="platform"><td>Platform &amp; shared <span style="font-size:10px">('+plat.items.map(function(i){return esc(i.l).replace(/ .*/,'')+' $'+i.v;}).join(', ')+')</span></td><td>—</td><td class="cost">$'+plat.total+'</td><td class="net neg">−$'+plat.total+'</td><td>—</td></tr>';
+  var platRow='<tr class="platform"><td>Platform &amp; shared <span style="font-size:10px">('+plat.items.map(function(i){return esc(i.l).replace(/ .*/,'')+' $'+i.v;}).join(', ')+')</span></td><td>-</td><td class="cost">$'+plat.total+'</td><td class="net neg">−$'+plat.total+'</td><td>-</td></tr>';
   var p=DATA.portfolio;
   return '<table class="mtable"><thead><tr><th>Company</th><th>MRR</th><th>Cost</th><th>Net</th><th>Margin</th></tr></thead><tbody>'
     +rows+platRow+'</tbody><tfoot><tr><td>Portfolio</td><td>$'+p.mrr+'</td><td>$'+p.spend+'</td><td class="net pos">+$'+p.net+'</td><td>'+Math.round(p.net/p.mrr*100)+'%</td></tr></tfoot></table>';
@@ -6319,7 +6319,7 @@ function moneyBodyHTML(){
         +'<div class="mt-mini"><div class="v">$'+p.spend+'</div><div class="l">spend / mo</div></div>'
         +'<div class="mt-mini"><div class="v" style="color:var(--green)">+$'+p.net+'</div><div class="l">net / mo</div></div></div></div>'
       +'<div class="mt-stat"><span class="mt-sub">Net burn / profit</span><span class="mt-big green">+$'+p.net+'<small>/mo</small></span>'
-        +'<span class="mt-sub">Profitable &amp; bootstrapped — every company funds the next. Runway is effectively infinite at the current net.</span></div></div></div></section>';
+        +'<span class="mt-sub">Profitable &amp; bootstrapped - every company funds the next. Runway is effectively infinite at the current net.</span></div></div></div></section>';
   var table='<section class="pc"><div class="pc-head"><span class="pc-kicker k-health">P&amp;L</span><h3>Cost ↔ revenue ↔ net</h3><span class="pc-sub">click a company to drill in</span></div><div class="pc-body" style="padding:2px 6px 6px">'+moneyTableHTML()+'</div></section>';
   var guard='<section class="pc"><div class="pc-head"><span class="pc-kicker k-gate">Guardrail</span><h3>Budget control</h3></div><div class="pc-body">'+guardCtlHTML()+'</div></section>';
   return '<div class="pro pro-wide">'+top+table+guard+'</div>';
@@ -6335,8 +6335,8 @@ function updateGuard(v){
   var sl=document.getElementById('guardSlider'); if(sl) sl.style.setProperty('--fillpct', v+'%');
   var spends=[40,14,11,9,7], lab={40:'QuietInbox $40 PH launch',14:'QuietInbox $14 infra',11:'TranslatorBill $11 infra',9:'LeadSift $9 infra',7:'DataDrop $7 infra'};
   var auto=spends.filter(function(s){return s<v;}), gate=spends.filter(function(s){return s>=v;});
-  var ga=document.getElementById('guardAuto'); if(ga) ga.textContent=auto.length?auto.map(function(s){return '$'+s;}).join(', '):'nothing — all spend gates';
-  var gg=document.getElementById('guardGate'); if(gg) gg.textContent=gate.length?gate.map(function(s){return lab[s];}).join(' · '):'nothing — all auto';
+  var ga=document.getElementById('guardAuto'); if(ga) ga.textContent=auto.length?auto.map(function(s){return '$'+s;}).join(', '):'nothing - all spend gates';
+  var gg=document.getElementById('guardGate'); if(gg) gg.textContent=gate.length?gate.map(function(s){return lab[s];}).join(' · '):'nothing - all auto';
 }
 
 /* ============================================================
@@ -6384,8 +6384,8 @@ function autonomyBodyHTML(){
     +'<div class="amx-wrap"><table class="amx"><thead><tr><th>Company</th>'
     +RINGS.map(function(r){ return '<th><span class="rng"><span class="rd" style="background:'+RING_META[r.k].color+'"></span>'+r.lab+'</span></th>'; }).join('')
     +'</tr></thead><tbody>'+DATA.companies.map(amxRowHTML).join('')+'</tbody></table></div>'
-    +'<div class="lvkey"><span><span class="b" style="background:var(--slate)">L0</span> Ask first — gated</span><span><span class="b" style="background:var(--blue)">L1</span> Act + notify</span><span><span class="b" style="background:var(--green)">L2</span> Full autopilot</span></div></div></section>';
-  var accts='<section class="pc"><div class="pc-head"><span class="pc-kicker k-health">Connected accounts</span><h3>What’s wired up — and what each gap blocks</h3></div><div class="pc-body">'+acctPanelHTML()+'</div></section>';
+    +'<div class="lvkey"><span><span class="b" style="background:var(--slate)">L0</span> Ask first - gated</span><span><span class="b" style="background:var(--blue)">L1</span> Act + notify</span><span><span class="b" style="background:var(--green)">L2</span> Full autopilot</span></div></div></section>';
+  var accts='<section class="pc"><div class="pc-head"><span class="pc-kicker k-health">Connected accounts</span><h3>What’s wired up - and what each gap blocks</h3></div><div class="pc-body">'+acctPanelHTML()+'</div></section>';
   return '<div class="pro pro-wide">'+bar+matrix+accts+'</div>';
 }
 function renderAutonomy(){
@@ -6405,7 +6405,7 @@ function toggleTestMode(sw){
   sw.setAttribute('aria-pressed', String(on)); DATA.testMode=on;
   var lab=document.getElementById('tmodeLab'); if(lab) lab.textContent=on?'Test mode ON':'Real money LIVE';
   var sub=document.getElementById('tmodeSub'); if(sub) sub.textContent=on?'Real-world acts simulated · safe to experiment':'⚠ Acts hit real inboxes, posts & cards';
-  cmdToast(on?'Test mode ON — real-world acts simulated':'Real money LIVE — acts are real', on?'ok':'');
+  cmdToast(on?'Test mode ON - real-world acts simulated':'Real money LIVE - acts are real', on?'ok':'');
 }
 
 /* ============================================================
@@ -6422,7 +6422,7 @@ function ovRowHTML(o){
 }
 function oversightBodyHTML(){
   var html='<div class="pro pro-wide"><div class="ov-intro"><span style="flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-ink)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0"/><circle cx="12" cy="12" r="2.4"/></svg></span>'
-    +'<span><b>'+DATA.oversight.length+' actions</b> in the last 7 days. <b>Real-world acts</b> — emails, posts, money — are marked and can be undone or flagged.</span></div>';
+    +'<span><b>'+DATA.oversight.length+' actions</b> in the last 7 days. <b>Real-world acts</b> - emails, posts, money - are marked and can be undone or flagged.</span></div>';
   RINGS_ORDER.forEach(function(ring){
     var rows=DATA.oversight.filter(function(o){return o.ring===ring;});
     if(!rows.length) return;
@@ -6433,7 +6433,7 @@ function oversightBodyHTML(){
   return html;
 }
 function renderOversight(){
-  var stream=setNavHeader('Oversight ledger','Everything the AI did on your behalf, within its autonomy — newest first');
+  var stream=setNavHeader('Oversight ledger','Everything the AI did on your behalf, within its autonomy - newest first');
   stream.innerHTML=oversightBodyHTML();
 }
 
@@ -6453,7 +6453,7 @@ function renderManage(sub){
   if(!manageSub) manageSub='money';
   var p=DATA.portfolio;
   var netTxt=(p.net>=0?'+$'+p.net:'−$'+Math.abs(p.net));
-  var stream=setNavHeader('Manage','Money · Autonomy · Oversight — your control plane · $'+p.mrr+' MRR · net '+netTxt+'/mo');
+  var stream=setNavHeader('Manage','Money · Autonomy · Oversight - your control plane · $'+p.mrr+' MRR · net '+netTxt+'/mo');
   var tabs=MANAGE_TABS.map(function(t){
     return '<button class="manage-subtab'+(t.k===manageSub?' on':'')+'" type="button" data-manage-sub="'+t.k+'">'+t.lab+'</button>';
   }).join('');
@@ -6492,7 +6492,7 @@ function shotLeadsift(co){
   return '<div class="shot-pad"><div class="shot-head"><span class="shot-title">Leads · today</span><span class="shot-pill" style="background:var(--green-soft);color:var(--green)">8 NEW</span></div>'+rh+'</div>';
 }
 function shotQuietinbox(co){
-  var rows=[['To reply','blue','Stripe','Invoice #4021 needs approval',true],['Drafted','green','Dana K.','Re: onboarding call — reply ready',false],['FYI','slate','GitHub','3 PRs merged overnight',false],['Snoozed','violet','Notion','Weekly digest · muted',false]];
+  var rows=[['To reply','blue','Stripe','Invoice #4021 needs approval',true],['Drafted','green','Dana K.','Re: onboarding call - reply ready',false],['FYI','slate','GitHub','3 PRs merged overnight',false],['Snoozed','violet','Notion','Weekly digest · muted',false]];
   var rh=rows.map(function(r){ return '<div class="shot-row"><span style="width:6px;height:6px;border-radius:50%;background:var(--'+r[1]+');flex:0 0 auto"></span>'
     +'<div style="min-width:0;flex:1"><div class="shot-nm">'+esc(r[2])+(r[4]?' <b style="color:var(--accent)">•</b>':'')+'</div><div class="shot-sub">'+esc(r[3])+'</div></div>'
     +'<span class="shot-badge" style="background:var(--'+r[1]+'-soft);color:var(--'+r[1]+')">'+r[0]+'</span></div>'; }).join('');
@@ -6538,7 +6538,7 @@ function previewShotHTML(co){
     +'<span class="ci-shot-url">'+esc(url)+'</span></div>'
     +'<div class="ci-shot-body">'+body+'</div></div>';
 }
-/* identity header band — logo · name · mission | status · preview · version · health */
+/* identity header band - logo · name · mission | status · preview · version · health */
 function coIdentityHTML(co){
   var ls=coLiveStatus(co);
   return '<header class="co-identity"><div class="ci-top">'
@@ -6549,14 +6549,14 @@ function coIdentityHTML(co){
     +'</div></header>';
 }
 /* ============================================================
-   JOURNEY-PROOF · "watch it work" — problem → journey → payoff
+   JOURNEY-PROOF · "watch it work" - problem → journey → payoff
    ============================================================ */
 /* per-company journey text: { problem, steps[] }. steps count == frame count. */
 var JOURNEY_TEXT={
   leadsift:{ problem:'Leads pile up in the webform and never get followed up.',
-    steps:['A visitor submits the webform','The lead auto-scores 0–100 — this one hits 94','At 8am a digest email lands with the day’s top leads'] },
+    steps:['A visitor submits the webform','The lead auto-scores 0–100 - this one hits 94','At 8am a digest email lands with the day’s top leads'] },
   quietinbox:{ problem:'The reply that matters drowns under a flooded inbox.',
-    steps:['A new thread lands in your inbox','QuietInbox triages it and drafts the reply','You skim, tap approve — inbox back to zero'] },
+    steps:['A new thread lands in your inbox','QuietInbox triages it and drafts the reply','You skim, tap approve - inbox back to zero'] },
   translatorbill:{ problem:'Cross-border invoices get lost in translation and clumsy formatting.',
     steps:['A freelancer uploads an invoice','It’s auto-translated into the buyer’s locale','A clean, localized invoice is ready to send'] },
   datadrop:{ problem:'A messy CSV takes an hour to turn into a chart anyone can read.',
@@ -6583,9 +6583,9 @@ function jfQuietinbox(co){
   return [
     { html:'<div class="shot-pad"><div class="shot-head"><span class="shot-title">New message</span><span class="shot-pill" style="background:var(--blue-soft);color:var(--blue)">UNREAD</span></div>'
       +'<div class="shot-row"><span style="width:6px;height:6px;border-radius:50%;background:var(--blue);flex:0 0 auto"></span><div style="min-width:0;flex:1"><div class="shot-nm">Dana K.</div><div class="shot-sub">Re: onboarding call</div></div></div>'
-      +'<div class="jf-quote">“Hey — could we push our onboarding call to Thursday afternoon? Thanks!”</div></div>' },
+      +'<div class="jf-quote">“Hey - could we push our onboarding call to Thursday afternoon? Thanks!”</div></div>' },
     { html:'<div class="shot-pad"><div class="shot-head"><span class="shot-title">Reply · drafted</span><span class="shot-pill" style="background:var(--green-soft);color:var(--green)">READY</span></div>'
-      +'<div class="jf-draft">Hi Dana — Thursday afternoon works great. I’ve moved our onboarding call to 2pm Thursday. Talk soon!</div>'
+      +'<div class="jf-draft">Hi Dana - Thursday afternoon works great. I’ve moved our onboarding call to 2pm Thursday. Talk soon!</div>'
       +'<div class="jf-actions"><span class="jf-btn" style="background:var(--green);margin-top:0">Approve &amp; send</span><span class="jf-ghost">Edit</span></div></div>' },
     { html:shotQuietinbox(co), verified:1 }
   ];
@@ -6619,7 +6619,7 @@ function jfRedditpainbot(co){
     +'<span class="shot-badge" style="background:var(--'+r[3]+'-soft);color:var(--'+r[3]+')">pain</span></div>'; }).join('');
   return [
     { html:'<div class="shot-pad"><div class="shot-head"><span class="shot-title">r/freelance</span><span class="shot-pill" style="background:var(--slate-soft);color:var(--slate)">CRAWLING</span></div>'
-      +'<div class="jf-quote">“invoicing across currencies is hell — I waste hours every month.”</div>'
+      +'<div class="jf-quote">“invoicing across currencies is hell - I waste hours every month.”</div>'
       +'<div class="jf-quote">“there’s no cheap CSV cleaner that just works.”</div></div>' },
     { html:'<div class="shot-pad"><div class="shot-head"><span class="shot-title">Ranked pains</span><span class="shot-pill" style="background:var(--slate-soft);color:var(--slate)">TOP 3</span></div>'+rh+'</div>', verified:1 }
   ];
@@ -6633,7 +6633,7 @@ function jfGeneric(co){ var ac=avc(co.id);
   ];
 }
 var JOURNEY_FRAMES={ leadsift:jfLeadsift, quietinbox:jfQuietinbox, translatorbill:jfTranslatorbill, datadrop:jfDatadrop, redditpainbot:jfRedditpainbot };
-/* is the payoff actually proven (live / paying / passing check) — or still "the plan"? */
+/* is the payoff actually proven (live / paying / passing check) - or still "the plan"? */
 function coProven(co){ return !!(co.mrr>0 || (co.stage||'').toUpperCase().indexOf('LIVE')>=0 || co.approval); }
 /* the per-company journey object: { problem, steps, frames:[{caption, html, verified}] } + generic fallback */
 function coJourney(co){
@@ -6648,7 +6648,7 @@ function coJourney(co){
 function overviewSnapshotHTML(co){
   var j=coJourney(co), proven=coProven(co);
   var mrrTrend = co.mrrDelta>0?' <span class="ci-trend up">▲$'+co.mrrDelta+'</span>':(co.mrrDelta<0?' <span class="ci-trend down">▼$'+Math.abs(co.mrrDelta)+'</span>':'');
-  var uptime=(co.run&&co.run.uptime)?co.run.uptime:'—';
+  var uptime=(co.run&&co.run.uptime)?co.run.uptime:'-';
   var url=co.previewUrl||(co.domain?('https://'+co.domain):'localhost · preview');
   var preview = co.previewUrl
     ? '<a class="ci-preview" href="'+co.previewUrl+'" target="_blank" rel="noopener">view preview ↗</a>'
@@ -6671,21 +6671,21 @@ function overviewSnapshotHTML(co){
     +'<button type="button" class="ov-jp-arrow" data-jp-next aria-label="next step">›</button>'
     +'<span class="ov-jp-count" id="ovJpCount">1 / '+j.frames.length+'</span></div></div>';
   var proof='<div class="ov-jp-proof'+(proven?'':' plan')+'"><span class="ov-jp-proof-ic">'+(proven?'✓':'⏳')+'</span>'
-    +'<div style="min-width:0"><div class="ov-jp-proof-t">'+(proven?'Proven — the payoff check passes':'The plan — verifies once it goes live')+'</div>'
+    +'<div style="min-width:0"><div class="ov-jp-proof-t">'+(proven?'Proven - the payoff check passes':'The plan - verifies once it goes live')+'</div>'
     +'<div class="ov-jp-proof-c">'+esc(doneWhen)+'</div></div></div>';
   var health='<div class="co-health">'
     +'<div class="ch"><span class="ch-v">'+(co.users||0)+'</span><span class="ch-l">users</span></div>'
-    +'<div class="ch"><span class="ch-v">'+(co.mrr?'$'+co.mrr:'—')+mrrTrend+'</span><span class="ch-l">MRR / mo</span></div>'
+    +'<div class="ch"><span class="ch-v">'+(co.mrr?'$'+co.mrr:'-')+mrrTrend+'</span><span class="ch-l">MRR / mo</span></div>'
     +'<div class="ch"><span class="ch-v '+(co.net>=0?'pos':'neg')+'">'+(co.net>=0?'+$'+co.net:'−$'+Math.abs(co.net))+'</span><span class="ch-l">net / mo</span></div>'
     +'<div class="ch"><span class="ch-v">'+esc(uptime)+'</span><span class="ch-l">uptime</span></div></div>';
   var side='<div class="ov-jp-side">'+proof+health+'<div class="ov-jp-link">'+preview+'</div></div>';
   var body='<div class="ov-jp">'
-    +'<div class="ov-jp-problem"><span class="lab">Problem</span><span><b>'+esc(co.name)+'</b> — '+esc(j.problem)+'</span></div>'
+    +'<div class="ov-jp-problem"><span class="lab">Problem</span><span><b>'+esc(co.name)+'</b> - '+esc(j.problem)+'</span></div>'
     +'<div class="ov-jp-steps">'+chips+'</div>'
     +'<div class="ov-jp-body">'+player+side+'</div></div>';
   return tcard(proven?'Watch it work':'The journey · coming soon', body, proven?'journey-proof':'planned');
 }
-/* stepped player — re-inits on every Overview render; one timer, guarded */
+/* stepped player - re-inits on every Overview render; one timer, guarded */
 var _ovPlayer=null;
 function stopOvPlayer(){ if(_ovPlayer){ clearInterval(_ovPlayer.timer); _ovPlayer=null; } }
 function initOvPlayer(){
@@ -6759,7 +6759,7 @@ function featuresCardHTML(co){
   var rows=feats.map(function(f){ return '<div class="feat"><span class="feat-ic on">✓</span><span class="feat-l">'+esc(f)+'</span><span class="feat-tag live">live</span></div>'; }).join('');
   if(co.nextFeature){ var pend=coState(co)==='awaiting_approval'?'ready to ship':'building';
     rows+='<div class="feat"><span class="feat-ic pending">•</span><span class="feat-l">'+esc(co.nextFeature)+'</span><span class="feat-tag next">'+pend+'</span></div>'; }
-  if(!rows) rows='<div class="pc-sub">Nothing shipped yet — the walking skeleton is still being built.</div>';
+  if(!rows) rows='<div class="pc-sub">Nothing shipped yet - the walking skeleton is still being built.</div>';
   return tcard('What’s shipped'+(co.version?' · '+esc(co.version):''), '<div class="feats">'+rows+'</div>', feats.length?feats.length+' live':'');
 }
 function docsCardHTML(co){
@@ -6783,15 +6783,15 @@ function openDocModal(key){
 function closeDocModal(){ var m=document.getElementById('docModal'); if(m) m.hidden=true; }
 function nextStepHTML(co){
   var st=coState(co), msg;
-  if(co.approval) msg='Slice '+co.approval.slice+' is ready to ship — approve it in the <b>Needs you</b> rail to push '+esc(co.nextFeature||'the next feature')+' live.';
+  if(co.approval) msg='Slice '+co.approval.slice+' is ready to ship - approve it in the <b>Needs you</b> rail to push '+esc(co.nextFeature||'the next feature')+' live.';
   else if(st==='building') msg='Building '+(co.currentSlice?('slice '+co.currentSlice.n+' · '+esc(co.currentSlice.title)):'the next slice')+'. Track it in the <b>Build</b> tab.';
   else if(st==='blocked') msg=esc(co.name)+' is blocked'+(co.currentSlice?(' on '+esc(co.currentSlice.title)):'')+'. Clear it from the <b>Needs you</b> rail.';
-  else if(co.mrr) msg=esc(co.name)+' is live and healthy — <b>$'+co.mrr+'/mo</b> from '+(co.users||0)+' users. Next: '+esc(co.nextFeature||'grow distribution')+'.';
-  else msg=esc(co.name)+' is pre-revenue — focused on shipping the walking skeleton and landing the first users.';
+  else if(co.mrr) msg=esc(co.name)+' is live and healthy - <b>$'+co.mrr+'/mo</b> from '+(co.users||0)+' users. Next: '+esc(co.nextFeature||'grow distribution')+'.';
+  else msg=esc(co.name)+' is pre-revenue - focused on shipping the walking skeleton and landing the first users.';
   return '<div class="ov-next"><span class="ov-next-ic">→</span><div><div class="ov-next-t">Next step</div><div class="ov-next-d">'+msg+'</div></div></div>';
 }
 function overviewTabHTML(co){
-  var story='<b>'+esc(co.name)+'</b> — '+esc(co.mission||co.thesis);
+  var story='<b>'+esc(co.name)+'</b> - '+esc(co.mission||co.thesis);
   return '<div class="ov-story">'+story+'</div>'+overviewSnapshotHTML(co)+featuresCardHTML(co)+docsCardHTML(co)+nextStepHTML(co);
 }
 
@@ -6817,7 +6817,7 @@ function buildTabHTML(co){
   var shipped=co.slices?co.slices.filter(function(s){return s.status==='shipped';}).length:(co.slicesShipped||0);
   var st=coState(co);
   var stCls=st==='blocked'?'red':(st==='shipped'?'green':'');
-  out+='<div class="cstat c3">'+cstat(shipped+'','slices shipped','')+cstat(esc(co.version||'—'),'version','')+cstat(sbadgeLabel(st),'build state',stCls)+'</div>';
+  out+='<div class="cstat c3">'+cstat(shipped+'','slices shipped','')+cstat(esc(co.version||'-'),'version','')+cstat(sbadgeLabel(st),'build state',stCls)+'</div>';
   out+=blockerCardHTML(co);
   var work=currentWork(co);
   if(work){
@@ -6860,7 +6860,7 @@ function loadMonaco(){
     s.src=VS_URL+'/loader.min.js';
     s.onload=function(){
       try{
-        // cross-origin worker shim (blob → importScripts the CDN worker) — required from file://
+        // cross-origin worker shim (blob → importScripts the CDN worker) - required from file://
         self.MonacoEnvironment={ getWorkerUrl:function(){
           return URL.createObjectURL(new Blob(
             ['self.MonacoEnvironment={baseUrl:"'+VS_URL+'/"};importScripts("'+VS_URL+'/base/worker/workerMain.js");'],
@@ -6989,7 +6989,7 @@ function sourceTabHTML(co){
   else { pane=fallback; if(monacoState==='idle') loadMonaco(); }   // lazy-load the first time Source opens
   return '<div class="src-ide">'
     +'<div class="src-side"><div class="src-side-head">Explorer · '+esc(co.name)+'</div><div class="src-tree">'+srcTreeHTML(co)+'</div></div>'
-    +'<div class="src-main"><div class="src-titlebar"><span class="src-dots"><i></i><i></i><i></i></span><span class="src-path">'+esc(srcPath||'—')+'</span><button class="src-max-btn" data-src-max title="Focus mode — expand the editor to full width">⤢</button></div>'
+    +'<div class="src-main"><div class="src-titlebar"><span class="src-dots"><i></i><i></i><i></i></span><span class="src-path">'+esc(srcPath||'-')+'</span><button class="src-max-btn" data-src-max title="Focus mode - expand the editor to full width">⤢</button></div>'
       +'<div class="src-tabbar">'+tabs+'</div>'
       +pane+'</div>'
     +'</div>';
@@ -7018,7 +7018,7 @@ function growTabHTML(co){
   var g=co.grow||{};
   var out='';
   var stats='<div class="cstat c3">'+cstat((co.usersDelta?'+'+co.usersDelta:'0')+'<small>/wk</small>','new users',co.usersDelta?'green':'')
-    +cstat((co.users||0)+'','total users','')+cstat(g.funnelRate!=null?g.funnelRate+'%':'—','visit → paid','')+'</div>';
+    +cstat((co.users||0)+'','total users','')+cstat(g.funnelRate!=null?g.funnelRate+'%':'-','visit → paid','')+'</div>';
   out+=stats;
   if(g.blocked) out+=tabEmpty('Not launched yet.', esc(g.blocked));
   var launches=(g.launches&&g.launches.length)?g.launches.map(launchRowHTML).join(''):'<div class="pc-sub">No launches yet.</div>';
@@ -7042,10 +7042,10 @@ function ticketsHTML(co){
 }
 function runTabHTML(co){
   var r=co.run;
-  if(!r) return tabEmpty('Nothing to run yet.', esc(co.name)+' has no live users — support, uptime and billing begin once it launches.','slate');
+  if(!r) return tabEmpty('Nothing to run yet.', esc(co.name)+' has no live users - support, uptime and billing begin once it launches.','slate');
   var stats='<div class="cstat c4">'+cstat(r.ticketsOpen+'','open tickets','')+cstat(r.respTime,'avg response','')
-    +cstat(r.uptime,'uptime','green')+cstat((co.churn==null?'—':co.churn+'%'),'churn',co.churn>3?'amber':'green')+'</div>';
-  var tickets=r.ticketsOpen?ticketsHTML(co):'<div class="pc-sub">Inbox zero — no open tickets.</div>';
+    +cstat(r.uptime,'uptime','green')+cstat((co.churn==null?'-':co.churn+'%'),'churn',co.churn>3?'amber':'green')+'</div>';
+  var tickets=r.ticketsOpen?ticketsHTML(co):'<div class="pc-sub">Inbox zero - no open tickets.</div>';
   var billing='<div class="cstat c3">'+cstat(r.refunds+'','refunds (30d)',r.refunds?'amber':'green')
     +cstat(r.billing,'billing','green')+cstat(r.uptime,'uptime (30d)','green')+'</div>';
   return stats+tcard('Support queue · '+r.ticketsOpen+' open', tickets)+tcard('Reliability & billing', billing);
@@ -7058,7 +7058,7 @@ function moneyTabHTML(co){
   var max=Math.max.apply(null,parts.map(function(p){return p.v;}).concat([1]));
   var bars=parts.length?'<div class="blist">'+parts.map(function(p){ var pct=Math.round(p.v/max*100); return '<div class="brow"><span class="bl"><span class="dt" style="background:var(--'+p.tone+')"></span>'+esc(p.l)+'</span><span class="bt"><i style="width:'+Math.max(pct,6)+'%;background:var(--'+p.tone+')"></i></span><span class="bv">$'+p.v+'</span></div>'; }).join('')+'</div>':'<div class="pc-sub">No costs yet.</div>';
   var chart='<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'+sparkline(co.mrrHistory,240,60,co.mrrDelta>0?'var(--green)':'var(--slate)')
-    +'<div class="pc-sub">6-month MRR · '+(co.mrr?'$'+co.mrrPrev+' → $'+co.mrr+' ('+d.txt+'/mo)':'pre-revenue — cost only')+'</div></div>';
+    +'<div class="pc-sub">6-month MRR · '+(co.mrr?'$'+co.mrrPrev+' → $'+co.mrr+' ('+d.txt+'/mo)':'pre-revenue - cost only')+'</div></div>';
   return stats+tcard('MRR trend', chart)+tcard('Cost breakdown · $'+c.total+'/mo', bars);
 }
 
@@ -7085,8 +7085,8 @@ function clOversightBlock(co){
    ============================================================ */
 function resolveGate(id, btn){
   var g=DATA.gates.find(function(x){return x.id===id;}); if(!g) return;
-  if(g.type==='SHIP'){ btn.textContent='Shipped ✓'; btn.classList.add('done'); btn.classList.remove('primary'); cmdToast('✓ Shipped LeadSift slice 5 — daily digest is live','ok'); }
-  else if(g.type==='SPEND'){ btn.textContent='Approved ✓'; btn.classList.add('done'); cmdToast('✓ Approved $40 — QuietInbox Product Hunt launch scheduled','ok'); }
+  if(g.type==='SHIP'){ btn.textContent='Shipped ✓'; btn.classList.add('done'); btn.classList.remove('primary'); cmdToast('✓ Shipped LeadSift slice 5 - daily digest is live','ok'); }
+  else if(g.type==='SPEND'){ btn.textContent='Approved ✓'; btn.classList.add('done'); cmdToast('✓ Approved $40 - QuietInbox Product Hunt launch scheduled','ok'); }
   else if(g.type==='UNBLOCK'){ cmdToast('Opening RedditPainBot · blocker'); zoom('redditpainbot'); }
   else if(g.type==='SIGN'){ cmdToast('Opening TranslatorBill · entity + ToS'); zoom('translatorbill'); }
   else if(g.type==='POST'){ cmdToast('Opening DataDrop · launch draft'); zoom('datadrop'); }
@@ -7094,8 +7094,8 @@ function resolveGate(id, btn){
 function resolveBet(btn){
   var kind=btn.dataset.bet, target=btn.dataset.betTarget;
   if(kind==='spin'){ btn.textContent='Spinning…'; cmdToast('Spinning up PayoutReconciler…'); setTimeout(function(){ setNav('spin'); },280); return; }
-  if(kind==='kill'){ btn.textContent='Archived ✓'; btn.disabled=true; btn.style.opacity='.7'; cmdToast('RedditPainBot archived — build loop freed','ok'); return; }
-  if(kind==='double'){ btn.textContent='GROW → L2 ✓'; btn.disabled=true; var co=coById(target); if(co&&co.autonomy) co.autonomy.grow=2; cmdToast('QuietInbox GROW raised to L2 — paid acquisition now autopilot','ok'); return; }
+  if(kind==='kill'){ btn.textContent='Archived ✓'; btn.disabled=true; btn.style.opacity='.7'; cmdToast('RedditPainBot archived - build loop freed','ok'); return; }
+  if(kind==='double'){ btn.textContent='GROW → L2 ✓'; btn.disabled=true; var co=coById(target); if(co&&co.autonomy) co.autonomy.grow=2; cmdToast('QuietInbox GROW raised to L2 - paid acquisition now autopilot','ok'); return; }
   if(kind==='watch'){ cmdToast('Opening DataDrop · distribution'); zoom(target); return; }
 }
 function proClick(e){
@@ -7187,13 +7187,13 @@ function syncChrome(){
   updateNeedsCount();
 }
 
-/* fixed prototype demo pill — built once, reflects the current mode */
+/* fixed prototype demo pill - built once, reflects the current mode */
 function renderDemoPill(){
   var el = document.getElementById('demoPill');
   if(!el){
     el = document.createElement('div');
     el.id = 'demoPill'; el.className = 'demo-pill';
-    el.setAttribute('title', 'Prototype demo state — seeded app vs. a zero-company first run');
+    el.setAttribute('title', 'Prototype demo state - seeded app vs. a zero-company first run');
     el.innerHTML = '<span class="dp-ic" aria-hidden="true">◧</span><span class="dp-k">demo</span>'
       + '<button class="dp-seg" type="button" data-demo="full">Full</button>'
       + '<button class="dp-seg" type="button" data-demo="fresh">Fresh</button>';
@@ -7257,11 +7257,11 @@ function renderOnboarding(){
     + '<div class="onb-hero">'
       + '<div class="onb-eyebrow">// first run</div>'
       + '<h1 class="onb-h1">Let’s start your first company.</h1>'
-      + '<p class="onb-lead">You bring the ideas — <b>I build, launch and run the companies</b>. You approve the calls that matter.</p>'
+      + '<p class="onb-lead">You bring the ideas - <b>I build, launch and run the companies</b>. You approve the calls that matter.</p>'
     + '</div>'
     + '<div class="onb-card">'
       + '<div class="onb-test"><span class="tt-ic">' + ONB_SHIELD + '</span>'
-        + '<div class="tt-bd"><b>You’re in test mode</b> — I’ll spend nothing until you say so. Everything is simulated, so it’s safe to experiment.</div></div>'
+        + '<div class="tt-bd"><b>You’re in test mode</b> - I’ll spend nothing until you say so. Everything is simulated, so it’s safe to experiment.</div></div>'
       + '<div class="onb-budget">'
         + '<div class="onb-budget-top"><span class="onb-budget-lab">Monthly budget when you go live</span>'
           + '<span class="onb-budget-val" id="onbBudgetVal">$' + b + '</span></div>'
@@ -7328,7 +7328,7 @@ function startFirstCompany(thought){
     cost:{ infra:0, email:0, domain:0, apis:0, total:0 }, net:0,
     autonomy:{ make:1, grow:0, run:0 },
     connected:{ stripe:0, domain:0, esp:0, producthunt:0, x:0, ads:0, analytics:0 },
-    grow:{ launches:[], blocked:'Just created — the first slice is still being built.', funnel:[], funnelRate:null, traffic:[], distribution:[] },
+    grow:{ launches:[], blocked:'Just created - the first slice is still being built.', funnel:[], funnelRate:null, traffic:[], distribution:[] },
     run:null,
     currentSlice:{ n:1, title:'A visitor can use the smallest useful version', status:'building', step:'scaffolding the first version' },
     slicesShipped:0,
@@ -7339,7 +7339,7 @@ function startFirstCompany(thought){
   DATA.portfolio.companies    = DATA.companies.length;
   DATA.portfolio.active       = DATA.companies.length;
   DATA.portfolio.activeCompanies = DATA.companies.length;
-  document.body.classList.remove('demo-fresh');            // unlock the dashboards — we have a company now
+  document.body.classList.remove('demo-fresh');            // unlock the dashboards - we have a company now
   renderRail();                                            // ← pops into the sidebar immediately, spinning
   document.querySelectorAll('.co-item').forEach(function(el){ el.classList.toggle('sel', el.dataset.co===id); });
   syncChrome();
@@ -7383,7 +7383,7 @@ function initDemo(){
       e.target.style.setProperty('--fillpct', (ONB_BUDGET/500*100) + '%');
     }
   });
-  // onboarding actions — a separate delegated listener; onb-* selectors don't collide with the main handler
+  // onboarding actions - a separate delegated listener; onb-* selectors don't collide with the main handler
   document.body.addEventListener('click', function(e){
     if(e.target.closest('[data-onb-open]')){ setNav('spin'); return; }
     var chip = e.target.closest('[data-onb-chip]'); if(chip){ startFirstCompany(chip.dataset.onbChip); return; }

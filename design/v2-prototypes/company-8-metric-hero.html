@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LeadSift — C Slop Slop</title>
+<title>LeadSift - C Slop Slop</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -652,7 +652,7 @@
       <div class="dec-live">
         <span class="dec-eyebrow"><span class="spark"></span>Approval · Build</span>
         <div class="dec-title">Ship "Daily digest of top leads"?</div>
-        <p class="dec-sub">Feature 5 is built &amp; tested. A live preview is on staging and the automated check passed — it's ready to go live.</p>
+        <p class="dec-sub">Feature 5 is built &amp; tested. A live preview is on staging and the automated check passed - it's ready to go live.</p>
         <div class="dec-meta">
           <span class="chip"><span class="dt g"></span>check passed · /digest/preview → 200</span>
           <span class="chip"><span class="dt b"></span>deployed to staging · 4m ago</span>
@@ -742,7 +742,7 @@
           <div class="rm-txt"><b>Daily digest of top leads</b><small>Built · deployed to staging · check passed</small></div>
           <span class="rm-tag tag-wait">Needs you</span></li>
         <li class="rm stuck"><div class="rm-ic ic-stuck"><svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/></svg></div>
-          <div class="rm-txt"><b>Inbound webhook</b><small>Stuck — failed 3 tries · agent is looking into it</small></div>
+          <div class="rm-txt"><b>Inbound webhook</b><small>Stuck - failed 3 tries · agent is looking into it</small></div>
           <button class="btn-retry" onclick="this.textContent='Retrying…';this.disabled=true">Retry</button></li>
         <li class="rm"><div class="rm-ic ic-next"><span></span></div>
           <div class="rm-txt"><b>Export leads to CSV</b><small>Next up in the queue</small></div>
@@ -792,7 +792,7 @@
           <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Domain</span>
           <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Email</span>
           <span class="conn"><span class="cst ok"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Product Hunt</span>
-          <span class="conn missing"><span class="cst no"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></span>X / Twitter <span class="need">— needed for social posts</span></span>
+          <span class="conn missing"><span class="cst no"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></span>X / Twitter <span class="need">- needed for social posts</span></span>
         </div>
       </div>
     </div>
@@ -884,7 +884,7 @@
   }
   function approve(){
     resolve('Approved · shipping to production',
-            'Promoting the staging build now — users will see the daily digest shortly.', null);
+            'Promoting the staging build now - users will see the daily digest shortly.', null);
   }
   function preview(){
     // simulate opening the staging preview
@@ -894,7 +894,7 @@
   }
   function reject(){
     resolve('Sent back with feedback',
-            'Feature 5 returned to the build queue — the agent will revise and resubmit.',
+            'Feature 5 returned to the build queue - the agent will revise and resubmit.',
             {bg:'rgba(182,72,63,.12)', stroke:'#b6483f'});
     dec.style.setProperty('border-color','#e6c6c1');
     dec.querySelector('.check-badge svg').innerHTML='<path d="M9 14l6-6M15 14L9 8"/>';

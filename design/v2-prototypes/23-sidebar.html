@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>C Slop Slop — 23 · Sidebar</title>
+<title>C Slop Slop - 23 · Sidebar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -426,7 +426,7 @@ kbd{
 <div class="global-chat" id="globalChat">
   <div class="gc-inner">
     <span class="spark">✦</span>
-    <input id="globalInput" placeholder="Ask anything, or type a command — “promote PayoutReconciler”, “approve LeadSift slice 5”…">
+    <input id="globalInput" placeholder="Ask anything, or type a command - “promote PayoutReconciler”, “approve LeadSift slice 5”…">
     <button class="gc-send" id="globalSend">Send</button>
   </div>
 </div>
@@ -467,7 +467,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -495,7 +495,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -504,22 +504,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -583,7 +583,7 @@ function renderCompanies(){
       <div class="cc-r">
         <div class="cc-stat"><div class="v mono">$${c.mrr}</div><div class="k">mrr</div></div>
         <div class="cc-stat"><div class="v mono">${c.users}</div><div class="k">users</div></div>
-        <div class="cc-stat"><div class="v mono">${c.previewUrl?c.previewUrl.replace('http://localhost:',':'):'—'}</div><div class="k">preview</div></div>
+        <div class="cc-stat"><div class="v mono">${c.previewUrl?c.previewUrl.replace('http://localhost:',':'):'-'}</div><div class="k">preview</div></div>
       </div>`);
     card.addEventListener('click',()=>openCompany(c.id));
     list.appendChild(card);
@@ -609,11 +609,11 @@ function renderOpps(){
         </div>
       </div>
       <div class="tg">“${o.thought}”</div>
-      ${killed?'<span class="killed-tag">✕ Killed — low score</span>':`<button class="promote">Promote to company →</button>`}
+      ${killed?'<span class="killed-tag">✕ Killed - low score</span>':`<button class="promote">Promote to company →</button>`}
     `);
     const pb=card.querySelector('.promote');
     if(pb) pb.addEventListener('click',()=>{
-      pb.textContent='Promoted ✓ — committing'; pb.style.background='var(--green-soft)'; pb.style.color='var(--green)';
+      pb.textContent='Promoted ✓ - committing'; pb.style.background='var(--green-soft)'; pb.style.color='var(--green)';
       setTimeout(()=>{pb.textContent='Promote to company →';pb.style.background='';pb.style.color='';},1600);
     });
     g.appendChild(card);
@@ -640,7 +640,7 @@ function renderActivityFull(){
 /* ---------- live strip ---------- */
 function renderActivityStrip(){
   const latest=DATA.activity.find(a=>a.running)||DATA.activity[0];
-  $('#actLatest').innerHTML=`<b>${latest.co}</b> — ${latest.text}`;
+  $('#actLatest').innerHTML=`<b>${latest.co}</b> - ${latest.text}`;
   const stream=$('#actStream'); stream.innerHTML='';
   const byCo={};
   DATA.activity.forEach(a=>{(byCo[a.co]=byCo[a.co]||[]).push(a)});
@@ -743,7 +743,7 @@ function renderCompanyView(c){
     const t=ci.value.trim(); if(!t)return;
     chat.appendChild(el('div','msg user',t)); ci.value='';
     chat.scrollTop=chat.scrollHeight;
-    setTimeout(()=>{chat.appendChild(el('div','msg assistant','On it — I’ll route that to the build queue and report back here.'));chat.scrollTop=chat.scrollHeight;},420);
+    setTimeout(()=>{chat.appendChild(el('div','msg assistant','On it - I’ll route that to the build queue and report back here.'));chat.scrollTop=chat.scrollHeight;},420);
   }
   cs.addEventListener('click',send);
   ci.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
@@ -758,7 +758,7 @@ function buildGate(c){
   const g=el('section','gate',`
     <div class="gate-head">
       <span class="tag">Approval gate · L0</span>
-      <span class="t">Slice ${a.slice} — ${a.title}</span>
+      <span class="t">Slice ${a.slice} - ${a.title}</span>
       <span class="at">attempt ${a.attempt}</span>
     </div>
     <div class="gate-body">
@@ -797,14 +797,14 @@ function buildGate(c){
 
   setTimeout(()=>{
     $('#approveBtn').addEventListener('click',()=>{
-      const cf=$('#gateConfirm'); cf.textContent='Approved ✓ — shipping to '+c.domain; cf.className='gate-confirm ok show';
+      const cf=$('#gateConfirm'); cf.textContent='Approved ✓ - shipping to '+c.domain; cf.className='gate-confirm ok show';
       $('#approveBtn').textContent='Shipped ✓'; $('#approveBtn').disabled=true; $('#approveBtn').style.opacity='.7';
     });
     $('#rejectBtn').addEventListener('click',()=>{
       $('#rejectBox').classList.toggle('show'); $('#rejectText').focus();
     });
     $('#rejectSend').addEventListener('click',()=>{
-      const cf=$('#gateConfirm'); cf.textContent='Feedback sent ✓ — re-queued'; cf.className='gate-confirm rej show';
+      const cf=$('#gateConfirm'); cf.textContent='Feedback sent ✓ - re-queued'; cf.className='gate-confirm rej show';
       $('#rejectBox').classList.remove('show'); $('#rejectText').value='';
     });
   },0);

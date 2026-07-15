@@ -2,13 +2,13 @@ import { spawn } from "node:child_process";
 import type { AiTask } from "../config/ai-catalog.js";
 import { type ResolvedTask, resolveTaskModel } from "../config/ai-tasks.js";
 
-// dispatchAI — the AI proxy for the *thinking* tasks (opportunities · research · plan ·
+// dispatchAI - the AI proxy for the *thinking* tasks (opportunities · research · plan ·
 // write · chat · orchestrate). It is the brain, distinct from the build harness (the
 // hands, src/engine/seams/harness.ts). One resolver (resolveTaskModel) picks the route;
 // this executes it over three transports:
-//   • claude-cli — the keyless default: one-shot `claude -p` on the host subscription.
-//   • anthropic  — direct Messages API (x-api-key), when an Anthropic key is set.
-//   • openai-compat — OpenRouter and every other provider's /chat/completions.
+//   • claude-cli - the keyless default: one-shot `claude -p` on the host subscription.
+//   • anthropic  - direct Messages API (x-api-key), when an Anthropic key is set.
+//   • openai-compat - OpenRouter and every other provider's /chat/completions.
 // Callers (planning/scoring/chat drivers) get plain text back and never branch on route.
 
 export type DispatchInput = {
@@ -96,7 +96,7 @@ function dispatchClaudeCli(
                     costUsd: typeof j.total_cost_usd === "number" ? j.total_cost_usd : 0,
                 });
             } catch {
-                // Older CLIs may print bare text — return it as-is rather than failing.
+                // Older CLIs may print bare text - return it as-is rather than failing.
                 resolve({
                     text: out.trim(),
                     model: r.model || "claude",
@@ -130,7 +130,7 @@ async function dispatchAnthropic(
         signal: input.signal ?? AbortSignal.timeout(60_000),
     });
     if (!res.ok)
-        throw new Error(`dispatchAI: Anthropic HTTP ${res.status} — ${await snippet(res)}`);
+        throw new Error(`dispatchAI: Anthropic HTTP ${res.status} - ${await snippet(res)}`);
     const j = (await res.json()) as { content?: Array<{ type?: string; text?: string }> };
     const text = (j.content ?? [])
         .filter((c) => c.type === "text")
@@ -139,7 +139,7 @@ async function dispatchAnthropic(
     return { text: text.trim(), model: r.model, via: "direct", costUsd: 0 };
 }
 
-// OpenAI-compatible /chat/completions — OpenRouter and direct OpenAI/xAI/Perplexity/z.ai/custom.
+// OpenAI-compatible /chat/completions - OpenRouter and direct OpenAI/xAI/Perplexity/z.ai/custom.
 async function dispatchOpenAICompat(
     r: Extract<ResolvedTask, { kind: "model" }>,
     input: DispatchInput,
@@ -160,7 +160,7 @@ async function dispatchOpenAICompat(
         signal: input.signal ?? AbortSignal.timeout(60_000),
     });
     if (!res.ok)
-        throw new Error(`dispatchAI: ${r.provider} HTTP ${res.status} — ${await snippet(res)}`);
+        throw new Error(`dispatchAI: ${r.provider} HTTP ${res.status} - ${await snippet(res)}`);
     const j = (await res.json()) as {
         choices?: Array<{ message?: { content?: string } }>;
     };

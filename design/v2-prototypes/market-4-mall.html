@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop · The Mall — window-shop AI-built products you can use today</title>
+<title>C Slop Slop · The Mall - window-shop AI-built products you can use today</title>
 <script>
 /* pre-paint theme: no flash. LIGHT default; honor stored pref, else system dark. */
 (function () {
@@ -541,7 +541,7 @@ main { max-width: 1240px; margin: 0 auto; padding: 8px 24px 40px; }
 <section class="hero">
   <span class="hero-eyebrow">🛍️ Open now · built live on the factory floor</span>
   <h1>Window-shop a mall of <span class="em">AI-built products</span> you can use today.</h1>
-  <p class="hero-sub">Every storefront here was spun up by one solo maker on C Slop Slop. Stroll the aisles, peek in the windows, and try what's open — no login, no pitch deck.</p>
+  <p class="hero-sub">Every storefront here was spun up by one solo maker on C Slop Slop. Stroll the aisles, peek in the windows, and try what's open - no login, no pitch deck.</p>
   <div class="hero-meta">
     <span class="stat-pill"><b id="stat-stores">12</b> storefronts</span>
     <span class="stat-pill"><b id="stat-open">7</b> open now</span>
@@ -579,7 +579,7 @@ main { max-width: 1240px; margin: 0 auto; padding: 8px 24px 40px; }
   <section class="section closed-section" id="closedSection">
     <div class="sec-head">
       <span class="sec-title" style="font-size:15px;">🚧 Recently shuttered</span>
-      <span class="sec-note">curation keeps the mall fresh — dead bets get archived, not featured</span>
+      <span class="sec-note">curation keeps the mall fresh - dead bets get archived, not featured</span>
     </div>
     <div class="closed-strip" id="closedRow"></div>
   </section>
@@ -589,10 +589,10 @@ main { max-width: 1240px; margin: 0 auto; padding: 8px 24px 40px; }
   <div class="footer-in">
     <div style="flex:1 1 320px;">
       <h2>Your window could be <span class="em">next</span>.</h2>
-      <p class="footer-note">Describe a product. The factory spins up a storefront, ships it, and lists it here — public by default as social proof.</p>
-      <p class="footer-lock">🔒 the operator's cockpit — budget, spend, the AI's plan, the approval queue — stays private. Always.</p>
+      <p class="footer-note">Describe a product. The factory spins up a storefront, ships it, and lists it here - public by default as social proof.</p>
+      <p class="footer-lock">🔒 the operator's cockpit - budget, spend, the AI's plan, the approval queue - stays private. Always.</p>
     </div>
-    <button class="btn-build" style="padding:14px 24px;font-size:15px;" onclick="showToast('This is a prototype — the real Build flow lives in the app.')">Build your own storefront <span class="arr">→</span></button>
+    <button class="btn-build" style="padding:14px 24px;font-size:15px;" onclick="showToast('This is a prototype - the real Build flow lives in the app.')">Build your own storefront <span class="arr">→</span></button>
   </div>
 </footer>
 
@@ -617,7 +617,7 @@ var COMPANIES = [
     pitch:"Email triage that auto-drafts the replies you approve.",
     metric:"6 beta users", revenueHidden:true, signal:"Promising",
     fresh:"building now", domain:"quietinbox.io", emoji:"📥",
-    headline:"Inbox zero, pre-drafted.", sub:"Triage that writes the reply — you just approve.", cta:"Try the triage →" },
+    headline:"Inbox zero, pre-drafted.", sub:"Triage that writes the reply - you just approve.", cta:"Try the triage →" },
   { name:"DataDrop", handle:"@sana", category:"Data", stage:"Building",
     pitch:"CSV → clean → an instant, shareable dashboard.",
     metric:"40 on waitlist", signal:"Building",
@@ -644,7 +644,7 @@ var COMPANIES = [
     fresh:"trending ↑", domain:"mealmap.app", emoji:"🥗",
     headline:"Snap your fridge. Get dinner.", sub:"AI meal plans from one photo of your shelves.", cta:"Make my plan →" },
   { name:"GymStreak", handle:"@theo", category:"Fitness", stage:"Testing",
-    pitch:"Text your workout — it logs and progresses it for you.",
+    pitch:"Text your workout - it logs and progresses it for you.",
     metric:"48 beta", signal:"Promising",
     fresh:"shipped v2 today", domain:"gymstreak.fit", emoji:"💪",
     headline:"Just text your workout.", sub:"It logs it and progresses you automatically.", cta:"Start a streak →" },
@@ -692,7 +692,7 @@ var STAGE = {
   Killed:   { color:"red",    sign:"CLOSED",       open:"Post-mortem" }
 };
 
-/* aisle display order — liveliest first so dead/empty never dominate */
+/* aisle display order - liveliest first so dead/empty never dominate */
 var AISLE_ORDER = ["Sales","Health","Finance","Fitness","Email","Data","Games","Pricing","Home"];
 var STAGE_RANK = { Growing:0, Ejected:1, Testing:2, Building:3, Idea:4, Killed:5 };
 
@@ -875,9 +875,9 @@ function tractionCells(c){
   } else if (c.revenueHidden) {
     cells += "<div class='tr-cell'><div class='tr-k'>Revenue</div><div class='tr-v lock'>🔒 private</div></div>";
   } else {
-    cells += "<div class='tr-cell'><div class='tr-k'>Revenue</div><div class='tr-v lock'>— pre-revenue</div></div>";
+    cells += "<div class='tr-cell'><div class='tr-k'>Revenue</div><div class='tr-v lock'>- pre-revenue</div></div>";
   }
-  cells += "<div class='tr-cell'><div class='tr-k'>Signal</div><div class='tr-v'>" + (c.signal || "—") + "</div></div>";
+  cells += "<div class='tr-cell'><div class='tr-k'>Signal</div><div class='tr-v'>" + (c.signal || "-") + "</div></div>";
   cells += "<div class='tr-cell'><div class='tr-k'>Freshness</div><div class='tr-v' style='font-size:13px;'>" + c.fresh + "</div></div>";
   return cells;
 }
@@ -906,7 +906,7 @@ function openModal(c){
       "<div class='private-note'>" +
         "<b>🔒 What stays private.</b> This is the public product page. The operator's cockpit never shows here:" +
         "<div class='pn-list'>budget & spend · the AI's build plan · the approval queue · the risk log</div>" +
-        "Public by default — privacy is a paid upgrade." +
+        "Public by default - privacy is a paid upgrade." +
       "</div>" +
     "</div>";
 

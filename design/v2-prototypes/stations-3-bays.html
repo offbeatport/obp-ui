@@ -432,7 +432,7 @@
       </div>
     </div>
     <div class="top-spacer"></div>
-    <span class="needs-pill" id="needsPill" title="Bays with a pending gate — waiting on you">
+    <span class="needs-pill" id="needsPill" title="Bays with a pending gate - waiting on you">
       <span class="fl" aria-hidden="true"></span><b id="needsN">0</b>&nbsp;<span class="lbl-txt">need you</span>
     </span>
     <button class="zoom-btn" id="zoomBtn" aria-label="Toggle compact / expanded view">
@@ -450,7 +450,7 @@
   <section class="floor-head">
     <span class="floor-eyebrow"><span class="d"></span> factory floor · live</span>
     <h1>Six companies on the line, three stations each.</h1>
-    <p class="floor-sub">Every company runs across three bays — <b>Build</b> (the product), <b>Grow</b> (get it out there), <b>Run</b> (keep it alive). Lit bays are working; amber idles; grey is dark. A terracotta flag means a bay hit a gate and needs your call.</p>
+    <p class="floor-sub">Every company runs across three bays - <b>Build</b> (the product), <b>Grow</b> (get it out there), <b>Run</b> (keep it alive). Lit bays are working; amber idles; grey is dark. A terracotta flag means a bay hit a gate and needs your call.</p>
     <div class="legend">
       <span class="lg"><i class="g"></i> active</span>
       <span class="lg"><i class="a"></i> idle</span>
@@ -465,7 +465,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>operations floor</b> — the AI works the bays, you oversee</span>
+    <span>C Slop Slop · <b>operations floor</b> - the AI works the bays, you oversee</span>
     <span>stage = where it is · bays = what it's doing · <b>gates wait for you</b></span>
   </footer>
 
@@ -499,7 +499,7 @@
       bays: {
         build: { state: 'active', auto: 'L1', task: 'CSV export',
           log: ['wrote the exporter', 'ran tests ✓', 'deployed to staging', 'wired CSV headers', 'opened PR #48'] },
-        grow: { state: 'needs', auto: 'L0', task: 'Product Hunt launch — $40 gated', gate: 'SPEND',
+        grow: { state: 'needs', auto: 'L0', task: 'Product Hunt launch - $40 gated', gate: 'SPEND',
           log: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you', 'researched launch timing'] },
         run: { state: 'active', auto: 'L1', task: 'onboarding + support',
           log: ['sent 3 onboarding emails', 'answered a ticket', 'billing webhook ✓', 'uptime 200 OK'] }
@@ -523,7 +523,7 @@
           log: ['re-prioritized backlog', 'cleaning CSV parser', 'sketched saved views', 'fixed a delimiter bug'] },
         grow: { state: 'needs', auto: 'L0', task: 'r/SaaS launch thread', gate: 'POST',
           log: ['drafted the thread + 3 replies', 'awaiting your post', 'listed 5 subreddits', 'wrote a hook line'] },
-        run: { state: 'idle', auto: 'L1', task: 'quiet — 1 open ticket',
+        run: { state: 'idle', auto: 'L1', task: 'quiet - 1 open ticket',
           log: ['checked uptime · 200 OK', '1 ticket open', 'reviewed error logs'] }
       }
     },
@@ -532,14 +532,14 @@
       bays: {
         build: { state: 'active', auto: 'L1', task: 'InvoiceFormatter.tsx',
           log: ['translating a sample invoice', 'ran tests · green', 'wired InvoiceFormatter.tsx', 'mapped currency fields'] },
-        grow: { state: 'off', auto: null, task: 'blocked — no domain' },
+        grow: { state: 'off', auto: null, task: 'blocked - no domain' },
         run: { state: 'off', auto: null, task: 'pre-revenue' }
       }
     },
     {
       name: 'PricePeek', stage: 'Idea',
       bays: {
-        build: { state: 'idle', auto: 'L0', task: 'validating — 15 interviews',
+        build: { state: 'idle', auto: 'L0', task: 'validating - 15 interviews',
           log: ['drafted interview script', 'listed 15 targets', 'booked 2 calls', 'noted a pattern'] },
         grow: { state: 'off', auto: null, task: '' },
         run: { state: 'off', auto: null, task: '' }
@@ -595,7 +595,7 @@
     var sub = '<div class="bay-sub"><span class="auto' + autoCls + '">' + auto + '</span>' + flag + '</div>';
     var body;
     if (b.state === 'off') {
-      body = '<div class="bay-off">' + (b.task ? esc(b.task) : '—') + '</div>';
+      body = '<div class="bay-off">' + (b.task ? esc(b.task) : '-') + '</div>';
     } else {
       body = '<div class="task">' + esc(b.task) + '</div>' +
              '<div class="log" data-log data-c="' + ci + '" data-a="' + area.key + '"></div>';

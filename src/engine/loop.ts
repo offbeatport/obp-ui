@@ -25,7 +25,7 @@ export function startLoop(ctx: EngineContext): () => void {
         // Ship first: promote any action you (or autopilot) approved since last tick, which
         // also releases the company lock so its next queued action becomes claimable below.
         void shipApproved(ctx, shipping);
-        // Thinking passes — each processes at most ONE company per tick (bounded fan-out so
+        // Thinking passes - each processes at most ONE company per tick (bounded fan-out so
         // scoping/chat can't spawn a claude-subprocess thundering herd). They own their own
         // guard Sets and do all AI outside any DB transaction.
         void scopeNext(scoping); // fresh company thought → opportunity + spec + first action

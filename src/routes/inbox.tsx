@@ -1,6 +1,6 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { AppShell } from "~/components/app-shell";
-import { TONE_VAR } from "~/components/command-center/tone";
+import { CompanyLogo } from "~/components/company-logo";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { approveAction, rejectAction } from "~/server/actions";
 import { type InboxItem, listInbox } from "~/server/data";
@@ -57,12 +57,12 @@ function Inbox() {
                                 key={item.id}
                                 className="flex items-start gap-3 rounded-xl border bg-card p-3.5"
                             >
-                                <span
-                                    className="grid size-9 flex-none place-items-center rounded-lg font-display text-sm font-bold text-white"
-                                    style={{ background: TONE_VAR[item.tone] }}
-                                >
-                                    {item.companyName.charAt(0)}
-                                </span>
+                                <CompanyLogo
+                                    name={item.companyName}
+                                    branding={item.branding}
+                                    size={36}
+                                    radius={8}
+                                />
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
                                         <Link

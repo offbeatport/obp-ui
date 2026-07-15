@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 /* ============================================================
-   C SLOP SLOP — fixed app shell over ambient canvas (PRO)
+   C SLOP SLOP - fixed app shell over ambient canvas (PRO)
    Base: dock-layouts.html. Tokens verbatim. Operator-console extensions
    (Money / Autonomy / Oversight / Strategy + full company cockpit modal).
    ============================================================ */
@@ -28,7 +28,7 @@
   --elev:var(--panel2); --fg:var(--ink); --sub:var(--ink-dim); --muted:var(--ink-faint);
   --accent:var(--blue); --success:var(--green); --warning:var(--amber); --danger:var(--red); --purple:var(--violet);
   --sans:'Space Grotesk', system-ui, sans-serif; --mono:'JetBrains Mono', ui-monospace, monospace; --r:6px;
-  /* per-company brand hues — distinct in dark, mirror the spec's avatar intent
+  /* per-company brand hues - distinct in dark, mirror the spec's avatar intent
      (accent/terracotta · blue · violet · green · slate) */
   --b-leadsift:#e0794f; --b-quietinbox:var(--blue); --b-translatorbill:var(--violet);
   --b-datadrop:var(--green); --b-redditpainbot:var(--slate);
@@ -250,7 +250,7 @@ body.zoom-out .cocard .cthesis{ display:none; }
 .cocard .cactivity{ margin-top:13px; padding-top:13px; border-top:1px solid var(--line); }
 .act-line.fresh{ animation:actin .5s ease; }
 @keyframes actin{ from{ opacity:0; transform:translateY(-5px); } to{ opacity:1; transform:none; } }
-/* bigger boxes but LESS static info — let the live activity lead */
+/* bigger boxes but LESS static info - let the live activity lead */
 .cocard .csparkrow, .cocard .cauto, .cocard .cprog, .cocard .ccurrent, .cocard .cthesis{ display:none; }
 
 /* zoom toggle */
@@ -838,7 +838,7 @@ table.matrix tr.paused td{ opacity:.5; }
   </div>
   <div class="dock-scroll">
 
-    <!-- 1) LeadSift — SHIP gate -->
+    <!-- 1) LeadSift - SHIP gate -->
     <div class="cocard needsyou gt-ship" data-open="leadsift" style="--bc:var(--b-leadsift)">
       <div class="needsbadge">ship</div>
       <div class="ctop"><span class="cavatar">L</span><span class="cname">LeadSift</span><span class="cdomain">leadsift.app</span></div>
@@ -861,11 +861,11 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="ccurrent gt-ship"><span class="pulse live" style="background:var(--violet)"></span><span class="cs-label" style="color:var(--violet)">slice 5 · daily digest awaiting ship</span><span class="sbadge">ship</span></div>
     </div>
 
-    <!-- 2) QuietInbox — SPEND gate, building -->
+    <!-- 2) QuietInbox - SPEND gate, building -->
     <div class="cocard needsyou gt-spend" data-open="quietinbox" style="--bc:var(--b-quietinbox)">
       <div class="needsbadge">spend</div>
       <div class="ctop"><span class="cavatar">Q</span><span class="cname">QuietInbox</span><span class="cdomain">quietinbox.io</span></div>
-      <div class="cstage" style="--sc:var(--green)">● live · scaling — best roi</div>
+      <div class="cstage" style="--sc:var(--green)">● live · scaling - best roi</div>
       <div class="chealth h-building"><span class="hdot"></span><span class="hstatus">Building</span><span class="hcheck"><span class="hc-ic">✓</span> live · 99.9%</span></div>
       <div class="cmetrics">
         <div class="m mrr"><b>$420</b><span>mrr</span></div>
@@ -884,7 +884,7 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="ccurrent gt-spend"><span class="pulse live" style="background:var(--blue)"></span><span class="cs-label">$40 Product Hunt launch awaiting spend</span><span class="sbadge">spend</span></div>
     </div>
 
-    <!-- 3) TranslatorBill — building, capability blocked -->
+    <!-- 3) TranslatorBill - building, capability blocked -->
     <div class="cocard building gt-sign" data-open="translatorbill" style="--bc:var(--b-translatorbill)">
       <div class="ctop"><span class="cavatar">T</span><span class="cname">TranslatorBill</span><span class="cdomain none">no domain</span></div>
       <div class="cstage" style="--sc:var(--violet)">● pre-revenue · building <span class="cwarn">⚠ blocked</span></div>
@@ -892,7 +892,7 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="cmetrics">
         <div class="m mrr"><b>$0</b><span>mrr</span></div>
         <div class="m"><b>0</b><span>users</span></div>
-        <div class="m"><b>—</b><span>churn</span></div>
+        <div class="m"><b>-</b><span>churn</span></div>
         <div class="m net"><b class="neg">−11</b><span>net/mo</span></div>
       </div>
       <div class="csparkrow"><span class="ctrend">no revenue yet · needs domain + ToS to launch</span></div>
@@ -906,10 +906,10 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="ccurrent gt-none"><span class="pulse live" style="background:var(--blue)"></span><span class="cs-label">slice 6 · writing InvoiceFormatter.tsx</span><span class="sbadge sb-build">build</span></div>
     </div>
 
-    <!-- 4) DataDrop — flat, watch -->
+    <!-- 4) DataDrop - flat, watch -->
     <div class="cocard gt-post" data-open="datadrop" style="--bc:var(--b-datadrop)">
       <div class="ctop"><span class="cavatar">D</span><span class="cname">DataDrop</span><span class="cdomain">datadrop.sh</span></div>
-      <div class="cstage" style="--sc:var(--amber)">● live · flat — watch</div>
+      <div class="cstage" style="--sc:var(--amber)">● live · flat - watch</div>
       <div class="chealth h-healthy"><span class="hdot"></span><span class="hstatus">Healthy</span><span class="hcheck"><span class="hc-ic">✓</span> 200 OK · uptime ok</span></div>
       <div class="cmetrics">
         <div class="m mrr"><b>$95</b><span>mrr</span></div>
@@ -917,7 +917,7 @@ table.matrix tr.paused td{ opacity:.5; }
         <div class="m"><b>4%</b><span>churn</span></div>
         <div class="m net"><b class="pos">+76</b><span>net/mo</span></div>
       </div>
-      <div class="csparkrow"><span data-spark="datadrop"></span><span class="ctrend"><span class="flat">— flat</span> · low traffic</span></div>
+      <div class="csparkrow"><span data-spark="datadrop"></span><span class="ctrend"><span class="flat">- flat</span> · low traffic</span></div>
       <div class="cauto">
         <span class="achip">make <b class="l1">L1</b></span><span class="achip">grow <b class="l0">L0</b></span><span class="achip">run <b class="l1">L1</b></span>
       </div>
@@ -928,16 +928,16 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="ccurrent gt-post"><span class="pulse" style="background:var(--blue)"></span><span class="cs-label">distribution push queued · r/SaaS post</span><span class="sbadge">post</span></div>
     </div>
 
-    <!-- 5) RedditPainBot — paused / blocked -->
+    <!-- 5) RedditPainBot - paused / blocked -->
     <div class="cocard paused gt-unblock" data-open="redditpainbot" style="--bc:var(--b-redditpainbot)">
       <div class="needsbadge">unblock</div>
       <div class="ctop"><span class="cavatar">R</span><span class="cname">RedditPainBot</span><span class="cdomain none">no domain</span></div>
-      <div class="cstage" style="--sc:var(--red)">● paused &amp; blocked — kill candidate</div>
+      <div class="cstage" style="--sc:var(--red)">● paused &amp; blocked - kill candidate</div>
       <div class="chealth h-blocked"><span class="hdot"></span><span class="hstatus">Blocked</span><span class="hcheck"><span class="hc-ic">✗</span> stuck ×3</span></div>
       <div class="cmetrics">
         <div class="m mrr"><b>$0</b><span>mrr</span></div>
         <div class="m"><b>0</b><span>users</span></div>
-        <div class="m"><b>—</b><span>churn</span></div>
+        <div class="m"><b>-</b><span>churn</span></div>
         <div class="m net"><b class="neg">−4</b><span>net/mo</span></div>
       </div>
       <div class="csparkrow"><span class="ctrend">0 traction · loop off · −$4/mo drag</span></div>
@@ -963,7 +963,7 @@ table.matrix tr.paused td{ opacity:.5; }
     <div class="msg user"><span class="m-from">you</span>what about RedditPainBot?</div>
     <div class="msg assistant"><span class="m-from">copilot</span>0 traction, stuck ×3, costing −$4/mo. My call: <b>kill it</b> and spin up PayoutReconciler (demand 82) with the reclaimed loop.</div>
   </div>
-  <div class="chat-input"><input id="chatInput" placeholder="Direct the portfolio — ship, spend, unblock, kill…" /><button class="send" id="chatSend">↑</button></div>
+  <div class="chat-input"><input id="chatInput" placeholder="Direct the portfolio - ship, spend, unblock, kill…" /><button class="send" id="chatSend">↑</button></div>
 </div>
 </div><!-- /portfolio -->
 <!-- ===================== WAITING ROOM / GATE QUEUE ===================== -->
@@ -977,7 +977,7 @@ table.matrix tr.paused td{ opacity:.5; }
       <article class="wr-item" style="--rc:var(--green)">
         <div class="wr-top"><span class="wr-gtype">ship</span><span class="logo logo--L">L</span><span class="wr-name">LeadSift</span><span class="wr-ver">slice 5</span><span class="wr-status"><span class="wr-dot"></span> Awaiting you</span></div>
         <div class="wr-feature">User gets a daily email digest of top leads</div>
-        <div class="wr-note">Live at <b>localhost:4019</b>. doneWhen <b>passed</b> — <b>GET /digest/preview → 200</b> and body contains "Top leads". Ship to mark it live for all 12 users.</div>
+        <div class="wr-note">Live at <b>localhost:4019</b>. doneWhen <b>passed</b> - <b>GET /digest/preview → 200</b> and body contains "Top leads". Ship to mark it live for all 12 users.</div>
         <div class="wr-actions"><button class="wr-review" type="button" data-review="leadsift" data-tab="build">Review &amp; ship</button><button class="wr-approve" type="button">Ship now</button></div>
       </article>
 
@@ -990,27 +990,27 @@ table.matrix tr.paused td{ opacity:.5; }
 
       <article class="wr-item" style="--rc:var(--red)">
         <div class="wr-top"><span class="wr-gtype">unblock</span><span class="logo logo--R">R</span><span class="wr-name">RedditPainBot</span><span class="wr-ver">slice 8</span><span class="wr-status"><span class="wr-dot"></span> Awaiting you</span></div>
-        <div class="wr-feature">Dedupe near-identical pains — stuck ×3</div>
-        <div class="wr-note">The build loop hit the same failure <b>3 times</b> and stopped. Unblock with guidance, or kill the company — it has <b>0 traction</b> and costs −$4/mo.</div>
+        <div class="wr-feature">Dedupe near-identical pains - stuck ×3</div>
+        <div class="wr-note">The build loop hit the same failure <b>3 times</b> and stopped. Unblock with guidance, or kill the company - it has <b>0 traction</b> and costs −$4/mo.</div>
         <div class="wr-actions"><button class="wr-review" type="button" data-review="redditpainbot" data-tab="build">Review &amp; decide</button><button class="wr-approve" type="button">Unblock</button></div>
       </article>
 
     </div>
     <div class="gap"></div>
-    <div class="list-label tight">Upcoming — gating soon</div>
+    <div class="list-label tight">Upcoming - gating soon</div>
     <div class="wr-list">
 
       <article class="wr-item" style="--rc:var(--violet)">
         <div class="wr-top"><span class="wr-gtype">sign</span><span class="logo logo--T">T</span><span class="wr-name">TranslatorBill</span><span class="wr-ver">legal</span><span class="wr-status up"><span class="wr-dot"></span> Upcoming</span></div>
         <div class="wr-feature">Form an entity + accept ToS to take payments</div>
-        <div class="wr-note">Before TranslatorBill can charge anyone it needs a registered entity and signed terms. Blocked behind a missing domain too. The agent can't sign — that's always you.</div>
+        <div class="wr-note">Before TranslatorBill can charge anyone it needs a registered entity and signed terms. Blocked behind a missing domain too. The agent can't sign - that's always you.</div>
         <div class="wr-actions"><button class="wr-review" type="button" data-review="translatorbill" data-tab="grow">Review</button></div>
       </article>
 
       <article class="wr-item" style="--rc:var(--blue)">
         <div class="wr-top"><span class="wr-gtype">post</span><span class="logo logo--D">D</span><span class="wr-name">DataDrop</span><span class="wr-ver">r/SaaS</span><span class="wr-status up"><span class="wr-dot"></span> Upcoming</span></div>
         <div class="wr-feature">Publish a launch thread to r/SaaS</div>
-        <div class="wr-note">DataDrop is flat — a distribution push is the lever. The agent drafted a launch thread; public posts are gated, so it's holding for your go.</div>
+        <div class="wr-note">DataDrop is flat - a distribution push is the lever. The agent drafted a launch thread; public posts are gated, so it's holding for your go.</div>
         <div class="wr-actions"><button class="wr-review" type="button" data-review="datadrop" data-tab="grow">Review draft</button></div>
       </article>
 
@@ -1022,7 +1022,7 @@ table.matrix tr.paused td{ opacity:.5; }
 <div class="page" data-page="money" hidden>
   <div class="page-doc"><div class="page-inner">
     <p class="portfolio"><span class="n">$214</span> spend / mo of <span class="n">$500</span> cap · net <span class="n">+$481</span> / mo · profitable, bootstrapped</p>
-    <p class="guide"><span class="marker">Money · control plane</span>Where every dollar goes — and the guardrail that lets the agent spend small without asking, but gates anything bigger.</p>
+    <p class="guide"><span class="marker">Money · control plane</span>Where every dollar goes - and the guardrail that lets the agent spend small without asking, but gates anything bigger.</p>
 
     <div class="kpi-row">
       <div class="kpi"><div class="k-l">MRR</div><div class="k-v pos">$695</div><div class="k-sub"><span class="up">▲ 14%</span> from $610</div></div>
@@ -1038,7 +1038,7 @@ table.matrix tr.paused td{ opacity:.5; }
       <div style="height:18px"></div>
       <div class="tg-row">
         <div class="tg on" id="guardToggle" role="switch" aria-checked="true"></div>
-        <div class="tg-txt"><b>Budget guardrail</b> — auto-approve spend under $25, gate anything above</div>
+        <div class="tg-txt"><b>Budget guardrail</b> - auto-approve spend under $25, gate anything above</div>
         <span class="tg-state" id="guardState">auto &lt; $25</span>
       </div>
       <div class="ck-note" style="margin-top:14px">With the guardrail on, the agent paid <b style="color:var(--sub)">$9 infra</b> (LeadSift) and <b style="color:var(--sub)">$14 infra</b> (QuietInbox) this week without asking. The <b style="color:var(--amber)">$40 Product Hunt</b> launch is above the line, so it's gated in Waiting.</div>
@@ -1054,7 +1054,7 @@ table.matrix tr.paused td{ opacity:.5; }
           <tr style="--rc:var(--b-translatorbill)"><td><span class="mt-co">TranslatorBill</span></td><td>$0</td><td>$11</td><td class="neg">−$11</td></tr>
           <tr style="--rc:var(--b-datadrop)"><td><span class="mt-co">DataDrop</span></td><td>$95</td><td>$19</td><td class="pos">+$76</td></tr>
           <tr style="--rc:var(--b-redditpainbot)"><td><span class="mt-co">RedditPainBot</span></td><td>$0</td><td>$4</td><td class="neg">−$4</td></tr>
-          <tr class="platform"><td><span class="mt-co" style="--rc:var(--slate)">Platform &amp; agent compute</span></td><td>—</td><td>$110</td><td>−$110</td></tr>
+          <tr class="platform"><td><span class="mt-co" style="--rc:var(--slate)">Platform &amp; agent compute</span></td><td>-</td><td>$110</td><td>−$110</td></tr>
           <tr class="total"><td>Portfolio</td><td>$695</td><td>$214</td><td class="pos">+$481</td></tr>
         </tbody>
       </table>
@@ -1077,7 +1077,7 @@ table.matrix tr.paused td{ opacity:.5; }
 <div class="page" data-page="autonomy" hidden>
   <div class="page-doc"><div class="page-inner">
     <p class="portfolio"><span class="n">4</span> active loops · <span class="n">1</span> paused · test mode <span class="n">off</span> · <span class="n">2</span> capabilities blocked by missing accounts</p>
-    <p class="guide"><span class="marker">Autonomy &amp; capability</span>What runs on autopilot vs what waits for you — per company, per ring. L0 asks first · L1 acts &amp; logs · L2 acts on its own within budget.</p>
+    <p class="guide"><span class="marker">Autonomy &amp; capability</span>What runs on autopilot vs what waits for you - per company, per ring. L0 asks first · L1 acts &amp; logs · L2 acts on its own within budget.</p>
 
     <div class="summary-line"><b>On autopilot now:</b> <span class="auto">onboarding emails, reply drafts, infra spend &lt; $25, SEO publishing.</span> &nbsp;<b>Always gated to you:</b> <span class="gated">shipping a slice, paid spend, public posts, legal signatures, unblock calls.</span></div>
 
@@ -1085,10 +1085,10 @@ table.matrix tr.paused td{ opacity:.5; }
       <div class="pc-h">Global controls</div>
       <div class="tg-row" style="margin-bottom:14px">
         <div class="tg" id="testToggle" role="switch" aria-checked="false"></div>
-        <div class="tg-txt"><b>Test mode</b> — simulate every action (emails, posts, charges) without touching the real world</div>
+        <div class="tg-txt"><b>Test mode</b> - simulate every action (emails, posts, charges) without touching the real world</div>
         <span class="tg-state off" id="testState">live</span>
       </div>
-      <div class="ck-note" id="testNote">Live mode: L1/L2 actions hit real inboxes, real Stripe, real timelines — all logged to the Oversight ledger.</div>
+      <div class="ck-note" id="testNote">Live mode: L1/L2 actions hit real inboxes, real Stripe, real timelines - all logged to the Oversight ledger.</div>
     </div>
 
     <div class="panel-card">
@@ -1146,21 +1146,21 @@ table.matrix tr.paused td{ opacity:.5; }
 <div class="page" data-page="oversight" hidden>
   <div class="page-doc"><div class="page-inner">
     <p class="portfolio"><span class="n">24</span> actions taken on your behalf · last <span class="n">7</span> days · <span class="n">0</span> flagged · all within autonomy</p>
-    <p class="guide"><span class="marker">Oversight ledger</span>Everything the agent did <b style="color:var(--fg)">without asking</b> — inside the autonomy you granted. Real-world acts (emails, posts, money) can be undone or flagged.</p>
+    <p class="guide"><span class="marker">Oversight ledger</span>Everything the agent did <b style="color:var(--fg)">without asking</b> - inside the autonomy you granted. Real-world acts (emails, posts, money) can be undone or flagged.</p>
 
-    <div class="list-label tight">Acted on your behalf — reverse chronological</div>
+    <div class="list-label tight">Acted on your behalf - reverse chronological</div>
     <div class="ledger">
-      <div class="led-item grow" style="--rc:var(--b-quietinbox)"><div class="led-time">2h</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring grow">grow</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Scheduled <b>1 tweet</b> — "Snooze just shipped: send a thread to tomorrow 8am." Goes out 4:00pm.</div></div><div class="led-actions"><button class="led-btn undo">Undo</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ undone</div><div class="led-resolved r-flag">⚑ flagged</div></div>
+      <div class="led-item grow" style="--rc:var(--b-quietinbox)"><div class="led-time">2h</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring grow">grow</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Scheduled <b>1 tweet</b> - "Snooze just shipped: send a thread to tomorrow 8am." Goes out 4:00pm.</div></div><div class="led-actions"><button class="led-btn undo">Undo</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ undone</div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
-      <div class="led-item grow" style="--rc:var(--b-leadsift)"><div class="led-time">6h</div><div class="led-body"><div class="led-top"><span class="led-co">LeadSift</span><span class="led-ring grow">grow</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Published <b>1 SEO article</b> — "How to score inbound leads automatically" → leadsift.app/blog.</div></div><div class="led-actions"><button class="led-btn undo">Undo</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ undone</div><div class="led-resolved r-flag">⚑ flagged</div></div>
+      <div class="led-item grow" style="--rc:var(--b-leadsift)"><div class="led-time">6h</div><div class="led-body"><div class="led-top"><span class="led-co">LeadSift</span><span class="led-ring grow">grow</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Published <b>1 SEO article</b> - "How to score inbound leads automatically" → leadsift.app/blog.</div></div><div class="led-actions"><button class="led-btn undo">Undo</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ undone</div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
-      <div class="led-item run" style="--rc:var(--b-quietinbox)"><div class="led-time">8h</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring run">run</span><span class="led-lvl">L1 · held for review</span></div><div class="led-act">Drafted <b>9 reply suggestions</b> across support threads — staged, not sent. Awaiting your tone-check.</div></div><div class="led-actions"><button class="led-btn flag">Flag</button></div><div class="led-resolved r-flag">⚑ flagged</div></div>
+      <div class="led-item run" style="--rc:var(--b-quietinbox)"><div class="led-time">8h</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring run">run</span><span class="led-lvl">L1 · held for review</span></div><div class="led-act">Drafted <b>9 reply suggestions</b> across support threads - staged, not sent. Awaiting your tone-check.</div></div><div class="led-actions"><button class="led-btn flag">Flag</button></div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
       <div class="led-item run" style="--rc:var(--b-leadsift)"><div class="led-time">1d</div><div class="led-body"><div class="led-top"><span class="led-co">LeadSift</span><span class="led-ring run">run</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Sent <b>12 onboarding emails</b> to new signups from the Product Hunt cohort.</div></div><div class="led-actions"><button class="led-btn undo">Recall</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ recalled</div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
       <div class="led-item run" style="--rc:var(--b-datadrop)"><div class="led-time">2d</div><div class="led-body"><div class="led-top"><span class="led-co">DataDrop</span><span class="led-ring run">run</span><span class="led-lvl">L1 · acts &amp; logs</span></div><div class="led-act">Sent <b>3 onboarding emails</b> to trial users who uploaded their first CSV.</div></div><div class="led-actions"><button class="led-btn undo">Recall</button><button class="led-btn flag">Flag</button></div><div class="led-resolved r-undo">↩ recalled</div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
-      <div class="led-item spend" style="--rc:var(--b-quietinbox)"><div class="led-time">3d</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring spend">spend</span><span class="led-lvl">L1 · under $25 guardrail</span></div><div class="led-act">Spent <b>$14</b> on infra (Fly.io scale-up for the snooze worker) — within the auto-approve limit.</div></div><div class="led-actions"><button class="led-btn flag">Flag</button></div><div class="led-resolved r-flag">⚑ flagged</div></div>
+      <div class="led-item spend" style="--rc:var(--b-quietinbox)"><div class="led-time">3d</div><div class="led-body"><div class="led-top"><span class="led-co">QuietInbox</span><span class="led-ring spend">spend</span><span class="led-lvl">L1 · under $25 guardrail</span></div><div class="led-act">Spent <b>$14</b> on infra (Fly.io scale-up for the snooze worker) - within the auto-approve limit.</div></div><div class="led-actions"><button class="led-btn flag">Flag</button></div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
       <div class="led-item spend" style="--rc:var(--b-leadsift)"><div class="led-time">4d</div><div class="led-body"><div class="led-top"><span class="led-co">LeadSift</span><span class="led-ring spend">spend</span><span class="led-lvl">L1 · under $25 guardrail</span></div><div class="led-act">Spent <b>$9</b> on infra + lead-enrichment APIs.</div></div><div class="led-actions"><button class="led-btn flag">Flag</button></div><div class="led-resolved r-flag">⚑ flagged</div></div>
 
@@ -1178,13 +1178,13 @@ table.matrix tr.paused td{ opacity:.5; }
 
     <div class="list-label tight">The agent recommends</div>
     <div class="rec-grid">
-      <div class="rec" style="--rc:var(--green)"><div class="rec-top"><span class="rec-glyph">▲</span><span class="rec-verb">Double down</span><span class="rec-co">QuietInbox</span></div><div class="rec-why">Best net ROI in the portfolio — <b>+$372/mo</b>, 2% churn, 1.2k newsletter subs. Raise <b>GROW to L2</b> and greenlight the $40 Product Hunt launch (~120 signups projected).</div><button class="rec-act" type="button" data-rec="ql2">Raise GROW → L2</button></div>
+      <div class="rec" style="--rc:var(--green)"><div class="rec-top"><span class="rec-glyph">▲</span><span class="rec-verb">Double down</span><span class="rec-co">QuietInbox</span></div><div class="rec-why">Best net ROI in the portfolio - <b>+$372/mo</b>, 2% churn, 1.2k newsletter subs. Raise <b>GROW to L2</b> and greenlight the $40 Product Hunt launch (~120 signups projected).</div><button class="rec-act" type="button" data-rec="ql2">Raise GROW → L2</button></div>
 
-      <div class="rec" style="--rc:var(--blue)"><div class="rec-top"><span class="rec-glyph">→</span><span class="rec-verb">Push or watch</span><span class="rec-co">DataDrop</span></div><div class="rec-why">Flat at <b>$95</b> with 4% churn and almost no traffic. One real distribution push (the r/SaaS POST) could move it — otherwise it's a watch-for-kill.</div><button class="rec-act ghost" type="button" data-rec="ddpost">Approve r/SaaS post</button></div>
+      <div class="rec" style="--rc:var(--blue)"><div class="rec-top"><span class="rec-glyph">→</span><span class="rec-verb">Push or watch</span><span class="rec-co">DataDrop</span></div><div class="rec-why">Flat at <b>$95</b> with 4% churn and almost no traffic. One real distribution push (the r/SaaS POST) could move it - otherwise it's a watch-for-kill.</div><button class="rec-act ghost" type="button" data-rec="ddpost">Approve r/SaaS post</button></div>
 
       <div class="rec" style="--rc:var(--red)"><div class="rec-top"><span class="rec-glyph">✕</span><span class="rec-verb">Kill</span><span class="rec-co">RedditPainBot</span></div><div class="rec-why"><b>0 traction</b>, slice 8 stuck ×3, dragging <b>−$4/mo</b>. Archive it and reclaim the loop for something with demand.</div><button class="rec-act ghost" type="button" data-rec="killrpb">Archive company</button></div>
 
-      <div class="rec" style="--rc:var(--b-leadsift)"><div class="rec-top"><span class="rec-glyph">✦</span><span class="rec-verb">Spin up</span><span class="rec-co">PayoutReconciler</span></div><div class="rec-why">Highest buyer intent the agent has mined — <b>demand 82</b>, ready to scaffold. Strong fit with the existing Stripe + billing plumbing.</div><button class="rec-act" type="button" data-rec="spin">Spin up company</button></div>
+      <div class="rec" style="--rc:var(--b-leadsift)"><div class="rec-top"><span class="rec-glyph">✦</span><span class="rec-verb">Spin up</span><span class="rec-co">PayoutReconciler</span></div><div class="rec-why">Highest buyer intent the agent has mined - <b>demand 82</b>, ready to scaffold. Strong fit with the existing Stripe + billing plumbing.</div><button class="rec-act" type="button" data-rec="spin">Spin up company</button></div>
     </div>
 
     <div class="list-label">Opportunity pipeline · highest intent first</div>
@@ -1290,14 +1290,14 @@ table.matrix tr.paused td{ opacity:.5; }
       grow:{ launched:1, items:[
         ['ok','Product Hunt','Launched 3 weeks ago → <b>+8 signups</b>'],
         ['ok','SEO','<b>4 articles</b> live → <b>320 visits/mo</b>'],
-        ['block','X / social','Not connected — <b>blocks social posting</b>']],
+        ['block','X / social','Not connected - <b>blocks social posting</b>']],
         funnel:[['Webform visits',320,'100%','100%'],['Trial started',67,'21%','42%'],['Paid',12,'18% of trial','18%']] },
       run:{ stats:[['2','open tickets','warn'],['~4h','first response',''],['99.9%','uptime','']],
         rows:[['ok','Support','2 open · ~4h response time'],['ok','Uptime','99.9% · 200 OK'],['warn','Refunds','1 refund this month · churn 0%']] },
       money:{ mrr:180,trend:'+$40 vs last mo',cost:22,net:158,break:[['Infra',9,'var(--blue)'],['APIs',7,'var(--green)'],['Email',5,'var(--amber)'],['Domain',1,'var(--slate)']] },
-      chat:[['assistant','Daily digest is live at localhost:4019 and the doneWhen check passed. Want to ship it to all 12 users?'],['user','show me the diff first'],['assistant','One new component + a cron scheduler — both in the Build tab\'s gate, with the preview render.']] },
+      chat:[['assistant','Daily digest is live at localhost:4019 and the doneWhen check passed. Want to ship it to all 12 users?'],['user','show me the diff first'],['assistant','One new component + a cron scheduler - both in the Build tab\'s gate, with the preview render.']] },
 
-    quietinbox:{ name:'QuietInbox', initial:'Q', brand:'var(--b-quietinbox)', status:'active', stage:'LIVE · SCALING — best ROI', stageColor:'var(--green)',
+    quietinbox:{ name:'QuietInbox', initial:'Q', brand:'var(--b-quietinbox)', status:'active', stage:'LIVE · SCALING - best ROI', stageColor:'var(--green)',
       thesis:'Email triage that auto-drafts replies you can approve.', domain:'quietinbox.io', url:'http://localhost:4021',
       mrr:420, mrrTrend:'+$60', users:38, usersTrend:'steady', churn:'2%', cost:48, net:372, spark:'quietinbox',
       autonomy:{make:2,grow:1,run:1},
@@ -1308,30 +1308,30 @@ table.matrix tr.paused td{ opacity:.5; }
         current:{status:'building',step:'deploying to localhost:4021 · doneWhen probe',title:'Slice #9 · Snooze a thread until tomorrow'} },
       grow:{ launched:1, gate:{ type:'spend', label:'SPEND gate · $40', n:'GROW · L1', title:'Pay $40 to launch on Product Hunt',
           rows:[['projected','<b style="color:var(--green)">~120 signups</b> on launch day'],['budget','$214 of $500 cap used · this adds $40'],['why','Above the $25 auto-approve line, so it\'s gated']],
-          note:'GROW is at L1 — it can draft and schedule, but spending real money always stops for you.', approve:'Approve $40 spend', reject:'Hold' },
-        items:[['ok','Product Hunt','Launch drafted — <b>$40 spend gated</b> (above)'],['ok','Newsletter','<b>1,200 subscribers</b> · 3.1% weekly growth'],['block','Ads','Not connected — <b>blocks paid acquisition</b>']],
+          note:'GROW is at L1 - it can draft and schedule, but spending real money always stops for you.', approve:'Approve $40 spend', reject:'Hold' },
+        items:[['ok','Product Hunt','Launch drafted - <b>$40 spend gated</b> (above)'],['ok','Newsletter','<b>1,200 subscribers</b> · 3.1% weekly growth'],['block','Ads','Not connected - <b>blocks paid acquisition</b>']],
         funnel:[['Newsletter → site',1200,'100%','100%'],['Trial started',61,'5.1%','46%'],['Paid',38,'62% of trial','62%']] },
       run:{ stats:[['5','open tickets',''],['0','refunds','pos'],['99.9%','uptime','']],
         rows:[['ok','Support','5 open tickets · healthy queue'],['ok','Billing','Stripe healthy · 0 refunds · 2% churn'],['ok','Uptime','99.9% · live']] },
       money:{ mrr:420,trend:'+$60 vs last mo',cost:48,net:372,break:[['Infra',30,'var(--blue)'],['APIs',9,'var(--green)'],['Email',8,'var(--amber)'],['Domain',1,'var(--slate)']] },
-      chat:[['assistant','Slice 9 (snooze) is deploying. Separately — the $40 Product Hunt launch is waiting on you in the Grow tab. ~120 signups projected.'],['user','what\'s our best channel right now?'],['assistant','The 1.2k newsletter converts at 62% trial→paid. PH would be net-new top-of-funnel — worth the $40.']] },
+      chat:[['assistant','Slice 9 (snooze) is deploying. Separately - the $40 Product Hunt launch is waiting on you in the Grow tab. ~120 signups projected.'],['user','what\'s our best channel right now?'],['assistant','The 1.2k newsletter converts at 62% trial→paid. PH would be net-new top-of-funnel - worth the $40.']] },
 
     translatorbill:{ name:'TranslatorBill', initial:'T', brand:'var(--b-translatorbill)', status:'active', stage:'PRE-REVENUE · BUILDING', stageColor:'var(--violet)',
       thesis:'Auto-translate + reformat invoices for cross-border freelancers.', domain:null, url:'http://localhost:4023',
-      mrr:0, mrrTrend:'—', users:0, usersTrend:'—', churn:'—', cost:11, net:-11, spark:null,
+      mrr:0, mrrTrend:'-', users:0, usersTrend:'-', churn:'-', cost:11, net:-11, spark:null,
       autonomy:{make:1,grow:0,run:0},
       conn:[['Stripe',0],['Domain',0],['ESP',0]],
       over:[['5d','spend','Spent $11 on infra (build env)']],
       build:{ shipped:4,total:6, pipe:['shipped','shipped','shipped','shipped','todo','building'],
         slices:[[1,'Upload an invoice','shipped'],[2,'Detect source language + currency','shipped'],[3,'Translate line items','shipped'],[4,'Convert currency at live FX','shipped'],[5,'Generate a clean branded PDF','todo'],[6,'Re-format an invoice into the buyer\'s locale','building']],
         current:{status:'building',step:'writing InvoiceFormatter.tsx',title:'Slice #6 · Re-format an invoice into the buyer\'s locale'} },
-      grow:{ launched:0, blocked:[['block','Domain','No domain registered — <b>blocks launch entirely</b>'],['block','Entity + ToS','Needs a <b>SIGN</b> gate before it can take payments'],['block','Stripe','Not connected — can\'t charge']],
-        note:'Not launched. Two hard blockers stand between TranslatorBill and its first dollar — a domain and a signed entity/ToS. Neither can be done on autopilot.' },
-      run:{ na:'No RUN surface yet — TranslatorBill is pre-revenue with no live users, support, or billing. RUN autonomy stays at L0 until it launches.' },
+      grow:{ launched:0, blocked:[['block','Domain','No domain registered - <b>blocks launch entirely</b>'],['block','Entity + ToS','Needs a <b>SIGN</b> gate before it can take payments'],['block','Stripe','Not connected - can\'t charge']],
+        note:'Not launched. Two hard blockers stand between TranslatorBill and its first dollar - a domain and a signed entity/ToS. Neither can be done on autopilot.' },
+      run:{ na:'No RUN surface yet - TranslatorBill is pre-revenue with no live users, support, or billing. RUN autonomy stays at L0 until it launches.' },
       money:{ mrr:0,trend:'pre-revenue',cost:11,net:-11,break:[['Infra',11,'var(--blue)']] },
-      chat:[['assistant','Slice 6 (locale reformat) is being written. Heads up: I can\'t launch this — no domain, and it needs an entity + ToS signed before Stripe.'],['user','draft the ToS so it\'s ready'],['assistant','On it — I\'ll stage a ToS draft, but the signature gate stays with you.']] },
+      chat:[['assistant','Slice 6 (locale reformat) is being written. Heads up: I can\'t launch this - no domain, and it needs an entity + ToS signed before Stripe.'],['user','draft the ToS so it\'s ready'],['assistant','On it - I\'ll stage a ToS draft, but the signature gate stays with you.']] },
 
-    datadrop:{ name:'DataDrop', initial:'D', brand:'var(--b-datadrop)', status:'active', stage:'LIVE · FLAT — watch', stageColor:'var(--amber)',
+    datadrop:{ name:'DataDrop', initial:'D', brand:'var(--b-datadrop)', status:'active', stage:'LIVE · FLAT - watch', stageColor:'var(--amber)',
       thesis:'CSV intake → clean → instant dashboard.', domain:'datadrop.sh', url:'http://localhost:4025',
       mrr:95, mrrTrend:'flat', users:6, usersTrend:'flat', churn:'4%', cost:19, net:76, spark:'datadrop',
       autonomy:{make:1,grow:0,run:1},
@@ -1339,20 +1339,20 @@ table.matrix tr.paused td{ opacity:.5; }
       over:[['2d','run','Sent 3 onboarding emails'],['6d','spend','Spent $7 on infra'],['5m','make','Re-prioritized the backlog']],
       build:{ shipped:5,total:6, pipe:['shipped','shipped','shipped','shipped','shipped','todo'],
         slices:[[1,'Upload a CSV','shipped'],[2,'Auto-clean + type columns','shipped'],[3,'Instant dashboard from data','shipped'],[4,'Share a dashboard link','shipped'],[5,'Filter + pivot the data','shipped'],[6,'Saved chart views','todo']],
-        current:{status:'todo',step:'queued — top of backlog',title:'Slice #6 · Saved chart views'} },
+        current:{status:'todo',step:'queued - top of backlog',title:'Slice #6 · Saved chart views'} },
       grow:{ launched:1, gate:{ type:'post', label:'POST gate · upcoming', n:'GROW · L0', title:'Publish a launch thread to r/SaaS',
-          rows:[['draft','Agent wrote the thread + 3 reply variants'],['why','DataDrop is flat — distribution is the lever'],['target','r/SaaS · ~14k weekly active founders']],
+          rows:[['draft','Agent wrote the thread + 3 reply variants'],['why','DataDrop is flat - distribution is the lever'],['target','r/SaaS · ~14k weekly active founders']],
           note:'Public posts are always gated. Approve to let it go live, or open the draft to edit first.', approve:'Approve & post', reject:'Edit draft' },
-        items:[['warn','Directory','1 directory listing · <b>low traffic</b>'],['warn','SEO','No articles yet — thin top-of-funnel'],['ok','r/SaaS post','Drafted → <b>POST gated</b> (above)']],
+        items:[['warn','Directory','1 directory listing · <b>low traffic</b>'],['warn','SEO','No articles yet - thin top-of-funnel'],['ok','r/SaaS post','Drafted → <b>POST gated</b> (above)']],
         funnel:[['Site visits',140,'100%','100%'],['Trial started',11,'7.9%','30%'],['Paid',6,'55% of trial','55%']] },
       run:{ stats:[['1','open ticket',''],['4%','churn','warn'],['ok','uptime','']],
-        rows:[['ok','Support','1 open ticket · low volume'],['ok','Uptime','Healthy · 200 OK'],['warn','Churn','4% — watch; flat growth compounds it']] },
+        rows:[['ok','Support','1 open ticket · low volume'],['ok','Uptime','Healthy · 200 OK'],['warn','Churn','4% - watch; flat growth compounds it']] },
       money:{ mrr:95,trend:'flat vs last mo',cost:19,net:76,break:[['Infra',12,'var(--blue)'],['Email',4,'var(--amber)'],['APIs',2,'var(--green)'],['Domain',1,'var(--slate)']] },
-      chat:[['assistant','DataDrop is healthy but flat. I drafted an r/SaaS launch thread — it\'s in the Grow tab waiting on your POST approval.'],['user','is churn a problem?'],['assistant','4% on a small base. Distribution first; if a push doesn\'t move it, it\'s a kill candidate.']] },
+      chat:[['assistant','DataDrop is healthy but flat. I drafted an r/SaaS launch thread - it\'s in the Grow tab waiting on your POST approval.'],['user','is churn a problem?'],['assistant','4% on a small base. Distribution first; if a push doesn\'t move it, it\'s a kill candidate.']] },
 
-    redditpainbot:{ name:'RedditPainBot', initial:'R', brand:'var(--b-redditpainbot)', status:'paused', stage:'PAUSED & BLOCKED — kill candidate', stageColor:'var(--red)',
+    redditpainbot:{ name:'RedditPainBot', initial:'R', brand:'var(--b-redditpainbot)', status:'paused', stage:'PAUSED & BLOCKED - kill candidate', stageColor:'var(--red)',
       thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.', domain:null, url:null,
-      mrr:0, mrrTrend:'—', users:0, usersTrend:'—', churn:'—', cost:4, net:-4, spark:null,
+      mrr:0, mrrTrend:'-', users:0, usersTrend:'-', churn:'-', cost:4, net:-4, spark:null,
       autonomy:{make:'off',grow:'off',run:'off'},
       conn:[],
       over:[],
@@ -1360,10 +1360,10 @@ table.matrix tr.paused td{ opacity:.5; }
         slices:[[1,'Pull posts from a subreddit','shipped'],[2,'Classify pain vs noise','shipped'],[3,'Rank pains by buyer intent','todo'],[4,'Cluster similar pains','todo'],[5,'Weekly digest of top pains','todo'],[6,'Score willingness-to-pay','todo'],[7,'Suggest a micro-SaaS per pain','todo'],[8,'Dedupe near-identical pains','blocked']],
         gate:{ type:'unblock', label:'UNBLOCK gate · stuck ×3', n:'loop off', title:'Slice #8 · Dedupe near-identical pains',
           rows:[['failure','Same embedding-collision error, 3 attempts'],['traction','0 users · 0 MRR · −$4/mo'],['options','Unblock with guidance, or kill the company']],
-          note:'The loop stopped itself after 3 identical failures. Strategy recommends killing this one — 0 traction and stuck.', approve:'Unblock with guidance', reject:'Kill company' } },
-      grow:{ launched:0, blocked:[['block','Never launched','No domain, no audience, no funnel'],['block','Loop','Paused — GROW autonomy off']],
+          note:'The loop stopped itself after 3 identical failures. Strategy recommends killing this one - 0 traction and stuck.', approve:'Unblock with guidance', reject:'Kill company' } },
+      grow:{ launched:0, blocked:[['block','Never launched','No domain, no audience, no funnel'],['block','Loop','Paused - GROW autonomy off']],
         note:'RedditPainBot never reached a launch. With the build loop blocked and 0 traction, there\'s nothing to grow yet.' },
-      run:{ na:'No RUN surface — the company is paused with no live users or billing.' },
+      run:{ na:'No RUN surface - the company is paused with no live users or billing.' },
       money:{ mrr:0,trend:'paused',cost:4,net:-4,break:[['Infra',4,'var(--slate)']] },
       chat:[['assistant','Slice 8 has failed the same way 3 times, so I stopped. This company has 0 traction and costs −$4/mo.'],['user','is it worth unblocking?'],['assistant','Honestly, no. I\'d kill it and spin up PayoutReconciler (demand 82) with the freed-up loop.']] }
   };
@@ -1424,7 +1424,7 @@ table.matrix tr.paused td{ opacity:.5; }
   }
   function renderOverMini(c){
     var el=document.getElementById('coOver');
-    if(!c.over.length){ el.innerHTML='<div class="om" style="color:var(--ink-faint)">Nothing acted — loop is paused.</div>'; return; }
+    if(!c.over.length){ el.innerHTML='<div class="om" style="color:var(--ink-faint)">Nothing acted - loop is paused.</div>'; return; }
     el.innerHTML=c.over.map(function(o){ return '<div class="om"><span class="ot">'+o[0]+'</span><span class="or '+o[1]+'">'+o[1]+'</span>'+o[2]+'</div>'; }).join('');
   }
   function pipeHTML(pipe,shipped,total,note){
@@ -1435,7 +1435,7 @@ table.matrix tr.paused td{ opacity:.5; }
     var dw=g.doneWhen?'<div class="donewhen"><div class="dw-top"><span class="dw-check">✓ doneWhen passed</span></div><div class="dw-text">'+esc(g.doneWhen)+'</div></div>':'';
     var diff=g.diff?'<div class="diff">'+g.diff.map(function(l){ return '<div class="dl '+(l.charAt(0)==='+'?'add':'ctx')+'">'+esc(l)+'</div>'; }).join('')+'</div>':'';
     var note=g.note?'<div class="ck-note" style="margin-bottom:13px">'+g.note+'</div>':'';
-    var prev=g.preview==='digest'?'<div class="preview-card"><div class="pc-bar"><span class="dot" style="background:#f87171"></span><span class="dot" style="background:#fbbf24"></span><span class="dot" style="background:#34d399"></span><span class="pc-url">localhost:4019/digest/preview</span></div><div class="pc-body"><div class="digest-title">📧 Your top leads today</div><div class="lead-row"><span class="sc">94</span> Acme Corp — pricing inquiry</div><div class="lead-row"><span class="sc">88</span> Globex — demo request</div><div class="lead-row"><span class="sc">81</span> Initech — enterprise plan</div><div class="lead-row"><span class="sc">73</span> Umbrella — integration q</div></div></div>':'';
+    var prev=g.preview==='digest'?'<div class="preview-card"><div class="pc-bar"><span class="dot" style="background:#f87171"></span><span class="dot" style="background:#fbbf24"></span><span class="dot" style="background:#34d399"></span><span class="pc-url">localhost:4019/digest/preview</span></div><div class="pc-body"><div class="digest-title">📧 Your top leads today</div><div class="lead-row"><span class="sc">94</span> Acme Corp - pricing inquiry</div><div class="lead-row"><span class="sc">88</span> Globex - demo request</div><div class="lead-row"><span class="sc">81</span> Initech - enterprise plan</div><div class="lead-row"><span class="sc">73</span> Umbrella - integration q</div></div></div>':'';
     return '<div class="gate gt-'+g.type+'"><div class="gate-h"><span class="gt">⬡ '+g.label+'</span><span class="gn">'+g.n+'</span></div><div class="gate-body">'+
       '<div class="gate-title">'+g.title+'</div>'+rows+dw+diff+note+
       '<div class="gate-actions"><button class="btn-approve" id="gApprove">'+g.approve+'</button><button class="btn-reject" id="gReject">'+g.reject+'</button></div>'+
@@ -1459,11 +1459,11 @@ table.matrix tr.paused td{ opacity:.5; }
     if(g.gate) html+=gateHTML(g.gate);
     if(g.blocked){
       html+='<div class="ck-sec"><div class="ck-sec-h">Launch · blocked</div><div class="ck-note" style="margin-bottom:13px">'+g.note+'</div><div class="ck-list">'+
-        g.blocked.map(function(r){ return '<div class="ck-row"><span class="ck-ic block">✗</span><b>'+r[1]+'</b> — '+r[2]+'</div>'; }).join('')+'</div></div>';
+        g.blocked.map(function(r){ return '<div class="ck-row"><span class="ck-ic block">✗</span><b>'+r[1]+'</b> - '+r[2]+'</div>'; }).join('')+'</div></div>';
       return html;
     }
     html+='<div class="ck-sec"><div class="ck-sec-h">Channels &amp; distribution</div><div class="ck-list">'+
-      g.items.map(function(r){ var ic=r[0]==='ok'?'✓':r[0]==='warn'?'!':'✗'; return '<div class="ck-row"><span class="ck-ic '+(r[0]==='ok'?'':r[0])+'">'+ic+'</span><b>'+r[1]+'</b> — '+r[2]+'</div>'; }).join('')+'</div></div>';
+      g.items.map(function(r){ var ic=r[0]==='ok'?'✓':r[0]==='warn'?'!':'✗'; return '<div class="ck-row"><span class="ck-ic '+(r[0]==='ok'?'':r[0])+'">'+ic+'</span><b>'+r[1]+'</b> - '+r[2]+'</div>'; }).join('')+'</div></div>';
     if(g.funnel){
       html+='<div class="ck-sec"><div class="ck-sec-h">Funnel <span class="sh-right">visitor → paid</span></div><div class="funnel">'+
         g.funnel.map(function(f){ return '<div class="fstep"><span class="fl">'+f[0]+'</span><div class="ftrack"><div class="fbar" style="width:'+f[3]+'">'+f[1]+' · '+f[2]+'</div></div></div>'; }).join('')+'</div></div>';
@@ -1521,15 +1521,15 @@ table.matrix tr.paused td{ opacity:.5; }
       box.classList.remove('show');
       var g=(CO[curCo].build.gate&&document.querySelector('#ckBuild .gate'))?CO[curCo].build.gate:(CO[curCo].grow.gate?CO[curCo].grow.gate:null);
       var msg='Approved ✓';
-      if(g&&g.type==='ship'){ msg='Shipped ✓ — slice 5 live for all users'; var s=document.querySelector('#ckBuild .slice.awaiting_approval'); if(s){ s.classList.remove('awaiting_approval'); var b=s.querySelector('.sbadge'); b.className='sbadge b-shipped'; b.textContent='shipped'; } }
-      else if(g&&g.type==='spend'){ msg='Approved ✓ — $40 released for the Product Hunt launch'; }
-      else if(g&&g.type==='unblock'){ msg='Unblocking ✓ — guidance sent, loop resuming'; }
-      else if(g&&g.type==='post'){ msg='Posted ✓ — launch thread live on r/SaaS'; }
+      if(g&&g.type==='ship'){ msg='Shipped ✓ - slice 5 live for all users'; var s=document.querySelector('#ckBuild .slice.awaiting_approval'); if(s){ s.classList.remove('awaiting_approval'); var b=s.querySelector('.sbadge'); b.className='sbadge b-shipped'; b.textContent='shipped'; } }
+      else if(g&&g.type==='spend'){ msg='Approved ✓ - $40 released for the Product Hunt launch'; }
+      else if(g&&g.type==='unblock'){ msg='Unblocking ✓ - guidance sent, loop resuming'; }
+      else if(g&&g.type==='post'){ msg='Posted ✓ - launch thread live on r/SaaS'; }
       cf.className='gate-confirm ok show'; cf.textContent=msg; toast(CO[curCo].name+' · '+msg.replace(' ✓','')); }
     );
     rej.addEventListener('click',function(){ box.classList.toggle('show'); cf.classList.remove('show'); });
     document.getElementById('gRejectSend').addEventListener('click',function(){
-      cf.className='gate-confirm rej show'; cf.textContent='Sent ✓ — feedback routed to the build loop'; box.classList.remove('show'); document.getElementById('gRejectText').value=''; });
+      cf.className='gate-confirm rej show'; cf.textContent='Sent ✓ - feedback routed to the build loop'; box.classList.remove('show'); document.getElementById('gRejectText').value=''; });
   }
   document.getElementById('ckTabs').addEventListener('click',function(e){ var b=e.target.closest('.ck-tab'); if(b) showTab(b.dataset.tab); });
   document.getElementById('backBtn').addEventListener('click',backOut);
@@ -1539,7 +1539,7 @@ table.matrix tr.paused td{ opacity:.5; }
     var inp=document.getElementById('coChatInput'), v=inp.value.trim(); if(!v) return;
     var cs=document.getElementById('coChatScroll');
     var u=document.createElement('div'); u.className='msg user'; u.innerHTML='<span class="m-from">you</span>'+esc(v); cs.appendChild(u); inp.value='';
-    setTimeout(function(){ var a=document.createElement('div'); a.className='msg assistant'; a.innerHTML='<span class="m-from">copilot</span>On it — I\'ll route that into '+CO[curCo].name+'\'s loop and surface a gate here when there\'s a real-world consequence.'; cs.appendChild(a); cs.scrollTop=cs.scrollHeight; },480);
+    setTimeout(function(){ var a=document.createElement('div'); a.className='msg assistant'; a.innerHTML='<span class="m-from">copilot</span>On it - I\'ll route that into '+CO[curCo].name+'\'s loop and surface a gate here when there\'s a real-world consequence.'; cs.appendChild(a); cs.scrollTop=cs.scrollHeight; },480);
     cs.scrollTop=cs.scrollHeight;
   }
   document.getElementById('coChatSend').addEventListener('click',sendCoChat);
@@ -1584,17 +1584,17 @@ table.matrix tr.paused td{ opacity:.5; }
   guard.addEventListener('click',function(){ var on=guard.classList.toggle('on'); guard.setAttribute('aria-checked',String(on));
     var st=document.getElementById('guardState'); st.textContent=on?'auto < $25':'all gated'; st.classList.toggle('off',!on);
     document.querySelector('.meter .guard').style.display=on?'':'none';
-    toast(on?'Guardrail on — spend under $25 auto-approves':'Guardrail off — every spend now gated'); });
+    toast(on?'Guardrail on - spend under $25 auto-approves':'Guardrail off - every spend now gated'); });
 
   /* ===================== AUTONOMY · TEST MODE + MATRIX ===================== */
   var testT=document.getElementById('testToggle');
   testT.addEventListener('click',function(){ var on=testT.classList.toggle('on'); testT.setAttribute('aria-checked',String(on));
     var st=document.getElementById('testState'); st.textContent=on?'test':'live'; st.classList.toggle('off',!on);
-    document.getElementById('testNote').innerHTML=on?'Test mode: every L1/L2 action is <b style="color:var(--amber)">simulated</b> — no real emails, charges or posts. Safe to raise autonomy and watch what it would do.':'Live mode: L1/L2 actions hit real inboxes, real Stripe, real timelines — all logged to the Oversight ledger.';
-    toast(on?'Test mode ON — actions simulated':'Test mode OFF — actions are live'); });
+    document.getElementById('testNote').innerHTML=on?'Test mode: every L1/L2 action is <b style="color:var(--amber)">simulated</b> - no real emails, charges or posts. Safe to raise autonomy and watch what it would do.':'Live mode: L1/L2 actions hit real inboxes, real Stripe, real timelines - all logged to the Oversight ledger.';
+    toast(on?'Test mode ON - actions simulated':'Test mode OFF - actions are live'); });
   document.querySelectorAll('#matrix td.ring[data-co]').forEach(function(td){ td.innerHTML=lvlseg(td.dataset.co, td.dataset.ring); });
   var resume=document.getElementById('resumeRPB');
-  if(resume) resume.addEventListener('click',function(){ CO.redditpainbot.autonomy={make:1,grow:0,run:0}; resume.textContent='✓ resumed'; resume.disabled=true; resume.closest('tr').classList.remove('paused'); toast('RedditPainBot loop resumed — MAKE L1, GROW/RUN L0'); });
+  if(resume) resume.addEventListener('click',function(){ CO.redditpainbot.autonomy={make:1,grow:0,run:0}; resume.textContent='✓ resumed'; resume.disabled=true; resume.closest('tr').classList.remove('paused'); toast('RedditPainBot loop resumed - MAKE L1, GROW/RUN L0'); });
 
   /* ===================== OVERSIGHT · UNDO / FLAG ===================== */
   document.querySelectorAll('.ledger').forEach(function(led){ led.addEventListener('click',function(e){
@@ -1609,14 +1609,14 @@ table.matrix tr.paused td{ opacity:.5; }
     var r=b.dataset.rec;
     if(r==='ql2'){ setAuto('quietinbox','grow',2); b.textContent='✓ GROW raised to L2'; toast('QuietInbox · GROW → L2'); }
     else if(r==='ddpost'){ b.textContent='✓ r/SaaS post approved'; toast('DataDrop · launch thread approved'); }
-    else if(r==='killrpb'){ b.textContent='✓ RedditPainBot archived'; toast('RedditPainBot archived — loop reclaimed'); }
-    else if(r==='spin'){ b.textContent='✓ Spinning up PayoutReconciler'; toast('PayoutReconciler — scaffolding a new company'); }
+    else if(r==='killrpb'){ b.textContent='✓ RedditPainBot archived'; toast('RedditPainBot archived - loop reclaimed'); }
+    else if(r==='spin'){ b.textContent='✓ Spinning up PayoutReconciler'; toast('PayoutReconciler - scaffolding a new company'); }
   }); });
 
   /* ===================== PORTFOLIO COPILOT ===================== */
   var scroll=document.getElementById('chatScroll'), input=document.getElementById('chatInput'), send=document.getElementById('chatSend');
   function addMsg(text,who){ var m=document.createElement('div'); m.className='msg '+who; var f=document.createElement('span'); f.className='m-from'; f.textContent=who==='user'?'you':'copilot'; m.appendChild(f); m.appendChild(document.createTextNode(text)); scroll.appendChild(m); scroll.scrollTop=scroll.scrollHeight; }
-  function handleSend(){ var v=input.value.trim(); if(!v) return; addMsg(v,'user'); input.value=''; setTimeout(function(){ addMsg('On it. Top of your queue is still LeadSift · slice 5 (ship) — then the $40 QuietInbox spend. Want me to act on "'+v.slice(0,40)+'"?','assistant'); },420); }
+  function handleSend(){ var v=input.value.trim(); if(!v) return; addMsg(v,'user'); input.value=''; setTimeout(function(){ addMsg('On it. Top of your queue is still LeadSift · slice 5 (ship) - then the $40 QuietInbox spend. Want me to act on "'+v.slice(0,40)+'"?','assistant'); },420); }
   send.addEventListener('click',handleSend);
   input.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); handleSend(); } });
 
@@ -1625,7 +1625,7 @@ table.matrix tr.paused td{ opacity:.5; }
       conClose=document.getElementById('conClose'), conModes=document.getElementById('conModes'), conTimer=null, conMode='stream', entries=[], streamLog=null, colLogs={};
   var AGENTS=[ {n:'TranslatorBill',c:'var(--b-translatorbill)'}, {n:'RedditPainBot',c:'var(--b-redditpainbot)'}, {n:'QuietInbox',c:'var(--b-quietinbox)'}, {n:'LeadSift',c:'var(--b-leadsift)'}, {n:'DataDrop',c:'var(--b-datadrop)'} ];
   var AG={}; AGENTS.forEach(function(a){ AG[a.n]=a; });
-  var EVENTS=[ {lvl:'build',m:function(){ return 'wrote '+(2+(Math.random()*8|0))+' files · running test suite'; }}, {lvl:'deploy',m:function(){ return 'shipped to staging · '+(120+(Math.random()*400|0))+'ms cold start'; }}, {lvl:'deploy',m:function(){ return 'doneWhen probe → 200 · health green'; }}, {lvl:'scan',m:function(){ return 'scanned '+(8+(Math.random()*40|0))+' threads for pain signals'; }}, {lvl:'gtm',m:function(){ return 'drafted a launch post · queued for approval'; }}, {lvl:'gtm',m:function(){ return 'scheduled tweet for 4:00pm'; }}, {lvl:'support',m:function(){ return 'answered support ticket #'+(400+(Math.random()*99|0)); }}, {lvl:'email',m:function(){ return 'sent '+(1+(Math.random()*6|0))+' onboarding emails'; }}, {lvl:'spend',m:function(){ return 'paid $'+(4+(Math.random()*15|0))+' infra · within $25 guardrail'; }}, {lvl:'error',m:function(){ return 'retry 1/3 — upstream API returned 429'; }} ];
+  var EVENTS=[ {lvl:'build',m:function(){ return 'wrote '+(2+(Math.random()*8|0))+' files · running test suite'; }}, {lvl:'deploy',m:function(){ return 'shipped to staging · '+(120+(Math.random()*400|0))+'ms cold start'; }}, {lvl:'deploy',m:function(){ return 'doneWhen probe → 200 · health green'; }}, {lvl:'scan',m:function(){ return 'scanned '+(8+(Math.random()*40|0))+' threads for pain signals'; }}, {lvl:'gtm',m:function(){ return 'drafted a launch post · queued for approval'; }}, {lvl:'gtm',m:function(){ return 'scheduled tweet for 4:00pm'; }}, {lvl:'support',m:function(){ return 'answered support ticket #'+(400+(Math.random()*99|0)); }}, {lvl:'email',m:function(){ return 'sent '+(1+(Math.random()*6|0))+' onboarding emails'; }}, {lvl:'spend',m:function(){ return 'paid $'+(4+(Math.random()*15|0))+' infra · within $25 guardrail'; }}, {lvl:'error',m:function(){ return 'retry 1/3 - upstream API returned 429'; }} ];
   function pad(n){ return String(n).padStart(2,'0'); }
   function stamp(){ var d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
   function lineEl(e,withAgent){ var line=document.createElement('div'); line.className='con-line'; var t=document.createElement('span'); t.className='t'; t.textContent=e.time; line.appendChild(t); if(withAgent){ var ag=document.createElement('span'); ag.className='ag'; ag.textContent=e.agent.n; ag.style.color=e.agent.c; line.appendChild(ag); } var lv=document.createElement('span'); lv.className='lvl '+e.lvl; lv.textContent=e.lvl; var m=document.createElement('span'); m.className='m'; m.textContent=e.msg; line.append(lv,m); return line; }
@@ -1652,7 +1652,7 @@ table.matrix tr.paused td{ opacity:.5; }
   function statusNote(id){ var c=CO[id]; if(c.status==='paused') return 'paused'; if(c.build&&c.build.current){ var t=(c.build.current.title||'').split('·')[0].replace(/#\d+\s*$/,'').trim(); return 'building'+(t?' · '+t.toLowerCase():''); } return 'healthy · nothing pending'; }
   function approvalsHTML(id){
     var g=gateFor(id);
-    if(!g) return '<div class="capprovals"><div class="cap-h">Approval queue</div><div class="cap-empty">Nothing needs you — '+statusNote(id)+'</div></div>';
+    if(!g) return '<div class="capprovals"><div class="cap-h">Approval queue</div><div class="cap-empty">Nothing needs you - '+statusNote(id)+'</div></div>';
     var tab=(CO[id].build&&CO[id].build.gate)?'build':'grow';
     return '<div class="capprovals"><div class="cap-h">Approval queue · 1</div>'+
       '<div class="cap-item gt-'+g.type+'">'+
@@ -1675,7 +1675,7 @@ table.matrix tr.paused td{ opacity:.5; }
   function actLineHTML(l,fresh){ return '<div class="act-line'+(fresh?' fresh':'')+'"><span class="act-t">'+l.t+'</span><span class="act-r '+l.r+'">'+l.r+'</span><span class="act-m">'+l.m+'</span></div>'; }
   function activityHTML(id){
     var f=FEEDS[id]||[];
-    if(!f.length) return '<div class="cactivity"><div class="cap-h"><span class="act-dot off"></span>Agent activity</div><div class="cap-empty">Loop paused — nothing running.</div></div>';
+    if(!f.length) return '<div class="cactivity"><div class="cap-h"><span class="act-dot off"></span>Agent activity</div><div class="cap-empty">Loop paused - nothing running.</div></div>';
     return '<div class="cactivity" data-act="'+id+'"><div class="cap-h"><span class="act-dot"></span>Agent activity · live</div><div class="act-list">'+f.map(function(l){ return actLineHTML(l,false); }).join('')+'</div></div>';
   }
   function actTick(){
@@ -1702,7 +1702,7 @@ table.matrix tr.paused td{ opacity:.5; }
       var verb={ship:'Shipped',spend:'Approved',post:'Posted',unblock:'Unblocking',sign:'Signed'}[type]||'Approved';
       item.classList.add('done'); b.textContent='✓ '+verb; b.disabled=true;
       var rev=item.querySelector('.cap-review'); if(rev) rev.disabled=true;
-      toast(CO[id].name+' · '+verb+' — gate resolved');
+      toast(CO[id].name+' · '+verb+' - gate resolved');
     }); });
   }
 

@@ -97,7 +97,7 @@
   .rail-scroll { overflow-y: auto; flex: 1 1 auto; min-height: 0; padding: 6px 10px 12px; }
   .rail-lbl { padding: 12px 8px 6px; }
 
-  /* list item — content only, no nav idioms */
+  /* list item - content only, no nav idioms */
   .item {
     width: 100%;
     display: grid;
@@ -482,17 +482,17 @@ var COMPANIES = [
     progress:{ pct:100, note:"12 / 10 paying · 0% churn" },
     spend:28, revenue:180, net:152, users:"12 paying", signal:"STRONG",
     status:"Needs approval",
-    plan:"Shipping the Daily digest and watching activation — the digest already passed its automated check.",
+    plan:"Shipping the Daily digest and watching activation - the digest already passed its automated check.",
     next:"Ship the Daily digest to all 12 users",
     recent:["Scored 41 leads overnight","Daily digest passed its check","+2 signups from the embed"],
-    risks:["Single acquisition channel — all growth comes from the embed backlink."],
+    risks:["Single acquisition channel - all growth comes from the embed backlink."],
     decisionId:"leadsift",
     rec:{ verdict:"CONTINUE", cls:"s-green", text:"Traction is real and margin-positive. Keep shipping; the only worry is channel concentration." },
     docs:{
       foundation:"<p class='lead'>LeadSift exists because inbound sales teams burn the first hour of every day guessing which webform leads deserve a call.</p><p>We score each lead <em>0–100</em> on fit and intent the moment it hits your form, so reps dial the hot ones first instead of top-to-bottom.</p><p><strong>Wedge:</strong> a free, embeddable form that scores on submit. <strong>ICP:</strong> 2–10 person B2B sales teams running inbound.</p>",
-      product:"<p>Live today: the form embed, the 0–100 scoring model, and a ranked lead inbox.</p><ul><li>Shipping now — <em>Daily digest</em>: each morning the top-scoring leads land in one email.</li><li>The model retrains weekly against real close outcomes.</li><li>41 leads scored overnight without a human touching them.</li></ul>",
+      product:"<p>Live today: the form embed, the 0–100 scoring model, and a ranked lead inbox.</p><ul><li>Shipping now - <em>Daily digest</em>: each morning the top-scoring leads land in one email.</li><li>The model retrains weekly against real close outcomes.</li><li>41 leads scored overnight without a human touching them.</li></ul>",
       growth:"<p>One channel today: the <em>“Scored by LeadSift”</em> backlink on every embedded form drives roughly two signups a week.</p><p>12 users pay $15/mo with zero churn so far. The next move turns the digest itself into a referral surface.</p><p><em>Risk on file:</em> there is no second channel yet.</p>",
-      budget:"<p>Spend runs <strong>$28/mo</strong> — $19 LLM scoring, $6 email, $3 hosting.</p><p>Revenue is <strong>$180/mo</strong>, net <strong>+$152/mo</strong>, fully self-funding. Each new user adds about $1.60/mo of marginal cost, so margin widens as it grows.</p>"
+      budget:"<p>Spend runs <strong>$28/mo</strong> - $19 LLM scoring, $6 email, $3 hosting.</p><p>Revenue is <strong>$180/mo</strong>, net <strong>+$152/mo</strong>, fully self-funding. Each new user adds about $1.60/mo of marginal cost, so margin widens as it grows.</p>"
     }
   },
   {
@@ -505,12 +505,12 @@ var COMPANIES = [
     plan:"Running the private beta and measuring week-2 retention before spending anything on acquisition.",
     next:"Interview 3 churned beta users",
     recent:["Auto-drafted 30 replies","2 new beta signups"],
-    risks:["Retention is unproven — week-2 numbers not in yet."],
+    risks:["Retention is unproven - week-2 numbers not in yet."],
     decisionId:"quietinbox",
     rec:{ verdict:"CONTINUE", cls:"s-green", text:"Early usage is healthy. Prove retention before pouring in acquisition spend." },
     docs:{
       foundation:"<p class='lead'>QuietInbox turns a noisy inbox into a short list of drafts you just approve.</p><p>It reads incoming mail, drafts a reply in your voice, and waits for one click. The bet: people will pay to stop writing the same replies over and over.</p><p><strong>ICP:</strong> founders and operators clearing 40+ threads a day.</p>",
-      product:"<p>Beta build triages the inbox and auto-drafts replies for approval — 30 drafted so far.</p><ul><li>Nothing sends without an explicit approve.</li><li>Tone learns from the edits you make before sending.</li></ul>",
+      product:"<p>Beta build triages the inbox and auto-drafts replies for approval - 30 drafted so far.</p><ul><li>Nothing sends without an explicit approve.</li><li>Tone learns from the edits you make before sending.</li></ul>",
       growth:"<p>6 beta users in, 2 joined this week through word of mouth. No paid acquisition until week-2 retention clears 40%.</p><p>A $40 Product Hunt launch is queued and <em>awaiting your call</em>.</p>",
       budget:"<p>Spend <strong>$22/mo</strong> (LLM drafting + hosting). Early revenue <strong>$40/mo</strong> from 2 converted beta users, net <strong>+$18/mo</strong>.</p><p>Deliberately kept lean while the core retention question is open.</p>"
     }
@@ -522,17 +522,17 @@ var COMPANIES = [
     progress:{ pct:35, note:"skeleton in progress · 0 / 5 converted" },
     spend:12, revenue:0, net:-12, users:"40 waitlist", signal:"NONE YET",
     status:"On track",
-    plan:"Building the CSV cleaner and the dashboard renderer — the end-to-end skeleton before any polish.",
+    plan:"Building the CSV cleaner and the dashboard renderer - the end-to-end skeleton before any polish.",
     next:"Finish the cleaner, invite the first 5",
     recent:["Scaffolded intake API","Deployed to staging"],
-    risks:["No traction yet — nothing shipped to users."],
+    risks:["No traction yet - nothing shipped to users."],
     decisionId:null,
     rec:{ verdict:"CONTINUE", cls:"s-blue", text:"On plan for a pre-traction build. Judge it after the first 5 waitlist users touch the skeleton." },
     docs:{
       foundation:"<p class='lead'>DataDrop takes a messy CSV and hands back a clean, shareable dashboard in one drop.</p><p>Upload, we clean and infer types, you get a link. No spreadsheet wrangling, no BI setup.</p><p><strong>ICP:</strong> small teams who live in CSV exports but have no analyst.</p>",
-      product:"<ul><li>Intake API scaffolded and deployed to staging.</li><li>Building now: the cleaner (dedupe, type inference) and the dashboard renderer.</li><li>Goal is a <em>walking skeleton</em> — one file all the way to a live link — before any polish.</li></ul>",
+      product:"<ul><li>Intake API scaffolded and deployed to staging.</li><li>Building now: the cleaner (dedupe, type inference) and the dashboard renderer.</li><li>Goal is a <em>walking skeleton</em> - one file all the way to a live link - before any polish.</li></ul>",
       growth:"<p>40 people on the waitlist, none converted yet by design. The first cohort of 5 gets invited the moment the skeleton stands up.</p>",
-      budget:"<p>Spend <strong>$12/mo</strong> (staging + storage). Revenue <strong>$0</strong> — pre-launch. Net <strong>–$12/mo</strong>, an intentional build cost with a hard check at first-user contact.</p>"
+      budget:"<p>Spend <strong>$12/mo</strong> (staging + storage). Revenue <strong>$0</strong> - pre-launch. Net <strong>–$12/mo</strong>, an intentional build cost with a hard check at first-user contact.</p>"
     }
   },
   {
@@ -542,55 +542,55 @@ var COMPANIES = [
     progress:{ pct:0, note:"0 / 15 problem interviews" },
     spend:0, revenue:0, net:0, users:"0", signal:"NONE",
     status:"Needs approval",
-    plan:"Validate the pain with real interviews before building anything — no code until the problem is confirmed.",
+    plan:"Validate the pain with real interviews before building anything - no code until the problem is confirmed.",
     next:"Start the 15-interview validation sprint",
     recent:["Idea logged","Interview script drafted"],
-    risks:["Might be a vitamin, not a painkiller — nice-to-have risk is high."],
+    risks:["Might be a vitamin, not a painkiller - nice-to-have risk is high."],
     decisionId:"pricepeek",
-    rec:{ verdict:"CONTINUE", cls:"s-slate", text:"Cheap to validate, zero spend. Run the sprint — but kill fast if interviews come back weak." },
+    rec:{ verdict:"CONTINUE", cls:"s-slate", text:"Cheap to validate, zero spend. Run the sprint - but kill fast if interviews come back weak." },
     docs:{
       foundation:"<p class='lead'>PricePeek watches your competitors' pricing pages and pings you the moment they change.</p><p>Still an idea. Before any code we need proof the pain is real and urgent, not just interesting.</p><p><strong>Open question:</strong> is monitoring competitor pricing a painkiller or a vitamin?</p>",
-      product:"<p>Nothing built. The plan is a scrape-and-diff on public pricing pages with change alerts — but only after validation.</p>",
+      product:"<p>Nothing built. The plan is a scrape-and-diff on public pricing pages with change alerts - but only after validation.</p>",
       growth:"<p>No users, no channel. The next step is 15 problem interviews with people who actually track competitor pricing today.</p>",
       budget:"<p>Spend <strong>$0</strong>. Revenue <strong>$0</strong>. The validation sprint costs nothing but time, which is exactly why it should go first.</p>"
     }
   },
   {
     id:"translatorbill", name:"TranslatorBill", stage:"ejected",
-    desc:"Auto-translates & reformats cross-border invoices — ejected into its own standalone company.",
-    goal:"HIT — 20 paying at $15/mo, then ejected.",
+    desc:"Auto-translates & reformats cross-border invoices - ejected into its own standalone company.",
+    goal:"HIT - 20 paying at $15/mo, then ejected.",
     progress:{ pct:100, note:"HIT · 22 / 20 paying → ejected" },
     spend:0, revenue:320, net:320, users:"22 paying", signal:"STRONG",
     status:"Graduated",
     plan:"Handed off to its own company. The factory no longer operates it day to day.",
     next:null,
     recent:["Hit 20 paying users","Ejection package prepared","Handed off to standalone team"],
-    risks:["None on the factory's books — now standalone."],
+    risks:["None on the factory's books - now standalone."],
     decisionId:null,
     rec:{ verdict:"EJECT · DONE", cls:"s-violet", text:"Graduated. Cleared the validation bar and left the portfolio as its own company." },
     docs:{
       foundation:"<p class='lead'>TranslatorBill auto-translates and reformats cross-border invoices so finance teams stop retyping them.</p><p>It graduated: the bet cleared its bar and <em>ejected</em> into a standalone company with its own team.</p>",
       product:"<p>Shipped and proven inside the factory: invoice OCR, translation, and reformatting to local layouts. The product left with the company at handoff.</p>",
-      growth:"<p>Reached 22 paying users at $15/mo before ejection — past the 20-user graduation bar. Growth is now the standalone team's problem, not the factory's.</p>",
-      budget:"<p>Last recorded revenue <strong>$320/mo</strong>. Factory spend is now <strong>$0</strong> — costs and revenue moved with the company at ejection.</p>"
+      growth:"<p>Reached 22 paying users at $15/mo before ejection - past the 20-user graduation bar. Growth is now the standalone team's problem, not the factory's.</p>",
+      budget:"<p>Last recorded revenue <strong>$320/mo</strong>. Factory spend is now <strong>$0</strong> - costs and revenue moved with the company at ejection.</p>"
     }
   },
   {
     id:"redditpainbot", name:"RedditPainBot", stage:"killed",
-    desc:"Mined Reddit for recurring product pains — killed on weak willingness-to-pay.",
-    goal:"MISSED — nobody would pay; killed after 3 weeks.",
+    desc:"Mined Reddit for recurring product pains - killed on weak willingness-to-pay.",
+    goal:"MISSED - nobody would pay; killed after 3 weeks.",
     progress:{ pct:18, note:"MISSED · no willingness to pay" },
     spend:0, revenue:0, net:0, users:"0", signal:"WEAK",
     status:"Stopped",
     plan:"Post-mortem written. The bet is closed; no further work.",
     next:null,
     recent:["Ran 3-week validation","Willingness-to-pay came back weak","Post-mortem filed"],
-    risks:["Closed — lesson captured in the post-mortem."],
+    risks:["Closed - lesson captured in the post-mortem."],
     decisionId:null,
     rec:{ verdict:"KILL · DONE", cls:"s-red", text:"Stopped after 3 weeks. People found the pains interesting but would not pay to see them." },
     docs:{
       foundation:"<p class='lead'>RedditPainBot mined Reddit for recurring product pains and surfaced them as opportunities.</p><p>Killed after 3 weeks. The problem was real but the <em>willingness to pay</em> never showed up.</p>",
-      product:"<p>A working scraper clustered complaints into recurring pain themes. It functioned — the market just didn't value it enough to pay.</p>",
+      product:"<p>A working scraper clustered complaints into recurring pain themes. It functioned - the market just didn't value it enough to pay.</p>",
       growth:"<p>Zero paying users. Interest was high, wallets stayed shut. That gap is what ended it.</p>",
       budget:"<p>Spend now <strong>$0</strong> (stopped), revenue <strong>$0</strong>. The post-mortem is the only remaining artifact.</p>"
     }
@@ -601,7 +601,7 @@ var TOTALS = { bets:6, spend:62, revenue:220, net:158 };
 
 /* ---------------- mutable decision state ---------------- */
 var decisions = {
-  leadsift:   { status:"pending", ask:"Ship the Daily digest to all 12 users", sub:"One email endpoint. Fully reversible — you can pause the digest any time." },
+  leadsift:   { status:"pending", ask:"Ship the Daily digest to all 12 users", sub:"One email endpoint. Fully reversible - you can pause the digest any time." },
   pricepeek:  { status:"pending", ask:"Approve the 15-interview validation sprint", sub:"No spend. The AI books and runs the interviews; you review the transcript." },
   quietinbox: { status:"pending", ask:"Approve $40 Product Hunt launch spend", sub:"One-time $40 to buy a launch slot and assets. Capped, no recurring cost." }
 };
@@ -676,7 +676,7 @@ function decisionBlock(id, opened){
   var m = map[d.status];
   return "<div class='need-card "+st.cls+"'>"+head
        +   "<div class='resolved "+m.cls+"'>"+m.ico+"<span><b>"+m.word+".</b> "
-       +     (d.status==="approved" ? "The AI is executing now — reversible." :
+       +     (d.status==="approved" ? "The AI is executing now - reversible." :
               d.status==="held" ? "Parked. Nothing runs until you say so." :
               "Stopped. The AI will not proceed.")
        +   "</span><button class='undo' data-undo='"+id+"'>Undo</button></div>"
@@ -706,7 +706,7 @@ function renderPortfolio(){
   /* needs-you queue */
   html += "<div class='sec-hd'><h2>Needs you</h2><span class='hint'>resolve inline · reversible</span></div>";
   if (pc === 0){
-    html += "<div class='allclear'>"+iconCheck()+" All caught up — no decisions waiting. The AI keeps running the plan.</div>";
+    html += "<div class='allclear'>"+iconCheck()+" All caught up - no decisions waiting. The AI keeps running the plan.</div>";
   } else {
     DECISION_ORDER.forEach(function(id){
       if (decisions[id].status === "pending") html += decisionBlock(id, false);
@@ -728,7 +728,7 @@ function renderPortfolio(){
           +   "<span class='hnm'><span class='cdot'></span><b>"+c.name+"</b></span>"
           +   "<span class='hstg'>"+st.label+"</span>"
           +   meterHTML(c.signal)
-          +   "<span class='"+revClass+"'>"+(c.revenue>0?"$"+c.revenue+"/mo":"—")+"</span>"
+          +   "<span class='"+revClass+"'>"+(c.revenue>0?"$"+c.revenue+"/mo":"-")+"</span>"
           +   "<span class='arr'>"+iconArrow()+"</span>"
           + "</button>";
   });

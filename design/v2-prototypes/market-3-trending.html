@@ -514,7 +514,7 @@
   <section class="hero">
     <span class="hero-kicker"><span class="flame">🔥</span> live leaderboards</span>
     <h1 class="hero-h1">What people are<br><em>actually building</em> today.</h1>
-    <p class="hero-sub">Real companies spun up on C Slop Slop — ranked by the only thing that matters: traction. Winners rise. Dead bets don't chart.</p>
+    <p class="hero-sub">Real companies spun up on C Slop Slop - ranked by the only thing that matters: traction. Winners rise. Dead bets don't chart.</p>
     <div class="stats">
       <span class="stat"><span class="dot"></span><b>12</b><span>public companies</span></span>
       <span class="stat"><b>38</b><span>ships this week</span></span>
@@ -543,8 +543,8 @@
 
   <section class="footer-band" id="build">
     <h2 class="fb-h">Your company could chart next.</h2>
-    <p class="fb-sub">Describe an idea. The factory builds it, ships it, and puts it on the board. Free tier is public — that's the growth loop.</p>
-    <a class="cta fb-cta" href="#"><span>Start building — it's free</span> <span aria-hidden="true">→</span></a>
+    <p class="fb-sub">Describe an idea. The factory builds it, ships it, and puts it on the board. Free tier is public - that's the growth loop.</p>
+    <a class="cta fb-cta" href="#"><span>Start building - it's free</span> <span aria-hidden="true">→</span></a>
     <div class="fb-note">public by default · privacy is a paid upgrade · your cockpit stays yours</div>
   </section>
 </main>
@@ -573,7 +573,7 @@
     invoicesnap:  { name: "InvoiceSnap",   handle: "noor",  cat: "Finance", stage: "Growing",  glyph: "📸", ac: "blue",   url: "invoicesnap.cslop.app",
       tag: "Snap a receipt → a categorized expense, instantly.", users: "90 users", rev: "$120/mo", revPublic: true, signal: "Strong", fresh: "steady growth" },
     gymstreak:    { name: "GymStreak",     handle: "theo",  cat: "Fitness", stage: "Testing",  glyph: "💪", ac: "violet", url: "gymstreak.cslop.app",
-      tag: "Text your workout — it logs and progresses it for you.", users: "48 beta users", rev: null, revPublic: false, signal: "Promising", fresh: "shipped v2 today" },
+      tag: "Text your workout - it logs and progresses it for you.", users: "48 beta users", rev: null, revPublic: false, signal: "Promising", fresh: "shipped v2 today" },
     quotecue:     { name: "QuoteCue",      handle: "ada",   cat: "Sales",   stage: "Testing",  glyph: "💬", ac: "accent", url: "quotecue.cslop.app",
       tag: "AI follow-ups that actually book the meeting.", users: "15 beta users", rev: null, revPublic: false, signal: "Promising", fresh: "shipped this week" },
     quietinbox:   { name: "QuietInbox",    handle: "devan", cat: "Email",   stage: "Testing",  glyph: "📥", ac: "blue",   url: "quietinbox.cslop.app",
@@ -597,7 +597,7 @@
   var BOARDS = {
     trending: {
       icon: "🔥", label: "Trending",
-      blurb: "Heating up right now — fresh ships, real momentum.",
+      blurb: "Heating up right now - fresh ships, real momentum.",
       rows: [
         { id: "mealmap",     big: "210", unit: "users",    delta: "+64%", dir: "up",   move: { t: "up", n: 2 },   spark: sp([.20,.28,.35,.42,.55,.78,1]) },
         { id: "invoicesnap", big: "90",  unit: "users",    delta: "+45%", dir: "up",   move: { t: "up", n: 1 },   spark: sp([.25,.30,.38,.46,.60,.75,.92]) },
@@ -623,7 +623,7 @@
     },
     ejected: {
       icon: "🎓", label: "Just Ejected",
-      blurb: "Graduates — companies that outgrew the factory and left home.",
+      blurb: "Graduates - companies that outgrew the factory and left home.",
       special: true,
       hero: "translatorbill",
       runway: [
@@ -634,7 +634,7 @@
     },
     new: {
       icon: "✨", label: "New this week",
-      blurb: "Fresh out of the factory — spun up or shipped in the last 7 days.",
+      blurb: "Fresh out of the factory - spun up or shipped in the last 7 days.",
       rows: [
         { id: "gymstreak",  big: "48",  unit: "beta",     delta: "🕑 shipped v2 · today",  dir: "up",   move: { t: "new" }, spark: sp([.10,.18,.28,.40,.55,.74,.94]) },
         { id: "quotecue",   big: "15",  unit: "beta",     delta: "🕑 shipped · 2d ago",    dir: "up",   move: { t: "new" }, spark: sp([.14,.20,.28,.38,.48,.60,.72]) },
@@ -690,11 +690,11 @@
 
   /* ---- pieces ---- */
   function moveHTML(m) {
-    if (!m) return '<span class="mv flat">—</span>';
+    if (!m) return '<span class="mv flat">-</span>';
     if (m.t === "new") return '<span class="mv new">NEW</span>';
     if (m.t === "up") return '<span class="mv up">▲' + m.n + '</span>';
     if (m.t === "down") return '<span class="mv down">▼' + m.n + '</span>';
-    return '<span class="mv flat">—</span>';
+    return '<span class="mv flat">-</span>';
   }
   function sparkHTML(arr, dir) {
     var bars = arr.map(function (h, i) {
@@ -755,7 +755,7 @@
     var visible = b.rows.filter(function (r) { return matchesTopic(r.id); });
     var medals = state.topic === "all";
     if (visible.length === 0) {
-      $body.innerHTML = '<div class="empty">No <b>' + esc(state.topic) + '</b> companies on this chart yet.<br>Check the validating queue below — or build one.</div>';
+      $body.innerHTML = '<div class="empty">No <b>' + esc(state.topic) + '</b> companies on this chart yet.<br>Check the validating queue below - or build one.</div>';
     } else {
       $body.innerHTML = '<div class="list" role="list">' + b.rows.map(function (r, i) {
         if (!matchesTopic(r.id)) return "";
@@ -804,7 +804,7 @@
 
     var head = '<div class="cs-head">🌱 validating · not charting yet</div>';
     var grid = g ? '<div class="cs-grid">' + g + '</div>' : '<div class="empty" style="padding:22px">Nothing validating in this topic right now.</div>';
-    var archived = '<div class="archived">🪦 <b>1 bet archived this cycle</b> · RedditPainBot (@omar) — killed after 3 wks. Post-mortems are public; dead bets don\'t chart. That\'s the curation.</div>';
+    var archived = '<div class="archived">🪦 <b>1 bet archived this cycle</b> · RedditPainBot (@omar) - killed after 3 wks. Post-mortems are public; dead bets don\'t chart. That\'s the curation.</div>';
 
     $coming.innerHTML = head + grid + archived;
     bindOpens($coming);
@@ -856,7 +856,7 @@
 
       '<div class="p-traction">' + tiles + '</div>' +
 
-      '<div class="p-note"><span class="lk">🔒</span><span>The <b>operator cockpit</b> — budget, spend, the AI\'s plan, the approval queue, the risk log — stays private. This is the public product page. <b>Privacy is a paid upgrade.</b></span></div>' +
+      '<div class="p-note"><span class="lk">🔒</span><span>The <b>operator cockpit</b> - budget, spend, the AI\'s plan, the approval queue, the risk log - stays private. This is the public product page. <b>Privacy is a paid upgrade.</b></span></div>' +
 
       '<div class="p-actions">' +
         '<a class="btn-primary" href="#">' + ctaLabel + ' <span aria-hidden="true">→</span></a>' +

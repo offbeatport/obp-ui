@@ -647,7 +647,7 @@ function openFocus(id){
   }).join('');
 
   const needArea = ['build','grow','run'].find(a=>co[a].state==='needs');
-  const needBlock = needArea ? '<div class="f-need"><div class="fn-h">Needs you · '+(co[needArea].gate||'decide')+'</div><div class="fn-t">'+co[needArea].work+'</div><div class="fn-s">'+needArea.toUpperCase()+' step — your call before it proceeds.</div></div>' : '';
+  const needBlock = needArea ? '<div class="f-need"><div class="fn-h">Needs you · '+(co[needArea].gate||'decide')+'</div><div class="fn-t">'+co[needArea].work+'</div><div class="fn-s">'+needArea.toUpperCase()+' step - your call before it proceeds.</div></div>' : '';
   const primaryLabel = needArea ? (co[needArea].gate==='approve'?'Approve & ship':'Review request') : 'Open company';
 
   focus.innerHTML =

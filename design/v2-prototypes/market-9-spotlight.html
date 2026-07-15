@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>C Slop Slop · Spotlight</title>
 <script>
-/* pre-paint theme — light default, restore saved */
+/* pre-paint theme - light default, restore saved */
 (function(){try{var t=localStorage.getItem('cslopslop-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -308,7 +308,7 @@ main{flex:1 1 auto; position:relative; min-height:0}
   <section class="browse" id="browse" hidden aria-label="All companies">
     <div class="browse-head">
       <h2>Built on C Slop Slop</h2>
-      <p>Every free-tier company ships in public — the live ones you swipe through, plus what's validating and what got killed. This is the product, never the cockpit.</p>
+      <p>Every free-tier company ships in public - the live ones you swipe through, plus what's validating and what got killed. This is the product, never the cockpit.</p>
       <div class="cue"><b>public by default</b> · operators pay to go private · 🔒 spend, plan &amp; approvals never shown</div>
     </div>
     <div class="browse-grid" id="grid"></div>
@@ -356,7 +356,7 @@ var companies = [
       +'</div></div></div>' },
 
   { name:'TranslatorBill', handle:'@ravi', category:'Finance', stage:'Ejected', pa:'--violet', live:true,
-    tagline:'Auto-translates & reformats cross-border invoices — now spun out as its own company.',
+    tagline:'Auto-translates & reformats cross-border invoices - now spun out as its own company.',
     fresh:'ejected → its own company 🎓', freshShort:'ejected 🎓',
     metrics:[{n:'22',l:'paying'},{n:'$320<span>/mo</span>',l:'revenue · public'},{n:'Strong',l:'signal',c:'--green'}],
     deck:true, mock:
@@ -367,7 +367,7 @@ var companies = [
       +'</div></div></div>' },
 
   { name:'GymStreak', handle:'@theo', category:'Fitness', stage:'Testing', pa:'--amber', live:true,
-    tagline:'Text your workout — it logs it and progresses you automatically.',
+    tagline:'Text your workout - it logs it and progresses you automatically.',
     fresh:'shipped v2 today', freshShort:'shipped v2',
     metrics:[{n:'48',l:'beta users'},{n:'Promising',l:'signal',c:'--amber'},{n:'🔒',l:'revenue private'}],
     deck:true, mock:
@@ -375,7 +375,7 @@ var companies = [
       +'<div class="mk-msg out">did 5×5 squats @ 80kg</div>'
       +'<div class="mk-msg in">Logged 💪 that’s +5kg on last week. Next session: 82.5kg. Rest 3 min.</div>'
       +'<div class="mk-msg out">and a 2k row</div>'
-      +'<div class="mk-msg in">Nice — 2 km in 8:12, a PB by 0:14 🔥</div>'
+      +'<div class="mk-msg in">Nice - 2 km in 8:12, a PB by 0:14 🔥</div>'
       +'</div></div>' },
 
   { name:'DataDrop', handle:'@sana', category:'Data', stage:'Building', pa:'--blue', live:true,
@@ -407,17 +407,17 @@ var companies = [
       '<div class="mk mk-win"><div class="mk-bar"><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-dot"></span><div class="mk-url">quotecue.io/threads</div></div><div class="mk-body">'
       +'<div class="mk-mail-h">Follow-up · draft 3</div>'
       +'<div class="mk-mail-to">To: jordan@peak.co</div>'
-      +'<div class="mk-mail-body">Hi Jordan — circling back on the proposal. Would Thursday 2pm work for a quick 15-min to lock it in?</div>'
+      +'<div class="mk-mail-body">Hi Jordan - circling back on the proposal. Would Thursday 2pm work for a quick 15-min to lock it in?</div>'
       +'<div class="mk-mail-cta">✓ auto-books the meeting · 41% reply rate</div></div></div>' },
 
   { name:'QuietInbox', handle:'@devan', category:'Email', stage:'Testing', pa:'--blue', live:true,
-    tagline:'Email triage that auto-drafts the replies — you just approve.',
+    tagline:'Email triage that auto-drafts the replies - you just approve.',
     fresh:'building now · private beta', freshShort:'building now',
     metrics:[{n:'6',l:'beta users'},{n:'🔒',l:'revenue hidden'},{n:'Promising',l:'signal',c:'--amber'}],
     deck:true, mock:
       '<div class="mk mk-win"><div class="mk-bar"><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-dot"></span><div class="mk-url">quietinbox.app</div></div><div class="mk-body"><p class="mk-h">Triaged · 3 threads</p>'
-      +'<div class="mk-inbox-row"><span class="mk-lbl green">reply</span> Renewal question — Dana</div>'
-      +'<div class="mk-inbox-row sel"><span class="mk-lbl blue">draft ready</span> Re: onboarding — Sam<div class="mk-draft">“Happy to help! Here’s the setup link…” <span class="mk-approve">approve ✓</span></div></div>'
+      +'<div class="mk-inbox-row"><span class="mk-lbl green">reply</span> Renewal question - Dana</div>'
+      +'<div class="mk-inbox-row sel"><span class="mk-lbl blue">draft ready</span> Re: onboarding - Sam<div class="mk-draft">“Happy to help! Here’s the setup link…” <span class="mk-approve">approve ✓</span></div></div>'
       +'<div class="mk-inbox-row"><span class="mk-lbl faint">archive</span> Weekly newsletter</div></div></div>' },
 
   /* --- de-emphasized: validating / killed (browse only) --- */
@@ -456,7 +456,7 @@ function slideHTML(c){
     +'<div class="traction">'+c.metrics.map(metricHTML).join('')+'</div>'
     +'<div class="actions"><a class="btn primary try" href="#try" data-name="'+c.name+'">Try it&nbsp;→</a>'
     +'<span class="maker">built by <b>'+c.handle+'</b> on C&nbsp;Slop&nbsp;Slop</span></div>'
-    +'<div class="private-hint">🔒 <b>Spend, the AI’s plan &amp; the approval queue stay private.</b> This page shows only the product — the cockpit is never public.</div>'
+    +'<div class="private-hint">🔒 <b>Spend, the AI’s plan &amp; the approval queue stay private.</b> This page shows only the product - the cockpit is never public.</div>'
     +'</div>'
     +'<div class="stage" style="--pa:var('+c.pa+')"><div class="mk-wrap" style="--pa:var('+c.pa+')">'+c.mock+'</div></div>'
     +'</div></article>';
@@ -573,7 +573,7 @@ document.getElementById('grid').addEventListener('click', function(e){
   var locked=card.getAttribute('data-locked');
   if(locked){
     var parts=locked.split('|');
-    toast(parts[1]==='Killed' ? parts[0]+' — killed · post-mortem is public' : parts[0]+' — validating · not live yet');
+    toast(parts[1]==='Killed' ? parts[0]+' - killed · post-mortem is public' : parts[0]+' - validating · not live yet');
   }
 });
 
@@ -586,7 +586,7 @@ function toast(msg){
 track.addEventListener('click', function(e){
   var t=e.target.closest('.try'); if(!t) return;
   e.preventDefault();
-  toast('↗ '+t.getAttribute('data-name')+' — opens the live product');
+  toast('↗ '+t.getAttribute('data-name')+' - opens the live product');
 });
 document.getElementById('buildCta').addEventListener('click', function(e){
   e.preventDefault(); toast('→ Start your own company on C Slop Slop');

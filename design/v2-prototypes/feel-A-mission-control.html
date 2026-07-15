@@ -353,7 +353,7 @@
   .theme-toggle .i-moon{display:none}
 
   /* ============================================================
-     LIGHT THEME — bright mission control (opt-in via toggle)
+     LIGHT THEME - bright mission control (opt-in via toggle)
      ============================================================ */
   :root[data-theme="light"]{
     --bg:#f4efe8;
@@ -606,7 +606,7 @@
                   <div class="score-lab">Lead score</div>
                 </div>
               </div>
-              <div class="headline">The lead auto-scores 0–100 — <b>this one hits 94</b></div>
+              <div class="headline">The lead auto-scores 0–100 - <b>this one hits 94</b></div>
               <div class="score-lead"><b>Priya Nair</b> · Acme Robotics</div>
             </div>
 
@@ -636,7 +636,7 @@
                   <div class="scorepill lo">71</div>
                 </div>
                 <div class="efoot">
-                  <span class="verified">✓ verified — doneWhen check passed</span>
+                  <span class="verified">✓ verified - doneWhen check passed</span>
                 </div>
               </div>
             </div>
@@ -649,7 +649,7 @@
             </button>
             <button class="step" data-s="1">
               <div class="bar"><i></i></div>
-              <div class="lab"><em>02</em> The lead auto-scores — hits 94</div>
+              <div class="lab"><em>02</em> The lead auto-scores - hits 94</div>
             </button>
             <button class="step" data-s="2">
               <div class="bar"><i></i></div>
@@ -698,13 +698,13 @@
             <!-- greeting -->
             <div class="msg-in">
               <div class="mrow"><span class="who">Agent</span><span class="t">07:58</span></div>
-              <div class="bubble">Morning. I've been busy overnight — shipped a fix, scored a fresh batch of leads, and I've got <b>one thing that needs your call.</b></div>
+              <div class="bubble">Morning. I've been busy overnight - shipped a fix, scored a fresh batch of leads, and I've got <b>one thing that needs your call.</b></div>
             </div>
 
             <!-- live activity context lines -->
             <div class="sysmsg">
               <div class="sl"><span class="sd b"></span> deployed <b style="color:var(--soft)">daily-digest</b> to staging</div>
-              <div class="sl"><span class="sd g"></span> <span class="ck">doneWhen ✓</span> passed — email renders + sends</div>
+              <div class="sl"><span class="sd g"></span> <span class="ck">doneWhen ✓</span> passed - email renders + sends</div>
               <div class="sl"><span class="sd g"></span> scored <b style="color:var(--soft)">41 new leads</b> · avg 58 · 3 hot</div>
             </div>
 
@@ -714,7 +714,7 @@
                 <span class="dot t"></span>
                 <span class="lbl">Decision needed</span>
               </div>
-              <div class="amsg">I finished <b>Daily digest of top leads</b> and it passed its check ✓ — want me to ship it live?</div>
+              <div class="amsg">I finished <b>Daily digest of top leads</b> and it passed its check ✓ - want me to ship it live?</div>
               <div class="donewhen">
                 <span class="ck">✓ doneWhen</span>
                 <span>a scheduled 8am email lists the day's top-scored leads</span>
@@ -729,7 +729,7 @@
 
             <!-- resolved state -->
             <div class="resolved" id="resolved">
-              <div class="rt">🎉 Shipped — it's live</div>
+              <div class="rt">🎉 Shipped - it's live</div>
               <div class="rs"><span class="sd g"></span> daily-digest promoted to production · first send 08:00 tomorrow</div>
             </div>
           </div>
@@ -875,7 +875,7 @@
     note.className = 'donewhen';
     note.style.marginTop = '10px';
     note.style.color = 'var(--blue)';
-    note.innerHTML = '<span style="color:var(--blue)">↗ opening</span> staging preview — looks clean, send is idempotent.';
+    note.innerHTML = '<span style="color:var(--blue)">↗ opening</span> staging preview - looks clean, send is idempotent.';
     approval.querySelector('.abtns').before(note);
   };
   window.reject = function(){
@@ -886,7 +886,7 @@
       var m = document.createElement('div');
       m.className = 'msg-in';
       m.innerHTML = '<div class="mrow"><span class="who">Agent</span><span class="t">now</span></div>'+
-        '<div class="bubble">No problem — I\'ll hold <b>daily-digest</b> and keep it on staging. Tell me what to change and I\'ll revise the build.</div>';
+        '<div class="bubble">No problem - I\'ll hold <b>daily-digest</b> and keep it on staging. Tell me what to change and I\'ll revise the build.</div>';
       feed.insertBefore(m, resolved);
       feed.scrollTop = feed.scrollHeight;
     }, 300);
@@ -917,7 +917,7 @@
       var reply = document.createElement('div');
       reply.className = 'msg-in';
       reply.innerHTML = '<div class="mrow"><span class="who">Agent</span><span class="t">now</span></div>'+
-        '<div class="bubble">On it — I\'ll fold that into the next build pass and report back with a fresh check. 🛠️</div>';
+        '<div class="bubble">On it - I\'ll fold that into the next build pass and report back with a fresh check. 🛠️</div>';
       feed.appendChild(reply);
       feed.scrollTop = feed.scrollHeight;
     }, reduce ? 200 : 1100);

@@ -432,7 +432,7 @@ kbd{
     <div class="pills" id="pills"></div>
     <div class="feed" id="feed"></div>
     <button class="loadmore" id="loadMore">↓ Load earlier activity</button>
-    <div class="empty" id="emptyState" style="display:none">Nothing here yet — try another filter.</div>
+    <div class="empty" id="emptyState" style="display:none">Nothing here yet - try another filter.</div>
   </main>
 </div>
 
@@ -513,7 +513,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -541,7 +541,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -550,22 +550,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -592,7 +592,7 @@ DATA.companies.forEach(c=>{
     else if(s==='blocked') FEED.push({type:'blocked', bucket:'building', co:c.name, t:'18m', slice:c.currentSlice});
   }
 });
-// shipped receipt (LeadSift slice 4 — latest shipped) + QuietInbox prior ship
+// shipped receipt (LeadSift slice 4 - latest shipped) + QuietInbox prior ship
 FEED.push({type:'shipped', bucket:'shipped', co:'LeadSift', t:'1h',
   slice:{n:4,title:'User can filter leads by score'}, url:'http://localhost:4019', check:'GET /leads?min=70 → 200'});
 FEED.push({type:'shipped', bucket:'shipped', co:'DataDrop', t:'3h',
@@ -611,7 +611,7 @@ const FILTERS=[
   {key:'opps',  label:'Opportunities', match:f=>f.bucket==='opps'},
 ];
 let activeFilter='all';
-let shownCount=FEED.length; // load-more reveals "earlier" — start with all current
+let shownCount=FEED.length; // load-more reveals "earlier" - start with all current
 
 function pillCounts(){
   const m={};
@@ -710,7 +710,7 @@ function cardBlocked(f){
     ${head(f.co,`<span class="badge b-block"><span class="dot"></span>Blocked</span> · slice ${s.n} · ${c.status==='paused'?'paused':'active'}`,f.t)}
     <div class="card-body">
       <p class="lead">${s.title}</p>
-      <p class="muted">${s.step} — same failure repeated. Unblock with guidance, or pause the company.</p>
+      <p class="muted">${s.step} - same failure repeated. Unblock with guidance, or pause the company.</p>
       <div class="card-actions">
         <button class="btn btn-ghost" data-co="${f.co}">Open & unblock</button>
       </div>
@@ -726,7 +726,7 @@ function cardShipped(f){
       <div class="receipt">
         <span class="chk">✓</span>
         <div style="flex:1">
-          <div>Live & proven — <a class="url" href="${f.url}" target="_blank" rel="noopener">${f.url}</a></div>
+          <div>Live & proven - <a class="url" href="${f.url}" target="_blank" rel="noopener">${f.url}</a></div>
           <code class="mono" style="font-size:11px;color:var(--ink-3)">${f.check}</code>
         </div>
       </div>
@@ -789,16 +789,16 @@ function wireCards(){
   if(gt){
     gt.onclick=()=>$('#approvalCard').classList.toggle('open');
     $('#approveBtn').onclick=()=>{
-      $('#gateActions').innerHTML='<span class="flash ok">✓ Approved — shipping slice 5 to production</span>';
-      pushActivity('LeadSift','approved slice 5 — shipping to production');
+      $('#gateActions').innerHTML='<span class="flash ok">✓ Approved - shipping slice 5 to production</span>';
+      pushActivity('LeadSift','approved slice 5 - shipping to production');
     };
     $('#rejectBtn').onclick=()=>{$('#rejectBox').classList.add('show');$('#rejectText').focus();};
     $('#cancelReject').onclick=()=>$('#rejectBox').classList.remove('show');
     $('#sendReject').onclick=()=>{
       const v=$('#rejectText').value.trim();
-      $('#gateActions').innerHTML=`<span class="flash rej">↺ Feedback sent — agent will revise${v?' "'+v.slice(0,40)+(v.length>40?'…':'')+'"':''}</span>`;
+      $('#gateActions').innerHTML=`<span class="flash rej">↺ Feedback sent - agent will revise${v?' "'+v.slice(0,40)+(v.length>40?'…':'')+'"':''}</span>`;
       $('#rejectBox').classList.remove('show');
-      pushActivity('LeadSift','feedback received on slice 5 — revising');
+      pushActivity('LeadSift','feedback received on slice 5 - revising');
     };
   }
 }
@@ -816,7 +816,7 @@ $('#loadMore').onclick=()=>{
     shownCount=FEED.length;
     renderPills();renderFeed();
   }
-  if(earlierIdx>=EARLIER.length){$('#loadMore').textContent='✓ Caught up — that’s all activity';}
+  if(earlierIdx>=EARLIER.length){$('#loadMore').textContent='✓ Caught up - that’s all activity';}
 };
 
 /* ---------- live activity strip ---------- */
@@ -824,7 +824,7 @@ function pushActivity(co,text){DATA.activity.unshift({co,kind:'event',text,t:'no
 function actDotColor(k){return {building:'var(--blue)',deploy:'var(--blue)',await:'var(--violet)',check:'var(--green)',reprioritize:'var(--slate)',blocked:'var(--red)',event:'var(--accent)'}[k]||'var(--slate)';}
 function renderActivity(){
   const latest=DATA.activity[0];
-  $('#actLatest').innerHTML=`<b>${latest.co}</b> — ${latest.text}`;
+  $('#actLatest').innerHTML=`<b>${latest.co}</b> - ${latest.text}`;
   // group by company
   const groups={};
   DATA.activity.forEach(a=>{(groups[a.co]=groups[a.co]||[]).push(a);});
@@ -971,10 +971,10 @@ function renderZoom(c){
 
   // wire gate
   if(c.approval){
-    $('#zApprove').onclick=()=>{$('#zGateActions').innerHTML='<span class="flash ok">✓ Approved — shipping slice 5</span>';pushActivity('LeadSift','approved slice 5 — shipping to production');};
+    $('#zApprove').onclick=()=>{$('#zGateActions').innerHTML='<span class="flash ok">✓ Approved - shipping slice 5</span>';pushActivity('LeadSift','approved slice 5 - shipping to production');};
     $('#zReject').onclick=()=>{$('#zRejectBox').classList.add('show');$('#zRejectText').focus();};
     $('#zCancelReject').onclick=()=>$('#zRejectBox').classList.remove('show');
-    $('#zSendReject').onclick=()=>{const v=$('#zRejectText').value.trim();$('#zGateActions').innerHTML=`<span class="flash rej">↺ Feedback sent — revising</span>`;$('#zRejectBox').classList.remove('show');pushActivity('LeadSift','feedback received on slice 5 — revising');};
+    $('#zSendReject').onclick=()=>{const v=$('#zRejectText').value.trim();$('#zGateActions').innerHTML=`<span class="flash rej">↺ Feedback sent - revising</span>`;$('#zRejectBox').classList.remove('show');pushActivity('LeadSift','feedback received on slice 5 - revising');};
   }
 }
 function openZoom(c){currentZoom=c;renderZoom(c);$('#scrim').classList.add('show');$('#zoom').classList.add('show');}
@@ -989,7 +989,7 @@ function sendZChat(){
   const log=$('#zchatLog');
   log.insertAdjacentHTML('beforeend',`<div class="msg user">${v.replace(/</g,'&lt;')}</div>`);
   i.value='';log.scrollTop=log.scrollHeight;
-  setTimeout(()=>{log.insertAdjacentHTML('beforeend',`<div class="msg assistant">On it — I’ll route that to ${currentZoom?currentZoom.name:'the build'}.</div>`);log.scrollTop=log.scrollHeight;},420);
+  setTimeout(()=>{log.insertAdjacentHTML('beforeend',`<div class="msg assistant">On it - I’ll route that to ${currentZoom?currentZoom.name:'the build'}.</div>`);log.scrollTop=log.scrollHeight;},420);
 }
 $('#zchatSend').onclick=sendZChat;
 $('#zchatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendZChat();});

@@ -1,6 +1,6 @@
-# Architecture — run-executor spine
+# Architecture - run-executor spine
 
-> Diagrams are [Mermaid](https://mermaid.js.org/) — they render natively on GitHub and in VS Code (install the "Markdown Preview Mermaid Support" extension). Edit the fenced ` ```mermaid ` blocks as plain text.
+> Diagrams are [Mermaid](https://mermaid.js.org/) - they render natively on GitHub and in VS Code (install the "Markdown Preview Mermaid Support" extension). Edit the fenced ` ```mermaid ` blocks as plain text.
 
 ## Process topology
 
@@ -10,12 +10,12 @@ Two OS processes coordinate through **one WAL SQLite file** (queue/lease/lock st
 flowchart TB
     browser["🖥️ Browser<br/>Action Queue UI"]
 
-    subgraph web["Web process — vite dev :3000"]
+    subgraph web["Web process - vite dev :3000"]
         serverfns["Server fns<br/>enqueue · list · reset"]
         sse["SSE route<br/>/api/runs/$runId/logs"]
     end
 
-    subgraph exec["Executor daemon — tsx (src/engine/)"]
+    subgraph exec["Executor daemon - tsx (src/engine/)"]
         loop["loop.ts<br/>poll → claim → run"]
         claim["claim.ts<br/>BEGIN IMMEDIATE + lock CAS"]
         runner["runner.ts<br/>runOne"]
@@ -53,7 +53,7 @@ Legend: **✅ implemented** · **⬜ interface only** (local impls land in build
 Key rules encoded above:
 - The **executor** is a separate `tsx` process (survives Vite HMR; keeps synchronous SQLite + minutes-long subprocess supervision off the HTTP/SSR loop).
 - The **claim** is one `BEGIN IMMEDIATE` transaction doing sub-millisecond writes only; all build/deploy/agent work runs *outside* it. A company-lock CAS (`UPDATE … WHERE locked_by_run_id IS NULL`) is the cross-process guard.
-- The **web process is write-minimal** — it never spawns subprocesses, so the synchronous `busy_timeout` wait can't stall HTTP/SSE.
+- The **web process is write-minimal** - it never spawns subprocesses, so the synchronous `busy_timeout` wait can't stall HTTP/SSE.
 - **Crash recovery** = replay from the git-sha checkpoint; boot reclaims every `running` run left by a dead executor.
 
 ## Run + action state machine
@@ -90,7 +90,7 @@ stateDiagram-v2
 
 Today's control plane (NoopHarness) runs `queued → running → done`; the `awaiting_approval → approved → ship` path is wired into the schema (`action.status` enum) but activated in steps 5–6 when the real build → deploy → validate exists.
 
-## Deployment placements — one engine, two homes
+## Deployment placements - one engine, two homes
 
 The seams exist so the **local open-core** and the **hosted multi-tenant** product are the same engine with different implementations injected at each boundary.
 
@@ -123,4 +123,4 @@ flowchart LR
     s4 -.-> l4 & h4
 ```
 
-Swapping self-host → hosted means injecting the right-hand implementations at each seam — the run loop never changes.
+Swapping self-host → hosted means injecting the right-hand implementations at each seam - the run loop never changes.

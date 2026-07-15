@@ -57,9 +57,9 @@ function Onboarding() {
                 <div className="mt-10 flex items-center justify-between gap-4 border-t pt-6">
                     <div className="max-w-md text-xs text-muted-foreground">
                         {claudeReady
-                            ? "Claude is detected & logged in — one click and you're ready."
+                            ? "Claude is detected & logged in - one click and you're ready."
                             : canFinish
-                              ? "Your OpenRouter key is set — you're ready."
+                              ? "Your OpenRouter key is set - you're ready."
                               : "Log in to Claude Code on this host, or add an OpenRouter key above. C~Slop~Slop can't run without one."}
                     </div>
                     {claudeReady ? (

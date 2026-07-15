@@ -544,7 +544,7 @@
 <!-- Global command/chat bar -->
 <div class="globalchat" id="globalchat">
   <span class="gci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-1L3 21l1.1-4A8.4 8.4 0 0 1 3 11.5 8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg></span>
-  <input id="globalInput" placeholder="Direct your portfolio — “approve LeadSift digest”, “promote PayoutReconciler”…" />
+  <input id="globalInput" placeholder="Direct your portfolio - “approve LeadSift digest”, “promote PayoutReconciler”…" />
   <div class="hint"><kbd>↵</kbd></div>
 </div>
 
@@ -573,7 +573,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -601,7 +601,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -610,22 +610,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -665,7 +665,7 @@ function renderGrid(){
     return `<div class="build-row" onclick="openCo('${c.id}')">
       <span class="sdot ${s.status}"></span>
       <span class="co">${c.name}</span>
-      <span class="what">slice ${s.n} · ${esc(s.title)}${s.step?` — ${esc(s.step)}`:''}</span>
+      <span class="what">slice ${s.n} · ${esc(s.title)}${s.step?` - ${esc(s.step)}`:''}</span>
       <span class="st ${s.status}">${s.status==='building'?'building':s.status}</span>
     </div>`;
   }).join('');
@@ -771,7 +771,7 @@ function renderGrid(){
   <section class="panel c-12" id="panel-opps">
     <div class="phead">
       <span class="ico" style="background:var(--violet-soft);color:var(--violet)">${IC.spark}</span>
-      <h3>Opportunities</h3><span class="sub">· scored thoughts — promote to a company</span>
+      <h3>Opportunities</h3><span class="sub">· scored thoughts - promote to a company</span>
       <span class="spacer"></span>
       <button class="viewall" onclick="toast('Opportunities inbox','violet')">view all ${IC.arrow}</button>
     </div>
@@ -817,7 +817,7 @@ function buildSlices(c){
   return c.slices.map(s=>`
     <div class="slice-row${s.note?' note':''}">
       <span class="sn">${s.n}</span><span class="sd ${s.status}"></span>
-      <span class="stt">${esc(s.title)}${s.note?` <span class="nt">— ${esc(s.note)}</span>`:''}</span>
+      <span class="stt">${esc(s.title)}${s.note?` <span class="nt">- ${esc(s.note)}</span>`:''}</span>
       ${s.priority?`<span class="pr">P ${s.priority}</span>`:''}
       <span class="sst ${s.status}">${s.status.replace('_',' ')}</span>
     </div>`).join('');
@@ -855,9 +855,9 @@ function openCo(id){
           <div class="preview-bar"><div class="traffic"><i></i><i></i><i></i></div>${ap.previewUrl}</div>
           <div class="preview-frame">
             <div class="ph">Your top leads today <span class="badge">200 OK</span></div>
-            <div class="lead"><span class="ls">94</span><span class="ln">acme.co — “need pricing for 40 seats”</span></div>
-            <div class="lead"><span class="ls">88</span><span class="ln">northwind.io — “demo request, enterprise”</span></div>
-            <div class="lead"><span class="ls">76</span><span class="ln">globex.dev — “integration question”</span></div>
+            <div class="lead"><span class="ls">94</span><span class="ln">acme.co - “need pricing for 40 seats”</span></div>
+            <div class="lead"><span class="ls">88</span><span class="ln">northwind.io - “demo request, enterprise”</span></div>
+            <div class="lead"><span class="ls">76</span><span class="ln">globex.dev - “integration question”</span></div>
           </div>
         </div>
 
@@ -876,7 +876,7 @@ function openCo(id){
     </div>` : '';
 
   const chatLog = (c.id==='leadsift' ? DATA.chat : [
-    {role:'assistant',text:`${c.name} is ${c.currentSlice?('on slice '+c.currentSlice.n+' — '+c.currentSlice.title):'active'}. Anything you want to redirect?`}
+    {role:'assistant',text:`${c.name} is ${c.currentSlice?('on slice '+c.currentSlice.n+' - '+c.currentSlice.title):'active'}. Anything you want to redirect?`}
   ]).map(m=>`
     <div class="msg ${m.role}">
       <span class="mav">${m.role==='user'?'You':'AI'}</span>
@@ -921,7 +921,7 @@ function closeCo(){
 function approve(){
   const b=document.getElementById('approveBtn');
   b.classList.add('done');
-  toast('Approved ✓ — LeadSift slice 5 shipped','green');
+  toast('Approved ✓ - LeadSift slice 5 shipped','green');
 }
 function toggleReject(){document.getElementById('rejectBox').classList.toggle('show');
   if(document.getElementById('rejectBox').classList.contains('show')) document.getElementById('rejectText').focus();}
@@ -929,7 +929,7 @@ function sendReject(){
   const v=document.getElementById('rejectText').value.trim();
   toggleReject();
   document.getElementById('rejectText').value='';
-  toast(v?'Feedback sent — agent re-running slice 5':'Reject sent — agent re-running','red');
+  toast(v?'Feedback sent - agent re-running slice 5':'Reject sent - agent re-running','red');
 }
 function promote(id,title){toast(`Promoted “${title}” → new company`,'violet');}
 function coChat(input){
@@ -939,13 +939,13 @@ function coChat(input){
   input.value='';
   log.scrollTop=log.scrollHeight;
   setTimeout(()=>{
-    log.insertAdjacentHTML('beforeend',`<div class="msg assistant"><span class="mav">AI</span><span class="bubble">On it — re-prioritizing and reporting back in the live activity.</span></div>`);
+    log.insertAdjacentHTML('beforeend',`<div class="msg assistant"><span class="mav">AI</span><span class="bubble">On it - re-prioritizing and reporting back in the live activity.</span></div>`);
     log.scrollTop=log.scrollHeight;
   },520);
 }
 function cmd(){
   document.getElementById('globalInput').focus();
-  toast('⌘K — ask or jump anywhere','violet');
+  toast('⌘K - ask or jump anywhere','violet');
 }
 function scrollToPanel(id){
   document.querySelector('.topnav button[data-view="overview"]').classList.remove('on');

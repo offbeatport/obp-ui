@@ -497,7 +497,7 @@ const cv=k=>COL[k]||k;
 /* ============ DATA ============ */
 const COMPANIES=[
 { id:'redditpainbot', name:'RedditPainBot', stage:'PAUSED-BLOCKED', short:'paused·blocked', color:'red', tag:'KILL?', tagColor:'red',
-  mrr:0, series:[0,0,0,0,0,0], delta:'—', users:0, usersDelta:'paused', churn:'—',
+  mrr:0, series:[0,0,0,0,0,0], delta:'-', users:0, usersDelta:'paused', churn:'-',
   cost:4, costBreak:[{k:'compute',v:4,c:'slate'}], net:-4,
   auton:{make:0,grow:0,run:0}, paused:true,
   conn:{Stripe:0,domain:0,ESP:0,PH:0,X:0},
@@ -507,24 +507,24 @@ const COMPANIES=[
   slices:[
     {n:1,t:'scrape subreddits',s:'shipped'},{n:2,t:'classify pains',s:'shipped'},
     {n:3,t:'cluster themes',s:'shipped'},{n:5,t:'severity score',s:'shipped'},
-    {n:8,t:'dedupe pains',s:'blocked',note:'agent stuck ×3 — ambiguous merge rule. Decide: ship naive dedupe, or kill.'}
+    {n:8,t:'dedupe pains',s:'blocked',note:'agent stuck ×3 - ambiguous merge rule. Decide: ship naive dedupe, or kill.'}
   ],
   funnel:null,
   notes:'$0 MRR after 6 weeks · agent blocked ×3 on slice8 · lowest score in portfolio. AI recommends kill.' },
 
 { id:'translatorbill', name:'TranslatorBill', stage:'PRE-REVENUE', short:'pre-revenue', color:'violet', tag:'BUILDING', tagColor:'violet',
-  mrr:0, series:[0,0,0,0,0,0], delta:'—', users:0, usersDelta:'pre-launch', churn:'—',
+  mrr:0, series:[0,0,0,0,0,0], delta:'-', users:0, usersDelta:'pre-launch', churn:'-',
   cost:11, costBreak:[{k:'api',v:7,c:'violet'},{k:'infra',v:3,c:'blue'},{k:'domain',v:1,c:'amber'}], net:-11,
   auton:{make:1,grow:0,run:0},
   conn:{Stripe:0,domain:0,ESP:0,PH:0,X:0},
   buildState:'building', buildLabel:'slice6 BUILDING', buildText:'<b>"re-format invoice to buyer locale"</b> · InvoiceFormatter.tsx',
-  grow:'not launched — needs domain + entity/ToS (SIGN gate)', run:'n/a · pre-revenue',
+  grow:'not launched - needs domain + entity/ToS (SIGN gate)', run:'n/a · pre-revenue',
   pos:{x:380,y:470}, mark:540,
   slices:[
     {n:1,t:'parse invoice PDF',s:'shipped'},{n:2,t:'extract line items',s:'shipped'},
     {n:3,t:'currency convert',s:'shipped'},{n:4,t:'tax rules engine',s:'shipped'},
     {n:5,t:'PDF re-render',s:'shipped'},
-    {n:6,t:'re-format to buyer locale',s:'building',note:'InvoiceFormatter.tsx — deployed :4023, doneWhen not yet passing.'}
+    {n:6,t:'re-format to buyer locale',s:'building',note:'InvoiceFormatter.tsx - deployed :4023, doneWhen not yet passing.'}
   ],
   funnel:null,
   notes:'Build progressing well (5 slices shipped). Blocked on GTM: needs a domain + legal entity + ToS before it can take real money. SIGN gate upcoming.' },
@@ -535,7 +535,7 @@ const COMPANIES=[
   auton:{make:1,grow:0,run:1},
   conn:{Stripe:1,domain:1,ESP:1,PH:0,X:0},
   buildState:'queued', buildLabel:'slice6 QUEUED', buildText:'<b>"saved chart views"</b> · waiting on backlog re-prioritize',
-  grow:'1 directory listing · low traffic — needs a distribution push (POST gate)', run:'1 ticket · billing healthy',
+  grow:'1 directory listing · low traffic - needs a distribution push (POST gate)', run:'1 ticket · billing healthy',
   pos:{x:820,y:470}, mark:960,
   slices:[
     {n:1,t:'CSV intake',s:'shipped'},{n:2,t:'schema infer',s:'shipped'},
@@ -565,7 +565,7 @@ const COMPANIES=[
     {n:8,t:'webhook out',s:'blocked',note:'depends on slice5 shipping first.'}
   ],
   funnel:[{label:'Visits / mo',val:320},{label:'Signups',val:58},{label:'Paid',val:12}],
-  notes:'Distribution flywheel working: PH launch + compounding SEO. slice5 has passed its check and is waiting on you. Reversible feature — autopilot is allowed to ship it.' },
+  notes:'Distribution flywheel working: PH launch + compounding SEO. slice5 has passed its check and is waiting on you. Reversible feature - autopilot is allowed to ship it.' },
 
 { id:'quietinbox', name:'QuietInbox', stage:'LIVE-SCALING', short:'live·scaling', color:'blue', tag:'BEST ROI', tagColor:'green',
   mrr:420, series:[120,210,300,360,400,420], delta:'+5%', users:38, usersDelta:'+6/wk', churn:'2%',
@@ -578,7 +578,7 @@ const COMPANIES=[
   slices:[
     {n:5,t:'smart triage',s:'shipped'},{n:6,t:'reply drafts',s:'shipped'},
     {n:7,t:'digest summary',s:'shipped'},{n:8,t:'team seats',s:'shipped'},
-    {n:9,t:'snooze a thread',s:'building',note:'deployed :4021 — doneWhen probe running (12s ago).'}
+    {n:9,t:'snooze a thread',s:'building',note:'deployed :4021 - doneWhen probe running (12s ago).'}
   ],
   funnel:[{label:'Reach / mo',val:1200},{label:'Signups',val:95},{label:'Paid',val:38}],
   notes:'Best ROI in the portfolio and the only L2-MAKE company (ships features on autopilot). AI recommends raising GROW autonomy to L2 and funding the PH launch.' }
@@ -765,7 +765,7 @@ function renderNodes(){
       '<div class="node-stage-row">'+stageBadge(c)+'<span class="lod" style="font-family:JetBrains Mono;font-size:9px;color:var(--ink-faint)">'+c.usersDelta+'</span></div>'+
       '<div class="node-mrr">'+
         '<div class="big"><span class="c">$</span>'+c.mrr+'</div>'+
-        '<div class="dlt '+(c.delta==='flat'?'flat':c.delta.startsWith('+')?'up':'')+'" style="'+(c.delta==='—'?'color:var(--ink-faint)':'')+'">'+(c.delta==='—'?'pre-rev':c.delta)+'</div>'+
+        '<div class="dlt '+(c.delta==='flat'?'flat':c.delta.startsWith('+')?'up':'')+'" style="'+(c.delta==='-'?'color:var(--ink-faint)':'')+'">'+(c.delta==='-'?'pre-rev':c.delta)+'</div>'+
         spark(c.series,96,30,c.mrr===0?'slate':c.color)+
       '</div>'+
       '<div class="node-metrics">'+
@@ -939,7 +939,7 @@ function renderMoney(){
 function renderOversight(){
   let h='<div class="sec-h"><span class="t">Acted on your behalf</span><span class="n">last 7d</span></div>';
   h+=OVERSIGHT.map(o=>'<div class="ov-co" style="border-left-color:'+cv(o.color)+'"><div class="ovh"><span class="ring">'+ring(.6,16,o.color,3)+'</span><span class="cn">'+o.co+'</span><span class="ct">'+o.t+'</span></div><div class="ov-acts">'+o.acts.map(a=>'<span class="ov-act">'+a+'</span>').join('')+'</div></div>').join('');
-  h+='<div class="ov-note">GROW / RUN real-world actions are undoable — every outbound message, spend, and support reply is reversible and logged here.</div>';
+  h+='<div class="ov-note">GROW / RUN real-world actions are undoable - every outbound message, spend, and support reply is reversible and logged here.</div>';
   return h;
 }
 function renderStrategy(){
@@ -1034,7 +1034,7 @@ function detailBody(c){
   const sStat={shipped:['✓','green'],building:['◗','blue'],queued:['·','slate'],blocked:['!','red'],awaiting:['⏵','accent']};
   // KPIs
   let kpis='<div class="dt-kpis">'+
-    '<div class="dt-kpi"><div class="l">MRR</div><div class="v">$'+c.mrr+'</div><div class="d '+(c.delta==='flat'?'flat':c.delta.startsWith('+')?'up':'')+'" style="'+(c.delta==='—'?'color:var(--ink-faint)':'')+'">'+(c.delta==='—'?'pre-rev':c.delta+' MoM')+'</div></div>'+
+    '<div class="dt-kpi"><div class="l">MRR</div><div class="v">$'+c.mrr+'</div><div class="d '+(c.delta==='flat'?'flat':c.delta.startsWith('+')?'up':'')+'" style="'+(c.delta==='-'?'color:var(--ink-faint)':'')+'">'+(c.delta==='-'?'pre-rev':c.delta+' MoM')+'</div></div>'+
     '<div class="dt-kpi"><div class="l">Users</div><div class="v">'+c.users+'</div><div class="d">'+c.usersDelta+'</div></div>'+
     '<div class="dt-kpi"><div class="l">Churn</div><div class="v">'+c.churn+'</div><div class="d" style="color:var(--ink-faint)">monthly</div></div>'+
     '<div class="dt-kpi"><div class="l">Cost /mo</div><div class="v">$'+c.cost+'</div><div class="d" style="color:var(--ink-faint)">infra+api</div></div>'+
@@ -1076,7 +1076,7 @@ function detailBody(c){
     const conv=i>0?Math.round(f.val/c.funnel[i-1].val*100)+'%':'top';
     return '<div class="fn-row"><div class="fn-bar" style="width:'+w+'%;background:'+cv(c.color)+'"></div><span class="fn-l">'+f.label+'</span><span class="fn-c">'+conv+'</span><span class="fn-v">'+f.val+'</span></div>';
   }).join('')+'</div>';}
-  else grow+='<div class="locked-box">🔒 Not launched yet — needs '+(c.id==='translatorbill'?'domain + entity/ToS (SIGN gate)':'distribution')+'</div>';
+  else grow+='<div class="locked-box">🔒 Not launched yet - needs '+(c.id==='translatorbill'?'domain + entity/ToS (SIGN gate)':'distribution')+'</div>';
   grow+='</div>';
   // run
   let run='<div class="panel"><div class="panel-h"><span class="pt"><span class="pic" style="background:var(--green)">⚙</span>Run · operate</span><span class="px">L'+c.auton.run+'</span></div><div class="sig"><span class="si">🎫</span>'+c.run+'</div></div>';
@@ -1089,7 +1089,7 @@ function detailBody(c){
   };
   let auton='<div class="panel"><div class="panel-h"><span class="pt"><span class="pic" style="background:var(--accent)">⚡</span>Autonomy · capability ladder</span></div><div class="auton-full">'+
     aRow('Make',c.auton.make)+aRow('Grow',c.auton.grow)+aRow('Run',c.auton.run)+'</div>'+
-    '<div style="font-size:11px;color:var(--ink-soft);margin-top:11px;line-height:1.45">'+(c.paused?'Paused — no autonomous actions running.':'Reversible features can auto-ship at L2. Anything that talks to a human or spends real money is always gated to you.')+'</div></div>';
+    '<div style="font-size:11px;color:var(--ink-soft);margin-top:11px;line-height:1.45">'+(c.paused?'Paused - no autonomous actions running.':'Reversible features can auto-ship at L2. Anything that talks to a human or spends real money is always gated to you.')+'</div></div>';
   // integrations
   const order=['Stripe','domain','ESP','PH','X'];
   let integ='<div class="panel"><div class="panel-h"><span class="pt"><span class="pic" style="background:var(--slate)">🔌</span>Connected</span></div><div class="integ">'+

@@ -45,7 +45,7 @@ describe("extractJson", () => {
     it("strips ``` code fences", () =>
         expect(extractJson('```json\n{"a":1}\n```')).toEqual({ a: 1 }));
     it("extracts JSON embedded in prose", () =>
-        expect(extractJson('Sure! {"title":"X","score":5} — done')).toEqual({
+        expect(extractJson('Sure! {"title":"X","score":5} - done')).toEqual({
             title: "X",
             score: 5,
         }));
@@ -71,7 +71,7 @@ describe("scopeNext", () => {
         expect(opp.status).toBe("promoted");
     });
 
-    it("is idempotent — a second scopeNext does nothing", async () => {
+    it("is idempotent - a second scopeNext does nothing", async () => {
         const cid = makeCompany();
         await scopeNext(new Set());
         await scopeNext(new Set());
@@ -80,7 +80,7 @@ describe("scopeNext", () => {
         expect(n("SELECT COUNT(*) n FROM opportunity")).toBe(1);
     });
 
-    it("skips a company that already has an action (empty-queue precondition — no double-scope)", async () => {
+    it("skips a company that already has an action (empty-queue precondition - no double-scope)", async () => {
         const cid = makeCompany();
         sqlite
             .prepare(
@@ -88,7 +88,7 @@ describe("scopeNext", () => {
             )
             .run(randomUUID(), cid);
         await scopeNext(new Set());
-        expect(actions(cid)).toBe(1); // unchanged — not scoped
+        expect(actions(cid)).toBe(1); // unchanged - not scoped
         expect(marked(cid)).toBe(false);
     });
 

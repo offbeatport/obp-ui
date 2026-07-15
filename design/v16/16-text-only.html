@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>C Slop Slop — Text Only</title>
+<title>C Slop Slop - Text Only</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -186,7 +186,7 @@
 
   /* ── Portfolio columns (text-only, numbered-rail stepper) ── */
 /* ============================================================
-   PORTFOLIO — FINAL (numbered-rail base + grafts)
+   PORTFOLIO - FINAL (numbered-rail base + grafts)
    Base: Candidate 4 (layered stepper, no-jump hover).
    Grafts: C1 gradient-wash hover + animated left edge + pulsing
    awaiting dot + sweep on current node; C3 razor-thin tick masks
@@ -218,7 +218,7 @@
 .pf-list > * + *{ border-top:1px solid var(--line); }
 
 /* ============================================================
-   (a) COMPANY ITEM (.pco) — reads as a text row, never a card
+   (a) COMPANY ITEM (.pco) - reads as a text row, never a card
    ============================================================ */
 .pco{
   position:relative; display:block; width:100%; text-align:left;
@@ -285,7 +285,7 @@
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 
-/* stats — users + MRR, mono, calm */
+/* stats - users + MRR, mono, calm */
 .pco-stats{
   display:flex; align-items:baseline; gap:24px;
   margin:13px 0 18px;
@@ -297,7 +297,7 @@
 .pco-stat--rev b{ color:var(--success); }
 
 /* ============================================================
-   STEPPER (.step) — numbered rail (CENTERPIECE)
+   STEPPER (.step) - numbered rail (CENTERPIECE)
    layers: breadcrumb counter · determinate meter w/ tick masks · tick timeline
    set --pct to (currentStageIndex / 5) * 100%   (Features = 40%)
    ============================================================ */
@@ -372,7 +372,7 @@
   background:color-mix(in srgb,var(--rc,var(--accent)) 60%,var(--bg));
   box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--rc,var(--accent)) 70%,transparent);
 }
-/* current node — the single emphasized element + soft glow ring */
+/* current node - the single emphasized element + soft glow ring */
 .step-tick.is-now{
   width:9px; height:9px;
   background:var(--rc,var(--accent));
@@ -408,7 +408,7 @@
 }
 
 /* ============================================================
-   (b) GENERIC ROW (.li) — "Needs you" / "Go to market"
+   (b) GENERIC ROW (.li) - "Needs you" / "Go to market"
    mirrors .pco no-card / hover-reveal logic
    ============================================================ */
 .li{
@@ -852,7 +852,7 @@
 
   /* ── Feature approval review (modal) ── */
 /* ============================================================
-   APPROVAL REVIEW SURFACE  (.rv-*)  — centered modal
+   APPROVAL REVIEW SURFACE  (.rv-*)  - centered modal
    Winner: Candidate 1, grafted with C2 srcdoc + C3 footer copy.
    Tokens only. Hidden by default; open by removing [hidden].
    ============================================================ */
@@ -962,7 +962,7 @@
   display:grid; grid-template-columns:minmax(0,1.32fr) minmax(360px,.85fr);
 }
 
-/* LEFT — browser-window live preview */
+/* LEFT - browser-window live preview */
 .rv-preview{
   min-width:0; min-height:0;
   display:flex; flex-direction:column;
@@ -1036,7 +1036,7 @@
   border:0; display:block; background:#070d18;
 }
 
-/* RIGHT — scrollable rail (Description + Diff) */
+/* RIGHT - scrollable rail (Description + Diff) */
 .rv-rail{
   min-width:0; min-height:0; overflow-y:auto;
   padding:22px 22px 26px;
@@ -1147,11 +1147,11 @@
 .rv-btn:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
 .rv-btn svg{ width:16px; height:16px; flex:0 0 auto; }
 
-/* tertiary — quiet text */
+/* tertiary - quiet text */
 .rv-ghost{ background:transparent; border-color:var(--line2); color:var(--muted); font-weight:500; }
 .rv-ghost:hover{ color:var(--sub); border-color:var(--line2); }
 
-/* secondary — Chat with agent (brand-amber iterate path) */
+/* secondary - Chat with agent (brand-amber iterate path) */
 .rv-iterate{ display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
 .rv-iterate-hint{
   font-family:var(--mono); font-size:8.5px; letter-spacing:.16em; text-transform:uppercase;
@@ -1164,7 +1164,7 @@
 }
 .rv-chat:hover{ background:color-mix(in srgb,var(--rc) 18%,transparent); border-color:var(--rc); transform:translateY(-1px); }
 
-/* primary — accent, ship (the single accent element) */
+/* primary - accent, ship (the single accent element) */
 .rv-approve{
   color:#04121f; background:var(--accent); border-color:var(--accent);
   box-shadow:0 0 22px -6px color-mix(in srgb,var(--accent) 70%,transparent);
@@ -1376,7 +1376,7 @@
 
       <p class="guide">
         <span class="marker">Waiting room</span>
-        Three companies shipped a feature to staging and <b>paused</b> — each is waiting on your approval
+        Three companies shipped a feature to staging and <b>paused</b> - each is waiting on your approval
         before it continues to its next feature.
       </p>
 
@@ -1392,8 +1392,8 @@
             <span class="wr-ver">v0.6 → v0.7</span>
             <span class="wr-status"><span class="wr-dot"></span>Awaiting you</span>
           </div>
-          <div class="wr-feature">Feature 6 — Per-line invoice translation</div>
-          <div class="wr-note">Live on <b>translatorbill.cslopslop.com</b>, checks green. Paused until you approve — next up: feature 7 (per-currency rounding).</div>
+          <div class="wr-feature">Feature 6 - Per-line invoice translation</div>
+          <div class="wr-note">Live on <b>translatorbill.cslopslop.com</b>, checks green. Paused until you approve - next up: feature 7 (per-currency rounding).</div>
           <div class="wr-actions">
             <button class="wr-review" type="button" data-review="translatorbill">Review &amp; approve</button>
             <button class="wr-approve" type="button">Approve &amp; ship</button>
@@ -1407,8 +1407,8 @@
             <span class="wr-ver">v0.4 → v0.5</span>
             <span class="wr-status"><span class="wr-dot"></span>Awaiting you</span>
           </div>
-          <div class="wr-feature">Feature 8 — Auto-draft tone control</div>
-          <div class="wr-note">Live on <b>quietinbox.cslopslop.com</b>, checks green. Paused until you approve — next up: feature 9 (snooze a thread).</div>
+          <div class="wr-feature">Feature 8 - Auto-draft tone control</div>
+          <div class="wr-note">Live on <b>quietinbox.cslopslop.com</b>, checks green. Paused until you approve - next up: feature 9 (snooze a thread).</div>
           <div class="wr-actions">
             <button class="wr-review" type="button" data-review="quietinbox">Review &amp; approve</button>
             <button class="wr-approve" type="button">Approve &amp; ship</button>
@@ -1422,8 +1422,8 @@
             <span class="wr-ver">v1.0 → v1.1</span>
             <span class="wr-status"><span class="wr-dot"></span>Awaiting you</span>
           </div>
-          <div class="wr-feature">Feature 5 — Shareable dashboard link</div>
-          <div class="wr-note">Live on <b>datadrop.cslopslop.com</b>, checks green. Paused until you approve — next up: feature 6 (saved chart views).</div>
+          <div class="wr-feature">Feature 5 - Shareable dashboard link</div>
+          <div class="wr-note">Live on <b>datadrop.cslopslop.com</b>, checks green. Paused until you approve - next up: feature 6 (saved chart views).</div>
           <div class="wr-actions">
             <button class="wr-review" type="button" data-review="datadrop">Review &amp; approve</button>
             <button class="wr-approve" type="button">Approve &amp; ship</button>
@@ -1444,7 +1444,7 @@
 
       <p class="guide">
         <span class="marker">Top opportunity</span>
-        <b>Invoice OCR for freelancers</b> keeps surfacing on r/freelance — 142 people asked for it
+        <b>Invoice OCR for freelancers</b> keeps surfacing on r/freelance - 142 people asked for it
         this month and nothing good exists. I can scaffold an MVP today and have feature 1 live by tonight.
       </p>
 
@@ -1510,7 +1510,7 @@
       <div class="msg agent">
         <span class="av" aria-hidden="true">C</span>
         <div class="stack">
-          <div class="bubble"><b>TranslatorBill</b>'s feature 6 is ready — per-line invoice translation. It's the one thing blocking your next release. Want me to deploy it?</div>
+          <div class="bubble"><b>TranslatorBill</b>'s feature 6 is ready - per-line invoice translation. It's the one thing blocking your next release. Want me to deploy it?</div>
           <span class="time">9:02</span>
         </div>
       </div>
@@ -1573,7 +1573,7 @@
   </section>
 
 <!-- ============================================================
-     APPROVAL REVIEW SURFACE — centered modal (hidden by default)
+     APPROVAL REVIEW SURFACE - centered modal (hidden by default)
      Open:  document.getElementById('reviewOverlay').hidden = false
      ids: reviewOverlay / rvApprove / rvChat / rvClose
      ============================================================ -->
@@ -1789,7 +1789,7 @@
       var t = typing();
       setTimeout(function(){
         t.remove();
-        add('agent', 'On it — I’ll factor that into TranslatorBill’s next feature and report back.');
+        add('agent', 'On it - I’ll factor that into TranslatorBill’s next feature and report back.');
       }, 900);
     }
 
@@ -1855,7 +1855,7 @@
     ];
     var EVENTS = [
       {lvl:'build',   m:function(){ return 'wrote ' + (2 + (Math.random()*8|0)) + ' files · running test suite'; }},
-      {lvl:'build',   m:function(){ return 'compiling feature — ' + (40 + (Math.random()*60|0)) + ' modules'; }},
+      {lvl:'build',   m:function(){ return 'compiling feature - ' + (40 + (Math.random()*60|0)) + ' modules'; }},
       {lvl:'deploy',  m:function(){ return 'shipped to staging · ' + (120 + (Math.random()*400|0)) + 'ms cold start'; }},
       {lvl:'deploy',  m:function(){ return 'rollout 100% · health checks green'; }},
       {lvl:'scan',    m:function(){ return 'scanned ' + (8 + (Math.random()*40|0)) + ' reddit threads for pain signals'; }},
@@ -1864,7 +1864,7 @@
       {lvl:'gtm',     m:function(){ return 'scheduled tweet for 4:00pm'; }},
       {lvl:'support', m:function(){ return 'answered support ticket #' + (400 + (Math.random()*99|0)); }},
       {lvl:'email',   m:function(){ return 'sent ' + (1 + (Math.random()*6|0)) + ' onboarding emails'; }},
-      {lvl:'error',   m:function(){ return 'retry 1/3 — upstream API returned 429'; }}
+      {lvl:'error',   m:function(){ return 'retry 1/3 - upstream API returned 429'; }}
     ];
 
     function pad(n){ return String(n).padStart(2,'0'); }

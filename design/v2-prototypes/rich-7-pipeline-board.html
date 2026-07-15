@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — Pipeline Board</title>
+<title>C Slop Slop - Pipeline Board</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -613,14 +613,14 @@ let COMPANIES = [
   {
     id:'translatorbill', name:'TranslatorBill', lane:'building', color:'var(--violet)', av:'#7a5ea8',
     stageLabel:'Pre-revenue', badge:'badge-pre',
-    mrr:0, series:[0,0,0,0,0,0], growth:0, users:0, usersG:'—', churn:'—',
+    mrr:0, series:[0,0,0,0,0,0], growth:0, users:0, usersG:'-', churn:'-',
     cost:11, net:-11, costBreak:[['infra',7],['api',4]],
     make:1, grow:0, run:0,
     conns:{Str:0,Dom:0,ESP:0},
     slice:{n:6, name:'re-format invoice to buyer locale', prog:42, status:'building', pc:'var(--violet)', blocked:false},
     sliceNote:'InvoiceFormatter.tsx in progress',
     growTxt:'Not launched. Needs domain + entity/ToS (SIGN gate) before any outbound.',
-    runTxt:'n/a — pre-revenue',
+    runTxt:'n/a - pre-revenue',
     funnel:null,
     gate:{type:'SIGN', short:'entity + ToS', ev:'required before go-to-market', live:false, upcoming:true},
     qid:'g4'
@@ -634,7 +634,7 @@ let COMPANIES = [
     conns:{Str:1,Dom:1,ESP:1},
     slice:{n:6, name:'saved chart views', prog:0, status:'queued', pc:'var(--amber)', blocked:false},
     sliceNote:'re-prioritized backlog (5m ago)',
-    growTxt:'1 directory listing, low traffic — needs a real distribution push. Organic page converts 3.1%.',
+    growTxt:'1 directory listing, low traffic - needs a real distribution push. Organic page converts 3.1%.',
     runTxt:'1 ticket open',
     funnel:[['Visits',95,'100%'],['Signups',9,'9.5%'],['Paid',6,'6.3%']],
     gate:{type:'POST', short:'launch thread r/SaaS', ev:'distribution push or keep watching', live:false, upcoming:true},
@@ -643,14 +643,14 @@ let COMPANIES = [
   {
     id:'redditpainbot', name:'RedditPainBot', lane:'atrisk', color:'var(--red)', av:'#b6483f',
     stageLabel:'Paused · Blocked', badge:'badge-paused', tag:'kill candidate', tagcls:'tag-kill',
-    mrr:0, series:[0,0,0,0,0,0], growth:0, users:0, usersG:'—', churn:'—',
+    mrr:0, series:[0,0,0,0,0,0], growth:0, users:0, usersG:'-', churn:'-',
     cost:4, net:-4, costBreak:[['infra',4]],
     make:null, grow:null, run:null,
     conns:{},
     slice:{n:8, name:'dedupe pains', prog:30, status:'BLOCKED ×3', pc:'var(--red)', blocked:true},
     sliceNote:'stuck 18m · 3 failed attempts',
     growTxt:'Never launched.',
-    runTxt:'n/a — paused',
+    runTxt:'n/a - paused',
     funnel:null,
     gate:{type:'UNBLOCK', short:'slice8 "dedupe pains"', ev:'stuck ×3 · unblock or kill', live:true},
     qid:'g3'
@@ -665,7 +665,7 @@ const OPPS = [
 ];
 
 let GATES = [
-  {id:'g1', type:'SHIP',    co:'LeadSift',        cid:'leadsift',      title:'Ship slice5 — daily digest of top leads', ev:'doneWhen green · /digest/preview → 200', status:'active'},
+  {id:'g1', type:'SHIP',    co:'LeadSift',        cid:'leadsift',      title:'Ship slice5 - daily digest of top leads', ev:'doneWhen green · /digest/preview → 200', status:'active'},
   {id:'g2', type:'SPEND',   co:'QuietInbox',      cid:'quietinbox',    title:'Authorize $40 ProductHunt launch', ev:'~120 signups projected · best-ROI bet', status:'active'},
   {id:'g3', type:'UNBLOCK', co:'RedditPainBot',   cid:'redditpainbot', title:'slice8 "dedupe pains" blocked ×3', ev:'stuck 18m · unblock or kill', status:'active'},
   {id:'g4', type:'SIGN',    co:'TranslatorBill',  cid:'translatorbill',title:'Sign entity + ToS', ev:'required before go-to-market', status:'upcoming', when:'queued'},
@@ -841,7 +841,7 @@ function renderBoard(){
     const body=col.querySelector('.lane-body');
 
     if(!items.length){
-      body.innerHTML=`<div style="font-size:11px;color:var(--ink-faint);text-align:center;padding:18px 6px;font-family:JetBrains Mono">— empty —</div>`;
+      body.innerHTML=`<div style="font-size:11px;color:var(--ink-faint);text-align:center;padding:18px 6px;font-family:JetBrains Mono">- empty -</div>`;
     } else if(lane.id==='discover'){
       items.forEach(o=>body.appendChild(oppCard(o)));
     } else {
@@ -892,7 +892,7 @@ function companyCard(c){
     </div>
 
     <div class="c-stats">
-      <div class="stat"><span class="sl">users</span><span class="sv">${c.users}<span style="font-size:8px;color:var(--ink-faint)"> ${c.usersG!=='—'?c.usersG:''}</span></span></div>
+      <div class="stat"><span class="sl">users</span><span class="sv">${c.users}<span style="font-size:8px;color:var(--ink-faint)"> ${c.usersG!=='-'?c.usersG:''}</span></span></div>
       <div class="stat"><span class="sl">churn</span><span class="sv sm">${c.churn}</span></div>
       <div class="stat"><span class="sl">cost/mo</span><span class="sv sm">$${c.cost}</span></div>
       <div class="stat"><span class="sl">net</span><span class="sv sm ${c.net>=0?'up':'down'}">${c.net>=0?'+':'−'}$${Math.abs(c.net)}</span></div>
@@ -1115,7 +1115,7 @@ function openCompany(id,scrollGate){
     return `<div class="funnel">`+c.funnel.map(f=>
       `<div class="fn"><div class="fbar" style="width:${Math.max(18,f[1]/fmax*100)}%">${f[1]}</div><span class="fl">${f[0]}</span><span class="fp">${f[2]}</span></div>`
     ).join('')+`</div>`;
-  })() : `<div style="font-size:11.5px;color:var(--ink-faint);font-family:JetBrains Mono;padding:4px 0">no funnel yet — pre-launch</div>`;
+  })() : `<div style="font-size:11.5px;color:var(--ink-faint);font-family:JetBrains Mono;padding:4px 0">no funnel yet - pre-launch</div>`;
 
   const isShip=c.gate.type==='SHIP';
   const gateBody = isShip ? `
@@ -1185,7 +1185,7 @@ function openCompany(id,scrollGate){
             ${['Str','Dom','ESP','PH','X','Ads'].filter(k=>k in c.conns).map(k=>{
               const names={Str:'Stripe',Dom:'Domain',ESP:'Email',PH:'ProductHunt',X:'Social',Ads:'Paid ads'};
               return `<span class="conn-pill ${c.conns[k]?'on':'off'}">${c.conns[k]?'✓':'✗'} ${names[k]}</span>`;
-            }).join('')||'<span style="font-size:11px;color:var(--ink-faint);font-family:JetBrains Mono">none connected — paused</span>'}
+            }).join('')||'<span style="font-size:11px;color:var(--ink-faint);font-family:JetBrains Mono">none connected - paused</span>'}
           </div>
         </div>
       </div>
@@ -1200,14 +1200,14 @@ function openCompany(id,scrollGate){
               <div class="m-gate-act">
                 <button class="approve" onclick="resolveGate('${c.qid}',true);closeModal()">✓ Approve</button>
                 <button class="reject" onclick="resolveGate('${c.qid}',false);closeModal()">Reject…</button>
-              </div>`:`<div style="font-family:JetBrains Mono;font-size:10px;color:var(--ink-faint);margin-top:8px">◷ upcoming — not yet actionable</div>`}
+              </div>`:`<div style="font-family:JetBrains Mono;font-size:10px;color:var(--ink-faint);margin-top:8px">◷ upcoming - not yet actionable</div>`}
           </div>
         </div>
 
         <div class="m-sec">
           <div class="m-sec-h">Build · Grow · Run <span class="ln"></span></div>
           <div class="m-phase">
-            <div class="ph-row"><span class="ph-tag ph-MAKE">MAKE</span><div class="ph-tx"><b>slice ${c.slice.n} · ${c.slice.name}</b> — ${c.slice.status}. ${c.sliceNote}.
+            <div class="ph-row"><span class="ph-tag ph-MAKE">MAKE</span><div class="ph-tx"><b>slice ${c.slice.n} · ${c.slice.name}</b> - ${c.slice.status}. ${c.sliceNote}.
               <div class="pbar ${c.slice.blocked?'blocked':''}" style="margin-top:6px"><i style="width:${c.slice.prog}%;background:${c.slice.pc}"></i></div></div></div>
             <div class="ph-row"><span class="ph-tag ph-GROW">GROW</span><div class="ph-tx">${c.growTxt}</div></div>
             <div class="ph-row"><span class="ph-tag ph-RUN">RUN</span><div class="ph-tx">${c.runTxt}</div></div>

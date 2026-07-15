@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — Workspace</title>
+<title>C Slop Slop - Workspace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
@@ -630,7 +630,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -658,7 +658,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -667,22 +667,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -845,7 +845,7 @@ function renderOverview(){
       <div class="section-label">Companies</div>
       <div class="co-grid">${cards}</div>
 
-      <div class="section-label">Opportunities — scored thoughts, promote the strong ones</div>
+      <div class="section-label">Opportunities - scored thoughts, promote the strong ones</div>
       <div class="opp-list">${opps}</div>
 
       <div class="section-label">Next moves</div>
@@ -870,7 +870,7 @@ function renderCompany(){
 
   // OVERVIEW sub
   const shipped = c.slices ? c.slices.filter(s=>s.status==='shipped').length : c.slicesShipped;
-  const total = c.slices ? c.slices.length : '—';
+  const total = c.slices ? c.slices.length : '-';
   const overviewHtml = `
     <div class="pad" data-subview="overview">
       <div class="h1">${esc(c.name)}</div>
@@ -887,7 +887,7 @@ function renderCompany(){
         ${c.previewUrl ? `<a href="${c.previewUrl}" onclick="return previewClick(event)">${c.previewUrl}</a>` : '<span style="color:var(--fg-3)">not deployed</span>'}
         ${c.domain ? `<span class="open-ext" style="color:var(--fg-3)">domain: ${c.domain}</span>` : ''}
       </div>
-      ${c.needsYou ? `<div class="move" style="margin-top:16px;border-left-color:var(--violet)"><span class="mnum" style="color:var(--violet)">!</span><span>Slice 5 (daily digest) is live and the check is green — <b style="color:var(--amber);cursor:pointer" onclick="setSub('diff')">review the diff →</b></span></div>` : ''}
+      ${c.needsYou ? `<div class="move" style="margin-top:16px;border-left-color:var(--violet)"><span class="mnum" style="color:var(--violet)">!</span><span>Slice 5 (daily digest) is live and the check is green - <b style="color:var(--amber);cursor:pointer" onclick="setSub('diff')">review the diff →</b></span></div>` : ''}
     </div>`;
 
   // DIFF sub = approval gate
@@ -905,12 +905,12 @@ function renderCompany(){
         <span class="gtitle">Slice ${a.slice} · ${esc(a.title)}</span>
         <span class="pass-pill">✓ doneWhen passed · attempt ${a.attempt}</span>
       </div>
-      <div class="sub" style="margin-top:6px">This slice is built, deployed, and proven. Review and approve to ship it — or reject with feedback.</div>
+      <div class="sub" style="margin-top:6px">This slice is built, deployed, and proven. Review and approve to ship it - or reject with feedback.</div>
 
       <div class="donewhen">
         <div class="dw-label">doneWhen check (executable)</div>
         <div class="dw-check">${esc(a.doneWhen)}</div>
-        <div class="dw-result">✓ ${a.checkResult} — GET /digest/preview → 200, body contains "Top leads"</div>
+        <div class="dw-result">✓ ${a.checkResult} - GET /digest/preview → 200, body contains "Top leads"</div>
       </div>
 
       <div class="preview-bar">
@@ -926,7 +926,7 @@ function renderCompany(){
       </div>
 
       <div class="gate-actions">
-        <span class="gtext"><b>Approval gate (L0)</b> — you ship this slice. The product stays live.</span>
+        <span class="gtext"><b>Approval gate (L0)</b> - you ship this slice. The product stays live.</span>
         <div class="gspace"></div>
         <button class="btn ghost-red" onclick="toggleReject()">Reject with feedback</button>
         <button class="btn primary" onclick="approve()">✓ Approve & ship</button>
@@ -978,7 +978,7 @@ function renderCompany(){
   let backlogHtml;
   const slices = c.slices || (c.currentSlice?[c.currentSlice]:[]);
   backlogHtml = `<div class="pad" data-subview="backlog">
-    <div class="h1" style="font-size:16px">Backlog — one validated slice at a time</div>
+    <div class="h1" style="font-size:16px">Backlog - one validated slice at a time</div>
     <div class="sub" style="margin-bottom:14px">Agents pull the top-priority slice, ship it live + proven, then re-prioritize.</div>
     <div class="backlog">
     ${slices.map(s => {
@@ -1079,20 +1079,20 @@ function sendChat(){
   const sc = $('#chatScroll');
   sc.insertAdjacentHTML('beforeend', `<div class="msg user"><div class="who">You</div><div class="bubble">${esc(inp.value.trim())}</div></div>`);
   inp.value=''; sc.scrollTop = sc.scrollHeight;
-  setTimeout(()=>{ sc.insertAdjacentHTML('beforeend', `<div class="msg assistant"><div class="who">C Slop Slop</div><div class="bubble">On it — I’ll route that to the build loop.</div></div>`); sc.scrollTop = sc.scrollHeight; }, 600);
+  setTimeout(()=>{ sc.insertAdjacentHTML('beforeend', `<div class="msg assistant"><div class="who">C Slop Slop</div><div class="bubble">On it - I’ll route that to the build loop.</div></div>`); sc.scrollTop = sc.scrollHeight; }, 600);
 }
 $('#chatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') sendChat(); });
 
 /* ============ approval actions ============ */
 function approve(){
-  flashToast('Approved ✓ — slice 5 shipping live to leadsift.app', false);
+  flashToast('Approved ✓ - slice 5 shipping live to leadsift.app', false);
   const co = DATA.companies.find(x=>x.id==='leadsift');
   co.needsYou = false;
   const s5 = co.slices.find(s=>s.n===5);
   if (s5) s5.status = 'shipped';
   DATA.portfolio.needsYou = 0;
   // reflect
-  renderCompany(); renderTabs(); renderTree(); updateStatusBar(); pushActivity('LeadSift','check','slice 5 approved & shipped — live on leadsift.app');
+  renderCompany(); renderTabs(); renderTree(); updateStatusBar(); pushActivity('LeadSift','check','slice 5 approved & shipped - live on leadsift.app');
   setSub('overview');
 }
 function toggleReject(force){
@@ -1103,10 +1103,10 @@ function toggleReject(force){
 }
 function submitReject(){
   const t = $('#rejectText').value.trim();
-  flashToast('Rejected — feedback sent to the build loop ✗', true);
+  flashToast('Rejected - feedback sent to the build loop ✗', true);
   $('#rejectBox').classList.remove('show');
   $('#rejectText').value='';
-  pushActivity('LeadSift','building','reworking slice 5 from your feedback' + (t?' — "'+t.slice(0,40)+'"':''), true);
+  pushActivity('LeadSift','building','reworking slice 5 from your feedback' + (t?' - "'+t.slice(0,40)+'"':''), true);
 }
 
 function previewClick(e){ e.preventDefault(); flashToast('Opening '+e.target.textContent+' (mock)'); return false; }

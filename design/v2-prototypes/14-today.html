@@ -357,7 +357,7 @@
   <!-- UPCOMING column -->
   <section class="col col-up" id="upcol">
     <h2>Upcoming</h2>
-    <div class="sub">Queued &amp; building slices — agents pull the top one next.</div>
+    <div class="sub">Queued &amp; building slices - agents pull the top one next.</div>
     <div id="upcoming"></div>
 
     <div class="up-sec">Opportunities</div>
@@ -378,7 +378,7 @@
   <div class="ov-head">
     <div>
       <h1>Portfolio</h1>
-      <p>5 active bets · the loop never stops — thought → opportunity → company → bag.</p>
+      <p>5 active bets · the loop never stops - thought → opportunity → company → bag.</p>
     </div>
   </div>
   <div class="metrics" id="metrics"></div>
@@ -425,7 +425,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -453,7 +453,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -462,22 +462,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -543,7 +543,7 @@ function approvalBody(){
     return `<span class="ctx">${esc(l)}</span>`;
   }).join('');
   return `
-    <div class="lede">LeadSift shipped slice ${a.slice} — <b>${esc(a.title)}</b>. It’s live and the check is green. Review &amp; approve to ship it to users.</div>
+    <div class="lede">LeadSift shipped slice ${a.slice} - <b>${esc(a.title)}</b>. It’s live and the check is green. Review &amp; approve to ship it to users.</div>
     <div class="gate">
       <div class="gate-row"><span class="lbl">Preview</span><a href="${a.previewUrl}" target="_blank">${a.previewUrl}</a></div>
       <div class="gate-row"><span class="lbl">doneWhen</span><span class="donewhen">${esc(a.doneWhen)}</span></div>
@@ -570,16 +570,16 @@ function approvalBody(){
 function unblockBody(){
   const c = co('redditpainbot');
   return `
-    <div class="lede">Slice 8 — <b>Dedupe near-identical pains</b> — has been stuck. Same failure ×3, no progress. Decide the move.</div>
+    <div class="lede">Slice 8 - <b>Dedupe near-identical pains</b> - has been stuck. Same failure ×3, no progress. Decide the move.</div>
     <div class="gate" style="padding:11px 13px">
       <div style="font-size:12px;color:var(--ink-2);line-height:1.6">
-        <span class="pill blocked"><span class="d"></span>blocked</span> stopped — no progress.
+        <span class="pill blocked"><span class="d"></span>blocked</span> stopped - no progress.
         Preview unavailable. The agent can’t get past the dedupe check.
       </div>
     </div>
     <div class="simple-acts">
-      <button class="btn-ghost" data-act="Retry queued — agents will re-attempt slice 8">Retry slice</button>
-      <button class="btn-ghost" data-act="Skipped — slice 8 moved to backlog">Skip &amp; reprioritize</button>
+      <button class="btn-ghost" data-act="Retry queued - agents will re-attempt slice 8">Retry slice</button>
+      <button class="btn-ghost" data-act="Skipped - slice 8 moved to backlog">Skip &amp; reprioritize</button>
       <button class="btn-ghost warn" data-act="RedditPainBot paused">Pause company</button>
     </div>`;
 }
@@ -592,7 +592,7 @@ function promoteBody(){
       <div style="font-size:12px;color:var(--ink-3);margin-top:3px">${esc(o.thesis)}</div>
     </div>
     <div class="simple-acts">
-      <button class="btn btn-approve" data-act="“PayoutReconciler” promoted to a company — slice 1 queued">Promote to company</button>
+      <button class="btn btn-approve" data-act="“PayoutReconciler” promoted to a company - slice 1 queued">Promote to company</button>
       <button class="btn-ghost warn" data-act="Opportunity kept in inbox">Keep in inbox</button>
     </div>`;
 }
@@ -676,7 +676,7 @@ function wireMoves(){
         e.stopPropagation();
         conf.textContent='Approved ✓ shipping to users'; conf.className='conf green show';
         rbox.classList.remove('show');
-        toast('LeadSift slice 5 approved — shipped ✓');
+        toast('LeadSift slice 5 approved - shipped ✓');
         const pill = $('.pill', el);
         pill.className='pill shipped'; pill.innerHTML='<span class="d"></span>shipped';
         setTimeout(()=>{ check.click(); }, 650);
@@ -691,7 +691,7 @@ function wireMoves(){
         const fb=$('textarea',rbox).value.trim();
         conf.textContent='Sent back ↩ agents re-running'; conf.className='conf amber show';
         rbox.classList.remove('show');
-        toast(fb?'Feedback sent — slice 5 re-running':'Sent back for changes', false);
+        toast(fb?'Feedback sent - slice 5 re-running':'Sent back for changes', false);
       });
     }
     // simple actions
@@ -737,7 +737,7 @@ function renderOpps(targetId, withPromote){
   $(targetId).innerHTML = html;
   $$('[data-promote]', $(targetId)).forEach(b=>b.addEventListener('click',()=>{
     const o=DATA.opportunities.find(x=>x.id===b.dataset.promote);
-    toast(`“${o.title}” promoted — slice 1 queued`);
+    toast(`“${o.title}” promoted - slice 1 queued`);
     b.textContent='Promoted ✓'; b.style.background='var(--accent)'; b.style.color='#fff';
     b.disabled=true;
   }));
@@ -821,7 +821,7 @@ function jumpToLeadSift(){
 function jumpToCompany(id){
   if(id==='leadsift'){ jumpToLeadSift(); return; }
   setView('today');
-  toast(`${co(id).name} — building activity opening…`);
+  toast(`${co(id).name} - building activity opening…`);
   $('#activity').classList.add('open');
   setTimeout(()=>$('#activity').classList.remove('open'),2600);
   const card=$$('.up-card').find(x=>x.dataset.jump===id);
@@ -854,7 +854,7 @@ function init(){
 
   // add a day
   $('#addDay').addEventListener('click', ()=>{
-    toast('Day added — planner grows right →');
+    toast('Day added - planner grows right →');
     $('#shell').scrollTo({left:$('#shell').scrollWidth, behavior:'smooth'});
   });
 

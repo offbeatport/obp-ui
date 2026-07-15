@@ -3,11 +3,11 @@
 You are building one small web app inside this git working directory. Ship the ONE
 capability described in the task, then stop. Nothing else matters.
 
-## Hard stack contract — no exceptions
+## Hard stack contract - no exceptions
 - The app is a **single `server.js`** started with `node server.js`. No bundler, no
-  build step, no framework, no Dockerfile, no `npm install` of runtime deps — use only
+  build step, no framework, no Dockerfile, no `npm install` of runtime deps - use only
   Node's built-in modules (`node:http`, `node:fs`, etc.).
-- A minimal `package.json` (`"type": "commonjs"`) is already in the repo — **leave it**.
+- A minimal `package.json` (`"type": "commonjs"`) is already in the repo - **leave it**.
   Write `server.js` as CommonJS (`const http = require("node:http")`); do not add deps.
 - The server MUST listen on `process.env.PORT` (the platform assigns it) and bind
   `127.0.0.1`. Do not hardcode a port.
@@ -22,6 +22,6 @@ capability described in the task, then stop. Nothing else matters.
   record's persistence can be proven.
 
 ## Discipline
-- Keep it minimal and correct — a working thin slice beats an elaborate broken one.
+- Keep it minimal and correct - a working thin slice beats an elaborate broken one.
 - Do not edit files outside this working directory.
 - When the routes above work, you are done. Do not add extra features.

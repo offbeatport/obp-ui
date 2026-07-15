@@ -590,7 +590,7 @@
 <!-- PIPELINE BOARD -->
 <main class="board-wrap">
   <div class="board-label">
-    <span class="eyebrow">Validation pipeline — read left → right</span>
+    <span class="eyebrow">Validation pipeline - read left → right</span>
     <span class="flowline"></span>
     <span class="eyebrow">6 bets in flight</span>
   </div>
@@ -620,7 +620,7 @@ const STAGES = {
   testing:  { name: "Testing",  desc: "Prove retention & willingness",  color: "var(--amber)",  soft: "var(--amber-soft)" },
   growing:  { name: "Growing",  desc: "Real users, real revenue",       color: "var(--green)",  soft: "var(--green-soft)" },
   ejected:  { name: "Ejected",  desc: "Graduated to its own company",   color: "var(--violet)", soft: "var(--violet-soft)" },
-  killed:   { name: "Killed",   desc: "Stopped — post-mortem written",  color: "var(--red)",    soft: "var(--red-soft)" }
+  killed:   { name: "Killed",   desc: "Stopped - post-mortem written",  color: "var(--red)",    soft: "var(--red-soft)" }
 };
 const STAGE_ORDER = ["idea", "building", "testing", "growing", "ejected", "killed"];
 
@@ -641,16 +641,16 @@ const COMPANIES = [
     goalLab: "12 / 10 paying · 0% churn", progress: 1.0,
     spend: 28, revenue: 180, users: "12 paying", usersNum: "12",
     plan: "Shipping the Daily digest and watching activation on the newest cohort.",
-    nextAction: "Approve — ship Daily digest to all 12 users",
+    nextAction: "Approve - ship Daily digest to all 12 users",
     recent: ["Scored 41 leads overnight", "Daily digest passed its check", "+2 signups from the embed"],
-    risks: ["Single acquisition channel — the embed is the only inflow."],
+    risks: ["Single acquisition channel - the embed is the only inflow."],
     approval: { title: "Ship Daily digest → all 12 users", detail: "One email endpoint, fully reversible. Users can one-click unsubscribe." },
     rec: "CONTINUE",
     needs: true,
     docs: {
       Foundation: { h: "Why LeadSift exists", p: "Sales teams call leads in the order they arrive, not the order they should. LeadSift reorders the queue by fit + intent so reps spend their first hour on the two leads most likely to close.", li: ["ICP: SMB sales teams, 2–10 reps", "Wedge: score, don't replace the CRM", "Moat: scoring model tuned on their own closed-won"] },
       Product: { h: "What's shipped", p: "A webform embed captures leads, an overnight job scores each 0–100, and reps see a ranked queue. The Daily digest (pending approval) emails each rep their top 3 hot leads at 8am.", li: ["Live: embed + overnight scoring", "Live: ranked in-app queue", "Pending: Daily digest email"] },
-      Growth: { h: "How it grows", p: "Growth is entirely embed-driven right now: every scored lead nudges the customer to add the embed to one more form. That's working but fragile — it's a single channel.", li: ["Channel: in-product embed loop", "Next test: a lightweight referral ask", "Watch: activation of the 2 newest users"] },
+      Growth: { h: "How it grows", p: "Growth is entirely embed-driven right now: every scored lead nudges the customer to add the embed to one more form. That's working but fragile - it's a single channel.", li: ["Channel: in-product embed loop", "Next test: a lightweight referral ask", "Watch: activation of the 2 newest users"] },
       Budget: { h: "Unit economics", p: "At $15/mo × 12 users = $180 revenue against $28 infra + model spend. Net +$152/mo and healthy. Scoring cost scales sub-linearly with volume.", li: ["Revenue $180/mo", "Spend $28/mo", "Net +$152/mo", "Gross margin ~84%"] }
     }
   },
@@ -664,7 +664,7 @@ const COMPANIES = [
     plan: "Running the closed beta and measuring week-2 retention before we open the doors wider.",
     nextAction: "Interview 3 churned beta users",
     recent: ["Auto-drafted 30 replies", "2 new beta signups"],
-    risks: ["Retention unproven — week-2 numbers aren't in yet."],
+    risks: ["Retention unproven - week-2 numbers aren't in yet."],
     approval: { title: "$40 Product Hunt launch spend", detail: "One-time promoted launch to pull the beta from 6 → 20. Capped spend, no recurring commitment." },
     rec: "CONTINUE",
     needs: true,
@@ -672,7 +672,7 @@ const COMPANIES = [
       Foundation: { h: "Why QuietInbox exists", p: "Inbox triage is the tax everyone pays. QuietInbox reads the thread, drafts the reply in your voice, and waits for one click. You approve; you never start from a blank box.", li: ["ICP: founders & solo operators", "Wedge: draft, never auto-send", "Trust: human approves every send"] },
       Product: { h: "What's shipped", p: "Connects to the inbox, clusters threads by urgency, and drafts a reply for each. 30 replies drafted so far in the beta. Approval is a single keystroke.", li: ["Live: triage + clustering", "Live: reply drafting", "Testing: approve-and-send flow"] },
       Growth: { h: "How it grows", p: "Still pre-growth. The plan is a Product Hunt launch (pending your approval) to move from 6 to 20 beta users, then measure whether retention holds.", li: ["Pending: PH launch, $40 cap", "Then: measure week-2 retention", "Signal to watch: 5 would-pay"] },
-      Budget: { h: "Unit economics", p: "Early: $40 revenue from a handful of would-pay conversions against $22 spend. Not the point yet — the point is proving retention before pouring in acquisition.", li: ["Revenue $40/mo (early)", "Spend $22/mo", "Net +$18/mo", "Gate: retention, not revenue"] }
+      Budget: { h: "Unit economics", p: "Early: $40 revenue from a handful of would-pay conversions against $22 spend. Not the point yet - the point is proving retention before pouring in acquisition.", li: ["Revenue $40/mo (early)", "Spend $22/mo", "Net +$18/mo", "Gate: retention, not revenue"] }
     }
   },
   {
@@ -685,14 +685,14 @@ const COMPANIES = [
     plan: "Building the CSV cleaner and the dashboard renderer end-to-end before touching the waitlist.",
     nextAction: "Finish the cleaner, invite the first 5",
     recent: ["Scaffolded the intake API", "Deployed to staging"],
-    risks: ["No traction yet — a 40-person waitlist is interest, not proof."],
+    risks: ["No traction yet - a 40-person waitlist is interest, not proof."],
     approval: null,
     rec: "CONTINUE",
     needs: false,
     docs: {
       Foundation: { h: "Why DataDrop exists", p: "Non-technical teams have data trapped in CSVs and no way to share it that isn't a screenshot. DataDrop takes a messy CSV, cleans it, and hands back a link to a live dashboard.", li: ["ICP: ops & founders without analysts", "Wedge: link, not a BI tool to learn", "Waitlist: 40 signed up pre-build"] },
       Product: { h: "What's building", p: "Intake API is scaffolded and on staging. The cleaner (dedupe, type-infer, fix headers) is the current focus. Dashboard renderer is next. This is the walking skeleton phase.", li: ["Done: intake API scaffold", "Done: staging deploy", "Building: CSV cleaner", "Next: dashboard render"] },
-      Growth: { h: "How it grows", p: "The 40-person waitlist is the first funnel. The near-term goal is converting 5 of them into active users once the skeleton walks — that's the real signal.", li: ["Asset: 40-person waitlist", "First goal: convert 5", "Loop later: shared dashboards"] },
+      Growth: { h: "How it grows", p: "The 40-person waitlist is the first funnel. The near-term goal is converting 5 of them into active users once the skeleton walks - that's the real signal.", li: ["Asset: 40-person waitlist", "First goal: convert 5", "Loop later: shared dashboards"] },
       Budget: { h: "Unit economics", p: "Pre-revenue by design. $12/mo of infra keeps staging alive. No spend on acquisition until the product proves it can convert the waitlist.", li: ["Revenue $0", "Spend $12/mo", "Net −$12/mo (build phase)", "Runway: negligible burn"] }
     }
   },
@@ -704,51 +704,51 @@ const COMPANIES = [
     goalLab: "0 / 15 interviews", progress: 0.0,
     spend: 0, revenue: 0, users: "0 users", usersNum: "0",
     plan: "Validate the pain before building anything. No code until the interviews say it hurts.",
-    nextAction: "Approve — start the 15-interview validation sprint",
+    nextAction: "Approve - start the 15-interview validation sprint",
     recent: ["Idea logged", "Interview script drafted"],
-    risks: ["Might be a vitamin, not a painkiller — people say they'd use it, but would they pay?"],
+    risks: ["Might be a vitamin, not a painkiller - people say they'd use it, but would they pay?"],
     approval: { title: "Approve the validation sprint", detail: "No spend. Green-lights 15 problem interviews. If willingness-to-pay is weak, this one gets killed cheap." },
     rec: "CONTINUE",
     altRec: "KILL",
     needs: true,
     docs: {
-      Foundation: { h: "The bet", p: "Teams reprice reactively when a competitor moves — usually too late. PricePeek would watch competitor pricing pages and alert on any change. But that's a hypothesis, not a validated pain.", li: ["ICP: SaaS & e-comm pricing owners", "Hypothesis: reactive repricing hurts", "Risk: nice-to-have, not must-have"] },
-      Product: { h: "Nothing built", p: "Deliberately zero code. The whole idea stage is about interviews, not features. If the pain is real, the build is trivial — a scraper and a diff.", li: ["No product yet — by design", "Build is trivial if validated", "Gate: 15 interviews first"] },
+      Foundation: { h: "The bet", p: "Teams reprice reactively when a competitor moves - usually too late. PricePeek would watch competitor pricing pages and alert on any change. But that's a hypothesis, not a validated pain.", li: ["ICP: SaaS & e-comm pricing owners", "Hypothesis: reactive repricing hurts", "Risk: nice-to-have, not must-have"] },
+      Product: { h: "Nothing built", p: "Deliberately zero code. The whole idea stage is about interviews, not features. If the pain is real, the build is trivial - a scraper and a diff.", li: ["No product yet - by design", "Build is trivial if validated", "Gate: 15 interviews first"] },
       Growth: { h: "N/A yet", p: "There is no growth plan because there is no product. The only 'growth' activity is the interview sprint that decides whether this bet lives.", li: ["Pre-product", "Interview sprint = the test", "Kill-cheap if weak"] },
-      Budget: { h: "Zero spend", p: "$0 in, $0 out. This is the cheapest possible bet — a week of the AI running structured interviews and reporting willingness-to-pay before any capital is committed.", li: ["Revenue $0", "Spend $0", "Cost of the test: time only"] }
+      Budget: { h: "Zero spend", p: "$0 in, $0 out. This is the cheapest possible bet - a week of the AI running structured interviews and reporting willingness-to-pay before any capital is committed.", li: ["Revenue $0", "Spend $0", "Cost of the test: time only"] }
     }
   },
   {
     id: "translatorbill", name: "TranslatorBill", stage: "ejected", status: "Graduated",
-    desc: "Auto-translates & reformats cross-border invoices — ejected into its own standalone company.",
+    desc: "Auto-translates & reformats cross-border invoices - ejected into its own standalone company.",
     signal: "STRONG",
     goal: "20 paying at $15/mo → HIT, then ejected.",
     goalLab: "GOAL HIT · 22 paying", progress: 1.0,
     spend: 0, revenue: 320, users: "22 paying", usersNum: "22",
     plan: "Handed off to its own company. The factory no longer operates it day-to-day.",
-    nextAction: "—",
+    nextAction: "-",
     recent: ["Hit 20 paying users", "Eject approved", "Spun out as standalone"],
-    risks: ["Out of portfolio — monitored, not operated."],
+    risks: ["Out of portfolio - monitored, not operated."],
     approval: null,
     rec: "EJECT",
     outcome: { badge: "grad", label: "Graduated", note: "$320/mo last recorded" },
     needs: false,
     docs: {
-      Foundation: { h: "Why it graduated", p: "Cross-border invoices arrive in the wrong language and format. TranslatorBill fixed both automatically. It hit 20 paying users at $15/mo — the eject bar — and was spun out into its own company.", li: ["ICP: SMBs invoicing across borders", "Bar to eject: 20 paying users", "Result: 22 paying, ejected"] },
+      Foundation: { h: "Why it graduated", p: "Cross-border invoices arrive in the wrong language and format. TranslatorBill fixed both automatically. It hit 20 paying users at $15/mo - the eject bar - and was spun out into its own company.", li: ["ICP: SMBs invoicing across borders", "Bar to eject: 20 paying users", "Result: 22 paying, ejected"] },
       Product: { h: "What shipped", p: "Full pipeline: ingest invoice → translate → reformat to the destination's layout → export. Mature enough to stand on its own without the factory operating it.", li: ["Complete translate + reformat pipeline", "Multi-currency, multi-language", "Now maintained by its own team"] },
-      Growth: { h: "How it got there", p: "Word-of-mouth inside cross-border trade communities plus a directory listing. Steady compounding to 22 paying users — enough to justify the spin-out.", li: ["Channel: trade communities", "Grew to 22 paying users", "Ejected on strong retention"] },
-      Budget: { h: "Final factory economics", p: "Last recorded $320/mo revenue at eject. Now standalone, so it no longer draws factory spend — its P&L lives in its own company.", li: ["Revenue $320/mo (last recorded)", "Factory spend now $0", "Standalone P&L"] }
+      Growth: { h: "How it got there", p: "Word-of-mouth inside cross-border trade communities plus a directory listing. Steady compounding to 22 paying users - enough to justify the spin-out.", li: ["Channel: trade communities", "Grew to 22 paying users", "Ejected on strong retention"] },
+      Budget: { h: "Final factory economics", p: "Last recorded $320/mo revenue at eject. Now standalone, so it no longer draws factory spend - its P&L lives in its own company.", li: ["Revenue $320/mo (last recorded)", "Factory spend now $0", "Standalone P&L"] }
     }
   },
   {
     id: "redditpainbot", name: "RedditPainBot", stage: "killed", status: "Stopped",
-    desc: "Mined Reddit for recurring product pains — killed on weak willingness-to-pay.",
+    desc: "Mined Reddit for recurring product pains - killed on weak willingness-to-pay.",
     signal: "WEAK",
     goal: "Find a pain people would pay for → MISSED.",
     goalLab: "GOAL MISSED · killed at week 3", progress: 0.0,
     spend: 0, revenue: 0, users: "0 users", usersNum: "0",
     plan: "Post-mortem written. Learnings folded back into how we pick bets.",
-    nextAction: "—",
+    nextAction: "-",
     recent: ["Mined 4 subreddits", "Willingness-to-pay tested weak", "Killed after 3 weeks"],
     risks: ["Closed. Kept as a reference for what weak demand looks like."],
     approval: null,
@@ -756,9 +756,9 @@ const COMPANIES = [
     outcome: { badge: "stop", label: "Stopped", note: "killed week 3 · nobody would pay" },
     needs: false,
     docs: {
-      Foundation: { h: "Why it was killed", p: "RedditPainBot mined subreddits for recurring product complaints. It found plenty of pains — but when tested, nobody would pay to have them surfaced. Weak willingness-to-pay, so it was stopped at week 3.", li: ["Idea: mine Reddit for product pains", "Found pains, found no buyers", "Killed on weak WTP"] },
-      Product: { h: "What existed", p: "A thin miner across 4 subreddits that clustered recurring complaints. Functional, but the output had no buyer — a solution mining for a problem.", li: ["Miner across 4 subreddits", "Complaint clustering", "No path to willingness-to-pay"] },
-      Growth: { h: "Never reached", p: "Killed before any growth work. The validation gate — would anyone pay — failed early and cheaply, which is exactly what it's for.", li: ["Never launched", "Failed the WTP gate", "Cheap, fast kill"] },
+      Foundation: { h: "Why it was killed", p: "RedditPainBot mined subreddits for recurring product complaints. It found plenty of pains - but when tested, nobody would pay to have them surfaced. Weak willingness-to-pay, so it was stopped at week 3.", li: ["Idea: mine Reddit for product pains", "Found pains, found no buyers", "Killed on weak WTP"] },
+      Product: { h: "What existed", p: "A thin miner across 4 subreddits that clustered recurring complaints. Functional, but the output had no buyer - a solution mining for a problem.", li: ["Miner across 4 subreddits", "Complaint clustering", "No path to willingness-to-pay"] },
+      Growth: { h: "Never reached", p: "Killed before any growth work. The validation gate - would anyone pay - failed early and cheaply, which is exactly what it's for.", li: ["Never launched", "Failed the WTP gate", "Cheap, fast kill"] },
       Budget: { h: "Clean stop", p: "$0 revenue, spend stopped at kill. The value here is the learning: this pattern of 'interesting data, no buyer' is now a red flag when we score new bets.", li: ["Revenue $0", "Spend $0 (stopped)", "Return: a sharper kill-filter"] }
     }
   }
@@ -873,9 +873,9 @@ function resolveNeed(id, act, item) {
   const c = byId(id);
   state.resolved[id] = act;
   const labels = {
-    approve: `Approved — the AI is executing. Reversible from ${c.name}.`,
+    approve: `Approved - the AI is executing. Reversible from ${c.name}.`,
     hold: `Held. ${c.name} paused this decision; nothing shipped.`,
-    kill: `${c.name} marked to kill — the AI is winding it down.`
+    kill: `${c.name} marked to kill - the AI is winding it down.`
   };
   item.querySelector('[data-role="rmsg"]').textContent = labels[act];
   item.classList.remove("open");
@@ -996,7 +996,7 @@ function openFocus(id) {
 
   const recCls = c.rec === "CONTINUE" ? "continue" : c.rec === "EJECT" ? "eject" : "kill";
   const recIco = c.rec === "EJECT" ? IC.eject : c.rec === "KILL" ? IC.warn : IC.check;
-  const altRec = c.altRec ? ` <span class="rec-lab">— or <b style="color:var(--red)">KILL</b> if the signal is weak</span>` : "";
+  const altRec = c.altRec ? ` <span class="rec-lab">- or <b style="color:var(--red)">KILL</b> if the signal is weak</span>` : "";
 
   const revZero = c.revenue === 0 ? " zero" : "";
   const resolvedAct = state.resolved[c.id];
@@ -1075,8 +1075,8 @@ function overviewPanel(c, s, revZero, resolvedAct) {
   if (c.approval) {
     const done = resolvedAct ? " done" : "";
     const msg = resolvedAct
-      ? (resolvedAct === "approve" ? "Approved — the AI is executing this now. Reversible." :
-         resolvedAct === "hold" ? "Held — nothing shipped." : "Marked to kill — winding down.")
+      ? (resolvedAct === "approve" ? "Approved - the AI is executing this now. Reversible." :
+         resolvedAct === "hold" ? "Held - nothing shipped." : "Marked to kill - winding down.")
       : "";
     approvalBox = `
       <div class="approval-box${done}" id="focusApproval">
@@ -1092,7 +1092,7 @@ function overviewPanel(c, s, revZero, resolvedAct) {
       </div>`;
   }
 
-  const naBlock = c.nextAction && c.nextAction !== "—"
+  const naBlock = c.nextAction && c.nextAction !== "-"
     ? `<div class="next-action"><span class="na-ico">${IC.bolt}</span><div><div class="na-lab">Next best action</div><div class="na-txt">${c.nextAction}</div></div></div>`
     : "";
 
@@ -1173,8 +1173,8 @@ function syncFocusApproval(id, act) {
   if (!open.querySelector(`.focus-title`)) return;
   if (open.querySelector(".focus-title").textContent !== c.name) return;
   box.classList.add("done");
-  const msg = act === "approve" ? "Approved — the AI is executing this now. Reversible." :
-              act === "hold" ? "Held — nothing shipped." : "Marked to kill — winding down.";
+  const msg = act === "approve" ? "Approved - the AI is executing this now. Reversible." :
+              act === "hold" ? "Held - nothing shipped." : "Marked to kill - winding down.";
   const span = box.querySelector(".approval-done span");
   if (span) span.textContent = msg;
 }

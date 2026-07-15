@@ -16,9 +16,9 @@ export const Route = createFileRoute("/settings/account")({
 function Account() {
     const [name, setName] = useState("");
     const [saved, setSaved] = useState(false);
-    const [plan, setPlan] = useState("—");
-    const [mrr, setMrr] = useState("—");
-    const [users, setUsers] = useState("—");
+    const [plan, setPlan] = useState("-");
+    const [mrr, setMrr] = useState("-");
+    const [users, setUsers] = useState("-");
 
     useEffect(() => {
         void getAgentConfig().then((c) => setName(c.accountName));

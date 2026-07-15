@@ -256,7 +256,7 @@
   }
   .lamp svg { width: 19px; height: 19px; position: relative; z-index: 2; transition: color .3s ease, opacity .3s ease; }
 
-  /* OFF — dark / unlit, cold dashed */
+  /* OFF - dark / unlit, cold dashed */
   .lamp[data-state="off"] {
     background: radial-gradient(circle at 50% 42%, var(--line-soft), var(--cream-2));
     border: 1.5px dashed color-mix(in srgb, var(--ink-faint) 45%, var(--line));
@@ -264,7 +264,7 @@
   }
   .lamp[data-state="off"] svg { color: var(--ink-faint); opacity: .45; }
 
-  /* IDLE — warm-dim, on but low */
+  /* IDLE - warm-dim, on but low */
   .lamp[data-state="idle"] {
     background: radial-gradient(circle at 50% 40%,
       color-mix(in srgb, var(--area) 45%, var(--paper)),
@@ -274,7 +274,7 @@
   }
   .lamp[data-state="idle"] svg { color: color-mix(in srgb, var(--area) 72%, var(--ink)); }
 
-  /* LIVE — bright, saturated, breathing halo */
+  /* LIVE - bright, saturated, breathing halo */
   .lamp[data-state="active"] {
     background: radial-gradient(circle at 50% 38%,
       color-mix(in srgb, #fff 60%, var(--area)), var(--area) 72%);
@@ -290,7 +290,7 @@
     animation: halo 2.6s ease-out infinite;
   }
 
-  /* NEEDS — terracotta blinking */
+  /* NEEDS - terracotta blinking */
   .lamp[data-state="needs"] {
     --area: var(--accent);
     background: radial-gradient(circle at 50% 38%,
@@ -465,7 +465,7 @@
   <section class="head">
     <span class="eyebrow">Factory floor · per-company status</span>
     <h1>Read each company by which lamps are lit.</h1>
-    <p class="head-sub">The AI works three areas — <b>Build</b> the product, <b>Grow</b> the go-to-market, <b>Run</b> the operations. Each area is an indicator light: dark means locked, warm-dim means quiet, bright means the AI is working, terracotta blinking means it needs you.</p>
+    <p class="head-sub">The AI works three areas - <b>Build</b> the product, <b>Grow</b> the go-to-market, <b>Run</b> the operations. Each area is an indicator light: dark means locked, warm-dim means quiet, bright means the AI is working, terracotta blinking means it needs you.</p>
 
     <div class="legend" id="legend" aria-label="Lamp state legend">
       <span class="legend-l">Lamp states</span>
@@ -477,7 +477,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>status lamps</b> — the light is the signal</span>
+    <span>C Slop Slop · <b>status lamps</b> - the light is the signal</span>
     <span>L0 propose · L1 act-with-review · L2 autonomous</span>
   </footer>
 
@@ -519,22 +519,22 @@
     { name: 'DataDrop', stage: 'Testing', killed: false,
       build: { state: 'active', autonomy: 'L1', task: 'Saved chart views', log: ['re-prioritized backlog', 'cleaning CSV parser'] },
       grow:  { state: 'needs', autonomy: 'L0', task: 'r/SaaS launch thread', money: '', log: ['drafted the thread + 3 replies', 'awaiting your post'] },
-      run:   { state: 'idle', autonomy: 'L1', task: 'quiet — 1 open ticket', log: ['checked uptime · 200 OK'] } },
+      run:   { state: 'idle', autonomy: 'L1', task: 'quiet - 1 open ticket', log: ['checked uptime · 200 OK'] } },
 
     { name: 'TranslatorBill', stage: 'Building', killed: false,
       build: { state: 'active', autonomy: 'L1', task: 'InvoiceFormatter.tsx', log: ['translating a sample invoice', 'ran tests · green'] },
-      grow:  { state: 'off', autonomy: 'off', task: 'blocked — no domain', log: [] },
+      grow:  { state: 'off', autonomy: 'off', task: 'blocked - no domain', log: [] },
       run:   { state: 'off', autonomy: 'off', task: 'pre-revenue', log: [] } },
 
     { name: 'PricePeek', stage: 'Idea', killed: false,
-      build: { state: 'idle', autonomy: 'L0', task: 'validating — 15 interviews', log: ['drafted interview script', 'listed 15 targets'] },
-      grow:  { state: 'off', autonomy: 'off', task: '—', log: [] },
-      run:   { state: 'off', autonomy: 'off', task: '—', log: [] } },
+      build: { state: 'idle', autonomy: 'L0', task: 'validating - 15 interviews', log: ['drafted interview script', 'listed 15 targets'] },
+      grow:  { state: 'off', autonomy: 'off', task: '-', log: [] },
+      run:   { state: 'off', autonomy: 'off', task: '-', log: [] } },
 
     { name: 'RedditPainBot', stage: 'Killed', killed: true,
-      build: { state: 'off', autonomy: 'off', task: '—', log: [] },
-      grow:  { state: 'off', autonomy: 'off', task: '—', log: [] },
-      run:   { state: 'off', autonomy: 'off', task: '—', log: [] } }
+      build: { state: 'off', autonomy: 'off', task: '-', log: [] },
+      grow:  { state: 'off', autonomy: 'off', task: '-', log: [] },
+      run:   { state: 'off', autonomy: 'off', task: '-', log: [] } }
   ];
 
   function esc(s) {
@@ -624,7 +624,7 @@
     if (c.killed) {
       feedInner = '<div class="feed-empty">loop stopped · post-mortem filed</div>';
     } else if (!pool.length) {
-      feedInner = '<div class="feed-empty">standing by — no activity yet</div>';
+      feedInner = '<div class="feed-empty">standing by - no activity yet</div>';
     } else {
       var rows = '';
       for (var r = 0; r < Math.min(3, pool.length); r++) {

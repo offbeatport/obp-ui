@@ -45,7 +45,7 @@ function QueuePage() {
         setPinned(true);
         setActiveRunId(runId);
     };
-    // Actions don't carry a run id — resolve the newest attempt, then show its log.
+    // Actions don't carry a run id - resolve the newest attempt, then show its log.
     const selectAction = async (actionId: string) => {
         const h = await listActionRuns({ data: actionId });
         if (h.runs[0]) select(h.runs[0].id);
@@ -77,7 +77,7 @@ function QueuePage() {
         await refresh();
     };
     const doReject = async (actionId: string) => {
-        const feedback = window.prompt("Reject — feedback for the next attempt (optional):") ?? "";
+        const feedback = window.prompt("Reject - feedback for the next attempt (optional):") ?? "";
         await rejectAction({ data: { actionId, feedback } });
         await refresh();
     };
@@ -149,7 +149,7 @@ function QueuePage() {
                     ))}
                 </div>
             ) : (
-                <Empty>Queue empty — enqueue the demo action to drive the executor.</Empty>
+                <Empty>Queue empty - enqueue the demo action to drive the executor.</Empty>
             )}
 
             <SectionLabel>Live runs</SectionLabel>

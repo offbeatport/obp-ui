@@ -221,7 +221,7 @@ body{
 .prose p .mono{ font-family:var(--font-mono); font-size:14px; color:var(--accent) }
 .section{ margin-bottom:46px }
 
-/* what's next — editorial agenda list */
+/* what's next - editorial agenda list */
 .agenda{ border-top:1px solid var(--line); margin-top:4px }
 .agitem{
   display:grid; grid-template-columns:74px 1fr auto; gap:16px; align-items:baseline;
@@ -243,7 +243,7 @@ body{
 .agkind.ops{ color:var(--amber); background:var(--amber-soft) }
 .agkind.await{ color:var(--amber); background:var(--amber-soft) }
 
-/* features — inline captioned figures */
+/* features - inline captioned figures */
 .gallery{ display:grid; grid-template-columns:1fr 1fr; gap:34px 30px; margin-top:6px }
 .figure{ margin:0 }
 .figure.lead{ grid-column:1 / -1 }
@@ -343,7 +343,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
 .modal-body strong{ color:var(--ink); font-weight:500 }
 .modal-body ul{ margin:0 0 13px 4px; list-style:none }
 .modal-body li{ padding-left:20px; position:relative; margin-bottom:7px }
-.modal-body li::before{ content:"—"; position:absolute; left:0; color:var(--accent) }
+.modal-body li::before{ content:"-"; position:absolute; left:0; color:var(--accent) }
 .modal-body .metaline{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); border-top:1px solid var(--line-soft); padding-top:14px; margin-top:20px; display:flex; gap:20px; flex-wrap:wrap }
 
 /* ============ UPGRADES ============ */
@@ -361,7 +361,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
 .sysline .ts{ opacity:.7 }
 .sysline b{ color:var(--ink-soft); font-weight:600 }
 
-/* approval — blast radius / autonomy / auto-approve */
+/* approval - blast radius / autonomy / auto-approve */
 .appr-blast{
   margin-top:11px; padding-top:11px; border-top:1px dashed var(--line);
   font-family:var(--font-mono); font-size:10.5px; color:var(--ink-soft);
@@ -380,7 +380,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
 .outcome{ font-family:var(--font-mono); font-size:10px; color:var(--green); display:inline-flex; align-items:center; gap:5px; margin-top:6px; letter-spacing:.01em }
 .outcome.gtm{ color:var(--violet) }
 
-/* feature group labels — light dividers, not panels */
+/* feature group labels - light dividers, not panels */
 .grouplabel{
   font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-soft); display:flex; align-items:center; gap:11px; margin:2px 0 18px;
@@ -447,12 +447,12 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
 
     <div class="msg">
       <div class="msg-who">Sift</div>
-      <div class="bubble">Morning ☀ — I've been up since 4am watching the numbers so you didn't have to. We're <span class="check">Live · growing</span>: MRR crossed <span class="k">$180</span> overnight, up <span class="k">$40</span> this month. Zero incidents, uptime holding at 99.9%. Good day to ship something.<div class="outcome gtm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg> Landing + pricing page → +$40 MRR this month</div></div>
+      <div class="bubble">Morning ☀ - I've been up since 4am watching the numbers so you didn't have to. We're <span class="check">Live · growing</span>: MRR crossed <span class="k">$180</span> overnight, up <span class="k">$40</span> this month. Zero incidents, uptime holding at 99.9%. Good day to ship something.<div class="outcome gtm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg> Landing + pricing page → +$40 MRR this month</div></div>
     </div>
 
     <div class="msg">
       <div class="msg-who">Sift</div>
-      <div class="bubble">Two new signups from the webform embed on a customer's landing page. That's <span class="k">12 users</span> now, three of them this week. Auto-scoring flagged one as a hot lead (score 91) — I'll wire the Slack alert for that next.<div class="outcome"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg> Webform embed → +2 users this week, 1 hot lead</div></div>
+      <div class="bubble">Two new signups from the webform embed on a customer's landing page. That's <span class="k">12 users</span> now, three of them this week. Auto-scoring flagged one as a hot lead (score 91) - I'll wire the Slack alert for that next.<div class="outcome"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg> Webform embed → +2 users this week, 1 hot lead</div></div>
     </div>
 
     <div class="sysline"><span class="tk"></span><span class="ts">8:03</span> captured webform lead <b>#248</b> · scoring…</div>
@@ -461,7 +461,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
     <div class="msg" id="apprMsg">
       <div class="msg-who">Sift</div>
       <div class="bubble">
-        I finished the <b>Daily digest</b> — the 8am email of each account's top-scored leads. It built clean and <span class="check">passed its check ✓</span> (render test + 3 sample sends verified). This one lands in real inboxes, so it's your call to ship.
+        I finished the <b>Daily digest</b> - the 8am email of each account's top-scored leads. It built clean and <span class="check">passed its check ✓</span> (render test + 3 sample sends verified). This one lands in real inboxes, so it's your call to ship.
         <div class="appr-blast">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
           Ships to <b>all 12 users</b> · reversible in one click
@@ -507,7 +507,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
   <section class="pane active" id="overview">
     <div class="editorial">
       <div class="kicker">The company · a running report</div>
-      <p class="lede">LeadSift is an <b>autonomous software company</b> that turns any webform into <span class="u">scored, ranked sales leads</span> — and right now it's small, profitable, and quietly compounding.</p>
+      <p class="lede">LeadSift is an <b>autonomous software company</b> that turns any webform into <span class="u">scored, ranked sales leads</span> - and right now it's small, profitable, and quietly compounding.</p>
       <div class="byline">Written by the agent · updated 8:04 AM · 12 users · net +$158/mo</div>
 
       <!-- headline figures -->
@@ -542,7 +542,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
       <div class="section prose">
         <h3><span class="n">01</span> Where it is</h3>
         <p>The core loop is <span class="hl">live and working</span>: a customer embeds our webform, every submission is captured, and each lead is auto-scored <span class="mono">0–100</span> by buying intent so the sales-ready ones rise to the top. Twelve accounts rely on it daily, none have left, and the first paid tier is holding at <span class="hl">$15/seat</span>. Costs are trivial, so nearly every new dollar is margin.</p>
-        <p>This morning I shipped and self-verified the <span class="hl">Daily digest</span> — it's waiting on your approval in the chat. Once it's out, every account gets an 8am summary of its hottest leads, which is the feature seven users asked for by name.</p>
+        <p>This morning I shipped and self-verified the <span class="hl">Daily digest</span> - it's waiting on your approval in the chat. Once it's out, every account gets an 8am summary of its hottest leads, which is the feature seven users asked for by name.</p>
       </div>
 
       <!-- what's next -->
@@ -551,7 +551,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
         <div class="agenda">
           <div class="agitem" id="agNow">
             <span class="aggroup now">Now</span>
-            <span class="agtitle">Daily digest<span class="why">Built &amp; check-passed — waiting on your approval to ship</span></span>
+            <span class="agtitle">Daily digest<span class="why">Built &amp; check-passed - waiting on your approval to ship</span></span>
             <span class="agkind await">Awaiting</span>
           </div>
           <div class="agitem">
@@ -580,11 +580,11 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
       <!-- features -->
       <div class="section prose">
         <h3><span class="n">03</span> What we ship</h3>
-        <p style="margin-bottom:28px">Two halves of one company — the <span class="hl">storefront</span> that presents and sells it, and the <span class="hl">product</span> our users actually touch. Figure by figure, from the pitch to the exports still on the workbench.</p>
+        <p style="margin-bottom:28px">Two halves of one company - the <span class="hl">storefront</span> that presents and sells it, and the <span class="hl">product</span> our users actually touch. Figure by figure, from the pitch to the exports still on the workbench.</p>
 
         <div class="grouplabel"><b>Storefront</b> <span class="gl-sub">how the company presents &amp; sells itself</span></div>
         <div class="gallery">
-          <!-- LANDING first, lead figure — the pitch that sells it -->
+          <!-- LANDING first, lead figure - the pitch that sells it -->
           <figure class="figure lead">
             <div class="thumb">
               <svg class="mock" viewBox="0 0 420 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -618,7 +618,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
             </figcaption>
           </figure>
 
-          <!-- BRAND / DESIGN — how the company presents & sells itself -->
+          <!-- BRAND / DESIGN - how the company presents & sells itself -->
           <figure class="figure">
             <div class="thumb">
               <svg class="mock" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -758,7 +758,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
             </figcaption>
           </figure>
 
-          <!-- Daily digest — BUILDING -->
+          <!-- Daily digest - BUILDING -->
           <figure class="figure is-building" id="digestFig">
             <div class="thumb">
               <svg class="mock" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -788,7 +788,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
             </figcaption>
           </figure>
 
-          <!-- Export to CSV — PLANNED -->
+          <!-- Export to CSV - PLANNED -->
           <figure class="figure is-planned">
             <div class="thumb">
               <svg class="mock" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -866,7 +866,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
     <div class="stub">
       <div class="stub-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div>
       <h2>Grow</h2>
-      <p>Acquisition &amp; GTM. Launch drafts, funnel numbers, and channel experiments — the Product Hunt tweet is in the queue.</p>
+      <p>Acquisition &amp; GTM. Launch drafts, funnel numbers, and channel experiments - the Product Hunt tweet is in the queue.</p>
       <span class="tagm">+3 users / wk · 0% churn</span>
     </div>
   </section>
@@ -875,7 +875,7 @@ figcaption{ margin-top:11px; display:flex; align-items:baseline; gap:9px }
     <div class="stub">
       <div class="stub-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2 0 0 1 5 0c0 2.5-5 1.5-5 4a2.5 2 0 0 0 5 0"/></svg></div>
       <h2>Money</h2>
-      <p>Revenue, margin, and unit economics. $180 MRR against $22 infra — net <em>+$158/mo</em> and climbing.</p>
+      <p>Revenue, margin, and unit economics. $180 MRR against $22 infra - net <em>+$158/mo</em> and climbing.</p>
       <span class="tagm">MRR $180 · net +$158/mo</span>
     </div>
   </section>
@@ -920,8 +920,8 @@ document.querySelectorAll('.tab').forEach(function(t){
 function resolve(action){
   var box=document.getElementById('apprActions');
   var map={
-    approve:{c:'var(--green)',t:'Approved — shipping Daily digest to all 12 users now. I\'ll confirm the 8am send.'},
-    review:{c:'var(--blue)',t:'Opening the digest in Build for your review — take your time.'},
+    approve:{c:'var(--green)',t:'Approved - shipping Daily digest to all 12 users now. I\'ll confirm the 8am send.'},
+    review:{c:'var(--blue)',t:'Opening the digest in Build for your review - take your time.'},
     reject:{c:'var(--red)',t:'Holding the digest. I\'ll keep it staged until you say otherwise.'}
   };
   var r=map[action];
@@ -954,20 +954,20 @@ function shipDigest(){
   var ag=document.getElementById('agNow');
   if(ag){
     var grp=ag.querySelector('.aggroup'); if(grp){ grp.className='aggroup shipped'; grp.textContent='Shipped'; }
-    var why=ag.querySelector('.why'); if(why){ why.textContent='Live — 8am digest now sending to all 12 accounts'; }
+    var why=ag.querySelector('.why'); if(why){ why.textContent='Live - 8am digest now sending to all 12 accounts'; }
     var kind=ag.querySelector('.agkind'); if(kind){ kind.className='agkind live'; kind.textContent='Live'; }
   }
   /* digest going live nudges the headline numbers */
   if(window.bumpMetrics) window.bumpMetrics(15,0);
 }
 
-/* ---- 'why now?' — the agent's rationale, posted into the chat ---- */
+/* ---- 'why now?' - the agent's rationale, posted into the chat ---- */
 function explain(){
   var stream=document.getElementById('stream'); if(!stream) return;
   if(explain._done){ stream.scrollTop=stream.scrollHeight; return; }
   explain._done=true;
   var m=document.createElement('div'); m.className='msg';
-  m.innerHTML='<div class="msg-who">Sift</div><div class="bubble tight">Why now? Seven users asked for the digest by name, it passed its check on the first build, and 8am is when they open their inbox — ship today and they wake up tomorrow to their hottest leads already waiting.</div>';
+  m.innerHTML='<div class="msg-who">Sift</div><div class="bubble tight">Why now? Seven users asked for the digest by name, it passed its check on the first build, and 8am is when they open their inbox - ship today and they wake up tomorrow to their hottest leads already waiting.</div>';
   stream.appendChild(m); stream.scrollTop=stream.scrollHeight;
 }
 
@@ -982,7 +982,7 @@ function send(){
   stream.appendChild(me); input.value=''; input.style.height='auto'; stream.scrollTop=stream.scrollHeight;
   setTimeout(function(){
     var r=document.createElement('div'); r.className='msg';
-    r.innerHTML='<div class="msg-who">Sift</div><div class="bubble tight">On it — I\'ll fold that into the plan and report back on the next cycle.</div>';
+    r.innerHTML='<div class="msg-who">Sift</div><div class="bubble tight">On it - I\'ll fold that into the plan and report back on the next cycle.</div>';
     stream.appendChild(r); stream.scrollTop=stream.scrollHeight;
   },650);
 }
@@ -1003,10 +1003,10 @@ var DOCS={
     <p>Small teams drown in form fills and treat them all the same. The good lead and the tire-kicker land in the same inbox. We fix ordering: score <strong>0–100</strong> on buying intent, surface the top, and let the rest wait.</p>
     <h4>Principles</h4>
     <ul>
-      <li>Ranking over volume — fewer, better leads beat a bigger list.</li>
-      <li>Embed anywhere in one line — no migration, no rip-and-replace.</li>
-      <li>Ship small, ship verified — every feature passes its own check first.</li>
-      <li>Stay lean — margin funds the next feature, not headcount.</li>
+      <li>Ranking over volume - fewer, better leads beat a bigger list.</li>
+      <li>Embed anywhere in one line - no migration, no rip-and-replace.</li>
+      <li>Ship small, ship verified - every feature passes its own check first.</li>
+      <li>Stay lean - margin funds the next feature, not headcount.</li>
     </ul>
     <div class="metaline"><span>OWNER · agent</span><span>STATUS · Live</span><span>REV · this week</span></div>`},
   market:{kick:'RESEARCH.md · v2',title:'Market opportunity',body:`
@@ -1019,7 +1019,7 @@ var DOCS={
       <li>No-code builders (Webflow, Framer, Carrd) with no scoring layer.</li>
     </ul>
     <h4>Why now</h4>
-    <p>Intent scoring that needed a data team is now a single model call. That collapses the cost of the core feature to near zero — a one-person company can offer what used to be enterprise-only, at <strong>$15/seat</strong>.</p>
+    <p>Intent scoring that needed a data team is now a single model call. That collapses the cost of the core feature to near zero - a one-person company can offer what used to be enterprise-only, at <strong>$15/seat</strong>.</p>
     <h4>Signal so far</h4>
     <ul>
       <li>12 accounts, <strong>0% churn</strong>, MRR at $180 and climbing ~29%/mo.</li>
@@ -1029,18 +1029,18 @@ var DOCS={
     <div class="metaline"><span>TAM · long-tail SMB</span><span>PRICE · $15/seat</span><span>WEDGE · scoring</span></div>`},
   design:{kick:'DESIGN.md · v4',title:'Design doc',body:`
     <h4>Architecture</h4>
-    <p>A thin capture endpoint takes any webform POST, normalizes fields, and writes the lead. A scoring pass runs asynchronously and stamps a <strong>0–100</strong> intent score. The dashboard reads a single sorted view — table, filters, and score badges all hang off it.</p>
+    <p>A thin capture endpoint takes any webform POST, normalizes fields, and writes the lead. A scoring pass runs asynchronously and stamps a <strong>0–100</strong> intent score. The dashboard reads a single sorted view - table, filters, and score badges all hang off it.</p>
     <h4>Scoring</h4>
     <ul>
       <li>Features: email domain, role words, message length &amp; urgency, budget/timeline hints.</li>
       <li>One model call returns score + a short reason; cached per lead.</li>
-      <li>Deterministic fallback rules if the call fails — never block capture.</li>
+      <li>Deterministic fallback rules if the call fails - never block capture.</li>
     </ul>
     <h4>Shipped surface</h4>
     <ul>
-      <li>Landing page · webform embed · lead table · auto-score · score filter — all live.</li>
-      <li>Daily digest — built, check-passed, awaiting approval to send.</li>
-      <li>CSV export — queued next; Slack hot-lead alert &amp; two-way CRM sync later.</li>
+      <li>Landing page · webform embed · lead table · auto-score · score filter - all live.</li>
+      <li>Daily digest - built, check-passed, awaiting approval to send.</li>
+      <li>CSV export - queued next; Slack hot-lead alert &amp; two-way CRM sync later.</li>
     </ul>
     <h4>Reliability</h4>
     <p>Every feature ships behind an automated check (render + sample-run) before it reaches the approval step. Infra runs at <strong>$22/mo</strong>; uptime <strong>99.9%</strong>. Capture is the one path that must never fail, so it degrades gracefully and scores later.</p>

@@ -1,11 +1,11 @@
-# C Slop Slop — Layout Prototypes Brief (shared, read this first)
+# C Slop Slop - Layout Prototypes Brief (shared, read this first)
 
 You are building **one** standalone HTML layout prototype for **C Slop Slop**. 10 prototypes
 total, each a different STYLE + STRUCTURAL LAYOUT, but all share the product model, the mock
 data below, and the hard requirements. Your specific assignment is in your task prompt.
 
-## What the product is (from SPEC.md — do not invent beyond this)
-> **From thought to bag.** Turn a thought into a real, deployed software product — built, tested,
+## What the product is (from SPEC.md - do not invent beyond this)
+> **From thought to bag.** Turn a thought into a real, deployed software product - built, tested,
 > and shipped by agents one validated slice at a time. You don't write code; you direct agents.
 
 - **The primitive is a `company`** = a committed product bet (one company = one product).
@@ -14,7 +14,7 @@ data below, and the hard requirements. Your specific assignment is in your task 
   companies, ship it (live + proven), re-prioritize. Continuous priority loop, not a pipeline.
 - **A slice (`feature`) = a vertical, independently-shippable user capability** ("user can do X")
   with an executable `doneWhen` check. Slice status: `todo | building | awaiting_approval | shipped | blocked`.
-- **Build law:** every iteration ships ONE user-facing capability — live + proven, never "code written."
+- **Build law:** every iteration ships ONE user-facing capability - live + proven, never "code written."
   The product is always live. Slice #1 = a walking skeleton.
 - **The headline feature = the approval gate (L0):** the human approves a slice, shown the
   **diff + the live preview URL + the validation result**. Approve, or **reject-with-feedback**.
@@ -26,25 +26,25 @@ data below, and the hard requirements. Your specific assignment is in your task 
 - 3 surfaces: **Companies board**, **Company** (chat + live artifacts), **Opportunities inbox**.
 
 ## HARD REQUIREMENTS (every prototype must satisfy all)
-1. **Single self-contained `.html` file** — inline `<style>` + inline `<script>`, mocked data only,
+1. **Single self-contained `.html` file** - inline `<style>` + inline `<script>`, mocked data only,
    no build step, opens directly in a browser by double-click. A single Google Fonts `<link>` is allowed.
 2. **Two states, both reachable by interaction:**
-   - **Overview / dashboard** — all companies + portfolio metrics + opportunities + next moves.
-   - **Company zoom-in** — click a company to drill into it; a clear way back to overview (Esc/back/click-out).
+   - **Overview / dashboard** - all companies + portfolio metrics + opportunities + next moves.
+   - **Company zoom-in** - click a company to drill into it; a clear way back to overview (Esc/back/click-out).
 3. **The zoomed company is `LeadSift`** and it MUST surface the **approval gate**: the diff, the live
    preview URL, the green `doneWhen` result, and **Approve / Reject-with-feedback** buttons that give a
    small visible confirmation on click (e.g. flash "Approved ✓"). This is the most important screen.
-4. **Chat present** — global command bar in overview; company chat in zoom (chat is the spine).
+4. **Chat present** - global command bar in overview; company chat in zoom (chat is the spine).
 5. **Opportunities** represented somewhere (candidate cards with score → a "Promote" affordance).
-6. **Live activity strip** — collapsible. **Collapsed = only the single latest current line** (or one
+6. **Live activity strip** - collapsible. **Collapsed = only the single latest current line** (or one
    compact line per actively-building company). **Expanded = the full real-time stream**, grouped by
-   company, running items animated (pulsing dot). No pause/config controls — read-only visibility.
-7. **Infinite-grow right + bottom** — the canvas/layout must visibly extend horizontally (right) and
+   company, running items animated (pulsing dot). No pause/config controls - read-only visibility.
+7. **Infinite-grow right + bottom** - the canvas/layout must visibly extend horizontally (right) and
    vertically (bottom): horizontal scroll/pan/columns/tabs/splits + vertical scroll. Express it the way
    your assigned layout naturally does (see your prompt). It should *feel* like it can keep growing.
 8. **No agent-management UI** (see invisible-engine note). Keep autonomy legible via status + preview URL.
 9. A small fixed **corner badge** naming the prototype, e.g. `01 · Drill Columns`, so it's identifiable.
-10. Polished + DISTINCTIVE per your assigned visual style — avoid generic AI-dashboard aesthetics.
+10. Polished + DISTINCTIVE per your assigned visual style - avoid generic AI-dashboard aesthetics.
     Desktop-first. Clean code, ~500–1200 lines is fine.
 
 ## Status → color convention (keep consistent across all 10)
@@ -52,7 +52,7 @@ data below, and the hard requirements. Your specific assignment is in your task 
 - slice: `todo` = slate · `building` = blue (pulsing) · `awaiting_approval` = violet/amber (NEEDS YOU)
   · `shipped` = green · `blocked` = red
 
-## MOCK DATA — copy this `DATA` object verbatim into your script and render from it
+## MOCK DATA - copy this `DATA` object verbatim into your script and render from it
 ```js
 const DATA = {
   portfolio: { mrr: 695, users: 56, activeCompanies: 5, slicesShipped: 22, needsYou: 1 },
@@ -68,7 +68,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -96,7 +96,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -105,22 +105,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 ```

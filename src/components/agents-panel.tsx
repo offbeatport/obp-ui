@@ -9,7 +9,7 @@ import { discoverAgents, getTaskRouting, saveConfig } from "~/server/agents";
 type Discovery = Awaited<ReturnType<typeof discoverAgents>>;
 type Routing = Awaited<ReturnType<typeof getTaskRouting>>;
 
-// Shared Agents/Providers panel — the ONE source for /onboarding and /settings/agents.
+// Shared Agents/Providers panel - the ONE source for /onboarding and /settings/agents.
 // Simple: two big builder tiles (Claude/Codex). Advanced: per-task provider+model matrix.
 // Readiness the onboarding gate needs: is there a usable AI config yet?
 export type PanelReady = { claudeReady: boolean; canFinish: boolean };
@@ -93,7 +93,7 @@ export function AgentsProvidersPanel({
             <section>
                 <SectionHead
                     title="Thinking"
-                    hint="Planning, research & scoring run on your Claude subscription by default — no key needed. Add an OpenRouter key to use cheaper models and live web research (Perplexity)."
+                    hint="Planning, research & scoring run on your Claude subscription by default - no key needed. Add an OpenRouter key to use cheaper models and live web research (Perplexity)."
                 />
                 <OpenRouterKeyField last4={routing.keys.openrouter} onSave={save} />
             </section>
@@ -105,7 +105,7 @@ export function AgentsProvidersPanel({
                     className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
                 >
                     <Settings2 className="size-4" />
-                    Advanced — pick a model per task
+                    Advanced - pick a model per task
                     <span className="text-faint">{advanced ? "▲" : "▼"}</span>
                 </button>
                 {advanced && (
@@ -128,7 +128,7 @@ export function AgentsProvidersPanel({
 }
 
 // Optional OpenRouter key. Its PRESENCE flips thinking tasks from the Claude subscription to
-// OpenRouter routing — no separate toggle needed.
+// OpenRouter routing - no separate toggle needed.
 function OpenRouterKeyField({
     last4,
     onSave,
@@ -145,7 +145,7 @@ function OpenRouterKeyField({
             <div className="min-w-0 flex-1">
                 <div className="text-[13px] font-semibold">OpenRouter key (optional)</div>
                 <div className="text-xs text-muted-foreground">
-                    {last4 ? `Active · •••• ${last4}` : "sk-or-…  — leave blank to stay on Claude"}
+                    {last4 ? `Active · •••• ${last4}` : "sk-or-…  - leave blank to stay on Claude"}
                 </div>
             </div>
             <Input

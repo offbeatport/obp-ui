@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C Slop Slop — Copilot</title>
+<title>C Slop Slop - Copilot</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root{
@@ -360,7 +360,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           </div>
           <div class="co-meta"><div class="co-mrr">$180</div><div class="co-users">12 users</div></div>
         </div>
-        <div class="co-doing"><span class="sdot" style="background:var(--green)"></span><span>Slice 5 shipped to staging — awaiting your approval · slice 8 blocked</span></div>
+        <div class="co-doing"><span class="sdot" style="background:var(--green)"></span><span>Slice 5 shipped to staging - awaiting your approval · slice 8 blocked</span></div>
       </div>
 
       <div class="co" data-co="QuietInbox">
@@ -372,7 +372,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           </div>
           <div class="co-meta"><div class="co-mrr">$420</div><div class="co-users">38 users</div></div>
         </div>
-        <div class="co-doing"><span class="sdot run" style="background:var(--blue);color:var(--blue)"></span><span>Building slice 9 — snooze a thread until tomorrow</span></div>
+        <div class="co-doing"><span class="sdot run" style="background:var(--blue);color:var(--blue)"></span><span>Building slice 9 - snooze a thread until tomorrow</span></div>
       </div>
 
       <div class="co" data-co="TranslatorBill">
@@ -384,7 +384,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           </div>
           <div class="co-meta"><div class="co-mrr">$0</div><div class="co-users">0 users</div></div>
         </div>
-        <div class="co-doing"><span class="sdot run" style="background:var(--violet);color:var(--violet)"></span><span>Building slice 6 — re-format an invoice into the buyer's locale</span></div>
+        <div class="co-doing"><span class="sdot run" style="background:var(--violet);color:var(--violet)"></span><span>Building slice 6 - re-format an invoice into the buyer's locale</span></div>
       </div>
 
       <div class="co" data-co="DataDrop">
@@ -396,7 +396,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           </div>
           <div class="co-meta"><div class="co-mrr">$95</div><div class="co-users">6 users</div></div>
         </div>
-        <div class="co-doing"><span class="sdot" style="background:var(--amber)"></span><span>Slice 6 queued — saved chart views</span></div>
+        <div class="co-doing"><span class="sdot" style="background:var(--amber)"></span><span>Slice 6 queued - saved chart views</span></div>
       </div>
 
       <div class="co paused blocked" data-co="RedditPainBot">
@@ -408,7 +408,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           </div>
           <div class="co-meta"><div class="co-mrr">$0</div><div class="co-users">0 users</div></div>
         </div>
-        <div class="co-doing"><span class="sdot" style="background:var(--red)"></span><span>Slice 8 BLOCKED — dedupe near-identical pains, stuck ×3</span></div>
+        <div class="co-doing"><span class="sdot" style="background:var(--red)"></span><span>Slice 8 BLOCKED - dedupe near-identical pains, stuck ×3</span></div>
       </div>
 
     </div>
@@ -428,7 +428,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <div class="composer" id="composer">
         <div class="composer-row">
           <div class="cmd-glyph">◆</div>
-          <textarea id="cmd" rows="1" placeholder="Command your portfolio — approve LeadSift, spend on QuietInbox, spin up a company…"></textarea>
+          <textarea id="cmd" rows="1" placeholder="Command your portfolio - approve LeadSift, spend on QuietInbox, spin up a company…"></textarea>
         </div>
         <div class="composer-foot">
           <div class="composer-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> newline</div>
@@ -439,7 +439,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       <!-- QUICK CHIPS -->
       <div class="chips">
         <button class="chip" onclick="fillCmd('Approve LeadSift slice 5 and ship it')"><span class="ic" style="color:var(--green)">✓</span> Approve LeadSift</button>
-        <button class="chip" onclick="fillCmd('Unblock RedditPainBot — retry slice 8 differently')"><span class="ic" style="color:var(--red)">↻</span> Unblock RedditPainBot</button>
+        <button class="chip" onclick="fillCmd('Unblock RedditPainBot - retry slice 8 differently')"><span class="ic" style="color:var(--red)">↻</span> Unblock RedditPainBot</button>
         <button class="chip" onclick="newCompany()"><span class="ic">+</span> New company</button>
         <button class="chip" onclick="fillCmd('What needs me right now?')"><span class="ic" style="color:var(--accent)">?</span> What needs me?</button>
       </div>
@@ -460,14 +460,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <div class="msg">
           <div class="cop-av">◆</div>
           <div class="bubble">
-            <div class="cop-line">Here's your gate queue. <b>Touch only these and the portfolio keeps running</b> — everything else is handled.</div>
+            <div class="cop-line">Here's your gate queue. <b>Touch only these and the portfolio keeps running</b> - everything else is handled.</div>
             <div class="card briefing" id="gateCard">
 
               <div class="gate t-ship" id="gate-ship">
                 <div class="gate-ic">✓</div>
                 <div class="gate-body">
                   <div class="gate-head"><span class="gtype">Ship</span><span class="gco">LeadSift</span></div>
-                  <div class="gate-txt">Approve <b>slice 5 — daily digest of top leads</b>. <span class="ok">doneWhen ✓ passed</span> · preview live.</div>
+                  <div class="gate-txt">Approve <b>slice 5 - daily digest of top leads</b>. <span class="ok">doneWhen ✓ passed</span> · preview live.</div>
                   <div class="gate-actions">
                     <button class="act primary" onclick="resolveGate('gate-ship','Shipped to production ✓')">Approve &amp; ship</button>
                     <button class="act" onclick="fillCmd('Show me the LeadSift slice 5 preview before I approve')">Review</button>
@@ -480,7 +480,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                 <div class="gate-ic">↻</div>
                 <div class="gate-body">
                   <div class="gate-head"><span class="gtype">Unblock</span><span class="gco">RedditPainBot</span></div>
-                  <div class="gate-txt"><b>Slice 8 stuck ×3</b> — dedupe near-identical pains. Retry differently, or pause the company?</div>
+                  <div class="gate-txt"><b>Slice 8 stuck ×3</b> - dedupe near-identical pains. Retry differently, or pause the company?</div>
                   <div class="gate-actions">
                     <button class="act primary" onclick="resolveGate('gate-unblock','Retrying with a new approach ↻')">Retry</button>
                     <button class="act" onclick="resolveGate('gate-unblock','Company paused ⏸')">Pause</button>
@@ -492,7 +492,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                 <div class="gate-ic">$</div>
                 <div class="gate-body">
                   <div class="gate-head"><span class="gtype">Spend</span><span class="gco">QuietInbox</span></div>
-                  <div class="gate-txt">Authorize <b>$40 for a Product Hunt launch</b> — projected ~120 signups.</div>
+                  <div class="gate-txt">Authorize <b>$40 for a Product Hunt launch</b> - projected ~120 signups.</div>
                   <div class="gate-actions">
                     <button class="act primary" onclick="resolveGate('gate-spend','$40 authorized ✓')">Approve spend</button>
                     <button class="act" onclick="resolveGate('gate-spend','On hold ⏸')">Hold</button>
@@ -515,31 +515,31 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
               <div class="costat" onclick="openCo('LeadSift')">
                 <div class="costat-top"><div class="costat-av" style="background:var(--accent)">L</div><div class="costat-name">LeadSift</div><div class="costat-mrr">$180</div></div>
-                <div class="costat-doing"><span class="sdot" style="background:var(--green)"></span><span>Slice 5 shipped to staging — awaiting approval</span></div>
+                <div class="costat-doing"><span class="sdot" style="background:var(--green)"></span><span>Slice 5 shipped to staging - awaiting approval</span></div>
                 <div class="costat-open">OPEN →</div>
               </div>
 
               <div class="costat" onclick="openCo('QuietInbox')">
                 <div class="costat-top"><div class="costat-av" style="background:var(--blue)">Q</div><div class="costat-name">QuietInbox</div><div class="costat-mrr">$420</div></div>
-                <div class="costat-doing"><span class="sdot run" style="background:var(--blue);color:var(--blue)"></span><span>Building slice 9 — snooze a thread until tomorrow</span></div>
+                <div class="costat-doing"><span class="sdot run" style="background:var(--blue);color:var(--blue)"></span><span>Building slice 9 - snooze a thread until tomorrow</span></div>
                 <div class="costat-open">OPEN →</div>
               </div>
 
               <div class="costat" onclick="openCo('TranslatorBill')">
                 <div class="costat-top"><div class="costat-av" style="background:var(--violet)">T</div><div class="costat-name">TranslatorBill</div><div class="costat-mrr">$0</div></div>
-                <div class="costat-doing"><span class="sdot run" style="background:var(--violet);color:var(--violet)"></span><span>Building slice 6 — invoice in buyer's locale</span></div>
+                <div class="costat-doing"><span class="sdot run" style="background:var(--violet);color:var(--violet)"></span><span>Building slice 6 - invoice in buyer's locale</span></div>
                 <div class="costat-open">OPEN →</div>
               </div>
 
               <div class="costat" onclick="openCo('DataDrop')">
                 <div class="costat-top"><div class="costat-av" style="background:var(--green)">D</div><div class="costat-name">DataDrop</div><div class="costat-mrr">$95</div></div>
-                <div class="costat-doing"><span class="sdot" style="background:var(--amber)"></span><span>Slice 6 queued — saved chart views</span></div>
+                <div class="costat-doing"><span class="sdot" style="background:var(--amber)"></span><span>Slice 6 queued - saved chart views</span></div>
                 <div class="costat-open">OPEN →</div>
               </div>
 
               <div class="costat paused blocked" onclick="openCo('RedditPainBot')">
                 <div class="costat-top"><div class="costat-av" style="background:var(--slate)">R</div><div class="costat-name">RedditPainBot</div><div class="costat-mrr">$0</div></div>
-                <div class="costat-doing"><span class="sdot" style="background:var(--red)"></span><span>Slice 8 BLOCKED — stuck ×3 · paused</span></div>
+                <div class="costat-doing"><span class="sdot" style="background:var(--red)"></span><span>Slice 8 BLOCKED - stuck ×3 · paused</span></div>
                 <div class="costat-open">OPEN →</div>
               </div>
 
@@ -629,12 +629,12 @@ function sendCmd(){
 
 function replyFor(t){
   var s = t.toLowerCase();
-  if(s.indexOf('approve')>-1 && s.indexOf('leadsift')>-1) return "On it — approving <b>LeadSift slice 5</b> and shipping the daily digest to production.";
+  if(s.indexOf('approve')>-1 && s.indexOf('leadsift')>-1) return "On it - approving <b>LeadSift slice 5</b> and shipping the daily digest to production.";
   if(s.indexOf('unblock')>-1 || (s.indexOf('retry')>-1)) return "Queuing a fresh approach for <b>RedditPainBot slice 8</b>. I'll flag you if it stalls again.";
-  if(s.indexOf('spend')>-1 || s.indexOf('product hunt')>-1) return "Authorizing the <b>$40 QuietInbox launch</b>. Projected ~120 signups — I'll report back.";
+  if(s.indexOf('spend')>-1 || s.indexOf('product hunt')>-1) return "Authorizing the <b>$40 QuietInbox launch</b>. Projected ~120 signups - I'll report back.";
   if(s.indexOf('what needs')>-1 || s.indexOf('need me')>-1) return "<b>3 gates</b> are open: ship LeadSift, unblock RedditPainBot, approve QuietInbox spend. They're all in the queue above.";
-  if(s.indexOf('new')>-1 && s.indexOf('compan')>-1) return "Opening the new-company composer — describe the pain and I'll scaffold the first slices.";
-  return "Got it — queued. I'll handle it and surface a gate if I need your call.";
+  if(s.indexOf('new')>-1 && s.indexOf('compan')>-1) return "Opening the new-company composer - describe the pain and I'll scaffold the first slices.";
+  return "Got it - queued. I'll handle it and surface a gate if I need your call.";
 }
 
 function appendUser(text){
@@ -700,7 +700,7 @@ function openCo(name){
   document.querySelectorAll('.co').forEach(function(c){
     c.classList.toggle('sel', c.getAttribute('data-co')===name);
   });
-  appendCopilot("Opening <b>"+name+"</b> — pulling its slices, doneWhen log, and metrics.");
+  appendCopilot("Opening <b>"+name+"</b> - pulling its slices, doneWhen log, and metrics.");
 }
 function newCompany(){
   appendCopilot("Let's spin up a new company. Describe the pain it solves and I'll draft the spec + first 3 slices.");

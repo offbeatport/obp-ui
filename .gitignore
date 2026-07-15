@@ -14,7 +14,7 @@ builds/
 .builds/
 .build-registry.json
 .runs/
-# runtime workspace where the engine clones each built company (git.ts) — root only,
+# runtime workspace where the engine clones each built company (git.ts) - root only,
 # so it never swallows src/routes/companies
 /companies/
 .db-backup/

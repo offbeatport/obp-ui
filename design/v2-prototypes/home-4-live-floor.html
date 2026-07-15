@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — Live Floor</title>
+<title>C Slop Slop - Live Floor</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -482,7 +482,7 @@
           <div class="node"><div class="marker running"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--violet)">TB</div>
-            <div class="rtext"><b>TranslatorBill</b> — building slice 6 · writing <span class="code">InvoiceFormatter.tsx</span></div>
+            <div class="rtext"><b>TranslatorBill</b> - building slice 6 · writing <span class="code">InvoiceFormatter.tsx</span></div>
             <span class="kind k-run">building</span>
             <div class="rtime"><span class="pd"></span>now</div>
           </div>
@@ -493,28 +493,28 @@
           <div class="node"><div class="marker running"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--blue)">QI</div>
-            <div class="rtext"><b>QuietInbox</b> — deployed to <span class="code">localhost:4021</span> · running doneWhen probe</div>
+            <div class="rtext"><b>QuietInbox</b> - deployed to <span class="code">localhost:4021</span> · running doneWhen probe</div>
             <span class="kind k-run">deploy</span>
             <div class="rtime"><span class="pd"></span>12s</div>
           </div>
         </div>
 
-        <!-- GATE: SPEND — QuietInbox -->
+        <!-- GATE: SPEND - QuietInbox -->
         <div class="gate g-spend" data-co="quietinbox" data-type="gate" id="gate-spend">
           <div class="gate-top">
             <span class="gate-badge">⛁ Spend</span>
             <span class="gate-co"><span class="ravatar" style="background:var(--blue)">QI</span>QuietInbox</span>
             <span class="gate-flag"><span class="dot"></span>Needs you</span>
           </div>
-          <div class="gate-body">Authorize <b>$40</b> for a Product Hunt launch — projected <b>~120 signups</b>.</div>
+          <div class="gate-body">Authorize <b>$40</b> for a Product Hunt launch - projected <b>~120 signups</b>.</div>
           <div class="gate-meta">
             <span class="chip">budget · $40 one-off</span>
             <span class="chip ok">ROI est · ~120 signups</span>
             <span class="chip">channel · Product Hunt</span>
           </div>
           <div class="gate-actions">
-            <button class="btn btn-amber" onclick="resolve('gate-spend','#c08a2e','Spend authorized — $40 to Product Hunt launch.')">Approve spend</button>
-            <button class="btn btn-ghost" onclick="resolve('gate-spend','#8a8579','Held — QuietInbox launch spend parked.')">Hold</button>
+            <button class="btn btn-amber" onclick="resolve('gate-spend','#c08a2e','Spend authorized - $40 to Product Hunt launch.')">Approve spend</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-spend','#8a8579','Held - QuietInbox launch spend parked.')">Hold</button>
             <span class="hint">gate · SPEND</span>
           </div>
         </div>
@@ -524,7 +524,7 @@
           <div class="node"><div class="marker pass"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--accent)">LS</div>
-            <div class="rtext"><b>LeadSift</b> — doneWhen passed · <span class="code">GET /digest/preview → 200</span></div>
+            <div class="rtext"><b>LeadSift</b> - doneWhen passed · <span class="code">GET /digest/preview → 200</span></div>
             <span class="kind k-pass">check ok</span>
             <div class="rtime">2m</div>
           </div>
@@ -535,29 +535,29 @@
           <div class="node"><div class="marker wait"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--accent)">LS</div>
-            <div class="rtext"><b>LeadSift</b> — slice 5 shipped to staging · awaiting your approval</div>
+            <div class="rtext"><b>LeadSift</b> - slice 5 shipped to staging · awaiting your approval</div>
             <span class="kind k-wait">awaiting</span>
             <div class="rtime">2m</div>
           </div>
         </div>
 
-        <!-- GATE: SHIP — LeadSift -->
+        <!-- GATE: SHIP - LeadSift -->
         <div class="gate g-ship" data-co="leadsift" data-type="gate" id="gate-ship">
           <div class="gate-top">
             <span class="gate-badge">⤴ Ship</span>
             <span class="gate-co"><span class="ravatar" style="background:var(--accent)">LS</span>LeadSift</span>
             <span class="gate-flag"><span class="dot"></span>Needs you</span>
           </div>
-          <div class="gate-body">Approve <b>slice 5 — daily digest of top leads.</b> Shipped to staging, preview is live and ready for production.</div>
+          <div class="gate-body">Approve <b>slice 5 - daily digest of top leads.</b> Shipped to staging, preview is live and ready for production.</div>
           <div class="gate-meta">
             <span class="chip ok">✓ doneWhen passed</span>
             <span class="chip ok">● preview live · /digest/preview</span>
             <span class="chip warn">slice 8 blocked downstream</span>
           </div>
           <div class="gate-actions">
-            <button class="btn btn-green" onclick="resolve('gate-ship','#4f8a52','Shipped — slice 5 daily digest is live in production.')">Approve &amp; ship</button>
-            <button class="btn btn-ghost" onclick="resolve('gate-ship','#4a72b0','Opened review — slice 5 diff &amp; preview.')">Review</button>
-            <button class="btn btn-ghost" onclick="resolve('gate-ship','#8a8579','Held — slice 5 parked for later.')">Hold</button>
+            <button class="btn btn-green" onclick="resolve('gate-ship','#4f8a52','Shipped - slice 5 daily digest is live in production.')">Approve &amp; ship</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-ship','#4a72b0','Opened review - slice 5 diff &amp; preview.')">Review</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-ship','#8a8579','Held - slice 5 parked for later.')">Hold</button>
             <span class="hint">gate · SHIP</span>
           </div>
         </div>
@@ -567,7 +567,7 @@
           <div class="node"><div class="marker info"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--green)">DD</div>
-            <div class="rtext"><b>DataDrop</b> — re-prioritized backlog · <b>slice 6 (saved chart views)</b> now top, queued</div>
+            <div class="rtext"><b>DataDrop</b> - re-prioritized backlog · <b>slice 6 (saved chart views)</b> now top, queued</div>
             <span class="kind k-info">planning</span>
             <div class="rtime">5m</div>
           </div>
@@ -580,28 +580,28 @@
           <div class="node"><div class="marker blocked"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--slate)">RP</div>
-            <div class="rtext"><b>RedditPainBot</b> — slice 8 blocked · no progress, same failure <b>×3</b></div>
+            <div class="rtext"><b>RedditPainBot</b> - slice 8 blocked · no progress, same failure <b>×3</b></div>
             <span class="kind k-block">blocked</span>
             <div class="rtime">18m</div>
           </div>
         </div>
 
-        <!-- GATE: UNBLOCK — RedditPainBot -->
+        <!-- GATE: UNBLOCK - RedditPainBot -->
         <div class="gate g-block" data-co="redditpainbot" data-type="gate" id="gate-block">
           <div class="gate-top">
             <span class="gate-badge">⚠ Unblock</span>
             <span class="gate-co"><span class="ravatar" style="background:var(--slate)">RP</span>RedditPainBot</span>
             <span class="gate-flag"><span class="dot"></span>Needs you</span>
           </div>
-          <div class="gate-body">Slice 8 stuck <b>×3</b> — dedupe near-identical pains. The agent can't make progress. Retry with a different approach, or pause the company?</div>
+          <div class="gate-body">Slice 8 stuck <b>×3</b> - dedupe near-identical pains. The agent can't make progress. Retry with a different approach, or pause the company?</div>
           <div class="gate-meta">
             <span class="chip warn">✗ stuck ×3 · same failure</span>
             <span class="chip">last error · cosine threshold too tight</span>
             <span class="chip">company · paused</span>
           </div>
           <div class="gate-actions">
-            <button class="btn btn-red" onclick="resolve('gate-block','#b6483f','Retrying — RedditPainBot slice 8 with a new dedupe strategy.')">Retry differently</button>
-            <button class="btn btn-ghost" onclick="resolve('gate-block','#8a8579','Paused — RedditPainBot put on ice.')">Pause company</button>
+            <button class="btn btn-red" onclick="resolve('gate-block','#b6483f','Retrying - RedditPainBot slice 8 with a new dedupe strategy.')">Retry differently</button>
+            <button class="btn btn-ghost" onclick="resolve('gate-block','#8a8579','Paused - RedditPainBot put on ice.')">Pause company</button>
             <span class="hint">gate · UNBLOCK</span>
           </div>
         </div>
@@ -611,7 +611,7 @@
           <div class="node"><div class="marker pass"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--blue)">QI</div>
-            <div class="rtext"><b>QuietInbox</b> — slice 9 scaffolded · <span class="code">snooze a thread until tomorrow</span></div>
+            <div class="rtext"><b>QuietInbox</b> - slice 9 scaffolded · <span class="code">snooze a thread until tomorrow</span></div>
             <span class="kind k-info">planning</span>
             <div class="rtime">24m</div>
           </div>
@@ -620,7 +620,7 @@
           <div class="node"><div class="marker pass"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--green)">DD</div>
-            <div class="rtext"><b>DataDrop</b> — slice 5 shipped to production · <span class="code">CSV column mapping</span></div>
+            <div class="rtext"><b>DataDrop</b> - slice 5 shipped to production · <span class="code">CSV column mapping</span></div>
             <span class="kind k-pass">shipped</span>
             <div class="rtime">41m</div>
           </div>
@@ -629,7 +629,7 @@
           <div class="node"><div class="marker info"></div></div>
           <div class="rline">
             <div class="ravatar" style="background:var(--accent)">LS</div>
-            <div class="rtext"><b>LeadSift</b> — new signup · <b>12 users</b> total · MRR steady at $180</div>
+            <div class="rtext"><b>LeadSift</b> - new signup · <b>12 users</b> total · MRR steady at $180</div>
             <span class="kind k-info">growth</span>
             <div class="rtime">1h</div>
           </div>
@@ -690,7 +690,7 @@
       if(curSeg==='running' && node.dataset.type!=='running') show=false;
       node.style.display = show ? '' : 'none';
     });
-    // hide empty day dividers loosely (keep simple — always show)
+    // hide empty day dividers loosely (keep simple - always show)
   }
 
   // lightweight live auto-feed: prepend a fresh running line every few seconds
@@ -710,7 +710,7 @@
     row.className='row';row.dataset.co=f.co;row.dataset.type=f.run?'running':'pass';
     row.innerHTML='<div class="node"><div class="marker '+(f.run?'running':'pass')+'"></div></div>'+
       '<div class="rline"><div class="ravatar" style="background:'+f.bg+'">'+f.av+'</div>'+
-      '<div class="rtext"><b>'+f.av.replace('TB','TranslatorBill').replace('QI','QuietInbox').replace('DD','DataDrop')+'</b> — '+f.txt+'</div>'+
+      '<div class="rtext"><b>'+f.av.replace('TB','TranslatorBill').replace('QI','QuietInbox').replace('DD','DataDrop')+'</b> - '+f.txt+'</div>'+
       '<span class="kind '+f.k+'">'+f.kt+'</span>'+
       '<div class="rtime">'+(f.run?'<span class="pd"></span>now':'1s')+'</div></div>';
     row.style.opacity='0';row.style.transform='translateY(-6px)';

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { AgentConsole } from "~/components/agent-console";
-import { TONE } from "~/components/command-center/tone";
+import { CompanyLogo } from "~/components/company-logo";
 import { Logo, LogoMark } from "~/components/logo";
 import { UserMenu } from "~/components/user-menu";
 import { cn } from "~/lib/utils";
@@ -138,12 +138,6 @@ function Rail({
     );
 }
 
-function initials(name: string): string {
-    const caps = name.match(/[A-Z]/g);
-    if (caps && caps.length >= 2) return caps.slice(0, 2).join("");
-    return name.slice(0, 2).toUpperCase();
-}
-
 // company.status → the avatar's status dot color (prototype COLORS map). Draft = idle/neutral.
 const STATUS_DOT: Record<CompanySummary["status"], string> = {
     active: "bg-success",
@@ -234,29 +228,26 @@ function CompaniesNav() {
                                 "bg-card shadow-e1 before:absolute before:-left-3 before:top-[9px] before:bottom-[9px] before:w-[3px] before:rounded-r-[3px] before:bg-primary before:content-['']",
                         )}
                     >
-                        <span
-                            className={cn(
-                                "relative grid size-8 flex-none place-items-center rounded-[10px] text-[13px] font-semibold text-primary-foreground",
-                                // Draft: an incubating icon on a muted fill instead of the tone
-                                // letter avatar. Live companies keep their tone avatar + status dot.
-                                draft ? "bg-neutral text-card" : TONE[c.tone].solid,
-                            )}
-                            aria-label={draft ? "Draft (incubating)" : undefined}
-                        >
-                            {draft ? (
+                        {draft ? (
+                            // Draft: an incubating icon on a muted fill (no logo generated yet).
+                            <span
+                                className="grid size-8 flex-none place-items-center rounded-[10px] bg-neutral text-card"
+                                aria-label="Draft (incubating)"
+                            >
                                 <FlaskConical className="size-4" />
-                            ) : (
-                                <>
-                                    {initials(c.name)}
-                                    <span
-                                        className={cn(
-                                            "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
-                                            STATUS_DOT[c.status],
-                                        )}
-                                    />
-                                </>
-                            )}
-                        </span>
+                            </span>
+                        ) : (
+                            // Live: the generated company logo + a status dot.
+                            <span className="relative flex-none">
+                                <CompanyLogo name={c.name} branding={c.branding} size={32} />
+                                <span
+                                    className={cn(
+                                        "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
+                                        STATUS_DOT[c.status],
+                                    )}
+                                />
+                            </span>
+                        )}
                         <span className="min-w-0 flex-1">
                             <span className="flex items-center gap-1.5 text-[13.5px] font-[550]">
                                 <span className="truncate">{c.name}</span>

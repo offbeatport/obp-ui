@@ -455,7 +455,7 @@
 <div class="overview" id="overview">
   <div class="ov-scroll">
     <div class="ov-inner">
-      <div class="ov-h"><h1>Portfolio</h1><span>From thought to bag — one validated slice at a time.</span></div>
+      <div class="ov-h"><h1>Portfolio</h1><span>From thought to bag - one validated slice at a time.</span></div>
       <div class="metrics" id="metrics"></div>
       <div class="ov-cols">
         <div class="ov-sec">
@@ -478,7 +478,7 @@
   <div class="gcmd">
     <div class="gcmd-inner">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <input id="globalInput" placeholder="Direct the portfolio — “promote PayoutReconciler”, “unblock RedditPainBot”…">
+      <input id="globalInput" placeholder="Direct the portfolio - “promote PayoutReconciler”, “unblock RedditPainBot”…">
       <button class="gcmd-send" onclick="sendGlobal()">Send <kbd style="background:rgba(255,255,255,.2);border:none;color:#fff">↵</kbd></button>
     </div>
   </div>
@@ -502,7 +502,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -530,7 +530,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -539,31 +539,31 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
 /* ---------- inbox queue model ---------- */
 let queue = [
   { id:'q-leadsift', co:'LeadSift', coId:'leadsift', kind:'await', tag:'Approval', dot:'await',
-    line:'Slice 5 — daily digest awaiting your approval', meta:'doneWhen passed · preview ready', time:'2m', unread:true, type:'approval' },
+    line:'Slice 5 - daily digest awaiting your approval', meta:'doneWhen passed · preview ready', time:'2m', unread:true, type:'approval' },
   { id:'q-reddit', co:'RedditPainBot', coId:'redditpainbot', kind:'blocked', tag:'Blocked', dot:'blocked',
-    line:'Slice 8 blocked — no progress (same failure ×3)', meta:'Unblock or pause the company', time:'18m', unread:true, type:'company' },
+    line:'Slice 8 blocked - no progress (same failure ×3)', meta:'Unblock or pause the company', time:'18m', unread:true, type:'company' },
   { id:'q-promote', co:'Opportunity', coId:'o1', kind:'promote', tag:'Promote', dot:'promote',
     line:'Promote “PayoutReconciler” to a company', meta:'Score 82 · top candidate', time:'1h', unread:true, type:'opp' },
 ];
@@ -746,8 +746,8 @@ function renderApproval(){
 function doApprove(){
   const bar = document.getElementById('approveBar');
   if(bar) bar.innerHTML = `<span class="check-ic" style="width:18px;height:18px;background:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-    <span class="at"><b style="color:var(--green)">Approved ✓</b> Slice 5 shipped — now live on leadsift.app.</span>`;
-  flash('Approved ✓ — slice shipped','ok');
+    <span class="at"><b style="color:var(--green)">Approved ✓</b> Slice 5 shipped - now live on leadsift.app.</span>`;
+  flash('Approved ✓ - slice shipped','ok');
   resolved['q-leadsift'] = true;
   setTimeout(()=>{ sel=0; renderQueue(); afterResolve(); }, 850);
 }
@@ -755,9 +755,9 @@ function toggleFeedback(){ const w=document.getElementById('fbwrap'); w.classLis
 function closeFeedback(){ document.getElementById('fbwrap').classList.remove('open'); }
 function submitReject(){
   const t = document.getElementById('fbtext').value.trim();
-  flash(t? 'Feedback sent — agents re-building' : 'Rejected — agents re-building','warn');
+  flash(t? 'Feedback sent - agents re-building' : 'Rejected - agents re-building','warn');
   const bar = document.getElementById('approveBar');
-  if(bar) bar.innerHTML = `<span class="at"><b style="color:var(--amber)">Rejected ↺</b> Sent back with feedback — agents re-building slice 5.</span>`;
+  if(bar) bar.innerHTML = `<span class="at"><b style="color:var(--amber)">Rejected ↺</b> Sent back with feedback - agents re-building slice 5.</span>`;
   closeFeedback();
   resolved['q-leadsift'] = true;
   setTimeout(()=>{ sel=0; renderQueue(); afterResolve(); }, 950);
@@ -803,7 +803,7 @@ function renderCompanyView(c){
     ${c.status==='paused'? `<div class="card"><div class="check" style="background:var(--red-soft)">
        <span class="check-ic" style="background:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 8v5M12 17h0M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
        <div><div class="check-t" style="color:var(--red)">Slice 8 blocked</div>
-       <div class="check-d" style="color:var(--red)">No progress — same failure ×3. Unblock with guidance, or pause the company.</div></div></div></div>`:''}
+       <div class="check-d" style="color:var(--red)">No progress - same failure ×3. Unblock with guidance, or pause the company.</div></div></div></div>`:''}
     <div class="card">
       <div class="card-h">Slices <span class="r mono">${(c.slices||[]).filter(s=>s.status==='shipped').length || c.slicesShipped||0} shipped</span></div>
       ${slices}
@@ -812,8 +812,8 @@ function renderCompanyView(c){
       <span class="at">${c.status==='paused'? 'This company is paused. Decide its fate.' : 'Direct this company below.'}</span>
       <span class="grow"></span>
       ${c.status==='paused'
-        ? `<button class="btn btn-ghost" onclick="flash('Paused — agents idle')">Keep paused</button>
-           <button class="btn btn-primary" onclick="flash('Unblocked — agents retrying ✓','ok'); resolveReddit()">Unblock with guidance</button>`
+        ? `<button class="btn btn-ghost" onclick="flash('Paused - agents idle')">Keep paused</button>
+           <button class="btn btn-primary" onclick="flash('Unblocked - agents retrying ✓','ok'); resolveReddit()">Unblock with guidance</button>`
         : `<button class="btn btn-ghost" onclick="flash('Re-prioritized ✓','ok')">Re-prioritize</button>`}
     </div>
     ${companyChatHtml(c.id)}
@@ -858,13 +858,13 @@ function renderOpp(id){
         </svg>
         <div>
           <div style="font-size:14px;font-weight:600">${o.thesis}</div>
-          <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Validation score ${o.score}/100 — top-ranked candidate</div>
+          <div style="font-size:12px;color:var(--ink-3);margin-top:3px">Validation score ${o.score}/100 - top-ranked candidate</div>
         </div>
       </div>
       <div class="opp-thought">“${o.thought}”</div>
     </div>
     <div class="approve-bar" id="approveBar">
-      <span class="at"><b>Promote</b> spins up a company and queues slice #1 — a walking skeleton.</span>
+      <span class="at"><b>Promote</b> spins up a company and queues slice #1 - a walking skeleton.</span>
       <span class="grow"></span>
       <button class="btn btn-ghost" onclick="flash('Kept as candidate')">Keep watching</button>
       <button class="btn btn-primary" onclick="promoteOpp('${o.id}')">Promote to company</button>
@@ -873,9 +873,9 @@ function renderOpp(id){
 }
 function promoteOpp(id){
   const o = DATA.opportunities.find(o=>o.id===id);
-  flash('Promoted ✓ — '+(o?o.title:'')+' is now a company','ok');
+  flash('Promoted ✓ - '+(o?o.title:'')+' is now a company','ok');
   const bar=document.getElementById('approveBar');
-  if(bar) bar.innerHTML=`<span class="at"><b style="color:var(--green)">Promoted ✓</b> ${o.title} is live as a company — slice #1 queued.</span>`;
+  if(bar) bar.innerHTML=`<span class="at"><b style="color:var(--green)">Promoted ✓</b> ${o.title} is live as a company - slice #1 queued.</span>`;
   resolved['q-promote'] = true;
   setTimeout(()=>{ sel=0; renderQueue(); afterResolve(); }, 850);
 }
@@ -885,7 +885,7 @@ function renderReaderEmpty(){
     <div class="empty" style="min-height:60vh">
       <div class="em">🎉</div>
       <h3>Inbox zero</h3>
-      <div>Nothing needs you right now. Agents keep building — new items land here.</div>
+      <div>Nothing needs you right now. Agents keep building - new items land here.</div>
       <button class="btn btn-ghost" style="margin-top:14px" onclick="showOverview()">Open Portfolio</button>
     </div>`;
 }
@@ -917,7 +917,7 @@ function sendChat(id){
   const host=document.getElementById('chatMsgs-'+id);
   host.insertAdjacentHTML('beforeend',`<div class="msg user"><div class="av u">You</div><div class="bub">${escapeHtml(v)}</div></div>`);
   inp.value=''; host.scrollTop=host.scrollHeight;
-  setTimeout(()=>{ host.insertAdjacentHTML('beforeend',`<div class="msg assistant"><div class="av a">AI</div><div class="bub">On it — I’ll route that to the build loop and report back here.</div></div>`); host.scrollTop=host.scrollHeight; }, 480);
+  setTimeout(()=>{ host.insertAdjacentHTML('beforeend',`<div class="msg assistant"><div class="av a">AI</div><div class="bub">On it - I’ll route that to the build loop and report back here.</div></div>`); host.scrollTop=host.scrollHeight; }, 480);
 }
 
 /* ---------- activity strip ---------- */
@@ -978,7 +978,7 @@ function renderOverview(){
 }
 function promoteFromOverview(id){
   const o=DATA.opportunities.find(o=>o.id===id);
-  flash('Promoted ✓ — '+o.title+' is now a company','ok');
+  flash('Promoted ✓ - '+o.title+' is now a company','ok');
 }
 
 /* ---------- view switching ---------- */
