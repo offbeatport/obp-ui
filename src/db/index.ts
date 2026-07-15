@@ -147,4 +147,19 @@ function createTables(s: Database.Database) {
     // Index on the just-migrated columns - MUST run after the ALTERs above (an existing DB won't
     // have spin_status until they've applied).
     s.exec("CREATE INDEX IF NOT EXISTS company_status ON company(status, spin_status);");
+    // Company names are unique platform-wide (COLLATE NOCASE - matches the lowercased slug that
+    // routing uses; the app's uniqueName() keeps writes collision-free). A UNIQUE INDEX is the DB
+    // backstop. Guarded: an existing DB with duplicate names would make this throw, which must not
+    // crash boot - dedupe those rows, then it applies on the next start.
+    try {
+        s.exec(
+            "CREATE UNIQUE INDEX IF NOT EXISTS company_name ON company(name COLLATE NOCASE);",
+        );
+    } catch (e) {
+        console.warn(
+            "[db] could not create UNIQUE index on company(name) - duplicate names exist; " +
+                "rename/remove them so names are unique, then restart:",
+            (e as Error).message,
+        );
+    }
 }

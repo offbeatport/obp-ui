@@ -20,7 +20,7 @@ function makeScopedCompany(): string {
         .prepare(
             "INSERT INTO company (id,name,thesis,status,autopilot) VALUES (?,?,?,'active','on')",
         )
-        .run(id, "Co", "a thesis");
+        .run(id, `Co ${id.slice(0, 8)}`, "a thesis"); // unique name (company.name is UNIQUE)
     sqlite
         .prepare("INSERT INTO app_config (scope,key,value) VALUES ('global',?, 'true')")
         .run(`scope.done.${id}`);
@@ -99,7 +99,7 @@ describe("answerNext", () => {
         addMsg(cid, "user", "q", 1000);
         addMsg(cid, "assistant", "prior answer", 2000);
         await answerNext(new Set());
-        expect(assistantMsgs(cid)).toHaveLength(1); // unchanged — no duplicate
+        expect(assistantMsgs(cid)).toHaveLength(1); // unchanged - no duplicate
     });
 
     it("message-swallow fix: a follow-up sent before the first is answered is not dropped", async () => {
