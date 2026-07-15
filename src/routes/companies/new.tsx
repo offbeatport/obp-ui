@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowUp, Loader2, Sparkles } from "lucide-react";
+import { ArrowUp, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { GuardrailMenu } from "~/components/guardrail-menu";
@@ -23,15 +23,6 @@ import {
 } from "~/server/actions";
 import { getBootState } from "~/server/agents";
 import { getDraft } from "~/server/data";
-
-const LUCKY_THOUGHTS = [
-    "help freelancers get paid on time",
-    "a tiny tool that saves indie makers an hour a week",
-    "turn messy CSVs into clean dashboards",
-    "help small Shopify stores cut refund fraud",
-    "auto-summarize long meeting recordings into action items",
-    "a calm way for tutors to schedule and bill students",
-];
 
 export const Route = createFileRoute("/companies/new")({
     validateSearch: (s: Record<string, unknown>): { draft?: string } => ({
@@ -334,11 +325,6 @@ function Composer({
     const [thought, setThought] = useState("");
     const [preset, setPreset] = useState("lean");
 
-    const lucky = () => {
-        const t = LUCKY_THOUGHTS[Math.floor(Math.random() * LUCKY_THOUGHTS.length)];
-        onStart(t, "lean");
-    };
-
     return (
         <div className="mx-auto flex min-h-full max-w-2xl flex-col justify-center px-6 py-16">
             <div className="mb-2 text-center font-mono text-xs uppercase tracking-[0.14em] text-faint">
@@ -348,7 +334,7 @@ function Composer({
                 Start your new AI company
             </h1>
             <p className="mt-4 text-center text-lg text-muted-foreground">
-                Tell me a thought — I’ll scout the opportunities, and we’ll take it from there.
+                Tell me a thought - I’ll scout the opportunities, and we’ll take it from there.
             </p>
 
             <div className="mt-9 rounded-[1.25rem] border bg-card p-2 shadow-e1 transition focus-within:ring-2 focus-within:ring-primary/50">
@@ -380,21 +366,6 @@ function Composer({
                         )}
                     </button>
                 </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-center gap-3">
-                <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-faint">
-                    or
-                </span>
-                <button
-                    type="button"
-                    onClick={lucky}
-                    disabled={busy}
-                    className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:brightness-95 active:scale-95 disabled:opacity-40"
-                >
-                    <Sparkles className="size-4" />
-                    Surprise me
-                </button>
             </div>
         </div>
     );
