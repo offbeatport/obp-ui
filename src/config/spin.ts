@@ -34,16 +34,29 @@ export const SCORE_KEYS: ScoreKey[] = [
     "pricing",
 ];
 export type OppScores = Record<ScoreKey, number>;
-export const SCORE_META: Record<ScoreKey, { label: string; hint: string }> = {
-    buyer: { label: "Buyer", hint: "a clear, reachable buyer" },
-    pain: { label: "Pain", hint: "how acute the problem is" },
-    wtp: { label: "Willingness", hint: "willingness to pay" },
-    timing: { label: "Timing", hint: "why now" },
-    build: { label: "Buildable", hint: "solo-shippable, software-only" },
-    legal: { label: "Legal", hint: "regulatory / liability safety" },
-    distro: { label: "Distribution", hint: "you can reach the buyer" },
-    pricing: { label: "Pricing", hint: "pricing power" },
+// One home for the 8 signals: `lab` = the short pip label, `full` = the long name, `hint` = the
+// tooltip reason. Both the engine and the UI read this (no separate copy in the components).
+export const SCORE_META: Record<ScoreKey, { label: string; full: string; hint: string }> = {
+    buyer: { label: "Buyer", full: "Buyer Quality", hint: "a clear, reachable buyer" },
+    pain: { label: "Pain", full: "Pain Urgency", hint: "how acute the problem is" },
+    wtp: { label: "WTP", full: "Willingness to Pay", hint: "willingness to pay" },
+    timing: { label: "Timing", full: "Timing Signal", hint: "why now" },
+    build: { label: "Build", full: "Build Simplicity", hint: "solo-shippable, software-only" },
+    legal: { label: "Legal", full: "Legal Safety", hint: "regulatory / liability safety" },
+    distro: { label: "Reach", full: "Distribution Ready", hint: "you can reach the buyer" },
+    pricing: { label: "Ceiling", full: "Pricing Ceiling", hint: "pricing power" },
 };
+// The order the signals are shown in the breakdown (prototype SR_ORDER: legal last).
+export const SCORE_DISPLAY_ORDER: ScoreKey[] = [
+    "buyer",
+    "pain",
+    "wtp",
+    "timing",
+    "build",
+    "distro",
+    "pricing",
+    "legal",
+];
 
 export type EvidenceKind = "demand" | "gap" | "price";
 export type Evidence = { kind: EvidenceKind; text: string; source: string };
@@ -105,11 +118,34 @@ export type SpinData = {
 // A message in the spin chat (the "start your company" conversation).
 export type SpinMessage = { id: string; role: "user" | "assistant"; content: string; ago: string };
 
-// avg of the 8 scores (0-10) - the ranking signal for a candidate.
+// The overall opportunity score (0-10) - the ONE ranking signal, used by both the engine
+// (ranking + demand) and the UI (the .ql-sig chip). Weighted: willingness-to-pay counts 2×,
+// divisor 9 (the prototype's formula).
 export function scoreTotal(s: OppScores): number {
-    let sum = 0;
-    for (const k of SCORE_KEYS) sum += s[k] ?? 0;
-    return sum / SCORE_KEYS.length;
+    const t =
+        ((s.buyer ?? 0) +
+            (s.pain ?? 0) +
+            (s.wtp ?? 0) * 2 +
+            (s.timing ?? 0) +
+            (s.build ?? 0) +
+            (s.legal ?? 0) +
+            (s.distro ?? 0) +
+            (s.pricing ?? 0)) /
+        9;
+    return Math.round(t * 10) / 10;
+}
+
+// Per-signal band (a 0-10 score → green/amber/gray tier). Shared by the UI's .sig chips.
+export function sigBand(v: number): "sig-green" | "sig-amber" | "sig-gray" {
+    return v >= 8 ? "sig-green" : v >= 5 ? "sig-amber" : "sig-gray";
+}
+// Overall-score band (the .ql-sig chip: hi/mid/lo at 7.5/6.5).
+export function scoreBand(total: number): "hi" | "mid" | "lo" {
+    return total >= 7.5 ? "hi" : total >= 6.5 ? "mid" : "lo";
+}
+// Compact money ("4200" → "4.2k").
+export function fmtK(n: number): string {
+    return n >= 1000 ? `${Math.round(n / 100) / 10}k` : String(n);
 }
 
 // A small deterministic palette set so branding always has sane gradients (AI may override).

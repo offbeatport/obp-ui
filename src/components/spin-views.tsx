@@ -3,9 +3,13 @@ import {
     type Branding,
     type Candidate,
     type CompanySpec,
-    type OppScores,
+    SCORE_DISPLAY_ORDER,
     SCORE_META,
     type SpinMessage,
+    fmtK,
+    scoreBand,
+    scoreTotal,
+    sigBand,
 } from "~/config/spin";
 import type { CompanyDetail } from "~/server/data";
 
@@ -14,28 +18,7 @@ type Spin = NonNullable<CompanyDetail["spin"]>;
 // The spin-flow view surfaces, ported to the design prototype's EXACT markup + classes
 // (08-chat-spine-pro-v7.html). Styling lives in command-center/spin-proto.css (verbatim rules
 // scoped under .cc); this file only reproduces the class structure and binds the draft data.
-// The route (companies/new.tsx) wraps everything in .cc and owns state + server callbacks.
-
-// ---- shared: 8-signal metadata + score math (prototype SR_ORDER / scoreTotal / bands) -------
-const SR: { key: keyof OppScores; lab: string; full: string }[] = [
-    { key: "buyer", lab: "Buyer", full: "Buyer Quality" },
-    { key: "pain", lab: "Pain", full: "Pain Urgency" },
-    { key: "wtp", lab: "WTP", full: "Willingness to Pay" },
-    { key: "timing", lab: "Timing", full: "Timing Signal" },
-    { key: "build", lab: "Build", full: "Build Simplicity" },
-    { key: "distro", lab: "Reach", full: "Distribution Ready" },
-    { key: "pricing", lab: "Ceiling", full: "Pricing Ceiling" },
-    { key: "legal", lab: "Legal", full: "Legal Safety" },
-];
-const sigBand = (v: number) => (v >= 8 ? "sig-green" : v >= 5 ? "sig-amber" : "sig-gray");
-// Prototype weighting: willingness-to-pay counts 2×, divisor 9.
-function weightedTotal(s: OppScores): number {
-    const t =
-        (s.buyer + s.pain + s.wtp * 2 + s.timing + s.build + s.legal + s.distro + s.pricing) / 9;
-    return Math.round(t * 10) / 10;
-}
-const rowBand = (t: number) => (t >= 7.5 ? "hi" : t >= 6.5 ? "mid" : "lo");
-const fmtK = (n: number) => (n >= 1000 ? `${Math.round(n / 100) / 10}k` : String(n));
+// Score math + labels come from config/spin.ts (one source of truth for engine + UI).
 
 // ---- chat bubble (.spin-msg / .spin-av / .spin-stream-body / .spin-bubble) ------------------
 export function Bubble({ m }: { m: SpinMessage }) {
@@ -158,9 +141,7 @@ export function ProposalsView({
     onPick: (id: string) => void;
     busy: boolean;
 }) {
-    const ranked = [...candidates].sort(
-        (a, b) => weightedTotal(b.scores) - weightedTotal(a.scores),
-    );
+    const ranked = [...candidates].sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
     const [open, setOpen] = useState<string | null>(ranked[0]?.id ?? null);
     return (
         <AssistantTurn>
@@ -174,7 +155,7 @@ export function ProposalsView({
             <div className="spin-prop-mount">
                 <div className={`ql${pickedId ? " ql-locked" : ""}`}>
                     {ranked.map((c, i) => {
-                        const total = weightedTotal(c.scores);
+                        const total = scoreTotal(c.scores);
                         const isOpen = open === c.id;
                         const proof = c.evidence[0];
                         return (
@@ -197,7 +178,7 @@ export function ProposalsView({
                                             <span className="ql-wd">{c.wedge}</span>
                                         </span>
                                         <span
-                                            className={`ql-sig ${rowBand(total)}`}
+                                            className={`ql-sig ${scoreBand(total)}`}
                                             title="Overall score · willingness-to-pay counts 2×"
                                         >
                                             {total.toFixed(1)}
@@ -246,18 +227,18 @@ export function ProposalsView({
                                             </div>
                                         </div>
                                         <div className="signals">
-                                            {SR.map((d) => {
-                                                const v = c.scores[d.key] ?? 0;
+                                            {SCORE_DISPLAY_ORDER.map((k) => {
+                                                const v = c.scores[k] ?? 0;
+                                                const meta = SCORE_META[k];
                                                 return (
-                                                    <div
-                                                        key={d.key}
-                                                        className={`sig ${sigBand(v)}`}
-                                                    >
-                                                        <span className="sig-name">{d.lab}</span>
+                                                    <div key={k} className={`sig ${sigBand(v)}`}>
+                                                        <span className="sig-name">
+                                                            {meta.label}
+                                                        </span>
                                                         <span className="sig-score">{v}</span>
                                                         <span className="sig-tip">
-                                                            <strong>{d.full}</strong>
-                                                            {SCORE_META[d.key].hint}
+                                                            <strong>{meta.full}</strong>
+                                                            {meta.hint}
                                                         </span>
                                                     </div>
                                                 );
