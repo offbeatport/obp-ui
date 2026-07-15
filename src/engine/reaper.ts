@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { sqlite } from "../db/index.js";
 import type { Checkpoint } from "../db/schema.js";
 import { config } from "./config.js";
+import { BLOCK_ACTION, FAIL_RUN, REQUEUE_ACTION, UNLOCK_COMPANY } from "./terminal.js";
 
 // Crash recovery. Git-sha replay is the correctness anchor; recovery kills orphaned
 // process groups, cleans the worktree back to the checkpoint, then requeues (or blocks
@@ -25,18 +26,6 @@ const SELECT_LEASE_EXPIRED = sqlite.prepare(
     `SELECT id, action_id, company_id, attempt, checkpoint FROM run WHERE status = 'running' AND lease_expires_at < ?`,
 );
 
-const FAIL_RUN = sqlite.prepare(
-    `UPDATE run SET status = 'failed', error = ? WHERE id = ? AND status = 'running'`,
-);
-const REQUEUE_ACTION = sqlite.prepare(
-    `UPDATE action SET status = 'queued' WHERE id = ? AND status = 'running'`,
-);
-const BLOCK_ACTION = sqlite.prepare(
-    `UPDATE action SET status = 'blocked' WHERE id = ? AND status = 'running'`,
-);
-const UNLOCK_COMPANY = sqlite.prepare(
-    "UPDATE company SET locked_by_run_id = NULL WHERE id = ? AND locked_by_run_id = ?",
-);
 const RENEW_LEASE = sqlite.prepare(
     `UPDATE run SET lease_expires_at = ? WHERE id = ? AND status = 'running'`,
 );
@@ -106,7 +95,7 @@ function killPgid(pgid?: number): void {
     if (!pgid || pgid <= 0) return; // never let -pgid become a positive PID (e.g. kill(1))
     // Verify the group leader is still one of OUR processes before the group SIGKILL. After a
     // crash/reboot the OS recycles pids, so a checkpointed pgid can belong to an unrelated
-    // process group — and `-pgid` would kill the whole group. If ps can't confirm it's a
+    // process group - and `-pgid` would kill the whole group. If ps can't confirm it's a
     // claude/node process, skip (it's gone or not ours).
     let cmd = "";
     try {
@@ -117,7 +106,7 @@ function killPgid(pgid?: number): void {
     } catch {
         return; // process no longer exists (ps exits non-zero) or ps unavailable
     }
-    if (!KILLABLE.test(cmd)) return; // recycled pid owned by something else — do NOT kill
+    if (!KILLABLE.test(cmd)) return; // recycled pid owned by something else - do NOT kill
     try {
         process.kill(-pgid, "SIGKILL");
     } catch {
