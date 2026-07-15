@@ -1,12 +1,27 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
-import { type CSSProperties, useCallback, useState } from "react";
+import { User } from "lucide-react";
+import { type CSSProperties, type ReactNode, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
-import { TONE, TONE_VAR } from "~/components/command-center/tone";
+import { TONE_VAR } from "~/components/command-center/tone";
+import { CompanyLogo } from "~/components/company-logo";
+import { GrowthTab } from "~/components/company-tabs/growth";
+import { PipelineTab } from "~/components/company-tabs/pipeline";
+import { ProductTab } from "~/components/company-tabs/product";
+import { SetupTab } from "~/components/company-tabs/setup";
+import { SourceCodeTab } from "~/components/company-tabs/source-code";
+import type { CompanySettingsPatch, CompanyTabProps } from "~/components/company-tabs/types";
+import { WorkspaceTab } from "~/components/company-tabs/workspace";
 import { SpinChat } from "~/components/spin-chat";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
-import { approveAction, messageCompany, rejectAction } from "~/server/actions";
+import { cn } from "~/lib/utils";
+import {
+    approveAction,
+    messageCompany,
+    rejectAction,
+    updateCompanySettings,
+} from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
-import { getCompany, listActivity, listCompanies } from "~/server/data";
+import { getCompany, listActivity, listCompanies, listCompanyActions } from "~/server/data";
 // The .cc command-center + spin stylesheets this page relies on - load here so a direct
 // /companies/<slug> visit is styled (its route chunk doesn't include the home chunk).
 import "~/components/command-center/proto.css";
@@ -24,9 +39,13 @@ export const Route = createFileRoute("/companies/$slug")({
         const summary =
             companies.find((c) => c.id === params.slug || c.slug === params.slug) ?? null;
         const co = detail ?? summary;
+        // The full task list powers the Pipeline/Product tabs (skip for a draft / not-found).
+        const actions =
+            co && co.status !== "draft" ? await listCompanyActions({ data: co.id }) : [];
         return {
             detail,
             summary,
+            actions,
             activity: co ? activity.filter((a) => a.companySlug === co.slug) : [],
         };
     },
@@ -34,6 +53,16 @@ export const Route = createFileRoute("/companies/$slug")({
 });
 
 const CO_TABS = ["Overview", "Pipeline", "Workspace", "Product", "Growth", "Setup", "Source Code"];
+// The 6 non-Overview tabs → their component. Overview is bespoke (has extra props); these all
+// take the same CompanyTabProps.
+const TAB_COMPONENT: Record<string, (p: CompanyTabProps) => ReactNode> = {
+    Pipeline: PipelineTab,
+    Workspace: WorkspaceTab,
+    Product: ProductTab,
+    Growth: GrowthTab,
+    Setup: SetupTab,
+    "Source Code": SourceCodeTab,
+};
 
 // Company workspace - the live prototype: left co-pilot chat (renderCompanyLeft / .cpg-chat)
 // + center tabbed company view (renderCompanyView / .co-tabs + .co-ov3 Overview).
@@ -41,12 +70,13 @@ const CO_TABS = ["Overview", "Pipeline", "Workspace", "Product", "Growth", "Setu
 function CompanyWorkspace() {
     const { slug } = Route.useParams();
     const router = useRouter();
-    const { detail, summary, activity } = Route.useLoaderData();
+    const { detail, summary, actions, activity } = Route.useLoaderData();
     const base = detail ?? summary;
     const companyId = base?.id;
     const [tab, setTab] = useState("Overview");
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
+    const [busy, setBusy] = useState(false);
 
     // Poll the loader so the engine's scope narration, chat replies and build/run status
     // stream in without a manual reload.
@@ -83,6 +113,20 @@ function CompanyWorkspace() {
         },
         [router],
     );
+    // Setup/Growth tabs persist company config; a shared busy flag disables their controls in-flight.
+    const onUpdate = useCallback(
+        async (patch: CompanySettingsPatch) => {
+            if (!companyId || busy) return;
+            setBusy(true);
+            try {
+                await updateCompanySettings({ data: { companyId, ...patch } });
+                await router.invalidate();
+            } finally {
+                setBusy(false);
+            }
+        },
+        [companyId, busy, router],
+    );
 
     if (!base) {
         return (
@@ -101,6 +145,7 @@ function CompanyWorkspace() {
     }
 
     const co = base as CompanyDetail;
+    const TabComp = TAB_COMPONENT[tab];
 
     // A draft company is still incubating: render the spin-up chat (scout → proposals → spec →
     // approve) as its page. Approving graduates it and this same page becomes the workspace below.
@@ -123,21 +168,24 @@ function CompanyWorkspace() {
             <div className="cc grid h-full grid-cols-1 lg:grid-cols-[minmax(360px,420px)_1fr]">
                 {/* ============ LEFT · co-pilot chat ============ */}
                 <aside className="flex min-h-0 flex-col border-r bg-secondary/40 lg:h-full">
-                    <div className="flex items-start gap-3.5 border-b px-4 py-4">
-                        <span
-                            className="grid size-10 flex-none place-items-center rounded-xl font-display text-[17px] font-bold text-white"
-                            style={{ background: TONE_VAR[co.tone] }}
-                        >
-                            {co.name.charAt(0)}
-                        </span>
+                    {/* Borderless, open identity header (prototype .cl-head): the chat IS the company. */}
+                    <div className="flex items-start gap-3 px-[18px] py-[15px]">
+                        <CompanyLogo
+                            name={co.name}
+                            branding={co.branding}
+                            size={40}
+                            radius={12}
+                            style={{
+                                boxShadow:
+                                    "inset 0 1px 1px rgba(255,255,255,.22), 0 2px 8px rgba(0,0,0,.12)",
+                            }}
+                        />
                         <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                                <span className="truncate font-display text-[22px] font-semibold tracking-[-0.02em]">
+                            <div className="flex items-center gap-2.5">
+                                <span className="truncate font-display text-[17px] font-semibold tracking-[-0.01em]">
                                     {co.name}
                                 </span>
-                                <span
-                                    className={`size-2 flex-none rounded-full ${co.status === "active" ? "bg-success pulse" : "bg-warning"}`}
-                                />
+                                <LiveStatus co={co} />
                             </div>
                             {detail?.thesis && (
                                 <p className="mt-1 truncate text-xs leading-[1.45] text-muted-foreground">
@@ -156,12 +204,12 @@ function CompanyWorkspace() {
                             </div>
                         ) : (
                             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-                                <span
-                                    className="grid size-11 place-items-center rounded-xl font-display text-base font-bold text-white"
-                                    style={{ background: TONE_VAR[co.tone] }}
-                                >
-                                    {co.name.charAt(0)}
-                                </span>
+                                <CompanyLogo
+                                    name={co.name}
+                                    branding={co.branding}
+                                    size={44}
+                                    radius={12}
+                                />
                                 <p className="mt-3 text-sm font-medium">Message {co.name}</p>
                                 <p className="mt-1 text-xs text-faint">
                                     Steer this company - ask for changes, approve slices, set
@@ -183,7 +231,7 @@ function CompanyWorkspace() {
                                 }
                             }}
                             placeholder={`Message ${co.name}…`}
-                            className="block max-h-[260px] min-h-[92px] w-full resize-none rounded-xl border bg-card px-3.5 py-3 pr-12 text-sm leading-relaxed outline-none focus:border-primary"
+                            className="block max-h-[260px] min-h-[120px] w-full resize-none rounded-xl border bg-card px-3.5 py-[13px] pr-12 text-sm leading-relaxed outline-none focus:border-primary"
                         />
                         <button
                             type="button"
@@ -237,7 +285,7 @@ function CompanyWorkspace() {
                             </span>
                         </div>
 
-                        <div className="co-tabwrap">
+                        <div className="co-tabwrap py-2">
                             {tab === "Overview" ? (
                                 <Overview
                                     co={co}
@@ -245,6 +293,15 @@ function CompanyWorkspace() {
                                     activity={activity}
                                     onApprove={approve}
                                     onReject={reject}
+                                />
+                            ) : TabComp ? (
+                                <TabComp
+                                    co={co}
+                                    actions={actions}
+                                    busy={busy}
+                                    onApprove={approve}
+                                    onReject={reject}
+                                    onUpdate={onUpdate}
                                 />
                             ) : (
                                 <div className="co-ov3">
@@ -415,7 +472,34 @@ function Overview({
     );
 }
 
-// Left-rail chat bubble (.cpg-chat .msg / .bubble).
+// The company's live-status pill (prototype .cl-live): a tone dot with a soft ring + a mono
+// uppercase label. "building" while a slice is in flight, else "live"/"paused"/"archived".
+function LiveStatus({ co }: { co: CompanyDetail }) {
+    const building =
+        co.slice?.state === "building" ||
+        co.slice?.state === "awaiting_approval" ||
+        co.slice?.state === "blocked";
+    const s =
+        co.status === "paused"
+            ? { label: "paused", dot: "bg-warning", ring: "var(--warning-soft)" }
+            : co.status === "archived"
+              ? { label: "archived", dot: "bg-neutral", ring: "var(--neutral-soft)" }
+              : building
+                ? { label: "building", dot: "bg-info", ring: "var(--info-soft)" }
+                : { label: "live", dot: "bg-success", ring: "var(--success-soft)" };
+    return (
+        <span className="inline-flex flex-none items-center gap-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.05em] text-muted-foreground">
+            <span
+                className={cn("size-1.5 rounded-full", s.dot)}
+                style={{ boxShadow: `0 0 0 3px ${s.ring}` }}
+            />
+            {s.label}
+        </span>
+    );
+}
+
+// Left-rail chat bubble (.cpg-chat .msg / .bubble). Assistant avatar = the company logo; user = a
+// person glyph (prototype CPG_ICON_USER on a cream .av).
 function Bubble({ m, co }: { m: ChatMessage; co: CompanyDetail }) {
     if (m.role === "system") {
         return (
@@ -429,12 +513,13 @@ function Bubble({ m, co }: { m: ChatMessage; co: CompanyDetail }) {
     const me = m.role === "user";
     return (
         <div className={`msg${me ? " me" : ""}`}>
-            <span
-                className="av"
-                style={me ? undefined : ({ background: TONE_VAR[co.tone] } as CSSProperties)}
-            >
-                {me ? "" : co.name.charAt(0)}
-            </span>
+            {me ? (
+                <span className="av">
+                    <User className="size-[15px]" />
+                </span>
+            ) : (
+                <CompanyLogo name={co.name} branding={co.branding} size={28} radius={9} />
+            )}
             <div className="bubble">
                 <p>{m.content}</p>
                 <span className="t">{m.ago}</span>
