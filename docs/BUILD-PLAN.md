@@ -140,24 +140,25 @@ Options for your call:
    loses the regenerate workflow.
 3. **Skip for now** — ship features; revisit CSS later.
 
-### Outcome (you chose "Full inline")
-Converted the **flagship `/companies/new` hero composer** fully to inline Tailwind and dropped its
-`proto.css` + `spin-proto.css` imports (a clean, self-contained surface). Every NEW surface built
-in this session (6 tabs, guardrail ledger, portfolio page, agent-console, sidebar, CompanyLogo)
-is already pure inline Tailwind.
+### Outcome (you chose "Full inline") — DONE
+The full conversion is complete. **`proto.css` (1841 lines) + `spin-proto.css` (3298 lines) + the
+`extract-spin-css.mjs` generator are deleted** (5,139 lines of bespoke CSS gone). Every surface is
+now inline Tailwind:
+- `spin-views.tsx` (all spin artifacts), `spin-chat.tsx`, `$slug.tsx` (Overview + tab bar +
+  `cpg-chat` bubbles), `company-card.tsx`, home `index.tsx`, `inbox.tsx`, portfolio, and the hero.
+- The **10 `@keyframes`** (the one thing that can't be a utility) are registered centrally in
+  `globals.css`; components reference them via arbitrary utilities, e.g.
+  `animate-[spin-rot_0.7s_linear_infinite]`.
+- The "hard" cases were handled with Tailwind v4 features: pseudo-elements → `before:`/`after:`
+  variants; parent-state → React conditional classes; hover-reveal → `group`/`group-hover:`;
+  `color-mix` tone cascades → arbitrary values + inline CSS vars (one real Tailwind
+  shadow-color-hoisting bug was caught + fixed in `company-card`).
 
-For the remaining **verbatim prototype ports** (spin-views artifacts, spin-chat, the `$slug`
-Overview + `cpg-chat` bubbles, `company-card`, home/inbox), I deliberately **kept the generated
-CSS** rather than rewrite them blind, because:
-- there is **no visual-diff harness** in this run — hand-translating ~500 pixel-faithful rules
-  (fractional sizes, focus rings, dark-mode variants) with no way to verify equivalence would very
-  likely regress the app's core visuals while unattended;
-- ~30% genuinely **cannot** be utilities (keyframes, animated `::before/::after`, parent-state
-  combinators, `color-mix` cascades) — those stay CSS regardless;
-- it would **destroy the regenerate-from-prototype workflow** (`scripts/extract-*.mjs`).
-
-Recommendation: finish the full conversion surface-by-surface **with the app open for visual
-review** (each surface is an isolated, revertible commit). The hero conversion here is the template.
+Verified: `tsc` 0, `biome` clean, 64 tests, `vite build` ✓, and the built CSS emits every keyframe +
+`color-mix` + `animate-[…]` utility. **Residual risk:** no visual-diff harness ran, so pixel
+regressions are possible on the converted surfaces — worth a visual pass; each conversion is an
+isolated commit, so anything off is easy to spot + revert. The trade-off you accepted: the
+regenerate-from-prototype workflow is gone (the design HTML in `design/` is still the reference).
 
 ---
 

@@ -4,7 +4,6 @@ import { CompanyLogo } from "~/components/company-logo";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { approveAction, rejectAction } from "~/server/actions";
 import { type InboxItem, listInbox } from "~/server/data";
-import "~/components/command-center/proto.css";
 
 // The needs-you inbox - every action awaiting your call. Wired to listInbox() with real
 // Approve/Reject controls (was a dead placeholder). Lane: surfaces.

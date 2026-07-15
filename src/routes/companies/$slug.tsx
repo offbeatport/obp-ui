@@ -22,10 +22,6 @@ import {
 } from "~/server/actions";
 import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies, listCompanyActions } from "~/server/data";
-// The .cc command-center + spin stylesheets this page relies on - load here so a direct
-// /companies/<slug> visit is styled (its route chunk doesn't include the home chunk).
-import "~/components/command-center/proto.css";
-import "~/components/command-center/spin-proto.css";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
@@ -152,7 +148,7 @@ function CompanyWorkspace() {
     if (co.status === "draft" && detail) {
         return (
             <AppShell active="companies">
-                <div className="cc dash-mode h-full">
+                <div className="h-full">
                     <SpinChat detail={detail} />
                 </div>
             </AppShell>
@@ -165,7 +161,7 @@ function CompanyWorkspace() {
 
     return (
         <AppShell active="companies">
-            <div className="cc grid h-full grid-cols-1 lg:grid-cols-[minmax(360px,420px)_1fr]">
+            <div className="grid h-full grid-cols-1 lg:grid-cols-[minmax(360px,420px)_1fr]">
                 {/* ============ LEFT · co-pilot chat ============ */}
                 <aside className="flex min-h-0 flex-col border-r bg-secondary/40 lg:h-full">
                     {/* Borderless, open identity header (prototype .cl-head): the chat IS the company. */}
@@ -197,7 +193,7 @@ function CompanyWorkspace() {
 
                     <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
                         {messages.length > 0 ? (
-                            <div className="cpg-chat">
+                            <div className="flex flex-col gap-4 px-1.5 pt-2 pb-2.5">
                                 {messages.map((m) => (
                                     <Bubble key={m.id} m={m} co={co} />
                                 ))}
@@ -247,29 +243,37 @@ function CompanyWorkspace() {
 
                 {/* ============ RIGHT · company view ============ */}
                 <div className="min-h-0 overflow-y-auto bg-background px-6">
-                    <div className="cows mx-auto max-w-[820px]">
-                        <div className="co-tabs">
+                    <div className="mx-auto flex max-w-[820px] flex-col">
+                        <div className="sticky top-0 z-[4] mb-[18px] flex items-end gap-0.5 border-b border-border bg-[linear-gradient(var(--background)_68%,transparent)] pt-2">
                             {CO_TABS.map((t) => (
                                 <button
                                     key={t}
                                     type="button"
                                     onClick={() => setTab(t)}
-                                    className={`co-tab${t === tab ? " on" : ""}`}
+                                    className={cn(
+                                        "relative inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-t-[8px] px-[15px] pt-[9px] pb-[13px] text-[13px] transition-colors after:absolute after:-bottom-px after:right-[15px] after:left-[15px] after:h-0.5 after:rounded-t-[2px] after:bg-primary after:transition-[opacity,transform] after:duration-200 after:content-['']",
+                                        t === tab
+                                            ? "font-semibold text-foreground after:opacity-100 after:[transform:scaleX(1)]"
+                                            : "font-medium text-faint after:opacity-0 after:[transform:scaleX(0.35)] hover:text-muted-foreground",
+                                    )}
                                 >
                                     {t}
                                     {t === "Overview" && co.needsYou && (
-                                        <span className="cb">1</span>
+                                        <span className="rounded-[10px] bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
+                                            1
+                                        </span>
                                     )}
                                 </button>
                             ))}
-                            <span className="cpg-wstools">
+                            <span className="mb-1.5 ml-auto inline-flex items-center gap-2.5 self-center">
                                 <a
-                                    className="preview-link"
+                                    className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-[11.5px] text-faint no-underline transition hover:bg-card hover:text-muted-foreground"
                                     href={href}
                                     target="_blank"
                                     rel="noreferrer"
                                 >
                                     <svg
+                                        className="size-[13px]"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -285,7 +289,7 @@ function CompanyWorkspace() {
                             </span>
                         </div>
 
-                        <div className="co-tabwrap py-2">
+                        <div className="py-2">
                             {tab === "Overview" ? (
                                 <Overview
                                     co={co}
@@ -304,8 +308,8 @@ function CompanyWorkspace() {
                                     onUpdate={onUpdate}
                                 />
                             ) : (
-                                <div className="co-ov3">
-                                    <div className="ov3-empty">
+                                <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">
+                                    <div className="px-3 py-2 text-[13px] text-faint">
                                         The {tab} surface is generated and maintained by {co.name}'s
                                         build loop.
                                     </div>
@@ -319,13 +323,11 @@ function CompanyWorkspace() {
     );
 }
 
-const FD: Record<string, string> = {
-    green: "c",
-    blue: "b",
-    violet: "a",
-    slate: "b",
-    amber: "a",
-    red: "a",
+// Now-building task dot tone by slice state (todo / other → neutral).
+const OV3_DOT: Record<string, string> = {
+    building: "bg-warning",
+    awaiting_approval: "bg-approval",
+    blocked: "bg-destructive",
 };
 
 // Overview tab (co-ov3) - stats · mission · now-building · up-next · recent activity.
@@ -354,47 +356,73 @@ function Overview({
     const queued = slice && slice.state === "todo" ? slice : null;
 
     return (
-        <div className="co-page co-ov3">
-            <div className="ov3-stats">
-                <div className="ov3-stat">
-                    <span className="ov3-v mono">${co.mrr}</span>
-                    <span className="ov3-l">MRR / mo</span>
-                    <span className={`ov3-d${co.mrr > 0 ? " up" : ""}`}>
+        <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">
+            <div className="mb-1 flex flex-wrap items-end gap-x-10 gap-y-[26px]">
+                <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[32px] font-semibold leading-none tracking-[-0.02em] text-foreground">
+                        ${co.mrr}
+                    </span>
+                    <span className="text-[11.5px] text-faint">MRR / mo</span>
+                    <span
+                        className={cn(
+                            "min-h-[14px] font-mono text-[11px]",
+                            co.mrr > 0 ? "text-success" : "text-faint",
+                        )}
+                    >
                         {co.mrr > 0 ? "live revenue" : "pre-revenue"}
                     </span>
                 </div>
-                <div className="ov3-stat">
-                    <span className="ov3-v mono">{co.users}</span>
-                    <span className="ov3-l">paying users</span>
-                    <span className="ov3-d"> </span>
+                <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[32px] font-semibold leading-none tracking-[-0.02em] text-foreground">
+                        {co.users}
+                    </span>
+                    <span className="text-[11.5px] text-faint">paying users</span>
+                    <span className="min-h-[14px] font-mono text-[11px] text-faint"> </span>
                 </div>
-                <div className="ov3-stat">
-                    <span className="ov3-v mono">{co.shipped}</span>
-                    <span className="ov3-l">slices shipped</span>
-                    <span className="ov3-d"> </span>
+                <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[32px] font-semibold leading-none tracking-[-0.02em] text-foreground">
+                        {co.shipped}
+                    </span>
+                    <span className="text-[11.5px] text-faint">slices shipped</span>
+                    <span className="min-h-[14px] font-mono text-[11px] text-faint"> </span>
                 </div>
-                <div className="ov3-stat">
-                    <span className="ov3-v mono">{co.status}</span>
-                    <span className="ov3-l">status</span>
-                    <span className="ov3-d"> </span>
+                <div className="flex flex-col gap-1">
+                    <span className="font-mono text-[32px] font-semibold leading-none tracking-[-0.02em] text-foreground">
+                        {co.status}
+                    </span>
+                    <span className="text-[11.5px] text-faint">status</span>
+                    <span className="min-h-[14px] font-mono text-[11px] text-faint"> </span>
                 </div>
             </div>
 
-            {thesis && <p className="ov3-mission">{thesis}</p>}
+            {thesis && (
+                <p className="mt-4 mb-2 max-w-[60ch] text-[14.5px] leading-normal text-muted-foreground">
+                    {thesis}
+                </p>
+            )}
 
-            <div className="ov3-sec">
-                <div className="ov3-sec-h">
-                    <span className="ov3-dot-a" />
+            <div className="mt-[26px]">
+                <div className="mb-2 flex items-center gap-[9px] font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
+                    <span className="size-[7px] rounded-full bg-primary" />
                     Now building
-                    <span className="ov3-sec-n">{building ? 1 : 0}</span>
+                    <span className="text-[10px] text-faint">{building ? 1 : 0}</span>
                 </div>
-                <div className="ov3-tasks">
+                <div className="flex flex-col">
                     {building ? (
-                        <div className={`ov3-task is-${building.state}`}>
-                            <span className="ov3-dot" />
-                            <span className="ov3-tid">S{building.n}</span>
-                            <span className="ov3-tmain">
-                                <span className="ov3-ttitle">{building.title}</span>
+                        <div className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors">
+                            <span
+                                className={cn(
+                                    "size-[7px] flex-none rounded-full",
+                                    OV3_DOT[building.state] ?? "bg-neutral",
+                                )}
+                            />
+                            <span className="min-w-10 flex-none font-mono text-[11px] font-semibold text-faint">
+                                S{building.n}
+                            </span>
+                            <span className="flex min-w-0 flex-1 flex-col">
+                                <span className="truncate text-sm font-medium text-foreground">
+                                    {building.title}
+                                </span>
                             </span>
                             {building.state === "awaiting_approval" ? (
                                 <span className="flex flex-none gap-1.5">
@@ -414,55 +442,81 @@ function Overview({
                                     </button>
                                 </span>
                             ) : (
-                                <span className={`ov3-tstatus st-${building.state}`}>
+                                <span
+                                    className={cn(
+                                        "flex-none font-mono text-[9.5px] uppercase tracking-[0.05em]",
+                                        building.state === "building"
+                                            ? "text-warning"
+                                            : "text-faint",
+                                    )}
+                                >
                                     {building.state.replace("_", " ")}
                                 </span>
                             )}
                         </div>
                     ) : (
-                        <div className="ov3-empty">
+                        <div className="px-3 py-2 text-[13px] text-faint">
                             Nothing building right now - the queue is clear.
                         </div>
                     )}
                 </div>
             </div>
 
-            <div className="ov3-sec">
-                <div className="ov3-sec-h">
-                    Up next<span className="ov3-sec-n">{queued ? 1 : 0}</span>
+            <div className="mt-[26px]">
+                <div className="mb-2 flex items-center gap-[9px] font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
+                    Up next<span className="text-[10px] text-faint">{queued ? 1 : 0}</span>
                 </div>
-                <div className="ov3-tasks">
+                <div className="flex flex-col">
                     {queued ? (
-                        <div className={`ov3-task is-${queued.state}`}>
-                            <span className="ov3-dot" />
-                            <span className="ov3-tid">S{queued.n}</span>
-                            <span className="ov3-tmain">
-                                <span className="ov3-ttitle">{queued.title}</span>
+                        <div className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors">
+                            <span
+                                className={cn(
+                                    "size-[7px] flex-none rounded-full",
+                                    OV3_DOT[queued.state] ?? "bg-neutral",
+                                )}
+                            />
+                            <span className="min-w-10 flex-none font-mono text-[11px] font-semibold text-faint">
+                                S{queued.n}
                             </span>
-                            <span className="ov3-tstatus">{queued.state}</span>
+                            <span className="flex min-w-0 flex-1 flex-col">
+                                <span className="truncate text-sm font-medium text-foreground">
+                                    {queued.title}
+                                </span>
+                            </span>
+                            <span className="flex-none font-mono text-[9.5px] uppercase tracking-[0.05em] text-faint">
+                                {queued.state}
+                            </span>
                         </div>
                     ) : (
-                        <div className="ov3-empty">Nothing queued.</div>
+                        <div className="px-3 py-2 text-[13px] text-faint">Nothing queued.</div>
                     )}
                 </div>
             </div>
 
-            <div className="ov3-sec">
-                <div className="ov3-sec-h">Recent activity</div>
-                <ul className="ov3-feed">
+            <div className="mt-[26px]">
+                <div className="mb-2 flex items-center gap-[9px] font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
+                    Recent activity
+                </div>
+                <ul className="m-0 list-none p-0">
                     {activity.length > 0 ? (
                         activity.slice(0, 6).map((a) => (
-                            <li key={a.id}>
+                            <li
+                                key={a.id}
+                                className="flex items-start gap-[11px] px-3 py-[9px] text-[13px] leading-[1.4] text-muted-foreground"
+                            >
                                 <i
-                                    className={`fd ${FD[a.tone]}`}
+                                    className="mt-1.5 size-[7px] flex-none rounded-full"
                                     style={{ background: TONE_VAR[a.tone] }}
                                 />
                                 <span>{a.text}</span>
                             </li>
                         ))
                     ) : (
-                        <li>
-                            <i className="fd a" style={{ background: TONE_VAR.violet }} />
+                        <li className="flex items-start gap-[11px] px-3 py-[9px] text-[13px] leading-[1.4] text-muted-foreground">
+                            <i
+                                className="mt-1.5 size-[7px] flex-none rounded-full"
+                                style={{ background: TONE_VAR.violet }}
+                            />
                             <span>Agent is warming up - first activity soon.</span>
                         </li>
                     )}
@@ -503,26 +557,40 @@ function LiveStatus({ co }: { co: CompanyDetail }) {
 function Bubble({ m, co }: { m: ChatMessage; co: CompanyDetail }) {
     if (m.role === "system") {
         return (
-            <div className="sys">
-                <span className="sd" />
-                <span className="sx">{m.content}</span>
-                <span className="st">{m.ago}</span>
+            <div className="flex items-center gap-2 px-1.5 py-px font-mono text-[10.5px] text-faint">
+                <span className="size-[5px] shrink-0 rounded-full bg-success shadow-[0_0_0_3px_var(--success-soft)]" />
+                <span className="min-w-0 truncate">{m.content}</span>
+                <span className="ml-auto opacity-[0.65]">{m.ago}</span>
             </div>
         );
     }
     const me = m.role === "user";
     return (
-        <div className={`msg${me ? " me" : ""}`}>
+        <div className={cn("flex max-w-full items-start gap-[11px]", me && "flex-row-reverse")}>
             {me ? (
-                <span className="av">
+                <span className="mt-px grid size-7 shrink-0 place-items-center overflow-hidden rounded-[9px] bg-secondary font-display text-xs font-bold text-muted-foreground">
                     <User className="size-[15px]" />
                 </span>
             ) : (
                 <CompanyLogo name={co.name} branding={co.branding} size={28} radius={9} />
             )}
-            <div className="bubble">
+            <div
+                className={cn(
+                    "text-[13.5px] leading-normal",
+                    me
+                        ? "max-w-[300px] rounded-[14px_5px_14px_14px] bg-primary px-3.5 py-2.5 text-white"
+                        : "max-w-[440px] rounded-[5px_14px_14px_14px] pt-0.5 pb-[3px] text-foreground",
+                )}
+            >
                 <p>{m.content}</p>
-                <span className="t">{m.ago}</span>
+                <span
+                    className={cn(
+                        "mt-[7px] block font-mono text-[10px]",
+                        me ? "text-white/70" : "text-faint",
+                    )}
+                >
+                    {m.ago}
+                </span>
             </div>
         </div>
     );
