@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { desc, eq, isNull, sql } from "drizzle-orm";
-import type { Branding, Candidate, CompanySpec, SpinMessage, SpinStatus } from "../config/spin.js";
+import { desc, eq, sql } from "drizzle-orm";
+import type { Branding, Candidate, CompanySpec, SpinStatus } from "../config/spin.js";
 import {
     type Action,
     type Company,
@@ -8,18 +8,17 @@ import {
     actions,
     companies,
     db,
-    drafts,
     messages,
     opportunities,
     runs,
 } from "../db/index.js";
 
 // ============================================================================
-// DATA CONTRACT — the read seam between the `engine` lane (fills bodies from the
+// DATA CONTRACT - the read seam between the `engine` lane (fills bodies from the
 // DB) and the `ui` lane (renders these shapes). Bodies now read the REAL DB and
-// project rows into these view-models; the exported TYPES are frozen — the seam.
+// project rows into these view-models; the exported TYPES are frozen - the seam.
 //
-// RULE: don't change a shape without coordinating both lanes — this is the seam.
+// RULE: don't change a shape without coordinating both lanes - this is the seam.
 // View-models are flattened/enriched for display (derived from src/db/schema.ts):
 //   company → CompanySummary/CompanyDetail   action(current) → Slice
 //   run/action → ActivityItem                opportunity → OpportunityItem
@@ -27,13 +26,14 @@ import {
 // ============================================================================
 
 export type Tone = "green" | "blue" | "violet" | "slate" | "amber" | "red";
-export type CompanyStatus = "active" | "paused" | "archived";
+// 'draft' = still incubating in the spin-up flow (not yet a live product).
+export type CompanyStatus = "draft" | "active" | "paused" | "archived";
 export type SliceState = "building" | "awaiting_approval" | "blocked" | "todo" | "shipped";
 
 export type Slice = { n: number; title: string; state: SliceState; actionId: string };
 
 export type CompanySummary = {
-    id: string; // immutable company id — the collision-proof routing key
+    id: string; // immutable company id - the collision-proof routing key
     slug: string; // human URL key (slugify(name)); may collide, so prefer id for routing
     name: string;
     tone: Tone; // avatar tint
@@ -57,6 +57,14 @@ export type CompanyDetail = CompanySummary & {
     domain?: string;
     liveUrl?: string;
     messages: ChatMessage[];
+    // Set only while status='draft' (the spin-up incubation): the chat UI renders the spin flow.
+    spin?: {
+        stage: SpinStatus;
+        candidates: Candidate[];
+        pickedId?: string;
+        spec?: CompanySpec;
+        branding?: Branding;
+    };
 };
 
 export type ActivityItem = {
@@ -98,33 +106,15 @@ export type PortfolioMetrics = {
     needsYou: number;
 };
 
-export type ChatSummary = { slug: string; title: string; ago: string };
-
-// The whole spin session projected for the chat UI (polled while the engine fills it).
-export type DraftView = {
-    id: string;
-    thought: string;
-    status: SpinStatus;
-    preset: string;
-    candidates: Candidate[];
-    pickedId?: string;
-    spec?: CompanySpec;
-    branding?: Branding;
-    companyId?: string; // set once committed → the UI routes to /companies/<id>
-    messages: SpinMessage[]; // the chat transcript
-    working: boolean; // engine is mid-pass (scouting/specing) → UI shows a typing indicator
-    ago: string;
-};
-
 // ---------------------------------------------------------------------------
-// Projection helpers — pure row → view-model mapping (no DB access).
+// Projection helpers - pure row → view-model mapping (no DB access).
 // ---------------------------------------------------------------------------
 
 const TONES: Tone[] = ["green", "blue", "violet", "slate", "amber", "red"];
 
 // URL key from the company name; getCompany reverses it by re-slugifying candidates.
 // Readable + stable for the few companies a local instance has (collisions resolve to
-// the first match — acceptable at v1's scale).
+// the first match - acceptable at v1's scale).
 export function slugify(name: string): string {
     return (
         name
@@ -266,7 +256,7 @@ function sliceIndex(all: Action[]): Map<string, number> {
 }
 
 // ---------------------------------------------------------------------------
-// Read server-fns (the contract surface) — real DB reads. An empty DB yields
+// Read server-fns (the contract surface) - real DB reads. An empty DB yields
 // empty collections, which the UI renders as its empty states.
 // ---------------------------------------------------------------------------
 
@@ -286,7 +276,7 @@ export const listCompanies = createServerFn({ method: "GET" }).handler(
 export const getCompany = createServerFn({ method: "GET" })
     .validator((slug: string) => slug)
     .handler(async ({ data: slug }): Promise<CompanyDetail | null> => {
-        // Resolve by immutable id FIRST (createCompany navigates by id → collision-proof),
+        // Resolve by immutable id FIRST (the spin flow navigates by id - collision-proof),
         // then fall back to slugify(name) for human/portfolio links.
         const all = db.select().from(companies).all();
         const c = all.find((x) => x.id === slug) ?? all.find((x) => slugify(x.name) === slug);
@@ -299,12 +289,24 @@ export const getCompany = createServerFn({ method: "GET" })
             .orderBy(messages.createdAt, sql`rowid`)
             .all();
         const liveUrl = acts.slice().sort(byCreated).map(previewUrlOf).filter(Boolean).pop();
+        // While the company is a draft, surface its spin state so the chat UI renders the spin flow.
+        const spin =
+            c.status === "draft" && c.spinStatus
+                ? {
+                      stage: c.spinStatus,
+                      candidates: c.spin?.candidates ?? [],
+                      pickedId: c.spin?.pickedId,
+                      spec: c.spin?.spec,
+                      branding: c.spin?.branding,
+                  }
+                : undefined;
         return {
             ...toSummary(c, acts),
             thesis: c.thesis,
             domain: c.domain ?? undefined,
             liveUrl: liveUrl ?? undefined,
             messages: msgs.map(toChatMessage),
+            spin,
         };
     });
 
@@ -390,7 +392,7 @@ export const listInbox = createServerFn({ method: "GET" }).handler(
                           ? `Approve "${a.title}"`
                           : `Authorize "${a.title}"`,
                     sub: blocked
-                        ? "No progress — needs a decision."
+                        ? "No progress - needs a decision."
                         : "Check is green and it's live · approve to ship.",
                     sliceN: idx.get(a.id),
                     liveUrl: previewUrlOf(a),
@@ -398,54 +400,6 @@ export const listInbox = createServerFn({ method: "GET" }).handler(
             });
     },
 );
-
-export const listChats = createServerFn({ method: "GET" }).handler(
-    async (): Promise<ChatSummary[]> =>
-        db
-            .select()
-            .from(messages)
-            .where(isNull(messages.companyId))
-            .orderBy(desc(messages.createdAt))
-            .all()
-            .filter((m) => m.role === "user")
-            .map((m) => ({ slug: m.id, title: m.content.slice(0, 80), ago: ago(m.createdAt) })),
-);
-
-// One read for the whole spin chat (polled). An empty/missing draft → null → the UI shows
-// the composer. All the shape-y bits live in draft.data (JSON), projected 1:1 here.
-export const getDraft = createServerFn({ method: "GET" })
-    .validator((id: string) => id)
-    .handler(async ({ data: id }): Promise<DraftView | null> => {
-        const d = db.select().from(drafts).where(eq(drafts.id, id)).get();
-        if (!d) return null;
-        const msgs = db
-            .select()
-            .from(messages)
-            .where(eq(messages.draftId, id))
-            .orderBy(messages.createdAt, sql`rowid`)
-            .all();
-        return {
-            id: d.id,
-            thought: d.thought,
-            status: d.status,
-            preset: d.guardrails?.preset ?? "balanced",
-            candidates: d.data.candidates ?? [],
-            pickedId: d.data.pickedId,
-            spec: d.data.spec,
-            branding: d.data.branding,
-            companyId: d.companyId ?? undefined,
-            messages: msgs
-                .filter((m) => m.role !== "system")
-                .map((m) => ({
-                    id: m.id,
-                    role: m.role as "user" | "assistant",
-                    content: m.content,
-                    ago: ago(m.createdAt),
-                })),
-            working: d.status === "scouting" || d.status === "specing",
-            ago: ago(d.createdAt),
-        };
-    });
 
 export const getPortfolioMetrics = createServerFn({ method: "GET" }).handler(
     async (): Promise<PortfolioMetrics> => {

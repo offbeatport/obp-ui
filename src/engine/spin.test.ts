@@ -17,42 +17,49 @@ const mockAI = vi.mocked(dispatchAI);
 
 function clearAll() {
     sqlite.exec(
-        "DELETE FROM run; DELETE FROM action; DELETE FROM message; DELETE FROM opportunity; DELETE FROM draft; DELETE FROM company; DELETE FROM app_config;",
+        "DELETE FROM run; DELETE FROM action; DELETE FROM message; DELETE FROM opportunity; DELETE FROM company; DELETE FROM app_config;",
     );
 }
 
-function addMsg(draftId: string, role: "user" | "assistant", content: string) {
+function addMsg(companyId: string, role: "user" | "assistant", content: string) {
     sqlite
-        .prepare("INSERT INTO message (id,draft_id,role,content,created_at) VALUES (?,?,?,?,?)")
-        .run(randomUUID(), draftId, role, content, Date.now());
+        .prepare("INSERT INTO message (id,company_id,role,content,created_at) VALUES (?,?,?,?,?)")
+        .run(randomUUID(), companyId, role, content, Date.now());
 }
-function msgs(draftId: string) {
+function msgs(companyId: string) {
     return sqlite
-        .prepare("SELECT role, content FROM message WHERE draft_id=? ORDER BY created_at, rowid")
-        .all(draftId) as { role: string; content: string }[];
+        .prepare("SELECT role, content FROM message WHERE company_id=? ORDER BY created_at, rowid")
+        .all(companyId) as { role: string; content: string }[];
 }
 
-type DraftInit = { thought?: string; status?: string; data?: unknown; preset?: string };
+// A draft company = one spin session. `status` here is the spinStatus sub-stage; `data` is spin.
+type DraftInit = { thought?: string; status?: string; data?: object; preset?: string };
 function makeDraft(init: DraftInit = {}): string {
     const id = randomUUID();
+    const spin = { preset: init.preset ?? "balanced", ...(init.data ?? {}) };
     sqlite
-        .prepare("INSERT INTO draft (id,thought,status,guardrails,data) VALUES (?,?,?,?,?)")
+        .prepare(
+            "INSERT INTO company (id,name,thesis,status,spin_status,spin) VALUES (?,?,?,'draft',?,?)",
+        )
         .run(
             id,
+            "Co",
             init.thought ?? "a scheduling tool for tutors",
             init.status ?? "scouting",
-            JSON.stringify({ preset: init.preset ?? "balanced" }),
-            JSON.stringify(init.data ?? {}),
+            JSON.stringify(spin),
         );
     return id;
 }
 
+// Reads the draft company's spinStatus (as `status`) + spin payload (as `data`).
 function read(id: string): { status: string; data: Record<string, unknown> } {
-    const r = sqlite.prepare("SELECT status, data FROM draft WHERE id=?").get(id) as {
+    const r = sqlite
+        .prepare("SELECT spin_status AS status, spin FROM company WHERE id=?")
+        .get(id) as {
         status: string;
-        data: string;
+        spin: string;
     };
-    return { status: r.status, data: JSON.parse(r.data) };
+    return { status: r.status, data: JSON.parse(r.spin) };
 }
 
 const aiOk = (text: string) => ({ text, model: "x", via: "claude-cli" as const, costUsd: 0 });
@@ -105,7 +112,7 @@ describe("spinScout", () => {
         expect(cands.map((c) => c.name)).toEqual(["Strong Bet", "Weak Bet"]); // ranked
     });
 
-    it("is status-gated — a second scout is a no-op (draft already 'proposals')", async () => {
+    it("is status-gated - a second scout is a no-op (draft already 'proposals')", async () => {
         const id = makeDraft();
         await spinScout(new Set());
         const first = read(id).data.candidates;
@@ -216,7 +223,7 @@ describe("spinSpec", () => {
         // (still 'specing') right before returning a spec for A.
         mockAI.mockImplementationOnce(async () => {
             sqlite
-                .prepare("UPDATE draft SET data=? WHERE id=?")
+                .prepare("UPDATE company SET spin=? WHERE id=?")
                 .run(JSON.stringify({ ...oneCandidate(randomUUID()) }), id);
             return aiOk(JSON.stringify({ product: "StaleSpecForA", pricingUsd: 20, trialDays: 7 }));
         });
@@ -278,7 +285,7 @@ describe("spinChat (offline heuristic routing)", () => {
 
     it("routes 'different, target agencies' → re-scout with criteria", async () => {
         const id = makeDraft({ status: "proposals", data: proposalsData });
-        addMsg(id, "user", "different — target agencies instead");
+        addMsg(id, "user", "different - target agencies instead");
         await spinChat(new Set());
         const { status, data } = read(id);
         expect(status).toBe("scouting");
@@ -286,12 +293,23 @@ describe("spinChat (offline heuristic routing)", () => {
         expect(data.candidates).toBeUndefined(); // cleared for the re-scout
     });
 
-    it("routes 'create it' on a spec → commits to a real company", async () => {
+    it("routes 'create it' on a spec → graduates the draft company to active", async () => {
         const id = makeDraft({ status: "spec", data: specData });
-        addMsg(id, "user", "looks great, create it");
+        addMsg(id, "user", "looks great, build it");
         await spinChat(new Set());
-        expect(read(id).status).toBe("committed");
-        expect((sqlite.prepare("SELECT COUNT(*) n FROM company").get() as { n: number }).n).toBe(1);
+        const co = sqlite
+            .prepare("SELECT status, spin_status AS spinStatus FROM company WHERE id=?")
+            .get(id) as { status: string; spinStatus: string | null };
+        expect(co.status).toBe("active"); // same row, graduated
+        expect(co.spinStatus).toBeNull();
+        // a first http-signup action was queued
+        expect(
+            (
+                sqlite.prepare("SELECT COUNT(*) n FROM action WHERE company_id=?").get(id) as {
+                    n: number;
+                }
+            ).n,
+        ).toBe(1);
     });
 
     it("skips a draft in the in-flight set", async () => {
