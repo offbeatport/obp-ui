@@ -9,6 +9,8 @@ import {
     scoreTotal,
 } from "../config/spin.js";
 import { actions, appConfig, companies, db, messages, opportunities } from "../db/index.js";
+import { slugify } from "../lib/slug.js";
+import { uniqueName } from "./naming.js";
 
 // The spin flow's DB logic. A company is created immediately in status 'draft' (this is what
 // "spin up" does); its spin sub-stage lives in company.spinStatus + company.spin, and the
@@ -29,13 +31,16 @@ function deriveName(thought: string): string {
 
 // "Spin up" — create the draft company. Returns its id; the UI routes to /companies/<id> where
 // the incubation chat lives. The engine's spinScout pass then fills spin.candidates.
-export function startSpinLogic(thought: string, guardrails: Guardrails): { id: string } {
+export function startSpinLogic(
+    thought: string,
+    guardrails: Guardrails,
+): { id: string; slug: string } {
     const t = thought.trim();
     if (!t) throw new Error("Describe the idea first.");
     const company = db
         .insert(companies)
         .values({
-            name: deriveName(t),
+            name: uniqueName(deriveName(t)),
             thesis: t,
             status: "draft",
             spinStatus: "scouting",
@@ -43,7 +48,7 @@ export function startSpinLogic(thought: string, guardrails: Guardrails): { id: s
         })
         .returning()
         .get();
-    return { id: company.id };
+    return { id: company.id, slug: slugify(company.name) };
 }
 
 // The spin payload of a draft company currently at one of `from` (else null — not actionable).
@@ -142,11 +147,11 @@ function thoughtCandidate(thought: string): Candidate {
 // Approve the reviewed spec → GRADUATE the draft company to a live one. Flips status draft→active,
 // applies the product name/domain/pricing, and scopes it (promoted opportunity + first http-signup
 // action + scope.done marker + narration) so the runner builds immediately and scope.ts skips it.
-// Idempotent: a re-approve of an already-graduated company just returns its id.
-export function graduateCompany(companyId: string): { ok: boolean; id?: string } {
+// Idempotent: a re-approve of an already-graduated company just returns its id + slug.
+export function graduateCompany(companyId: string): { ok: boolean; id?: string; slug?: string } {
     const c = db.select().from(companies).where(eq(companies.id, companyId)).get();
     if (!c) return { ok: false };
-    if (c.status !== "draft") return { ok: true, id: companyId }; // already graduated
+    if (c.status !== "draft") return { ok: true, id: companyId, slug: slugify(c.name) }; // graduated
     if (c.spinStatus !== "spec") return { ok: false };
     const spin = c.spin ?? {};
     const spec = spin.spec;
@@ -154,12 +159,15 @@ export function graduateCompany(companyId: string): { ok: boolean; id?: string }
     const branding = spin.branding;
     const picked = (spin.candidates ?? []).find((x) => x.id === spin.pickedId);
 
+    // Name the live company from the spec's product, made unique platform-wide (excluding this
+    // draft itself) so its slug is a collision-free route key.
+    const name = uniqueName(spec.product.slice(0, 48), companyId);
     db.update(companies)
         .set({
             status: "active",
             spinStatus: null,
             spin: null,
-            name: spec.product.slice(0, 48),
+            name,
             domain: branding?.domain,
             pricing: { plan: "Pro", priceUsd: spec.pricingUsd, interval: "month" },
             autopilot: "on",
@@ -210,5 +218,5 @@ export function graduateCompany(companyId: string): { ok: boolean; id?: string }
         .values({ scope: "global", key: `scope.done.${companyId}`, value: true })
         .onConflictDoNothing()
         .run();
-    return { ok: true, id: companyId };
+    return { ok: true, id: companyId, slug: slugify(name) };
 }

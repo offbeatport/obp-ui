@@ -223,7 +223,9 @@ function CompaniesNav() {
                     <Link
                         key={c.id}
                         to="/companies/$slug"
-                        params={{ slug: c.id }}
+                        // Active → the pretty name slug (the default); drafts → id (their name is
+                        // still volatile until graduation, so the slug would churn).
+                        params={{ slug: draft ? c.id : c.slug }}
                         className={cn(
                             "relative flex items-center gap-[11px] rounded-xl px-2.5 py-[9px] transition-colors hover:bg-primary/[0.07]",
                             draft && "bg-primary/[0.06]",

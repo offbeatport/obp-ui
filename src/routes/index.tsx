@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
     component: Home,
 });
 
-// Home — the live prototype's renderHome() / .home-simple:
+// Home - the live prototype's renderHome() / .home-simple:
 // greeting · big ask composer · Inbox strip · Your Companies (co-cards) · Up next.
 // design/v2-prototypes/08-chat-spine-pro-v7.html.
 function Home() {
@@ -165,7 +165,11 @@ function GateRow({ item }: { item: InboxItem }) {
     const g = GATE[item.kind];
     const t = TONE[item.tone];
     return (
-        <Link to="/companies/$slug" params={{ slug: item.companyId }} className="gate">
+        <Link
+            to="/companies/$slug"
+            params={{ slug: item.companySlug || item.companyId }}
+            className="gate"
+        >
             <span className={`gate-av ${t.solid}`}>{item.companyName.charAt(0)}</span>
             <div className="gate-main">
                 <div className="gate-top">
@@ -186,10 +190,10 @@ function GateRow({ item }: { item: InboxItem }) {
     );
 }
 
-// Up next — one queued task per company (its current slice), matching upcomingTasksHTML().
+// Up next - one queued task per company (its current slice), matching upcomingTasksHTML().
 function UpNext({ companies }: { companies: CompanySummary[] }) {
     const groups = companies
-        // only genuinely-pending slices — a finished (shipped) slice is not "up next"
+        // only genuinely-pending slices - a finished (shipped) slice is not "up next"
         .filter((c) => c.slice && c.slice.state !== "shipped")
         .map((c) => ({
             c,
@@ -254,7 +258,7 @@ function UpNext({ companies }: { companies: CompanySummary[] }) {
                     <circle cx="12" cy="12" r="9" />
                     <path d="M12 7v5l3 2" />
                 </svg>
-                <span>Preview only — each company runs its own queue on autopilot</span>
+                <span>Preview only - each company runs its own queue on autopilot</span>
             </div>
         </div>
     );

@@ -65,7 +65,7 @@ function LoopNode({ area, state, focus }: { area: Area; state: NodeState; focus:
     );
 }
 
-// Company card — brandmark · needs-you · build→grow→run work-line · live activity feed.
+// Company card - brandmark · needs-you · build→grow→run work-line · live activity feed.
 // Ported from design/v2-prototypes/08-chat-spine-pro-v7.html (coCardHTML / .co-card).
 export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem[] }) {
     const st = loopStates(c);
@@ -76,7 +76,8 @@ export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem
     return (
         <Link
             to="/companies/$slug"
-            params={{ slug: c.id }}
+            // Route by the unique name slug (default); drafts keep their stable id while volatile.
+            params={{ slug: c.status === "draft" ? c.id : c.slug }}
             className={`co-card ${STAGE_CLASS[c.tone]}${dead ? " co-dead" : ""}`}
             style={{ "--co-bc": TONE_VAR[c.tone] } as CSSProperties}
         >
