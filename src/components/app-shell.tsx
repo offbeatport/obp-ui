@@ -229,26 +229,26 @@ function CompaniesNav() {
                     <span
                         className={cn(
                             "grid size-6 flex-none place-items-center rounded-md text-[10px] font-bold text-primary-foreground",
-                            TONE[c.tone].solid,
+                            // Drafts (still incubating) get an icon + muted fill; live companies
+                            // get their tone-colored initials avatar.
+                            c.status === "draft" ? "bg-neutral text-card" : TONE[c.tone].solid,
                         )}
+                        aria-label={c.status === "draft" ? "Draft (incubating)" : undefined}
                     >
-                        {initials(c.name)}
+                        {c.status === "draft" ? (
+                            <FlaskConical className="size-3.5" />
+                        ) : (
+                            initials(c.name)
+                        )}
                     </span>
                     <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
                         {c.name}
                     </span>
-                    {c.status === "draft" ? (
-                        <FlaskConical
-                            className="size-3.5 flex-none text-faint"
-                            aria-label="Draft (incubating)"
+                    {c.status !== "draft" && c.needsYou && (
+                        <span
+                            className="size-1.5 flex-none rounded-full bg-primary"
+                            aria-label="Needs you"
                         />
-                    ) : (
-                        c.needsYou && (
-                            <span
-                                className="size-1.5 flex-none rounded-full bg-primary"
-                                aria-label="Needs you"
-                            />
-                        )
                     )}
                 </Link>
             ))}
