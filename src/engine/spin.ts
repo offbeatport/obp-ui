@@ -5,10 +5,12 @@ import {
     type CompanySpec,
     type Evidence,
     type EvidenceKind,
+    type Guardrails,
     type OppScores,
     SCORE_KEYS,
     type SpecSlice,
     type SpinData,
+    guardrailsText,
     paletteFor,
     scoreTotal,
 } from "../config/spin.js";
@@ -80,11 +82,7 @@ export async function spinScout(inflight: Set<string>): Promise<void> {
     await singleFlight(inflight, row.id, async () => {
         try {
             const spin = parseData(row.spin);
-            const candidates = await scoutCandidates(
-                row.thought,
-                presetOf(spin.preset),
-                spin.criteria,
-            );
+            const candidates = await scoutCandidates(row.thought, spin.guardrails, spin.criteria);
             // clear criteria once consumed (undefined drops from the merged JSON)
             advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
             // Open the chat with the result so it reads as a conversation.
@@ -124,6 +122,7 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
             const { spec, branding } = await draftSpecAndBranding(
                 picked,
                 row.thought,
+                data.guardrails,
                 data.editNote,
             );
             // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
@@ -447,7 +446,7 @@ function matchCandidate(text: string, candidates: Candidate[]): Candidate | unde
 
 async function scoutCandidates(
     thought: string,
-    preset: string,
+    guardrails: Guardrails | undefined,
     criteria?: string,
 ): Promise<Candidate[]> {
     const fb = fallbackCandidates(thought);
@@ -462,7 +461,7 @@ async function scoutCandidates(
                 '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
                 '"firstSlice":{"title":string,"doneWhen":string}}. scores are integers 0-10. ' +
                 "Give 2-3 evidence items each. name is a short product angle (2-3 words).",
-            prompt: `Founder's thought: ${thought}\nGuardrails: ${preset}.${extra}\nPropose 3 distinct, scored SaaS opportunities that a solo founder could ship.`,
+            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 3 distinct, scored SaaS opportunities that a solo founder could ship.`,
             maxTokens: 2200,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
@@ -481,6 +480,7 @@ async function scoutCandidates(
 async function draftSpecAndBranding(
     picked: Candidate,
     thought: string,
+    guardrails: Guardrails | undefined,
     editNote?: string,
 ): Promise<{ spec: CompanySpec; branding: Branding }> {
     const fb = fallbackSpec(picked, thought);
@@ -496,8 +496,9 @@ async function draftSpecAndBranding(
                 '"branding":{"mark":string,"palette":[string,string],"domain":string,"style":string}}. ' +
                 "product is a real, brandable company name. pricingUsd 9-299. trialDays 7-30. " +
                 "4-6 slices; slices[0] is the first buildable slice. mark is ONE uppercase letter. " +
-                "palette is two hex colors (e.g. #e0794c). domain like 'name.app'. 2-3 competitors.",
-            prompt: `Angle: ${picked.name}\nICP: ${picked.icp}\nWedge: ${picked.wedge}\nPain: ${picked.pain}\nFounder's thought: ${thought}${extra}\nWrite the full company spec + branding for this bet.`,
+                "palette is two hex colors (e.g. #e0794c). domain like 'name.app'. 2-3 competitors. " +
+                "Respect the founder's guardrails (budget, test/live, constraints) in stack + pricing.",
+            prompt: `Angle: ${picked.name}\nICP: ${picked.icp}\nWedge: ${picked.wedge}\nPain: ${picked.pain}\nFounder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}${extra}\nWrite the full company spec + branding for this bet.`,
             maxTokens: 2000,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
@@ -730,10 +731,6 @@ function fallbackSpec(
 }
 
 // ---- small pure helpers -------------------------------------------------------------------
-
-function presetOf(preset: string | undefined): string {
-    return preset || "balanced";
-}
 
 function parseData(spin: string | null): SpinData {
     if (!spin) return {};

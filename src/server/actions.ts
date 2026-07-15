@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray, like } from "drizzle-orm";
+import { type Guardrails, resolveGuardrails } from "../config/spin.js";
 import {
     type ActionPayload,
     actions,
@@ -30,11 +31,15 @@ const DEMO_NAME = "Demo Co";
 // statuses gate each step so a double-click / stale poll is a harmless no-op.
 // ============================================================================
 
-// "Spin up" — create the draft company from a thought + guardrail preset. Returns its id; the UI
-// routes to /companies/<id> where the incubation chat lives.
+// "Spin up" — create the draft company from a thought + guardrails. Returns its id; the UI routes
+// to /companies/<id> where the incubation chat lives. Guardrails are re-resolved server-side (the
+// client sends a preset key + any custom overrides) so a preset is never trusted to be complete.
 export const startSpin = createServerFn({ method: "POST" })
-    .validator((d: { thought: string; preset?: string }) => d)
-    .handler(async ({ data }) => startSpinLogic(data.thought, data.preset ?? ""));
+    .validator((d: { thought: string; guardrails?: Guardrails }) => d)
+    .handler(async ({ data }) => {
+        const g = data.guardrails;
+        return startSpinLogic(data.thought, resolveGuardrails(g?.preset ?? "lean", g));
+    });
 
 // Pick one candidate to spec out → 'specing' so spinSpec drafts the company spec + branding.
 export const pickOpportunity = createServerFn({ method: "POST" })

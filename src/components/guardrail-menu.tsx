@@ -55,7 +55,7 @@ export function GuardrailMenu({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="ghost">
                     <ShieldCheck className="size-4 text-primary" />
                     {current.name}
                 </Button>

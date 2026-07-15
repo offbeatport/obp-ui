@@ -8,7 +8,7 @@ vi.mock("./dispatch.js", () => ({
     }),
 }));
 
-import { SCORE_KEYS } from "../config/spin.js";
+import { type Guardrails, SCORE_KEYS } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
 import { dispatchAI } from "./dispatch.js";
 import { spinChat, spinScout, spinSpec } from "./spin.js";
@@ -33,10 +33,10 @@ function msgs(companyId: string) {
 }
 
 // A draft company = one spin session. `status` here is the spinStatus sub-stage; `data` is spin.
-type DraftInit = { thought?: string; status?: string; data?: object; preset?: string };
+type DraftInit = { thought?: string; status?: string; data?: object; guardrails?: Guardrails };
 function makeDraft(init: DraftInit = {}): string {
     const id = randomUUID();
-    const spin = { preset: init.preset ?? "balanced", ...(init.data ?? {}) };
+    const spin = { guardrails: init.guardrails ?? { preset: "lean" }, ...(init.data ?? {}) };
     sqlite
         .prepare(
             "INSERT INTO company (id,name,thesis,status,spin_status,spin) VALUES (?,?,?,'draft',?,?)",

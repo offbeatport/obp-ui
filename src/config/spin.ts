@@ -102,9 +102,58 @@ export type Branding = {
     style: string; // one-line brand style / voice
 };
 
+// Guardrails the agent must respect while scouting + building the company. Chosen in the
+// composer: a preset, or "custom" with the fields set inline.
+export type Guardrails = {
+    preset: string; // lean | fast | boot | custom
+    budgetUsd?: number; // monthly budget cap (undefined = unset; 0 = free tools only)
+    mode?: "test" | "live"; // start in Stripe test-mode, or charge from day one
+    constraints?: string[]; // free-form rules ("target agencies", "no Stripe", "GDPR-safe")
+};
+
+// Canonical guardrails per preset. "custom" is a blank slate the founder fills in.
+export const GUARDRAIL_PRESETS: Record<string, Guardrails> = {
+    lean: {
+        preset: "lean",
+        budgetUsd: 500,
+        mode: "test",
+        constraints: ["avoid regulated industries"],
+    },
+    fast: { preset: "fast", budgetUsd: 2000, mode: "live", constraints: ["ship within a week"] },
+    boot: { preset: "boot", budgetUsd: 0, mode: "test", constraints: ["keep running costs at $0"] },
+    custom: { preset: "custom" },
+};
+
+// Resolve the chosen preset into concrete guardrails; for "custom", merge the founder's overrides.
+export function resolveGuardrails(preset: string, custom?: Partial<Guardrails>): Guardrails {
+    if (preset === "custom") {
+        return {
+            preset: "custom",
+            budgetUsd: custom?.budgetUsd,
+            mode: custom?.mode,
+            constraints: (custom?.constraints ?? []).map((c) => c.trim()).filter(Boolean),
+        };
+    }
+    return GUARDRAIL_PRESETS[preset] ?? GUARDRAIL_PRESETS.lean;
+}
+
+// A compact one-line summary the AI must honor (fed into the scout + spec prompts).
+export function guardrailsText(g: Guardrails | undefined): string {
+    if (!g) return "balanced";
+    const parts: string[] = [];
+    if (g.budgetUsd != null)
+        parts.push(
+            g.budgetUsd === 0 ? "$0 budget (free tools only)" : `budget ≤ $${g.budgetUsd}/mo`,
+        );
+    if (g.mode)
+        parts.push(g.mode === "test" ? "test-mode (no real charges yet)" : "charge from day one");
+    for (const c of g.constraints ?? []) if (c.trim()) parts.push(c.trim());
+    return parts.length ? parts.join("; ") : g.preset;
+}
+
 // The draft company's incubation payload (stored as company.spin JSON).
 export type SpinData = {
-    preset?: string; // guardrail preset chosen in the composer
+    guardrails?: Guardrails; // preset + custom options chosen in the composer
     candidates?: Candidate[];
     pickedId?: string;
     spec?: CompanySpec;
