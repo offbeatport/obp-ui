@@ -1,9 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import {
     ChevronLeft,
     CreditCard,
     Diamond,
-    FlaskConical,
     Home,
     Inbox,
     LayoutGrid,
@@ -169,11 +168,30 @@ function initials(name: string): string {
     return name.slice(0, 2).toUpperCase();
 }
 
-// Live company list in the rail. Self-fetches + polls (5s) so a just-spun-up DRAFT company
-// (created by /companies/new before it navigates) shows here without a manual refresh. Shows the
-// empty-state prompt only when there are genuinely no companies.
+// company.status → the avatar's status dot color (prototype COLORS map). Draft = idle/neutral.
+const STATUS_DOT: Record<CompanySummary["status"], string> = {
+    active: "bg-success",
+    paused: "bg-warning",
+    archived: "bg-neutral",
+    draft: "bg-neutral",
+};
+// slice state → the rail meta label (prototype SLICE.lbl).
+const SLICE_LBL: Record<NonNullable<CompanySummary["slice"]>["state"], string> = {
+    todo: "todo",
+    building: "building",
+    awaiting_approval: "needs you",
+    shipped: "shipped",
+    blocked: "blocked",
+};
+
+// Live company list in the rail — the prototype's `.co-item` rows (design/08-chat-spine-pro-v7,
+// #coList). Self-fetches + polls (5s + on focus) so a just-spun-up DRAFT company (created by
+// /companies/new before it navigates) shows without a manual refresh. Draft companies read as
+// "spinning up…" with a spinner (the prototype's .co-item.spinning). Empty → the .co-empty-cta.
 function CompaniesNav() {
     const [companies, setCompanies] = useState<CompanySummary[] | null>(null);
+    // Which company page we're on (highlights that row). strict:false → undefined off the route.
+    const params = useParams({ strict: false }) as { slug?: string };
 
     useEffect(() => {
         let stopped = false;
@@ -202,14 +220,14 @@ function CompaniesNav() {
 
     if (companies.length === 0) {
         return (
-            <div className="mx-1 mt-1 rounded-md border border-dashed p-4 text-center">
-                <div className="text-[13px] font-semibold">No companies yet</div>
-                <p className="mx-auto mt-1 max-w-[15rem] text-[12px] leading-relaxed text-faint">
+            <div className="mx-1 mt-1.5 mb-0.5 rounded-md border-[1.5px] border-dashed bg-secondary px-3.5 py-4 text-center">
+                <div className="text-[12.5px] font-[650] text-foreground">No companies yet</div>
+                <p className="mt-[3px] text-[11px] leading-[1.45] text-faint">
                     You bring the ideas - I build, launch and run them.
                 </p>
                 <Link
                     to="/companies/new"
-                    className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-[12.5px] font-semibold text-accent-foreground transition hover:brightness-105"
+                    className="mt-[11px] inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-[12px] font-semibold text-muted-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
                 >
                     <Plus className="size-3.5" /> Start your first company
                 </Link>
@@ -218,40 +236,63 @@ function CompaniesNav() {
     }
 
     return (
-        <div className="mt-1 space-y-0.5">
-            {companies.map((c) => (
-                <Link
-                    key={c.id}
-                    to="/companies/$slug"
-                    params={{ slug: c.id }}
-                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition hover:bg-primary/[0.06]"
-                >
-                    <span
+        <div>
+            {companies.map((c) => {
+                const sel = params.slug === c.id;
+                const draft = c.status === "draft";
+                const meta = draft
+                    ? null // rendered as spinner + "spinning up…" below
+                    : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
+                return (
+                    <Link
+                        key={c.id}
+                        to="/companies/$slug"
+                        params={{ slug: c.id }}
                         className={cn(
-                            "grid size-6 flex-none place-items-center rounded-md text-[10px] font-bold text-primary-foreground",
-                            // Drafts (still incubating) get an icon + muted fill; live companies
-                            // get their tone-colored initials avatar.
-                            c.status === "draft" ? "bg-neutral text-card" : TONE[c.tone].solid,
+                            "relative flex items-center gap-[11px] rounded-xl px-2.5 py-[9px] transition-colors hover:bg-primary/[0.07]",
+                            draft && "bg-primary/[0.06]",
+                            // selected: paper fill + a terracotta bar hugging the rail edge
+                            sel &&
+                                "bg-card shadow-e1 before:absolute before:-left-3 before:top-[9px] before:bottom-[9px] before:w-[3px] before:rounded-r-[3px] before:bg-primary before:content-['']",
                         )}
-                        aria-label={c.status === "draft" ? "Draft (incubating)" : undefined}
                     >
-                        {c.status === "draft" ? (
-                            <FlaskConical className="size-3.5" />
-                        ) : (
-                            initials(c.name)
-                        )}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
-                        {c.name}
-                    </span>
-                    {c.status !== "draft" && c.needsYou && (
                         <span
-                            className="size-1.5 flex-none rounded-full bg-primary"
-                            aria-label="Needs you"
-                        />
-                    )}
-                </Link>
-            ))}
+                            className={cn(
+                                "relative grid size-8 flex-none place-items-center rounded-[10px] text-[13px] font-semibold text-primary-foreground",
+                                TONE[c.tone].solid,
+                            )}
+                        >
+                            {initials(c.name)}
+                            <span
+                                className={cn(
+                                    "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
+                                    STATUS_DOT[c.status],
+                                )}
+                            />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                            <span className="flex items-center gap-1.5 text-[13.5px] font-[550]">
+                                <span className="truncate">{c.name}</span>
+                                {c.needsYou && (
+                                    <span className="flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-white">
+                                        INBOX
+                                    </span>
+                                )}
+                            </span>
+                            <span className="block truncate text-[11.5px] text-faint">
+                                {draft ? (
+                                    <>
+                                        <span className="mr-1.5 inline-block size-2.5 animate-spin rounded-full border-2 border-border border-t-primary align-[-1px]" />
+                                        spinning up…
+                                    </>
+                                ) : (
+                                    meta
+                                )}
+                            </span>
+                        </span>
+                    </Link>
+                );
+            })}
         </div>
     );
 }
