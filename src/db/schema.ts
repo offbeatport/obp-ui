@@ -128,6 +128,8 @@ export const runs = sqliteTable("run", {
 export const messages = sqliteTable("message", {
     id: pk(),
     companyId: text("company_id").references(() => companies.id),
+    // draft chat (the "spin up a company" conversation); mutually exclusive with companyId.
+    draftId: text("draft_id"),
     role: text("role", { enum: ["user", "assistant", "system"] }).notNull(),
     content: text("content").notNull(),
     createdAt: createdAt(),

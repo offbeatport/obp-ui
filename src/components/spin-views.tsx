@@ -36,7 +36,7 @@ const BAND_PIP: Record<Band, string> = {
 
 // ---- scouting: the scout is scanning for demand -------------------------------------------
 const SCAN_SOURCES = [
-    "reddit communities",
+    "internet communities",
     "search-volume trends",
     "competitor pricing pages",
     "indie forums & Discords",
