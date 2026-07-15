@@ -62,7 +62,7 @@ function toOpenRouterModel(provider: string, model: string): string {
     return vendor ? `${vendor}/${model}` : model;
 }
 
-/** Raw (unvalidated) provider selection for a task — what the UI shows/edits. */
+/** Raw (unvalidated) provider selection for a task - what the UI shows/edits. */
 export function taskProvider(task: AiTask): string {
     return (
         getConfig<string>(`ai.task.${task}.provider`) ??
@@ -71,9 +71,6 @@ export function taskProvider(task: AiTask): string {
             : undefined) ??
         DEFAULT_TASK_ROUTING[task].provider
     );
-}
-export function taskModel(task: AiTask): string {
-    return getConfig<string>(`ai.task.${task}.model`) ?? DEFAULT_TASK_ROUTING[task].model;
 }
 
 // Per-provider key (shared across tasks). Legacy fallbacks so pre-existing keys survive.
@@ -100,10 +97,7 @@ export function resolveTaskModel(task: AiTask, env: NodeJS.ProcessEnv = process.
     if (task === "build") {
         const raw = env.CSLOP_HARNESS ?? taskProvider("build");
         const harnessKind: HarnessKind = isDrivable(raw) ? raw : "noop";
-        const hasKey =
-            !!env.ANTHROPIC_API_KEY ||
-            !!getSecret("ai.key.anthropic") ||
-            !!getSecret("agent.anthropic_api_key");
+        const hasKey = !!keyForProvider("anthropic", env);
         return {
             kind: "harness",
             task,
@@ -126,7 +120,7 @@ export function resolveTaskModel(task: AiTask, env: NodeJS.ProcessEnv = process.
         getConfig<string>(`ai.task.${task}.model`) ??
         (provider === "claude" ? CLAUDE_TASK_MODEL[task] : DEFAULT_TASK_ROUTING[task].model);
 
-    // Claude subscription (CLI) — the keyless default. No HTTP base/key.
+    // Claude subscription (CLI) - the keyless default. No HTTP base/key.
     if (provider === "claude") {
         return { kind: "model", task, provider, model, via: "claude-cli", baseUrl: "" };
     }
@@ -157,7 +151,7 @@ export function resolveTaskModel(task: AiTask, env: NodeJS.ProcessEnv = process.
             baseUrl: DIRECT_BASE[provider] ?? OPENROUTER_BASE,
         };
     }
-    // OpenRouter fallback — a brand model routed through OpenRouter (this is "Perplexity via
+    // OpenRouter fallback - a brand model routed through OpenRouter (this is "Perplexity via
     // OpenRouter"). Re-namespace the bare native model to OpenRouter's vendor/model form.
     return {
         kind: "model",

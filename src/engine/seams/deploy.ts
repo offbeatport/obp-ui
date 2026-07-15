@@ -1,7 +1,8 @@
 import { createServer } from "node:net";
+import { setTimeout as sleep } from "node:timers/promises";
 import type { Deploy, DeploySpec, Deployment, Sandbox } from "./types.js";
 
-// LocalDeploy — the v1 Deploy seam: run the built app as a detached host subprocess
+// LocalDeploy - the v1 Deploy seam: run the built app as a detached host subprocess
 // (through the injected Sandbox, so it gets its own process group and the reaper can
 // kill(-pgid) it) on a real 127.0.0.1 port, and block until it answers HTTP. The
 // company's live URL is what the Validator (and later, you) hits. CloudDeploy
@@ -16,7 +17,7 @@ type Live = Deployment & { runId?: string };
 export class LocalDeploy implements Deploy {
     kind = "local-deploy";
     private readonly live = new Map<string, Live>();
-    // Ports picked but not yet in `live` — bridges the probe→spawn gap so two concurrent
+    // Ports picked but not yet in `live` - bridges the probe→spawn gap so two concurrent
     // up() calls (maxConcurrentRuns) can't both claim the same "free" port (TOCTOU).
     private readonly reserved = new Set<number>();
 
@@ -71,7 +72,7 @@ export class LocalDeploy implements Deploy {
             if (!healthy) {
                 await this.sandbox.kill(proc.pgid);
                 const why = exited ? "process exited before serving" : "health check timed out";
-                throw new Error(`deploy failed: ${why}${errTail ? ` — ${errTail.trim()}` : ""}`);
+                throw new Error(`deploy failed: ${why}${errTail ? ` - ${errTail.trim()}` : ""}`);
             }
 
             const dep: Live = { url, pid: proc.pid, pgid: proc.pgid, port, runId: spec.runId };
@@ -160,8 +161,4 @@ async function waitForHealth(
         }
     }
     return false;
-}
-
-function sleep(ms: number): Promise<void> {
-    return new Promise((r) => setTimeout(r, ms));
 }

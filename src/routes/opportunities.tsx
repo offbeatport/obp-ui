@@ -1,9 +1,9 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "~/components/app-shell";
+import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { listOpportunities } from "~/server/data";
 
-// The opportunities feed — scored demand candidates the engine's scope pass writes. Ranked
+// The opportunities feed - scored demand candidates the engine's scope pass writes. Ranked
 // by score, newest gate at top. Lane: surfaces.
 export const Route = createFileRoute("/opportunities")({
     loader: async () => ({
@@ -14,12 +14,7 @@ export const Route = createFileRoute("/opportunities")({
 
 function Opportunities() {
     const { items } = Route.useLoaderData();
-    const router = useRouter();
-
-    useEffect(() => {
-        const t = setInterval(() => void router.invalidate(), 4000);
-        return () => clearInterval(t);
-    }, [router]);
+    usePollInvalidate(4000);
 
     return (
         <AppShell active="opportunities">
@@ -34,7 +29,7 @@ function Opportunities() {
 
                 {items.length === 0 ? (
                     <div className="mt-8 rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                        No opportunities yet — start a company and the agents surface more as they
+                        No opportunities yet - start a company and the agents surface more as they
                         research.
                     </div>
                 ) : (

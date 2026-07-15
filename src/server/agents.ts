@@ -17,7 +17,7 @@ const PROVIDER_IDS = [
     "custom",
 ];
 
-// Boot state — drives the onboarding gate + which tabs show.
+// Boot state - drives the onboarding gate + which tabs show.
 export const getBootState = createServerFn({ method: "GET" }).handler(async () => {
     return {
         deployment: deploymentMode(),
@@ -42,22 +42,13 @@ export const discoverAgents = createServerFn({ method: "GET" }).handler(async ()
     return { deployment: "self-host" as const, agents, managedAvailable: false, recommended };
 });
 
-// Current effective config (never returns raw secrets — only last4).
-export const getAgentConfig = createServerFn({ method: "GET" }).handler(async () => {
-    const r = resolveAgentConfig();
-    return {
-        harness: getConfig<string>("agent.harness") ?? "noop",
-        credMode: r.credMode,
-        brainProvider: r.brainProvider,
-        brainModel: r.brainModel ?? "",
-        anthropicKeyLast4: secretLast4("agent.anthropic_api_key") ?? null,
-        openrouterKeyLast4: secretLast4("agent.openrouter_api_key") ?? null,
-        guardrailPreset: getConfig<string>("guardrails.preset") ?? "lean",
-        budgetCapUsd: getConfig<number>("guardrails.budget_cap_usd") ?? null,
-        autopilot: getConfig<string>("guardrails.autopilot") ?? "off",
-        accountName: getConfig<string>("account.name") ?? "Vlad",
-    };
-});
+// Current effective config for the settings screens (only the 4 fields they read).
+export const getAgentConfig = createServerFn({ method: "GET" }).handler(async () => ({
+    guardrailPreset: getConfig<string>("guardrails.preset") ?? "lean",
+    budgetCapUsd: getConfig<number>("guardrails.budget_cap_usd") ?? null,
+    autopilot: getConfig<string>("guardrails.autopilot") ?? "off",
+    accountName: getConfig<string>("account.name") ?? "Vlad",
+}));
 
 // One upsert per field. secret=true routes to the server-only secret store.
 export const saveConfig = createServerFn({ method: "POST" })

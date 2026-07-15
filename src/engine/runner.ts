@@ -32,7 +32,7 @@ const UNLOCK_COMPANY = sqlite.prepare(
 );
 
 // Approval-gate writes: a green run lands here instead of `done`. The company stays LOCKED
-// until the ship driver promotes it (see src/engine/ship.ts) — the gate is a resting state.
+// until the ship driver promotes it (see src/engine/ship.ts) - the gate is a resting state.
 const AWAIT_RUN = sqlite.prepare(
     "UPDATE run SET status = 'awaiting_approval' WHERE id = ? AND status = 'running'",
 );
@@ -69,7 +69,7 @@ const finishFail = sqlite.transaction((c: Claim, err: string) => {
 });
 
 // Green run → the gate. `auto` (autopilot + reversible) skips straight to `approved`; the
-// company lock is deliberately NOT released here — the ship driver holds it through promote.
+// company lock is deliberately NOT released here - the ship driver holds it through promote.
 const finishAwait = sqlite.transaction((c: Claim, auto: boolean) => {
     AWAIT_RUN.run(c.runId);
     (auto ? AUTO_APPROVE_ACTION : AWAIT_ACTION).run(c.actionId);
@@ -88,7 +88,7 @@ function getPayload(actionId: string): { title: string; payload: CodePayload } |
     try {
         payload = JSON.parse(a.payload) as CodePayload;
     } catch {
-        /* payload not JSON — fall back to default */
+        /* payload not JSON - fall back to default */
     }
     return { title: a.title, payload };
 }
@@ -138,7 +138,7 @@ function buildPrompt(actionId: string): string {
 }
 
 // The follow-up prompt for an iterate-to-green retry: the same session already built the
-// app, so a terse "here's exactly what the distinct check found — fix it" is enough.
+// app, so a terse "here's exactly what the distinct check found - fix it" is enough.
 function iterationPrompt(detail: string): string {
     return [
         "The app you built is deployed but FAILED the acceptance check:",
@@ -147,11 +147,6 @@ function iterationPrompt(detail: string): string {
         "",
         "Fix the code in the working directory so the check passes. Keep it minimal, then stop.",
     ].join("\n");
-}
-
-// doneWhen strings map to the Validator's kinds. v1 has one archetype; unknowns default to it.
-function doneWhenKind(doneWhen: string | undefined): "http-signup" {
-    return doneWhen === "http-signup" ? "http-signup" : "http-signup";
 }
 
 export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
@@ -174,7 +169,7 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
             const repo = await ctx.git.ensureRepo(claim.companyId);
             workdir = repo.workdir;
             // Stop any previously-shipped app for this company BEFORE prepareRun mutates their
-            // shared working tree — otherwise it would serve out of a half-reset/cleaned tree.
+            // shared working tree - otherwise it would serve out of a half-reset/cleaned tree.
             // (down() is idempotent.) A later up() re-serves the newly-built slice.
             await ctx.deploy.down(claim.companyId).catch(() => {});
             await ctx.git.prepareRun(workdir, claim.runId);
@@ -190,7 +185,7 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
             signal: ac.signal,
         };
 
-        // NO-OP path: one call, no deploy/validate — keeps the original control-plane behavior
+        // NO-OP path: one call, no deploy/validate - keeps the original control-plane behavior
         // (proves claim → run → log → done without spending tokens).
         if (!real) {
             const res = await harness.run(
@@ -218,7 +213,8 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
         // leaves the loop; exhausting the budget fails the run (requeue/block). prepareRun
         // cleaned the worktree ONCE above, so each retry edits its own prior code, not a
         // blank slate. This in-run repair loop is the main cold-run pass-rate lever.
-        const kind = doneWhenKind(getPayload(claim.actionId)?.payload.doneWhen);
+        // v1 has one validator archetype; every doneWhen maps to it.
+        const kind = "http-signup" as const;
         let totalCost = 0;
         let sessionId: string | undefined;
         let lastDetail = "";
@@ -275,7 +271,7 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
             const more = iter < config.maxBuildIters;
             log.write({
                 type: "status",
-                msg: `doneWhen RED · ${verdict.detail}${more ? " — feeding back, rebuilding" : ""}`,
+                msg: `doneWhen RED · ${verdict.detail}${more ? " - feeding back, rebuilding" : ""}`,
             });
         }
 
@@ -303,12 +299,12 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
             type: "status",
             msg: auto
                 ? "green + reversible → auto-approved (autopilot); shipping…"
-                : "green — awaiting your approval to ship",
+                : "green - awaiting your approval to ship",
         });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         // Tear down any preview this run brought up, so a failed/aborted run never leaks a
-        // live server holding its port (down() is idempotent — no-op if nothing was deployed).
+        // live server holding its port (down() is idempotent - no-op if nothing was deployed).
         await ctx.deploy.down(claim.companyId).catch(() => {});
         finishFail.immediate(claim, msg);
         log.write({ type: "end", status: "failed", error: msg });

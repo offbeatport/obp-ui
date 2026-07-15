@@ -7,7 +7,6 @@ const SET = sqlite.prepare(
     `INSERT INTO app_config (scope, key, value, updated_at) VALUES ('global', ?, ?, ?)
      ON CONFLICT(scope, key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
 );
-const ALL = sqlite.prepare("SELECT key, value FROM app_config WHERE scope = 'global'");
 const GET_SECRET = sqlite.prepare(
     "SELECT value, last4 FROM secret WHERE scope = 'global' AND key = ?",
 );
@@ -26,13 +25,7 @@ export function setConfig(key: string, value: unknown): void {
     SET.run(key, JSON.stringify(value), Date.now());
 }
 
-export function listConfig(): Record<string, unknown> {
-    const out: Record<string, unknown> = {};
-    for (const r of ALL.all() as { key: string; value: string }[]) out[r.key] = JSON.parse(r.value);
-    return out;
-}
-
-/** RAW secret value — SERVER ONLY, never return to the client. */
+/** RAW secret value - SERVER ONLY, never return to the client. */
 export function getSecret(key: string): string | undefined {
     return (GET_SECRET.get(key) as { value: string } | undefined)?.value;
 }

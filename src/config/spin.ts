@@ -1,12 +1,12 @@
-// CLIENT-SAFE spin-up model (no sqlite) — the "thought → company" flow: scout scored
+// CLIENT-SAFE spin-up model (no sqlite) - the "thought → company" flow: scout scored
 // opportunity candidates, pick one, generate its company spec + branding, then commit it to a
 // real company. Shapes mirror design/v2-prototypes/08-chat-spine-pro-v7.html (SPIN flow).
 
 export const SPIN_STATUSES = [
     "scouting", // engine is generating opportunity candidates
-    "proposals", // candidates ready — pick one
+    "proposals", // candidates ready - pick one
     "specing", // engine is drafting the picked company's spec + branding
-    "spec", // spec + branding ready — review & commit
+    "spec", // spec + branding ready - review & commit
     "committed", // a real company was created from this draft
     "failed",
 ] as const;
@@ -45,11 +45,6 @@ export const SCORE_META: Record<ScoreKey, { label: string; hint: string }> = {
 };
 
 export type EvidenceKind = "demand" | "gap" | "price";
-export const EVIDENCE_META: Record<EvidenceKind, { badge: string; label: string }> = {
-    demand: { badge: "D", label: "Demand signal" },
-    gap: { badge: "G", label: "Market gap" },
-    price: { badge: "$", label: "Willingness-to-pay" },
-};
 export type Evidence = { kind: EvidenceKind; text: string; source: string };
 
 // One scored opportunity candidate (a bet).
@@ -111,7 +106,7 @@ export type SpinMessage = { id: string; role: "user" | "assistant"; content: str
 // Guardrails chosen inline in the composer (same presets as the run guardrails).
 export type SpinGuardrails = { preset: string };
 
-// avg of the 8 scores (0-10) — the ranking signal for a candidate.
+// avg of the 8 scores (0-10) - the ranking signal for a candidate.
 export function scoreTotal(s: OppScores): number {
     let sum = 0;
     for (const k of SCORE_KEYS) sum += s[k] ?? 0;
