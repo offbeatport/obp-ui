@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { sqlite } from "../db/index.js";
 import { dispatchAI } from "./dispatch.js";
+import { singleFlight } from "./single-flight.js";
 
-// chat.ts — the engine pass that answers a user turn in a company's co-pilot chat. Design
+// chat.ts - the engine pass that answers a user turn in a company's co-pilot chat. Design
 // notes (grounded in the pre-impl critique):
 //   • SCOPED companies only (must have a scope.done marker) → never races/duplicates
 //     scope.ts's founding narration; the founding thought is scope's, not chat's.
@@ -20,7 +21,7 @@ const DISPATCH_MS = 90_000;
 // A user turn is answerable iff it is the LAST user-or-assistant message in a scoped company
 // (system ship-notices don't count, so they neither suppress nor get re-answered). Keying off
 // "no later user OR assistant message" (not just assistant) means a follow-up the founder
-// sends while a reply is in flight makes the earlier turn no longer answerable — the in-flight
+// sends while a reply is in flight makes the earlier turn no longer answerable - the in-flight
 // reply is then dropped by STILL_UNANSWERED and the newer turn is answered next tick WITH the
 // full transcript, so no message is ever silently swallowed.
 const LAST_NON_SYSTEM = `
@@ -30,7 +31,7 @@ const LAST_NON_SYSTEM = `
       AND (x.created_at, x.rowid) > (m.created_at, m.rowid)
   )`;
 // A few candidate companies (at most one pending turn each) so answerNext can skip any that
-// are already in flight — one company's slow dispatch never head-of-line-blocks the others.
+// are already in flight - one company's slow dispatch never head-of-line-blocks the others.
 const PICK = sqlite.prepare(`
   SELECT m.company_id AS companyId, m.id AS msgId
   FROM message m
@@ -55,7 +56,7 @@ const INS_REPLY = sqlite.prepare(
     "INSERT INTO message (id, company_id, role, content, created_at) VALUES (?, ?, 'assistant', ?, ?)",
 );
 
-// Guarded insert — only replies if the target turn is STILL unanswered (a second reply for
+// Guarded insert - only replies if the target turn is STILL unanswered (a second reply for
 // the same turn is a harmless no-op if two ticks ever overlap).
 const reply = sqlite.transaction((companyId: string, msgId: string, text: string) => {
     if (!STILL_UNANSWERED.get(msgId)) return;
@@ -66,22 +67,21 @@ export async function answerNext(inflight: Set<string>): Promise<void> {
     const rows = PICK.all() as { companyId: string; msgId: string }[];
     const row = rows.find((r) => !inflight.has(r.companyId));
     if (!row) return;
-    inflight.add(row.companyId);
-    try {
-        const text = await answer(row.companyId);
-        // .immediate() + catch: the guarded insert is atomic and idempotent, so a transient
-        // SQLITE_BUSY under web contention is swallowed and the turn is retried next tick
-        // (matches scopeNext/claimNext) instead of surfacing as an unhandledRejection.
-        reply.immediate(row.companyId, row.msgId, text);
-    } catch {
-        /* transient DB busy or dispatch hiccup — next tick re-picks the turn */
-    } finally {
-        inflight.delete(row.companyId);
-    }
+    await singleFlight(inflight, row.companyId, async () => {
+        try {
+            const text = await answer(row.companyId);
+            // .immediate() + catch: the guarded insert is atomic and idempotent, so a transient
+            // SQLITE_BUSY under web contention is swallowed and the turn is retried next tick
+            // (matches scopeNext/claimNext) instead of surfacing as an unhandledRejection.
+            reply.immediate(row.companyId, row.msgId, text);
+        } catch {
+            /* transient DB busy or dispatch hiccup - next tick re-picks the turn */
+        }
+    });
 }
 
 async function answer(companyId: string): Promise<string> {
-    const fb = "On it — I'll fold that into the next slice and report back here.";
+    const fb = "On it - I'll fold that into the next slice and report back here.";
     const thesis = (GET_THESIS.get(companyId) as { thesis: string } | undefined)?.thesis ?? "";
     const recent = (RECENT.all(companyId) as { role: string; content: string }[]).reverse();
     const transcript = recent.map((m) => `${m.role}: ${m.content}`).join("\n");
@@ -94,6 +94,6 @@ async function answer(companyId: string): Promise<string> {
         });
         return r.text.trim() || fb;
     } catch {
-        return fb; // ALWAYS leave a reply — never leave the turn pending.
+        return fb; // ALWAYS leave a reply - never leave the turn pending.
     }
 }

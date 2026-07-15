@@ -16,6 +16,7 @@ import { sqlite } from "../db/index.js";
 import { graduateCompany } from "../server/spin-logic.js";
 import { extractJson, extractJsonArray, str } from "./coerce.js";
 import { dispatchAI } from "./dispatch.js";
+import { singleFlight } from "./single-flight.js";
 
 // spin.ts - the engine passes behind the "spin up a company" chat. A DRAFT COMPANY (company row,
 // status='draft') is one spin session: company.thesis is the thought, company.spinStatus the
@@ -75,77 +76,83 @@ const advance = sqlite.transaction(
 // ---- pass 1: scout - a fresh thought → 3 scored opportunity candidates -------------------
 export async function spinScout(inflight: Set<string>): Promise<void> {
     const row = PICK_SCOUTING.get() as DraftRow | undefined;
-    if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id); // sync, before any await - closes the double-claim window
-    try {
-        const spin = parseData(row.spin);
-        const candidates = await scoutCandidates(row.thought, presetOf(spin.preset), spin.criteria);
-        // clear criteria once consumed (undefined drops from the merged JSON)
-        advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
-        // Open the chat with the result so it reads as a conversation.
-        if ((READ_STATUS.get(row.id) as { status: string })?.status === "proposals") {
-            INSERT_MSG.run(
-                randomUUID(),
-                row.id,
-                "assistant",
-                `I found ${candidates.length} opportunities: ${candidates.map((c) => c.name).join(", ")}. Ask me to refine (e.g. "target agencies", "make it cheaper"), or tell me which to spec out.`,
-                Date.now(),
-            );
-        }
-    } catch {
-        // scoutCandidates never throws (has a fallback); only a DB error lands here. Mark the
-        // draft failed so the UI shows an error state instead of polling 'scouting' forever.
+    if (!row) return;
+    await singleFlight(inflight, row.id, async () => {
         try {
-            FAIL_SPIN.run(row.id, "scouting");
+            const spin = parseData(row.spin);
+            const candidates = await scoutCandidates(
+                row.thought,
+                presetOf(spin.preset),
+                spin.criteria,
+            );
+            // clear criteria once consumed (undefined drops from the merged JSON)
+            advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
+            // Open the chat with the result so it reads as a conversation.
+            if ((READ_STATUS.get(row.id) as { status: string })?.status === "proposals") {
+                INSERT_MSG.run(
+                    randomUUID(),
+                    row.id,
+                    "assistant",
+                    `I found ${candidates.length} opportunities: ${candidates.map((c) => c.name).join(", ")}. Ask me to refine (e.g. "target agencies", "make it cheaper"), or tell me which to spec out.`,
+                    Date.now(),
+                );
+            }
         } catch {
-            /* give up - next boot's operator can inspect */
+            // scoutCandidates never throws (has a fallback); only a DB error lands here. Mark the
+            // draft failed so the UI shows an error state instead of polling 'scouting' forever.
+            try {
+                FAIL_SPIN.run(row.id, "scouting");
+            } catch {
+                /* give up - next boot's operator can inspect */
+            }
         }
-    } finally {
-        inflight.delete(row.id);
-    }
+    });
 }
 
 // ---- pass 2: spec - the picked candidate → full company spec + branding -------------------
 export async function spinSpec(inflight: Set<string>): Promise<void> {
     const row = PICK_SPECING.get() as DraftRow | undefined;
-    if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id);
-    try {
+    if (!row) return;
+    await singleFlight(inflight, row.id, async () => {
         const data = parseData(row.spin);
         const picked = data.candidates?.find((c) => c.id === data.pickedId) ?? data.candidates?.[0];
         if (!picked) {
             FAIL_SPIN.run(row.id, "specing"); // pick lost - shouldn't happen, fail loudly
             return;
         }
-        const { spec, branding } = await draftSpecAndBranding(picked, row.thought, data.editNote);
-        // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
-        // discard this now-stale spec. Undefined (defensive candidates[0] fallback) → no guard.
-        // Clear editNote once applied.
-        advance.immediate(
-            row.id,
-            "specing",
-            "spec",
-            { spec, branding, editNote: undefined },
-            data.pickedId,
-        );
-        if ((READ_STATUS.get(row.id) as { status: string })?.status === "spec") {
-            INSERT_MSG.run(
-                randomUUID(),
-                row.id,
-                "assistant",
-                `Here's the ${spec.product} spec - $${spec.pricingUsd}/mo, ${spec.slices.length} slices. Want any changes (price, stack, slices), or should I build the company?`,
-                Date.now(),
-            );
-        }
-    } catch {
         try {
-            FAIL_SPIN.run(row.id, "specing");
+            const { spec, branding } = await draftSpecAndBranding(
+                picked,
+                row.thought,
+                data.editNote,
+            );
+            // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
+            // discard this now-stale spec. Undefined (defensive candidates[0] fallback) → no guard.
+            // Clear editNote once applied.
+            advance.immediate(
+                row.id,
+                "specing",
+                "spec",
+                { spec, branding, editNote: undefined },
+                data.pickedId,
+            );
+            if ((READ_STATUS.get(row.id) as { status: string })?.status === "spec") {
+                INSERT_MSG.run(
+                    randomUUID(),
+                    row.id,
+                    "assistant",
+                    `Here's the ${spec.product} spec - $${spec.pricingUsd}/mo, ${spec.slices.length} slices. Want any changes (price, stack, slices), or should I build the company?`,
+                    Date.now(),
+                );
+            }
         } catch {
-            /* give up */
+            try {
+                FAIL_SPIN.run(row.id, "specing");
+            } catch {
+                /* give up */
+            }
         }
-    } finally {
-        inflight.delete(row.id);
-    }
+    });
 }
 
 // ---- pass 3: chat - a ChatGPT-style conversation that also DRIVES the flow ----------------
@@ -192,37 +199,35 @@ export async function spinChat(inflight: Set<string>): Promise<void> {
     const row = PICK_CHAT.get() as
         | { id: string; thought: string; status: string | null; spin: string | null }
         | undefined;
-    if (!row || inflight.has(row.id)) return;
-    inflight.add(row.id);
-    try {
+    if (!row) return;
+    await singleFlight(inflight, row.id, async () => {
         const data = parseData(row.spin);
-        const transcript = READ_TRANSCRIPT.all(row.id) as ChatMsg[];
-        const { reply, action } = await chatTurn(
-            row.thought,
-            row.status ?? "spec",
-            data,
-            transcript,
-        );
-        // Always answer; then route the intent (status-gated so it can't corrupt a working pass).
-        const now = Date.now();
-        INSERT_MSG.run(randomUUID(), row.id, "assistant", reply, now);
-        applyChatAction(row.id, action, data);
-    } catch {
-        // never leave the turn unanswered - drop a graceful fallback line.
         try {
-            INSERT_MSG.run(
-                randomUUID(),
-                row.id,
-                "assistant",
-                "I hit a snag on that - try rephrasing, or use the buttons.",
-                Date.now(),
+            const transcript = READ_TRANSCRIPT.all(row.id) as ChatMsg[];
+            const { reply, action } = await chatTurn(
+                row.thought,
+                row.status ?? "spec",
+                data,
+                transcript,
             );
+            // Always answer; then route the intent (status-gated so it can't corrupt a pass).
+            INSERT_MSG.run(randomUUID(), row.id, "assistant", reply, Date.now());
+            applyChatAction(row.id, action, data);
         } catch {
-            /* give up */
+            // never leave the turn unanswered - drop a graceful fallback line.
+            try {
+                INSERT_MSG.run(
+                    randomUUID(),
+                    row.id,
+                    "assistant",
+                    "I hit a snag on that - try rephrasing, or use the buttons.",
+                    Date.now(),
+                );
+            } catch {
+                /* give up */
+            }
         }
-    } finally {
-        inflight.delete(row.id);
-    }
+    });
 }
 
 function applyChatAction(id: string, action: ChatAction, data: SpinData): void {
