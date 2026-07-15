@@ -291,13 +291,23 @@ async function chatTurn(
             maxTokens: 700,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
-        const j = extractJson(r.text);
-        const reply = str(j?.reply, "", 800) || fallbackReply(status);
-        return { reply, action: coerceAction(j?.action) };
-    } catch {
-        // Offline / parse failure: a light keyword heuristic on the last user turn.
         const last = transcript.filter((m) => m.role === "user").pop()?.content ?? "";
-        return heuristicTurn(last, status);
+        const j = extractJson(r.text);
+        // Preferred: the model emitted the {reply, action} envelope.
+        if (j && typeof j.reply === "string") {
+            return {
+                reply: str(j.reply, fallbackReply(status), 800),
+                action: coerceAction(j.action),
+            };
+        }
+        // Weaker models (e.g. haiku) often answer in plain prose. Use that prose as the reply,
+        // but still route intent with the deterministic heuristic so "go with 1" etc. work.
+        const h = heuristicTurn(last, status, data.candidates ?? []);
+        return { reply: r.text.trim().slice(0, 800) || h.reply, action: h.action };
+    } catch {
+        // Offline / dispatch failure: pure heuristic on the last user turn.
+        const last = transcript.filter((m) => m.role === "user").pop()?.content ?? "";
+        return heuristicTurn(last, status, data.candidates ?? []);
     }
 }
 
@@ -349,35 +359,78 @@ function fallbackReply(status: string): string {
     return "Got it.";
 }
 
-// Deterministic offline routing so the chat still steers the flow without AI.
-function heuristicTurn(text: string, status: string): { reply: string; action: ChatAction } {
+// Deterministic routing (the offline path AND the fallback when a weak model answers in prose):
+// detect the founder's intent from keywords + candidate-name overlap.
+function heuristicTurn(
+    text: string,
+    status: string,
+    candidates: Candidate[],
+): { reply: string; action: ChatAction } {
     const t = text.toLowerCase();
-    if (/\b(re-?scout|different|again|other|instead|other ideas|new (ideas|angle))\b/.test(t)) {
+    if (
+        /\b(re-?scout|different|other ideas|another (set|angle|idea)|not these|something else)\b/.test(
+            t,
+        )
+    ) {
         return {
             reply: "Re-scouting with that in mind.",
             action: { type: "rescout", criteria: text },
         };
     }
-    const pickMatch = t.match(
-        /\b(?:pick|choose|go with|select|option|number|#)\s*#?(\d+|one|two|three)\b/,
-    );
-    if (pickMatch && status === "proposals") {
-        const map: Record<string, string> = { one: "1", two: "2", three: "3" };
-        return {
-            reply: "Great pick — drafting the company spec.",
-            action: { type: "pick", candidate: map[pickMatch[1]] ?? pickMatch[1] },
-        };
+    if (status === "proposals") {
+        const wantsPick =
+            /\b(go with|let'?s go|pick|choose|select|i'?ll take|take the|do the|spec (it|out)|build (the|this)|go for)\b/.test(
+                t,
+            ) || /^\s*#?[1-5]\b/.test(text.trim());
+        const c = wantsPick ? matchCandidate(t, candidates) : undefined;
+        if (c) {
+            return {
+                reply: `Great — drafting the ${c.name} spec.`,
+                action: { type: "pick", candidate: c.id },
+            };
+        }
     }
-    if (/\b(create|build|ship|make) it\b|\blet'?s go\b|\bcommit\b/.test(t) && status === "spec") {
-        return { reply: "Creating the company now.", action: { type: "commit" } };
-    }
-    if (
-        status === "spec" &&
-        /\b(cheaper|price|stack|slice|drop|add|change|remove|rename)\b/.test(t)
-    ) {
-        return { reply: "Updating the spec.", action: { type: "editSpec", note: text } };
+    if (status === "spec") {
+        if (
+            /\b(create|build|ship|make) it\b|\blet'?s (go|build|ship)\b|\bcommit\b|\bgo live\b/.test(
+                t,
+            )
+        ) {
+            return { reply: "Creating the company now.", action: { type: "commit" } };
+        }
+        if (
+            /\b(cheaper|price|pricing|\$|stack|slice|drop|add|change|remove|rename|tagline|trial|target)\b/.test(
+                t,
+            )
+        ) {
+            return { reply: "Updating the spec.", action: { type: "editSpec", note: text } };
+        }
     }
     return { reply: fallbackReply(status), action: { type: "none" } };
+}
+
+// Find which candidate the founder means: a 1-based number, or the best name-word overlap
+// (so "go with the conflict check one" → "Conflict Check Screener").
+function matchCandidate(text: string, candidates: Candidate[]): Candidate | undefined {
+    const num = text.match(/#?\b([1-5])\b/);
+    if (num) {
+        const c = candidates[Number(num[1]) - 1];
+        if (c) return c;
+    }
+    let best: Candidate | undefined;
+    let bestHits = 0;
+    for (const c of candidates) {
+        const name = c.name.toLowerCase();
+        if (name.length > 2 && text.includes(name)) return c;
+        const hits = name
+            .split(/[^a-z0-9]+/)
+            .filter((w) => w.length > 3 && text.includes(w)).length;
+        if (hits > bestHits) {
+            bestHits = hits;
+            best = c;
+        }
+    }
+    return bestHits > 0 ? best : undefined;
 }
 
 // ---- AI drivers (never throw — deterministic fallback) -----------------------------------
