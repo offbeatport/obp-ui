@@ -10,7 +10,14 @@ import { Button } from "./ui/button";
 
 // The composer's guardrail-preset selector (prototype .spin-hero-guard): the founder picks how
 // aggressive/safe the agent should be before it spins up a company.
-type Preset = { key: string; icon: LucideIcon; name: string; desc: string; rec?: boolean };
+type Preset = {
+    key: string;
+    icon: LucideIcon;
+    name: string;
+    desc: string;
+    swatch: string;
+    rec?: boolean;
+};
 
 const PRESETS: Preset[] = [
     {
@@ -18,6 +25,7 @@ const PRESETS: Preset[] = [
         icon: ShieldCheck,
         name: "Lean & safe",
         desc: "≤ $500/mo · test-mode · avoid regulated",
+        swatch: "bg-success-soft text-success",
         rec: true,
     },
     {
@@ -25,13 +33,21 @@ const PRESETS: Preset[] = [
         icon: Zap,
         name: "Move fast",
         desc: "≤ $2k/mo · charge day one · ship in a week",
+        swatch: "bg-warning-soft text-warning",
     },
-    { key: "boot", icon: Sprout, name: "Bootstrap", desc: "$0 spend · free for now · no deadline" },
+    {
+        key: "boot",
+        icon: Sprout,
+        name: "Bootstrap",
+        desc: "$0 spend · free for now · no deadline",
+        swatch: "bg-info-soft text-info",
+    },
     {
         key: "custom",
         icon: SlidersHorizontal,
         name: "Custom…",
         desc: "Set each guardrail yourself",
+        swatch: "bg-secondary text-faint",
     },
 ];
 
@@ -51,12 +67,13 @@ export function GuardrailMenu({
         else setInternal(key);
     };
     const current = PRESETS.find((p) => p.key === sel) ?? PRESETS[0];
+    const CurrentIcon = current.icon;
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
-                    <ShieldCheck className="size-4 text-primary" />
+                    <CurrentIcon className="size-4 text-primary" />
                     {current.name}
                 </Button>
             </DropdownMenuTrigger>
@@ -69,7 +86,9 @@ export function GuardrailMenu({
                             onSelect={() => setSel(p.key)}
                             className="items-start gap-3 py-2.5"
                         >
-                            <span className="mt-0.5 grid size-7 flex-none place-items-center rounded-md bg-accent text-accent-foreground">
+                            <span
+                                className={`mt-0.5 grid size-7 flex-none place-items-center rounded-md ${p.swatch}`}
+                            >
                                 <Icon className="size-4" />
                             </span>
                             <span className="min-w-0 flex-1">

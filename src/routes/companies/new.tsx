@@ -5,8 +5,14 @@ import { AppShell } from "~/components/app-shell";
 // Prototype-faithful CSS for the .spin-start hero (proto.css supplies the .cc token aliases).
 import "~/components/command-center/proto.css";
 import "~/components/command-center/spin-proto.css";
+import {
+    type GuardRow,
+    GuardrailLedger,
+    defaultRows,
+    rowsToGuardrails,
+} from "~/components/guardrail-ledger";
 import { GuardrailMenu } from "~/components/guardrail-menu";
-import { type Guardrails, resolveGuardrails } from "~/config/spin";
+import type { Guardrails } from "~/config/spin";
 import { startSpin } from "~/server/actions";
 import { getBootState } from "~/server/agents";
 
@@ -26,22 +32,14 @@ function NewCompany() {
     const navigate = useNavigate();
     const [thought, setThought] = useState("");
     const [preset, setPreset] = useState("lean");
-    // Custom-guardrail fields (only used/sent when preset === "custom"). budget "" = unset.
-    const [budget, setBudget] = useState("");
-    const [mode, setMode] = useState<"test" | "live">("test");
-    const [constraints, setConstraints] = useState("");
+    // The custom Guardrail Ledger rows (only used/sent when preset === "custom").
+    const [rows, setRows] = useState<GuardRow[]>(defaultRows);
     const [busy, setBusy] = useState(false);
 
     // Build the guardrails to send. For a preset the server re-resolves the canonical values, so we
-    // only send the key; for "custom" we send the founder's fields (resolveGuardrails trims them).
+    // only send the key; for "custom" we serialize the ledger rows into Guardrails.
     const buildGuardrails = (): Guardrails =>
-        preset === "custom"
-            ? resolveGuardrails("custom", {
-                  budgetUsd: budget.trim() === "" ? undefined : Number(budget),
-                  mode,
-                  constraints: constraints.split("\n"),
-              })
-            : { preset };
+        preset === "custom" ? rowsToGuardrails(rows) : { preset };
 
     const submit = async () => {
         const t = thought.trim();
@@ -108,104 +106,10 @@ function NewCompany() {
                             </div>
                         </div>
 
-                        {preset === "custom" && (
-                            <CustomGuardrails
-                                budget={budget}
-                                setBudget={setBudget}
-                                mode={mode}
-                                setMode={setMode}
-                                constraints={constraints}
-                                setConstraints={setConstraints}
-                            />
-                        )}
+                        {preset === "custom" && <GuardrailLedger rows={rows} onChange={setRows} />}
                     </div>
                 </div>
             </div>
         </AppShell>
-    );
-}
-
-// The "Custom…" guardrail editor — revealed under the composer when that preset is picked. Budget
-// cap, test/live start mode, and free-form constraints, all fed to the scout + spec AI prompts.
-function CustomGuardrails({
-    budget,
-    setBudget,
-    mode,
-    setMode,
-    constraints,
-    setConstraints,
-}: {
-    budget: string;
-    setBudget: (v: string) => void;
-    mode: "test" | "live";
-    setMode: (v: "test" | "live") => void;
-    constraints: string;
-    setConstraints: (v: string) => void;
-}) {
-    return (
-        <div className="mx-auto mt-3 grid w-full max-w-[640px] gap-4 rounded-xl border border-border bg-card/60 p-4 text-left">
-            <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-1.5">
-                    <span className="text-xs font-semibold text-foreground">Monthly budget</span>
-                    <span className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 focus-within:border-primary">
-                        <span className="text-sm text-muted-foreground">$</span>
-                        <input
-                            type="number"
-                            min={0}
-                            step={50}
-                            value={budget}
-                            onChange={(e) => setBudget(e.target.value)}
-                            placeholder="unset"
-                            className="w-full bg-transparent py-2 text-sm outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <span className="text-xs text-muted-foreground">/mo</span>
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">
-                        Leave blank for no cap · 0 = free tools only
-                    </span>
-                </label>
-
-                <div className="grid gap-1.5">
-                    <span className="text-xs font-semibold text-foreground">Start mode</span>
-                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-background p-1">
-                        {(["test", "live"] as const).map((m) => (
-                            <button
-                                key={m}
-                                type="button"
-                                onClick={() => setMode(m)}
-                                className={`rounded-md px-2 py-1.5 text-xs font-semibold capitalize transition-colors ${
-                                    mode === m
-                                        ? "bg-accent text-accent-foreground"
-                                        : "text-muted-foreground hover:text-foreground"
-                                }`}
-                            >
-                                {m === "test" ? "Test-mode" : "Charge day one"}
-                            </button>
-                        ))}
-                    </div>
-                    <span className="text-[11px] text-muted-foreground">
-                        {mode === "test"
-                            ? "Stripe test-mode — no real charges yet"
-                            : "Real payments from launch"}
-                    </span>
-                </div>
-            </div>
-
-            <label className="grid gap-1.5">
-                <span className="text-xs font-semibold text-foreground">Constraints</span>
-                <textarea
-                    rows={3}
-                    value={constraints}
-                    onChange={(e) => setConstraints(e.target.value)}
-                    placeholder={
-                        "One rule per line, e.g.\ntarget agencies, not consumers\nno regulated industries"
-                    }
-                    className="w-full resize-none rounded-lg border border-border bg-background px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground/70 focus:border-primary"
-                />
-                <span className="text-[11px] text-muted-foreground">
-                    The agent must honor these while scouting and building.
-                </span>
-            </label>
-        </div>
     );
 }
