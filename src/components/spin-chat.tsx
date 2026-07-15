@@ -1,8 +1,9 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import {
     approveCompany,
+    continueWithoutResearch,
     messageCompany,
     pickOpportunity,
     reSpin,
@@ -58,6 +59,10 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     );
     const reroll = useCallback(() => run(() => reSpin({ data: { companyId } })), [run, companyId]);
     const back = useCallback(() => run(() => resetPick({ data: { companyId } })), [run, companyId]);
+    const skipResearch = useCallback(
+        () => run(() => continueWithoutResearch({ data: { companyId } })),
+        [run, companyId],
+    );
 
     const sendChat = useCallback(
         async (text: string) => {
@@ -87,6 +92,39 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     const lastIsUser = detail.messages.at(-1)?.role === "user";
     const working = stage === "scouting" || stage === "specing";
     const showTyping = (working || lastIsUser) && stage !== "scouting";
+    const canSkip = stage === "scouting" || stage === "proposals";
+
+    // The interactive artifact (proposals / spec) is anchored INLINE, right after the assistant
+    // message that announced it, so the founder's later questions continue the conversation BELOW
+    // it instead of pushing above it. Loaders (scouting/specing/failed) stay at the bottom.
+    const anchoredArtifact =
+        stage === "proposals" && spin ? (
+            <ProposalsView
+                candidates={spin.candidates}
+                pickedId={spin.pickedId}
+                onPick={pick}
+                busy={busy}
+            />
+        ) : stage === "spec" && spin ? (
+            <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
+        ) : null;
+    const anchorId = anchoredArtifact ? announcementId(detail.messages, stage) : undefined;
+
+    // Build the thread, injecting the artifact right after its anchor message (or at the end if the
+    // anchor isn't found - e.g. an offline run that skipped the announcement).
+    const thread: ReactNode[] = [];
+    let injected = false;
+    for (const m of detail.messages) {
+        if (m.role === "system") continue;
+        thread.push(
+            <Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />,
+        );
+        if (anchoredArtifact && m.id === anchorId) {
+            thread.push(<div key={`${m.id}-artifact`}>{anchoredArtifact}</div>);
+            injected = true;
+        }
+    }
+    if (anchoredArtifact && !injected) thread.push(<div key="artifact">{anchoredArtifact}</div>);
 
     return (
         <div className="flex h-full flex-col">
@@ -95,25 +133,10 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                     className="spin mx-auto w-full"
                     style={{ maxWidth: 840, padding: "22px 20px 8px" }}
                 >
-                    {detail.messages.map((m) =>
-                        m.role === "system" ? null : (
-                            <Bubble
-                                key={m.id}
-                                m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }}
-                            />
-                        ),
-                    )}
+                    {thread}
                     {showTyping && <Typing />}
 
                     {stage === "scouting" && <ScoutingView thought={detail.thesis} />}
-                    {stage === "proposals" && spin && (
-                        <ProposalsView
-                            candidates={spin.candidates}
-                            pickedId={spin.pickedId}
-                            onPick={pick}
-                            busy={busy}
-                        />
-                    )}
                     {stage === "specing" && spin && (
                         <SpecingView
                             name={
@@ -122,18 +145,39 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                             }
                         />
                     )}
-                    {stage === "spec" && spin && (
-                        <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
-                    )}
                     {stage === "failed" && <FailedView onRetry={reroll} busy={busy} />}
                 </div>
             </div>
 
             <div className="mx-auto w-full" style={{ maxWidth: 840 }}>
+                {canSkip && (
+                    <div className="px-5 pt-1 text-center">
+                        <button
+                            type="button"
+                            onClick={skipResearch}
+                            disabled={busy}
+                            className="text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
+                        >
+                            Continue without market research →
+                        </button>
+                    </div>
+                )}
                 <ChatComposer onSend={sendChat} stage={stage} />
             </div>
         </div>
     );
+}
+
+// The id of the assistant message that announced the current artifact (the scout's "I found …
+// opportunities:" line, or the spec's "… spec - …" line) - the anchor the artifact renders after.
+function announcementId(messages: CompanyDetail["messages"], stage?: string): string | undefined {
+    const marker = stage === "proposals" ? "opportunities:" : stage === "spec" ? "spec -" : null;
+    if (!marker) return undefined;
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const m = messages[i];
+        if (m.role === "assistant" && m.content.includes(marker)) return m.id;
+    }
+    return undefined;
 }
 
 function Typing() {
@@ -205,7 +249,7 @@ function ChatComposer({
                         }
                     }}
                     placeholder={HINTS[stage ?? ""] ?? "Message…"}
-                    className="block max-h-40 min-h-11 w-full resize-none rounded-2xl bg-transparent px-4 py-3 pr-12 text-sm outline-none"
+                    className="block max-h-40 min-h-11 w-full resize-none rounded-2xl bg-transparent px-4 py-3 pr-12 font-display text-base outline-none placeholder:font-display placeholder:text-muted-foreground/70"
                 />
                 <button
                     type="button"

@@ -71,13 +71,13 @@ beforeEach(() => {
 });
 
 describe("spinScout", () => {
-    it("scouts a fresh draft via the fallback path: proposals + 3 fully-scored candidates", async () => {
+    it("scouts a fresh draft via the fallback path: proposals + 5 fully-scored candidates", async () => {
         const id = makeDraft({ thought: "budgeting for freelancers" });
         await spinScout(new Set());
         const { status, data } = read(id);
         expect(status).toBe("proposals");
         const cands = data.candidates as Array<Record<string, unknown>>;
-        expect(cands).toHaveLength(3);
+        expect(cands).toHaveLength(5);
         for (const c of cands) {
             expect(typeof c.id).toBe("string");
             expect(typeof c.name).toBe("string");

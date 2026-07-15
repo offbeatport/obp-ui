@@ -1,5 +1,13 @@
+import { randomUUID } from "node:crypto";
 import { and, eq } from "drizzle-orm";
-import { type Guardrails, type SpinData, scoreTotal } from "../config/spin.js";
+import {
+    type Candidate,
+    type Guardrails,
+    type OppScores,
+    SCORE_KEYS,
+    type SpinData,
+    scoreTotal,
+} from "../config/spin.js";
 import { actions, appConfig, companies, db, messages, opportunities } from "../db/index.js";
 
 // The spin flow's DB logic. A company is created immediately in status 'draft' (this is what
@@ -79,6 +87,56 @@ export function resetPickLogic(companyId: string): { ok: boolean } {
         .where(eq(companies.id, companyId))
         .run();
     return { ok: true };
+}
+
+// "Continue without market research" — skip scouting/proposals entirely and go straight to a spec
+// drafted from the raw idea. Synthesizes ONE candidate from the thought, marks it picked, and
+// advances scouting|proposals → specing so the engine's spinSpec pass drafts the spec + branding.
+// Status-gated so a double-click (or a scout finishing first) is a harmless no-op.
+export function continueWithoutResearchLogic(companyId: string): { ok: boolean } {
+    const c = db.select().from(companies).where(eq(companies.id, companyId)).get();
+    const from = c?.spinStatus;
+    if (!c || c.status !== "draft" || (from !== "scouting" && from !== "proposals")) {
+        return { ok: false };
+    }
+    const cand = thoughtCandidate(c.thesis);
+    const changed = db
+        .update(companies)
+        .set({
+            spinStatus: "specing",
+            spin: { guardrails: c.spin?.guardrails, candidates: [cand], pickedId: cand.id },
+        })
+        .where(and(eq(companies.id, companyId), eq(companies.spinStatus, from)))
+        .run();
+    if (changed.changes !== 1) return { ok: false }; // lost the race (scout advanced it) - no-op
+    db.insert(messages)
+        .values({
+            companyId,
+            role: "assistant",
+            content: "Skipping market research — I'll draft a spec straight from your idea.",
+        })
+        .run();
+    return { ok: true };
+}
+
+// A single opportunity synthesized directly from the founder's thought (the "skip research" path).
+// Mid scores so the spec pass + graduation demand read as a plausible, un-hyped bet.
+function thoughtCandidate(thought: string): Candidate {
+    const t = thought.trim();
+    const scores = Object.fromEntries(SCORE_KEYS.map((k) => [k, 6])) as OppScores;
+    return {
+        id: randomUUID(),
+        name: deriveName(t),
+        icp: "Early adopters who feel this pain and want it gone.",
+        wedge: "The most direct build of the idea — nothing extra.",
+        pain: t.slice(0, 180) || "A recurring problem worth paying to remove.",
+        scores,
+        evidence: [],
+        firstSlice: {
+            title: "A visitor can sign up on a live URL",
+            doneWhen: "The signup page is live and accepts an email.",
+        },
+    };
 }
 
 // Approve the reviewed spec → GRADUATE the draft company to a live one. Flips status draft→active,
