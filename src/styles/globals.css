@@ -224,7 +224,6 @@
     box-shadow: var(--shadow-e2);
 }
 
-
 /* Instant hover feedback - buttons, links, and menu/tab items snap their hover
    color/background with no fade. Everything else (sidebar collapse slide, the new-company
    spring icon, keyframe @animations) keeps its timing. Applies to all future ones too. */
