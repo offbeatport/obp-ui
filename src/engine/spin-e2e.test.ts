@@ -9,7 +9,12 @@ vi.mock("./dispatch.js", () => ({
 
 import { resolveGuardrails } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
-import { graduateCompany, pickOpportunityLogic, startSpinLogic } from "../server/spin-logic.js";
+import {
+    continueWithoutResearchLogic,
+    graduateCompany,
+    pickOpportunityLogic,
+    startSpinLogic,
+} from "../server/spin-logic.js";
 import { spinScout, spinSpec } from "./spin.js";
 
 const LEAN = resolveGuardrails("lean");
@@ -52,7 +57,7 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
         await spinScout(new Set());
         const proposed = readDraft(id);
         expect(proposed?.spinStatus).toBe("proposals");
-        expect(proposed?.candidates).toHaveLength(3);
+        expect(proposed?.candidates).toHaveLength(5);
 
         // 3. pick the top candidate → 'specing'
         const candidateId = proposed?.candidates?.[0]?.id ?? "";
@@ -106,6 +111,26 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
                 id,
             ),
         ).toBe(1);
+    });
+
+    it("continue without research: skips scouting straight to a spec from the idea", async () => {
+        const { id } = startSpinLogic("a CRM for plumbers", LEAN);
+        expect(readDraft(id)?.spinStatus).toBe("scouting");
+
+        // Skip the scout: synthesize one candidate from the thought → 'specing'
+        expect(continueWithoutResearchLogic(id).ok).toBe(true);
+        const skipped = readDraft(id);
+        expect(skipped?.spinStatus).toBe("specing");
+        expect(skipped?.candidates).toHaveLength(1);
+
+        // The engine drafts the spec directly (no proposals stage was ever entered)
+        await spinSpec(new Set());
+        const specced = readDraft(id);
+        expect(specced?.spinStatus).toBe("spec");
+        expect(specced?.spec?.product).toBeTruthy();
+
+        // guarded: a second skip after it already advanced is a no-op
+        expect(continueWithoutResearchLogic(id).ok).toBe(false);
     });
 
     it("graduate is idempotent - a second approve returns the same id, makes no dupes", async () => {

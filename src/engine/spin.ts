@@ -455,13 +455,13 @@ async function scoutCandidates(
         const r = await dispatchAI("research", {
             system:
                 "You are a startup scout finding small, solo-buildable SaaS bets. Return ONLY a " +
-                "minified JSON array of exactly 3 objects - no prose, no code fences. Each object: " +
+                "minified JSON array of exactly 5 objects - no prose, no code fences. Each object: " +
                 '{"name":string,"icp":string,"wedge":string,"pain":string,"scores":' +
                 '{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
                 '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
                 '"firstSlice":{"title":string,"doneWhen":string}}. scores are integers 0-10. ' +
                 "Give 2-3 evidence items each. name is a short product angle (2-3 words).",
-            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 3 distinct, scored SaaS opportunities that a solo founder could ship.`,
+            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 5 distinct, scored SaaS opportunities that a solo founder could ship.`,
             maxTokens: 2200,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
@@ -645,6 +645,16 @@ function fallbackCandidates(thought: string): Candidate[] {
         },
         { name: `${base} Flow`, wedge: "Automates the busywork around it end to end.", bias: 0 },
         { name: `${base} Radar`, wedge: "Alerts the moment something needs attention.", bias: -1 },
+        {
+            name: `${base} Studio`,
+            wedge: "A focused workspace to do the whole job in one place.",
+            bias: 0,
+        },
+        {
+            name: `${base} Copilot`,
+            wedge: "An assistant that does the first draft for you.",
+            bias: 1,
+        },
     ];
     return angles.map((a, i) => ({
         id: randomUUID(),
@@ -674,7 +684,8 @@ function fallbackSpec(
     thought: string,
 ): { spec: CompanySpec; branding: Branding } {
     const product =
-        picked.name.replace(/\s+(Pro|Flow|Radar)$/i, "").trim() || titleFromThought(thought);
+        picked.name.replace(/\s+(Pro|Flow|Radar|Studio|Copilot)$/i, "").trim() ||
+        titleFromThought(thought);
     const palette = paletteFor(product);
     return {
         spec: {

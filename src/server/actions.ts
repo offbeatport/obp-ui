@@ -11,6 +11,7 @@ import {
     runs,
 } from "../db/index.js";
 import {
+    continueWithoutResearchLogic,
     graduateCompany,
     pickOpportunityLogic,
     reSpinLogic,
@@ -55,6 +56,11 @@ export const reSpin = createServerFn({ method: "POST" })
 export const resetPick = createServerFn({ method: "POST" })
     .validator((d: { companyId: string }) => d)
     .handler(async ({ data }) => resetPickLogic(data.companyId));
+
+// Skip scouting/proposals and draft a spec straight from the idea ("continue without research").
+export const continueWithoutResearch = createServerFn({ method: "POST" })
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => continueWithoutResearchLogic(data.companyId));
 
 // Approve the reviewed spec → graduate the draft company to a live, building one.
 export const approveCompany = createServerFn({ method: "POST" })
