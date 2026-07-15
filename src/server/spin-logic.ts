@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { type SpinData, scoreTotal } from "../config/spin.js";
+import { type Guardrails, type SpinData, scoreTotal } from "../config/spin.js";
 import { actions, appConfig, companies, db, messages, opportunities } from "../db/index.js";
 
 // The spin flow's DB logic. A company is created immediately in status 'draft' (this is what
@@ -21,7 +21,7 @@ function deriveName(thought: string): string {
 
 // "Spin up" — create the draft company. Returns its id; the UI routes to /companies/<id> where
 // the incubation chat lives. The engine's spinScout pass then fills spin.candidates.
-export function startSpinLogic(thought: string, preset: string): { id: string } {
+export function startSpinLogic(thought: string, guardrails: Guardrails): { id: string } {
     const t = thought.trim();
     if (!t) throw new Error("Describe the idea first.");
     const company = db
@@ -31,7 +31,7 @@ export function startSpinLogic(thought: string, preset: string): { id: string } 
             thesis: t,
             status: "draft",
             spinStatus: "scouting",
-            spin: { preset: preset || "balanced" },
+            spin: { guardrails },
         })
         .returning()
         .get();
@@ -61,7 +61,7 @@ export function reSpinLogic(companyId: string): { ok: boolean } {
     const spin = draftAt(companyId, ["proposals", "failed"]);
     if (!spin) return { ok: false };
     db.update(companies)
-        .set({ spinStatus: "scouting", spin: { preset: spin.preset } })
+        .set({ spinStatus: "scouting", spin: { guardrails: spin.guardrails } })
         .where(eq(companies.id, companyId))
         .run();
     return { ok: true };
@@ -74,7 +74,7 @@ export function resetPickLogic(companyId: string): { ok: boolean } {
     db.update(companies)
         .set({
             spinStatus: "proposals",
-            spin: { preset: spin.preset, candidates: spin.candidates ?? [] },
+            spin: { guardrails: spin.guardrails, candidates: spin.candidates ?? [] },
         })
         .where(eq(companies.id, companyId))
         .run();

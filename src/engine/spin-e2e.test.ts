@@ -7,9 +7,12 @@ vi.mock("./dispatch.js", () => ({
     }),
 }));
 
+import { resolveGuardrails } from "../config/spin.js";
 import { sqlite } from "../db/index.js";
 import { graduateCompany, pickOpportunityLogic, startSpinLogic } from "../server/spin-logic.js";
 import { spinScout, spinSpec } from "./spin.js";
+
+const LEAN = resolveGuardrails("lean");
 
 // The web fns (createServerFn) are thin shells over these logic fns; they need the Start request
 // runtime, so the e2e drives the logic layer directly (same DB writes) plus a tiny company read.
@@ -41,7 +44,7 @@ beforeEach(clearAll);
 describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
     it("thought → draft company → scout → pick → spec → graduated active company", async () => {
         // 1. spin up - a draft company at spinStatus 'scouting'
-        const { id } = startSpinLogic("help freelancers get paid on time", "lean");
+        const { id } = startSpinLogic("help freelancers get paid on time", LEAN);
         expect(readDraft(id)?.status).toBe("draft");
         expect(readDraft(id)?.spinStatus).toBe("scouting");
 
@@ -106,7 +109,7 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
     });
 
     it("graduate is idempotent - a second approve returns the same id, makes no dupes", async () => {
-        const { id } = startSpinLogic("schedule tutors", "lean");
+        const { id } = startSpinLogic("schedule tutors", LEAN);
         await spinScout(new Set());
         const c = readDraft(id)?.candidates?.[0]?.id ?? "";
         pickOpportunityLogic(id, c);
@@ -119,7 +122,7 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
     });
 
     it("guards the order: can't pick before proposals, can't approve before spec", async () => {
-        const { id } = startSpinLogic("x", "lean");
+        const { id } = startSpinLogic("x", LEAN);
         // still 'scouting' - pick + approve are no-ops (company stays a draft, no action)
         expect(pickOpportunityLogic(id, "nope").ok).toBe(false);
         expect(graduateCompany(id).ok).toBe(false);
