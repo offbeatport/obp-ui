@@ -9,7 +9,6 @@ import {
     LayoutGrid,
     Lock,
     type LucideIcon,
-    MessageCircle,
     Plus,
     SlidersHorizontal,
     Wrench,
@@ -122,24 +121,6 @@ function Rail({
 
                 <SectionHead collapsed={collapsed}>Companies</SectionHead>
                 {!collapsed && <CompaniesNav />}
-
-                <SectionHead collapsed={collapsed}>Chats</SectionHead>
-                {!collapsed &&
-                    CHATS.map((c) => (
-                        <button
-                            type="button"
-                            key={c.title}
-                            className="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-primary/[0.06]"
-                        >
-                            <MessageCircle className="mt-0.5 size-4 flex-none text-faint" />
-                            <span className="min-w-0">
-                                <span className="block truncate text-[13px] font-medium">
-                                    {c.title}
-                                </span>
-                                <span className="block text-[11px] text-faint">{c.ago}</span>
-                            </span>
-                        </button>
-                    ))}
             </div>
 
             {/* foot: credit · user menu */}
@@ -156,12 +137,6 @@ function Rail({
         </aside>
     );
 }
-
-const CHATS = [
-    { title: "How is my portfolio doing?", ago: "3d ago" },
-    { title: "Ideas for a solo-founder SaaS", ago: "yesterday" },
-    { title: "Which company should I double down on?", ago: "2h ago" },
-];
 
 function initials(name: string): string {
     const caps = name.match(/[A-Z]/g);
