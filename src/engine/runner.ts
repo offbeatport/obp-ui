@@ -7,6 +7,7 @@ import { config } from "./config.js";
 import type { EngineContext } from "./context.js";
 import { RunLog } from "./log.js";
 import type { HarnessIO } from "./seams/types.js";
+import { BLOCK_ACTION, FAIL_RUN, REQUEUE_ACTION, UNLOCK_COMPANY } from "./terminal.js";
 
 const MAX_TURNS = 60;
 
@@ -17,18 +18,6 @@ const SUCCEED_RUN = sqlite.prepare(
 );
 const DONE_ACTION = sqlite.prepare(
     "UPDATE action SET status = 'done' WHERE id = ? AND status = 'running'",
-);
-const FAIL_RUN = sqlite.prepare(
-    "UPDATE run SET status = 'failed', error = ? WHERE id = ? AND status = 'running'",
-);
-const REQUEUE_ACTION = sqlite.prepare(
-    "UPDATE action SET status = 'queued' WHERE id = ? AND status = 'running'",
-);
-const BLOCK_ACTION = sqlite.prepare(
-    "UPDATE action SET status = 'blocked' WHERE id = ? AND status = 'running'",
-);
-const UNLOCK_COMPANY = sqlite.prepare(
-    "UPDATE company SET locked_by_run_id = NULL WHERE id = ? AND locked_by_run_id = ?",
 );
 
 // Approval-gate writes: a green run lands here instead of `done`. The company stays LOCKED
