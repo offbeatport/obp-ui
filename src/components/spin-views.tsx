@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CompanyLogo } from "~/components/company-logo";
 import {
     type Branding,
     type Candidate,
@@ -291,26 +292,9 @@ export function SpecingView({ name }: { name: string }) {
 }
 
 // ---- spec: the .spin-spec letterhead + .spin-ready approve turn -----------------------------
+// Delegates to the shared CompanyLogo (identical look) so the generated logo is one component.
 function BrandLogo({ branding, size }: { branding: Branding; size: number }) {
-    return (
-        <span
-            className="font-display"
-            style={{
-                display: "grid",
-                placeItems: "center",
-                width: size,
-                height: size,
-                borderRadius: Math.round(size * 0.26),
-                background: `linear-gradient(145deg, ${branding.palette[0]}, ${branding.palette[1]})`,
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: Math.round(size * 0.42),
-                flex: "none",
-            }}
-        >
-            {branding.mark}
-        </span>
-    );
+    return <CompanyLogo name={branding.mark} branding={branding} size={size} />;
 }
 
 export function SpecView({

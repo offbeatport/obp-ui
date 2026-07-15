@@ -61,6 +61,9 @@ function createTables(s: Database.Database) {
       spin_status       text,
       spin              text,
       domain            text,
+      branding          text,
+      spec              text,
+      guardrails        text,
       pricing           text,
       channels          text NOT NULL DEFAULT '[]',
       metrics           text,
@@ -137,6 +140,9 @@ function createTables(s: Database.Database) {
     for (const stmt of [
         "ALTER TABLE company ADD COLUMN spin_status text",
         "ALTER TABLE company ADD COLUMN spin text",
+        "ALTER TABLE company ADD COLUMN branding text",
+        "ALTER TABLE company ADD COLUMN spec text",
+        "ALTER TABLE company ADD COLUMN guardrails text",
     ]) {
         try {
             s.exec(stmt);
@@ -152,9 +158,7 @@ function createTables(s: Database.Database) {
     // backstop. Guarded: an existing DB with duplicate names would make this throw, which must not
     // crash boot - dedupe those rows, then it applies on the next start.
     try {
-        s.exec(
-            "CREATE UNIQUE INDEX IF NOT EXISTS company_name ON company(name COLLATE NOCASE);",
-        );
+        s.exec("CREATE UNIQUE INDEX IF NOT EXISTS company_name ON company(name COLLATE NOCASE);");
     } catch (e) {
         console.warn(
             "[db] could not create UNIQUE index on company(name) - duplicate names exist; " +

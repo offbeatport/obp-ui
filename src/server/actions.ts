@@ -3,6 +3,7 @@ import { and, desc, eq, inArray, like } from "drizzle-orm";
 import { type Guardrails, resolveGuardrails } from "../config/spin.js";
 import {
     type ActionPayload,
+    type Channel,
     actions,
     appConfig,
     companies,
@@ -66,6 +67,35 @@ export const continueWithoutResearch = createServerFn({ method: "POST" })
 export const approveCompany = createServerFn({ method: "POST" })
     .validator((d: { companyId: string }) => d)
     .handler(async ({ data }) => graduateCompany(data.companyId));
+
+// Setup/Growth tabs — patch a company's own config (domain, budget cap, autopilot, pricing,
+// channels, git remote). Tiny write only; only the provided keys are applied.
+export const updateCompanySettings = createServerFn({ method: "POST" })
+    .validator(
+        (d: {
+            companyId: string;
+            domain?: string;
+            budgetCapUsd?: number | null;
+            autopilot?: "off" | "on";
+            pricing?: { plan?: string; priceUsd?: number; interval?: "month" | "year" };
+            channels?: { kind: string; status: string; budgetIntentUsd?: number }[];
+            gitRemote?: string;
+        }) => d,
+    )
+    .handler(async ({ data }) => {
+        const exists = db.select().from(companies).where(eq(companies.id, data.companyId)).get();
+        if (!exists) return { ok: false };
+        const patch: Partial<typeof companies.$inferInsert> = {};
+        if (data.domain !== undefined) patch.domain = data.domain || null;
+        if (data.budgetCapUsd !== undefined) patch.budgetCapUsd = data.budgetCapUsd;
+        if (data.autopilot !== undefined) patch.autopilot = data.autopilot;
+        if (data.pricing !== undefined) patch.pricing = data.pricing;
+        if (data.channels !== undefined) patch.channels = data.channels as Channel[];
+        if (data.gitRemote !== undefined) patch.gitRemote = data.gitRemote || null;
+        if (Object.keys(patch).length === 0) return { ok: true };
+        db.update(companies).set(patch).where(eq(companies.id, data.companyId)).run();
+        return { ok: true };
+    });
 
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
 // engine's chat pass (src/engine/chat.ts) picks it up and inserts the assistant reply.

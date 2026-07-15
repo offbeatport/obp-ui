@@ -80,7 +80,7 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
 
         const company = sqlite
             .prepare(
-                "SELECT name, status, spin_status AS spinStatus, autopilot, domain FROM company WHERE id=?",
+                "SELECT name, status, spin_status AS spinStatus, autopilot, domain, spin, branding, spec, guardrails FROM company WHERE id=?",
             )
             .get(id) as {
             name: string;
@@ -88,11 +88,22 @@ describe("spin end-to-end (logic fns + engine passes, fallback AI)", () => {
             spinStatus: string | null;
             autopilot: string;
             domain: string | null;
+            spin: string | null;
+            branding: string | null;
+            spec: string | null;
+            guardrails: string | null;
         };
         expect(company.status).toBe("active");
         expect(company.spinStatus).toBeNull();
         expect(company.name).toBe(product.slice(0, 48));
         expect(company.autopilot).toBe("on");
+        // Generated identity survives graduation onto its own columns (spin is cleared).
+        expect(company.spin).toBeNull();
+        const branding = JSON.parse(company.branding ?? "null");
+        expect(branding?.mark).toBeTruthy();
+        expect(Array.isArray(branding?.palette)).toBe(true);
+        expect(JSON.parse(company.spec ?? "null")?.product).toBeTruthy();
+        expect(JSON.parse(company.guardrails ?? "null")?.preset).toBe("lean");
 
         const action = sqlite
             .prepare("SELECT type, status, payload FROM action WHERE company_id=?")

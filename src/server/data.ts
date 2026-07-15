@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { desc, eq, sql } from "drizzle-orm";
-import type { Branding, Candidate, CompanySpec, SpinStatus } from "../config/spin.js";
+import type { Branding, Candidate, CompanySpec, Guardrails, SpinStatus } from "../config/spin.js";
 import {
     type Action,
+    type Channel,
     type Company,
     type Message,
+    type Run,
     actions,
     companies,
     db,
@@ -33,11 +35,32 @@ export type SliceState = "building" | "awaiting_approval" | "blocked" | "todo" |
 
 export type Slice = { n: number; title: string; state: SliceState; actionId: string };
 
+// Serializable pricing projection (the raw Pricing type has a `[k]: unknown` index that can't
+// cross the server-fn wire).
+export type CompanyPricing = { plan?: string; priceUsd?: number; interval?: "month" | "year" };
+
+// A company's task (a `code` action) with the richer projection the Pipeline/Product tabs need.
+export type CompanyAction = {
+    id: string;
+    n: number; // 1-based slice number among the company's code actions
+    type: "code" | "message" | "money";
+    title: string;
+    state: SliceState;
+    status: Action["status"];
+    reversible: boolean;
+    doneWhen?: string;
+    previewUrl?: string;
+    attempts: number; // run count
+    latestRun?: { status: string; error?: string; costUsd: number };
+    createdAt: number;
+};
+
 export type CompanySummary = {
     id: string; // immutable company id - the collision-proof routing key
     slug: string; // human URL key (slugify(name)) - unique platform-wide; the default routing key
     name: string;
-    tone: Tone; // avatar tint
+    tone: Tone; // avatar tint (fallback / card frame)
+    branding?: Branding; // generated logo (mark + palette) - the real company icon everywhere
     status: CompanyStatus;
     mrr: number;
     users: number;
@@ -57,6 +80,13 @@ export type CompanyDetail = CompanySummary & {
     thesis: string;
     domain?: string;
     liveUrl?: string;
+    gitRemote?: string;
+    autopilot: "off" | "on";
+    budgetCapUsd?: number;
+    pricing?: CompanyPricing; // plan / price / interval
+    channels?: Channel[]; // growth channels the engine has wired
+    spec?: CompanySpec; // the reviewed spec (persisted at graduation) - powers the Product tab
+    guardrails?: Guardrails; // the chosen guardrails - powers the Setup tab
     messages: ChatMessage[];
     // Set only while status='draft' (the spin-up incubation): the chat UI renders the spin flow.
     spin?: {
@@ -93,6 +123,7 @@ export type InboxItem = {
     companySlug: string;
     companyName: string;
     tone: Tone;
+    branding?: Branding; // company logo
     title: string;
     sub: string;
     sliceN?: number;
@@ -198,6 +229,7 @@ function toSummary(c: Company, acts: Action[]): CompanySummary {
         slug: slugify(c.name),
         name: c.name,
         tone: toneFor(c.id),
+        branding: c.branding ?? undefined,
         status: c.status,
         mrr: metrics.mrr ?? 0,
         users: metrics.users ?? 0,
@@ -311,6 +343,19 @@ export const getCompany = createServerFn({ method: "GET" })
             thesis: c.thesis,
             domain: c.domain ?? undefined,
             liveUrl: liveUrl ?? undefined,
+            gitRemote: c.gitRemote ?? undefined,
+            autopilot: c.autopilot,
+            budgetCapUsd: c.budgetCapUsd ?? undefined,
+            pricing: c.pricing
+                ? {
+                      plan: c.pricing.plan,
+                      priceUsd: c.pricing.priceUsd,
+                      interval: c.pricing.interval,
+                  }
+                : undefined,
+            channels: c.channels ?? undefined,
+            spec: c.spec ?? undefined,
+            guardrails: c.guardrails ?? undefined,
             messages: msgs.map(toChatMessage),
             spin,
         };
@@ -378,6 +423,7 @@ export const listInbox = createServerFn({ method: "GET" }).handler(
                 companySlug: c ? slugify(c.name) : "",
                 companyName: c?.name ?? "",
                 tone: c ? toneFor(c.id) : "slate",
+                branding: c?.branding ?? undefined,
                 title: blocked
                     ? `Unblock "${a.title}", or pause the company`
                     : a.type === "code"
@@ -406,3 +452,43 @@ export const getPortfolioMetrics = createServerFn({ method: "GET" }).handler(
         };
     },
 );
+
+// One company's full task list (its actions) with slice numbering + latest-run status - the
+// Pipeline + Product tabs read this. Ordered oldest-first (build order).
+export const listCompanyActions = createServerFn({ method: "GET" })
+    .validator((companyId: string) => companyId)
+    .handler(async ({ data: companyId }): Promise<CompanyAction[]> => {
+        const acts = db
+            .select()
+            .from(actions)
+            .where(eq(actions.companyId, companyId))
+            .all()
+            .sort(byCreated);
+        const rs = db.select().from(runs).where(eq(runs.companyId, companyId)).all();
+        const latest = new Map<string, Run>();
+        const attempts = new Map<string, number>();
+        const byTime = (a: Run, b: Run) => a.createdAt.getTime() - b.createdAt.getTime();
+        for (const r of rs.slice().sort(byTime)) latest.set(r.actionId, r); // last wins = newest
+        for (const r of rs) attempts.set(r.actionId, (attempts.get(r.actionId) ?? 0) + 1);
+        const code = acts.filter((a) => a.type === "code");
+        return acts.map((a) => {
+            const run = latest.get(a.id);
+            const payload = (a.payload ?? {}) as { doneWhen?: string; previewUrl?: string };
+            return {
+                id: a.id,
+                n: a.type === "code" ? code.indexOf(a) + 1 : 0,
+                type: a.type,
+                title: a.title,
+                state: sliceState(a.status),
+                status: a.status,
+                reversible: a.reversible,
+                doneWhen: payload.doneWhen,
+                previewUrl: payload.previewUrl,
+                attempts: attempts.get(a.id) ?? 0,
+                latestRun: run
+                    ? { status: run.status, error: run.error ?? undefined, costUsd: run.costUsd }
+                    : undefined,
+                createdAt: a.createdAt.getTime(),
+            };
+        });
+    });
