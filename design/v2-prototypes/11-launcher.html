@@ -482,7 +482,7 @@ body {
           <div class="gate-top">
             <span class="dot" style="background:var(--violet);width:9px;height:9px"></span>
             <span class="tag">Needs you · L0 Approval</span>
-            <span class="gt">Slice 5 — <span>User gets a daily email digest of top leads</span></span>
+            <span class="gt">Slice 5 - <span>User gets a daily email digest of top leads</span></span>
           </div>
           <div class="gate-meta">
             <div class="meta-chip"><span class="ml">Preview</span><a href="http://localhost:4019/digest/preview" target="_blank">http://localhost:4019/digest/preview ↗</a></div>
@@ -585,7 +585,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -613,7 +613,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -622,22 +622,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -663,11 +663,11 @@ DATA.opportunities.forEach(o => {
   });
 });
 const commands = [
-  { name:'Approve LeadSift slice 5', sub:'Daily digest — live + check green', act:'zoom', kw:'approve leadsift slice 5 digest gate' },
+  { name:'Approve LeadSift slice 5', sub:'Daily digest - live + check green', act:'zoom', kw:'approve leadsift slice 5 digest gate' },
   { name:'Promote “PayoutReconciler”', sub:'Score 82 → spin up a company', act:'promote', oid:'o1', kw:'promote payoutreconciler opportunity stripe' },
   { name:'Open portfolio overview', sub:'All companies, metrics, next moves', act:'overview', kw:'overview portfolio dashboard companies metrics' },
   { name:'Toggle live activity', sub:'Show the full build stream', act:'activity', kw:'activity live stream build feed toggle' },
-  { name:'Unblock RedditPainBot slice 8', sub:'Stopped — same failure ×3', act:'noop', kw:'unblock redditpainbot slice 8 blocked' },
+  { name:'Unblock RedditPainBot slice 8', sub:'Stopped - same failure ×3', act:'noop', kw:'unblock redditpainbot slice 8 blocked' },
 ];
 commands.forEach(c => items.push({ type:'cmd', group:'Commands', name:c.name, sub:c.sub, keywords:c.kw, act:c.act, oid:c.oid }));
 
@@ -787,8 +787,8 @@ function showOverview(on){
 function approve(){
   const b = el('approveBtn');
   b.classList.add('flashed');
-  b.innerHTML = 'Approved ✓ — shipping';
-  flashToast('Approved ✓ — slice 5 shipped to leadsift.app', false);
+  b.innerHTML = 'Approved ✓ - shipping';
+  flashToast('Approved ✓ - slice 5 shipped to leadsift.app', false);
   el('feedback').classList.remove('open');
   // mark slice shipped
   const s = document.querySelector('.slice.await');
@@ -801,7 +801,7 @@ function approve(){
 }
 function sendFeedback(){
   const txt = el('fbText').value.trim();
-  flashToast('Rejected — feedback sent to agents' + (txt ? ' ↻' : ''), true);
+  flashToast('Rejected - feedback sent to agents' + (txt ? ' ↻' : ''), true);
   el('feedback').classList.remove('open');
   el('fbText').value = '';
   const ss = document.querySelector('.slice.await .sstatus');
@@ -927,7 +927,7 @@ el('chatIn').addEventListener('keydown', e=>{
     log.insertAdjacentHTML('beforeend', `<div class="msg user">${esc(e.target.value.trim())}</div>`);
     e.target.value='';
     log.scrollTop = log.scrollHeight;
-    setTimeout(()=>{ log.insertAdjacentHTML('beforeend', `<div class="msg assistant"><div class="who">Agent</div>On it — I’ll fold that into the next pass.</div>`); log.scrollTop=log.scrollHeight; }, 600);
+    setTimeout(()=>{ log.insertAdjacentHTML('beforeend', `<div class="msg assistant"><div class="who">Agent</div>On it - I’ll fold that into the next pass.</div>`); log.scrollTop=log.scrollHeight; }, 600);
   }
 });
 

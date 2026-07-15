@@ -89,7 +89,7 @@
 
   .col{display:flex;flex-direction:column;min-height:0;flex-shrink:0}
 
-  /* LEFT — conversation list grouped by stream */
+  /* LEFT - conversation list grouped by stream */
   .col-list{width:340px;border-right:1px solid var(--line);background:var(--panel-2)}
   .list-head{padding:14px 18px 9px;flex-shrink:0}
   .list-head h2{font-family:'Newsreader',serif;font-size:21px;font-weight:600;letter-spacing:-.01em}
@@ -129,7 +129,7 @@
   .pip.you{background:var(--accent-soft);color:var(--accent-ink)}
   .needs-mark{color:var(--gate);font-size:11px;font-weight:700}
 
-  /* CENTER — open thread */
+  /* CENTER - open thread */
   .col-thread{flex:1;min-width:520px;background:var(--panel);border-right:1px solid var(--line)}
   .thread-head{padding:16px 26px;border-bottom:1px solid var(--line);flex-shrink:0;display:flex;align-items:flex-start;gap:14px}
   .thread-head .icn{
@@ -221,7 +221,7 @@
   .composer textarea:focus{outline:none;border-color:var(--accent)}
   .composer .send{background:var(--accent);color:#fff;border-radius:11px;padding:0 18px;height:44px;font-weight:600}
 
-  /* RIGHT — needs-you queue + altitude + autopilot rule */
+  /* RIGHT - needs-you queue + altitude + autopilot rule */
   .col-rail{width:380px;background:var(--panel-2);display:flex;flex-direction:column}
   .rail-scroll{flex:1;overflow-y:auto;padding:16px 16px 30px}
   .rail-sec{margin-bottom:22px}
@@ -331,7 +331,7 @@
     <aside class="col col-list">
       <div class="list-head">
         <h2 class="serif">Conversations</h2>
-        <p id="listSub">Everything inward &amp; outward — one approve action</p>
+        <p id="listSub">Everything inward &amp; outward - one approve action</p>
       </div>
       <div class="streams" id="streams"></div>
     </aside>
@@ -361,8 +361,8 @@
           <h4>Autopilot gate rule</h4>
           <div class="rule-card">
             Same shape for everything you act on: <b>preview + evidence + approve</b>.
-            <div class="rl"><span class="b gated">GATED</span><span>Talks to a real human or spends real money — tweets, cold email, support replies, ad spend. <b>You must approve.</b></span></div>
-            <div class="rl"><span class="b auto">AUTOPILOT</span><span>A reversible, non-spend feature with a green <span class="mono">doneWhen</span> — autopilot can ship it.</span></div>
+            <div class="rl"><span class="b gated">GATED</span><span>Talks to a real human or spends real money - tweets, cold email, support replies, ad spend. <b>You must approve.</b></span></div>
+            <div class="rl"><span class="b auto">AUTOPILOT</span><span>A reversible, non-spend feature with a green <span class="mono">doneWhen</span> - autopilot can ship it.</span></div>
           </div>
         </div>
         <div class="rail-sec">
@@ -402,7 +402,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -430,7 +430,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -439,27 +439,27 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
 /* ======================== BATCH-3 DATA (verbatim) ======================== */
-const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+const QUEUE = [ // universal "Needs you" - heterogeneous proposed real-world actions
   { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
     evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
     diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
@@ -468,17 +468,17 @@ const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world a
     draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
   { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
     evidence:'batch 1: 25 sent → 36% open → 8% reply',
-    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} - you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? - V' },
   { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
     evidence:'3rd request this week → candidate feature',
-    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
-  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    draft:'Great question - today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test - “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
     evidence:'organic SEO page converts 3.1% → worth a paid test' },
 ];
 
 const OUTBOUND = {
   twitter:[ // build-in-public stream
-    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it - lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
     { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
   ],
   cold:[ // sequences (per company)
@@ -488,7 +488,7 @@ const OUTBOUND = {
 
 const SUPPORT = [ // inbound = evidence stream
   { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
-  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am - I’m in PST, expected 8am local.' },
   { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
 ];
 
@@ -546,7 +546,7 @@ function buildConversations(){
     const needs = t.status==='needs_reply';
     convs.push({
       id:'c-'+t.id, stream:'support', who:t.user, tag:t.company, time: needs?'1h':'1d',
-      preview:t.subject+' — '+t.body, status: needs?'needs':'answered', needs,
+      preview:t.subject+' - '+t.body, status: needs?'needs':'answered', needs,
       kind:'support_reply', company:t.company,
       queueId: t.id==='t1'?'q4':null, ticket:t
     });
@@ -554,13 +554,13 @@ function buildConversations(){
   // 5) Spend authorization (rides the same gate, inward proposal)
   convs.push({
     id:'c-q5', stream:'cofounder', who:'DataDrop · ads budget', tag:'DataDrop', time:'30m',
-    preview:'Proposing a $50 Google Ads test — real money, gated to you.', status:'needs', needs:true,
+    preview:'Proposing a $50 Google Ads test - real money, gated to you.', status:'needs', needs:true,
     kind:'authorize_spend', company:'DataDrop', queueId:'q5'
   });
   // The special q1 LeadSift ship_feature thread (the full gate)
   convs.unshift({
     id:'c-q1', stream:'cofounder', who:'LeadSift · daily digest', tag:'LeadSift', time:'2m',
-    preview:'Slice 5 shipped & green — open the gate to approve the diff.', status:'needs', needs:true,
+    preview:'Slice 5 shipped & green - open the gate to approve the diff.', status:'needs', needs:true,
     kind:'ship_feature', company:'LeadSift', queueId:'q1'
   });
   return convs;
@@ -684,7 +684,7 @@ function renderThread(){
 function renderSpendThread(body, c, q){
   body.innerHTML = `
     <div class="msg assistant"><div class="lbl">Co-founder</div>
-      <div class="b">The organic SEO page for DataDrop converts at 3.1% — strong enough to justify a small paid test. Spending real money → this is gated to you.</div></div>
+      <div class="b">The organic SEO page for DataDrop converts at 3.1% - strong enough to justify a small paid test. Spending real money → this is gated to you.</div></div>
     <div class="draft-card">
       <div class="dc-hd">$ Spend authorization · ${c.company}</div>
       <div class="dc-body">
@@ -702,7 +702,7 @@ function renderChatThread(body){
     h+=`<div class="msg ${m.role}"><div class="lbl">${m.role==='user'?'You':'Co-founder'}</div><div class="b">${esc(m.text)}</div></div>`;
   });
   h+=`<div class="signal-arrow"><span class="sg">Tip</span><span class="ar">→</span>
-      <span>Ask to <span class="flink" onclick="openConv('c-q1')">see the diff</span> — the daily digest gate is one click away.</span></div>`;
+      <span>Ask to <span class="flink" onclick="openConv('c-q1')">see the diff</span> - the daily digest gate is one click away.</span></div>`;
   body.innerHTML=h;
 }
 
@@ -717,7 +717,7 @@ function renderGateThread(body, q){
       <div class="b">${esc(DATA.chat[0].text)}</div></div>
 
     <div class="gate">
-      <div class="g-hd"><span class="ttl">⚡ Ship slice 5 — daily digest of top leads</span>
+      <div class="g-hd"><span class="ttl">⚡ Ship slice 5 - daily digest of top leads</span>
         <span class="auto-tag">autopilot eligible</span></div>
       <div class="diff">${diffHtml}</div>
       <div class="gate-meta">
@@ -753,7 +753,7 @@ function renderTweetThread(body, c, q){
 function renderColdThread(body, c, q){
   body.innerHTML = `
     <div class="msg assistant"><div class="lbl">Co-founder</div>
-      <div class="b">Cold sequence for <b>${c.company}</b> — segment: ${esc(c.cold.segment)}. ${c.cold.step}, ${c.cold.size} recipients. Real humans → gated.</div></div>
+      <div class="b">Cold sequence for <b>${c.company}</b> - segment: ${esc(c.cold.segment)}. ${c.cold.step}, ${c.cold.size} recipients. Real humans → gated.</div></div>
     <div class="draft-card">
       <div class="dc-hd">✉ Cold email draft · ${c.company}</div>
       <div class="dc-body">${esc(q.draft)}</div>
@@ -773,7 +773,7 @@ function renderSupportThread(body, c, q){
       <span class="ft">candidate feature</span></div>`;
   if(answered){
     h+=`<div class="draft-card"><div class="dc-hd">✓ Answered</div>
-        <div class="dc-body">This ticket matches backlog feature 6 — already replied. Logged as adoption evidence.</div></div>`;
+        <div class="dc-body">This ticket matches backlog feature 6 - already replied. Logged as adoption evidence.</div></div>`;
   }else if(q){
     h+=`<div class="draft-card">
         <div class="dc-hd">❝ Drafted reply · ${c.company}</div>
@@ -793,7 +793,7 @@ function approve(qid, btn){
   const bar = document.querySelector(`.actions[data-q="${qid}"]`);
   const q = QUEUE.find(x=>x.id===qid);
   const verb = q && q.kind==='ship_feature' ? 'Shipped' : (q && q.kind==='authorize_spend'?'Authorized':'Sent');
-  if(bar) bar.innerHTML = `<span class="confirm ok">✓ Approved — ${verb}</span>`;
+  if(bar) bar.innerHTML = `<span class="confirm ok">✓ Approved - ${verb}</span>`;
   pushActivity(q);
   markResolved(qid);
 }
@@ -813,9 +813,9 @@ function confirmReject(qid){
   state.rejected[qid]=true; delete state.approved[qid];
   const bar = document.querySelector(`.actions[data-q="${qid}"]`);
   const z = document.getElementById('rej-'+qid); if(z) z.innerHTML='';
-  if(bar) bar.innerHTML = `<span class="confirm no">↩ Rejected — sent back with feedback</span>`;
+  if(bar) bar.innerHTML = `<span class="confirm no">↩ Rejected - sent back with feedback</span>`;
   const q=QUEUE.find(x=>x.id===qid);
-  unshiftAct(q?q.company:'—','drafted','feedback sent — co-founder re-drafting');
+  unshiftAct(q?q.company:'-','drafted','feedback sent - co-founder re-drafting');
   markResolved(qid, true);
 }
 function markResolved(qid){
@@ -831,9 +831,9 @@ function markResolved(qid){
 
 function pushActivity(q){
   if(!q) return;
-  const map={ship_feature:['posted','slice 5 shipped — daily digest now live'],
+  const map={ship_feature:['posted','slice 5 shipped - daily digest now live'],
     tweet:['posted','build-in-public post published'],
-    cold_batch:['sent','cold batch 2 of 3 sent — 25 recipients'],
+    cold_batch:['sent','cold batch 2 of 3 sent - 25 recipients'],
     support_reply:['posted','support reply sent to '+ (SUPPORT.find(t=>t.id==='t1')||{}).user],
     authorize_spend:['posted','$50 Google Ads test authorized']};
   const [kind,text]=map[q.kind]||['posted','sent'];
@@ -908,7 +908,7 @@ function renderLadder(){
     const row=document.createElement('div'); row.className='rl';
     row.innerHTML=`<span class="b" style="background:var(--panel-2);color:var(--ink-soft)">${r.rung}</span>
       <span style="flex:1">${r.items.map(i=>esc(i.label)).join(' · ')}
-        <i style="color:var(--ink-faint)"> — ${r.cost}</i></span>`;
+        <i style="color:var(--ink-faint)"> - ${r.cost}</i></span>`;
     wrap.appendChild(row);
   });
 }
@@ -976,7 +976,7 @@ function zoomFeature(coid, n){
   const slices=co.slices||[]; const s=slices.find(x=>x.n===n)|| (co.currentSlice&&co.currentSlice.n===n?co.currentSlice:null);
   const head=$('#threadHead'), body=$('#threadBody'); $('#composer').style.display='none';
   head.innerHTML=`<div class="icn">⚡</div><div style="flex:1">
-    <h3 class="serif">Slice ${n}: ${s?esc(s.title):'—'}</h3>
+    <h3 class="serif">Slice ${n}: ${s?esc(s.title):'-'}</h3>
     <div class="th-meta">${co.name} <span class="sep">·</span>
       <span class="badge ${s?s.status:'todo'}" style="vertical-align:middle">${s?s.status.replace('_',' '):''}</span></div></div>`;
   // if it's the awaiting LeadSift digest, show the gate
@@ -985,7 +985,7 @@ function zoomFeature(coid, n){
   }
   let h=`<div class="feat-detail" style="padding:0">`;
   if(s&&s.check) h+=`<div class="gm-row" style="border:1px solid var(--line);border-radius:10px;margin-bottom:10px"><span class="k">doneWhen</span><span class="check-ok">✓ ${s.check}</span></div>`;
-  if(s&&s.priority) h+=`<p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">Priority score <b>${s.priority}</b> — competes across the whole portfolio for the next build slot.</p>`;
+  if(s&&s.priority) h+=`<p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">Priority score <b>${s.priority}</b> - competes across the whole portfolio for the next build slot.</p>`;
   if(s&&s.dependsOn) h+=`<p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:8px">Depends on slice ${s.dependsOn.join(', ')}.</p>`;
   if(s&&s.note) h+=`<p style="font-size:12.5px;color:var(--s-blocked);margin-bottom:8px">⚠ ${esc(s.note)}</p>`;
   h+=`<div class="signal-arrow"><span class="sg">Evidence</span><span class="ar">→</span>
@@ -1026,7 +1026,7 @@ $('#needsPill').onclick=()=>{
 $('#composerSend').onclick=()=>{
   const inp=$('#composerInput'); const v=inp.value.trim(); if(!v) return;
   DATA.chat.push({role:'user',text:v});
-  DATA.chat.push({role:'assistant',text:'Got it — I’ll fold that into the next slice and surface the gate when the check is green.'});
+  DATA.chat.push({role:'assistant',text:'Got it - I’ll fold that into the next slice and surface the gate when the check is green.'});
   inp.value=''; renderThread();
   $('#threadBody').scrollTop=$('#threadBody').scrollHeight;
 };

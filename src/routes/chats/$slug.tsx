@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "~/components/app-shell";
 import { Placeholder } from "~/components/placeholder";
 
-// PLACEHOLDER — one global chat thread. Lane: chats.
+// PLACEHOLDER - one global chat thread. Lane: chats.
 export const Route = createFileRoute("/chats/$slug")({
     component: Chat,
 });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C Slop Slop — Zoom Canvas</title>
+<title>C Slop Slop - Zoom Canvas</title>
 <script>
 /* pre-paint theme: no flash */
 (function(){try{var t=localStorage.getItem('cslopslop-theme');document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
@@ -346,7 +346,7 @@ body{
     <div class="canvas-head">
       <div>
         <h1>Portfolio</h1>
-        <p>Six AI-operated bets on one calm canvas. Zoom into any square to focus a company — the squares are the navigation.</p>
+        <p>Six AI-operated bets on one calm canvas. Zoom into any square to focus a company - the squares are the navigation.</p>
       </div>
       <div class="legend" id="legend"></div>
     </div>
@@ -393,17 +393,17 @@ const COMPANIES = [
     progress:1, progressLabel:'120% to goal',
     spend:28, revenue:180, users:'12', usersUnit:'paying',
     plan:'Shipping the Daily digest to lift activation, then watching whether it moves usage.',
-    nba:'Approve — ship the Daily digest to all 12 users.',
+    nba:'Approve - ship the Daily digest to all 12 users.',
     recent:['Scored 41 leads overnight','Daily digest passed its check','+2 signups from the embed'],
-    risks:['Single acquisition channel — every signup comes from one embed.'],
-    approval:{title:'Ship Daily digest → all 12 users', detail:'One email endpoint. Fully reversible — you can pause it anytime.'},
-    rec:'continue', recText:'Traction is strong and churn is zero — keep compounding. Ship the digest, then add a second channel.',
+    risks:['Single acquisition channel - every signup comes from one embed.'],
+    approval:{title:'Ship Daily digest → all 12 users', detail:'One email endpoint. Fully reversible - you can pause it anytime.'},
+    rec:'continue', recText:'Traction is strong and churn is zero - keep compounding. Ship the digest, then add a second channel.',
     needsYou:true,
     docs:{
-      foundation:'Sales teams call leads in whatever order they arrive, wasting the best hours on cold ones. LeadSift scores every inbound webform lead <b>0–100</b> so reps call the hot ones first.<br><br><b>ICP</b> — SMB sales teams with a website contact form and no scoring in place.',
+      foundation:'Sales teams call leads in whatever order they arrive, wasting the best hours on cold ones. LeadSift scores every inbound webform lead <b>0–100</b> so reps call the hot ones first.<br><br><b>ICP</b> - SMB sales teams with a website contact form and no scoring in place.',
       product:'Live today: real-time scoring on webform submit, plus an embeddable capture widget. Shipping next: a <b>Daily digest</b> email of the day\'s hottest leads. Last night it scored 41 leads and the digest cleared QA.',
-      growth:'One channel today — the embed drives signups (+2 this week). That concentration is the main risk; a second channel is queued for right after the digest lands.',
-      budget:'Spend <b>$28/mo</b> (LLM + email). Revenue <b>$180/mo</b> from 12 seats at $15. Net <b>+$152/mo</b> — comfortably self-funding.'
+      growth:'One channel today - the embed drives signups (+2 this week). That concentration is the main risk; a second channel is queued for right after the digest lands.',
+      budget:'Spend <b>$28/mo</b> (LLM + email). Revenue <b>$180/mo</b> from 12 seats at $15. Net <b>+$152/mo</b> - comfortably self-funding.'
     }
   },
   {
@@ -413,7 +413,7 @@ const COMPANIES = [
     goal:'20 beta users, 40% week-2 retention, 5 who would pay.', goalNote:'6 of 20 beta · retention TBD',
     progress:0.30, progressLabel:'30% to goal',
     spend:22, revenue:40, users:'6', usersUnit:'beta',
-    plan:'Running the closed beta and measuring week-2 retention — the number that decides everything.',
+    plan:'Running the closed beta and measuring week-2 retention - the number that decides everything.',
     nba:'Interview 3 churned beta users to learn why they dropped.',
     recent:['Auto-drafted 30 replies this week','2 new beta signups'],
     risks:['Retention is unproven until the week-2 data lands.'],
@@ -421,7 +421,7 @@ const COMPANIES = [
     rec:'continue', recText:'Early signal is promising. Finish the beta and prove week-2 retention before spending big.',
     needsYou:true,
     docs:{
-      foundation:'Inbox triage eats an hour a day. QuietInbox reads new mail, sorts it, and <b>auto-drafts replies</b> the user approves before send.<br><br><b>ICP</b> — solo founders and consultants drowning in email.',
+      foundation:'Inbox triage eats an hour a day. QuietInbox reads new mail, sorts it, and <b>auto-drafts replies</b> the user approves before send.<br><br><b>ICP</b> - solo founders and consultants drowning in email.',
       product:'Closed beta running with 6 users. Auto-drafted 30 replies this week. Approve-before-send keeps the human firmly in control.',
       growth:'6 beta users, 2 new this week. Week-2 retention still unproven. A <b>$40 Product Hunt</b> launch is the pending call to widen the funnel.',
       budget:'Spend <b>$22/mo</b>. Revenue <b>$40/mo</b> from early believers. The launch spend of $40 is the only open decision.'
@@ -437,7 +437,7 @@ const COMPANIES = [
     plan:'Building the CSV cleaner and the dashboard so the first waitlisters can be invited.',
     nba:'Finish the cleaner, then invite the first 5 waitlisters.',
     recent:['Scaffolded the intake API','Deployed to staging'],
-    risks:['No traction yet — pre-launch, waitlist unconverted.'],
+    risks:['No traction yet - pre-launch, waitlist unconverted.'],
     approval:null,
     rec:'continue', recText:'No traction yet, but the build is on schedule. Ship the skeleton and invite the first 5.',
     needsYou:false,
@@ -445,7 +445,7 @@ const COMPANIES = [
       foundation:'Non-technical teams get messy CSVs and no easy way to share the insight inside them. DataDrop turns a CSV into a cleaned, <b>shareable dashboard</b> in one drop. 40 on the waitlist.',
       product:'Building the walking skeleton: intake API scaffolded, cleaner in progress, deployed to staging. Next goal: invite the first 5.',
       growth:'40 on the waitlist, 0 converted yet. Converting 5 of them is the first real signal to chase.',
-      budget:'Spend <b>$12/mo</b> (hosting). Revenue <b>$0</b> — pre-launch. Burn is negligible.'
+      budget:'Spend <b>$12/mo</b> (hosting). Revenue <b>$0</b> - pre-launch. Burn is negligible.'
     }
   },
   {
@@ -455,15 +455,15 @@ const COMPANIES = [
     goal:'15 problem interviews before writing a single line of code.', goalNote:'0 of 15 interviews',
     progress:0, progressLabel:'0 of 15 interviews',
     spend:0, revenue:0, users:'0', usersUnit:'users',
-    plan:'Validating the pain before building anything — deliberately code-free until the interviews are in.',
-    nba:'Approve — start the 15-interview validation sprint.',
+    plan:'Validating the pain before building anything - deliberately code-free until the interviews are in.',
+    nba:'Approve - start the 15-interview validation sprint.',
     recent:['Drafted the interview script','Listed 15 target users to reach'],
-    risks:['Might be a vitamin, not a painkiller — validate first.'],
+    risks:['Might be a vitamin, not a painkiller - validate first.'],
     approval:{title:'Start the 15-interview validation sprint', detail:'No spend. Validates the pain and willingness-to-pay before any code is written.'},
-    rec:'continue', recText:'Cheap to validate. Run the 15 interviews before writing code — and kill it fast if the pain looks weak.',
+    rec:'continue', recText:'Cheap to validate. Run the 15 interviews before writing code - and kill it fast if the pain looks weak.',
     needsYou:true,
     docs:{
-      foundation:'Teams find out about competitor price changes too late. PricePeek watches competitor pricing pages and <b>alerts on any change</b>.<br><br>Unvalidated on purpose — it could be a vitamin, not a painkiller.',
+      foundation:'Teams find out about competitor price changes too late. PricePeek watches competitor pricing pages and <b>alerts on any change</b>.<br><br>Unvalidated on purpose - it could be a vitamin, not a painkiller.',
       product:'No code yet, by design. Validation-first: <b>15 problem interviews</b> before building anything.',
       growth:'0 users. The whole plan right now is 15 interviews to confirm the pain and willingness-to-pay.',
       budget:'Spend <b>$0</b>, revenue <b>$0</b>. The only ask is approval to start the (free) validation sprint.'
@@ -471,34 +471,34 @@ const COMPANIES = [
   },
   {
     id:'translatorbill', name:'TranslatorBill', stage:'ejected', signal:'strong', status:'Graduated',
-    desc:'Auto-translates & reformats cross-border invoices — ejected into its own standalone company.',
+    desc:'Auto-translates & reformats cross-border invoices - ejected into its own standalone company.',
     metric:'$320<span>/mo · 22 paying</span>',
-    goal:'HIT — 20 paying at $15/mo, then ejected.', goalNote:'goal hit · graduated',
+    goal:'HIT - 20 paying at $15/mo, then ejected.', goalNote:'goal hit · graduated',
     progress:1, progressLabel:'goal hit · ejected',
     spend:0, revenue:320, revNote:'last recorded', users:'22', usersUnit:'paying',
-    plan:'Handed off to run as its own standalone company — no longer operated inside the factory.',
-    nba:'Nothing needed — it graduated and now runs independently.',
+    plan:'Handed off to run as its own standalone company - no longer operated inside the factory.',
+    nba:'Nothing needed - it graduated and now runs independently.',
     recent:['Hit 20 paying users at $15/mo','Crossed the eject threshold','Handed off into a standalone company'],
-    risks:['Now runs independently — no factory risk remaining.'],
+    risks:['Now runs independently - no factory risk remaining.'],
     approval:null,
-    rec:'ejected', recText:'Goal hit — graduated into its own standalone company. Nothing left to operate here.',
+    rec:'ejected', recText:'Goal hit - graduated into its own standalone company. Nothing left to operate here.',
     needsYou:false,
     docs:{
-      foundation:'Cross-border invoices arrive in the wrong language and format. TranslatorBill auto-translates and <b>reformats</b> them. A clear painkiller — which is why it graduated.',
+      foundation:'Cross-border invoices arrive in the wrong language and format. TranslatorBill auto-translates and <b>reformats</b> them. A clear painkiller - which is why it graduated.',
       product:'A mature product handed off to its own standalone company. No longer operated inside the factory.',
-      growth:'Hit 20 paying at $15/mo, then 22 — the eject threshold. Graduated to run on its own.',
+      growth:'Hit 20 paying at $15/mo, then 22 - the eject threshold. Graduated to run on its own.',
       budget:'Last recorded: <b>$320/mo</b> revenue, 22 paying users, <b>$0</b> factory spend (now standalone).'
     }
   },
   {
     id:'redditpainbot', name:'RedditPainBot', stage:'killed', signal:'weak', status:'Stopped',
-    desc:'Mined Reddit for recurring product pains — killed on weak willingness-to-pay.',
+    desc:'Mined Reddit for recurring product pains - killed on weak willingness-to-pay.',
     metric:'$0<span>/mo · 0 users</span>',
-    goal:'MISSED — nobody would pay. Killed after 3 weeks.', goalNote:'missed · killed',
+    goal:'MISSED - nobody would pay. Killed after 3 weeks.', goalNote:'missed · killed',
     progress:0.12, progressLabel:'missed · killed',
     spend:0, revenue:0, users:'0', usersUnit:'users',
     plan:'Post-mortem written and filed. The learnings are kept for the next bet.',
-    nba:'Nothing needed — the bet is stopped and the post-mortem is filed.',
+    nba:'Nothing needed - the bet is stopped and the post-mortem is filed.',
     recent:['Willingness-to-pay came back weak','Stopped after 3 weeks','Post-mortem written'],
     risks:['Willingness-to-pay was too weak to continue.'],
     approval:null,
@@ -506,7 +506,7 @@ const COMPANIES = [
     needsYou:false,
     docs:{
       foundation:'Idea: mine Reddit for recurring product pains and surface them for builders. Tested whether anyone wanted the output.',
-      product:'The prototype mined threads and clustered pains — it technically worked, but nobody would pay for it.',
+      product:'The prototype mined threads and clustered pains - it technically worked, but nobody would pay for it.',
       growth:'0 users. Weak willingness-to-pay across every outreach. Killed after 3 weeks.',
       budget:'Spend <b>$0</b> (stopped), revenue <b>$0</b>. Post-mortem written; the learnings are kept.'
     }
@@ -679,9 +679,9 @@ function approvalCard(c){
   if(!c.approval) return '';
   if(st.resolved){
     const map = {
-      approved:{cls:'ok', icon:'✓', txt:'Approved — the AI is proceeding now. Reversible from the activity log.'},
-      held:{cls:'hold', icon:'‖', txt:'On hold — parked for now. The AI will wait for your call.'},
-      killed:{cls:'kill', icon:'✕', txt:'Killed — the bet is stopped and a post-mortem will be written.'}
+      approved:{cls:'ok', icon:'✓', txt:'Approved - the AI is proceeding now. Reversible from the activity log.'},
+      held:{cls:'hold', icon:'‖', txt:'On hold - parked for now. The AI will wait for your call.'},
+      killed:{cls:'kill', icon:'✕', txt:'Killed - the bet is stopped and a post-mortem will be written.'}
     };
     const r = map[st.resolvedAs];
     const more = firstNeeds();
@@ -723,7 +723,7 @@ function renderDetail(id){
 
     <div class="rec" style="${stageVars(st.stage)}">
       <span class="rk">AI recommends</span>
-      <div><b>${recLabel}</b> — ${c.recText}</div>
+      <div><b>${recLabel}</b> - ${c.recText}</div>
     </div>
 
     <p class="d-desc">${c.desc}</p>

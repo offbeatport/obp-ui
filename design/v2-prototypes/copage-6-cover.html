@@ -206,7 +206,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .cover-body{ display:grid; grid-template-columns:1fr 264px; gap:22px; margin-top:22px; align-items:start; }
 @media(max-width:1080px){.cover-body{grid-template-columns:1fr}}
 
-/* HERO — landing mock w/ overlaid metrics */
+/* HERO - landing mock w/ overlaid metrics */
 .hero{
   position:relative; border:1px solid var(--line); border-radius:16px; overflow:hidden;
   background:var(--paper); box-shadow:var(--shadow); min-height:430px; isolation:isolate;
@@ -233,7 +233,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mock-funnel{ position:absolute; right:22px; bottom:0; width:200px; z-index:0; opacity:.9; }
 .mock-funnel svg{width:100%;display:block}
 
-/* metric overlays — cover lines */
+/* metric overlays - cover lines */
 .hero-metrics{
   position:absolute; left:0; right:0; bottom:0; z-index:5;
   display:flex; align-items:flex-end; gap:0;
@@ -306,7 +306,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tag.building{color:var(--amber);background:var(--amber-soft)}
 .tag.planned{color:var(--ink-faint);background:var(--cream-2)}
 
-/* BUILDING state — shimmer + progress */
+/* BUILDING state - shimmer + progress */
 .thumb.building::before{
   content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
   background:linear-gradient(105deg,transparent 30%,var(--accent-soft) 48%,transparent 66%);
@@ -326,7 +326,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 @keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
 @keyframes prog{0%{width:12%}50%{width:74%}100%{width:12%}}
 
-/* PLANNED state — ghost overlay */
+/* PLANNED state - ghost overlay */
 .thumb.planned .mini{opacity:.4;filter:grayscale(.4)}
 .thumb.planned::after{
   content:""; position:absolute; inset:0; z-index:2;
@@ -340,7 +340,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .feat.planned{opacity:.72}
 
-/* RAIL — what's next as editorial contents */
+/* RAIL - what's next as editorial contents */
 .rail{ position:sticky; top:26px; }
 .rail-head{ border-bottom:2px solid var(--ink); padding-bottom:9px; margin-bottom:4px; display:flex; align-items:baseline; justify-content:space-between; }
 .rail-head h3{ font-family:var(--disp); font-weight:700; font-size:16px; letter-spacing:-.02em; }
@@ -548,7 +548,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
           <div class="brand-mission">Turn every webform into scored, ranked sales leads.</div>
         </div>
       </div>
-      <div class="agent-sub"><span class="dot pulse"></span> Sift · your AI operator — building &amp; running it live</div>
+      <div class="agent-sub"><span class="dot pulse"></span> Sift · your AI operator - building &amp; running it live</div>
     </div>
 
     <div class="stream" id="stream">
@@ -556,7 +556,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <span class="av"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-6 7v5l-4 2v-7L4 6Z" fill="#fff"/></svg></span>
         <div class="bubble">
           <div class="who">Sift · 8:02am</div>
-          <div class="txt">Morning ☀️ Quiet, productive night — I captured <b>4 fresh leads</b> while you slept, one scored <span class="em">92 (hot)</span>. MRR's holding at <b>$180</b>, churn's still a clean <b>0%</b>. All green — nothing needs you yet.</div>
+          <div class="txt">Morning ☀️ Quiet, productive night - I captured <b>4 fresh leads</b> while you slept, one scored <span class="em">92 (hot)</span>. MRR's holding at <b>$180</b>, churn's still a clean <b>0%</b>. All green - nothing needs you yet.</div>
         </div>
       </div>
 
@@ -564,7 +564,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <span class="av"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-6 7v5l-4 2v-7L4 6Z" fill="#fff"/></svg></span>
         <div class="bubble">
           <div class="who">Sift</div>
-          <div class="txt">One thing worth your eyes: I just finished the <b>Daily digest</b> — an 8am email of each day's top-scored leads. It passed every check <span class="check">✓</span> I'll auto-ship it in a moment, but you can green-light it now.</div>
+          <div class="txt">One thing worth your eyes: I just finished the <b>Daily digest</b> - an 8am email of each day's top-scored leads. It passed every check <span class="check">✓</span> I'll auto-ship it in a moment, but you can green-light it now.</div>
           <div class="approval" id="approvalCard">
             <div class="approval-top">
               <span class="approval-badge">Check passed</span>
@@ -665,7 +665,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                   </div>
                   <div class="mock-eyebrow">Lead intelligence</div>
                   <h1 class="mock-h1">Turn every webform into scored, ranked leads.</h1>
-                  <p class="mock-sub">LeadSift scores every lead 0–100 by buying intent — so your team chases the hot ones first, and nothing slips.</p>
+                  <p class="mock-sub">LeadSift scores every lead 0–100 by buying intent - so your team chases the hot ones first, and nothing slips.</p>
                   <div class="mock-cta">
                     <span class="go">Capture your first lead</span>
                     <span class="note">No card · live in 2 min</span>
@@ -701,7 +701,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                 <span class="sub" id="filmSub">8 assets · 6 live · 1 building · 1 planned</span>
               </div>
 
-              <!-- STOREFRONT — how the company presents & sells itself -->
+              <!-- STOREFRONT - how the company presents & sells itself -->
               <div class="film-group">
                 <div class="film-label"><span class="gl">Storefront</span> <span class="gd">how the company presents &amp; sells itself</span></div>
                 <div class="filmstrip storefront">
@@ -726,14 +726,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                     </div>
                     <div class="feat-cap">
                       <div class="feat-name">Brand &amp; design <span class="tag live">Live</span></div>
-                      <div class="feat-sum">Logo, palette &amp; voice — the LeadSift look.</div>
+                      <div class="feat-sum">Logo, palette &amp; voice - the LeadSift look.</div>
                     </div>
                   </div>
 
                 </div>
               </div>
 
-              <!-- PRODUCT — the features users actually use -->
+              <!-- PRODUCT - the features users actually use -->
               <div class="film-group">
                 <div class="film-label"><span class="gl">Product</span> <span class="gd">the features users actually use</span></div>
                 <div class="filmstrip product">
@@ -807,7 +807,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
               </div>
             </div>
 
-            <!-- RAIL — WHAT'S NEXT -->
+            <!-- RAIL - WHAT'S NEXT -->
             <aside class="rail">
               <div class="rail-head">
                 <h3>The plan</h3>
@@ -820,8 +820,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                   <span class="plan-no">01</span>
                   <div class="plan-body">
                     <div class="plan-t">Daily digest <span class="plan-pill await">Awaiting you</span></div>
-                    <div class="plan-m">Built &amp; passed its check — ship it from the chat.</div>
-                    <div class="plan-why"><b>Why:</b> the #1 recurring ask — keeps users in the loop daily.</div>
+                    <div class="plan-m">Built &amp; passed its check - ship it from the chat.</div>
+                    <div class="plan-why"><b>Why:</b> the #1 recurring ask - keeps users in the loop daily.</div>
                   </div>
                 </div>
               </div>
@@ -849,7 +849,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
                   <div class="plan-body">
                     <div class="plan-t">Slack alert on a hot lead</div>
                     <div class="plan-m">Ping the channel when a lead scores 90+.</div>
-                    <div class="plan-why"><b>Why:</b> hot leads cool in hours — speed closes them.</div>
+                    <div class="plan-why"><b>Why:</b> hot leads cool in hours - speed closes them.</div>
                   </div>
                 </div>
               </div>
@@ -894,7 +894,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
               <span class="doc-ic b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
               <div>
                 <div class="doc-title">Market-opportunity research</div>
-                <div class="doc-desc">The wedge, the buyers, and why now — with the numbers behind it.</div>
+                <div class="doc-desc">The wedge, the buyers, and why now - with the numbers behind it.</div>
               </div>
               <div class="doc-meta"><span>3 pages · updated 1w ago</span></div>
               <span class="doc-open">Read →</span>
@@ -918,7 +918,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <div class="stub">
           <span class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2l6 6-9 9-6 1 1-6 8-10Z"/><path d="M12 4l8 8"/></svg></span>
           <h3>Build</h3>
-          <p>The agent's workshop — code, tests, and deploys for each feature it ships. Currently building the Daily digest.</p>
+          <p>The agent's workshop - code, tests, and deploys for each feature it ships. Currently building the Daily digest.</p>
           <span class="soon">Coming soon</span>
         </div>
       </section>
@@ -927,7 +927,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <div class="stub">
           <span class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg></span>
           <h3>Grow</h3>
-          <p>Distribution, launches, and the funnel — how the agent finds and converts the next 12 users.</p>
+          <p>Distribution, launches, and the funnel - how the agent finds and converts the next 12 users.</p>
           <span class="soon">Coming soon</span>
         </div>
       </section>
@@ -936,7 +936,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         <div class="stub">
           <span class="stub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2 0 0 1 5 0c0 2.5-5 1-5 4a2.5 2 0 0 0 5 0"/></svg></span>
           <h3>Money</h3>
-          <p>Revenue, pricing, and payouts — MRR is $180 and climbing at +29% this month.</p>
+          <p>Revenue, pricing, and payouts - MRR is $180 and climbing at +29% this month.</p>
           <span class="soon">Coming soon</span>
         </div>
       </section>
@@ -950,14 +950,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-head">
       <div>
-        <div class="mt" id="modalTitle">—</div>
-        <div class="ms" id="modalMeta">—</div>
+        <div class="mt" id="modalTitle">-</div>
+        <div class="ms" id="modalMeta">-</div>
       </div>
       <button class="modal-x" onclick="closeDoc()" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
-    <div class="modal-body" id="modalBody">—</div>
+    <div class="modal-body" id="modalBody">-</div>
   </div>
 </div>
 
@@ -988,15 +988,15 @@ function resolveApproval(action){
   var box=document.getElementById('approvalBtns');
   if(!box)return;
   var map={
-    approve:{c:'var(--green)',ic:'✓',t:'Shipped — Daily digest is live for all 12 users.'},
-    review:{c:'var(--blue)',ic:'◎',t:'Opening the preview under Build — I’ll hold the ship.'},
-    reject:{c:'var(--red)',ic:'✕',t:'Held — I’ll rework the digest and bring it back.'}
+    approve:{c:'var(--green)',ic:'✓',t:'Shipped - Daily digest is live for all 12 users.'},
+    review:{c:'var(--blue)',ic:'◎',t:'Opening the preview under Build - I’ll hold the ship.'},
+    reject:{c:'var(--red)',ic:'✕',t:'Held - I’ll rework the digest and bring it back.'}
   };
   var r=map[action];
   box.outerHTML='<div class="resolved" style="color:'+r.c+'"><span class="ic" style="background:'+r.c+'">'+r.ic+'</span>'+r.t+'</div>';
   var replies={
-    approve:'On it — the digest is live. First send lands tomorrow at 8am. 🎉 I’ll watch the open rate and report back.',
-    review:'Sure. Preview’s queued under Build — I’ll hold the ship until you’re happy with it.',
+    approve:'On it - the digest is live. First send lands tomorrow at 8am. 🎉 I’ll watch the open rate and report back.',
+    review:'Sure. Preview’s queued under Build - I’ll hold the ship until you’re happy with it.',
     reject:'Understood. I’ll tighten the lead selection, re-run the checks, and bring it back for you.'
   };
   setTimeout(function(){addAgentMsg(replies[action]);},550);
@@ -1008,17 +1008,17 @@ function autoShip(){
   if(approvalResolved)return;
   approvalResolved=true; autoShipTimer=null;
   var box=document.getElementById('approvalBtns');
-  if(box)box.outerHTML='<div class="resolved" style="color:var(--green)"><span class="ic" style="background:var(--green)">✓</span>Shipped on autopilot — Daily digest is live for all 12 users.</div>';
+  if(box)box.outerHTML='<div class="resolved" style="color:var(--green)"><span class="ic" style="background:var(--green)">✓</span>Shipped on autopilot - Daily digest is live for all 12 users.</div>';
   shipDigest();
-  setTimeout(function(){addAgentMsg('Heads up — I auto-shipped the <b>Daily digest</b> (it’s a build, and builds ship on autopilot). It’s live for all 12 users; first send is tomorrow 8am. Shout if you’d like it pulled.');},550);
+  setTimeout(function(){addAgentMsg('Heads up - I auto-shipped the <b>Daily digest</b> (it’s a build, and builds ship on autopilot). It’s live for all 12 users; first send is tomorrow 8am. Shout if you’d like it pulled.');},550);
 }
 
 function explainDigest(){
-  addAgentMsg('Happy to explain 🙂 The digest jumped the queue because it’s the single most-requested thing — <b>7 of 12 users</b> asked to stop logging in just to check for hot leads. It reuses the scoring engine we already ship, so it was low-risk and quick. Ship it and everyone gets tomorrow’s top leads at 8am.');
+  addAgentMsg('Happy to explain 🙂 The digest jumped the queue because it’s the single most-requested thing - <b>7 of 12 users</b> asked to stop logging in just to check for hot leads. It reuses the scoring engine we already ship, so it was low-risk and quick. Ship it and everyone gets tomorrow’s top leads at 8am.');
 }
 
 function autoLearnToggle(cb){
-  if(cb&&cb.checked)addAgentMsg('Got it — I’ll <b>auto-ship digest-style changes</b> like this from now on and just tell you after. Flip it off anytime.');
+  if(cb&&cb.checked)addAgentMsg('Got it - I’ll <b>auto-ship digest-style changes</b> like this from now on and just tell you after. Flip it off anytime.');
 }
 
 /* ---------- THE "WOW": building → live ---------- */
@@ -1118,7 +1118,7 @@ function sendMsg(e){
   var v=inp.value.trim(); if(!v)return false;
   addMeMsg(v); inp.value='';
   setTimeout(function(){
-    addAgentMsg('Got it — noting that. I’ll fold it into the plan and flag anything that needs your call.');
+    addAgentMsg('Got it - noting that. I’ll fold it into the plan and flag anything that needs your call.');
   },700);
   return false;
 }
@@ -1128,16 +1128,16 @@ var DOCS={
   mission:{
     title:'Mission statement', meta:'1 page · updated 3d ago',
     body:'<p class="lead">Turn every webform into scored, ranked sales leads.</p>'+
-      '<h4>The problem</h4><p>Small teams collect leads through forms, then drown in them. Every submission looks the same in the inbox, so the best-fit buyers wait next to the tire-kickers — and go cold.</p>'+
+      '<h4>The problem</h4><p>Small teams collect leads through forms, then drown in them. Every submission looks the same in the inbox, so the best-fit buyers wait next to the tire-kickers - and go cold.</p>'+
       '<h4>What we do</h4><p>LeadSift sits behind any webform, scores each lead 0–100 by buying intent the moment it arrives, and ranks them so a founder can work the top of the list first. No CRM migration, no setup call.</p>'+
       '<h4>Who it’s for</h4><ul><li>Solo founders and 2–5 person GTM teams</li><li>Anyone routing inbound through Typeform, Webflow, or a plain HTML form</li><li>Teams that want signal, not another dashboard</li></ul>'+
-      '<h4>What "done" looks like</h4><p>A user connects a form and, within two minutes, sees their leads ranked by who is most likely to buy — and never manually triages an inbox again.</p>'
+      '<h4>What "done" looks like</h4><p>A user connects a form and, within two minutes, sees their leads ranked by who is most likely to buy - and never manually triages an inbox again.</p>'
   },
   market:{
     title:'Market-opportunity research', meta:'3 pages · updated 1w ago',
-    body:'<h4>The wedge</h4><p>Lead scoring is a feature buried inside heavy marketing suites that cost $800+/mo and take weeks to deploy. We unbundle the one part small teams actually want — intent scoring on inbound — and ship it as a drop-in.</p>'+
+    body:'<h4>The wedge</h4><p>Lead scoring is a feature buried inside heavy marketing suites that cost $800+/mo and take weeks to deploy. We unbundle the one part small teams actually want - intent scoring on inbound - and ship it as a drop-in.</p>'+
       '<h4>The buyer</h4><p>Founder-led SaaS and service businesses under 10 people. They already use a form tool, feel the pain of unranked leads weekly, and can adopt without a procurement cycle. Willingness to pay: $15–49/mo.</p>'+
-      '<h4>Why now</h4><ul><li>Cheap, reliable scoring models make per-lead inference trivial to run</li><li>Form tools expose webhooks — capture is a five-minute integration</li><li>Buyers expect self-serve; a sales-assist tool with no sales motion wins on speed</li></ul>'+
+      '<h4>Why now</h4><ul><li>Cheap, reliable scoring models make per-lead inference trivial to run</li><li>Form tools expose webhooks - capture is a five-minute integration</li><li>Buyers expect self-serve; a sales-assist tool with no sales motion wins on speed</li></ul>'+
       '<h4>Size &amp; path</h4><p>Millions of micro-businesses run inbound forms. Capturing a sliver at $29/mo is a durable, boring, profitable wedge. First 100 users come from communities where founders already complain about messy inbound.</p>'+
       '<h4>Risk</h4><p>Incumbents could bundle this for free. Our defense is focus and time-to-value: live in two minutes, priced for a team of one.</p>'
   },
@@ -1145,9 +1145,9 @@ var DOCS={
     title:'Design doc', meta:'2 pages · updated 2d ago',
     body:'<h4>System overview</h4><p>Three services: <b>Capture</b> (ingest), <b>Score</b> (rank), <b>Surface</b> (table, filters, digest). Each lead flows capture → score → surface in under a second.</p>'+
       '<h4>Capture</h4><p>A one-line embed or webhook accepts any form payload, normalizes fields, and dedupes on email. Malformed submissions are quarantined, never dropped.</p>'+
-      '<h4>Score 0–100</h4><p>Each lead is scored on firmographic fit, message intent, and engagement recency. The score is explainable — every lead shows the top three reasons it ranked where it did.</p>'+
-      '<h4>Surface</h4><ul><li><b>Lead table</b> — sortable, filterable, score-first</li><li><b>Filter by score</b> — one slider to isolate the hot ones</li><li><b>Daily digest</b> — 8am email of the day’s top leads <em>(building)</em></li><li><b>Export to CSV</b> — one-click handoff to a CRM <em>(planned)</em></li></ul>'+
-      '<h4>Principles</h4><p>Fast to value, explainable by default, and calm — the product should feel like a quiet analyst, not another noisy dashboard.</p>'
+      '<h4>Score 0–100</h4><p>Each lead is scored on firmographic fit, message intent, and engagement recency. The score is explainable - every lead shows the top three reasons it ranked where it did.</p>'+
+      '<h4>Surface</h4><ul><li><b>Lead table</b> - sortable, filterable, score-first</li><li><b>Filter by score</b> - one slider to isolate the hot ones</li><li><b>Daily digest</b> - 8am email of the day’s top leads <em>(building)</em></li><li><b>Export to CSV</b> - one-click handoff to a CRM <em>(planned)</em></li></ul>'+
+      '<h4>Principles</h4><p>Fast to value, explainable by default, and calm - the product should feel like a quiet analyst, not another noisy dashboard.</p>'
   }
 };
 function openDoc(k){

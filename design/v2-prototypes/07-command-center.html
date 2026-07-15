@@ -156,7 +156,7 @@
   }
   .back-btn:hover{color:var(--accent);border-color:var(--accent-dim)}
 
-  /* tile container — grows RIGHT (horizontal scroll) */
+  /* tile container - grows RIGHT (horizontal scroll) */
   .tiles{
     flex:1;display:flex;overflow-x:auto;overflow-y:hidden;min-height:0;
     scroll-behavior:smooth;
@@ -477,7 +477,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -505,7 +505,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -514,22 +514,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -661,7 +661,7 @@ function renderOverview(){
           <div class="kpi"><div class="v">${p.slicesShipped}</div><div class="l">slices shipped</div></div>
         </div>
         <div class="section-label">needs you</div>
-        <div class="move"><span class="n violet" style="color:var(--violet)">◆</span><span class="t">${p.needsYou} slice awaiting approval — <a href="#" data-focus="leadsift">LeadSift s5</a></span></div>
+        <div class="move"><span class="n violet" style="color:var(--violet)">◆</span><span class="t">${p.needsYou} slice awaiting approval - <a href="#" data-focus="leadsift">LeadSift s5</a></span></div>
         <div class="section-label">next moves</div>
         ${DATA.nextMoves.map((m,i)=>`<div class="move"><span class="n">${i+1}.</span><span class="t">${esc(m)}</span></div>`).join('')}
       </div>
@@ -677,7 +677,7 @@ function renderOverview(){
           if(c.id==='leadsift'){
             curLine=`<div class="colist-cur"><span class="s-awaiting_approval">◆</span> slice 5 awaiting approval · check green</div>`;
           } else if(cs){
-            curLine=`<div class="colist-cur"><span class="${'s-'+cs.status} ${cs.status==='building'?'pulse':''}">${SLICEGLYPH[cs.status]}</span> slice ${cs.n} ${esc(cs.title)} — ${esc(cs.step)}</div>`;
+            curLine=`<div class="colist-cur"><span class="${'s-'+cs.status} ${cs.status==='building'?'pulse':''}">${SLICEGLYPH[cs.status]}</span> slice ${cs.n} ${esc(cs.title)} - ${esc(cs.step)}</div>`;
           }
           const shipped = c.slices ? c.slices.filter(s=>s.status==='shipped').length : (c.slicesShipped||0);
           return `<div class="colist-row" data-co="${c.id}">
@@ -808,10 +808,10 @@ function renderLeadSiftZoom(c){
             <div class="bar"><i></i><i></i><i></i><span class="addr">${esc(ap.previewUrl)}</span></div>
             <div class="scr">
               <h4>Your top leads today</h4>
-              <div class="digest-row"><span class="nm">Acme Corp — contact form</span><span class="sc">94</span></div>
-              <div class="digest-row"><span class="nm">Globex — pricing inquiry</span><span class="sc">88</span></div>
-              <div class="digest-row"><span class="nm">Initech — demo request</span><span class="sc">81</span></div>
-              <div class="digest-row"><span class="nm">Hooli — partnership</span><span class="sc">73</span></div>
+              <div class="digest-row"><span class="nm">Acme Corp - contact form</span><span class="sc">94</span></div>
+              <div class="digest-row"><span class="nm">Globex - pricing inquiry</span><span class="sc">88</span></div>
+              <div class="digest-row"><span class="nm">Initech - demo request</span><span class="sc">81</span></div>
+              <div class="digest-row"><span class="nm">Hooli - partnership</span><span class="sc">73</span></div>
             </div>
           </div>
         </div>
@@ -845,7 +845,7 @@ function renderLeadSiftZoom(c){
     </div>`;
 
   $('#tiles').innerHTML = backlog + diffPane + previewPane + chatPane +
-    `<div class="tile-end">↦ PANES TILE RIGHT — SCROLL →</div>`;
+    `<div class="tile-end">↦ PANES TILE RIGHT - SCROLL →</div>`;
 
   wireGate();
   wireChat(c);
@@ -879,7 +879,7 @@ function renderGenericZoom(c){
         </div>
         <div class="field"><div class="lbl">thesis</div><div style="color:var(--txt);font-size:11.5px">${esc(c.thesis)}</div></div>
         <div class="field" style="border-bottom:0"><div class="lbl">live preview url</div>
-          ${c.previewUrl?`<div class="urlbox"><span class="u">${esc(c.previewUrl)}</span><span class="live ${c.status==='active'?'pulse':''}">${c.status==='active'?'● LIVE':'○ DOWN'}</span></div>`:`<div class="donewhen">not deployed yet — no preview</div>`}
+          ${c.previewUrl?`<div class="urlbox"><span class="u">${esc(c.previewUrl)}</span><span class="live ${c.status==='active'?'pulse':''}">${c.status==='active'?'● LIVE':'○ DOWN'}</span></div>`:`<div class="donewhen">not deployed yet - no preview</div>`}
         </div>
         ${cs&&cs.status==='building'?`<div class="field" style="border-top:1px solid var(--line)"><div class="lbl">current build step</div><div class="donewhen"><span class="s-building pulse">◐</span> ${esc(cs.step)}</div></div>`:''}
         ${cs&&cs.status==='blocked'?`<div class="field" style="border-top:1px solid var(--line)"><div class="lbl s-blocked">blocked</div><div class="donewhen s-blocked">${esc(cs.step)}</div></div>`:''}
@@ -890,13 +890,13 @@ function renderGenericZoom(c){
     <div class="pane flex">
       <div class="pane-head"><span class="tag">▸</span> ${esc(c.name).toUpperCase()} CHAT <span class="rcount">company log</span></div>
       <div class="pane-body chat-body" id="chatBody">
-        <div class="msg assistant"><div class="who">assistant</div>${esc(c.name)} is ${cs?cs.status.replace('_',' '):'idle'}${cs?` on slice ${cs.n}: ${esc(cs.title)}.`:'.'} ${cs&&cs.status==='blocked'?'No progress — recommend you unblock or pause the company.':'I’ll ping you the moment a slice needs approval.'}</div>
+        <div class="msg assistant"><div class="who">assistant</div>${esc(c.name)} is ${cs?cs.status.replace('_',' '):'idle'}${cs?` on slice ${cs.n}: ${esc(cs.title)}.`:'.'} ${cs&&cs.status==='blocked'?'No progress - recommend you unblock or pause the company.':'I’ll ping you the moment a slice needs approval.'}</div>
       </div>
       <div class="chat-input-wrap"><span class="pr">›</span>
         <input class="chat-input" id="chatInput" placeholder="message ${esc(c.name)}…" autocomplete="off"></div>
     </div>`;
 
-  $('#tiles').innerHTML = backlog + status + chatPane + `<div class="tile-end">↦ NO GATE — FOCUS LEADSIFT FOR APPROVAL</div>`;
+  $('#tiles').innerHTML = backlog + status + chatPane + `<div class="tile-end">↦ NO GATE - FOCUS LEADSIFT FOR APPROVAL</div>`;
   wireChat(c);
 }
 
@@ -907,12 +907,12 @@ function wireGate(){
     $('#gateActions').style.display='none';
     $('#rejectForm').classList.remove('show');
     confirm.className='gate-confirm show ok';
-    confirm.textContent='✓ Approved — slice 5 marked shipped & live';
-    toast('✓ Approved — LeadSift slice 5 shipped', 'ok');
+    confirm.textContent='✓ Approved - slice 5 marked shipped & live';
+    toast('✓ Approved - LeadSift slice 5 shipped', 'ok');
     // reflect in rail glyph
     const c=companyById('leadsift');
     const s=c.slices.find(x=>x.n===5); if(s) s.status='shipped';
-    appendChat('assistant','Approved ✓ — slice 5 is now shipped and live at localhost:4019. Pulling next top-priority slice across the portfolio.');
+    appendChat('assistant','Approved ✓ - slice 5 is now shipped and live at localhost:4019. Pulling next top-priority slice across the portfolio.');
   });
   $('#rejectBtn').addEventListener('click', ()=>{
     $('#rejectForm').classList.toggle('show');
@@ -923,10 +923,10 @@ function wireGate(){
     $('#gateActions').style.display='none';
     $('#rejectForm').classList.remove('show');
     confirm.className='gate-confirm show rej';
-    confirm.textContent='✕ Rejected — sent back to build loop';
-    toast('✕ Rejected with feedback — back to build loop', 'warn');
+    confirm.textContent='✕ Rejected - sent back to build loop';
+    toast('✕ Rejected with feedback - back to build loop', 'warn');
     appendChat('user','reject: '+fb);
-    appendChat('assistant','Got it — reverting slice 5 and re-queuing with your feedback. I’ll re-run the doneWhen check and ping you again.');
+    appendChat('assistant','Got it - reverting slice 5 and re-queuing with your feedback. I’ll re-run the doneWhen check and ping you again.');
   });
 }
 
@@ -949,13 +949,13 @@ function wireChat(c){
     if(v==='/reject' && c.id==='leadsift' && $('#rejectBtn')){ $('#rejectBtn').click(); return; }
     if(v==='/back'||v==='/exit'){ renderOverview(); return; }
     appendChat('user',v);
-    setTimeout(()=>appendChat('assistant','Noted. '+(c.id==='leadsift'?'Slice 5 is live and the check is green — approve when ready.':'Tracking against '+c.name+'’s backlog.')),350);
+    setTimeout(()=>appendChat('assistant','Noted. '+(c.id==='leadsift'?'Slice 5 is live and the check is green - approve when ready.':'Tracking against '+c.name+'’s backlog.')),350);
   });
 }
 
 /* ===== COMMAND BAR ===== */
 const COMMANDS = [
-  { cmd:'/focus leadsift',          desc:'zoom into LeadSift — approval gate is waiting' },
+  { cmd:'/focus leadsift',          desc:'zoom into LeadSift - approval gate is waiting' },
   { cmd:'/focus quietinbox',        desc:'zoom into QuietInbox (building slice 9)' },
   { cmd:'/focus translatorbill',    desc:'zoom into TranslatorBill (building slice 6)' },
   { cmd:'/focus datadrop',          desc:'zoom into DataDrop' },
@@ -1013,7 +1013,7 @@ function runCommand(raw){
   } else if(cmd==='promote'){
     const o=DATA.opportunities.find(x=>x.title.toLowerCase()===arg.toLowerCase());
     if(o && o.status!=='killed') promote(o.title);
-    else if(o) toast(o.title+' was killed — cannot promote','warn');
+    else if(o) toast(o.title+' was killed - cannot promote','warn');
     else if(arg) promote(arg);
     else toast('usage: /promote <opportunity>','warn');
   } else {

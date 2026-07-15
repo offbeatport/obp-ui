@@ -60,7 +60,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: var(--shadow-lg);
-    padding: 15px 17px;
+    padding: 20px 20px;
     text-align: left;
     transition: border-color .15s, box-shadow .15s;
 }
@@ -206,7 +206,7 @@
     place-items: center;
     cursor: pointer;
     border: none;
-    background: var(--accent);
+    background: var(--primary);
     color: #fff;
     box-shadow: 0 2px 8px -1px rgba(200, 100, 60, 0.5);
     transition: filter .14s ease, transform .12s ease;

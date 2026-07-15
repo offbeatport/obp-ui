@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C Slop Slop · Areas — Big Tiles</title>
+<title>C Slop Slop · Areas - Big Tiles</title>
 <script>
   (function () {
     try {
@@ -391,7 +391,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
         Full
       </button>
-      <button id="zoomOut" aria-pressed="false" title="Compact — all companies at a glance">
+      <button id="zoomOut" aria-pressed="false" title="Compact - all companies at a glance">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/><rect x="17" y="10" width="4" height="5" rx="1"/></svg>
         Compact
       </button>
@@ -404,7 +404,7 @@
 
   <section class="hero">
     <span class="eyebrow">the factory floor</span>
-    <h1>Three areas per company — Build, Grow, Run.</h1>
+    <h1>Three areas per company - Build, Grow, Run.</h1>
     <p class="hero-sub">Each tile shows what the AI is doing right now and how far it may go alone. Lit means alive; a flag means it needs you.</p>
     <div class="legend" id="legend">
       <span class="lg"><span class="lg-sw off"></span> <b>Off</b> · locked at this stage</span>
@@ -420,7 +420,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>build · grow · run</b> — the AI runs the line, you oversee it</span>
+    <span>C Slop Slop · <b>build · grow · run</b> - the AI runs the line, you oversee it</span>
     <span>tiles glow when alive · <b>terracotta = your call</b></span>
   </footer>
 
@@ -442,7 +442,7 @@
     { name: 'LeadSift', stage: 'Growing', note: '',
       areas: {
         build: { state: 'active', auto: 'L1', task: 'CSV export', ticks: ['wrote the exporter', 'ran tests ✓', 'deployed to staging'] },
-        grow:  { state: 'needs',  auto: 'L0', task: 'Product Hunt launch — $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
+        grow:  { state: 'needs',  auto: 'L0', task: 'Product Hunt launch - $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
         run:   { state: 'active', auto: 'L1', task: 'onboarding + support', ticks: ['sent 3 onboarding emails', 'answered a ticket'] }
       } },
     { name: 'QuietInbox', stage: 'Growing', note: '',
@@ -455,17 +455,17 @@
       areas: {
         build: { state: 'active', auto: 'L1', task: 'Saved chart views', ticks: ['re-prioritized backlog', 'cleaning CSV parser'] },
         grow:  { state: 'needs',  auto: 'L0', task: 'r/SaaS launch thread', ticks: ['drafted the thread + 3 replies', 'awaiting your post'] },
-        run:   { state: 'idle',   auto: 'L1', task: 'quiet — 1 open ticket', ticks: ['checked uptime · 200 OK'] }
+        run:   { state: 'idle',   auto: 'L1', task: 'quiet - 1 open ticket', ticks: ['checked uptime · 200 OK'] }
       } },
     { name: 'TranslatorBill', stage: 'Building', note: '',
       areas: {
         build: { state: 'active', auto: 'L1', task: 'InvoiceFormatter.tsx', ticks: ['translating a sample invoice', 'ran tests · green'] },
-        grow:  { state: 'off',    auto: 'off', task: 'blocked — no domain', ticks: [] },
+        grow:  { state: 'off',    auto: 'off', task: 'blocked - no domain', ticks: [] },
         run:   { state: 'off',    auto: 'off', task: 'pre-revenue', ticks: [] }
       } },
     { name: 'PricePeek', stage: 'Idea', note: '',
       areas: {
-        build: { state: 'idle', auto: 'L0', task: 'validating — 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
+        build: { state: 'idle', auto: 'L0', task: 'validating - 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
         grow:  { state: 'off',  auto: 'off', task: '', ticks: [] },
         run:   { state: 'off',  auto: 'off', task: '', ticks: [] }
       } },
@@ -509,7 +509,7 @@
       ? '<span class="tile-lock" aria-hidden="true">🔒</span>'
       : (cfg.state === 'needs' ? '' : '<span class="tile-dot"></span>');
     var taskCls = cfg.state === 'off' ? 'muted' : (cfg.state === 'needs' ? 'needs' : '');
-    var task = esc(cfg.task || '—');
+    var task = esc(cfg.task || '-');
     var stateWord = { active: 'live', idle: 'idle', off: 'off', needs: 'needs you' }[cfg.state];
     return '<div class="area">' +
       '<div class="tile ' + area + ' ' + STATECLS[cfg.state] + '" role="img" aria-label="' +
@@ -527,7 +527,7 @@
     var f = feeds[i];
     if (!f.length) {
       return '<div class="activity dead"><span class="act-live"></span>' +
-        '<span class="act-tag tag-dead">—</span>' +
+        '<span class="act-tag tag-dead">-</span>' +
         '<span class="act-txt">' + esc(c.note || 'idle · nothing running') + '</span></div>';
     }
     var it = f[0];

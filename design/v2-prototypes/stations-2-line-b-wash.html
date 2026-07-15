@@ -553,7 +553,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>engine room</b> — the AI turns the loop, you hold the gates</span>
+    <span>C Slop Slop · <b>engine room</b> - the AI turns the loop, you hold the gates</span>
     <span><b>L0</b> ask first · <b>L1</b> act + log · <b>L2</b> full autopilot</span>
   </footer>
 
@@ -571,7 +571,7 @@
 
   var AREA_COLOR = { build: 'var(--blue)', grow: 'var(--violet)', run: 'var(--green)' };
 
-  // per-company branding — unique brand color + logo mark
+  // per-company branding - unique brand color + logo mark
   var BRANDS = {
     LeadSift:       { c: '#e0794f', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg>' },
     QuietInbox:     { c: '#3f6fb0', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>' },
@@ -668,7 +668,7 @@
     var mine = (log || []).filter(function (l) { return l.a === area; });
     var logHTML = mine.length
       ? '<div class="node-log">' + mine.map(function (l) { return '<div class="nl-line">' + esc(l.t) + '</div>'; }).join('') + '</div>'
-      : (d.state === 'off' ? '<div class="node-log"><div class="nl-line off">— not active yet</div></div>' : '');
+      : (d.state === 'off' ? '<div class="node-log"><div class="nl-line off">- not active yet</div></div>' : '');
     return '<div class="' + cls + '">' +
              '<div class="node">' + ICON[area] + '</div>' +
              '<div class="lnode-body">' +
@@ -698,7 +698,7 @@
     var d = c[c.focus];
     var nm = c.focus.toUpperCase();
     var lbl = d.state === 'needs'
-      ? '<b>gated</b> — <span class="fa ' + c.focus + '">' + nm + '</span> needs you'
+      ? '<b>gated</b> - <span class="fa ' + c.focus + '">' + nm + '</span> needs you'
       : 'focus → <span class="fa ' + c.focus + '">' + nm + '</span> · ' + esc(d.label);
     return '<span class="loop-foot">' + lbl + '</span>';
   }

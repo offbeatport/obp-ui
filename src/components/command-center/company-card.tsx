@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
+import { CompanyLogo } from "~/components/company-logo";
 import type { ActivityItem, CompanySummary, Tone } from "~/server/data";
 import { STAGE_CLASS, TONE_VAR } from "./tone";
 
@@ -82,9 +83,7 @@ export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem
             style={{ "--co-bc": TONE_VAR[c.tone] } as CSSProperties}
         >
             <div className="co-card-head">
-                <span className="co-brandmark" aria-hidden="true">
-                    {c.name.charAt(0).toUpperCase()}
-                </span>
+                <CompanyLogo name={c.name} branding={c.branding} size={34} radius={10} />
                 <div className="co-card-id">
                     <h3>{c.name}</h3>
                 </div>

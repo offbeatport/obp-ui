@@ -95,7 +95,7 @@ function Guardrails() {
 
             <section className="flex items-center justify-between gap-4 rounded-xl border bg-card p-4 opacity-70">
                 <div>
-                    <div className="text-[13px] font-semibold">Payments — test-mode</div>
+                    <div className="text-[13px] font-semibold">Payments - test-mode</div>
                     <div className="text-xs text-muted-foreground">
                         Stripe test-mode only in v1. Going live is a separate money action (later).
                     </div>

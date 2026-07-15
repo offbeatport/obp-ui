@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C Slop Slop — Fund</title>
+<title>C Slop Slop - Fund</title>
 <script>
 /* pre-paint theme: no flash of wrong theme */
 (function(){try{var t=localStorage.getItem('cslopslop-theme');document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
@@ -390,7 +390,7 @@ h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-
 
 <script>
 /* ============================================================
-   DATA — the fund's book
+   DATA - the fund's book
    ============================================================ */
 const STAGE = {
   idea:    {label:'Idea',     c:'slate'},
@@ -426,20 +426,20 @@ const POSITIONS = [
     id:'leadsift', name:'LeadSift', stage:'growing',
     tag:'Scores inbound webform leads 0–100 so you call the hot ones first.',
     goal:'10 paying users at $15/mo · churn under 5%.',
-    goalState:'at 12/10 paying · 0% churn — goal exceeded',
+    goalState:'at 12/10 paying · 0% churn - goal exceeded',
     progress:1.2, tone:'good',
     progLabel:'12 / 10 paying · 0% churn',
     spend:28, revenue:180, users:'12 paying', signal:'strong',
     plan:'Shipping the Daily digest, watching activation on the 12 live users.',
-    nextAction:'Approve — ship the Daily digest to all 12 users.',
+    nextAction:'Approve - ship the Daily digest to all 12 users.',
     recent:[['~6h','Scored 41 leads overnight'],['1d','Daily digest passed its check'],['3d','+2 signups from the embed']],
-    risks:['Single acquisition channel — all growth rides the webform embed.'],
+    risks:['Single acquisition channel - all growth rides the webform embed.'],
     approvalId:'leadsift', rec:'continue',
     docs:{
-      foundation:'<strong>Thesis.</strong> Sales teams burn their fastest-response window on cold leads. LeadSift ranks every inbound 0–100 so reps call hot-first. <strong>Wedge:</strong> a drop-in webform embed that scores on submit — zero setup.',
-      product:'<strong>Live.</strong> Scoring model (0–100), embeddable webform, activation tracking. <strong>Shipping:</strong> Daily digest email — passed its check, pending your approval to roll to all 12 users.',
-      growth:'<strong>Channel:</strong> embed-driven — every customer form spreads the widget. 12 paying, +2 this week from the embed. <strong>Watch:</strong> concentration on one channel.',
-      budget:'<strong>Spend $28/mo</strong> — LLM scoring + transactional email. <strong>Revenue $180/mo</strong> (12 × $15). Net <strong>+$152/mo</strong>. Return on deployed capital <strong>6.4×</strong>.',
+      foundation:'<strong>Thesis.</strong> Sales teams burn their fastest-response window on cold leads. LeadSift ranks every inbound 0–100 so reps call hot-first. <strong>Wedge:</strong> a drop-in webform embed that scores on submit - zero setup.',
+      product:'<strong>Live.</strong> Scoring model (0–100), embeddable webform, activation tracking. <strong>Shipping:</strong> Daily digest email - passed its check, pending your approval to roll to all 12 users.',
+      growth:'<strong>Channel:</strong> embed-driven - every customer form spreads the widget. 12 paying, +2 this week from the embed. <strong>Watch:</strong> concentration on one channel.',
+      budget:'<strong>Spend $28/mo</strong> - LLM scoring + transactional email. <strong>Revenue $180/mo</strong> (12 × $15). Net <strong>+$152/mo</strong>. Return on deployed capital <strong>6.4×</strong>.',
     },
   },
   {
@@ -453,13 +453,13 @@ const POSITIONS = [
     plan:'Running the private beta, measuring week-2 retention before spending on growth.',
     nextAction:'Interview 3 churned beta users to find the retention leak.',
     recent:[['~8h','Auto-drafted 30 replies'],['2d','2 new beta signups']],
-    risks:['Retention unproven — the whole thesis rests on week-2 stickiness.'],
+    risks:['Retention unproven - the whole thesis rests on week-2 stickiness.'],
     approvalId:'quietinbox', rec:'continue',
     docs:{
       foundation:'<strong>Thesis.</strong> Inbox overwhelm is universal; the blocker to automation is trust. QuietInbox keeps a human approve-to-send step so drafts feel safe.',
       product:'<strong>Live.</strong> Auto-draft engine + approve-to-send. 30 replies drafted this cycle. Next: surface a confidence score per draft.',
       growth:'<strong>6 beta users.</strong> Measuring week-2 retention. Product Hunt launch ($40) pending your approval to open the top of funnel.',
-      budget:'<strong>Spend $22/mo</strong> — model calls + hosting. <strong>Revenue $40/mo.</strong> Net <strong>+$18/mo</strong>. Return <strong>1.8×</strong>. Thin, but pre-scale.',
+      budget:'<strong>Spend $22/mo</strong> - model calls + hosting. <strong>Revenue $40/mo.</strong> Net <strong>+$18/mo</strong>. Return <strong>1.8×</strong>. Thin, but pre-scale.',
     },
   },
   {
@@ -473,13 +473,13 @@ const POSITIONS = [
     plan:'Building the CSV cleaner + dashboard. Next: invite the first 5 off the waitlist.',
     nextAction:'Finish the cleaner, then invite the first 5 waitlist users.',
     recent:[['1d','Scaffolded intake API'],['2d','Deployed to staging']],
-    risks:['No traction yet — waitlist interest is not proven demand.'],
+    risks:['No traction yet - waitlist interest is not proven demand.'],
     approvalId:null, rec:'continue',
     docs:{
-      foundation:'<strong>Thesis.</strong> Non-technical teams get stuck in messy spreadsheets. DataDrop turns a raw CSV into a clean, shareable dashboard in one drop — no formulas.',
+      foundation:'<strong>Thesis.</strong> Non-technical teams get stuck in messy spreadsheets. DataDrop turns a raw CSV into a clean, shareable dashboard in one drop - no formulas.',
       product:'<strong>Building.</strong> Intake API scaffolded, deployed to staging. In progress: the CSV cleaner and the auto-dashboard renderer.',
       growth:'<strong>40 on the waitlist.</strong> First real test: convert 5 of them once the skeleton ships. Nothing to measure until then.',
-      budget:'<strong>Spend $12/mo</strong> — staging + storage. <strong>Revenue $0.</strong> Net <strong>−$12/mo</strong> — pure build cost, on plan.',
+      budget:'<strong>Spend $12/mo</strong> - staging + storage. <strong>Revenue $0.</strong> Net <strong>−$12/mo</strong> - pure build cost, on plan.',
     },
   },
   {
@@ -491,52 +491,52 @@ const POSITIONS = [
     progLabel:'0 / 15 problem interviews',
     spend:0, revenue:0, users:'0 users', signal:'none',
     plan:'Validate the pain before building anything. Interview-led, no code, no spend.',
-    nextAction:'Approve — start the 15-interview validation sprint.',
-    recent:[['—','Awaiting go on validation sprint']],
-    risks:['Might be a vitamin, not a painkiller — willingness-to-pay unknown.'],
-    approvalId:'pricepeek', rec:'continue', recAlt:'Recommend CONTINUE — but KILL fast if interviews come back weak.',
+    nextAction:'Approve - start the 15-interview validation sprint.',
+    recent:[['-','Awaiting go on validation sprint']],
+    risks:['Might be a vitamin, not a painkiller - willingness-to-pay unknown.'],
+    approvalId:'pricepeek', rec:'continue', recAlt:'Recommend CONTINUE - but KILL fast if interviews come back weak.',
     docs:{
       foundation:'<strong>Thesis (unvalidated).</strong> Teams want to know the instant a competitor changes price. Open question: is this urgent enough to pay for, or just nice-to-know?',
-      product:'<strong>Nothing built.</strong> Deliberately. The proposed validation sprint is 15 problem interviews — evidence before engineering.',
+      product:'<strong>Nothing built.</strong> Deliberately. The proposed validation sprint is 15 problem interviews - evidence before engineering.',
       growth:'<strong>0 users.</strong> Validation-first. If 15 interviews show real pain + willingness-to-pay, it graduates to Building. If not, it dies cheap.',
-      budget:'<strong>Spend $0. Revenue $0.</strong> No capital deployed — the whole point of the idea stage.',
+      budget:'<strong>Spend $0. Revenue $0.</strong> No capital deployed - the whole point of the idea stage.',
     },
   },
   {
     id:'translatorbill', name:'TranslatorBill', stage:'ejected',
-    tag:'Auto-translates & reformats cross-border invoices — ejected into its own standalone company.',
+    tag:'Auto-translates & reformats cross-border invoices - ejected into its own standalone company.',
     goal:'20 paying at $15/mo → graduation bar.',
-    goalState:'HIT — 22 paying · ejected into a standalone company',
+    goalState:'HIT - 22 paying · ejected into a standalone company',
     progress:1.0, tone:'good',
     progLabel:'22 paying · goal hit · graduated',
     spend:0, revenue:320, users:'22 paying', signal:'strong',
     plan:'Handed off to its own company. No longer drawing fund capital.',
     nextAction:null,
-    recent:[['—','Ejected — now operating standalone'],['prior','Last recorded $320/mo revenue']],
-    risks:['Ejected — out of the fund. Tracked for reference only.'],
+    recent:[['-','Ejected - now operating standalone'],['prior','Last recorded $320/mo revenue']],
+    risks:['Ejected - out of the fund. Tracked for reference only.'],
     approvalId:null, rec:'eject',
     docs:{
       foundation:'<strong>Thesis (validated).</strong> Cross-border invoices are a formatting + translation nightmare. Solved cleanly enough that 22 teams paid.',
       product:'<strong>Shipped & handed off.</strong> Translation + reformatting pipeline now runs under its own company.',
       growth:'<strong>22 paying at $15/mo.</strong> Cleared the 20-paying graduation bar and ejected.',
-      budget:'<strong>Last recorded $320/mo revenue.</strong> Now standalone — <strong>$0 fund spend</strong>. Booked as a realized exit.',
+      budget:'<strong>Last recorded $320/mo revenue.</strong> Now standalone - <strong>$0 fund spend</strong>. Booked as a realized exit.',
     },
   },
   {
     id:'redditpainbot', name:'RedditPainBot', stage:'killed',
-    tag:'Mined Reddit for recurring product pains — killed on weak willingness-to-pay.',
+    tag:'Mined Reddit for recurring product pains - killed on weak willingness-to-pay.',
     goal:'Find a pain people would pay to solve.',
-    goalState:'MISSED — nobody would pay · killed after 3 weeks',
+    goalState:'MISSED - nobody would pay · killed after 3 weeks',
     progress:0.1, tone:'bad',
     progLabel:'Goal missed · killed after 3 weeks',
     spend:0, revenue:0, users:'0 users', signal:'weak',
     plan:'Post-mortem written. Position closed.',
     nextAction:null,
-    recent:[['—','Killed on weak willingness-to-pay'],['prior','Post-mortem written']],
+    recent:[['-','Killed on weak willingness-to-pay'],['prior','Post-mortem written']],
     risks:['Closed. Lesson logged: interest ≠ willingness-to-pay.'],
     approvalId:null, rec:'kill',
     docs:{
-      foundation:'<strong>Thesis (failed).</strong> Reddit is full of product pains — surface the recurring ones as a lead list. People upvoted the pain but would not pay to solve it.',
+      foundation:'<strong>Thesis (failed).</strong> Reddit is full of product pains - surface the recurring ones as a lead list. People upvoted the pain but would not pay to solve it.',
       product:'<strong>Prototype scraper built</strong>, then stopped. Never reached a paid product.',
       growth:'<strong>0 paying.</strong> Three weeks of outreach; willingness-to-pay stayed at zero.',
       budget:'<strong>Spend stopped. Revenue $0.</strong> Written off. Post-mortem: validate willingness-to-pay before building the pipeline.',
@@ -554,7 +554,7 @@ const FUND = {deployed:62, revenue:220, net:158, positions:6};
 const $ = (s,r=document)=>r.querySelector(s);
 function money(n){return '$'+n;}
 function retMultiple(p){
-  if(p.revenue===0) return '—';
+  if(p.revenue===0) return '-';
   if(p.spend>0){ return (p.revenue/p.spend).toFixed(1).replace(/\.0$/,'')+'×'; }
   return '∞';
 }
@@ -567,7 +567,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 function pendingCount(){return DESK_ORDER.filter(id=>decisions[id].status==='pending').length;}
 
 /* ============================================================
-   RENDER — FUND (zoom out)
+   RENDER - FUND (zoom out)
    ============================================================ */
 function renderFund(){
   const active = POSITIONS.filter(p=>p.spend>0);
@@ -581,7 +581,7 @@ function renderFund(){
     <div class="hero-head">
       <div class="lead">
         <h1 class="hero-title">The book</h1>
-        <p class="hero-sub">Six AI-operated bets. Each is a position: cost basis is what it burns, return is the traction signal, and every one carries a call — kill, continue, or eject.</p>
+        <p class="hero-sub">Six AI-operated bets. Each is a position: cost basis is what it burns, return is the traction signal, and every one carries a call - kill, continue, or eject.</p>
       </div>
       <div class="asof">
         <span class="eyebrow">Fund · as of</span>
@@ -619,7 +619,7 @@ function renderFund(){
       </div>
     </div>
 
-    <div class="sec-head"><h2>On your desk</h2><span class="cnt" id="deskCnt"></span><span class="rule"></span><span class="eyebrow">approve · hold · kill — inline</span></div>
+    <div class="sec-head"><h2>On your desk</h2><span class="cnt" id="deskCnt"></span><span class="rule"></span><span class="eyebrow">approve · hold · kill - inline</span></div>
     <div class="desk" id="desk"></div>
 
     <div class="sec-head"><h2>Positions</h2><span class="cnt">6 · click a line to open</span><span class="rule"></span></div>
@@ -655,7 +655,7 @@ function rowHTML(p){
       <span class="tg">${esc(p.tag)}</span>
     </div>
     <div class="pr-stage"><span class="cell-mobile-k">Stage</span><span class="chip" data-c="${st.c}"><span class="g"></span>${st.label}</span></div>
-    <div class="pr-num r pr-col"><span class="cell-mobile-k">Cost basis</span><span>${p.spend?('$'+p.spend+'/mo'):'—'}</span></div>
+    <div class="pr-num r pr-col"><span class="cell-mobile-k">Cost basis</span><span>${p.spend?('$'+p.spend+'/mo'):'-'}</span></div>
     <div class="pr-num r pr-col"><span class="cell-mobile-k">Revenue</span><span>${p.revenue?('$'+p.revenue+'/mo'):'$0'}${p.stage==='ejected'?'<span class="sub">last recorded</span>':''}</span></div>
     <div class="pr-num r pr-col"><span class="cell-mobile-k">Return</span><span class="sig" data-t="${sg.t}">${sg.a} ${retMultiple(p)}<span style="opacity:.6;font-weight:400">·${sg.label}</span></span></div>
     <div class="pr-call r pr-col"><span class="cell-mobile-k">Call</span><span class="chip" data-c="${REC[p.rec].c}">${recTxt}${done?' ✓':''}</span></div>
@@ -725,7 +725,7 @@ function syncNeeds(){
 function jumpToDesk(){ const d=$('#desk'); if(d) d.scrollIntoView({behavior: reduceMotion()?'auto':'smooth', block:'start'}); }
 
 /* ============================================================
-   RENDER — POSITION (zoom in)
+   RENDER - POSITION (zoom in)
    ============================================================ */
 let OPEN=null;
 function openPosition(id){
@@ -865,7 +865,7 @@ function chooseCall(id,k){
   const el=document.querySelector(`#posView .opt[data-k="${k}"]`);
   if(el) el.classList.add('chosen');
   const verb={continue:'Continue',eject:'Eject',kill:'Kill'}[k];
-  toast(`${p.name}: logged your ${verb} call. (demo — reversible)`);
+  toast(`${p.name}: logged your ${verb} call. (demo - reversible)`);
 }
 
 /* approval card inside detail, synced to the desk state */

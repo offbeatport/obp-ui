@@ -539,7 +539,7 @@
     </div>
     <div class="metrics" id="metrics"></div>
     <div class="spacer"></div>
-    <div class="cmd" title="Global command bar — chat is the spine">
+    <div class="cmd" title="Global command bar - chat is the spine">
       <span class="glyph">⌘</span>
       <input id="cmdInput" placeholder="Direct your companies… e.g. “promote PayoutReconciler” or “approve LeadSift slice 5”" />
       <span class="kbd">↵</span>
@@ -550,7 +550,7 @@
   <div class="board-wrap">
     <div class="board-title">
       <h2>Slice Pipeline</h2>
-      <span>Every slice across all 5 companies — by stage. Click a card to zoom into its company.</span>
+      <span>Every slice across all 5 companies - by stage. Click a card to zoom into its company.</span>
       <span class="hint">scroll right → for more stages · scroll ↓ within a column</span>
     </div>
     <div class="board" id="board"></div>
@@ -590,7 +590,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -618,7 +618,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -627,22 +627,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -717,7 +717,7 @@ function renderBoard() {
     board.appendChild(col);
   });
 
-  // Opportunities column (intake) — keeps growing right
+  // Opportunities column (intake) - keeps growing right
   board.appendChild(makeOppColumn());
   // Next moves column at the far right
   board.appendChild(makeNextColumn());
@@ -885,7 +885,7 @@ function buildChatCol(co) {
   const col = el('div', 'chat-col');
   const scroll = el('div', 'chat-scroll');
   const msgs = co.id === 'leadsift' ? DATA.chat : [
-    { role:'assistant', text:co.name + ' is ' + (co.currentSlice ? 'on slice ' + co.currentSlice.n + ' — ' + co.currentSlice.title + '.' : 'running.') + ' I’ll surface a slice for approval when a check goes green.' },
+    { role:'assistant', text:co.name + ' is ' + (co.currentSlice ? 'on slice ' + co.currentSlice.n + ' - ' + co.currentSlice.title + '.' : 'running.') + ' I’ll surface a slice for approval when a check goes green.' },
     { role:'user', text:'keep going' },
   ];
   msgs.forEach(m => {
@@ -909,7 +909,7 @@ function buildChatCol(co) {
     setTimeout(() => {
       const a = el('div', 'msg assistant');
       a.appendChild(el('span', 'who', co.name));
-      a.appendChild(document.createTextNode('On it — re-prioritizing the backlog and continuing the build.'));
+      a.appendChild(document.createTextNode('On it - re-prioritizing the backlog and continuing the build.'));
       scroll.appendChild(a);
       scroll.scrollTop = scroll.scrollHeight;
     }, 500);
@@ -928,7 +928,7 @@ function buildArtCol(co) {
   // Approval gate first (only LeadSift has approval data)
   if (co.approval) {
     const sec = el('div', 'art-section');
-    sec.appendChild(el('h3', null, 'Approval gate — slice ' + co.approval.slice));
+    sec.appendChild(el('h3', null, 'Approval gate - slice ' + co.approval.slice));
     sec.appendChild(buildGate(co));
     col.appendChild(sec);
   }
@@ -946,9 +946,9 @@ function buildArtCol(co) {
     frame.appendChild(bar);
     const stage = el('div', 'pf-stage');
     if (co.id === 'leadsift') {
-      stage.innerHTML = '<div class="big">📧 Your top leads today</div>Daily digest rendering live — 10 leads scored ≥ 70';
+      stage.innerHTML = '<div class="big">📧 Your top leads today</div>Daily digest rendering live - 10 leads scored ≥ 70';
     } else if (co.currentSlice) {
-      stage.innerHTML = '<div class="big">' + co.name + '</div>slice ' + co.currentSlice.n + ' — ' + co.currentSlice.title;
+      stage.innerHTML = '<div class="big">' + co.name + '</div>slice ' + co.currentSlice.n + ' - ' + co.currentSlice.title;
     } else {
       stage.innerHTML = '<div class="big">' + co.name + '</div>app running at ' + co.previewUrl;
     }
@@ -984,7 +984,7 @@ function buildGate(co) {
   gh.appendChild(el('span', 'needs-you', '★ NEEDS YOU'));
   const ghm = el('div');
   ghm.appendChild(el('h4', null, 'Slice ' + a.slice + ' · ' + a.title));
-  ghm.appendChild(el('p', null, 'Attempt ' + a.attempt + ' · ready to ship — your call'));
+  ghm.appendChild(el('p', null, 'Attempt ' + a.attempt + ' · ready to ship - your call'));
   gh.appendChild(ghm);
   gate.appendChild(gh);
 
@@ -1018,8 +1018,8 @@ function buildGate(co) {
   actions.appendChild(reject);
   gb.appendChild(actions);
 
-  const confirmA = el('div', 'confirm approved', '<span>✓</span> Approved — shipping slice ' + a.slice + ' to production. The digest is now live.');
-  const confirmR = el('div', 'confirm rejected', '<span>↩</span> Sent back with your feedback — the build will iterate and resubmit.');
+  const confirmA = el('div', 'confirm approved', '<span>✓</span> Approved - shipping slice ' + a.slice + ' to production. The digest is now live.');
+  const confirmR = el('div', 'confirm rejected', '<span>↩</span> Sent back with your feedback - the build will iterate and resubmit.');
   gb.appendChild(confirmA);
   gb.appendChild(confirmR);
 

@@ -1,6 +1,6 @@
 import type { DoneWhenSpec, Validator } from "./types.js";
 
-// HttpValidator — the v1 Validator: the DISTINCT step that certifies a code action by
+// HttpValidator - the v1 Validator: the DISTINCT step that certifies a code action by
 // exercising the live URL over real HTTP (never trusting the builder's word). For the
 // spine's one archetype ("a visitor can sign up on a live URL") it drives the full
 // capability: the form renders, a POST is accepted, and the record actually persisted
@@ -46,7 +46,7 @@ export class HttpValidator implements Validator {
             const admin = await get(`${root}/admin`);
             if (admin.status !== 200) return red(`GET /admin returned ${admin.status}, want 200`);
             if (!admin.body.includes(probe))
-                return red("signup did not persist — probe email missing from /admin");
+                return red("signup did not persist - probe email missing from /admin");
 
             return { green: true, detail: "signup flow green: form → POST → persisted on /admin" };
         } catch (e) {

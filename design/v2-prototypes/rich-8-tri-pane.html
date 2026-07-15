@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C Slop Slop — Tri-Pane Console</title>
+<title>C Slop Slop - Tri-Pane Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root{
@@ -476,8 +476,8 @@ const COMPANIES=[
      funnel:[['Newsletter',1200],['Visits',640],['Signups',120],['Paid',38]], conv:32, visits:640, posts:6,
      channels:[['Newsletter','1.2k subs · 31% open','green'],['Product Hunt','SPEND gate $40 pending','blue'],['Referral','11 invited friends','violet'],['Paid ads','not connected','slate']], trafficSpark:[180,300,420,520,580,640]},
    run:{summary:'5 open tickets. Billing healthy, 0 failed charges. Uptime 99.95%.', tickets:5, uptime:99.95, refunds:0, sla:'6h',
-     ticketList:[['maria@acme.co','Snooze a whole label, not just a thread?','feature ×3','blue'],['lee@studio.dev','SAML / SSO on roadmap?','feature','blue'],['rio@past.io','Loving the snooze — keep it up','praise','green'],['ko@brightly.co','Export thread to PDF?','feature','blue'],['ann@nomail.co','Add Slack notifications','feature','blue']]},
-   ai:{tone:'green',icon:'▲',head:'Double down',body:'Approve the $40 PH spend and raise GROW → L2. This is the portfolio engine — +372 net at 2% churn.'} },
+     ticketList:[['maria@acme.co','Snooze a whole label, not just a thread?','feature ×3','blue'],['lee@studio.dev','SAML / SSO on roadmap?','feature','blue'],['rio@past.io','Loving the snooze - keep it up','praise','green'],['ko@brightly.co','Export thread to PDF?','feature','blue'],['ann@nomail.co','Add Slack notifications','feature','blue']]},
+   ai:{tone:'green',icon:'▲',head:'Double down',body:'Approve the $40 PH spend and raise GROW → L2. This is the portfolio engine - +372 net at 2% churn.'} },
 
  { id:'translatorbill', name:'TranslatorBill', tag:'Auto-translate + reformat invoices', stage:'PRE-REVENUE', tone:'slate',
    flag:null, mrr:0, series:[0,0,0,0,0,0], users:0, churn:null,
@@ -488,8 +488,8 @@ const COMPANIES=[
      slices:[{n:1,t:'Upload an invoice PDF',s:'shipped'},{n:2,t:'Extract line items',s:'shipped'},{n:3,t:'Detect source language',s:'shipped'},{n:4,t:'Translate fields',s:'shipped'},{n:5,t:'Currency + tax mapping',s:'shipped'},{n:6,t:'Re-format invoice to buyer locale',s:'building'}]},
    grow:{summary:'Not launched. Blocked on go-to-market: needs domain + entity/ToS (SIGN gate) before first outbound.',
      funnel:[['Cold list',75],['Sent',25],['Opened',9],['Replied',2]], conv:8, visits:0, posts:0,
-     channels:[['Cold email','batch 1: 25 sent · 36% open · 8% reply','amber'],['Domain','not registered — blocks launch','red'],['Entity / ToS','SIGN gate pending','violet']], trafficSpark:[0,0,0,0,0,0]},
-   run:{summary:'Not live to users yet — no support surface.', tickets:0, uptime:null, refunds:0, sla:'—', ticketList:[]},
+     channels:[['Cold email','batch 1: 25 sent · 36% open · 8% reply','amber'],['Domain','not registered - blocks launch','red'],['Entity / ToS','SIGN gate pending','violet']], trafficSpark:[0,0,0,0,0,0]},
+   run:{summary:'Not live to users yet - no support surface.', tickets:0, uptime:null, refunds:0, sla:'-', ticketList:[]},
    ai:{tone:'violet',icon:'✎',head:'Unblock GTM',body:'Build is ahead of distribution. Approve the SIGN gate (entity + ToS) and register a domain to unlock the first cold batch.'} },
 
  { id:'datadrop', name:'DataDrop', tag:'CSV → instant dashboard', stage:'LIVE · FLAT', tone:'amber',
@@ -499,7 +499,7 @@ const COMPANIES=[
    conn:[['Stripe',1],['domain',1],['ESP',1]],
    build:{now:'slice 6 · "saved chart views" queued', done:false,
      slices:[{n:1,t:'Upload a CSV file',s:'shipped'},{n:2,t:'Auto-detect column types',s:'shipped'},{n:3,t:'Render a chart',s:'shipped'},{n:4,t:'Pick chart type',s:'shipped'},{n:5,t:'Share a dashboard link',s:'shipped'},{n:6,t:'Saved chart views',s:'todo'}]},
-   grow:{summary:'Flat 2 months — needs distribution. 1 directory listing, low traffic. POST gate queued: launch thread r/SaaS.',
+   grow:{summary:'Flat 2 months - needs distribution. 1 directory listing, low traffic. POST gate queued: launch thread r/SaaS.',
      funnel:[['Visits',90],['Trials',14],['Activated',8],['Paid',6]], conv:31, visits:90, posts:1,
      channels:[['Directory listing','1 listing · low traffic','amber'],['r/SaaS thread','POST gate queued','blue'],['SEO','organic page converts 3.1%','green'],['Ads','$50 test proposed','slate']], trafficSpark:[88,90,86,92,89,90]},
    run:{summary:'1 open ticket. Uptime 99.8%. No refunds.', tickets:1, uptime:99.8, refunds:0, sla:'8h',
@@ -511,27 +511,27 @@ const COMPANIES=[
    cost:4, cb:[['Infra',4,'blue']], net:-4, shipped:0,
    auto:{make:null,grow:null,run:null}, dom:null, preview:'http://localhost:4027', paused:true,
    conn:[],
-   build:{now:'slice 8 · "dedupe pains" BLOCKED — same failure ×3', done:false,
+   build:{now:'slice 8 · "dedupe pains" BLOCKED - same failure ×3', done:false,
      slices:[{n:6,t:'Pull posts from subreddits',s:'shipped'},{n:7,t:'Classify post as pain/not',s:'shipped'},{n:8,t:'Dedupe pains (UNBLOCK)',s:'blocked'}]},
    grow:{summary:'Never launched. No connected channels.',
-     funnel:[['—',0],['—',0]], conv:0, visits:0, posts:0,
-     channels:[['—','no channels connected','slate']], trafficSpark:[0,0,0,0,0,0]},
-   run:{summary:'Paused — not serving users.', tickets:0, uptime:null, refunds:0, sla:'—', ticketList:[]},
+     funnel:[['-',0],['-',0]], conv:0, visits:0, posts:0,
+     channels:[['-','no channels connected','slate']], trafficSpark:[0,0,0,0,0,0]},
+   run:{summary:'Paused - not serving users.', tickets:0, uptime:null, refunds:0, sla:'-', ticketList:[]},
    ai:{tone:'red',icon:'✕',head:'Kill candidate',body:'Blocked ×3 on slice 8, $0 MRR, −$4/mo. Recommend kill and recycle the slot into PayoutReconciler (score 82).'} },
 ];
 const CO=Object.fromEntries(COMPANIES.map(c=>[c.id,c]));
 
 const GATES=[
  {id:'g1',type:'SHIP',company:'leadsift',tone:'green',status:'open',when:'now',auto:true,
-  title:'Ship slice 5 — "daily digest of top leads"', ev:['doneWhen','green · /digest/preview → 200'],
+  title:'Ship slice 5 - "daily digest of top leads"', ev:['doneWhen','green · /digest/preview → 200'],
   diff:[['ctx','export async function buildDigest(user) {'],['del','  return topLeads.slice(0, 5)'],['add','  const top = scoreSort(leads).slice(0, 10)'],['add','  await email.send(user, render(top))'],['add','  return { sent: true, count: top.length }'],['ctx','}']],
   previewUrl:'http://localhost:4019/digest/preview'},
  {id:'g2',type:'SPEND',company:'quietinbox',tone:'blue',status:'open',when:'now',amount:40,
-  title:'Authorize $40 — Product Hunt launch', ev:['projection','~120 signups · best-ROI company']},
+  title:'Authorize $40 - Product Hunt launch', ev:['projection','~120 signups · best-ROI company']},
  {id:'g3',type:'UNBLOCK',company:'redditpainbot',tone:'red',status:'open',when:'now',
-  title:'Unblock slice 8 — "dedupe pains"', ev:['blocker','same failure ×3 · halts all progress']},
+  title:'Unblock slice 8 - "dedupe pains"', ev:['blocker','same failure ×3 · halts all progress']},
  {id:'g4',type:'SIGN',company:'translatorbill',tone:'violet',status:'upcoming',when:'soon',
-  title:'Sign entity + ToS — required before launch', ev:['why','first outbound batch is gated on legal']},
+  title:'Sign entity + ToS - required before launch', ev:['why','first outbound batch is gated on legal']},
  {id:'g5',type:'POST',company:'datadrop',tone:'amber',status:'upcoming',when:'soon',
   title:'Launch thread on r/SaaS', ev:['why','flat MRR · needs a distribution push']},
 ];
@@ -587,7 +587,7 @@ const fmt$=v=>(v<0?'−$'+Math.abs(v):'$'+v);
 function tcVar(t){return 'var(--'+t+')'}
 function chgClass(c){ if(c.series.every(v=>v===0))return 'zero'; if(c.tone==='amber')return 'flat'; if(c.tone==='red')return 'dn'; return 'up'; }
 function chgText(c){
-  if(c.series.every(v=>v===0))return '—';
+  if(c.series.every(v=>v===0))return '-';
   const a=c.series[c.series.length-2],b=c.series[c.series.length-1];
   if(a===0)return '+new'; const p=Math.round((b-a)/a*100);
   return (p>0?'+':'')+p+'%';
@@ -631,7 +631,7 @@ function gauge(pct,color,label){
 
 function meter(level,tone){
   const segs=[0,1,2].map(i=>'<span class="sg'+(level!=null&&i<=level?' on':'')+'"></span>').join('');
-  return '<span class="meter tone '+tone+'"><span class="seg3">'+segs+'</span><b>'+(level==null?'—':'L'+level)+'</b></span>';
+  return '<span class="meter tone '+tone+'"><span class="seg3">'+segs+'</span><b>'+(level==null?'-':'L'+level)+'</b></span>';
 }
 function amBlock(c){
   return '<div class="am-row">'+
@@ -701,7 +701,7 @@ function sortCompanies(){
 }
 function coRow(c){
   const sel=state.detail==='company'&&state.companyId===c.id;
-  const churn=c.churn==null?'—':c.churn+'%';
+  const churn=c.churn==null?'-':c.churn+'%';
   return '<button class="co-row tone '+c.tone+(sel?' sel':'')+'" data-co="'+c.id+'">'+
     '<div class="co-top"><span class="co-name">'+c.name+'</span><span class="badge tone '+c.tone+'">'+c.stage+'</span>'+
       (c.flag?'<span class="flag '+c.flag+'">'+(c.flag==='best'?'best ROI':c.flag==='watch'?'watch':'kill?')+'</span>':'')+'</div>'+
@@ -723,7 +723,7 @@ function gateCard(g){
     '<div class="gate-title">'+g.title+'</div>'+
     '<div class="gate-ev"><span class="evk">'+g.ev[0]+'</span>'+g.ev[1]+'</div>';
   if(done){
-    inner+='<div class="gate-done '+(done==='approved'?'ok':'no')+'">'+(done==='approved'?'✓ Approved — action dispatched':'✕ Rejected — sent back with feedback')+'</div>';
+    inner+='<div class="gate-done '+(done==='approved'?'ok':'no')+'">'+(done==='approved'?'✓ Approved - action dispatched':'✕ Rejected - sent back with feedback')+'</div>';
   } else if(g.status==='open'){
     inner+='<div class="gate-act"><button class="btn approve" data-approve="'+g.id+'">✓ Approve</button>'+
       '<button class="btn reject" data-reject="'+g.id+'">Reject…</button>'+
@@ -792,7 +792,7 @@ function renderMiddle(){
     L.innerHTML=html;
   }
 }
-function lvlTxt(v){return v==null?'—':'L'+v;}
+function lvlTxt(v){return v==null?'-':'L'+v;}
 
 /* =================== DETAIL =================== */
 function tabDot(c,tab){
@@ -831,7 +831,7 @@ function ovTab(c){
       area(c.series,C[c.tone==='slate'||c.tone==='red'?'slate':c.tone],120)+'</div>'+
 
     metricCard('Users',c.users+(c.usersWk?' ':'') ,c.usersWk?'+'+c.usersWk+'/wk':'',c.usersWk?'green':'')+
-    metricCard('Churn',c.churn==null?'—':c.churn+'%','',c.churn>3?'amber':'')+
+    metricCard('Churn',c.churn==null?'-':c.churn+'%','',c.churn>3?'amber':'')+
     metricCard('Cost / mo','$'+c.cost,'','')+
     metricCard('Net / mo',fmt$(c.net),'',c.net>=0?'green':'red')+
 
@@ -856,9 +856,9 @@ function buildTab(c){
   const stLabel={shipped:'shipped',building:'building',await:'awaiting ship',blocked:'blocked',todo:'queued'};
   let html='<div class="grid2">'+
     '<div class="card"><div class="card-hd"><h4>Slices shipped</h4></div><div class="bignum">'+c.shipped+'</div><div class="subnum">each slice = a validated, live capability</div></div>'+
-    '<div class="card"><div class="card-hd"><h4>Build law</h4></div><div class="note">Every iteration ships ONE user-facing capability — live + proven, never "code written." The product is always live.</div></div>';
+    '<div class="card"><div class="card-hd"><h4>Build law</h4></div><div class="note">Every iteration ships ONE user-facing capability - live + proven, never "code written." The product is always live.</div></div>';
   if(c.build.done){
-    html+='<div class="ai-card span2 tone amber"><div class="ai-ico">⚡</div><div><div class="ait">Gate open · SHIP</div><div class="aib">'+c.build.now+' — doneWhen is green. Approve in Needs-you to ship.</div></div></div>';
+    html+='<div class="ai-card span2 tone amber"><div class="ai-ico">⚡</div><div><div class="ait">Gate open · SHIP</div><div class="aib">'+c.build.now+' - doneWhen is green. Approve in Needs-you to ship.</div></div></div>';
   }
   if(blocked){
     html+='<div class="ai-card span2 tone red"><div class="ai-ico">⛏</div><div><div class="ait">Blocked</div><div class="aib">A slice has failed the same way ×3 and is blocking progress. Needs UNBLOCK.</div></div></div>';
@@ -874,7 +874,7 @@ function growTab(c){
   return '<div class="grid2">'+
     '<div class="card span2 tone '+c.tone+'"><div class="card-hd"><h4>Acquisition funnel</h4><span class="ch-r">'+c.grow.conv+'% top-to-paid</span></div>'+funnel(c.grow.funnel,c.tone)+'</div>'+
     '<div class="card"><div class="card-hd"><h4>Visits / mo</h4></div><div class="bignum" style="font-size:24px">'+c.grow.visits+'</div>'+spark(c.grow.trafficSpark,t,150,34)+'</div>'+
-    '<div class="card"><div class="card-hd"><h4>GROW autonomy</h4></div>'+meter(c.auto.grow,c.tone)+'<div class="note" style="margin-top:8px">'+(c.auto.grow===null?'Paused.':c.auto.grow>=1?'Agent can run reversible growth acts; spend + outbound to humans stay gated.':'Manual — you approve every growth action.')+'</div></div>'+
+    '<div class="card"><div class="card-hd"><h4>GROW autonomy</h4></div>'+meter(c.auto.grow,c.tone)+'<div class="note" style="margin-top:8px">'+(c.auto.grow===null?'Paused.':c.auto.grow>=1?'Agent can run reversible growth acts; spend + outbound to humans stay gated.':'Manual - you approve every growth action.')+'</div></div>'+
     '<div class="card span2"><div class="card-hd"><h4>Channels</h4></div>'+
       c.grow.channels.map(ch=>'<div class="kv tone '+ch[2]+'"><span style="display:flex;gap:7px;align-items:center"><span class="sw" style="width:8px;height:8px;border-radius:3px;background:'+tcVar(ch[2])+'"></span>'+ch[0]+'</span><b style="font-size:11px;font-weight:500;color:var(--ink-soft)">'+ch[1]+'</b></div>').join('')+'</div>'+
     '<div class="ai-card span2 tone '+c.ai.tone+'"><div class="ai-ico">'+c.ai.icon+'</div><div><div class="ait">Grow signal</div><div class="aib">'+c.grow.summary+'</div></div></div>'+
@@ -894,12 +894,12 @@ function runTab(c){
 
 function moneyTab(c){
   const t=C[c.tone==='slate'||c.tone==='red'?'slate':c.tone];
-  const arpu=c.users?'$'+(c.mrr/c.users).toFixed(1):'—';
-  const margin=c.mrr?Math.round(c.net/c.mrr*100)+'%':'—';
+  const arpu=c.users?'$'+(c.mrr/c.users).toFixed(1):'-';
+  const margin=c.mrr?Math.round(c.net/c.mrr*100)+'%':'-';
   return '<div class="grid2">'+
     '<div class="card span2 tone '+c.tone+'"><div class="card-hd"><h4>Revenue · 6-month</h4><span class="ch-r">'+fmt$(c.mrr)+' MRR</span></div>'+area(c.series,t,116)+'</div>'+
     '<div class="card"><div class="card-hd"><h4>Cost breakdown</h4><span class="ch-r">$'+c.cost+'/mo</span></div>'+stackBar(c.cb,c.cost)+'</div>'+
-    '<div class="card"><div class="card-hd"><h4>Unit economics</h4></div><div class="kvgrid"><div class="kv"><span>ARPU</span><b>'+arpu+'</b></div><div class="kv"><span>Margin</span><b>'+margin+'</b></div><div class="kv"><span>Cost/user</span><b>'+(c.users?'$'+(c.cost/c.users).toFixed(1):'—')+'</b></div><div class="kv"><span>Net/mo</span><b style="color:'+(c.net>=0?'var(--green)':'var(--red)')+'">'+fmt$(c.net)+'</b></div></div></div>'+
+    '<div class="card"><div class="card-hd"><h4>Unit economics</h4></div><div class="kvgrid"><div class="kv"><span>ARPU</span><b>'+arpu+'</b></div><div class="kv"><span>Margin</span><b>'+margin+'</b></div><div class="kv"><span>Cost/user</span><b>'+(c.users?'$'+(c.cost/c.users).toFixed(1):'-')+'</b></div><div class="kv"><span>Net/mo</span><b style="color:'+(c.net>=0?'var(--green)':'var(--red)')+'">'+fmt$(c.net)+'</b></div></div></div>'+
     '<div class="card span2"><div class="card-hd"><h4>Revenue vs cost</h4></div>'+
       '<div class="cbars"><div class="cbar"><span class="cb-l">Revenue</span><div class="cb-track"><div class="cb-pos" style="left:50%;width:'+Math.min(c.mrr/420*50,50)+'%"></div></div><span class="cb-v" style="color:var(--green)">'+fmt$(c.mrr)+'</span></div>'+
       '<div class="cbar"><span class="cb-l">Cost</span><div class="cb-track"><div class="cb-neg" style="right:50%;width:'+Math.min(c.cost/420*50,50)+'%"></div></div><span class="cb-v" style="color:var(--red)">−$'+c.cost+'</span></div></div></div>'+
@@ -911,7 +911,7 @@ function ovsTab(c){
   if(!o)return '<div class="empty">No autonomous actions for '+c.name+' in the last 7 days.</div>';
   return '<div class="grid2"><div class="card span2 tone '+c.tone+'"><div class="card-hd"><h4>Acted on your behalf · 7 days</h4><span class="ch-r">$'+o.spend+' spent</span></div>'+
     o.items.map(it=>'<div class="ov-item tone '+c.tone+'"><span class="ov-glyph">'+it[0]+'</span><span class="ov-tx">'+it[1]+'</span><button class="ov-undo" data-undo="1">undo</button></div>').join('')+
-    '<div class="note" style="margin-top:10px">Reversible features auto-ship on autopilot. Anything that talks to a real human or spends real money is always gated — these GROW/RUN acts remain undoable.</div></div></div>';
+    '<div class="note" style="margin-top:10px">Reversible features auto-ship on autopilot. Anything that talks to a real human or spends real money is always gated - these GROW/RUN acts remain undoable.</div></div></div>';
 }
 
 /* ---- portfolio detail panels ---- */
@@ -939,7 +939,7 @@ function renderAutopilotDetail(H,B){
   let rows=COMPANIES.map(c=>{
     let cells=['make','grow','run'].map(k=>{
       const v=c.auto[k];const cls=v==null?'lnull':'l'+v;
-      return '<td><div class="lvl '+cls+'"><b>'+(v==null?'—':'L'+v)+'</b><small>'+(v==null?'paused':v===0?'manual':v===1?'assisted':'auto')+'</small></div></td>';
+      return '<td><div class="lvl '+cls+'"><b>'+(v==null?'-':'L'+v)+'</b><small>'+(v==null?'paused':v===0?'manual':v===1?'assisted':'auto')+'</small></div></td>';
     }).join('');
     return '<tr><td class="co"><span class="mco tone '+c.tone+'">'+c.name+'</span><div class="lr-s">'+c.stage+'</div></td>'+cells+'</tr>';
   }).join('');
@@ -988,17 +988,17 @@ function renderGateDetail(H,B){
       '<div class="preview-body"><div class="pv-tt">Your daily digest · top 10 leads</div><div class="pv-line" style="width:88%"></div><div class="pv-line" style="width:72%"></div><div class="pv-line" style="width:80%"></div><div class="pv-line" style="width:54%"></div></div></div></div>';
   }
   if(g.type==='SPEND'){
-    html+='<div class="card"><div class="card-hd"><h4>Amount</h4></div><div class="bignum">$'+g.amount+'</div><div class="subnum">above $25 guardrail — gated</div></div>'+
+    html+='<div class="card"><div class="card-hd"><h4>Amount</h4></div><div class="bignum">$'+g.amount+'</div><div class="subnum">above $25 guardrail - gated</div></div>'+
       '<div class="card"><div class="card-hd"><h4>Projection</h4></div><div class="bignum" style="font-size:22px">~120</div><div class="subnum">signups · best-ROI company</div></div>';
   }
   // resolution
   if(done){
-    html+='<div class="card span2"><div class="gate-done '+(done==='approved'?'ok':'no')+'" style="padding:4px 0">'+(done==='approved'?'✓ Approved — action dispatched to '+c.name:'✕ Rejected — sent back to the agent with feedback')+'</div></div>';
+    html+='<div class="card span2"><div class="gate-done '+(done==='approved'?'ok':'no')+'" style="padding:4px 0">'+(done==='approved'?'✓ Approved - action dispatched to '+c.name:'✕ Rejected - sent back to the agent with feedback')+'</div></div>';
   } else if(g.status==='open'){
     html+='<div class="card span2"><div class="gate-act" style="padding:0"><button class="btn approve" data-approve="'+g.id+'">✓ Approve & dispatch</button><button class="btn reject" data-reject="'+g.id+'">Reject with feedback…</button>'+
       '<button class="btn ghost" data-openco="'+c.id+'" style="margin-left:auto">Open '+c.name+' →</button></div></div>';
   } else {
-    html+='<div class="card span2"><div class="note">This gate is <b>upcoming</b> — it will surface for approval when its blockers clear. <button class="btn ghost sm" data-openco="'+c.id+'" style="margin-left:6px">Open '+c.name+' →</button></div></div>';
+    html+='<div class="card span2"><div class="note">This gate is <b>upcoming</b> - it will surface for approval when its blockers clear. <button class="btn ghost sm" data-openco="'+c.id+'" style="margin-left:6px">Open '+c.name+' →</button></div></div>';
   }
   html+='</div>';
   B.innerHTML=html;
@@ -1030,12 +1030,12 @@ function toast(msg,tone){
 }
 function approve(id){
   const g=GATES.find(x=>x.id===id);resolved[id]='approved';
-  toast('Approved '+g.type+' · '+CO[g.company].name+(g.type==='SPEND'?' — $'+g.amount+' authorized':' — dispatched'),g.tone);
+  toast('Approved '+g.type+' · '+CO[g.company].name+(g.type==='SPEND'?' - $'+g.amount+' authorized':' - dispatched'),g.tone);
   renderMiddle();renderDetail();renderKpis();
 }
 function reject(id){
   const g=GATES.find(x=>x.id===id);resolved[id]='rejected';
-  toast('Rejected '+g.type+' · '+CO[g.company].name+' — feedback sent to agent','red');
+  toast('Rejected '+g.type+' · '+CO[g.company].name+' - feedback sent to agent','red');
   renderMiddle();renderDetail();
 }
 
@@ -1057,7 +1057,7 @@ document.addEventListener('click',e=>{
     return;}
 });
 
-// segmented controls (sort/filter) — separate because they live in mid header
+// segmented controls (sort/filter) - separate because they live in mid header
 document.addEventListener('click',e=>{
   const s=e.target.closest('[data-sort]'); if(s){state.sort=s.dataset.sort;renderMiddle();return;}
   const f=e.target.closest('[data-filter]'); if(f){state.filter=f.dataset.filter;renderMiddle();return;}

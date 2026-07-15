@@ -389,7 +389,7 @@
     <div class="intro-inner">
       <span class="eyebrow">the company as a tower</span>
       <h1>Build the base. Grow the middle. Run the top.</h1>
-      <p class="intro-sub">Three <b>always-on</b> functions — not steps. <b>Build</b> lays the foundation, <b>Grow</b> stacks on once there's a product, <b>Run</b> caps it once there are users. They hum in parallel; the number of <b>lit floors</b> is the stage. A company is never "done".</p>
+      <p class="intro-sub">Three <b>always-on</b> functions - not steps. <b>Build</b> lays the foundation, <b>Grow</b> stacks on once there's a product, <b>Run</b> caps it once there are users. They hum in parallel; the number of <b>lit floors</b> is the stage. A company is never "done".</p>
     </div>
   </section>
 
@@ -398,7 +398,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>the stack</b> — floors light up as the company matures</span>
+    <span>C Slop Slop · <b>the stack</b> - floors light up as the company matures</span>
     <span>1 floor = idea/building · 2 = testing · <b>3 = growing</b></span>
   </footer>
 
@@ -440,15 +440,15 @@
     { name: 'DataDrop', stage: 'Testing', phase: 'building',
       build: { state: 'active', aut: 'L1', task: 'Saved chart views', feed: ['re-prioritized backlog', 'cleaning CSV parser'] },
       grow:  { state: 'needs', aut: 'L0', task: 'r/SaaS launch thread', gate: 'awaiting your post', feed: ['drafted the thread + 3 replies', 'awaiting your post'] },
-      run:   { state: 'idle', aut: 'L1', task: 'quiet — 1 open ticket', feed: ['checked uptime · 200 OK'] }
+      run:   { state: 'idle', aut: 'L1', task: 'quiet - 1 open ticket', feed: ['checked uptime · 200 OK'] }
     },
     { name: 'TranslatorBill', stage: 'Building', phase: 'building',
       build: { state: 'active', aut: 'L1', task: 'InvoiceFormatter.tsx', feed: ['translating a sample invoice', 'ran tests · green'] },
-      grow:  { state: 'off', aut: 'off', task: 'blocked — no domain yet', feed: [] },
+      grow:  { state: 'off', aut: 'off', task: 'blocked - no domain yet', feed: [] },
       run:   { state: 'off', aut: 'off', task: 'pre-revenue', feed: [] }
     },
     { name: 'PricePeek', stage: 'Idea', phase: 'new',
-      build: { state: 'idle', aut: 'L0', task: 'validating — 15 interviews', feed: ['drafted interview script', 'listed 15 targets'] },
+      build: { state: 'idle', aut: 'L0', task: 'validating - 15 interviews', feed: ['drafted interview script', 'listed 15 targets'] },
       grow:  { state: 'off', aut: 'off', task: 'unlocks once there is a product', feed: [] },
       run:   { state: 'off', aut: 'off', task: 'unlocks once there are users', feed: [] }
     },
@@ -490,7 +490,7 @@
       feedRegistry.push(d.feed);
       body += '<div class="lyr-feed" data-feed="' + fid + '" data-idx="0">' + esc(d.feed[0]) + '</div>';
     } else if (!lit && unlockNext) {
-      body += '<span class="unlock-hint">unlocks next — rests on the floor below</span>';
+      body += '<span class="unlock-hint">unlocks next - rests on the floor below</span>';
     }
 
     return '<div class="layer ' + area.cls + (lit ? '' : ' off') + '">' + head + body + '</div>';
@@ -505,7 +505,7 @@
         '<span class="mbar-dot"></span>' +
         '<span class="mbar-lbl">' + area.label + '</span>' +
         flag +
-        '<span class="mbar-aut">' + (d.aut === 'off' ? '—' : esc(d.aut)) + '</span>' +
+        '<span class="mbar-aut">' + (d.aut === 'off' ? '-' : esc(d.aut)) + '</span>' +
       '</div>';
     }).join('');
     var lit = ['build', 'grow', 'run'].filter(function (k) { return c[k].state !== 'off'; }).length;
@@ -533,7 +533,7 @@
 
     var note = c.note ? '<div class="st-note">' + esc(c.note) + '</div>' : '';
 
-    return '<article class="stack ' + STAGE[c.stage] + ' ph-' + c.phase + '" style="animation-delay:' + Math.min(i * 55, 350) + 'ms" aria-label="' + esc(c.name) + ' — ' + esc(c.stage) + ', ' + lit + ' of 3 floors lit">' +
+    return '<article class="stack ' + STAGE[c.stage] + ' ph-' + c.phase + '" style="animation-delay:' + Math.min(i * 55, 350) + 'ms" aria-label="' + esc(c.name) + ' - ' + esc(c.stage) + ', ' + lit + ' of 3 floors lit">' +
       '<div class="st-head">' +
         '<h3>' + esc(c.name) + '</h3>' +
         '<span class="lit-meter" title="' + lit + ' of 3 floors lit" aria-hidden="true">' + meter + '</span>' +

@@ -1,4 +1,4 @@
-// Scaffolding stub for the route tree — each lane replaces its route body with the real UI.
+// Scaffolding stub for the route tree - each lane replaces its route body with the real UI.
 export function Placeholder({
     kicker,
     title,

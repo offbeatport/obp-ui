@@ -281,12 +281,12 @@
     { id:'redditpainbot', name:'RedditPainBot', c:'slate', x:706, y:96,
       status:'PAUSED', sub:'paused · blocked', mrr:'$0', delta:null, users:'0',
       action:'Slice 8 stuck ×3', stage:'MAKE',
-      needs:{ k:'Unblock', v:'RedditPainBot — slice 8 stuck ×3' }, act:'Blocked ×3', actT:'18m', paused:true },
+      needs:{ k:'Unblock', v:'RedditPainBot - slice 8 stuck ×3' }, act:'Blocked ×3', actT:'18m', paused:true },
 
     { id:'leadsift', name:'LeadSift', c:'accent', x:360, y:392,
       status:'GROWING', sub:'live · growing', mrr:'$180', delta:'+$40', users:'12',
       action:'Ship "daily digest"', stage:'GROW',
-      needs:{ k:'Ship', v:'Daily digest — passed check ✓' }, act:'Awaiting approval', actT:'2m', paused:false },
+      needs:{ k:'Ship', v:'Daily digest - passed check ✓' }, act:'Awaiting approval', actT:'2m', paused:false },
 
     { id:'quietinbox', name:'QuietInbox', c:'blue', x:748, y:418,
       status:'SCALING', sub:'live · scaling · best', mrr:'$420', delta:null, users:'38',
@@ -378,7 +378,7 @@
     tween(nx, ny, s, animate ? 340 : 0);
   }
 
-  /* smooth tween for buttons / fit — grid follows every frame */
+  /* smooth tween for buttons / fit - grid follows every frame */
   var raf=null;
   function tween(nx, ny, ns, dur){
     if(raf){ cancelAnimationFrame(raf); raf=null; }

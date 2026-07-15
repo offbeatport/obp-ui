@@ -417,7 +417,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -445,7 +445,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -454,22 +454,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -681,7 +681,7 @@ function flash(cls,text){
   f.innerHTML=text;
 }
 function approve(){
-  flash('ok','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approved ✓ — slice 5 shipped & marked live');
+  flash('ok','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approved ✓ - slice 5 shipped & marked live');
   const box=document.getElementById('rejectBox'); if(box) box.classList.remove('show');
 }
 function toggleReject(){
@@ -690,7 +690,7 @@ function toggleReject(){
 }
 function reject(){
   const t=(document.getElementById('rejectText').value||'').trim();
-  flash('rej','✕ Rejected — feedback sent back to the build'+(t?': “'+esc(t)+'”':''));
+  flash('rej','✕ Rejected - feedback sent back to the build'+(t?': “'+esc(t)+'”':''));
   document.getElementById('rejectBox').classList.remove('show');
 }
 
@@ -701,7 +701,7 @@ function sendChat(){
   list.insertAdjacentHTML('beforeend','<div class="msg user">'+esc(v)+'</div>');
   i.value='';
   setTimeout(()=>{
-    list.insertAdjacentHTML('beforeend','<div class="msg assistant">On it — I’ll route that to the build and report back here.</div>');
+    list.insertAdjacentHTML('beforeend','<div class="msg assistant">On it - I’ll route that to the build and report back here.</div>');
     document.getElementById('detScroll').scrollTop=document.getElementById('detScroll').scrollHeight;
   },450);
   document.getElementById('detScroll').scrollTop=document.getElementById('detScroll').scrollHeight;
@@ -765,7 +765,7 @@ function showCompanies(){
 /* ───── ACTIVITY ───── */
 function renderActivity(){
   const latest=DATA.activity[0];
-  document.getElementById('actLatest').innerHTML=`<b>${latest.co}</b> — ${esc(latest.text)}`;
+  document.getElementById('actLatest').innerHTML=`<b>${latest.co}</b> - ${esc(latest.text)}`;
   const byCo={};
   DATA.activity.forEach(a=>{ (byCo[a.co]=byCo[a.co]||[]).push(a); });
   let html='';

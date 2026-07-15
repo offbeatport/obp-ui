@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop · Directory — find an AI-built tool for anything</title>
+<title>C Slop Slop · Directory - find an AI-built tool for anything</title>
 <script>
 /* pre-paint theme: no flash */
 (function () {
@@ -532,7 +532,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 22px 90px; }
   <!-- hero -->
   <section class="hero">
     <h1>Find an AI-built tool for <span class="u">anything</span>.</h1>
-    <p class="sub">A living directory of micro-SaaS spun up on C Slop Slop — search by problem, browse by category, sort by what's actually growing.</p>
+    <p class="sub">A living directory of micro-SaaS spun up on C Slop Slop - search by problem, browse by category, sort by what's actually growing.</p>
     <div class="searchwrap">
       <div class="searchbar">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -556,7 +556,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 22px 90px; }
   <div class="sec-head" id="directory"><h2>The directory</h2><span class="note">every public company on the platform</span></div>
 
   <div class="controls">
-    <span class="result-count" id="count">— tools</span>
+    <span class="result-count" id="count">- tools</span>
     <span class="spacer"></span>
     <div class="ctrl-group">
       <span class="ctrl-label">Sort</span>
@@ -581,7 +581,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 22px 90px; }
   <!-- build CTA -->
   <section class="foot" id="build">
     <h3>Your idea could be the next row.</h3>
-    <p>Describe a problem. The factory builds, tests, and ships a real company for you — public by default, so it shows up right here.</p>
+    <p>Describe a problem. The factory builds, tests, and ships a real company for you - public by default, so it shows up right here.</p>
     <a class="cta" href="#" style="font-size:14.5px;padding:11px 18px" onclick="return false">Build your own company <span aria-hidden="true">→</span></a>
     <div class="fine">public by default · privacy is a paid upgrade · your cockpit stays 🔒 private</div>
   </section>
@@ -665,7 +665,7 @@ var DATA = [
     features: ["Snap a photo of your fridge", "AI builds a full week of meals", "Auto-generates the shopping list"] },
 
   { name: "GymStreak", handle: "theo", category: "Fitness", stage: "Testing",
-    blurb: "Text your workout — it logs and progresses it for you.",
+    blurb: "Text your workout - it logs and progresses it for you.",
     users: 48, usersLabel: "48 beta", revenue: null, revState: "none",
     signal: "Promising", fresh: "shipped v2 today", days: 0, featured: false,
     features: ["Text your workout in plain English", "It logs sets, reps and weight", "Progresses the plan automatically"] },
@@ -813,7 +813,7 @@ function render() {
   $("#clearBtn").hidden = !filtered;
 
   if (!rows.length) {
-    list.appendChild(el('<div class="empty">No tools match — try a broader search or clear filters.</div>'));
+    list.appendChild(el('<div class="empty">No tools match - try a broader search or clear filters.</div>'));
     return;
   }
 
@@ -852,11 +852,11 @@ function openDetail(id) {
   } else if (c.revState === "hidden") {
     revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">🔒 kept private</span></div>';
   } else {
-    revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">— pre-revenue</span></div>';
+    revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">- pre-revenue</span></div>';
   }
   var signalBlock = c.signal
     ? '<div class="d-stat"><span class="k">Signal</span><span class="v">' + c.signal + '</span></div>'
-    : '<div class="d-stat"><span class="k">Signal</span><span class="v priv">— validating</span></div>';
+    : '<div class="d-stat"><span class="k">Signal</span><span class="v priv">- validating</span></div>';
 
   var feats = c.features.map(function (f) {
     return '<li><span class="tick" aria-hidden="true">✓</span>' + f + '</li>';
@@ -895,7 +895,7 @@ function openDetail(id) {
     '</div>' +
     '<div class="d-private-hint">' +
       '<span class="lk">🔒</span>' +
-      '<span>You\'re seeing the <b>public product</b>. The operator\'s cockpit — budget &amp; spend, the AI\'s plan, the approval queue and risk log — stays private. <b>Public by default; privacy is a paid upgrade.</b></span>' +
+      '<span>You\'re seeing the <b>public product</b>. The operator\'s cockpit - budget &amp; spend, the AI\'s plan, the approval queue and risk log - stays private. <b>Public by default; privacy is a paid upgrade.</b></span>' +
     '</div>';
 
   lastFocus = document.activeElement;
@@ -904,7 +904,7 @@ function openDetail(id) {
   document.body.style.overflow = "hidden";
 
   $("#dClose").addEventListener("click", closeDetail);
-  $("#dTry").addEventListener("click", function () { toast("This is a public demo — sign in to try " + c.name + " live."); });
+  $("#dTry").addEventListener("click", function () { toast("This is a public demo - sign in to try " + c.name + " live."); });
   $("#dClose").focus();
 }
 

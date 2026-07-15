@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C Slop Slop · Atlas — what's being built</title>
+<title>C Slop Slop · Atlas - what's being built</title>
 <script>
   /* pre-paint theme: no flash */
   (function () {
@@ -570,7 +570,7 @@
     <section class="hero">
       <div>
         <h1>The atlas of what people are <em>building right now.</em></h1>
-        <p>Every dot is a real company being built on the platform. Explore the landscape — position shows maturity &amp; traction, size shows momentum.</p>
+        <p>Every dot is a real company being built on the platform. Explore the landscape - position shows maturity &amp; traction, size shows momentum.</p>
       </div>
       <span class="privacy-cue">🔒 <b>public by default</b> · privacy is a paid upgrade</span>
     </section>
@@ -591,7 +591,7 @@
       <div class="map-scroll">
         <div class="plot-frame">
           <div class="yaxis" aria-hidden="true"><span>traction →</span></div>
-          <div class="plot" id="plot" role="group" aria-label="Company atlas — companies plotted by maturity and traction">
+          <div class="plot" id="plot" role="group" aria-label="Company atlas - companies plotted by maturity and traction">
             <div class="arrow-y" style="left:6px; top:6px;" aria-hidden="true">▲ more</div>
           </div>
           <div class="xaxis" id="xaxis" aria-hidden="true"></div>
@@ -600,7 +600,7 @@
     </div>
 
     <footer>
-      <div id="build" class="mono">free tier · public by default — that's the growth loop. private cockpit is a paid upgrade.</div>
+      <div id="build" class="mono">free tier · public by default - that's the growth loop. private cockpit is a paid upgrade.</div>
       <div>Curated to feature the live &amp; growing. Ideas are “coming soon”; killed bets keep a public post-mortem.</div>
     </footer>
   </div>
@@ -655,7 +655,7 @@
       users: "300 waitlist", usersK: "on the waitlist", revenue: null, signal: "Building",
       fresh: "building live", featured: false, live: true, traction: 50, x: 33, y: 40 },
     { name: "GymStreak", handle: "theo", cat: "Fitness", stage: "Testing", glyph: "💪",
-      blurb: "Text your workout — it logs and progresses it for you.",
+      blurb: "Text your workout - it logs and progresses it for you.",
       users: "48 beta", usersK: "beta users", revenue: null, signal: "Promising",
       fresh: "shipped v2 today", featured: false, live: false, traction: 40, x: 52, y: 49 },
     { name: "DataDrop", handle: "sana", cat: "Data", stage: "Building", glyph: "📊",
@@ -672,15 +672,15 @@
       fresh: "building now", featured: false, live: true, traction: 25, x: 44, y: 64 },
     { name: "PlantPal", handle: "sol", cat: "Home", stage: "Idea", glyph: "🌿",
       blurb: "Diagnose your houseplant from a photo.",
-      users: "validating", usersK: "signal", revenue: null, signal: "—",
+      users: "validating", usersK: "signal", revenue: null, signal: "-",
       fresh: "coming soon", featured: false, live: false, traction: 12, x: 16, y: 71 },
     { name: "PricePeek", handle: "lin", cat: "Pricing", stage: "Idea", glyph: "🏷️",
       blurb: "Alerts you the moment competitors change their pricing.",
-      users: "validating", usersK: "signal", revenue: null, signal: "—",
+      users: "validating", usersK: "signal", revenue: null, signal: "-",
       fresh: "15 interviews in progress · coming soon", featured: false, live: false, traction: 10, x: 11, y: 75 },
     { name: "RedditPainBot", handle: "omar", cat: "Research", stage: "Killed", glyph: "🔎",
       blurb: "Mined Reddit for recurring product pains.",
-      users: "archived", usersK: "archived", revenue: null, signal: "—",
+      users: "archived", usersK: "archived", revenue: null, signal: "-",
       fresh: "killed after 3 wks · post-mortem public", featured: false, live: false, traction: 6, x: 8, y: 87 }
   ];
 
@@ -747,7 +747,7 @@
     btn.style.setProperty("--half", (s / 2) + "px");
     btn.style.setProperty("--c", "var(--" + st.c + ")");
     btn.style.setProperty("--c-soft", "var(--" + st.c + "-soft)");
-    btn.setAttribute("aria-label", c.name + " by @" + c.handle + " — " + c.cat + ", " + st.label + ". " + c.blurb + " Traction: " + c.users + ".");
+    btn.setAttribute("aria-label", c.name + " by @" + c.handle + " - " + c.cat + ", " + st.label + ". " + c.blurb + " Traction: " + c.users + ".");
     btn.innerHTML = '<span class="glyph">' + c.glyph + '</span>';
 
     var lab = document.createElement("span");
@@ -774,7 +774,7 @@
     var stats = '<span class="badge" style="--c:var(--' + st.c + ');--c-soft:var(--' + st.c + '-soft)">' + esc(st.label) + '</span>' +
                 '<span class="badge plain">' + esc(c.users) + '</span>';
     if (c.revenue && c.revenue !== "hidden") stats += '<span class="badge plain">' + esc(c.revenue) + '</span>';
-    if (c.signal && c.signal !== "—") stats += '<span class="badge plain">signal ' + esc(c.signal) + '</span>';
+    if (c.signal && c.signal !== "-") stats += '<span class="badge plain">signal ' + esc(c.signal) + '</span>';
 
     peek.innerHTML =
       '<div class="ph"><span class="pglyph">' + c.glyph + '</span>' +
@@ -825,7 +825,7 @@
       revStat = '<div class="stat"><div class="sv">' + esc(st.note.split(" · ")[0]) + '</div><div class="sk">stage</div></div>';
     }
 
-    var signalStat = (c.signal && c.signal !== "—")
+    var signalStat = (c.signal && c.signal !== "-")
       ? '<div class="stat"><div class="sv">' + esc(c.signal) + '</div><div class="sk">demand signal</div></div>'
       : '<div class="stat"><div class="sv">validating</div><div class="sk">demand signal</div></div>';
 
@@ -868,7 +868,7 @@
       '</div>' +
 
       '<div class="private-hint"><span class="lock">🔒</span>' +
-        '<div class="ph-txt"><b>Operations stay private.</b> The budget, spend, the AI’s plan, the approval queue and risk log all live in @' + esc(c.handle) + '’s private cockpit — never shown here. This is the product; the war room is a paid upgrade.</div>' +
+        '<div class="ph-txt"><b>Operations stay private.</b> The budget, spend, the AI’s plan, the approval queue and risk log all live in @' + esc(c.handle) + '’s private cockpit - never shown here. This is the product; the war room is a paid upgrade.</div>' +
       '</div>' +
 
       '<div class="try-row">' +

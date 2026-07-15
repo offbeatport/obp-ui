@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LeadSift — C Slop Slop</title>
+<title>LeadSift - C Slop Slop</title>
 <script>try{if(localStorage.getItem('cslopslop-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
 <style>
@@ -43,7 +43,7 @@ body{
 /* ============ SHELL ============ */
 .shell{display:grid;grid-template-columns:minmax(360px,420px) 1fr;height:100vh;width:100vw}
 
-/* ============ LEFT — AGENT ============ */
+/* ============ LEFT - AGENT ============ */
 .agent{
   display:flex;flex-direction:column;height:100vh;
   border-right:1px solid var(--line);
@@ -118,7 +118,7 @@ body{
 .send svg{width:16px;height:16px}
 .composer-hint{margin-top:8px;font-size:10.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;text-align:center}
 
-/* ============ RIGHT — WORKSPACE ============ */
+/* ============ RIGHT - WORKSPACE ============ */
 .workspace{display:flex;flex-direction:column;height:100vh;background:var(--cream);min-width:0}
 .ws-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);height:56px;flex:0 0 auto}
 .tabs{display:flex;gap:2px;height:100%}
@@ -301,7 +301,7 @@ body{
 .ship-pop{position:absolute;top:9px;right:9px;z-index:3;display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#fff;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.03em;padding:3px 9px;border-radius:20px;box-shadow:var(--shadow);animation:shippop 2.8s cubic-bezier(.2,.7,.2,1) forwards}
 @keyframes shippop{0%{opacity:0;transform:translateY(-6px) scale(.92)}12%{opacity:1;transform:none}82%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
 
-/* feature grouping — light labels + dividers, not panels */
+/* feature grouping - light labels + dividers, not panels */
 .grp-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:9px;margin:0 0 13px}
 .gallery + .grp-label{margin-top:22px}
 .grp-label .grp-sub{font-weight:400;letter-spacing:.01em;text-transform:none;color:var(--ink-faint);font-size:10.5px}
@@ -340,7 +340,7 @@ body{
 <body>
 <div class="shell">
 
-  <!-- ============ LEFT — AGENT ============ -->
+  <!-- ============ LEFT - AGENT ============ -->
   <aside class="agent">
     <div class="agent-head">
       <div class="brand">
@@ -371,7 +371,7 @@ body{
         </div>
         <div class="msg-body">
           <div class="msg-name">Sift <time>8:02am</time></div>
-          <div class="bubble">Morning ☕ Overnight I pulled in <b>4 new leads</b> — two scored past 80. MRR's steady at <b>$180</b>, nobody churned. Ran the health checks myself: all green. Feels like a good day to ship something.</div>
+          <div class="bubble">Morning ☕ Overnight I pulled in <b>4 new leads</b> - two scored past 80. MRR's steady at <b>$180</b>, nobody churned. Ran the health checks myself: all green. Feels like a good day to ship something.</div>
         </div>
       </div>
 
@@ -381,7 +381,7 @@ body{
         </div>
         <div class="msg-body">
           <div class="msg-name">Sift <time>8:04am</time></div>
-          <div class="bubble">I finished the <b>Daily digest</b> you greenlit on the roadmap — an 8am email of each account's hottest leads. Passed its own test suite first run. Quietly proud of that one.</div>
+          <div class="bubble">I finished the <b>Daily digest</b> you greenlit on the roadmap - an 8am email of each account's hottest leads. Passed its own test suite first run. Quietly proud of that one.</div>
         </div>
       </div>
 
@@ -393,7 +393,7 @@ body{
         <div class="msg-body" style="width:100%">
           <div class="msg-name">Sift <time>8:05am</time></div>
           <div class="approve" id="approveCard">
-            <div class="approve-top">Daily digest is built and green across the board <span class="check">✓</span> — want to ship it, or shall I?</div>
+            <div class="approve-top">Daily digest is built and green across the board <span class="check">✓</span> - want to ship it, or shall I?</div>
             <div class="approve-meta">
               <span class="tag ok">✓ 14/14 tests</span>
               <span class="tag build">feature · email</span>
@@ -414,7 +414,7 @@ body{
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
               Builds ship on autopilot · you approve growth &amp; spend
             </div>
-            <div class="resolved-note" id="resolvedNote"><span class="check">✓</span> Shipped to leadsift.app — digest goes out tomorrow 8am.</div>
+            <div class="resolved-note" id="resolvedNote"><span class="check">✓</span> Shipped to leadsift.app - digest goes out tomorrow 8am.</div>
           </div>
         </div>
       </div>
@@ -432,7 +432,7 @@ body{
     </div>
   </aside>
 
-  <!-- ============ RIGHT — WORKSPACE ============ -->
+  <!-- ============ RIGHT - WORKSPACE ============ -->
   <main class="workspace">
     <div class="ws-head">
       <nav class="tabs">
@@ -500,7 +500,7 @@ body{
                   <span class="tmark now" id="planDigestMark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></span>
                   <div class="tbody">
                     <div class="ttitle">Daily digest <span class="tchip await" id="planDigestChip">awaiting approval</span></div>
-                    <div class="tmeta" id="planDigestMeta">Built &amp; tested — pending your ship in chat</div>
+                    <div class="tmeta" id="planDigestMeta">Built &amp; tested - pending your ship in chat</div>
                     <div class="twhy"><b>why</b> keeps LeadSift in the inbox daily → the retention loop before launch</div>
                   </div>
                 </div>
@@ -512,15 +512,15 @@ body{
                   <div class="tbody">
                     <div class="ttitle">Export to CSV <span class="tchip type b">build</span></div>
                     <div class="tmeta" id="planExportMeta">One-click CRM export</div>
-                    <div class="twhy"><b>why</b> 7 of 12 users asked — top request, unblocks the CRM handoff</div>
+                    <div class="twhy"><b>why</b> 7 of 12 users asked - top request, unblocks the CRM handoff</div>
                   </div>
                 </div>
                 <div class="task">
                   <span class="tmark gtm"></span>
                   <div class="tbody">
                     <div class="ttitle">Draft a Product Hunt launch tweet <span class="tchip type">GTM</span></div>
-                    <div class="tmeta">Growth — thread + launch-day plan</div>
-                    <div class="twhy"><b>why</b> 12 happy users, 0% churn — the proof to go public</div>
+                    <div class="tmeta">Growth - thread + launch-day plan</div>
+                    <div class="twhy"><b>why</b> 12 happy users, 0% churn - the proof to go public</div>
                   </div>
                 </div>
                 <div class="task">
@@ -528,7 +528,7 @@ body{
                   <div class="tbody">
                     <div class="ttitle">Slack alert on a hot lead <span class="tchip type b">build</span></div>
                     <div class="tmeta">Ping #sales when score &gt; 85</div>
-                    <div class="twhy"><b>why</b> hot leads go cold in minutes — speed closes deals</div>
+                    <div class="twhy"><b>why</b> hot leads go cold in minutes - speed closes deals</div>
                   </div>
                 </div>
               </div>
@@ -539,7 +539,7 @@ body{
                   <div class="tbody">
                     <div class="ttitle">Two-way CRM sync</div>
                     <div class="tmeta">HubSpot + Salesforce · scoping</div>
-                    <div class="twhy"><b>why</b> the enterprise ask — heavy, so scoping before committing</div>
+                    <div class="twhy"><b>why</b> the enterprise ask - heavy, so scoping before committing</div>
                   </div>
                 </div>
               </div>
@@ -556,7 +556,7 @@ body{
             <div class="grp-label">Storefront <span class="grp-sub">how it presents &amp; sells itself</span></div>
             <div class="gallery">
 
-              <!-- Landing page — wide, first -->
+              <!-- Landing page - wide, first -->
               <div class="feat wide">
                 <div class="thumb">
                   <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice">
@@ -580,7 +580,7 @@ body{
                 </div>
               </div>
 
-              <!-- Brand & design — storefront asset -->
+              <!-- Brand & design - storefront asset -->
               <div class="feat wide">
                 <div class="thumb">
                   <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice">
@@ -598,7 +598,7 @@ body{
                 </div>
                 <div class="feat-cap">
                   <div class="feat-name"><span class="nm">Brand &amp; design</span><span class="state live">Live</span></div>
-                  <div class="feat-sum">Logo, palette &amp; voice — how LeadSift shows up.</div>
+                  <div class="feat-sum">Logo, palette &amp; voice - how LeadSift shows up.</div>
                 </div>
               </div>
 
@@ -685,7 +685,7 @@ body{
                 </div>
               </div>
 
-              <!-- Daily digest — BUILDING -> LIVE -->
+              <!-- Daily digest - BUILDING -> LIVE -->
               <div class="feat is-building wide" id="digestFeat">
                 <div class="thumb">
                   <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice">
@@ -709,7 +709,7 @@ body{
                 </div>
               </div>
 
-              <!-- Export to CSV — PLANNED -->
+              <!-- Export to CSV - PLANNED -->
               <div class="feat is-planned wide">
                 <div class="thumb">
                   <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice">
@@ -739,7 +739,7 @@ body{
       <section class="panel" id="p-documents">
         <div class="docs">
           <div class="sec-label">The company's brain <span class="ln" style="max-width:120px"></span></div>
-          <p class="docs-intro">Everything LeadSift knows about itself — why it exists, the market it's chasing, and how it's built. These documents drive every decision the agent makes.</p>
+          <p class="docs-intro">Everything LeadSift knows about itself - why it exists, the market it's chasing, and how it's built. These documents drive every decision the agent makes.</p>
           <div class="doc-grid">
             <button class="doc-card" onclick="openDoc('mission')">
               <div class="doc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>
@@ -774,7 +774,7 @@ body{
         <div class="stub">
           <div class="stub-ic" style="background:var(--blue-soft);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7l-1.5-1.5a2 2 0 0 0-2.8 0L4 11.2a2 2 0 0 0 0 2.8L8 18M14 7l4 4-6 6-4-4M14 7l4 4"/><path d="M16 3l5 5"/></svg></div>
           <h2>Build</h2>
-          <p>The agent's build log — commits, test runs, deploys and the features currently in the oven. Right now it's finishing <b>Daily digest</b>.</p>
+          <p>The agent's build log - commits, test runs, deploys and the features currently in the oven. Right now it's finishing <b>Daily digest</b>.</p>
           <span class="kbd">1 feature building · 5 shipped</span>
         </div>
       </section>
@@ -783,7 +783,7 @@ body{
         <div class="stub">
           <div class="stub-ic" style="background:var(--violet-soft);color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-9"/><path d="M21 6v5h-5"/></svg></div>
           <h2>Grow</h2>
-          <p>Growth experiments the agent runs — launch posts, outreach, funnel tweaks. A Product Hunt tweet draft is queued.</p>
+          <p>Growth experiments the agent runs - launch posts, outreach, funnel tweaks. A Product Hunt tweet draft is queued.</p>
           <span class="kbd">+3 users / week · 0% churn</span>
         </div>
       </section>
@@ -792,7 +792,7 @@ body{
         <div class="stub">
           <div class="stub-ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.2A2.5 2.5 0 0 1 12 8c1.4 0 2.5.8 2.5 1.8s-1.1 1.7-2.5 1.7-2.5.8-2.5 1.8S11.1 17 12.5 17"/></svg></div>
           <h2>Money</h2>
-          <p>Revenue, costs and pricing decisions. Margin is 88% — infra runs about $22/mo against $180 MRR.</p>
+          <p>Revenue, costs and pricing decisions. Margin is 88% - infra runs about $22/mo against $180 MRR.</p>
           <span class="kbd">$180 MRR · +$158 net / mo</span>
         </div>
       </section>
@@ -847,29 +847,29 @@ function resolve(kind){
   if(card.classList.contains('resolved'))return;
   var note=document.getElementById('resolvedNote');
   if(kind==='review'){
-    agentReply("Sure — here's a live preview of the digest email. Skim it; I'll ship it (or auto-ship shortly) unless you tell me otherwise.");
+    agentReply("Sure - here's a live preview of the digest email. Skim it; I'll ship it (or auto-ship shortly) unless you tell me otherwise.");
     return;
   }
   card.classList.add('resolved');
   if(kind==='ship'){
     var auto=document.getElementById('autoDigest');
     var learned=auto&&auto.checked;
-    note.innerHTML='<span class="check">✓</span> Shipped to leadsift.app — first digest goes out tomorrow 8am.'+(learned?' Digests like this will auto-ship from now on.':'');
+    note.innerHTML='<span class="check">✓</span> Shipped to leadsift.app - first digest goes out tomorrow 8am.'+(learned?' Digests like this will auto-ship from now on.':'');
     agentReply(learned
-      ? "Done ✓ — and I'll auto-approve digest-style builds from here on, so you won't have to nod these through. Daily digest is live; first send is tomorrow 8am. CSV export is next."
-      : "Done ✓ — Daily digest is live. First send goes out tomorrow at 8am. I'll pick up CSV export next.");
+      ? "Done ✓ - and I'll auto-approve digest-style builds from here on, so you won't have to nod these through. Daily digest is live; first send is tomorrow 8am. CSV export is next."
+      : "Done ✓ - Daily digest is live. First send goes out tomorrow at 8am. I'll pick up CSV export next.");
     shipDigest(true);
   }else{
     digestBlocked=true;
     card.classList.add('rej');
-    note.innerHTML='✕ Held — I\'ll keep the digest on the shelf and revisit the roadmap.';
-    agentReply("Understood — holding Daily digest and bumping CSV export up. Want me to walk you through why I queued the digest first?");
+    note.innerHTML='✕ Held - I\'ll keep the digest on the shelf and revisit the roadmap.';
+    agentReply("Understood - holding Daily digest and bumping CSV export up. Want me to walk you through why I queued the digest first?");
   }
 }
 
 /* explain a decision, in the agent's voice */
 function explainDigest(){
-  agentReply("Why now: the digest is the retention loop — it drops LeadSift back into every user's inbox at 8am, right when they plan the day. 7 of 12 already open daily; a scheduled nudge should lift that. It's a low-risk email job, reversible in one click, and it seeds the habit before the Product Hunt push — which is why I put it ahead of CSV export.");
+  agentReply("Why now: the digest is the retention loop - it drops LeadSift back into every user's inbox at 8am, right when they plan the day. 7 of 12 already open daily; a scheduled nudge should lift that. It's a low-risk email job, reversible in one click, and it seeds the habit before the Product Hunt push - which is why I put it ahead of CSV export.");
 }
 
 /* the little wow: Daily digest resolves building -> live */
@@ -878,8 +878,8 @@ function shipDigest(fromApprove){
   var card=document.getElementById('approveCard');
   if(!fromApprove && card && !card.classList.contains('resolved')){
     card.classList.add('resolved');
-    document.getElementById('resolvedNote').innerHTML='<span class="check">✓</span> Auto-shipped on autopilot — low-risk build. First digest goes out tomorrow 8am.';
-    agentReply("Heads up — Daily digest cleared every check, so I shipped it on autopilot (low-risk, reversible build). It's live now; first send is tomorrow 8am. CSV export is up next.");
+    document.getElementById('resolvedNote').innerHTML='<span class="check">✓</span> Auto-shipped on autopilot - low-risk build. First digest goes out tomorrow 8am.';
+    agentReply("Heads up - Daily digest cleared every check, so I shipped it on autopilot (low-risk, reversible build). It's live now; first send is tomorrow 8am. CSV export is up next.");
   }
   var f=document.getElementById('digestFeat');
   if(f){
@@ -904,9 +904,9 @@ function shipDigest(fromApprove){
   var pl=document.getElementById('planNowLabel'); if(pl){pl.textContent='Just shipped';pl.classList.add('shipped');}
   var dm=document.getElementById('planDigestMark'); if(dm)dm.className='tmark done';
   var dchip=document.getElementById('planDigestChip'); if(dchip){dchip.className='tchip live';dchip.textContent='live';}
-  var dmeta=document.getElementById('planDigestMeta'); if(dmeta)dmeta.innerHTML='Shipped <span class="check">✓</span> — first send tomorrow 8am';
+  var dmeta=document.getElementById('planDigestMeta'); if(dmeta)dmeta.innerHTML='Shipped <span class="check">✓</span> - first send tomorrow 8am';
   var em=document.getElementById('planExportMark'); if(em){em.className='tmark now';em.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg>';}
-  var emeta=document.getElementById('planExportMeta'); if(emeta)emeta.textContent='Now building — the top user request';
+  var emeta=document.getElementById('planExportMeta'); if(emeta)emeta.textContent='Now building - the top user request';
   var gc=document.getElementById('galCnt'); if(gc)gc.textContent='7 live · 0 building · 1 planned';
   addSyslog('digest deployed → live ✓');
   setTimeout(function(){bumpMRR(15);},700);
@@ -924,10 +924,10 @@ function sendMsg(){
 }
 function pickReply(v){
   var s=v.toLowerCase();
-  if(s.indexOf('csv')>-1||s.indexOf('export')>-1)return "On it — CSV export is next in the queue. 7 users asked for it, so I'll prioritize a clean one-click flow to their CRM.";
+  if(s.indexOf('csv')>-1||s.indexOf('export')>-1)return "On it - CSV export is next in the queue. 7 users asked for it, so I'll prioritize a clean one-click flow to their CRM.";
   if(s.indexOf('launch')>-1||s.indexOf('tweet')>-1||s.indexOf('product hunt')>-1)return "I'll draft the Product Hunt thread today and share it here for your approval before anything goes public.";
-  if(s.indexOf('slack')>-1)return "Good call — I'll wire a Slack alert that fires when a lead scores above 85. I'll ship it behind a test flag first.";
-  return "Got it — logged that and I'll fold it into the roadmap. I'll surface anything that needs your approval right here.";
+  if(s.indexOf('slack')>-1)return "Good call - I'll wire a Slack alert that fires when a lead scores above 85. I'll ship it behind a test flag first.";
+  return "Got it - logged that and I'll fold it into the roadmap. I'll surface anything that needs your approval right here.";
 }
 function addMsg(text,me){
   var stream=document.getElementById('stream');
@@ -946,11 +946,11 @@ function esc(s){return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&l
 /* documents */
 var DOCS={
   mission:{title:'Mission statement',file:'mission.md · v1.4',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
-    body:'<h3>Our mission</h3><p><strong>Turn every webform into scored, ranked sales leads.</strong></p><p>Small teams drown in raw form submissions. Most never get followed up because no one knows which lead is worth a call. LeadSift reads intent from every submission the moment it lands and hands the team a ranked list — hottest first.</p><h3>Who it\'s for</h3><ul><li>Founders and solo marketers running inbound off a single form</li><li>Small sales teams without a full CRM or an SDR to triage</li><li>Agencies capturing leads for multiple clients at once</li></ul><h3>The promise</h3><p>Paste one snippet. Never manually sort a lead again. The right conversation, at the top, every morning.</p>'},
+    body:'<h3>Our mission</h3><p><strong>Turn every webform into scored, ranked sales leads.</strong></p><p>Small teams drown in raw form submissions. Most never get followed up because no one knows which lead is worth a call. LeadSift reads intent from every submission the moment it lands and hands the team a ranked list - hottest first.</p><h3>Who it\'s for</h3><ul><li>Founders and solo marketers running inbound off a single form</li><li>Small sales teams without a full CRM or an SDR to triage</li><li>Agencies capturing leads for multiple clients at once</li></ul><h3>The promise</h3><p>Paste one snippet. Never manually sort a lead again. The right conversation, at the top, every morning.</p>'},
   market:{title:'Market-opportunity research',file:'market.md · updated 3d ago',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>',
-    body:'<h3>The gap</h3><p>Form builders (Typeform, Tally, native site forms) capture leads but stop there — they don\'t <strong>qualify</strong>. Full CRMs (HubSpot, Salesforce) qualify but are heavy, expensive, and overkill for a team of one to five.</p><p>The wedge sits in the middle: <strong>instant scoring on top of the form you already use</strong>, priced for a team that can\'t justify a CRM seat.</p><h3>The buyer</h3><ul><li>10–500 form submissions / month</li><li>No dedicated ops person; the founder does follow-up</li><li>Already pays for a form tool but "checks the inbox when I remember"</li></ul><h3>Early signal</h3><p>12 paying users, 0% churn over 30 days, +3/week organic. 7 have asked for CSV export — a clear pull toward the CRM handoff. Willingness-to-pay clusters at <strong>$15–29/mo</strong>; current price $15.</p><h3>Risk</h3><p>Form tools could add native scoring. Moat = quality of the intent model + the daily-digest habit loop that keeps LeadSift in the inbox.</p>'},
+    body:'<h3>The gap</h3><p>Form builders (Typeform, Tally, native site forms) capture leads but stop there - they don\'t <strong>qualify</strong>. Full CRMs (HubSpot, Salesforce) qualify but are heavy, expensive, and overkill for a team of one to five.</p><p>The wedge sits in the middle: <strong>instant scoring on top of the form you already use</strong>, priced for a team that can\'t justify a CRM seat.</p><h3>The buyer</h3><ul><li>10–500 form submissions / month</li><li>No dedicated ops person; the founder does follow-up</li><li>Already pays for a form tool but "checks the inbox when I remember"</li></ul><h3>Early signal</h3><p>12 paying users, 0% churn over 30 days, +3/week organic. 7 have asked for CSV export - a clear pull toward the CRM handoff. Willingness-to-pay clusters at <strong>$15–29/mo</strong>; current price $15.</p><h3>Risk</h3><p>Form tools could add native scoring. Moat = quality of the intent model + the daily-digest habit loop that keeps LeadSift in the inbox.</p>'},
   design:{title:'Design doc',file:'design.md · v1.4',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16"/><path d="M6 16l4-8 4 5 4-9"/><circle cx="6" cy="16" r="1.4" fill="currentColor"/></svg>',
-    body:'<h3>Architecture</h3><p>A single embeddable snippet posts submissions to the ingest API. Each lead is enriched, then scored 0–100 and written to the lead store. The dashboard reads from there; the digest job reads the same store on a schedule.</p><ul><li><strong>Ingest:</strong> lightweight endpoint, dedupes on email + form</li><li><strong>Enrich:</strong> domain, role, company-size heuristics</li><li><strong>Score:</strong> weighted intent model, 0–100, explainable factors</li><li><strong>Deliver:</strong> live table, score filter, and the new 8am digest</li></ul><h3>Scoring model</h3><p>Buying-intent score blends explicit fields (budget, timeline, team size) with implicit signals (business email, message length, page path). Every score exposes its top factors so a rep can trust the ranking.</p><h3>Stack</h3><ul><li>Edge ingest + serverless jobs, single managed Postgres</li><li>Static dashboard, no heavy client framework</li><li>Email via transactional provider for the digest</li></ul><h3>Now building</h3><p><strong>Daily digest</strong> — a scheduled job that pulls each account\'s top-scored leads from the last 24h and sends an 8am summary. Next: <strong>CSV export</strong> for the CRM handoff.</p>'}
+    body:'<h3>Architecture</h3><p>A single embeddable snippet posts submissions to the ingest API. Each lead is enriched, then scored 0–100 and written to the lead store. The dashboard reads from there; the digest job reads the same store on a schedule.</p><ul><li><strong>Ingest:</strong> lightweight endpoint, dedupes on email + form</li><li><strong>Enrich:</strong> domain, role, company-size heuristics</li><li><strong>Score:</strong> weighted intent model, 0–100, explainable factors</li><li><strong>Deliver:</strong> live table, score filter, and the new 8am digest</li></ul><h3>Scoring model</h3><p>Buying-intent score blends explicit fields (budget, timeline, team size) with implicit signals (business email, message length, page path). Every score exposes its top factors so a rep can trust the ranking.</p><h3>Stack</h3><ul><li>Edge ingest + serverless jobs, single managed Postgres</li><li>Static dashboard, no heavy client framework</li><li>Email via transactional provider for the digest</li></ul><h3>Now building</h3><p><strong>Daily digest</strong> - a scheduled job that pulls each account\'s top-scored leads from the last 24h and sends an 8am summary. Next: <strong>CSV export</strong> for the CRM handoff.</p>'}
 };
 function openDoc(k){
   var d=DOCS[k];if(!d)return;

@@ -36,7 +36,7 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                 <button
                     type="button"
                     className={cn(
-                        "mt-2 flex w-full items-center gap-2.5 rounded-lg p-1 px-3 pb-2 text-left hover:bg-primary/[0.1] hover:text-foreground",
+                        "mt-2 flex w-full items-center gap-2.5 rounded-md p-1 px-3 pb-2 text-left hover:bg-primary/[0.07] hover:text-foreground",
                         collapsed && "justify-center",
                     )}
                 >
@@ -71,7 +71,7 @@ export function UserMenu({ collapsed }: { collapsed?: boolean }) {
                         <Settings2 /> Settings
                     </Link>
                 </DropdownMenuItem>
-                {/* Self-host is a single local principal — nothing to sign out of. */}
+                {/* Self-host is a single local principal - nothing to sign out of. */}
                 {me?.deployment === "hosted" && (
                     <>
                         <DropdownMenuSeparator />

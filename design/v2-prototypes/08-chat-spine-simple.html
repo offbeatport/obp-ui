@@ -193,7 +193,7 @@
       <div class="ava">cs</div>
       <div class="bubble">
         <p>Good morning. Your portfolio is at <span class="figure">$695/mo</span> and <span class="up">growing (+14%)</span> across 5 companies.</p>
-        <p>Most of it is running on its own. <strong>Three things</strong> need a quick decision from you — the rest is quiet.</p>
+        <p>Most of it is running on its own. <strong>Three things</strong> need a quick decision from you - the rest is quiet.</p>
       </div>
     </div>
 
@@ -204,7 +204,7 @@
         <div class="co-name">LeadSift <span class="tag">live · $180/mo</span></div>
         <div class="ask">Its daily-lead-digest feature is built and tested. Want it live?</div>
         <div class="actions">
-          <button class="btn-primary" onclick="resolve('d1','Shipping it now — I\'ll let you know the moment it\'s live.')">Approve &amp; ship</button>
+          <button class="btn-primary" onclick="resolve('d1','Shipping it now - I\'ll let you know the moment it\'s live.')">Approve &amp; ship</button>
           <button class="btn-ghost" onclick="resolve('d1','Opened the preview for you to review.')">Review</button>
         </div>
         <div class="resolved"><span class="ck">&#10003;</span><span data-text>Done.</span></div>
@@ -219,7 +219,7 @@
         <div class="ask">Spend <strong>$40</strong> to launch on Product Hunt? About <strong>120 new users</strong> expected.</div>
         <div class="actions">
           <button class="btn-primary" onclick="resolve('d2','Launching on Product Hunt. I\'ll watch the signups and report back.')">Approve</button>
-          <button class="btn-ghost" onclick="resolve('d2','Holding off — I\'ll keep this ready for whenever you want it.')">Not now</button>
+          <button class="btn-ghost" onclick="resolve('d2','Holding off - I\'ll keep this ready for whenever you want it.')">Not now</button>
         </div>
         <div class="resolved"><span class="ck">&#10003;</span><span data-text>Done.</span></div>
       </div>
@@ -232,7 +232,7 @@
         <div class="co-name">RedditPainBot <span class="tag">paused · stuck</span></div>
         <div class="ask">Three tries, no progress. Want me to retry a different way, or shut it down?</div>
         <div class="actions">
-          <button class="btn-primary" onclick="resolve('d3','On it — trying a fresh approach. I\'ll surface it again only if it works.')">Retry differently</button>
+          <button class="btn-primary" onclick="resolve('d3','On it - trying a fresh approach. I\'ll surface it again only if it works.')">Retry differently</button>
           <button class="btn-danger" onclick="resolve('d3','Shutting it down cleanly. One less thing to think about.')">Shut down</button>
         </div>
         <div class="resolved"><span class="ck">&#10003;</span><span data-text>Done.</span></div>
@@ -282,8 +282,8 @@
   }
 
   var SUMMARY = {
-    money:   "<strong>Money.</strong> Spending <span class='figure'>$214/mo</span> of your <span class='figure'>$500</span> cap — net <span class='figure up'>+$481/mo</span>. You're comfortably profitable.",
-    autopilot:"<strong>Autopilot.</strong> Most work runs on its own. I only stop to ask about growth spend and big changes — like the three above. You can tighten or loosen that anytime.",
+    money:   "<strong>Money.</strong> Spending <span class='figure'>$214/mo</span> of your <span class='figure'>$500</span> cap - net <span class='figure up'>+$481/mo</span>. You're comfortably profitable.",
+    autopilot:"<strong>Autopilot.</strong> Most work runs on its own. I only stop to ask about growth spend and big changes - like the three above. You can tighten or loosen that anytime.",
     week:    "<strong>This week.</strong> I shipped 1 feature, sent 15 customer emails, and spent <span class='figure'>$41</span>. Nothing else needed your input."
   };
 
@@ -310,7 +310,7 @@
     addBubble(t.replace(/</g,'&lt;'), true);
     f.value = '';
     setTimeout(function(){
-      addBubble("Got it — I'll take care of that and only come back if I need a decision.", false);
+      addBubble("Got it - I'll take care of that and only come back if I need a decision.", false);
     }, 500);
     return false;
   }

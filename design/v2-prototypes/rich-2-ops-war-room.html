@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — Ops War-Room</title>
+<title>C Slop Slop - Ops War-Room</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -460,7 +460,7 @@ const COMPANIES = [
     connected:[['Stripe',0],['domain',0],['ESP',0]],
     pipe:{slice:'slice6', title:'re-format invoice to buyer locale', state:'BUILDING', tag:'building', progress:60, busy:true, note:'InvoiceFormatter.tsx', dot:'violet'},
     grow:'Not launched: needs domain + legal entity / ToS (SIGN gate) before any outbound.',
-    run:'n/a — pre-revenue.',
+    run:'n/a - pre-revenue.',
     sig:'pre-rev · needs domain + ToS' },
 
   { id:'datadrop', name:'DataDrop', stage:'LIVE-FLAT', tone:'amber',
@@ -469,7 +469,7 @@ const COMPANIES = [
     autonomy:{make:1,grow:0,run:1},
     connected:[['Stripe',1],['domain',1],['ESP',1]],
     pipe:{slice:'slice6', title:'saved chart views', state:'QUEUED', tag:'queued', progress:0, busy:false, note:'in backlog', dot:'amber'},
-    grow:'1 directory listing, low traffic — flat MRR 3mo. Needs a distribution push or watch-list.',
+    grow:'1 directory listing, low traffic - flat MRR 3mo. Needs a distribution push or watch-list.',
     run:'1 ticket open.',
     sig:'flat 3mo · watch · 1 listing' },
 
@@ -478,7 +478,7 @@ const COMPANIES = [
     cost:4, costBreak:[['infra',4]], net:-4,
     autonomy:{make:0,grow:0,run:0},
     connected:[],
-    pipe:{slice:'slice8', title:'dedupe pains', state:'BLOCKED ×3', tag:'blocked', progress:30, busy:false, note:'stuck — needs unblock', dot:'red'},
+    pipe:{slice:'slice8', title:'dedupe pains', state:'BLOCKED ×3', tag:'blocked', progress:30, busy:false, note:'stuck - needs unblock', dot:'red'},
     grow:'Never launched.',
     run:'n/a.',
     sig:'kill candidate · stuck ×3' }
@@ -511,10 +511,10 @@ const OPPS = [
   { name:'RefundTriage', score:38, tone:'red', tag:'killed', dead:true }
 ];
 const AIRECS = [
-  { ic:'▲', col:'green', tx:'<b>Double-down QuietInbox</b> — raise GROW autonomy to L2; best ROI in portfolio.' },
+  { ic:'▲', col:'green', tx:'<b>Double-down QuietInbox</b> - raise GROW autonomy to L2; best ROI in portfolio.' },
   { ic:'→', col:'blue', tx:'<b>Push DataDrop distribution</b> or move to watch-list; MRR flat 3 months.' },
-  { ic:'✕', col:'red', tx:'<b>Kill RedditPainBot</b> — blocked ×3, never launched, −$4/mo drag.' },
-  { ic:'✦', col:'violet', tx:'<b>Spin PayoutReconciler</b> — score 82, ready; reuse Stripe + entity stack.' }
+  { ic:'✕', col:'red', tx:'<b>Kill RedditPainBot</b> - blocked ×3, never launched, −$4/mo drag.' },
+  { ic:'✦', col:'violet', tx:'<b>Spin PayoutReconciler</b> - score 82, ready; reuse Stripe + entity stack.' }
 ];
 
 const ACTIVITY = [
@@ -661,11 +661,11 @@ function renderGates(){
 function resolveGate(id,ok){
   const g=GATES.find(x=>x.id===id); const el=document.getElementById('gate-'+id);
   if(ok){
-    el.outerHTML=`<div class="gresolved"><span class="dot" style="background:var(--green)"></span><b style="font-family:Space Grotesk;color:var(--green)">${g.company}</b> — ${g.okWord} ✓</div>`;
-    toast(`<b>${g.company}</b> — ${g.okWord}`, '');
+    el.outerHTML=`<div class="gresolved"><span class="dot" style="background:var(--green)"></span><b style="font-family:Space Grotesk;color:var(--green)">${g.company}</b> - ${g.okWord} ✓</div>`;
+    toast(`<b>${g.company}</b> - ${g.okWord}`, '');
   } else {
-    el.outerHTML=`<div class="gresolved rej"><span class="dot" style="background:var(--red)"></span><b style="font-family:Space Grotesk;color:var(--red)">${g.company}</b> — ${g.no} · returned to agent with feedback</div>`;
-    toast(`<b>${g.company}</b> — ${g.no}, feedback sent to agent`, 'warn');
+    el.outerHTML=`<div class="gresolved rej"><span class="dot" style="background:var(--red)"></span><b style="font-family:Space Grotesk;color:var(--red)">${g.company}</b> - ${g.no} · returned to agent with feedback</div>`;
+    toast(`<b>${g.company}</b> - ${g.no}, feedback sent to agent`, 'warn');
   }
   const left = document.querySelectorAll('.gate').length;
   document.getElementById('gateCount').textContent = left;
@@ -779,7 +779,7 @@ function openCompany(id){
       </div>
       <div class="mstats">
         <div class="mstat"><div class="l">Users</div><div class="v">${c.users}${c.usersWk?` <span style="font-size:11px;color:var(--green)">+${c.usersWk}/wk</span>`:''}</div></div>
-        <div class="mstat"><div class="l">Churn</div><div class="v">${c.churn===null?'—':c.churn+'%'}</div></div>
+        <div class="mstat"><div class="l">Churn</div><div class="v">${c.churn===null?'-':c.churn+'%'}</div></div>
         <div class="mstat"><div class="l">Cost / mo</div><div class="v" style="color:var(--amber)">$${c.cost}</div></div>
         <div class="mstat"><div class="l">Net / mo</div><div class="v" style="color:${c.net>=0?'var(--green)':'var(--red)'}">${c.net>=0?'+':''}$${c.net}</div></div>
       </div>
@@ -792,7 +792,7 @@ function openCompany(id){
       </div>
       <div class="mcols" style="margin-top:14px">
         <div class="mcard"><h4><span style="color:var(--accent)">◆</span> BUILD</h4>
-          <p><b style="color:var(--ink)">${c.pipe.slice} · "${c.pipe.title}"</b><br><span style="font-family:JetBrains Mono;font-size:10px;color:${c.pipe.tag==='blocked'?'var(--red)':c.pipe.tag==='gate'?'var(--amber)':'var(--blue)'}">${c.pipe.state}</span> — ${c.pipe.note}.</p>
+          <p><b style="color:var(--ink)">${c.pipe.slice} · "${c.pipe.title}"</b><br><span style="font-family:JetBrains Mono;font-size:10px;color:${c.pipe.tag==='blocked'?'var(--red)':c.pipe.tag==='gate'?'var(--amber)':'var(--blue)'}">${c.pipe.state}</span> - ${c.pipe.note}.</p>
           <div class="pbar ${c.pipe.busy?'busy':''}" style="margin-top:9px"><i style="width:${c.pipe.progress}%;background:${toneVar[c.pipe.dot]}"></i></div>
         </div>
         <div class="mcard"><h4><span style="color:var(--green)">↗</span> GROW</h4><p>${c.grow}</p></div>
@@ -809,7 +809,7 @@ const CMDS = [
   {label:'Approve LeadSift · SHIP slice5', hint:'gate', ci:'✓', run:()=>{closeCmd();resolveGate('g1',true);}},
   {label:'Authorize QuietInbox · $40 PH spend', hint:'gate', ci:'$', run:()=>{closeCmd();resolveGate('g2',true);}},
   {label:'Unblock RedditPainBot · slice8', hint:'gate', ci:'⚑', run:()=>{closeCmd();resolveGate('g3',true);}},
-  {label:'Spin PayoutReconciler (score 82)', hint:'strategy', ci:'✦', run:()=>{closeCmd();toast('<b>PayoutReconciler</b> — spin queued','info');}},
+  {label:'Spin PayoutReconciler (score 82)', hint:'strategy', ci:'✦', run:()=>{closeCmd();toast('<b>PayoutReconciler</b> - spin queued','info');}},
   {label:'Filter pipeline: building', hint:'view', ci:'≡', run:()=>{closeCmd();pipeFilter='building';document.querySelectorAll('#pfilters .fchip').forEach(x=>x.classList.toggle('on',x.dataset.f==='building'));renderPipe();}},
   {label:'Filter pipeline: blocked', hint:'view', ci:'≡', run:()=>{closeCmd();pipeFilter='blocked';document.querySelectorAll('#pfilters .fchip').forEach(x=>x.classList.toggle('on',x.dataset.f==='blocked'));renderPipe();}}
 ];

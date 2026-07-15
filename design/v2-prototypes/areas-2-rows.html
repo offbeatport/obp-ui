@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C Slop Slop · Areas — Stacked Rows</title>
+<title>C Slop Slop · Areas - Stacked Rows</title>
 <script>
   (function () {
     try {
@@ -424,7 +424,7 @@
   </header>
 
   <!-- Legend: the three area states -->
-  <div class="legend" aria-label="Legend — the three area states">
+  <div class="legend" aria-label="Legend - the three area states">
     <span class="lg-t">area state</span>
     <span class="lg off"><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span> <b>Off</b> locked</span>
     <span class="lg idle"><span class="sw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg></span> <b>Idle</b> quiet</span>
@@ -439,8 +439,8 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>the AI runs the company</b> — you oversee the three areas</span>
-    <span>Build · Grow · Run — icon &amp; state say it all</span>
+    <span>C Slop Slop · <b>the AI runs the company</b> - you oversee the three areas</span>
+    <span>Build · Grow · Run - icon &amp; state say it all</span>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -475,7 +475,7 @@
   var companies = [
     { name: 'LeadSift', stage: 'Growing',
       build: { s: 'active', a: 'L1', task: 'CSV export', ticks: ['wrote the exporter', 'ran tests ✓', 'deployed to staging'] },
-      grow:  { s: 'needs',  a: 'L0', task: 'Product Hunt launch — $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
+      grow:  { s: 'needs',  a: 'L0', task: 'Product Hunt launch - $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
       run:   { s: 'active', a: 'L1', task: 'onboarding + support', ticks: ['sent 3 onboarding emails', 'answered a ticket'] } },
     { name: 'QuietInbox', stage: 'Growing',
       build: { s: 'active', a: 'L2', task: 'Snooze a thread', ticks: ['wrote snooze logic', 'deployed slice 9'] },
@@ -484,13 +484,13 @@
     { name: 'DataDrop', stage: 'Testing',
       build: { s: 'active', a: 'L1', task: 'Saved chart views', ticks: ['re-prioritized backlog', 'cleaning CSV parser'] },
       grow:  { s: 'needs',  a: 'L0', task: 'r/SaaS launch thread', ticks: ['drafted the thread + 3 replies', 'awaiting your post'] },
-      run:   { s: 'idle',   a: 'L1', task: 'quiet — 1 open ticket', ticks: ['checked uptime · 200 OK'] } },
+      run:   { s: 'idle',   a: 'L1', task: 'quiet - 1 open ticket', ticks: ['checked uptime · 200 OK'] } },
     { name: 'TranslatorBill', stage: 'Building',
       build: { s: 'active', a: 'L1', task: 'InvoiceFormatter.tsx', ticks: ['translating a sample invoice', 'ran tests · green'] },
-      grow:  { s: 'off',    a: 'off', task: 'blocked — no domain', ticks: [] },
+      grow:  { s: 'off',    a: 'off', task: 'blocked - no domain', ticks: [] },
       run:   { s: 'off',    a: 'off', task: 'pre-revenue', ticks: [] } },
     { name: 'PricePeek', stage: 'Idea',
-      build: { s: 'idle', a: 'L0', task: 'validating — 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
+      build: { s: 'idle', a: 'L0', task: 'validating - 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
       grow:  { s: 'off',  a: 'off', task: 'locked', ticks: [] },
       run:   { s: 'off',  a: 'off', task: 'locked', ticks: [] } },
     { name: 'RedditPainBot', stage: 'Killed', dead: true, note: 'loop stopped · post-mortem filed',
@@ -519,7 +519,7 @@
       live = '<div class="area-live' + (animate ? ' anim' : '') + '" data-ticks=\'' + esc(JSON.stringify(d.ticks)) + '\'>' +
              '<span class="tick">' + esc(d.ticks[0]) + '</span></div>';
     } else {
-      live = '<div class="area-live"><span class="tick muted">—</span></div>';
+      live = '<div class="area-live"><span class="tick muted">-</span></div>';
     }
     return '<div class="row ' + A.cls + ' ' + S.cls + '">' +
              '<div class="area-ic">' + A.icon + badge + '</div>' +
@@ -578,7 +578,7 @@
   document.getElementById('cNeeds').textContent = needsTotal;
   document.getElementById('cCos').textContent = companies.length;
 
-  // live-activity tickers — update in place
+  // live-activity tickers - update in place
   if (!rm) {
     var lives = Array.prototype.slice.call(document.querySelectorAll('.area-live.anim'));
     lives.forEach(function (el, idx) {
@@ -621,7 +621,7 @@
     var next = cur === 'out' ? 'in' : 'out';
     document.documentElement.setAttribute('data-zoom', next);
     try { localStorage.setItem('cslopslop-zoom', next); } catch (e) {}
-    showToast(next === 'out' ? '▦ Compact — all companies at a glance' : '≡ Expanded — full area rows');
+    showToast(next === 'out' ? '▦ Compact - all companies at a glance' : '≡ Expanded - full area rows');
   });
 })();
 </script>

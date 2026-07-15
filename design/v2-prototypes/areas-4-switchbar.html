@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C Slop Slop · Areas — Switchboard Strip</title>
+<title>C Slop Slop · Areas - Switchboard Strip</title>
 <script>
   (function () {
     try {
@@ -411,11 +411,11 @@
     <div class="top-spacer"></div>
     <span class="needs-hint"><span class="w">⚠</span> <span id="needsCount">0</span> need you</span>
     <div class="seg-toggle" role="group" aria-label="Zoom density">
-      <button id="zoomIn" aria-pressed="true" title="Detail — strip + activity feed">
+      <button id="zoomIn" aria-pressed="true" title="Detail - strip + activity feed">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
         <span class="lbl">Detail</span>
       </button>
-      <button id="zoomOut" aria-pressed="false" title="Dense — strip + stage only">
+      <button id="zoomOut" aria-pressed="false" title="Dense - strip + stage only">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span class="lbl">Dense</span>
       </button>
@@ -429,7 +429,7 @@
   <!-- Header band -->
   <section class="head">
     <span class="eyebrow">the factory floor · three areas per company</span>
-    <h1>Build · Grow · Run — read every company at a glance.</h1>
+    <h1>Build · Grow · Run - read every company at a glance.</h1>
     <p>Each company is a switchboard of three areas. Lit = the AI is working. Soft = idle. Dashed = off. A terracotta segment with ⚠ means it needs you.</p>
 
     <div class="legend" aria-label="State legend">
@@ -459,7 +459,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>switchboard strip</b> — Build · Grow · Run at portfolio scale</span>
+    <span>C Slop Slop · <b>switchboard strip</b> - Build · Grow · Run at portfolio scale</span>
     <span>lit = live · soft = idle · dashed = off · <b>⚠ = needs you</b></span>
   </footer>
 
@@ -491,7 +491,7 @@
     { name: 'LeadSift', stage: 'Growing',
       areas: {
         build: { state: 'active', auto: 'L1', label: 'CSV export', ticks: ['wrote the exporter', 'ran tests ✓', 'deployed to staging'] },
-        grow:  { state: 'needs', auto: 'L0', label: 'Product Hunt launch — $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
+        grow:  { state: 'needs', auto: 'L0', label: 'Product Hunt launch - $40 gated', ticks: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
         run:   { state: 'active', auto: 'L1', label: 'onboarding + support', ticks: ['sent 3 onboarding emails', 'answered a ticket'] }
       } },
     { name: 'QuietInbox', stage: 'Growing',
@@ -504,17 +504,17 @@
       areas: {
         build: { state: 'active', auto: 'L1', label: 'Saved chart views', ticks: ['re-prioritized backlog', 'cleaning CSV parser'] },
         grow:  { state: 'needs', auto: 'L0', label: 'r/SaaS launch thread', ticks: ['drafted the thread + 3 replies', 'awaiting your post'] },
-        run:   { state: 'idle', auto: 'L1', label: 'quiet — 1 open ticket', ticks: ['checked uptime · 200 OK'] }
+        run:   { state: 'idle', auto: 'L1', label: 'quiet - 1 open ticket', ticks: ['checked uptime · 200 OK'] }
       } },
     { name: 'TranslatorBill', stage: 'Building',
       areas: {
         build: { state: 'active', auto: 'L1', label: 'InvoiceFormatter.tsx', ticks: ['translating a sample invoice', 'ran tests · green'] },
-        grow:  { state: 'off', auto: 'off', label: 'blocked — no domain', ticks: [] },
+        grow:  { state: 'off', auto: 'off', label: 'blocked - no domain', ticks: [] },
         run:   { state: 'off', auto: 'off', label: 'pre-revenue', ticks: [] }
       } },
     { name: 'PricePeek', stage: 'Idea',
       areas: {
-        build: { state: 'idle', auto: 'L0', label: 'validating — 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
+        build: { state: 'idle', auto: 'L0', label: 'validating - 15 interviews', ticks: ['drafted interview script', 'listed 15 targets'] },
         grow:  { state: 'off', auto: 'off', label: 'not started', ticks: [] },
         run:   { state: 'off', auto: 'off', label: 'not started', ticks: [] }
       } },
@@ -597,7 +597,7 @@
                '<span class="chip-stage">' + esc(c.stage) + '</span>' +
                badge +
              '</div>' +
-             '<div class="strip" role="group" aria-label="' + esc(c.name) + ' areas — build, grow, run">' +
+             '<div class="strip" role="group" aria-label="' + esc(c.name) + ' areas - build, grow, run">' +
                segHTML('build', c.areas.build) +
                segHTML('grow', c.areas.grow) +
                segHTML('run', c.areas.run) +

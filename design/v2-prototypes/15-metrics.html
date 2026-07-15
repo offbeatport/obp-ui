@@ -382,7 +382,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -410,7 +410,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -419,22 +419,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -554,7 +554,7 @@ function curSliceCell(co){
     return `<span class="cur-slice">slice ${co.approval.slice} · ${co.approval.title}<span class="pill pill-await">needs you</span></span>`;
   }
   const cs=co.currentSlice;
-  if(!cs) return `<span class="cur-slice" style="color:var(--ink-4)">—</span>`;
+  if(!cs) return `<span class="cur-slice" style="color:var(--ink-4)">-</span>`;
   const [pc,pl]=SLICE_PILL[cs.status]||['pill-todo',cs.status];
   return `<span class="cur-slice">slice ${cs.n} · ${cs.title}<span class="pill ${pc}">${pl}</span></span>`;
 }
@@ -574,7 +574,7 @@ function renderCompanies(){
       <td><span class="stat"><span class="sdot ${building?'pulse':''}" style="background:${STATUS_COLOR[co.status]}"></span>${co.status}</span></td>
       <td>${curSliceCell(co)}</td>
       <td class="r num" style="color:var(--ink-2)">${co.users}</td>
-      <td class="r mrr-cell num">${co.mrr?`<b>$${co.mrr}</b>`:'<span style="color:var(--ink-4)">—</span>'}</td>
+      <td class="r mrr-cell num">${co.mrr?`<b>$${co.mrr}</b>`:'<span style="color:var(--ink-4)">-</span>'}</td>
       <td class="r">${rowSpark(TREND[co.id])}</td>`;
     tr.addEventListener('click',()=>openZoom(co.id));
     tb.appendChild(tr);
@@ -606,7 +606,7 @@ function renderOpps(){
 function renderActivity(){
   const a=DATA.activity;
   const latest=a[0];
-  $('#actLatest').innerHTML=`<span class="co">${latest.co}</span> — <b>${latest.text.replace(/^[a-z]+ /,m=>m)}</b>`;
+  $('#actLatest').innerHTML=`<span class="co">${latest.co}</span> - <b>${latest.text.replace(/^[a-z]+ /,m=>m)}</b>`;
   $('#actMeta').textContent=latest.t;
   // grouped
   const byCo={};
@@ -720,7 +720,7 @@ function wireZoom(co){
   const ap=$('#approveBtn'), rj=$('#rejectBtn'), conf=$('#gateConfirm');
   if(ap){
     ap.addEventListener('click',()=>{
-      conf.textContent='Approved ✓ — shipping to production';conf.className='gate-confirm ok show';
+      conf.textContent='Approved ✓ - shipping to production';conf.className='gate-confirm ok show';
       ap.disabled=true;rj.disabled=true;ap.style.opacity=.55;rj.style.opacity=.55;
       ap.textContent='Shipped';
     });
@@ -729,7 +729,7 @@ function wireZoom(co){
     $('#cancelReject').addEventListener('click',()=>rb.classList.remove('show'));
     $('#sendReject').addEventListener('click',()=>{
       const t=$('#rejectText').value.trim();
-      conf.textContent=t?'Sent back with feedback ↩':'Rejected — sent back';conf.className='gate-confirm no show';
+      conf.textContent=t?'Sent back with feedback ↩':'Rejected - sent back';conf.className='gate-confirm no show';
       rb.classList.remove('show');
     });
   }
@@ -739,7 +739,7 @@ function wireZoom(co){
     const v=ci.value.trim();if(!v)return;
     chat.appendChild(el('div','msg user',v));ci.value='';
     chat.parentElement.querySelector('.chat').scrollTop=9999;
-    setTimeout(()=>{chat.appendChild(el('div','msg assistant','On it — I’ll route that to the build and report back here.'));},420);
+    setTimeout(()=>{chat.appendChild(el('div','msg assistant','On it - I’ll route that to the build and report back here.'));},420);
   }
   if($('#chatSend')) $('#chatSend').addEventListener('click',send);
   if(ci) ci.addEventListener('keydown',e=>{if(e.key==='Enter')send();});

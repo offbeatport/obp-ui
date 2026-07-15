@@ -7,8 +7,8 @@ import type { Credentials } from "./credentials.js";
 import type { Harness, HarnessIO, HarnessResult, HarnessTask, Sandbox } from "./types.js";
 
 // NO-OP harness: no AI, no subprocess, no cost. It emits a few log lines over a few
-// seconds so the whole control plane — claim → run → live log stream → done, plus
-// lease/lock and crash-recovery — can be proven and measured before we ever spend
+// seconds so the whole control plane - claim → run → live log stream → done, plus
+// lease/lock and crash-recovery - can be proven and measured before we ever spend
 // agent tokens. Swapped for ClaudeCliHarness (real claude -p) in build step 4.
 export class NoopHarness implements Harness {
     kind = "noop";
@@ -25,14 +25,14 @@ export class NoopHarness implements Harness {
     }
 }
 
-// FixtureHarness — a deterministic, zero-cost builder (kind "fixture", NOT "noop", so the
+// FixtureHarness - a deterministic, zero-cost builder (kind "fixture", NOT "noop", so the
 // runner treats it as a real build and runs the deploy → validate → ship path). It just
 // drops the reference `server.js` into the workdir, letting the WHOLE spine be proven
 // end-to-end without a `claude` login or a single token spent. Opt in with
-// CSLOP_HARNESS=fixture (engine test seam only — never a user-selectable harness).
+// CSLOP_HARNESS=fixture (engine test seam only - never a user-selectable harness).
 //
 // `flaky` mode drops a BUGGY server on the first build per run (fails the doneWhen), then
-// the correct one on every retry — so the iterate-to-green loop can be proven too.
+// the correct one on every retry - so the iterate-to-green loop can be proven too.
 export class FixtureHarness implements Harness {
     kind = "fixture";
     private readonly calls = new Map<string, number>();
@@ -55,11 +55,11 @@ export class FixtureHarness implements Harness {
     }
 }
 
-// ClaudeCliHarness — the v1 real harness: drives `claude -p` inside the injected Sandbox,
+// ClaudeCliHarness - the v1 real harness: drives `claude -p` inside the injected Sandbox,
 // in the company's git worktree, iterating to a working app. stream-json → NDJSON log lines;
 // the prompt goes via stdin (avoids ARG_MAX); the run id (a UUID) is the claude session id.
 //
-// NOT yet exercised end-to-end — needs a `claude` binary + host login (see docs/RUNBOOK.md).
+// NOT yet exercised end-to-end - needs a `claude` binary + host login (see docs/RUNBOOK.md).
 // The AI proxy (OpenRouter, thinking tasks) is a separate path; this is the build "hands".
 export class ClaudeCliHarness implements Harness {
     kind = "claude";
@@ -149,7 +149,7 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
                     try {
                         onEvent(JSON.parse(line) as StreamEvent);
                     } catch {
-                        /* non-JSON line — ignore */
+                        /* non-JSON line - ignore */
                     }
                 }
                 nl = buf.indexOf("\n");
@@ -164,7 +164,7 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
                 try {
                     onEvent(JSON.parse(line) as StreamEvent);
                 } catch {
-                    /* non-JSON tail — ignore */
+                    /* non-JSON tail - ignore */
                 }
             }
             resolve();
@@ -175,7 +175,7 @@ function parseNdjson(stream: Readable, onEvent: (e: StreamEvent) => void): Promi
 }
 
 // Compact a stream event into one readable log line. Tool calls show WHAT they did (the
-// command / file / target), not just the tool name — so the log reads like a build narration
+// command / file / target), not just the tool name - so the log reads like a build narration
 // (`→ Bash: node server.js`, `→ Write server.js`) instead of a wall of bare `→ Bash`.
 function summarizeEvent(evt: StreamEvent): string | null {
     if (evt.type === "assistant" && evt.message?.content) {
@@ -199,7 +199,7 @@ function summarizeEvent(evt: StreamEvent): string | null {
     return null;
 }
 
-// `→ <Tool>: <the salient argument>` — the command for Bash, the file for Write/Edit/Read,
+// `→ <Tool>: <the salient argument>` - the command for Bash, the file for Write/Edit/Read,
 // the query for a search, the URL for a fetch. Falls back to the bare tool name.
 function summarizeTool(name?: string, input?: ToolInput): string {
     const tool = name ?? "tool";

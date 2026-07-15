@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — GRID · Operator Console</title>
+<title>C Slop Slop - GRID · Operator Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -594,7 +594,7 @@ const COMPANIES=[
     mrr:180, series:[60,90,120,140,160,180], delta:12.5, users:12, usersD:'+3/wk', churn:0,
     cost:22, costBreak:{infra:9,email:5,domain:1,api:7}, net:158,
     auto:{M:1,G:0,R:1}, accts:{S:1,D:1,E:1,L:1,P:0},
-    build:{state:'GATE',color:'#4f8a52',txt:'slice5 <b>"daily digest"</b> awaiting SHIP — doneWhen ✓. slice8 blocked.'},
+    build:{state:'GATE',color:'#4f8a52',txt:'slice5 <b>"daily digest"</b> awaiting SHIP - doneWhen ✓. slice8 blocked.'},
     grow:{txt:'Launched on Product Hunt 3wk ago (+8 users). 4 SEO posts → 320 visits/mo. Funnel 18%.',
           funnel:[['Visits',320],['Signups',58],['Trial',24],['Paid',12]]},
     run:{txt:'2 support tickets (~4h to clear). Uptime 99.9%. 1 refund issued.',uptime:99.9},
@@ -618,7 +618,7 @@ const COMPANIES=[
     auto:{M:1,G:0,R:0}, accts:{S:0,D:0,E:0,L:0,P:0},
     build:{state:'BUILDING',color:'#4a72b0',txt:'Building slice6 <b>"re-format invoice to buyer locale"</b> · InvoiceFormatter.tsx.'},
     grow:{txt:'Not launched. Needs domain + entity / ToS (SIGN gate) before any outreach.',funnel:[]},
-    run:{txt:'Not live yet — no traffic, no tickets.',uptime:null},
+    run:{txt:'Not live yet - no traffic, no tickets.',uptime:null},
     gate:{type:'SIGN',label:'entity + ToS',upcoming:true},
     oversight:'$11 infra spend (pre-revenue runway).' },
 
@@ -629,7 +629,7 @@ const COMPANIES=[
     build:{state:'QUEUED',color:'#8a8579',txt:'slice6 queued <b>"saved chart views"</b>.'},
     grow:{txt:'1 directory listing, low traffic. Distribution needs a push (or watch & decide).',
           funnel:[['Visits',90],['Signups',14],['Trial',9],['Paid',6]]},
-    run:{txt:'1 support ticket. Flat MRR for 3 months — watch list.',uptime:99.8},
+    run:{txt:'1 support ticket. Flat MRR for 3 months - watch list.',uptime:99.8},
     gate:{type:'POST',label:'launch r/SaaS',upcoming:true},
     oversight:'Sent 3 emails + $7 spend.' },
 
@@ -637,19 +637,19 @@ const COMPANIES=[
     mrr:0, series:[0,0,0,0,0,0], delta:null, users:0, usersD:'', churn:null,
     cost:4, costBreak:{infra:4,email:0,domain:0,api:0}, net:-4,
     auto:{M:0,G:0,R:0}, accts:{S:0,D:0,E:0,L:0,P:0},
-    build:{state:'BLOCKED',color:'#b6483f',txt:'slice8 BLOCKED <b>"dedupe pains"</b> — stuck ×3. Needs UNBLOCK.'},
+    build:{state:'BLOCKED',color:'#b6483f',txt:'slice8 BLOCKED <b>"dedupe pains"</b> - stuck ×3. Needs UNBLOCK.'},
     grow:{txt:'Never launched.',funnel:[]},
     run:{txt:'Not live.',uptime:null},
     gate:{type:'UNBLOCK',label:'slice8 stuck ×3'},
-    oversight:'No actions — paused.' },
+    oversight:'No actions - paused.' },
 ];
 
 const GATES=[
-  {id:'g1',type:'SHIP',co:'LeadSift',title:'Ship slice5 — "daily digest"',ev:'doneWhen green · /digest/preview → 200',time:'2m',upcoming:false},
-  {id:'g2',type:'SPEND',co:'QuietInbox',title:'Authorize $40 — Product Hunt launch',ev:'best-ROI company · ~120 signups projected',time:'8m',upcoming:false},
-  {id:'g3',type:'UNBLOCK',co:'RedditPainBot',title:'Unblock slice8 — "dedupe pains"',ev:'stuck ×3 · kill candidate if unresolved',time:'18m',upcoming:false},
+  {id:'g1',type:'SHIP',co:'LeadSift',title:'Ship slice5 - "daily digest"',ev:'doneWhen green · /digest/preview → 200',time:'2m',upcoming:false},
+  {id:'g2',type:'SPEND',co:'QuietInbox',title:'Authorize $40 - Product Hunt launch',ev:'best-ROI company · ~120 signups projected',time:'8m',upcoming:false},
+  {id:'g3',type:'UNBLOCK',co:'RedditPainBot',title:'Unblock slice8 - "dedupe pains"',ev:'stuck ×3 · kill candidate if unresolved',time:'18m',upcoming:false},
   {id:'g4',type:'SIGN',co:'TranslatorBill',title:'Sign entity + ToS to enable launch',ev:'blocks all outreach until signed',time:'~1d',upcoming:true},
-  {id:'g5',type:'POST',co:'DataDrop',title:'Post launch thread → r/SaaS',ev:'organic page converts 3.1% — worth a push',time:'~1d',upcoming:true},
+  {id:'g5',type:'POST',co:'DataDrop',title:'Post launch thread → r/SaaS',ev:'organic page converts 3.1% - worth a push',time:'~1d',upcoming:true},
 ];
 
 const MONEY_CAT=[
@@ -670,10 +670,10 @@ const ACTIVITY=[
 ];
 
 const STRATEGY=[
-  {act:'Double-down',ico:'▲',col:'#4f8a52',bg:'rgba(79,138,82,.13)',txt:'QuietInbox — raise GROW autonomy to L2.'},
-  {act:'Push or watch',ico:'→',col:'#4a72b0',bg:'rgba(74,114,176,.13)',txt:'DataDrop — push distribution or keep on watch.'},
-  {act:'Kill',ico:'✕',col:'#b6483f',bg:'rgba(182,72,63,.13)',txt:'RedditPainBot — blocked, no traction, retire it.'},
-  {act:'Spin up',ico:'✦',col:'#7a5ea8',bg:'rgba(122,94,168,.13)',txt:'PayoutReconciler — score 82, ready to spin.'},
+  {act:'Double-down',ico:'▲',col:'#4f8a52',bg:'rgba(79,138,82,.13)',txt:'QuietInbox - raise GROW autonomy to L2.'},
+  {act:'Push or watch',ico:'→',col:'#4a72b0',bg:'rgba(74,114,176,.13)',txt:'DataDrop - push distribution or keep on watch.'},
+  {act:'Kill',ico:'✕',col:'#b6483f',bg:'rgba(182,72,63,.13)',txt:'RedditPainBot - blocked, no traction, retire it.'},
+  {act:'Spin up',ico:'✦',col:'#7a5ea8',bg:'rgba(122,94,168,.13)',txt:'PayoutReconciler - score 82, ready to spin.'},
 ];
 const OPPS=[
   {name:'PayoutReconciler',score:82,meta:'ready to spin',col:'#4f8a52',killed:false},
@@ -754,18 +754,18 @@ function renderGrid(){
   const body=$('#gridBody');
   body.innerHTML=list.map(c=>{
     const S=STAGE[c.stage];
-    const deltaHtml=c.delta==null?'<span class="zero">—</span>':
+    const deltaHtml=c.delta==null?'<span class="zero">-</span>':
       (c.delta>0?`<span class="delta pos">▲ ${c.delta.toFixed(1)}%</span>`:
        c.delta<0?`<span class="delta neg">▼ ${Math.abs(c.delta).toFixed(1)}%</span>`:
-       `<span class="delta zero">— 0.0%</span>`);
-    const churnHtml=c.churn==null?'<span class="zero">—</span>':
+       `<span class="delta zero">- 0.0%</span>`);
+    const churnHtml=c.churn==null?'<span class="zero">-</span>':
       `<span class="${c.churn===0?'pos':c.churn>=4?'neg':''}">${c.churn}%</span>`;
     const tag=S.tag?`<div class="s-tag" style="background:${S.tagBg};color:${S.tagCol}">${S.tag}</div>`:'';
     const gate=c.gate?
       (c.gate.upcoming?
         `<span class="gate-cell none"><span class="gtype" style="background:${GTYPE[c.gate.type]};opacity:.55">${c.gate.type}</span> ${c.gate.label} <span style="opacity:.6">(soon)</span></span>`:
         `<span class="gate-cell" style="background:${GTYPE[c.gate.type]}1a;color:${GTYPE[c.gate.type]}"><span class="gtype" style="background:${GTYPE[c.gate.type]}">${c.gate.type}</span> ${c.gate.label}</span>`)
-      :`<span class="gate-cell none">—</span>`;
+      :`<span class="gate-cell none">-</span>`;
     const sparkColor=c.mrr>0?S.color:'#b0a895';
     return `
     <tr class="row ${c.stage==='paused'?'paused':''} ${state.open.has(c.id)?'open':''}" data-id="${c.id}">
@@ -903,7 +903,7 @@ function resolveGate(id,approved){
   const msg=document.createElement('div');
   msg.className='gate-resolved-msg';
   msg.style.color=approved?'var(--green)':'var(--red)';
-  msg.innerHTML=approved?'✓ Approved — agent is executing now':'✕ Rejected — sent back with feedback';
+  msg.innerHTML=approved?'✓ Approved - agent is executing now':'✕ Rejected - sent back with feedback';
   el.appendChild(msg);
   decisionsLeft=Math.max(0,decisionsLeft-1);
   $('#needsCount').textContent=decisionsLeft;
@@ -952,7 +952,7 @@ function openDrawer(id){
   const fn=c.grow.funnel.length?`<div class="funnel" style="margin-top:11px">`+c.grow.funnel.map((f,i)=>{
     const max=c.grow.funnel[0][1];
     return `<div class="fn-row"><span class="fn-l" style="width:70px">${f[0]}</span><div class="fn-bar" style="width:${Math.max(10,(f[1]/max)*260)}px;opacity:${1-i*0.13}"></div><span class="fn-v">${f[1]}</span></div>`;
-  }).join('')+`</div>`:'<div class="empty-note" style="margin-top:10px">Not launched — no funnel yet</div>';
+  }).join('')+`</div>`:'<div class="empty-note" style="margin-top:10px">Not launched - no funnel yet</div>';
 
   $('#drawer').innerHTML=`
     <div class="dh">
@@ -982,10 +982,10 @@ function openDrawer(id){
         <div class="kgrid">
           <div class="kcell"><div class="kc-l">MRR</div><div class="kc-v">$${c.mrr}</div></div>
           <div class="kcell"><div class="kc-l">Users</div><div class="kc-v">${c.users}${c.usersD?` <small class="pos">${c.usersD}</small>`:''}</div></div>
-          <div class="kcell"><div class="kc-l">Churn</div><div class="kc-v">${c.churn==null?'—':c.churn+'%'}</div></div>
+          <div class="kcell"><div class="kc-l">Churn</div><div class="kc-v">${c.churn==null?'-':c.churn+'%'}</div></div>
           <div class="kcell"><div class="kc-l">Cost / mo</div><div class="kc-v">$${c.cost}</div></div>
           <div class="kcell"><div class="kc-l">Net / mo</div><div class="kc-v ${c.net>=0?'pos':'neg'}">${c.net>=0?'+':''}${money(c.net)}</div></div>
-          <div class="kcell"><div class="kc-l">Uptime</div><div class="kc-v">${c.run.uptime!=null?c.run.uptime+'%':'—'}</div></div>
+          <div class="kcell"><div class="kc-l">Uptime</div><div class="kc-v">${c.run.uptime!=null?c.run.uptime+'%':'-'}</div></div>
         </div>
         <div style="margin-top:9px;font-family:var(--mono);font-size:10px;color:var(--ink-faint)">cost breakdown · infra $${c.costBreak.infra} · email $${c.costBreak.email} · domain $${c.costBreak.domain} · api $${c.costBreak.api}</div>
       </div>
@@ -1021,17 +1021,17 @@ function openDrawer(id){
       </div>
 
       ${c.gate?`<div class="dsection">
-        <h4>${c.gate.upcoming?'Upcoming gate':'Open gate — needs you'}<span class="ln"></span></h4>
+        <h4>${c.gate.upcoming?'Upcoming gate':'Open gate - needs you'}<span class="ln"></span></h4>
         <div class="gate ${c.gate.upcoming?'upcoming':''}">
           <div class="gate-head"><span class="gt" style="background:${GTYPE[c.gate.type]}">${c.gate.type}</span><span class="gco">${c.gate.label}</span></div>
-          ${c.gate.upcoming?'<div class="gate-title" style="color:var(--ink-faint)">queued — will surface when ready</div>':`<div class="gate-actions" style="margin-top:8px"><button class="btn approve" onclick="drawerApprove('${c.id}')">✓ Approve gate</button><button class="btn reject" onclick="drawerApprove('${c.id}')">✕ Reject</button></div>`}
+          ${c.gate.upcoming?'<div class="gate-title" style="color:var(--ink-faint)">queued - will surface when ready</div>':`<div class="gate-actions" style="margin-top:8px"><button class="btn approve" onclick="drawerApprove('${c.id}')">✓ Approve gate</button><button class="btn reject" onclick="drawerApprove('${c.id}')">✕ Reject</button></div>`}
         </div>
       </div>`:''}
     </div>`;
   $('#drawer').classList.add('show');
   $('#overlay').classList.add('show');
 }
-function drawerApprove(id){closeDrawer();toast('Gate handled — see queue');}
+function drawerApprove(id){closeDrawer();toast('Gate handled - see queue');}
 function closeDrawer(){$('#drawer').classList.remove('show');$('#overlay').classList.remove('show');}
 
 /* ====================== COMMAND PALETTE ====================== */

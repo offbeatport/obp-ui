@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C Slop Slop — Constellation Map</title>
+<title>C Slop Slop - Constellation Map</title>
 <script>
 /* pre-paint theme: no flash */
 (function(){try{var t=localStorage.getItem('cslopslop-theme');document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
@@ -515,16 +515,16 @@ var BETS = [
     goal:'10 paying users at $15/mo, keep churn under 5%.',
     goalMetric:'12 / 10 paying · 0% churn', progress:100, gstate:'hit', gstateLabel:'Goal hit',
     plan:'Shipping the Daily digest, then watching activation on the first opens.',
-    action:'Approve — ship the Daily digest to all 12 users.',
+    action:'Approve - ship the Daily digest to all 12 users.',
     recent:['Scored 41 leads overnight','Daily digest passed its check','+2 signups from the embed'],
-    risk:'Single acquisition channel — the embed is the only inflow.',
+    risk:'Single acquisition channel - the embed is the only inflow.',
     approvalId:'ap_leadsift',
     rec:'CONTINUE', recNote:'Traction is real and cheap. Keep going, harden a second channel.',
     docs:{
       Foundation:'Sales teams burn the first hour on cold leads. Thesis: a plain 0–100 score on inbound webform leads lets reps call the hot ones first. Wedge: a drop-in embed that needs no CRM change and no setup call.',
       Product:'The scoring model runs live on inbound webforms (41 scored overnight). Shipping now: a Daily digest email that ranks the day’s hottest leads. Activation = the first digest getting opened.',
       Growth:'Only channel today is the embed widget, which seeds a light viral loop on client sites (+2 signups this week). Next: a referral nudge inside the digest so growth is not hostage to one source.',
-      Budget:'$28/mo spend against $180/mo revenue — net +$152/mo from 12 paying users at $15. Comfortably self-funding.'
+      Budget:'$28/mo spend against $180/mo revenue - net +$152/mo from 12 paying users at $15. Comfortably self-funding.'
     }
   },
   {
@@ -537,14 +537,14 @@ var BETS = [
     plan:'Running the closed beta and measuring week-2 retention as the make-or-break metric.',
     action:'Interview 3 churned beta users to find the drop-off reason.',
     recent:['Auto-drafted 30 replies','2 new beta signups'],
-    risk:'Retention is still unproven — the core bet rides on week-2.',
+    risk:'Retention is still unproven - the core bet rides on week-2.',
     approvalId:'ap_quietinbox',
     rec:'CONTINUE', recNote:'Promising usage, but hold the line until retention data lands.',
     docs:{
       Foundation:'Inbox overwhelm is universal and painful. Thesis: auto-draft the reply, let the user approve it in one click. Wedge: it works inside existing email, and approve-to-send keeps the human in control so trust stays intact.',
-      Product:'Drafting engine is live — 30 replies auto-drafted this week. Beta is gated to 6 users so feedback stays tight. The one metric that matters right now is week-2 retention.',
+      Product:'Drafting engine is live - 30 replies auto-drafted this week. Beta is gated to 6 users so feedback stays tight. The one metric that matters right now is week-2 retention.',
       Growth:'Beta invites plus a planned $40 Product Hunt launch to widen the top of funnel. Five users must signal real willingness-to-pay before this advances to Growing.',
-      Budget:'$22/mo spend against $40/mo early revenue — net +$18/mo. A $40 launch spend is the open ask.'
+      Budget:'$22/mo spend against $40/mo early revenue - net +$18/mo. A $40 launch spend is the open ask.'
     }
   },
   {
@@ -557,13 +557,13 @@ var BETS = [
     plan:'Building the CSV cleaner and dashboard so the walking skeleton runs end to end.',
     action:'Finish the cleaner, then invite the first 5 waitlisters.',
     recent:['Scaffolded the intake API','Deployed to staging'],
-    risk:'No traction yet — nothing shipped for users to react to.',
+    risk:'No traction yet - nothing shipped for users to react to.',
     approvalId:null,
     rec:'CONTINUE', recNote:'Pre-traction but on plan. Get the skeleton in front of the first 5.',
     docs:{
       Foundation:'Non-technical teams get handed messy CSVs and have no fast route to a clean, shareable view. Thesis: CSV in → cleaned automatically → instant shareable dashboard out.',
       Product:'Building the walking skeleton. Intake API is scaffolded, the cleaner is in progress, and staging is deployed. Next milestone: finish the cleaner and put it in front of the first 5 of 40 waitlisters.',
-      Growth:'A 40-person waitlist was captured before any build — a cheap early demand signal. First conversion target is 5 of 40 reaching a successful first run.',
+      Growth:'A 40-person waitlist was captured before any build - a cheap early demand signal. First conversion target is 5 of 40 reaching a successful first run.',
       Budget:'$12/mo spend, $0 revenue. Staging-only, so infra cost stays minimal until the first invites go out.'
     }
   },
@@ -574,48 +574,48 @@ var BETS = [
     usersLabel:'0 users', signal:'NONE', signalKey:'none', status:'Needs approval',
     goal:'Run 15 problem interviews before writing a single line of code.',
     goalMetric:'0 / 15 interviews', progress:0, gstate:'none', gstateLabel:'Not started',
-    plan:'Validate the pain before building anything — 15 interviews first.',
-    action:'Approve — start the 15-interview validation sprint (no spend).',
+    plan:'Validate the pain before building anything - 15 interviews first.',
+    action:'Approve - start the 15-interview validation sprint (no spend).',
     recent:['Idea logged and framed','Interview script drafted'],
-    risk:'Might be a vitamin, not a painkiller — willingness-to-pay is unknown.',
+    risk:'Might be a vitamin, not a painkiller - willingness-to-pay is unknown.',
     approvalId:'ap_pricepeek',
-    rec:'CONTINUE', recNote:'Cheap to validate. Continue — but kill fast if the interviews come back weak.',
+    rec:'CONTINUE', recNote:'Cheap to validate. Continue - but kill fast if the interviews come back weak.',
     docs:{
       Foundation:'Teams miss competitor price changes and react late. Thesis: watch competitor pricing pages and alert on any change. Honest open question: is this a painkiller people pay for, or a nice-to-have vitamin?',
-      Product:'No code yet — deliberately. This is validation-first: 15 problem interviews before a single feature is built.',
+      Product:'No code yet - deliberately. This is validation-first: 15 problem interviews before a single feature is built.',
       Growth:'Pre-product. Interview sourcing from the target segment is the entire near-term motion.',
-      Budget:'$0 spend, $0 revenue. The sprint asks for no money — just a green light to start.'
+      Budget:'$0 spend, $0 revenue. The sprint asks for no money - just a green light to start.'
     }
   },
   {
     id:'translatorbill', name:'TranslatorBill', stage:'Ejected', stageKey:'ejected',
-    desc:'Auto-translates & reformats cross-border invoices — now its own standalone company.',
+    desc:'Auto-translates & reformats cross-border invoices - now its own standalone company.',
     mx:92, tr:93, users:22, spend:0, revenue:320,
     usersLabel:'22 paying', signal:'STRONG', signalKey:'strong', status:'Graduated', terminal:true,
     goal:'Hit 20 paying at $15/mo, then eject into a standalone company.',
     goalMetric:'22 / 20 paying · goal hit', progress:100, gstate:'hit', gstateLabel:'Graduated',
-    plan:'Handed off to its own company — no longer drawing factory resources.',
-    action:'None — this bet has graduated out of the portfolio.',
+    plan:'Handed off to its own company - no longer drawing factory resources.',
+    action:'None - this bet has graduated out of the portfolio.',
     recent:['Crossed 20 paying users','Ejection approved','Handed off to standalone company'],
     risk:'Retired from the portfolio; standalone company owns its risk now.',
     approvalId:null,
     rec:'EJECT', recNote:'Ejected. The strongest possible outcome for a factory bet.',
     docs:{
-      Foundation:'Cross-border invoices need translation and reformatting — a concrete, recurring pain with obvious willingness-to-pay. Thesis validated cleanly.',
+      Foundation:'Cross-border invoices need translation and reformatting - a concrete, recurring pain with obvious willingness-to-pay. Thesis validated cleanly.',
       Product:'Auto-translates and reformats invoices end to end. Mature enough that it graduated into its own standalone company.',
       Growth:'Reached 20 paying at $15/mo, which triggered ejection. Last recorded standing was 22 paying and $320/mo.',
-      Budget:'$0 to the factory now — it funds itself as a standalone. Last recorded revenue was $320/mo.'
+      Budget:'$0 to the factory now - it funds itself as a standalone. Last recorded revenue was $320/mo.'
     }
   },
   {
     id:'redditpainbot', name:'RedditPainBot', stage:'Killed', stageKey:'killed',
-    desc:'Mined Reddit for recurring product pains — killed on weak willingness-to-pay.',
+    desc:'Mined Reddit for recurring product pains - killed on weak willingness-to-pay.',
     mx:30, tr:9, users:0, spend:0, revenue:0,
     usersLabel:'0 users', signal:'WEAK', signalKey:'weak', status:'Stopped', terminal:true,
     goal:'Prove that someone would pay for mined product-pain reports.',
     goalMetric:'0 would pay · goal missed', progress:0, gstate:'missed', gstateLabel:'Killed',
     plan:'Post-mortem written and archived. No further work.',
-    action:'None — this bet was stopped after 3 weeks.',
+    action:'None - this bet was stopped after 3 weeks.',
     recent:['Prototype miner ran 3 weeks','Willingness-to-pay tested weak','Killed · post-mortem written'],
     risk:'Closed out. Learning captured: pain existed, payment did not.',
     approvalId:null,
@@ -624,7 +624,7 @@ var BETS = [
       Foundation:'Mine Reddit for recurring product pains and turn them into leads. Thesis failed: the pains were real, but nobody would pay to have them surfaced.',
       Product:'A prototype miner ran for 3 weeks. It found pains reliably, but the willingness-to-pay test came back weak, so it was killed.',
       Growth:'No paying interest ever materialized. The post-mortem is written and archived for the next idea.',
-      Budget:'$0 spend now (stopped), $0 revenue. Total cost was low — exactly how a fast kill should look.'
+      Budget:'$0 spend now (stopped), $0 revenue. Total cost was low - exactly how a fast kill should look.'
     }
   }
 ];
@@ -639,7 +639,7 @@ var STAGE_COLS = [
 
 /* needs-you queue */
 var NEEDS = [
-  {id:'ap_leadsift', betId:'leadsift', title:'Ship Daily digest → all 12 users', detail:'One email endpoint. Reversible — you can pause it anytime.'},
+  {id:'ap_leadsift', betId:'leadsift', title:'Ship Daily digest → all 12 users', detail:'One email endpoint. Reversible - you can pause it anytime.'},
   {id:'ap_pricepeek', betId:'pricepeek', title:'Approve validation sprint', detail:'Start 15 problem interviews. No spend, no code.'},
   {id:'ap_quietinbox', betId:'quietinbox', title:'$40 Product Hunt launch', detail:'One-time launch spend to widen the beta funnel.'}
 ];
@@ -767,7 +767,7 @@ function renderNeeds(){
     var el = document.createElement('div');
     el.className = 'need s-'+b.stageKey + (isDone?' done':'');
     if(isDone){
-      el.innerHTML = '<div class="resolved">✓ '+esc(b.name)+' — approved</div>';
+      el.innerHTML = '<div class="resolved">✓ '+esc(b.name)+' - approved</div>';
     } else {
       el.innerHTML =
         '<div class="n-top" data-open="'+b.id+'">'+
@@ -796,12 +796,12 @@ function approve(apId){
   renderNeeds();
   renderNodes();
   syncDrawerApproval(apId);
-  if(n){ var b = betById(n.betId); toast('Approved — '+b.name+' · '+n.title, true); }
+  if(n){ var b = betById(n.betId); toast('Approved - '+b.name+' · '+n.title, true); }
 }
 function hold(apId){
   var n = NEEDS.filter(function(x){ return x.id===apId; })[0];
   var b = n? betById(n.betId): null;
-  toast('Held — '+(b?b.name:'decision')+' stays on your queue', false);
+  toast('Held - '+(b?b.name:'decision')+' stays on your queue', false);
 }
 
 /* delegate rail clicks */
@@ -868,7 +868,7 @@ function overviewPanel(b){
           '<button class="btn hold" data-hold="'+ap.id+'">Hold</button>'+
           '<button class="btn kill" data-hold="'+ap.id+'">Not now</button>'+
         '</div>'+
-        '<div class="a-resolved">✓ Approved — the AI is on it</div>'+
+        '<div class="a-resolved">✓ Approved - the AI is on it</div>'+
       '</div></div>';
   }
 

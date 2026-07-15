@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { CompanyCard } from "~/components/command-center/company-card";
 import { TONE } from "~/components/command-center/tone";
+import { CompanyLogo } from "~/components/company-logo";
 import { getBootState } from "~/server/agents";
 import type { CompanySummary, InboxItem } from "~/server/data";
 import { listActivity, listCompanies, listInbox } from "~/server/data";
@@ -170,7 +171,7 @@ function GateRow({ item }: { item: InboxItem }) {
             params={{ slug: item.companySlug || item.companyId }}
             className="gate"
         >
-            <span className={`gate-av ${t.solid}`}>{item.companyName.charAt(0)}</span>
+            <CompanyLogo name={item.companyName} branding={item.branding} size={34} radius={10} />
             <div className="gate-main">
                 <div className="gate-top">
                     <span className="gate-co2">{item.companyName}</span>
@@ -219,9 +220,12 @@ function UpNext({ companies }: { companies: CompanySummary[] }) {
                     return (
                         <section key={c.id} className="uq-co">
                             <div className="uq-co-head">
-                                <span className={`uq-avatar ${TONE[c.tone].solid}`}>
-                                    {c.name.charAt(0)}
-                                </span>
+                                <CompanyLogo
+                                    name={c.name}
+                                    branding={c.branding}
+                                    size={30}
+                                    radius={9}
+                                />
                                 <div className="uq-co-id">
                                     <span className="uq-co-name">{c.name}</span>
                                     <span

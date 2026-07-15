@@ -383,7 +383,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -411,7 +411,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -420,22 +420,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -528,7 +528,7 @@ function oppsTile(){
     </div>`).join('');
   return `<div class="tile span2">
     <div class="mini-h">Opportunities</div>
-    <div class="mini-sub">Cheap, scored bets — promote one to a company.</div>
+    <div class="mini-sub">Cheap, scored bets - promote one to a company.</div>
     ${rows}
   </div>`;
 }
@@ -571,7 +571,7 @@ function renderBoard(){
 /* ---------- activity strip ---------- */
 function renderActivity(){
   const latest = DATA.activity.find(a=>a.running) || DATA.activity[0];
-  document.getElementById('actLatest').innerHTML = `<b>${latest.co}</b> — ${latest.text} <span style="color:var(--ink3)">· ${latest.t}</span>`;
+  document.getElementById('actLatest').innerHTML = `<b>${latest.co}</b> - ${latest.text} <span style="color:var(--ink3)">· ${latest.t}</span>`;
   const groups = {};
   DATA.activity.forEach(a=>{ (groups[a.co]=groups[a.co]||[]).push(a); });
   document.getElementById('actStream').innerHTML = Object.entries(groups).map(([co,items])=>`
@@ -667,7 +667,7 @@ function zoomContent(co){
   <div class="zbody">
     <div class="zcol">
       <div class="panel chat">
-        <div class="panel-h">Chat — direct ${co.name}</div>
+        <div class="panel-h">Chat - direct ${co.name}</div>
         <div class="chat-log" id="chatLog">
           ${DATA.chat.map(m=>`<div class="msg ${m.role}">${m.text}</div>`).join('')}
         </div>
@@ -720,13 +720,13 @@ function approvalGate(a){
         <div class="pf-body">
           <div class="pf-mock-h">Your top leads today</div>
           <div class="pf-mock-s">Daily digest · 3 leads scored ≥ 70</div>
-          <div class="pf-lead"><span class="pscore">94</span><span>acme.co — “need 200 seats by Q3”</span></div>
-          <div class="pf-lead"><span class="pscore">88</span><span>northwind.io — enterprise demo request</span></div>
-          <div class="pf-lead"><span class="pscore">73</span><span>globex — pricing page, 4 visits</span></div>
+          <div class="pf-lead"><span class="pscore">94</span><span>acme.co - “need 200 seats by Q3”</span></div>
+          <div class="pf-lead"><span class="pscore">88</span><span>northwind.io - enterprise demo request</span></div>
+          <div class="pf-lead"><span class="pscore">73</span><span>globex - pricing page, 4 visits</span></div>
         </div>
       </div>
 
-      <div class="diff-cap">Diff — 1 new component + scheduler hook</div>
+      <div class="diff-cap">Diff - 1 new component + scheduler hook</div>
       <div class="diff">${a.diff.split('\n').map(l=>`<div class="dline ${l.trim().startsWith('+')?'add':''}">${escapeHtml(l)}</div>`).join('')}</div>
 
       <div class="gate-actions">
@@ -752,10 +752,10 @@ function artifactsPanel(co){
       ${co.previewUrl?`<div class="preview-frame">
         <div class="pf-bar"><span class="dots"><i></i><i></i><i></i></span><span class="pf-url">${co.previewUrl}</span></div>
         <div class="pf-body"><div class="pf-mock-h">${co.name}</div><div class="pf-mock-s">Live build · ${co.slicesShipped||0} slices shipped</div></div>
-      </div>`:`<div class="meta" style="background:var(--gray-bg)"><div class="ml">Preview</div><div class="mv">No live preview — company ${co.status}</div></div>`}
+      </div>`:`<div class="meta" style="background:var(--gray-bg)"><div class="ml">Preview</div><div class="mv">No live preview - company ${co.status}</div></div>`}
       <div class="donewhen" style="background:${cs.status==='building'?'var(--blue-bg)':'var(--bg2)'};border-color:${cs.status==='building'?'var(--blue-ring)':'var(--line)'};margin-top:16px">
         <div class="gcheck" style="background:${cs.status==='blocked'?'var(--red)':cs.status==='building'?'var(--blue)':'var(--slate)'}">${cs.status==='blocked'?'!':cs.status==='building'?'∿':'·'}</div>
-        <div class="dw-txt"><div class="dw-lab" style="color:var(--ink2)">Current slice #${cs.n}</div><div class="dw-code" style="color:var(--ink)">${cs.title} — ${cs.step}</div></div>
+        <div class="dw-txt"><div class="dw-lab" style="color:var(--ink2)">Current slice #${cs.n}</div><div class="dw-code" style="color:var(--ink)">${cs.title} - ${cs.step}</div></div>
       </div>
     </div>
   </div>`;
@@ -776,25 +776,25 @@ function flash(txt){
 function approve(){
   const c=document.getElementById('gateConfirm');
   c.className='gate-confirm ok show';
-  c.innerHTML='Approved ✓ — shipping to production. LeadSift slice 5 is now live.';
+  c.innerHTML='Approved ✓ - shipping to production. LeadSift slice 5 is now live.';
   document.querySelector('.btn-approve').textContent='Shipped ✓';
-  flash('Approved — LeadSift slice 5 shipping');
+  flash('Approved - LeadSift slice 5 shipping');
 }
 function toggleReject(){ document.getElementById('rejectBox').classList.toggle('show'); }
 function sendReject(){
   const c=document.getElementById('gateConfirm');
   const t=document.getElementById('rejectText').value.trim();
   c.className='gate-confirm rej show';
-  c.innerHTML='Feedback sent ✓ — agent is re-building and will re-run the doneWhen check.'+(t?` <em>“${escapeHtml(t)}”</em>`:'');
+  c.innerHTML='Feedback sent ✓ - agent is re-building and will re-run the doneWhen check.'+(t?` <em>“${escapeHtml(t)}”</em>`:'');
   document.getElementById('rejectBox').classList.remove('show');
-  flash('Rejected — sent back for rebuild');
+  flash('Rejected - sent back for rebuild');
 }
 function sendZoomChat(){
   const i=document.getElementById('zoomChatInput'); const v=i.value.trim(); if(!v)return;
   const log=document.getElementById('chatLog');
   log.insertAdjacentHTML('beforeend',`<div class="msg user">${escapeHtml(v)}</div>`);
   i.value='';
-  setTimeout(()=>{ log.insertAdjacentHTML('beforeend',`<div class="msg assistant">On it — re-prioritizing and the agent will pick this up next.</div>`); log.scrollTop=log.scrollHeight; },450);
+  setTimeout(()=>{ log.insertAdjacentHTML('beforeend',`<div class="msg assistant">On it - re-prioritizing and the agent will pick this up next.</div>`); log.scrollTop=log.scrollHeight; },450);
   log.scrollTop=log.scrollHeight;
 }
 function sendCmd(){
@@ -806,7 +806,7 @@ document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLower
 
 function promote(ev,title,killed){
   ev.stopPropagation();
-  if(killed){ flash('Revived “'+title+'” — back to opportunities'); return; }
+  if(killed){ flash('Revived “'+title+'” - back to opportunities'); return; }
   flash('Promoting “'+title+'” to a company ✓');
 }
 function dropThought(){
@@ -816,7 +816,7 @@ function dropThought(){
 let extra=0;
 function loadMore(){
   extra++;
-  flash('Loaded more bets — the board keeps growing');
+  flash('Loaded more bets - the board keeps growing');
   // append faded placeholder tiles to express infinite-grow downward
   const ghosts = ['NextBet','SignalForge','InboxZeroAI','MetricMuse'];
   const html = ghosts.slice(0, Math.min(4, 1+extra)).map(n=>`

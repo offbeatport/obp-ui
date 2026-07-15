@@ -12,7 +12,7 @@ export type LogLine = {
     error?: string;
 };
 
-// action/run status → Badge variant — the shared status language across queue + runs.
+// action/run status → Badge variant - the shared status language across queue + runs.
 export const STATUS_VARIANT: Record<
     string,
     "neutral" | "info" | "approval" | "success" | "destructive"

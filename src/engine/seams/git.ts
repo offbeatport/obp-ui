@@ -67,7 +67,7 @@ export class LocalGitProvider implements Git {
         await gitTry(workdir, "rebase", "--abort");
         await git(workdir, "checkout", "-q", "-B", `run/${runId}`, "main");
         await git(workdir, "reset", "-q", "--hard", "main");
-        // `-fd` (NOT `-fdx`): clean stray untracked source, but PRESERVE gitignored files —
+        // `-fd` (NOT `-fdx`): clean stray untracked source, but PRESERVE gitignored files -
         // node_modules AND, critically, the shipped app's data.json. `-x` here destroyed live
         // customer signup data (and deps) out from under an already-shipped, still-serving app
         // when the same company's next slice built in this shared tree.

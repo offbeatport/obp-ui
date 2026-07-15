@@ -1,12 +1,13 @@
 import { closeSync, openSync, readSync, statSync } from "node:fs";
 import { createServerFn } from "@tanstack/react-start";
 import { eq, inArray } from "drizzle-orm";
+import type { Branding } from "~/config/spin";
 import { companies, db, runs } from "~/db";
 import { type LogLine, logPath } from "~/engine/log";
 import { type Tone, listActivity, listCompanies } from "./data";
 
 // ============================================================================
-// AGENT CONSOLE — the bottom-docked "one agent per company, live" panel from
+// AGENT CONSOLE - the bottom-docked "one agent per company, live" panel from
 // design/v2-prototypes/08-chat-spine-pro-v7.html (AGENT CONSOLE section).
 //
 // EFFICIENCY: the console is a *glanceable* overview, not a byte-exact tail. The
@@ -18,13 +19,13 @@ import { type Tone, listActivity, listCompanies } from "./data";
 // SEAM: getDigestSnapshot() is a per-tenant COALESCING CACHE (~500ms) so many
 // tabs/polls collapse to one DB query + file read. Local reads the executor's
 // `.runs/<id>/log.ndjson` directly; a hosted DigestSource (remote executors, no
-// shared FS) swaps in behind this same function — see the `hosted` note below.
+// shared FS) swaps in behind this same function - see the `hosted` note below.
 // ============================================================================
 
 export type ConsoleKind = "act" | "ok" | "warn" | "info" | "msg";
 export type ConsolePaneState = "building" | "awaiting_approval" | "shipped" | "blocked" | "todo";
 
-// `off` = absolute byte offset (end) of the line in its run log — the pane cursor.
+// `off` = absolute byte offset (end) of the line in its run log - the pane cursor.
 // Fallback (activity) lines use small monotonic offsets; both are per-pane consistent.
 export type ConsoleLine = { off: number; t: number; kind: ConsoleKind; msg: string };
 
@@ -32,8 +33,9 @@ export type ConsolePane = {
     slug: string;
     name: string;
     tone: Tone;
+    branding?: Branding; // company logo
     state: ConsolePaneState;
-    active: boolean; // a run is live (or building) — drives the adaptive poll interval
+    active: boolean; // a run is live (or building) - drives the adaptive poll interval
     cursor: number; // latest offset the client should send back next poll
     lines: ConsoleLine[]; // DELTA since the client's cursor (full window on first poll)
 };
@@ -121,7 +123,7 @@ async function buildSnapshot(): Promise<Snapshot> {
     const [cos, activity] = await Promise.all([listCompanies(), listActivity()]);
 
     // Latest run keyed by company NAME. `running` means genuinely live; an awaiting_approval
-    // run is idle (waiting on a human) — we still show its log tail but it must NOT count as
+    // run is idle (waiting on a human) - we still show its log tail but it must NOT count as
     // "working" (no pulse, and it doesn't force the fast poll interval).
     const active = new Map<string, { runId: string; running: boolean }>(); // name -> run
     try {
@@ -134,7 +136,7 @@ async function buildSnapshot(): Promise<Snapshot> {
         for (const r of rows)
             if (r.name) active.set(r.name, { runId: r.runId, running: r.status === "running" });
     } catch {
-        /* no runs yet — fall back to activity lines below */
+        /* no runs yet - fall back to activity lines below */
     }
 
     const panes: ConsolePane[] = cos.map((co) => {
@@ -146,6 +148,7 @@ async function buildSnapshot(): Promise<Snapshot> {
                 slug: co.slug,
                 name: co.name,
                 tone: co.tone,
+                branding: co.branding,
                 state,
                 active: run.running,
                 cursor: size,
@@ -166,6 +169,7 @@ async function buildSnapshot(): Promise<Snapshot> {
             slug: co.slug,
             name: co.name,
             tone: co.tone,
+            branding: co.branding,
             state,
             active: state === "building",
             cursor: seed.length,

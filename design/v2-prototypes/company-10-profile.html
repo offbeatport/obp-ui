@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LeadSift — C Slop Slop</title>
+<title>LeadSift - C Slop Slop</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -457,7 +457,7 @@ const COMPANIES = {
     build:[
       {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'4 features shipped', s:'scoring, dedupe, Slack alerts, weekly recap'},
       {ic:'wait', icsvg:'bolt', tag:'awaiting you', tagcls:'wait', t:'Daily digest of top leads', s:'built · deployed to staging · check passed'},
-      {ic:'stuck', icsvg:'alert', tag:'failed ×3', tagcls:'stuck', t:'Inbound webhook', s:'stuck — agent needs a fix or a nudge'},
+      {ic:'stuck', icsvg:'alert', tag:'failed ×3', tagcls:'stuck', t:'Inbound webhook', s:'stuck - agent needs a fix or a nudge'},
       {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Export leads to CSV', s:'queued on autopilot'}
     ],
     growth:[
@@ -487,16 +487,16 @@ const COMPANIES = {
   quietinbox: {
     mono:'Q', name:'QuietInbox', domain:'quietinbox.app', band:'#4f8a52', bandShadow:'rgba(79,138,82,.5)',
     status:{label:'Live & growing', tone:'green'},
-    thesis:['Snooze and batch your inbox by label — not one thread at a time.'],
+    thesis:['Snooze and batch your inbox by label - not one thread at a time.'],
     metrics:{ mrr:'$420', trendDir:'up', trendPct:'12%', trendAbs:'+$45 this month',
       users:'31', usersDelta:'+2 this week', net:'+$392', churn:'2%', uptime:'99.8%',
       series:[210,260,300,350,390,420] },
     decision:{
       kind:'Support reply', glyph:'❝',
       title:'Reply to Maria: “snooze a whole label?”',
-      sub:'3rd request this week — this is a candidate feature. Draft is ready to send.',
+      sub:'3rd request this week - this is a candidate feature. Draft is ready to send.',
       evidence:'feature request ×3 → keep-signal',
-      draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.',
+      draft:'Great question - today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.',
       primary:'Approve & send', secondary:'Open thread', quiet:'Edit draft',
       confirm:{ h:'Reply sent to maria@acme.co', p:'Logged as evidence. The request is now attached to a candidate feature.' }
     },
@@ -537,12 +537,12 @@ const COMPANIES = {
       series:[0,10,20,30,45,60] },
     decision:{
       kind:'Cold outreach', glyph:'✉',
-      title:'Send cold email — 25 cross-border freelancers',
+      title:'Send cold email - 25 cross-border freelancers',
       sub:'Batch 2 of 3 to freelancers who invoice in 3+ currencies. Copy is drafted.',
       evidence:'batch 1: 25 sent → 36% open · 8% reply',
-      draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V',
+      draft:'Subject: the invoice-translation thing\n\nHi {{name}} - you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? - V',
       primary:'Approve & send', secondary:'Preview batch', quiet:'Edit copy',
-      confirm:{ h:'Batch queued — 25 emails sending', p:'Replies come back as evidence. Batch 3 unlocks once this one pays off.' }
+      confirm:{ h:'Batch queued - 25 emails sending', p:'Replies come back as evidence. Batch 3 unlocks once this one pays off.' }
     },
     build:[
       {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'3 features shipped', s:'upload, translate, reformat'},
@@ -552,7 +552,7 @@ const COMPANIES = {
     growth:[
       {k:'a', t:'<b>Cold batch 1</b> sent', s:'25 recipients', v:'8% reply'},
       {k:'b', t:'Landing page live', s:'organic', v:'~40 visits/mo'},
-      {k:'a', t:'Funnel', s:'still forming', v:'—'}
+      {k:'a', t:'Funnel', s:'still forming', v:'-'}
     ],
     money:{ mrr:'$60', net:'+$44', netNeg:false, costTotal:'$16',
       costs:[{l:'Infra',a:'$6',c:'#4a72b0'},{l:'APIs',a:'$5',c:'#c8643c'},{l:'Email',a:'$4',c:'#7a5ea8'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
@@ -578,15 +578,15 @@ const COMPANIES = {
     status:{label:'Validating', tone:'blue'},
     thesis:['Turn any CSV into a shareable dashboard in one drop.'],
     metrics:{ mrr:'$0', trendDir:'flat', trendPct:'pre-revenue', trendAbs:'2 active trials',
-      users:'2', usersDelta:'trials', net:'−$15', churn:'—', uptime:'99.9%',
+      users:'2', usersDelta:'trials', net:'−$15', churn:'-', uptime:'99.9%',
       series:[0,0,0,0,0,0] },
     decision:{
       kind:'Authorize spend', glyph:'$',
-      title:'Authorize $50 Google Ads test — “csv to dashboard”',
+      title:'Authorize $50 Google Ads test - “csv to dashboard”',
       sub:'The organic SEO page converts 3.1%. A small paid test would tell us if it scales.',
       evidence:'organic page converts 3.1% → worth a $50 test',
       primary:'Approve $50 test', secondary:'See SEO page', quiet:'Not now',
-      confirm:{ h:'$50 ad test authorized', p:'Ads go live within the hour. Spend is capped at $50 — you’ll see conversions as evidence.' }
+      confirm:{ h:'$50 ad test authorized', p:'Ads go live within the hour. Spend is capped at $50 - you’ll see conversions as evidence.' }
     },
     build:[
       {ic:'ok', icsvg:'check', tag:'shipped', tagcls:'ok', t:'5 features shipped', s:'upload, auto-charts, share links'},
@@ -596,7 +596,7 @@ const COMPANIES = {
     growth:[
       {k:'g', t:'<b>Organic SEO page</b>', s:'converting', v:'3.1%'},
       {k:'b', t:'Blog posts ranking', s:'organic', v:'~90 visits/mo'},
-      {k:'a', t:'Funnel', s:'forming', v:'—'}
+      {k:'a', t:'Funnel', s:'forming', v:'-'}
     ],
     money:{ mrr:'$0', net:'−$15', netNeg:true, costTotal:'$15',
       costs:[{l:'Infra',a:'$7',c:'#4a72b0'},{l:'APIs',a:'$4',c:'#c8643c'},{l:'Email',a:'$3',c:'#7a5ea8'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
@@ -622,7 +622,7 @@ const COMPANIES = {
     status:{label:'Building', tone:'violet'},
     thesis:['Mine Reddit for painful problems worth building next.'],
     metrics:{ mrr:'$0', trendDir:'flat', trendPct:'pre-revenue', trendAbs:'skeleton',
-      users:'0', usersDelta:'not launched', net:'−$8', churn:'—', uptime:'—',
+      users:'0', usersDelta:'not launched', net:'−$8', churn:'-', uptime:'-',
       series:[0,0,0,0,0,0] },
     decision:null,
     build:[
@@ -631,13 +631,13 @@ const COMPANIES = {
       {ic:'next', icsvg:'dots', tag:'next up', tagcls:'next', t:'Score & rank pains', s:'queued'}
     ],
     growth:[
-      {k:'a', t:'Not launched yet', s:'building the core', v:'—'}
+      {k:'a', t:'Not launched yet', s:'building the core', v:'-'}
     ],
     money:{ mrr:'$0', net:'−$8', netNeg:true, costTotal:'$8',
       costs:[{l:'Infra',a:'$5',c:'#4a72b0'},{l:'APIs',a:'$2',c:'#c8643c'},{l:'Domain',a:'$1',c:'#c08a2e'}] },
     health:[
       {k:'g', t:'<b>0 open</b> support tickets', s:'not live', v:'0'},
-      {k:'a', t:'Uptime', s:'not deployed', v:'—'},
+      {k:'a', t:'Uptime', s:'not deployed', v:'-'},
       {k:'g', t:'Refunds', s:'this month', v:'0'}
     ],
     connected:[
@@ -736,7 +736,7 @@ function decisionCard(d){
   if(!d){
     return `<div class="caught">
       <div class="cc"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-      <div><h3>You’re all caught up</h3><p>On autopilot — building the core. Nothing needs your approval right now.</p></div>
+      <div><h3>You’re all caught up</h3><p>On autopilot - building the core. Nothing needs your approval right now.</p></div>
     </div>`;
   }
   let detail = '<div class="dec-detail">';
@@ -921,12 +921,12 @@ function approve(){
   card.style.borderColor = '#cbe0c4';
   card.style.background = 'linear-gradient(180deg,#f4faf1,var(--paper))';
   card.querySelector('.dec-tag').style.marginBottom = '14px';
-  toast('Approved — '+d.confirm.h);
+  toast('Approved - '+d.confirm.h);
 }
 function secondary(){
   const d = COMPANIES[currentKey].decision;
   if(d.previewUrl){ toast('Opening preview · '+d.previewUrl); }
-  else { toast(d.secondary+' — opened'); }
+  else { toast(d.secondary+' - opened'); }
 }
 function reviewPreview(e){ e.stopPropagation(); const d=COMPANIES[currentKey].decision; toast('Opening preview · '+d.previewUrl); }
 function openFeedback(){
@@ -963,7 +963,7 @@ function sendFeedback(){
     </div>`;
   card.style.borderColor = '#e6cfa0';
   card.style.background = 'linear-gradient(180deg,#fbf6ec,var(--paper))';
-  toast('Feedback sent — agent will revise');
+  toast('Feedback sent - agent will revise');
 }
 
 /* ============================ UTIL ============================ */

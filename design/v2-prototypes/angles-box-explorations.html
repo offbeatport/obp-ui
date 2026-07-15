@@ -278,7 +278,7 @@
 <body>
   <div class="head">
     <h1>Angles box · 20 designs</h1>
-    <p>Twenty ways to render the 5 proposals. Each is glanceable at the top — name + one honest signal — and reveals the full 8-score breakdown, evidence, and first slice when you dig in. Click any row / card / chip to expand.</p>
+    <p>Twenty ways to render the 5 proposals. Each is glanceable at the top - name + one honest signal - and reveals the full 8-score breakdown, evidence, and first slice when you dig in. Click any row / card / chip to expand.</p>
   </div>
   <div class="wrap" id="wrap"></div>
 
@@ -397,7 +397,7 @@ R.d10 = function(){
   return '<div class="d10">'+chips+'<div class="d10-drawer" id="d10drawer">'+detailHTML(A[AS[0].i])+'</div></div>'; };
 
 R.d11 = function(){ return '<div class="d11">'+AS.map(function(o,i){ var a=o.a; return host(
-  '<button class="d11-row" data-exp><span class="d11-h"><span class="n">'+(i+1)+'</span><b>'+a.name+'</b> — <span class="vd">'+a.verdict.toLowerCase().replace(/\.$/,'')+'</span><span class="d11-more">evidence ↓</span></span></button>', a); }).join('')+'</div>'; };
+  '<button class="d11-row" data-exp><span class="d11-h"><span class="n">'+(i+1)+'</span><b>'+a.name+'</b> - <span class="vd">'+a.verdict.toLowerCase().replace(/\.$/,'')+'</span><span class="d11-more">evidence ↓</span></span></button>', a); }).join('')+'</div>'; };
 
 R.d12 = function(){
   function avg(a,p){ var ds=SD.filter(function(d){return d.p===p;}); return ds.reduce(function(s,d){return s+a.scores[d.k];},0)/ds.length; }
@@ -439,7 +439,7 @@ R.d20 = function(){
 const DESIGNS = [
   ['01','Quiet list','Rank + name + one signal (pain). The calmest possible top.', R.d1],
   ['02','Compact table','All 8 scores in aligned columns; expand a row for evidence.', R.d2],
-  ['03','Dot strip','Eight colour dots per angle — scan the shape, expand for numbers.', R.d3],
+  ['03','Dot strip','Eight colour dots per angle - scan the shape, expand for numbers.', R.d3],
   ['04','Slim cards','Name + plain-language verdict + class; expand to the full card.', R.d4],
   ['05','Leaderboard','One bar per angle (pain urgency). Expand for the rest.', R.d5],
   ['06','Master / detail','Pick a name on the left, its breakdown fills the right pane.', R.d6],
@@ -450,13 +450,13 @@ const DESIGNS = [
   ['11','Editorial','One-line headline + verdict; “evidence ↓” digs deeper.', R.d11],
   ['12','Pillar bar','One bar split into Demand / Build / Distro averages; expand for the 8.', R.d12],
   ['13','Sparkline','Eight micro-bars as a tiny chart; expand for labels.', R.d13],
-  ['14','Verdict-first','Just the name + verdict — scores fully hidden until you ask.', R.d14],
+  ['14','Verdict-first','Just the name + verdict - scores fully hidden until you ask.', R.d14],
   ['15','Kanban','Three tier columns of cards; expand a card in place.', R.d15],
   ['16','Accordion','Full-width rows, one open at a time.', R.d16],
-  ['17','Compare toggle','Just names — flip “Compare scores” to reveal the grid.', R.d17],
+  ['17','Compare toggle','Just names - flip “Compare scores” to reveal the grid.', R.d17],
   ['18','Big number','Each angle’s single strongest signal, huge; expand for the rest.', R.d18],
   ['19','Ladder','Ranked on a vertical line; expand a rung.', R.d19],
-  ['20','Dense grid','Power view — every number visible; row click reveals evidence.', R.d20],
+  ['20','Dense grid','Power view - every number visible; row click reveals evidence.', R.d20],
 ];
 
 document.getElementById('wrap').innerHTML = DESIGNS.map(function(d){

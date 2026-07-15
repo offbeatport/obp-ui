@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop — Workspace</title>
+<title>C Slop Slop - Workspace</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -484,7 +484,7 @@ const COMPANIES=[
     ]},
     grow:{ launched:true, funnel:[['Visits',1400],['Signups',210],['Activated',92],['Paid',38]],
       channels:[{n:'Newsletter',d:'1.2k subscribers',on:true},{n:'Product Hunt',d:'$40 launch gated → ~120 signups',on:true},{n:'Paid ads',d:'not connected',on:false}],
-      note:'SPEND gate open: $40 Product Hunt launch. GROW autonomy at L1 — AI recommends raising to L2.' },
+      note:'SPEND gate open: $40 Product Hunt launch. GROW autonomy at L1 - AI recommends raising to L2.' },
     run:{ tickets:5, ttr:'~3h', uptime:'99.95%', refunds:0, billing:'healthy',
       items:[{u:'maria@acme.co',s:'Snooze a whole label, not just a thread?',tag:'feature ×3',c:'violet'},{u:'tom@brightloop.io',s:'Annual plan invoice',tag:'billing',c:'green'}] }
   },
@@ -501,14 +501,14 @@ const COMPANIES=[
     grow:{ launched:false, funnel:[['Visits',0],['Signups',0],['Activated',0],['Paid',0]],
       channels:[{n:'Domain',d:'not registered → needs SIGN',on:false},{n:'Entity / ToS',d:'awaiting your signature',on:false},{n:'Cold email',d:'batch 1 sent · 36% open · 8% reply',on:true}],
       note:'Cannot launch until SIGN gate (entity + ToS) clears. Cold batch 2 of 3 is drafted & gated.' },
-    run:{ tickets:0, ttr:'—', uptime:'—', refunds:0, billing:'pre-revenue', items:[] }
+    run:{ tickets:0, ttr:'-', uptime:'-', refunds:0, billing:'pre-revenue', items:[] }
   },
   { id:'datadrop', name:'DataDrop', stage:'LIVE · FLAT', color:'amber', order:3,
     mrr:95, series:[80,88,92,95,95,95], users:6, usersWk:0, churn:4,
     cost:19, costBreak:[['infra',10],['api',5],['email',3],['domain',1]], net:76,
     autonomy:{MAKE:1,GROW:0,RUN:1}, owner:'You', ownerColor:'amber',
     connected:{Stripe:1,domain:1,ESP:1},
-    headline:'MRR flat 3 months — watch list. Needs a distribution push or a watch-and-wait call.',
+    headline:'MRR flat 3 months - watch list. Needs a distribution push or a watch-and-wait call.',
     build:{ shipped:5, items:[
       {n:'slice 6', t:'saved chart views', s:'queued', sc:'slate', note:'matches support ticket'},
       {n:'slice 5', t:'csv → chart', s:'shipped', sc:'green'},
@@ -525,14 +525,14 @@ const COMPANIES=[
     cost:4, costBreak:[['infra',4]], net:-4,
     autonomy:{MAKE:0,GROW:0,RUN:0}, owner:'Agent', ownerColor:'slate',
     connected:{},
-    headline:'Skeleton only, slice 8 stuck ×3. Kill candidate — AI recommends shutting it down.',
+    headline:'Skeleton only, slice 8 stuck ×3. Kill candidate - AI recommends shutting it down.',
     build:{ shipped:0, items:[
       {n:'slice 8', t:'dedupe pains', s:'blocked', sc:'red', hot:true, note:'stuck ×3 → unblock or kill'}
     ]},
     grow:{ launched:false, funnel:[['Visits',0],['Signups',0],['Activated',0],['Paid',0]],
-      channels:[{n:'—',d:'never launched, no integrations',on:false}],
+      channels:[{n:'-',d:'never launched, no integrations',on:false}],
       note:'Never reached live. Burning $4/mo. AI recommends kill.' },
-    run:{ tickets:0, ttr:'—', uptime:'paused', refunds:0, billing:'n/a', items:[] }
+    run:{ tickets:0, ttr:'-', uptime:'paused', refunds:0, billing:'n/a', items:[] }
   }
 ];
 const CO=Object.fromEntries(COMPANIES.map(c=>[c.id,c]));
@@ -682,7 +682,7 @@ function viewHome(){
     </div></div>`;
   const compPanel=`<div class="panel"><div class="panel-h"><h3>MRR by company</h3></div><div class="panel-b">${compBars}<div style="margin-top:4px;font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">2 pre-revenue · 1 paused</div></div></div>`;
 
-  const queueMini=QUEUE.filter(q=>q.status==='active').map(q=>{const c=CO[q.co];return `<div class="act" style="cursor:pointer" data-act="nav-needs"><span class="adot bg-${q.tone}"></span><div class="atxt"><span class="qkind st-${q.tone}" style="margin-right:7px">${q.kind}</span><b>${c.name}</b> — ${q.title.replace(/^[^:]+:\s*/,'')}</div><span class="at">${q.gated?'gated':'auto-ok'}</span></div>`}).join('');
+  const queueMini=QUEUE.filter(q=>q.status==='active').map(q=>{const c=CO[q.co];return `<div class="act" style="cursor:pointer" data-act="nav-needs"><span class="adot bg-${q.tone}"></span><div class="atxt"><span class="qkind st-${q.tone}" style="margin-right:7px">${q.kind}</span><b>${c.name}</b> - ${q.title.replace(/^[^:]+:\s*/,'')}</div><span class="at">${q.gated?'gated':'auto-ok'}</span></div>`}).join('');
   const queuePanel=`<div class="panel"><div class="panel-h"><h3>Needs you</h3><span class="ph-sub">${QUEUE.filter(q=>q.status==='active').length} active · ${QUEUE.filter(q=>q.status==='upcoming').length} upcoming</span></div><div class="panel-b" style="padding:6px 15px 12px">${queueMini}<button class="tbtn" style="margin-top:11px;width:100%;justify-content:center" data-act="nav-needs">Open queue →</button></div></div>`;
 
   const actPanel=`<div class="panel"><div class="panel-h"><h3>Live activity</h3><span class="ph-sub"><span class="chip st-green"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block" class="pulse"></span>running</span></span></div><div class="panel-b" style="padding:4px 15px 10px">${ACTIVITY.map(a=>`<div class="act"><span class="adot bg-${a.c} ${a.live?'pulse':''}"></span><div class="atxt"><b>${CO[a.co].name}</b> ${a.txt}</div><span class="at">${a.t}</span></div>`).join('')}</div></div>`;
@@ -757,7 +757,7 @@ function companyList(){
       <div class="row-meta">
         <span class="mi">${c.users}u</span>
         ${c.usersWk>0?`<span class="mi up">+${c.usersWk}/wk</span>`:''}
-        ${c.churn!==null?`<span class="mi">${c.churn}% churn</span>`:`<span class="mi" style="color:var(--ink-faint)">—</span>`}
+        ${c.churn!==null?`<span class="mi">${c.churn}% churn</span>`:`<span class="mi" style="color:var(--ink-faint)">-</span>`}
         <span class="mi tx-green">net ${c.net>=0?'+':''}$${c.net}</span>
         ${autoBadgesShort(c.autonomy)}
         <span class="owner"><span class="oav" style="background:${oColor};color:${oFg}">${c.owner==='You'?'U':'AI'}</span>${needsYou?'<span class="chip st-amber" style="font-size:9px;padding:0 6px">!</span>':''}</span>
@@ -796,7 +796,7 @@ function companyDetail(){
         <div class="dk"><span class="l">MRR</span><span class="v">$${c.mrr} ${c.mrr>0?spark(c.series,60,20,COLORS[c.color]):''}</span></div>
         <div class="dk"><span class="l">Net / mo</span><span class="v ${c.net>=0?'tx-green':'tx-red'}">${c.net>=0?'+':''}$${c.net}</span></div>
         <div class="dk"><span class="l">Users</span><span class="v">${c.users} ${c.usersWk>0?`<small class="tx-green">+${c.usersWk}/wk</small>`:''}</span></div>
-        <div class="dk"><span class="l">Churn</span><span class="v">${c.churn!==null?c.churn+'%':'—'}</span></div>
+        <div class="dk"><span class="l">Churn</span><span class="v">${c.churn!==null?c.churn+'%':'-'}</span></div>
         <div class="dk"><span class="l">Cost / mo</span><span class="v">$${c.cost}</span></div>
         <div class="dk"><span class="l">Owner</span><span class="v" style="font-size:14px">${c.owner}</span></div>
       </div>
@@ -844,7 +844,7 @@ function tabGrow(c){
 }
 function tabRun(c){
   if(c.run.items.length===0&&c.run.tickets===0){
-    return `<div class="panel"><div class="panel-b empty">${c.color==='red'?'Paused — RUN is offline.':'Pre-revenue — no support load yet.'}<br><span style="font-family:var(--mono);font-size:11px">RUN autonomy L${c.autonomy.RUN}</span></div></div>`;
+    return `<div class="panel"><div class="panel-b empty">${c.color==='red'?'Paused - RUN is offline.':'Pre-revenue - no support load yet.'}<br><span style="font-family:var(--mono);font-size:11px">RUN autonomy L${c.autonomy.RUN}</span></div></div>`;
   }
   const stats=`<div class="det-kpis" style="margin:0 0 16px">
     <div class="dk"><span class="l">Open tickets</span><span class="v">${c.run.tickets}</span></div>
@@ -854,14 +854,14 @@ function tabRun(c){
     <div class="dk"><span class="l">Billing</span><span class="v tx-green" style="font-size:15px">${c.run.billing}</span></div>
   </div>`;
   const tickets=c.run.items.map(t=>`<div class="slice"><span class="ss st-${t.c}" style="width:auto;padding:2px 8px">${t.tag}</span><span class="st">${t.s}<span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);display:block;font-weight:400">${t.u}</span></span><span style="font-family:var(--mono);font-size:10px;color:var(--ink-faint)">evidence →</span></div>`).join('');
-  return `${stats}<div class="panel"><div class="panel-h"><h3>Support inbox</h3><span class="ph-sub">tickets seed features · RUN L${c.autonomy.RUN}</span></div><div class="panel-b">${tickets}<div class="guard" style="margin-top:6px"><span class="gi">🛡</span><div>Replies that <b>talk to a real human are always gated</b> to you — the agent drafts, you approve.</div></div></div></div>`;
+  return `${stats}<div class="panel"><div class="panel-h"><h3>Support inbox</h3><span class="ph-sub">tickets seed features · RUN L${c.autonomy.RUN}</span></div><div class="panel-b">${tickets}<div class="guard" style="margin-top:6px"><span class="gi">🛡</span><div>Replies that <b>talk to a real human are always gated</b> to you - the agent drafts, you approve.</div></div></div></div>`;
 }
 function tabMoney(c){
   const max=Math.max(...c.costBreak.map(b=>b[1]),1);
   const tones={infra:'blue',api:'violet',email:'amber',domain:'slate'};
   const bars=c.costBreak.map(b=>`<div class="barline"><div class="bl">${b[0]}</div><div class="bartrack"><div class="barfill bg-${tones[b[0]]||'slate'}" style="width:${b[1]/max*100}%"></div></div><div class="bv">$${b[1]}</div></div>`).join('');
   return `<div class="grid" style="grid-template-columns:1.3fr 1fr">
-    <div class="panel"><div class="panel-h"><h3>MRR trend</h3><span class="ph-sub">6 months</span></div><div class="panel-b" style="padding:16px 16px 10px">${c.mrr>0?areaChart(c.series,420,140,COLORS[c.color]):'<div class="empty">Pre-revenue — $0 MRR.</div>'}</div></div>
+    <div class="panel"><div class="panel-h"><h3>MRR trend</h3><span class="ph-sub">6 months</span></div><div class="panel-b" style="padding:16px 16px 10px">${c.mrr>0?areaChart(c.series,420,140,COLORS[c.color]):'<div class="empty">Pre-revenue - $0 MRR.</div>'}</div></div>
     <div class="panel"><div class="panel-h"><h3>Cost breakdown</h3><span class="ph-sub">$${c.cost}/mo</span></div><div class="panel-b">${bars}
       <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft)">
         <div class="dk"><span class="l">Revenue</span><span class="v">$${c.mrr}</span></div>
@@ -877,7 +877,7 @@ function viewMoney(){
   const breakdown=[['infra',66,'blue'],['compute',110,'green'],['APIs',18,'violet'],['email',17,'amber'],['domains',3,'slate']];
   const segs=breakdown.map(b=>`<div class="seg2 bg-${b[2]}" style="width:${b[1]/p.cap*100}%"></div>`).join('');
   const legend=breakdown.map(b=>`<div class="legi"><span class="ld bg-${b[2]}"></span>${b[0]} <b>$${b[1]}</b></div>`).join('');
-  const coRows=[...COMPANIES].sort((a,b)=>b.net-a.net).map(c=>`<tr><td class="lft">${c.name}</td><td class="num">$${c.mrr}</td><td class="num">$${c.cost}</td><td class="num ${c.net>=0?'tx-green':'tx-red'}">${c.net>=0?'+':''}$${c.net}</td><td>${c.mrr>0?spark(c.series,70,18,COLORS[c.color]):'<span style="color:var(--ink-faint);font-family:var(--mono);font-size:11px">—</span>'}</td></tr>`).join('');
+  const coRows=[...COMPANIES].sort((a,b)=>b.net-a.net).map(c=>`<tr><td class="lft">${c.name}</td><td class="num">$${c.mrr}</td><td class="num">$${c.cost}</td><td class="num ${c.net>=0?'tx-green':'tx-red'}">${c.net>=0?'+':''}$${c.net}</td><td>${c.mrr>0?spark(c.series,70,18,COLORS[c.color]):'<span style="color:var(--ink-faint);font-family:var(--mono);font-size:11px">-</span>'}</td></tr>`).join('');
   return `<div class="detail"><div class="pad" style="max-width:1040px">
     <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
       <div class="kpi"><div class="kl">Revenue</div><div class="kv tx-green">$${p.mrr}</div><div class="kfoot">MRR · ▲${p.mom}% MoM</div></div>
@@ -927,8 +927,8 @@ function viewAutopilot(){
     </div>
     <div class="panel" style="margin-top:14px"><div class="panel-h"><h3>The autopilot rule</h3></div><div class="panel-b">
       <div class="guard"><span class="gi">⚡</span><div><b>Reversible, non-spend features</b> at L2 auto-ship without you (e.g. QuietInbox MAKE).</div></div>
-      <div class="guard" style="margin-top:9px;background:rgba(192,138,46,.07);border-color:rgba(192,138,46,.25)"><span class="gi">🛡</span><div><b>Anything that talks to a real human or spends real money is ALWAYS gated</b> — tweets, cold emails, support replies, ad spend. No exceptions, regardless of level.</div></div>
-      <div style="font-size:12.5px;color:var(--ink-soft);margin-top:11px"><b style="color:var(--ink)">AI recommendation:</b> QuietInbox is your best ROI — raise <b>GROW L1 → L2</b> to let it self-schedule launches within the spend guardrail. <button class="recbtn" style="margin-left:8px" data-act="toast" data-msg="QuietInbox GROW → L2 staged for confirmation" data-tone="green">Raise to L2</button></div>
+      <div class="guard" style="margin-top:9px;background:rgba(192,138,46,.07);border-color:rgba(192,138,46,.25)"><span class="gi">🛡</span><div><b>Anything that talks to a real human or spends real money is ALWAYS gated</b> - tweets, cold emails, support replies, ad spend. No exceptions, regardless of level.</div></div>
+      <div style="font-size:12.5px;color:var(--ink-soft);margin-top:11px"><b style="color:var(--ink)">AI recommendation:</b> QuietInbox is your best ROI - raise <b>GROW L1 → L2</b> to let it self-schedule launches within the spend guardrail. <button class="recbtn" style="margin-left:8px" data-act="toast" data-msg="QuietInbox GROW → L2 staged for confirmation" data-tone="green">Raise to L2</button></div>
     </div></div>
   </div></div>`;
 }
@@ -945,9 +945,9 @@ function viewOversight(){
       ${OVERSIGHT.map(o=>`<div class="ov"><span class="ovav bg-${o.c}">${CO[o.co].name.slice(0,2).toUpperCase()}</span><div class="ovt"><b>${CO[o.co].name}</b> ${o.txt}</div><button class="undo" data-act="toast" data-msg="${CO[o.co].name}: last action reverted" data-tone="${o.c}">undo last</button></div>`).join('')}
     </div></div>
     <div class="panel" style="margin-top:14px"><div class="panel-h"><h3>Inbound = evidence stream</h3><span class="ph-sub">support tickets seed features</span></div><div class="panel-b">
-      <div class="ov"><span class="ovav bg-violet">QI</span><div class="ovt"><b>maria@acme.co</b> — “Snooze a whole label?” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ feature request ×3, candidate slice</span></div><span class="chip st-violet">needs reply</span></div>
-      <div class="ov"><span class="ovav bg-green">LS</span><div class="ovt"><b>devon@dgsales.io</b> — “Digest came at 6am not 8am” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ bug · timezone</span></div><span class="chip st-amber">needs reply</span></div>
-      <div class="ov"><span class="ovav bg-amber">DD</span><div class="ovt"><b>sam@sheetly.app</b> — “Can I save a chart view?” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ matches backlog slice 6</span></div><span class="chip st-green">answered</span></div>
+      <div class="ov"><span class="ovav bg-violet">QI</span><div class="ovt"><b>maria@acme.co</b> - “Snooze a whole label?” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ feature request ×3, candidate slice</span></div><span class="chip st-violet">needs reply</span></div>
+      <div class="ov"><span class="ovav bg-green">LS</span><div class="ovt"><b>devon@dgsales.io</b> - “Digest came at 6am not 8am” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ bug · timezone</span></div><span class="chip st-amber">needs reply</span></div>
+      <div class="ov"><span class="ovav bg-amber">DD</span><div class="ovt"><b>sam@sheetly.app</b> - “Can I save a chart view?” <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">→ matches backlog slice 6</span></div><span class="chip st-green">answered</span></div>
     </div></div>
   </div></div>`;
 }
@@ -976,7 +976,7 @@ function viewStrategy(){
       <div class="panel"><div class="panel-h"><h3>AI co-founder recommendations</h3></div><div class="panel-b" style="padding:6px 15px 10px">${RECS.map(r=>`<div class="rec"><span class="recg st-${r.c}">${r.g}</span><div class="rt"><b>${r.t}</b><div class="rs">${r.s}</div></div><button class="recbtn" data-act="toast" data-msg="${r.act}: queued" data-tone="${r.c}">${r.act}</button></div>`).join('')}</div></div>
     </div>
     <div class="panel" style="margin-top:14px"><div class="panel-h"><h3>Evidence ladder</h3><span class="ph-sub">thought → score → live → doneWhen → adoption → test-pay → MRR</span></div><div class="panel-b">${ladderRows}
-      <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:9px">Items climb only when the rung below pays off — cheapest validation first.</div>
+      <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:9px">Items climb only when the rung below pays off - cheapest validation first.</div>
     </div></div>
   </div></div>`;
 }
@@ -987,7 +987,7 @@ function buildPalItems(){
   const items=[];
   NAV.forEach(n=>items.push({cat:'Navigate',g:'→',t:'Go to '+n.label,sub:'view',k:n.k,run:()=>go(n.id)}));
   COMPANIES.forEach(c=>items.push({cat:'Companies',g:c.owner==='You'?'◆':'◇',t:'Open '+c.name,sub:c.stage+' · $'+c.mrr,run:()=>{STATE.company=c.id;STATE.tab='build';go('companies')}}));
-  QUEUE.filter(q=>q.status==='active'&&!q.resolved).forEach(q=>items.push({cat:'Resolve',g:q.glyph,t:(q.kind==='SHIP'?'Approve & ship — ':q.kind==='SPEND'?'Authorize — ':'Resolve — ')+CO[q.co].name,sub:q.title,run:()=>{approveGate(q.id)}}));
+  QUEUE.filter(q=>q.status==='active'&&!q.resolved).forEach(q=>items.push({cat:'Resolve',g:q.glyph,t:(q.kind==='SHIP'?'Approve & ship - ':q.kind==='SPEND'?'Authorize - ':'Resolve - ')+CO[q.co].name,sub:q.title,run:()=>{approveGate(q.id)}}));
   items.push({cat:'Actions',g:'✦',t:'Spin up PayoutReconciler',sub:'top opportunity · 82',run:()=>toast('PayoutReconciler: spin-up queued','green')});
   items.push({cat:'Actions',g:'✕',t:'Kill RedditPainBot',sub:'blocked ×3 · 0 users',run:()=>toast('RedditPainBot: kill staged','red')});
   items.push({cat:'Actions',g:'▲',t:'Raise QuietInbox GROW → L2',sub:'best ROI',run:()=>toast('QuietInbox GROW → L2 staged','green')});
@@ -1026,14 +1026,14 @@ function approveGate(id){
   q.resolved=true;q.resolution={SHIP:'Shipped to production',SPEND:'Authorized & launched',UNBLOCK:'Hint sent to agent',SIGN:'Signed',POST:'Posted'}[q.kind]||'Approved';
   const w=document.getElementById('toastwrap');
   const t=document.createElement('div');t.className='toast';
-  t.innerHTML=`<span class="tdot bg-green"></span>${q.kind} approved — ${CO[q.co].name}: ${q.resolution}<button class="tundo" data-act="undo-gate" data-id="${id}">undo</button>`;
+  t.innerHTML=`<span class="tdot bg-green"></span>${q.kind} approved - ${CO[q.co].name}: ${q.resolution}<button class="tundo" data-act="undo-gate" data-id="${id}">undo</button>`;
   w.appendChild(t);setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(()=>t.remove(),300)},3400);
   render();
 }
 function rejectGate(id){
   const q=QUEUE.find(x=>x.id===id);if(!q)return;
-  q.resolved=true;q.resolution='Rejected — feedback sent to agent';
-  toast(`${q.kind} rejected — feedback returned to ${CO[q.co].name} agent`,'red');
+  q.resolved=true;q.resolution='Rejected - feedback sent to agent';
+  toast(`${q.kind} rejected - feedback returned to ${CO[q.co].name} agent`,'red');
   render();
 }
 function undoGate(id){const q=QUEUE.find(x=>x.id===id);if(q){q.resolved=false;q.resolution=null;render();toast('Reverted','slate');}}

@@ -120,7 +120,7 @@ export function TaskRoutingMatrix({
                             ))}
                         </div>
                         <p className="mt-2 text-xs text-muted-foreground">
-                            Brand providers route via OpenRouter unless you add their own key — so
+                            Brand providers route via OpenRouter unless you add their own key - so
                             an OpenRouter key alone covers the defaults (e.g. Perplexity via
                             OpenRouter).
                         </p>

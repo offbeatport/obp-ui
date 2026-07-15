@@ -4,12 +4,12 @@ import type { Checkpoint } from "../db/schema.js";
 import type { EngineContext } from "./context.js";
 import { RunLog } from "./log.js";
 
-// Ship driver — the terminal rung. An action reaches `approved` two ways: you clicked
+// Ship driver - the terminal rung. An action reaches `approved` two ways: you clicked
 // Approve (L0), or bounded autopilot auto-approved a reversible green code action (L1).
 // Either way this promotes the run's checkpoint sha onto the company's `main`, flips the
 // action `done` + run `succeeded`, records a system activity message, and releases the
 // company lock. Git promote (irreversible-ish) runs FIRST, outside the txn; only on its
-// success do the sub-ms guarded DB writes flip terminal state — so a crash mid-ship
+// success do the sub-ms guarded DB writes flip terminal state - so a crash mid-ship
 // leaves the action `approved` and the next tick retries idempotently.
 
 type ApprovedRow = {

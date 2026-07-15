@@ -620,21 +620,21 @@
       signal: "Strong", sigLevel: 4, sigTone: "green",
       goal: "10 paying users at $15/mo with under 5% churn.",
       pct: 100, over: true, meterHi: "120% of goal", meterLo: "12 / 10 paying · 0% churn",
-      plan: "Shipping the <b>Daily digest</b> and watching activation — does a rep open it and call a top-3 lead?",
-      next: "Approve — ship the Daily digest to all 12 users.",
+      plan: "Shipping the <b>Daily digest</b> and watching activation - does a rep open it and call a top-3 lead?",
+      next: "Approve - ship the Daily digest to all 12 users.",
       feed: [
         { t: "overnight", s: "Scored 41 new leads" },
         { t: "today", s: "Daily digest passed its check" },
         { t: "2d ago", s: "+2 signups from the embed" }
       ],
-      risks: [{ t: "Single acquisition channel — the embed is the only inflow.", tone: "warn" }],
-      rec: "Continue", why: "Positive unit economics and 0% churn. Keep shipping — just open a second channel before the embed saturates.",
-      approval: { title: "Ship Daily digest → all 12 users", detail: "Fires one email endpoint. Fully reversible — pause the digest anytime from Product.", meta: "1 email endpoint · reversible" },
+      risks: [{ t: "Single acquisition channel - the embed is the only inflow.", tone: "warn" }],
+      rec: "Continue", why: "Positive unit economics and 0% churn. Keep shipping - just open a second channel before the embed saturates.",
+      approval: { title: "Ship Daily digest → all 12 users", detail: "Fires one email endpoint. Fully reversible - pause the digest anytime from Product.", meta: "1 email endpoint · reversible" },
       docs: {
         Foundation: { h: "The bet", p: "Sales reps burn the morning dialing cold webform leads in the order they arrived. LeadSift scores every inbound 0–100 on fit and intent so the rep calls the hot ones first. Built for small B2B teams drowning in form fills." },
         Product: { h: "What's built", p: "Live: the scoring engine plus embed and Zapier capture. Shipping now: the Daily digest that ranks yesterday's leads into one email. Activation means a rep opens the digest and calls a top-3 lead the same morning." },
-        Growth: { h: "How it grows", p: "One channel today — the embeddable form widget. 12 paying at $15/mo with zero churn across three months. The next move is a second channel before this one taps out." },
-        Budget: { h: "The money", p: "Spend runs $28/mo on LLM scoring and email delivery against $180/mo revenue — net +$152/mo. Economics are clearly positive, so it is safe to reinvest into the digest." }
+        Growth: { h: "How it grows", p: "One channel today - the embeddable form widget. 12 paying at $15/mo with zero churn across three months. The next move is a second channel before this one taps out." },
+        Budget: { h: "The money", p: "Spend runs $28/mo on LLM scoring and email delivery against $180/mo revenue - net +$152/mo. Economics are clearly positive, so it is safe to reinvest into the digest." }
       }
     },
     {
@@ -644,20 +644,20 @@
       signal: "Promising", sigLevel: 2, sigTone: "amber",
       goal: "20 beta users, 40% week-2 retention, and 5 who would pay.",
       pct: 30, over: false, meterHi: "30% of goal", meterLo: "6 of 20 beta · retention pending",
-      plan: "Running the closed beta and measuring <b>week-2 retention</b> — are the drafts good enough to send unedited?",
+      plan: "Running the closed beta and measuring <b>week-2 retention</b> - are the drafts good enough to send unedited?",
       next: "Interview 3 churned beta users to find why they dropped.",
       feed: [
         { t: "today", s: "Auto-drafted 30 replies" },
         { t: "3d ago", s: "2 new beta signups" }
       ],
-      risks: [{ t: "Retention is unproven — signups are easy, staying is the test.", tone: "warn" }],
+      risks: [{ t: "Retention is unproven - signups are easy, staying is the test.", tone: "warn" }],
       rec: "Continue", why: "Signal is promising but retention is the open question. Continue the beta and let the retention number decide.",
-      approval: { title: "$40 Product Hunt launch spend", detail: "One-time spend to fill the beta to 20. Pushes net negative for a single month — a deliberate bet on filling the funnel.", meta: "$40 one-time · net −$22 this month" },
+      approval: { title: "$40 Product Hunt launch spend", detail: "One-time spend to fill the beta to 20. Pushes net negative for a single month - a deliberate bet on filling the funnel.", meta: "$40 one-time · net −$22 this month" },
       docs: {
         Foundation: { h: "The bet", p: "Inbox triage eats the first hour of every day. QuietInbox reads new mail, drafts a reply in your voice, and waits for a one-tap approval before anything sends. Built for founders and solo operators." },
-        Product: { h: "What's built", p: "Auto-draft is live on 6 beta inboxes — 30 replies drafted this week. The measurement in flight is week-2 retention and whether the drafts are good enough to send without edits." },
+        Product: { h: "What's built", p: "Auto-draft is live on 6 beta inboxes - 30 replies drafted this week. The measurement in flight is week-2 retention and whether the drafts are good enough to send without edits." },
         Growth: { h: "How it grows", p: "6 beta users, up 2 this week. A $40 Product Hunt launch is queued to fill the beta. Retention, not acquisition, is the thing standing between here and a paid tier." },
-        Budget: { h: "The money", p: "Spend is $22/mo against $40/mo of early beta revenue — net +$18/mo. The proposed PH spend would push one month negative on purpose." }
+        Budget: { h: "The money", p: "Spend is $22/mo against $40/mo of early beta revenue - net +$18/mo. The proposed PH spend would push one month negative on purpose." }
       }
     },
     {
@@ -667,18 +667,18 @@
       signal: "None yet", sigLevel: 0, sigTone: "faint",
       goal: "Ship the walking skeleton and convert 5 of the 40 waitlist.",
       pct: 40, over: false, meterHi: "skeleton in progress", meterLo: "0 of 5 converted",
-      plan: "Building the <b>CSV cleaner and dashboard renderer</b> — get the skeleton walking end to end before inviting anyone.",
+      plan: "Building the <b>CSV cleaner and dashboard renderer</b> - get the skeleton walking end to end before inviting anyone.",
       next: "Finish the cleaner, then invite the first 5 from the waitlist.",
       feed: [
         { t: "yesterday", s: "Scaffolded the intake API" },
         { t: "today", s: "Deployed to staging" }
       ],
-      risks: [{ t: "No traction yet — 40 on a list is interest, not proof.", tone: "warn" }],
+      risks: [{ t: "No traction yet - 40 on a list is interest, not proof.", tone: "warn" }],
       rec: "Continue", why: "Far too early to judge. Continue building the skeleton, then let the first 5 invites tell you something real.",
       approval: null,
       docs: {
-        Foundation: { h: "The bet", p: "Messy CSVs rarely make it to a chart. DataDrop takes an upload, cleans it, and hands back a shareable dashboard link — no spreadsheet gymnastics. Built for non-technical ops people." },
-        Product: { h: "What's built", p: "Assembling the walking skeleton: the intake API is scaffolded, the cleaner is in progress, the dashboard renderer is next. Staging is deployed. No users are in the loop yet — deliberately." },
+        Foundation: { h: "The bet", p: "Messy CSVs rarely make it to a chart. DataDrop takes an upload, cleans it, and hands back a shareable dashboard link - no spreadsheet gymnastics. Built for non-technical ops people." },
+        Product: { h: "What's built", p: "Assembling the walking skeleton: the intake API is scaffolded, the cleaner is in progress, the dashboard renderer is next. Staging is deployed. No users are in the loop yet - deliberately." },
         Growth: { h: "How it grows", p: "40 on the waitlist, zero activated. The plan is small on purpose: finish the cleaner, invite the first 5, and learn before scaling the list." },
         Budget: { h: "The money", p: "Spend is $12/mo on staging and storage; revenue is $0. Pre-traction, so burn stays near zero until the skeleton actually walks." }
       }
@@ -690,62 +690,62 @@
       signal: "None", sigLevel: 0, sigTone: "faint",
       goal: "15 problem interviews before a single line of code.",
       pct: 0, over: false, meterHi: "0% of goal", meterLo: "0 of 15 interviews",
-      plan: "Validate the pain <b>before building anything</b> — talk to 15 people who supposedly have this problem.",
-      next: "Approve — start the 15-interview validation sprint.",
+      plan: "Validate the pain <b>before building anything</b> - talk to 15 people who supposedly have this problem.",
+      next: "Approve - start the 15-interview validation sprint.",
       feed: [
         { t: "queued", s: "15-interview sprint drafted, awaiting go" }
       ],
-      risks: [{ t: "Might be a vitamin, not a painkiller — nobody may care enough to pay.", tone: "warn" }],
-      rec: "Continue", why: "Unvalidated. Continue only if the interview sprint surfaces real, urgent pain — otherwise this is a clean kill.",
+      risks: [{ t: "Might be a vitamin, not a painkiller - nobody may care enough to pay.", tone: "warn" }],
+      rec: "Continue", why: "Unvalidated. Continue only if the interview sprint surfaces real, urgent pain - otherwise this is a clean kill.",
       approval: { title: "Start the 15-interview validation sprint", detail: "No spend, no code. Just your go-ahead to begin outreach and book the first conversations.", meta: "$0 spend · validation only" },
       docs: {
         Foundation: { h: "The bet", p: "The premise, still unproven: teams get blindsided when a competitor changes pricing. PricePeek would watch pricing pages and alert on any diff. The honest risk is that it's a vitamin, not a painkiller." },
-        Product: { h: "What's built", p: "Nothing — on purpose. No code gets written until 15 problem interviews confirm the pain is real and someone would pay to remove it." },
+        Product: { h: "What's built", p: "Nothing - on purpose. No code gets written until 15 problem interviews confirm the pain is real and someone would pay to remove it." },
         Growth: { h: "How it grows", p: "0 users. Right now the validation sprint is the only work: 15 interviews, then a build-or-kill call. Growth comes later, if at all." },
-        Budget: { h: "The money", p: "Spend $0, revenue $0. The sprint needs no budget — only an operator's decision to start." }
+        Budget: { h: "The money", p: "Spend $0, revenue $0. The sprint needs no budget - only an operator's decision to start." }
       }
     },
     {
       id: "translatorbill", name: "TranslatorBill", stage: "Ejected", status: "Graduated", statusTone: "ok",
-      desc: "Auto-translates & reformats cross-border invoices — <em>ejected into its own company</em>.",
+      desc: "Auto-translates & reformats cross-border invoices - <em>ejected into its own company</em>.",
       revenue: 320, spend: 0, usersNum: "22", usersLbl: "paying (last)",
       signal: "Strong", sigLevel: 4, sigTone: "green",
-      goal: "20 paying at $15/mo — the graduation bar.",
+      goal: "20 paying at $15/mo - the graduation bar.",
       pct: 100, over: false, meterHi: "goal hit", meterLo: "22 of 20 paying → ejected",
       plan: "<b>Handed off</b> to its own standalone company. No longer drawing on the portfolio.",
-      next: "Nothing here — it graduated. Read the eject write-up in Foundation.",
+      next: "Nothing here - it graduated. Read the eject write-up in Foundation.",
       feed: [
         { t: "wk 8", s: "Hit 22 paying users" },
         { t: "wk 9", s: "Ejected to a standalone company" }
       ],
-      risks: [{ t: "None — graduated cleanly. The template for a successful eject.", tone: "clear" }],
-      rec: "Eject", why: "Goal was hit and exceeded. Ejected into its own company — this is what a win looks like.", done: true,
+      risks: [{ t: "None - graduated cleanly. The template for a successful eject.", tone: "clear" }],
+      rec: "Eject", why: "Goal was hit and exceeded. Ejected into its own company - this is what a win looks like.", done: true,
       approval: null,
       docs: {
-        Foundation: { h: "The bet", p: "Cross-border invoices land in the wrong language and format, and someone re-keys them by hand. TranslatorBill translated and reformatted them automatically. A clear painkiller — it reached 22 paying users." },
+        Foundation: { h: "The bet", p: "Cross-border invoices land in the wrong language and format, and someone re-keys them by hand. TranslatorBill translated and reformatted them automatically. A clear painkiller - it reached 22 paying users." },
         Product: { h: "What's built", p: "Shipped and handed off: the full OCR → translate → reformat → export pipeline. Now maintained by its own standalone company outside the portfolio." },
-        Growth: { h: "How it grew", p: "Cleared the bar — 20 paying at $15/mo, exceeded to 22 — and graduated out of the portfolio into its own entity." },
+        Growth: { h: "How it grew", p: "Cleared the bar - 20 paying at $15/mo, exceeded to 22 - and graduated out of the portfolio into its own entity." },
         Budget: { h: "The money", p: "Last recorded $320/mo revenue with $0 portfolio spend now that it's standalone. The reference case for a successful eject." }
       }
     },
     {
       id: "redditpainbot", name: "RedditPainBot", stage: "Killed", status: "Stopped", statusTone: "",
-      desc: "Mined Reddit for recurring product pains — <em>killed on weak willingness-to-pay</em>.",
+      desc: "Mined Reddit for recurring product pains - <em>killed on weak willingness-to-pay</em>.",
       revenue: 0, spend: 0, usersNum: "0", usersLbl: "users",
       signal: "Weak", sigLevel: 1, sigTone: "red",
       goal: "Find pains people would actually pay to solve.",
       pct: 0, over: false, meterHi: "goal missed", meterLo: "0 willing to pay",
       plan: "<b>Stopped.</b> Post-mortem written and filed. Interesting tech, no market.",
-      next: "Nothing here — it was killed. The lesson lives in Foundation.",
+      next: "Nothing here - it was killed. The lesson lives in Foundation.",
       feed: [
-        { t: "wk 2", s: "Willingness-to-pay tested — weak" },
+        { t: "wk 2", s: "Willingness-to-pay tested - weak" },
         { t: "wk 3", s: "Post-mortem written, bet killed" }
       ],
-      risks: [{ t: "Killed — no willingness-to-pay after three weeks of testing.", tone: "clear" }],
-      rec: "Kill", why: "Surfaced pains but none with willingness-to-pay. Killed after three weeks — cheap lesson, cleanly closed.", done: true,
+      risks: [{ t: "Killed - no willingness-to-pay after three weeks of testing.", tone: "clear" }],
+      rec: "Kill", why: "Surfaced pains but none with willingness-to-pay. Killed after three weeks - cheap lesson, cleanly closed.", done: true,
       approval: null,
       docs: {
-        Foundation: { h: "The bet", p: "The hypothesis: mining Reddit for recurring product pains would surface buildable ideas people pay for. It surfaced plenty of pains — but none with willingness-to-pay behind them." },
+        Foundation: { h: "The bet", p: "The hypothesis: mining Reddit for recurring product pains would surface buildable ideas people pay for. It surfaced plenty of pains - but none with willingness-to-pay behind them." },
         Product: { h: "What was built", p: "A scraper plus clustering that ranked recurring complaints. It worked technically. The output simply didn't convert to buying intent." },
         Growth: { h: "How it went", p: "0 users and $0 after three weeks. Every willingness-to-pay test came back weak, so it was killed rather than nursed along." },
         Budget: { h: "The money", p: "Spend stopped at $0/mo, revenue $0. Post-mortem filed: interesting technology, no market underneath it." }
@@ -920,9 +920,9 @@
 
   function resolvedMarkup(b) {
     var map = {
-      approve: { cls: "approved", ico: svgCheck(), b: "Approved — " + b.approval.title, s: "Shipped · reversible", tone: "green", toast: "Approved. " + b.name + " is shipping." },
-      hold: { cls: "held", ico: svgClock(), b: "Held for later — " + b.approval.title, s: "Parked · resume anytime", tone: "amber", toast: b.name + " decision held." },
-      kill: { cls: "killed", ico: svgX(), b: "Bet killed — " + b.name, s: "Stopped · reversible", tone: "red", toast: b.name + " killed." }
+      approve: { cls: "approved", ico: svgCheck(), b: "Approved - " + b.approval.title, s: "Shipped · reversible", tone: "green", toast: "Approved. " + b.name + " is shipping." },
+      hold: { cls: "held", ico: svgClock(), b: "Held for later - " + b.approval.title, s: "Parked · resume anytime", tone: "amber", toast: b.name + " decision held." },
+      kill: { cls: "killed", ico: svgX(), b: "Bet killed - " + b.name, s: "Stopped · reversible", tone: "red", toast: b.name + " killed." }
     };
     var m = map[b.resolved];
     return '<div class="resolved ' + m.cls + '"><span class="r-ico">' + m.ico + '</span>' +
@@ -960,7 +960,7 @@
         renderFocus();
         updateNeeds();
         if (a !== "undo") {
-          var map = { approve: "Approved. " + b.name + " is shipping.", hold: b.name + " decision held.", kill: b.name + " killed — reversible." };
+          var map = { approve: "Approved. " + b.name + " is shipping.", hold: b.name + " decision held.", kill: b.name + " killed - reversible." };
           showToast(map[a], a);
         }
       });
@@ -998,7 +998,7 @@
     bets.forEach(function (b, i) {
       var net = b.revenue - b.spend;
       var flag = (b.approval && !b.resolved) ? '<span class="pfn-flag">needs you</span>' : '';
-      var rev = b.revenue > 0 ? money(b.revenue, true) : (b.spend > 0 ? '−' + money(b.spend, true) : '—');
+      var rev = b.revenue > 0 ? money(b.revenue, true) : (b.spend > 0 ? '−' + money(b.spend, true) : '-');
       rows +=
         '<li class="pf-row" data-stage="' + b.stage + '" data-i="' + i + '">' +
           '<span class="pf-idx">' + pad(i + 1) + '</span>' +
@@ -1075,7 +1075,7 @@
         return;
       }
     }
-    showToast("No decisions pending — all clear.", "approve");
+    showToast("No decisions pending - all clear.", "approve");
   }
 
   var toastTimer;

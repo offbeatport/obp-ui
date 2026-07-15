@@ -599,8 +599,8 @@
                 <button class="reject-send" id="rejectSend">Send feedback</button>
                 <div style="clear:both"></div>
               </div>
-              <div class="gate-flash approved" id="flashApproved"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approved ✓ — shipping slice 5, will mark live</div>
-              <div class="gate-flash rejected" id="flashRejected"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg> Feedback sent — agent will iterate on slice 5</div>
+              <div class="gate-flash approved" id="flashApproved"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approved ✓ - shipping slice 5, will mark live</div>
+              <div class="gate-flash rejected" id="flashRejected"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg> Feedback sent - agent will iterate on slice 5</div>
             </div>
           </div>
         </div>
@@ -665,7 +665,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -693,7 +693,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -702,22 +702,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -755,10 +755,10 @@ function buildCards(){
     // now line
     let now;
     if(c.id==='leadsift'){
-      now=`<div class="cc-now"><span class="tag awaiting">awaiting</span><span class="ntext">Slice 5 — daily digest needs your approval</span></div>`;
+      now=`<div class="cc-now"><span class="tag awaiting">awaiting</span><span class="ntext">Slice 5 - daily digest needs your approval</span></div>`;
     }else{
       const cs=c.currentSlice;
-      now=`<div class="cc-now"><span class="tag ${statusTag[cs.status]}">${statusTag[cs.status]}</span><span class="ntext">Slice ${cs.n} — ${cs.step}</span></div>`;
+      now=`<div class="cc-now"><span class="tag ${statusTag[cs.status]}">${statusTag[cs.status]}</span><span class="ntext">Slice ${cs.n} - ${cs.step}</span></div>`;
     }
     const foot = c.needsYou
       ? `<button class="cc-open" data-id="${c.id}">Open & approve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><span class="needs-pill">● needs you</span>`
@@ -887,7 +887,7 @@ function openCompany(id){
   // every card routes to LeadSift zoom for the prototype; non-leadsift toast
   if(id!=='leadsift'){
     const c=DATA.companies.find(x=>x.id===id);
-    toast('Opening '+c.name+' — LeadSift is the wired demo company',false);
+    toast('Opening '+c.name+' - LeadSift is the wired demo company',false);
   }
   $('#overview').classList.add('hidden');
   $('#zoom').classList.remove('hidden');
@@ -967,7 +967,7 @@ $('#approve').addEventListener('click',()=>{
   $('#flashRejected').classList.remove('show');
   $('#flashApproved').classList.add('show');
   $('#approve').disabled=true;
-  toast('Approved ✓ — LeadSift slice 5 shipping');
+  toast('Approved ✓ - LeadSift slice 5 shipping');
 });
 $('#rejectToggle').addEventListener('click',()=>{
   const b=$('#rejectBox'); b.classList.toggle('show');
@@ -978,7 +978,7 @@ $('#rejectSend').addEventListener('click',()=>{
   $('#rejectBox').classList.remove('show');
   $('#flashApproved').classList.remove('show');
   $('#flashRejected').classList.add('show');
-  toast(txt?'Feedback sent — agent will iterate':'Rejected — agent will iterate',true);
+  toast(txt?'Feedback sent - agent will iterate':'Rejected - agent will iterate',true);
 });
 $('#openPreview').addEventListener('click',()=>toast('Opening localhost:4019/digest/preview ↗'));
 
@@ -992,7 +992,7 @@ function sendChat(){
   s.scrollTop=s.scrollHeight;
   setTimeout(()=>{
     const a=document.createElement('div'); a.className='msg assistant';
-    a.innerHTML=`<div class="who">C Slop Slop</div><div class="bubble">On it — the slice 5 digest is live and green. Approve above to ship, or tell me what to change.</div>`;
+    a.innerHTML=`<div class="who">C Slop Slop</div><div class="bubble">On it - the slice 5 digest is live and green. Approve above to ship, or tell me what to change.</div>`;
     s.appendChild(a); s.scrollTop=s.scrollHeight;
   },480);
 }
@@ -1003,7 +1003,7 @@ $('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
 function renderActivity(){
   // collapsed latest line
   const latest=DATA.activity[0];
-  $('#actLatest').innerHTML=`<b>${latest.co}</b> — ${latest.text}`;
+  $('#actLatest').innerHTML=`<b>${latest.co}</b> - ${latest.text}`;
   const running=DATA.activity.filter(a=>a.running).length;
   $('#actCount').textContent=`${DATA.activity.length} events · ${running} live`;
   // expanded grouped

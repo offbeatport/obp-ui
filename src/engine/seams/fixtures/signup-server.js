@@ -1,4 +1,4 @@
-// Reference walking-skeleton — the exact artifact prompts/harness-system.md asks the
+// Reference walking-skeleton - the exact artifact prompts/harness-system.md asks the
 // coding agent to produce: a single-file Node signup app, no deps, listens on $PORT,
 // binds 127.0.0.1, persists to ./data.json. It is the deploy target the HttpValidator
 // checks, and FixtureHarness copies it verbatim so the whole spine (build → deploy →

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Action } from "../db/index.js";
 import { pickCurrent, sliceState, slugify } from "./data.js";
 
-// Minimal Action factory — pickCurrent only reads status; id/createdAt just need to exist.
+// Minimal Action factory - pickCurrent only reads status; id/createdAt just need to exist.
 let seq = 0;
 const act = (status: Action["status"]): Action =>
     ({ id: `a${seq++}`, status, type: "code" }) as Action;

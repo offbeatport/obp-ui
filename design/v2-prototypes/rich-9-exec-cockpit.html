@@ -477,7 +477,7 @@ const COMPANIES = [
       risk:{v:'0% churn', k:'good', note:'retention solid'}
     },
     note:'Growth is strong and compounding. Build has a <b>blocked slice 8</b>, but the rest of the pipeline is clear. Needs a <b>SHIP approval on slice 5</b> (daily digest, already tested).',
-    gate:{kind:'SHIP', text:'Approve <b>slice 5</b> (daily digest) — tested, ready to ship to 12 users.'}
+    gate:{kind:'SHIP', text:'Approve <b>slice 5</b> (daily digest) - tested, ready to ship to 12 users.'}
   },
   {
     id:'quietinbox', name:'QuietInbox', glyph:'Q', color:'#4a72b0',
@@ -492,13 +492,13 @@ const COMPANIES = [
       risk:{v:'2% churn', k:'good', note:'healthy retention'}
     },
     note:'The <b>best earner</b> in the portfolio and strongest net ROI. Wants a <b>$40 Product Hunt launch</b> (est. ~120 signups). Candidate to raise growth autonomy to L2.',
-    gate:{kind:'SPEND', text:'Approve <b>$40 Product Hunt launch</b> — projected ~120 signups, within cap.'}
+    gate:{kind:'SPEND', text:'Approve <b>$40 Product Hunt launch</b> - projected ~120 signups, within cap.'}
   },
   {
     id:'translatorbill', name:'TranslatorBill', glyph:'T', color:'#7a5ea8',
     stage:'PRE-REVENUE', stageKey:'prerev', overall:'building', overallLabel:'Building',
-    mrr:0, mrrSeries:[0,0,0,0,0,0], users:0, usersDelta:'—',
-    churn:'—', cost:11, net:-11, margin:'—',
+    mrr:0, mrrSeries:[0,0,0,0,0,0], users:0, usersDelta:'-',
+    churn:'-', cost:11, net:-11, margin:'-',
     autonomy:{make:1, grow:0, run:0},
     health:{
       growth:{v:'Pre-revenue', k:'idle', note:'not launched'},
@@ -506,7 +506,7 @@ const COMPANIES = [
       build:{v:'v1 in build', k:'warn', note:'first version WIP'},
       risk:{v:'No entity/ToS', k:'warn', note:'blocks payments'}
     },
-    note:'Still building the first version. To take payments it <b>needs an entity + ToS</b> in place. Burn is minimal (−$11/mo) — low-risk incubation.',
+    note:'Still building the first version. To take payments it <b>needs an entity + ToS</b> in place. Burn is minimal (−$11/mo) - low-risk incubation.',
     gate:null
   },
   {
@@ -521,14 +521,14 @@ const COMPANIES = [
       build:{v:'Stable', k:'good', note:'no blockers'},
       risk:{v:'4% churn', k:'warn', note:'leak to watch'}
     },
-    note:'Revenue is <b>flat at $95</b> for two months and growth has stalled. Profitable (+$76) but needs a <b>distribution push</b> — or it becomes a watch-for-kill.',
+    note:'Revenue is <b>flat at $95</b> for two months and growth has stalled. Profitable (+$76) but needs a <b>distribution push</b> - or it becomes a watch-for-kill.',
     gate:null
   },
   {
     id:'redditpainbot', name:'RedditPainBot', glyph:'R', color:'#b6483f',
     stage:'PAUSED · BLOCKED', stageKey:'paused', overall:'critical', overallLabel:'Critical',
-    mrr:0, mrrSeries:[0,0,0,0,0,0], users:0, usersDelta:'—',
-    churn:'—', cost:4, net:-4, margin:'—',
+    mrr:0, mrrSeries:[0,0,0,0,0,0], users:0, usersDelta:'-',
+    churn:'-', cost:4, net:-4, margin:'-',
     autonomy:null,
     health:{
       growth:{v:'0 traction', k:'bad', note:'no signal'},
@@ -536,22 +536,22 @@ const COMPANIES = [
       build:{v:'Stuck ×3', k:'bad', note:'slice 8 looping'},
       risk:{v:'Kill candidate', k:'bad', note:'recommend sunset'}
     },
-    note:'Paused and blocked — <b>stuck ×3 on slice 8</b> with <b>zero traction</b> and no revenue. AI recommends a <b>kill</b> to reclaim the −$4/mo and free attention.',
-    gate:{kind:'UNBLOCK', text:'Slice 8 stuck ×3 — decide <b>retry once more</b> or <b>kill the company</b>.'}
+    note:'Paused and blocked - <b>stuck ×3 on slice 8</b> with <b>zero traction</b> and no revenue. AI recommends a <b>kill</b> to reclaim the −$4/mo and free attention.',
+    gate:{kind:'UNBLOCK', text:'Slice 8 stuck ×3 - decide <b>retry once more</b> or <b>kill the company</b>.'}
   }
 ];
 
 const GATES = [
   {id:'g-ship', kind:'SHIP', co:'leadsift', coName:'LeadSift',
-    title:'Ship slice 5 — Daily Digest',
+    title:'Ship slice 5 - Daily Digest',
     body:'Tested and ready. Ships the daily digest to <b>12 active users</b>. RUN autonomy is L1, so this needs your sign-off.',
     actions:[{t:'Approve &amp; ship', cls:'primary', r:'Shipped slice 5 → live for 12 users'},{t:'Hold', cls:'', r:'Held for review'}]},
   {id:'g-spend', kind:'SPEND', co:'quietinbox', coName:'QuietInbox',
     title:'$40 Product Hunt launch',
-    body:'QuietInbox (best ROI) requests <b>$40</b> for a Product Hunt launch — projected <b>~120 signups</b>. Keeps spend at $254 of $500 cap.',
+    body:'QuietInbox (best ROI) requests <b>$40</b> for a Product Hunt launch - projected <b>~120 signups</b>. Keeps spend at $254 of $500 cap.',
     actions:[{t:'Approve $40', cls:'primary', r:'Approved $40 PH launch · spend → $254/$500'},{t:'Decline', cls:'', r:'Declined PH spend'}]},
   {id:'g-unblock', kind:'UNBLOCK', co:'redditpainbot', coName:'RedditPainBot',
-    title:'Slice 8 stuck ×3 — retry or kill',
+    title:'Slice 8 stuck ×3 - retry or kill',
     body:'RedditPainBot has looped on slice 8 <b>three times</b> with <b>0 traction</b>. Retry once more, or kill and reclaim −$4/mo.',
     actions:[{t:'Retry once', cls:'', r:'Queued one more retry on slice 8'},{t:'Kill company', cls:'danger', r:'RedditPainBot killed · −$4/mo reclaimed'}]}
 ];
@@ -561,13 +561,13 @@ const RECS = [
     rationale:'Best net ROI in the book (+$372/mo, 89% margin). Raise its <b>GROW autonomy to L2</b> and let it self-allocate growth spend.',
     action:'Raise GROW → L2', done:'Autonomy raised → L2'},
   {ic:'→', cls:'watch', kind:'WATCH', co:'datadrop', coName:'DataDrop',
-    rationale:'Revenue flat at $95 for two months. <b>Push distribution</b> this cycle — if still flat next month, move to kill review.',
+    rationale:'Revenue flat at $95 for two months. <b>Push distribution</b> this cycle - if still flat next month, move to kill review.',
     action:'Queue distribution push', done:'Distribution push queued'},
   {ic:'✕', cls:'kill', kind:'KILL', co:'redditpainbot', coName:'RedditPainBot',
-    rationale:'Zero traction, stuck ×3, −$4/mo. <b>Sunset it</b> — reclaim the burn and the attention budget.',
+    rationale:'Zero traction, stuck ×3, −$4/mo. <b>Sunset it</b> - reclaim the burn and the attention budget.',
     action:'Open kill gate', done:'Kill gate opened'},
   {ic:'✦', cls:'spin', kind:'SPIN UP', co:null, coName:'PayoutReconciler',
-    rationale:'New idea <b>“PayoutReconciler”</b> scoring <b>demand 82</b>. Strongest fresh signal — spin up a MAKE loop.',
+    rationale:'New idea <b>“PayoutReconciler”</b> scoring <b>demand 82</b>. Strongest fresh signal - spin up a MAKE loop.',
     action:'Spin up MAKE loop', done:'Spin-up scheduled'}
 ];
 
@@ -703,9 +703,9 @@ function renderFinancials(){
       +'<td><div class="barcell"><div class="rbar"><i style="width:'+revW.toFixed(1)+'%; background:'+sc+'"></i></div><span class="fval">$'+c.mrr+'</span></div></td>'
       +'<td><span class="fval mut">$'+c.cost+'</span></td>'
       +'<td><div class="barcell"><span class="netbar"><span class="zero"></span><i style="'+netStyle+'"></i></span><span class="fval '+(netPos?'pos':'neg')+'">'+(netPos?'+':'−')+'$'+Math.abs(c.net)+'</span></div></td>'
-      +'<td><span class="fval '+(c.margin==='—'?'mut':'')+'">'+c.margin+'</span></td></tr>';
+      +'<td><span class="fval '+(c.margin==='-'?'mut':'')+'">'+c.margin+'</span></td></tr>';
   }).join('')
-  + '<tr class="shared"><td class="l">Shared / platform</td><td><span class="fval mut">—</span></td><td><span class="fval mut">$110</span></td><td><span class="fval neg">−$110</span></td><td><span class="fval mut">—</span></td></tr>';
+  + '<tr class="shared"><td class="l">Shared / platform</td><td><span class="fval mut">-</span></td><td><span class="fval mut">$110</span></td><td><span class="fval neg">−$110</span></td><td><span class="fval mut">-</span></td></tr>';
 
   document.getElementById('finFoot').innerHTML =
     '<tr><td class="l"><div class="fco">Portfolio total</div></td>'
@@ -793,7 +793,7 @@ function openDrawer(id){
           +'<span class="ad">'+(lv===0?'manual':lv===1?'review gate':'autonomous')+'</span></div>';
       }).join('')+'</div>';
   } else {
-    autoHtml='<div class="d-note" style="font-style:italic">Autonomy paused — company is blocked and not running build/grow/run loops.</div>';
+    autoHtml='<div class="d-note" style="font-style:italic">Autonomy paused - company is blocked and not running build/grow/run loops.</div>';
   }
   const heatHtml='<div class="dheat">'+HEAT_DIMS.map(([dim])=>{
     const hd=c.health[dim];

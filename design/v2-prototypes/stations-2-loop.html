@@ -513,7 +513,7 @@
     <div class="hero-inner">
       <span class="live-badge"><span class="dot"></span> engine · turning</span>
       <h1>The AI runs each company on a <b>Make → Grow → Run</b> loop.</h1>
-      <p class="hero-sub">Every company is an engine. Watch the pulse travel the ring — the glowing node is where the AI's focus is right now. The stage chip says how mature it is; the badge says where it needs you.</p>
+      <p class="hero-sub">Every company is an engine. Watch the pulse travel the ring - the glowing node is where the AI's focus is right now. The stage chip says how mature it is; the badge says where it needs you.</p>
       <div class="legend" aria-hidden="true">
         <span class="lg"><i class="i-build"></i> Build · product</span>
         <span class="lg"><i class="i-grow"></i> Grow · GTM</span>
@@ -528,7 +528,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>engine room</b> — the AI turns the loop, you hold the gates</span>
+    <span>C Slop Slop · <b>engine room</b> - the AI turns the loop, you hold the gates</span>
     <span><b>L0</b> ask first · <b>L1</b> act + log · <b>L2</b> full autopilot</span>
   </footer>
 
@@ -620,7 +620,7 @@
     var isFocus = focus === area;
     var cls = 'node n-' + area + ' a-' + area + ' st-' + d.state + (isFocus ? ' focus' : '');
     var needs = d.state === 'needs'
-      ? '<span class="needs-dot" title="' + esc(d.gate) + ' gate — needs you">!</span>' : '';
+      ? '<span class="needs-dot" title="' + esc(d.gate) + ' gate - needs you">!</span>' : '';
     var auto = d.auto === 'off' ? 'off' : d.auto;
     var flag = d.state === 'needs' ? '<u>needs you</u>' : '';
     var nm = area.toUpperCase();
@@ -648,7 +648,7 @@
     var d = c[c.focus];
     var nm = c.focus.toUpperCase();
     var lbl = d.state === 'needs'
-      ? '<b>gated</b> — <span class="fa ' + c.focus + '">' + nm + '</span> needs you'
+      ? '<b>gated</b> - <span class="fa ' + c.focus + '">' + nm + '</span> needs you'
       : 'focus → <span class="fa ' + c.focus + '">' + nm + '</span> · ' + esc(d.label);
     return '<span class="loop-foot">' + lbl + '</span>';
   }

@@ -437,21 +437,21 @@
       status:'building · pre-revenue', mrr:'$0', delta:'', users:'0',
       work:'Building <em>“invoice reformat”</em>',
       x:-40, y:300, rot:-1,
-      desc:'Reformats and translates invoices across languages and layouts. Pre-revenue — the core formatter is being built right now.',
+      desc:'Reformats and translates invoices across languages and layouts. Pre-revenue - the core formatter is being built right now.',
       now:'Building <em>“invoice reformat”</em>', activity:'Building InvoiceFormatter.tsx · now' },
 
     { id:'datadrop', name:'DataDrop', color:'green',
       status:'live · flat', mrr:'$95', delta:'', users:'6',
       work:'Queued <em>“saved chart views”</em>',
       x:410, y:70, rot:2.2,
-      desc:'CSV intake with instant charts. Traffic is flat — “saved chart views” is queued to re-spark engagement and win back attention.',
+      desc:'CSV intake with instant charts. Traffic is flat - “saved chart views” is queued to re-spark engagement and win back attention.',
       now:'Queued <em>“saved chart views”</em>', activity:'Re-prioritized · 5m ago' },
 
     { id:'redditpainbot', name:'RedditPainBot', color:'slate', paused:true,
       status:'paused · blocked', mrr:'$0', delta:'', users:'0',
       work:'Slice 8 stuck <em>×3</em>',
       x:560, y:360, rot:-2.6,
-      desc:'Mines Reddit threads for recurring, monetizable pains. Paused — slice 8 has failed three times and needs a human decision to move.',
+      desc:'Mines Reddit threads for recurring, monetizable pains. Paused - slice 8 has failed three times and needs a human decision to move.',
       now:'Slice 8 stuck <em>×3</em>', activity:'Blocked ×3 · 18m ago',
       need:{ lab:'Unblock', txt:'Slice 8 has failed <em>×3</em>. Review the blocker and unblock, retry, or park this company.' } }
   ];
@@ -466,7 +466,7 @@
     if(c.paused) cls.push('paused');
     if(c.need) cls.push('needs');
     const deltaCls = c.delta ? 'up' : 'zero';
-    const delta = c.delta ? c.delta : '—';
+    const delta = c.delta ? c.delta : '-';
     const tag = c.need ? `<div class="needs-tag"><span class="pulse"></span>${c.need.lab}</div>` : '';
     const need = c.need ? `<div class="note-need"><span class="nn-lab">${c.need.lab}</span><span class="nn-txt">${c.need.txt}</span></div>` : '';
     return `<div class="${cls.join(' ')}" data-id="${c.id}" data-x="${c.x}" data-y="${c.y}"
@@ -500,7 +500,7 @@
 
   const annoHTML = `
     <div class="node anno" data-x="300" data-y="-180" style="left:300px; top:-180px;">
-      <span class="arw">↯</span><span>3 decisions are waiting on your call — highlighted below</span>
+      <span class="arw">↯</span><span>3 decisions are waiting on your call - highlighted below</span>
     </div>`;
 
   board.innerHTML = titleHTML + annoHTML + companies.map(noteHTML).join('');

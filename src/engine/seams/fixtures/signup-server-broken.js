@@ -1,4 +1,4 @@
-// BUGGY variant of the reference app — used only by the flaky fixture harness to prove the
+// BUGGY variant of the reference app - used only by the flaky fixture harness to prove the
 // iterate-to-green loop. The form renders and POST /signup is accepted, but the record is
 // never persisted (the save() call is missing), so GET /admin stays empty and the
 // HttpValidator's persistence check goes RED. The retry writes the correct signup-server.js.
@@ -13,7 +13,7 @@ function esc(s) {
     );
 }
 
-// BUG: in-memory only, and we never even push to it on POST — nothing persists.
+// BUG: in-memory only, and we never even push to it on POST - nothing persists.
 const rows = [];
 
 const server = http.createServer((req, res) => {
@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (req.method === "POST" && req.url === "/signup") {
-        // Accept the submission but (bug) drop it on the floor — no persistence.
+        // Accept the submission but (bug) drop it on the floor - no persistence.
         req.resume();
         req.on("end", () => {
             res.writeHead(303, { location: "/admin" });

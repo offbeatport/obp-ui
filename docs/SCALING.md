@@ -2,7 +2,7 @@
 
 Today's build is **single-node**: one web process + one executor over one local SQLite/WAL file,
 with local subprocess deploys. It comfortably runs a handful–low-tens of active companies. This
-doc is the path to thousands of users. The design is built for it — every wall below is a *local
+doc is the path to thousands of users. The design is built for it - every wall below is a *local
 impl behind a seam*, swappable for a distributed one, not a rewrite. Coordination is already rows
 in a DB, so the logic ports.
 
@@ -30,7 +30,7 @@ in a DB, so the logic ports.
 3. **Cloud sandbox.** Drop `CloudSandbox` (microVM/container) behind the `Sandbox` seam
    (`seams/types.ts`) so agent + app processes run isolated per tenant, not as local children.
 
-4. **Cloud deploy.** Drop `CloudDeploy` (Fly/Coolify/containers) behind the `Deploy` seam — kills
+4. **Cloud deploy.** Drop `CloudDeploy` (Fly/Coolify/containers) behind the `Deploy` seam - kills
    the ~1000-port cap (wall #3) and the one-host ceiling. `Deploy.reconcile(liveRunIds)` already
    exists for orphan reaping across nodes.
 
@@ -51,5 +51,5 @@ in a DB, so the logic ports.
 ## Rule of thumb
 
 DB (1) and executor fleet (2) are the first two walls; cloud deploy (4) is the third. Auth (6) and
-metering (7) are the safety layer before opening the doors. Do them in order — each unblocks the
+metering (7) are the safety layer before opening the doors. Do them in order - each unblocks the
 next.

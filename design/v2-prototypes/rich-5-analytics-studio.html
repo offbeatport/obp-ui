@@ -518,7 +518,7 @@
   <span><kbd>Esc</kbd> close</span>
   <div class="right">
     <span>net <b style="color:var(--green)">+$481/mo</b></span>
-    <span id="footClock">—</span>
+    <span id="footClock">-</span>
   </div>
 </div>
 
@@ -561,7 +561,7 @@ const COMPANIES = [
     costBreak:[['Infra',20,C.blue],['Compute',14,C.violet],['Email',9,C.green],['API',4,C.amber],['Domain',1,C.accent]],
     auto:{make:2,grow:1,run:1}, connected:[['Stripe',1],['Domain',1],['ESP',1],['PH',1],['Ads',0]],
     funnel:{visitors:1200,trials:190,paid:38},
-    build:'Building slice9 "snooze a thread" — doneWhen probe running.',
+    build:'Building slice9 "snooze a thread" - doneWhen probe running.',
     grow:'SPEND gate: $40 PH launch (~120 signups). Newsletter at 1.2k subs.',
     run:'5 open tickets, billing healthy, no refunds this week.',
     note:'best ROI · double-down candidate' },
@@ -580,7 +580,7 @@ const COMPANIES = [
     auto:{make:1,grow:0,run:1}, connected:[['Stripe',1],['Domain',1],['ESP',1]],
     funnel:{visitors:220,trials:24,paid:6},
     build:'slice6 queued "saved chart views".',
-    grow:'1 directory listing, low traffic — needs a distribution push.',
+    grow:'1 directory listing, low traffic - needs a distribution push.',
     run:'1 open ticket. Organic SEO page converts 3.1%.',
     note:'watch · flat 3 months' },
   { id:'translatorbill', name:'TranslatorBill', stage:'PRE-REVENUE', badge:'badge-violet', color:C.violet, health:'pre',
@@ -590,14 +590,14 @@ const COMPANIES = [
     funnel:null,
     build:'Building slice6 "re-format invoice to buyer locale".',
     grow:'Not launched: needs domain + entity/ToS (SIGN gate).',
-    run:'n/a — not live yet.',
+    run:'n/a - not live yet.',
     note:'pre-revenue build' },
   { id:'redditpainbot', name:'RedditPainBot', stage:'PAUSED · BLOCKED', badge:'badge-slate', color:C.slate, health:'bad',
     mrr:[0,0,0,0,0,0], mrrV:0, users:0, uDelta:0, churn:null, cost:4, net:-4,
     costBreak:[['Compute',4,C.slate]],
     auto:{make:0,grow:0,run:0}, connected:[],
     funnel:null,
-    build:'slice8 BLOCKED "dedupe pains" — stuck ×3 → UNBLOCK gate.',
+    build:'slice8 BLOCKED "dedupe pains" - stuck ×3 → UNBLOCK gate.',
     grow:'Never launched.',
     run:'n/a',
     note:'kill candidate' },
@@ -605,10 +605,10 @@ const COMPANIES = [
 const byId = id => COMPANIES.find(c=>c.id===id);
 
 let GATES = [
-  { id:'g1', type:'SHIP', co:'LeadSift', coId:'leadsift', title:'slice5 — "daily digest of top leads"', ev:'doneWhen green · localhost:4019/digest/preview', ok:true, status:'active', amount:null },
+  { id:'g1', type:'SHIP', co:'LeadSift', coId:'leadsift', title:'slice5 - "daily digest of top leads"', ev:'doneWhen green · localhost:4019/digest/preview', ok:true, status:'active', amount:null },
   { id:'g2', type:'SPEND', co:'QuietInbox', coId:'quietinbox', title:'$40 Product Hunt launch', ev:'projected ~120 signups · best-ROI app', ok:false, status:'active', amount:40 },
-  { id:'g3', type:'UNBLOCK', co:'RedditPainBot', coId:'redditpainbot', title:'slice8 "dedupe pains"', ev:'stuck ×3 builds — needs your call', ok:false, status:'active', amount:null },
-  { id:'g4', type:'SIGN', co:'TranslatorBill', coId:'translatorbill', title:'entity + ToS before launch', ev:'blocks GROW — gated to you', ok:false, status:'upcoming', amount:null },
+  { id:'g3', type:'UNBLOCK', co:'RedditPainBot', coId:'redditpainbot', title:'slice8 "dedupe pains"', ev:'stuck ×3 builds - needs your call', ok:false, status:'active', amount:null },
+  { id:'g4', type:'SIGN', co:'TranslatorBill', coId:'translatorbill', title:'entity + ToS before launch', ev:'blocks GROW - gated to you', ok:false, status:'upcoming', amount:null },
   { id:'g5', type:'POST', co:'DataDrop', coId:'datadrop', title:'launch thread r/SaaS', ev:'distribution push for flat MRR', ok:false, status:'upcoming', amount:null },
 ];
 
@@ -629,10 +629,10 @@ const OVERSIGHT = [
 ];
 
 const STRAT = [
-  { ic:'▲', col:C.green, tx:'<b>Double-down QuietInbox</b> — raise GROW autonomy → L2.' },
+  { ic:'▲', col:C.green, tx:'<b>Double-down QuietInbox</b> - raise GROW autonomy → L2.' },
   { ic:'→', col:C.amber, tx:'<b>Push DataDrop distribution</b> or keep watching (flat 3mo).' },
-  { ic:'✕', col:C.red, tx:'<b>Kill RedditPainBot</b> — blocked, never launched.' },
-  { ic:'✦', col:C.violet, tx:'<b>Spin PayoutReconciler</b> — score 82, ready.' },
+  { ic:'✕', col:C.red, tx:'<b>Kill RedditPainBot</b> - blocked, never launched.' },
+  { ic:'✦', col:C.violet, tx:'<b>Spin PayoutReconciler</b> - score 82, ready.' },
 ];
 const OPPS = [
   { nm:'PayoutReconciler', sc:82, col:C.green, m:'ready to spin' },
@@ -869,7 +869,7 @@ function wireGates(){
           el.querySelector('.reject-box input').focus();
         } else if(a==='rejdo'){
           el.classList.add('done','rej'); g.resolved=true;
-          el.querySelector('.gate-resolved').innerHTML='✕ Rejected — feedback sent to agent';
+          el.querySelector('.gate-resolved').innerHTML='✕ Rejected - feedback sent to agent';
           flash(`Rejected with feedback · ${g.co}`); refreshNeed();
         }
       });
@@ -888,7 +888,7 @@ const HEALTH_COL={good:C.green,watch:C.amber,bad:C.red,pre:C.violet};
 function renderHeat(){
   $('#heatStrip').innerHTML=COMPANIES.map(c=>{
     const col=HEALTH_COL[c.health];
-    const churn=c.churn===null?'—':c.churn+'%';
+    const churn=c.churn===null?'-':c.churn+'%';
     const tag=c.health==='good'?'healthy':c.health==='watch'?'watch':c.health==='bad'?'kill?':'pre-rev';
     return `<div class="heat-cell" data-co="${c.id}" style="cursor:pointer;background:linear-gradient(180deg,${hexA(col,.05)},${hexA(col,.0)})">
       <div class="hc-name">${c.name}</div>
@@ -910,7 +910,7 @@ function renderSmall(){
   });
   $('#smGrid').innerHTML=sorted.map(c=>{
     const netCls=c.net>=0?'pos':'neg';
-    const churn=c.churn===null?'—':c.churn+'%';
+    const churn=c.churn===null?'-':c.churn+'%';
     return `<div class="sm" data-co="${c.id}">
       <span class="sm-go">→</span>
       <div class="sm-top"><span class="sm-name">${c.name}</span><span class="badge ${c.badge}">${c.stage.split('·')[1]?c.stage.split('·')[1].trim():c.stage}</span></div>
@@ -940,7 +940,7 @@ function renderOversight(){
   $('#ovBody').innerHTML=OVERSIGHT.map(o=>{
     const tags=o.tags.map(t=>Array.isArray(t)?`<span class="ov-tag ${t[1]}">${t[0]}</span>`:`<span class="ov-tag">${t}</span>`).join('');
     return `<div class="ov-row"><span class="ov-co">${o.co}</span><div class="ov-tags">${tags}</div></div>`;
-  }).join('')+`<div class="ov-foot">GROW / RUN real-world actions are reversible — undo any from the company panel.</div>`;
+  }).join('')+`<div class="ov-foot">GROW / RUN real-world actions are reversible - undo any from the company panel.</div>`;
 }
 function renderStrategy(){
   let html=STRAT.map(s=>`<div class="strat-row"><span class="strat-ic" style="background:${hexA(s.col,.13)};color:${s.col}">${s.ic}</span><span class="strat-tx">${s.tx}</span></div>`).join('');
@@ -953,7 +953,7 @@ function renderStrategy(){
 /* ---------------- drill panel ---------------- */
 function openDrill(id){
   const c=byId(id); if(!c) return;
-  const churn=c.churn===null?'—':c.churn+'%';
+  const churn=c.churn===null?'-':c.churn+'%';
   const costTot=c.costBreak.reduce((s,x)=>s+x[1],0);
   const cbMax=Math.max(...c.costBreak.map(x=>x[1]));
   const costBars=c.costBreak.map(x=>`<div class="cb-row"><span class="cb-l">${x[0]}</span><div class="cb-track"><i style="width:${(x[1]/cbMax*100).toFixed(0)}%;background:${x[2]}"></i></div><span class="cb-v">$${x[1]}</span></div>`).join('');

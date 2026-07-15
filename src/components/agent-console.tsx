@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CompanyLogo } from "~/components/company-logo";
+import type { Branding } from "~/config/spin";
 import { cn } from "~/lib/utils";
 import type { ConsoleLine, ConsolePaneState } from "~/server/console";
 import { getConsoleDigest } from "~/server/console";
@@ -30,6 +32,7 @@ type PaneMeta = {
     slug: string;
     name: string;
     tone: Tone;
+    branding?: Branding;
     state: ConsolePaneState;
     active: boolean;
 };
@@ -48,15 +51,6 @@ const STATE_LABEL: Record<ConsolePaneState, string> = {
     shipped: "live",
     blocked: "blocked",
     todo: "queued",
-};
-// Avatar tone → its status-token background.
-const TONE_BG: Record<Tone, string> = {
-    green: "bg-success",
-    blue: "bg-info",
-    violet: "bg-approval",
-    slate: "bg-neutral",
-    amber: "bg-warning",
-    red: "bg-destructive",
 };
 // Log-line kind → the message color (timestamp stays faint).
 const KIND_TEXT: Partial<Record<ConsoleLine["kind"], string>> = {
@@ -81,12 +75,6 @@ function hms(t: number): string {
     const d = new Date(t);
     const p = (n: number) => String(n).padStart(2, "0");
     return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-}
-
-function initials(name: string): string {
-    const caps = name.match(/[A-Z]/g);
-    if (caps && caps.length >= 2) return caps.slice(0, 2).join("");
-    return name.slice(0, 2).toUpperCase();
 }
 
 export function AgentConsole() {
@@ -190,10 +178,11 @@ export function AgentConsole() {
                     const resp = await getConsoleDigest({ data: { cursors: cursorsRef.current } });
                     if (stopped) return;
                     setPanes(
-                        resp.panes.map(({ slug, name, tone, state, active }) => ({
+                        resp.panes.map(({ slug, name, tone, branding, state, active }) => ({
                             slug,
                             name,
                             tone,
+                            branding,
                             state,
                             active,
                         })),
@@ -307,14 +296,12 @@ export function AgentConsole() {
                             key={p.slug}
                         >
                             <div className="flex flex-none items-center gap-2 border-b border-border px-3 py-[9px]">
-                                <span
-                                    className={cn(
-                                        "grid size-[22px] flex-none place-items-center rounded-md text-[10px] font-bold text-primary-foreground",
-                                        TONE_BG[p.tone],
-                                    )}
-                                >
-                                    {initials(p.name)}
-                                </span>
+                                <CompanyLogo
+                                    name={p.name}
+                                    branding={p.branding}
+                                    size={22}
+                                    radius={6}
+                                />
                                 <span className="overflow-hidden text-ellipsis whitespace-nowrap text-[12.5px] font-semibold text-foreground">
                                     {p.name}
                                 </span>

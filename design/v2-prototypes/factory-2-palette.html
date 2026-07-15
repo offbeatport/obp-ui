@@ -447,9 +447,9 @@ var COMPANIES = [
     progress:{ pct:100, tone:"good", label:"12 / 10 paying · 0% churn" },
     spend:28, revenue:180, users:"12 paying", signal:"STRONG", status:"Needs approval",
     plan:"Shipping the Daily digest, then watching activation to make sure new users stick.",
-    nextAction:"Approve — ship Daily digest to all 12 users",
+    nextAction:"Approve - ship Daily digest to all 12 users",
     recent:["scored 41 leads overnight","Daily digest passed its check","+2 signups from the embed"],
-    risk:"Single acquisition channel — all growth is coming from one embed.",
+    risk:"Single acquisition channel - all growth is coming from one embed.",
     recommendation:"CONTINUE"
   },
   {
@@ -461,7 +461,7 @@ var COMPANIES = [
     plan:"Running the private beta and measuring week-2 retention before opening it wider.",
     nextAction:"Interview 3 churned beta users",
     recent:["auto-drafted 30 replies","2 new beta signups"],
-    risk:"Retention is still unproven — nobody has hit week 2 yet.",
+    risk:"Retention is still unproven - nobody has hit week 2 yet.",
     recommendation:"CONTINUE"
   },
   {
@@ -473,7 +473,7 @@ var COMPANIES = [
     plan:"Building the CSV cleaner and the auto-dashboard so the first 5 waitlisters can try it.",
     nextAction:"Finish the cleaner, invite the first 5",
     recent:["scaffolded intake API","deployed to staging"],
-    risk:"No traction yet — it's all promise until the skeleton ships.",
+    risk:"No traction yet - it's all promise until the skeleton ships.",
     recommendation:"CONTINUE"
   },
   {
@@ -483,40 +483,40 @@ var COMPANIES = [
     progress:{ pct:0, tone:"none", label:"0 / 15 interviews" },
     spend:0, revenue:0, users:"0", signal:"NONE", status:"Needs approval",
     plan:"Validate the pain with real interviews before committing a single line of code.",
-    nextAction:"Approve — start the 15-interview validation sprint",
+    nextAction:"Approve - start the 15-interview validation sprint",
     recent:["idea drafted","competitor list assembled"],
-    risk:"Might be a vitamin, not a painkiller — willingness-to-pay is unknown.",
+    risk:"Might be a vitamin, not a painkiller - willingness-to-pay is unknown.",
     recommendation:"CONTINUE"
   },
   {
     id:"translatorbill", name:"TranslatorBill", stage:"ejected",
-    desc:"Auto-translates & reformats cross-border invoices — ejected into its own standalone company.",
-    goal:"HIT — 20 paying at $15/mo → ejected",
+    desc:"Auto-translates & reformats cross-border invoices - ejected into its own standalone company.",
+    goal:"HIT - 20 paying at $15/mo → ejected",
     progress:{ pct:100, tone:"good", label:"Goal hit · graduated to standalone" },
     spend:0, revenue:320, users:"22 paying", signal:"STRONG", status:"Graduated",
-    plan:"Handed off — now running as its own company.",
-    nextAction:"—",
+    plan:"Handed off - now running as its own company.",
+    nextAction:"-",
     recent:["hit 20 paying users","incorporated + handed off","final MRR $320 recorded"],
-    risk:"None — graduated cleanly.",
+    risk:"None - graduated cleanly.",
     recommendation:"EJECT"
   },
   {
     id:"redditpainbot", name:"RedditPainBot", stage:"killed",
-    desc:"Mined Reddit for recurring product pains — killed on weak willingness-to-pay.",
-    goal:"MISSED — nobody would pay, killed after 3 weeks",
+    desc:"Mined Reddit for recurring product pains - killed on weak willingness-to-pay.",
+    goal:"MISSED - nobody would pay, killed after 3 weeks",
     progress:{ pct:8, tone:"dead", label:"Missed · stopped in week 3" },
     spend:0, revenue:0, users:"0", signal:"WEAK", status:"Stopped",
     plan:"Post-mortem written and archived.",
-    nextAction:"—",
+    nextAction:"-",
     recent:["3 weeks of interviews","willingness-to-pay: near zero","post-mortem written"],
-    risk:"Weak willingness-to-pay — the fatal one.",
+    risk:"Weak willingness-to-pay - the fatal one.",
     recommendation:"KILL"
   }
 ];
 
 var DECISIONS = [
   { id:"leadsift-digest", company:"leadsift", title:"Ship Daily digest", sub:"LeadSift · to all 12 users",
-    detail:"One email endpoint. Fully reversible — you can pull it back within 24h." },
+    detail:"One email endpoint. Fully reversible - you can pull it back within 24h." },
   { id:"pricepeek-sprint", company:"pricepeek", title:"Approve validation sprint", sub:"PricePeek · no spend",
     detail:"Start the 15-interview validation sprint. Zero spend, just the AI's time." },
   { id:"quietinbox-ph", company:"quietinbox", title:"$40 Product Hunt launch", sub:"QuietInbox · $40 spend",
@@ -582,7 +582,7 @@ function renderHome(){
   '<section class="home">'+
     '<div class="home-eyebrow eyebrow">AI-operated startup factory</div>'+
     '<h1>A calm room where the AI runs the <em>bets</em>.</h1>'+
-    '<p class="home-sub">Six tiny companies, each validating on its own. You approve only the few calls that matter — start typing to steer.</p>'+
+    '<p class="home-sub">Six tiny companies, each validating on its own. You approve only the few calls that matter - start typing to steer.</p>'+
     '<div class="pulse">'+
       '<span class="seg"><b>6</b> bets</span>'+
       '<span class="seg"><b>'+money(t.spend)+'</b>/mo out</span>'+
@@ -698,9 +698,9 @@ function tabOverview(c){
 
   var footer;
   if(c.stage==="ejected"){
-    footer = '<div class="done-note done-ejected">✓ Graduated — TranslatorBill is running as its own standalone company.</div>';
+    footer = '<div class="done-note done-ejected">✓ Graduated - TranslatorBill is running as its own standalone company.</div>';
   } else if(c.stage==="killed"){
-    footer = '<div class="done-note done-killed">■ Stopped in week 3 — post-mortem written and archived.</div>';
+    footer = '<div class="done-note done-killed">■ Stopped in week 3 - post-mortem written and archived.</div>';
   } else {
     footer =
       '<div class="rec-footer">'+
@@ -780,7 +780,7 @@ function tabBudget(c){
   return '<div class="doc">'+
     '<h4>Monthly picture</h4>'+
     '<p>Spend <span class="kv">'+money(c.spend)+'/mo</span> · Revenue <span class="kv">'+money(c.revenue)+'/mo</span> · Net <span class="kv">'+(net>=0?"+":"")+money(net)+'/mo</span></p>'+
-    '<h4>Runway note</h4><p>'+(c.spend===0 ? "No active spend — this bet costs nothing to keep watching." : "Burning "+money(c.spend)+"/mo. "+(net>=0?"Already net-positive.":"Not yet covering its own cost; that's expected this early."))+'</p>'+
+    '<h4>Runway note</h4><p>'+(c.spend===0 ? "No active spend - this bet costs nothing to keep watching." : "Burning "+money(c.spend)+"/mo. "+(net>=0?"Already net-positive.":"Not yet covering its own cost; that's expected this early."))+'</p>'+
   '</div>';
 }
 
@@ -790,7 +790,7 @@ function renderNeeds(){
     return ''+
     '<div class="crumbs"><button data-act="home">Home</button> / <span>Needs you</span></div>'+
     '<div class="view-head"><div><h2>Needs you</h2><p>The only decisions the AI can\'t make alone.</p></div></div>'+
-    '<div class="need-empty"><div class="big">✓</div>All clear. Nothing needs you right now — the AI is running the rest.</div>';
+    '<div class="need-empty"><div class="big">✓</div>All clear. Nothing needs you right now - the AI is running the rest.</div>';
   }
   var cards = "";
   for(var i=0;i<state.decisions.length;i++){
@@ -810,7 +810,7 @@ function renderNeeds(){
   }
   return ''+
   '<div class="crumbs"><button data-act="home">Home</button> / <span>Needs you</span></div>'+
-  '<div class="view-head"><div><h2>Needs you</h2><p>Resolve one inline — Approve, hold, or kill. The AI handles everything else.</p></div></div>'+
+  '<div class="view-head"><div><h2>Needs you</h2><p>Resolve one inline - Approve, hold, or kill. The AI handles everything else.</p></div></div>'+
   '<div class="needs-list">'+cards+'</div>';
 }
 
@@ -830,14 +830,14 @@ function approveDecision(id){
   if(!d) return;
   var msg = d.title;
   resolveWithAnim(id, function(){
-    toast("Approved — "+msg+". Reversible for 24h.");
+    toast("Approved - "+msg+". Reversible for 24h.");
     render();
   });
 }
 function holdDecision(id){
   var d=null; for(var i=0;i<state.decisions.length;i++){ if(state.decisions[i].id===id) d=state.decisions[i]; }
   if(!d) return;
-  resolveWithAnim(id, function(){ toast("Held — the AI will hold off and re-surface this later."); render(); });
+  resolveWithAnim(id, function(){ toast("Held - the AI will hold off and re-surface this later."); render(); });
 }
 function killFromDecision(id){
   var d=null; for(var i=0;i<state.decisions.length;i++){ if(state.decisions[i].id===id) d=state.decisions[i]; }
@@ -890,7 +890,7 @@ function buildCommands(){
   /* Needs you */
   for(i=0;i<state.decisions.length;i++){
     (function(d){
-      cmds.push({ group:"Needs you", icon:"!", kind:"decision", label:"Approve — "+d.title, sub:d.sub,
+      cmds.push({ group:"Needs you", icon:"!", kind:"decision", label:"Approve - "+d.title, sub:d.sub,
         keywords:"approve "+byId(d.company).name+" "+d.title,
         run:function(){ approveDecision(d.id); } });
     })(state.decisions[i]);
@@ -905,7 +905,7 @@ function buildCommands(){
   }
   /* Actions */
   cmds.push({ group:"Actions", icon:"✦", label:"New bet", sub:"Draft a new company idea",
-    keywords:"new bet create idea start company", run:function(){ toast("New bet drafted — the AI is sketching the foundation (demo)."); } });
+    keywords:"new bet create idea start company", run:function(){ toast("New bet drafted - the AI is sketching the foundation (demo)."); } });
   cmds.push({ group:"Actions", icon:"▦", label:"Browse bets", sub:"See all 6 in the portfolio",
     keywords:"browse portfolio list all bets", run:function(){ go("browse"); } });
   cmds.push({ group:"Actions", icon:"!", label:"Needs you", sub:state.decisions.length+" decisions pending",

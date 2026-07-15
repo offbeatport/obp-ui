@@ -462,11 +462,11 @@
     </div>
     <div class="top-spacer"></div>
     <div class="seg" role="group" aria-label="Board zoom level">
-      <button id="zoomIn" data-z="in" aria-pressed="true" title="Zoomed in — full stations">
+      <button id="zoomIn" data-z="in" aria-pressed="true" title="Zoomed in - full stations">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.5-3.5M11 8v6M8 11h6"/></svg>
         Detail
       </button>
-      <button id="zoomOut" data-z="out" aria-pressed="false" title="Zoomed out — all boards, compact">
+      <button id="zoomOut" data-z="out" aria-pressed="false" title="Zoomed out - all boards, compact">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         Overview
       </button>
@@ -497,7 +497,7 @@
   </main>
 
   <footer>
-    <span>C Slop Slop · <b>tycoon stations</b> — the AI builds, grows &amp; runs; you oversee</span>
+    <span>C Slop Slop · <b>tycoon stations</b> - the AI builds, grows &amp; runs; you oversee</span>
     <span>stage = where it is · stations = what it's doing</span>
   </footer>
 
@@ -539,7 +539,7 @@
     {
       name: 'LeadSift', stage: 'Growing',
       build: { s: 'active', a: 'L1', task: 'CSV export', feed: ['wrote the exporter', 'ran tests ✓', 'deployed to staging'] },
-      grow:  { s: 'needs',  a: 'L0', gate: 'SPEND', task: 'Product Hunt launch — $40 gated', feed: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
+      grow:  { s: 'needs',  a: 'L0', gate: 'SPEND', task: 'Product Hunt launch - $40 gated', feed: ['drafted the PH post', 'wrote an SEO article', '$40 spend awaiting you'] },
       run:   { s: 'active', a: 'L1', task: 'onboarding + support', feed: ['sent 3 onboarding emails', 'answered a ticket'] }
     },
     {
@@ -552,25 +552,25 @@
       name: 'DataDrop', stage: 'Testing',
       build: { s: 'active', a: 'L1', task: 'Saved chart views', feed: ['re-prioritized backlog', 'cleaning CSV parser'] },
       grow:  { s: 'needs',  a: 'L0', gate: 'POST', task: 'r/SaaS launch thread', feed: ['drafted the thread + 3 replies', 'awaiting your post'] },
-      run:   { s: 'idle',   a: 'L1', task: 'quiet — 1 open ticket', feed: ['checked uptime · 200 OK'] }
+      run:   { s: 'idle',   a: 'L1', task: 'quiet - 1 open ticket', feed: ['checked uptime · 200 OK'] }
     },
     {
       name: 'TranslatorBill', stage: 'Building',
       build: { s: 'active', a: 'L1', task: 'InvoiceFormatter.tsx', feed: ['translating a sample invoice', 'ran tests · green'] },
-      grow:  { s: 'off', a: 'off', task: 'blocked — no domain', feed: [] },
+      grow:  { s: 'off', a: 'off', task: 'blocked - no domain', feed: [] },
       run:   { s: 'off', a: 'off', task: 'pre-revenue', feed: [] }
     },
     {
       name: 'PricePeek', stage: 'Idea',
-      build: { s: 'idle', a: 'L0', task: 'validating — 15 interviews', feed: ['drafted interview script', 'listed 15 targets'] },
-      grow:  { s: 'off', a: 'off', task: '—', feed: [] },
-      run:   { s: 'off', a: 'off', task: '—', feed: [] }
+      build: { s: 'idle', a: 'L0', task: 'validating - 15 interviews', feed: ['drafted interview script', 'listed 15 targets'] },
+      grow:  { s: 'off', a: 'off', task: '-', feed: [] },
+      run:   { s: 'off', a: 'off', task: '-', feed: [] }
     },
     {
       name: 'RedditPainBot', stage: 'Killed', killedNote: 'loop stopped · post-mortem filed',
-      build: { s: 'off', a: 'off', task: '—', feed: [] },
-      grow:  { s: 'off', a: 'off', task: '—', feed: [] },
-      run:   { s: 'off', a: 'off', task: '—', feed: [] }
+      build: { s: 'off', a: 'off', task: '-', feed: [] },
+      grow:  { s: 'off', a: 'off', task: '-', feed: [] },
+      run:   { s: 'off', a: 'off', task: '-', feed: [] }
     }
   ];
 
@@ -581,14 +581,14 @@
   }
 
   var AUTO_TIP = {
-    L0: 'Autonomy L0 — you approve every action',
-    L1: 'Autonomy L1 — auto within limits, gates the risky calls',
-    L2: 'Autonomy L2 — fully autonomous here',
+    L0: 'Autonomy L0 - you approve every action',
+    L1: 'Autonomy L1 - auto within limits, gates the risky calls',
+    L2: 'Autonomy L2 - fully autonomous here',
     off: 'Station off'
   };
 
   function pipHTML(a) {
-    var lbl = a === 'off' ? '—' : a;
+    var lbl = a === 'off' ? '-' : a;
     return '<span class="pip' + (a === 'off' ? ' pip-off' : '') + '" title="' + esc(AUTO_TIP[a] || '') + '">' + esc(lbl) + '</span>';
   }
 

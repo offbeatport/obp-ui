@@ -2,7 +2,7 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "~/components/app-shell";
 import { SettingsTabs } from "~/components/settings-tabs";
 
-// Layout for /settings/* — shell + sub-tabs + <Outlet/>. Reached via the rail user menu.
+// Layout for /settings/* - shell + sub-tabs + <Outlet/>. Reached via the rail user menu.
 export const Route = createFileRoute("/settings")({
     component: SettingsLayout,
 });

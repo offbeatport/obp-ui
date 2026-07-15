@@ -531,7 +531,7 @@
               <span class="cpill"><span class="ck">✓</span> Domain</span>
               <span class="cpill"><span class="ck">✓</span> Email</span>
               <span class="cpill"><span class="ck">✓</span> Product Hunt</span>
-              <span class="cpill missing" onclick="connectX()"><span class="ck">✗</span> Connect X — needed for posts</span>
+              <span class="cpill missing" onclick="connectX()"><span class="ck">✗</span> Connect X - needed for posts</span>
             </div>
           </div>
         </div>
@@ -547,7 +547,7 @@
         <div class="callout" id="coActive">
           <div class="co-tag"><span class="pulse"></span> Needs your approval</div>
           <div class="co-q">Ship “Daily digest of top leads”?</div>
-          <div class="co-sub">Feature 5 is built, deployed to staging, and its automated check passed. The preview is live — one look and it can go to production.</div>
+          <div class="co-sub">Feature 5 is built, deployed to staging, and its automated check passed. The preview is live - one look and it can go to production.</div>
           <div class="co-evidence">
             <span class="ok">✓ doneWhen green</span><span class="edot">·</span>
             <span class="ok">✓ staging check passed</span><span class="edot">·</span>
@@ -600,23 +600,23 @@
         <div class="callout done" id="coDone" hidden>
           <div class="co-tag">✓ Shipped to production</div>
           <div class="co-q">Daily digest of top leads is live.</div>
-          <div class="co-done-sub">First run goes out tonight at <em>8:00am local</em> to all 12 users. Deploy is green — no action needed. That's feature 5 of your build queue.</div>
-          <button class="undo" onclick="resetDecision()">Undo — put it back for review</button>
+          <div class="co-done-sub">First run goes out tonight at <em>8:00am local</em> to all 12 users. Deploy is green - no action needed. That's feature 5 of your build queue.</div>
+          <button class="undo" onclick="resetDecision()">Undo - put it back for review</button>
         </div>
 
         <!-- held confirmation -->
         <div class="callout held" id="coHeld" hidden>
-          <div class="co-tag">◷ On hold — feedback sent</div>
+          <div class="co-tag">◷ On hold - feedback sent</div>
           <div class="co-q">Held for revision.</div>
-          <div class="co-done-sub">Your note went to the build agent: <em id="heldNote">—</em> It'll revise the digest and re-request your approval.</div>
-          <button class="undo" onclick="resetDecision()">Undo — approve as-is instead</button>
+          <div class="co-done-sub">Your note went to the build agent: <em id="heldNote">-</em> It'll revise the digest and re-request your approval.</div>
+          <button class="undo" onclick="resetDecision()">Undo - approve as-is instead</button>
         </div>
 
         <!-- other build lines -->
         <div class="statlines">
           <div class="statline">
             <span class="sl-badge b-stuck">stuck</span>
-            <span class="sl-text">Feature 8 <span class="q">“Inbound webhook”</span> — failed 3 tries</span>
+            <span class="sl-text">Feature 8 <span class="q">“Inbound webhook”</span> - failed 3 tries</span>
             <span class="sl-meta">agent retrying</span>
           </div>
           <div class="statline">
@@ -632,7 +632,7 @@
       <!-- growth -->
       <section class="section">
         <div class="h-sec"><span class="kick">Operate · grow</span> Growth</div>
-        <p class="body-p">Reached its first users through a <b>Product Hunt launch</b> three weeks ago, now compounding on search. The funnel is efficient — nearly one in five visitors ends up paying.</p>
+        <p class="body-p">Reached its first users through a <b>Product Hunt launch</b> three weeks ago, now compounding on search. The funnel is efficient - nearly one in five visitors ends up paying.</p>
         <div class="facts">
           <div class="fact">
             <div class="fk">Product Hunt</div>
@@ -745,7 +745,7 @@
             <span class="atime">3h</span>
           </div>
         </div>
-        <div class="footer-note">End of page · LeadSift runs itself — you just make the calls.</div>
+        <div class="footer-note">End of page · LeadSift runs itself - you just make the calls.</div>
       </section>
 
     </main>
@@ -814,15 +814,15 @@
     active.setAttribute('hidden','');
     heldEl.setAttribute('hidden','');
     doneEl.removeAttribute('hidden');
-    toast('Shipped — daily digest is live');
+    toast('Shipped - daily digest is live');
   }
   function sendReject(){
     var v=document.getElementById('rejectText').value.trim();
-    document.getElementById('heldNote').textContent = v ? '“'+v+'”' : '“(no note — hold and revisit)”';
+    document.getElementById('heldNote').textContent = v ? '“'+v+'”' : '“(no note - hold and revisit)”';
     active.setAttribute('hidden','');
     doneEl.setAttribute('hidden','');
     heldEl.removeAttribute('hidden');
-    toast('Held — feedback sent to the agent', false);
+    toast('Held - feedback sent to the agent', false);
   }
   function resetDecision(){
     doneEl.setAttribute('hidden','');

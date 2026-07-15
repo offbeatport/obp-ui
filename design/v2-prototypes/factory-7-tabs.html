@@ -562,7 +562,7 @@ body {
 .prose p { margin-bottom: 13px; }
 .prose ul { margin: 0 0 14px 0; padding-left: 4px; list-style: none; }
 .prose ul li { position: relative; padding-left: 20px; margin-bottom: 7px; }
-.prose ul li::before { content: '—'; position: absolute; left: 0; color: var(--accent); }
+.prose ul li::before { content: '-'; position: absolute; left: 0; color: var(--accent); }
 .prose .kv { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink-soft); }
 .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 6px 0 20px; }
 .doc-kpi { border: 1px solid var(--line); border-radius: 11px; padding: 13px 15px; background: var(--cream-2); }
@@ -690,21 +690,21 @@ const COMPANIES = [
     goalProgress: 1.2, progressVal: '12 / 10 paying', progressNote: '120% of goal · 0% churn so far',
     spend: 28, revenue: 180, users: '12', usersLbl: 'paying users', net: 152,
     signal: 'STRONG', status: 'Needs approval',
-    plan: 'Shipping the <b>Daily digest</b> and watching activation — the last blocker before a paid tier.',
-    nba: 'Approve — ship Daily digest to all 12 users.',
+    plan: 'Shipping the <b>Daily digest</b> and watching activation - the last blocker before a paid tier.',
+    nba: 'Approve - ship Daily digest to all 12 users.',
     recent: [
       { t: 'Scored 41 new leads overnight', time: '2h' },
       { t: 'Daily digest passed its QA check', time: '5h' },
       { t: '+2 signups from the embed widget', time: '1d' }
     ],
-    risk: 'Single acquisition channel — nearly all signups come from the embed widget.',
-    approval: { title: 'Ship the Daily digest to all 12 users', detail: 'Enables one email endpoint that sends each user their morning lead scores. Fully reversible — you can turn it off in one click and no data is deleted.' },
-    rec: 'CONTINUE', recNote: 'Beat its goal with zero churn. Momentum is real — feed the channel, then price it.',
+    risk: 'Single acquisition channel - nearly all signups come from the embed widget.',
+    approval: { title: 'Ship the Daily digest to all 12 users', detail: 'Enables one email endpoint that sends each user their morning lead scores. Fully reversible - you can turn it off in one click and no data is deleted.' },
+    rec: 'CONTINUE', recNote: 'Beat its goal with zero churn. Momentum is real - feed the channel, then price it.',
     docs: {
       foundation: [
         { h: 'Thesis', p: 'Sales teams waste the first hour of every day guessing which fresh leads are worth a call. LeadSift scores them the moment they arrive so reps work top-down.' },
         { h: 'Who it is for', p: 'Small B2B sales teams (2–10 reps) drowning in webform submissions from ads and content.' },
-        { h: 'Moat', p: 'A tuned scoring model on the operator\'s own closed-won history — it gets sharper the more they use it.' }
+        { h: 'Moat', p: 'A tuned scoring model on the operator\'s own closed-won history - it gets sharper the more they use it.' }
       ],
       product: [
         { h: 'What ships today', p: 'Embed widget captures the lead, a scoring model returns 0–100 with a one-line reason, and a dashboard sorts the queue hot-to-cold.' },
@@ -725,18 +725,18 @@ const COMPANIES = [
     goalProgress: 0.3, progressVal: '6 / 20 beta', progressNote: 'Retention & willingness-to-pay still unproven',
     spend: 22, revenue: 40, users: '6', usersLbl: 'beta users', net: 18,
     signal: 'PROMISING', status: 'On track',
-    plan: 'Running the private beta and measuring <b>week-2 retention</b> — the metric that decides if this is real.',
+    plan: 'Running the private beta and measuring <b>week-2 retention</b> - the metric that decides if this is real.',
     nba: 'Interview 3 churned beta users to learn what broke trust.',
     recent: [
       { t: 'Auto-drafted 30 replies this week', time: '4h' },
       { t: '2 new beta signups', time: '1d' }
     ],
-    risk: 'Retention is unproven — drafting is fun to try but users may not come back weekly.',
+    risk: 'Retention is unproven - drafting is fun to try but users may not come back weekly.',
     approval: { title: 'Approve $40 Product Hunt launch spend', detail: 'Funds a small featured-launch push to bring 15–25 fresh beta users in one day, so retention can be measured on a real cohort. One-time spend, capped at $40.' },
     rec: 'CONTINUE', recNote: 'Early love is visible but thin. Buy a real cohort, then let retention make the call.',
     docs: {
       foundation: [
-        { h: 'Thesis', p: 'Inbox overwhelm is universal, but full automation scares people. QuietInbox drafts the reply and keeps the human in the approve loop — trust first, autonomy later.' },
+        { h: 'Thesis', p: 'Inbox overwhelm is universal, but full automation scares people. QuietInbox drafts the reply and keeps the human in the approve loop - trust first, autonomy later.' },
         { h: 'Who it is for', p: 'Founders and operators who live in email and answer the same 20 questions all day.' },
         { h: 'Open question', p: 'Does draft-and-approve save enough time to become a daily habit? The beta exists to answer exactly this.' }
       ],
@@ -746,7 +746,7 @@ const COMPANIES = [
       ],
       growth: [
         { k: 'Channel', v: 'Founder communities + planned Product Hunt launch' },
-        { k: 'Week-2 retention', v: 'Too early — needs a bigger cohort' },
+        { k: 'Week-2 retention', v: 'Too early - needs a bigger cohort' },
         { k: 'Would-pay signal', v: '2 of 6 unprompted asked about pricing' }
       ],
       budget: { spend: '$22/mo', rev: '$40/mo', net: '+$18/mo', runway: 'Break-even', note: 'Revenue from 2 early supporters prepaying. $40 PH spend pending approval is separate one-time.' }
@@ -765,12 +765,12 @@ const COMPANIES = [
       { t: 'Scaffolded the intake API', time: '6h' },
       { t: 'Deployed to staging', time: '1d' }
     ],
-    risk: 'No traction yet — a 40-person waitlist is interest, not proof anyone will use it.',
+    risk: 'No traction yet - a 40-person waitlist is interest, not proof anyone will use it.',
     approval: null,
     rec: 'CONTINUE', recNote: 'Pre-traction and cheap. Right move is to ship the skeleton and let the first 5 users react.',
     docs: {
       foundation: [
-        { h: 'Thesis', p: 'Non-technical people get a messy CSV and freeze. DataDrop takes the file, cleans the obvious problems, and hands back a shareable dashboard — no spreadsheet skills required.' },
+        { h: 'Thesis', p: 'Non-technical people get a messy CSV and freeze. DataDrop takes the file, cleans the obvious problems, and hands back a shareable dashboard - no spreadsheet skills required.' },
         { h: 'Who it is for', p: 'Ops and marketing people at small companies who export CSVs and need a chart to send upward, today.' },
         { h: 'Riskiest assumption', p: 'That auto-cleaning is trustworthy enough that people paste in real data. The skeleton exists to test this.' }
       ],
@@ -793,14 +793,14 @@ const COMPANIES = [
     goalProgress: 0, progressVal: '0 / 15 interviews', progressNote: 'Validation sprint not yet started',
     spend: 0, revenue: 0, users: '0', usersLbl: 'users', net: 0,
     signal: 'NONE', status: 'Needs approval',
-    plan: 'Validate that the pain is real and sharp <b>before building anything</b> — 15 structured interviews first.',
-    nba: 'Approve — start the 15-interview validation sprint.',
+    plan: 'Validate that the pain is real and sharp <b>before building anything</b> - 15 structured interviews first.',
+    nba: 'Approve - start the 15-interview validation sprint.',
     recent: [
       { t: 'Idea logged and framed', time: '1d' },
       { t: 'Interview script drafted', time: '1d' }
     ],
-    risk: 'Might be a vitamin, not a painkiller — people say they want price tracking but rarely act on it.',
-    approval: { title: 'Approve the 15-interview validation sprint', detail: 'The AI will source and run 15 problem interviews with target buyers and report whether the pain is real, frequent, and paid-for. No spend, no code — pure validation before commitment.' },
+    risk: 'Might be a vitamin, not a painkiller - people say they want price tracking but rarely act on it.',
+    approval: { title: 'Approve the 15-interview validation sprint', detail: 'The AI will source and run 15 problem interviews with target buyers and report whether the pain is real, frequent, and paid-for. No spend, no code - pure validation before commitment.' },
     rec: 'CONTINUE', recNote: 'Cheap to validate, easy to kill. Approve the sprint; if interviews are weak, kill it fast.',
     docs: {
       foundation: [
@@ -822,24 +822,24 @@ const COMPANIES = [
   },
   {
     id: 'translatorbill', name: 'TranslatorBill', stage: 'Ejected', dead: true,
-    desc: 'Auto-translates & reformats cross-border invoices — ejected into its own standalone company.',
-    goal: '<b>HIT</b> — 20 paying at $15/mo, which triggered the eject.',
+    desc: 'Auto-translates & reformats cross-border invoices - ejected into its own standalone company.',
+    goal: '<b>HIT</b> - 20 paying at $15/mo, which triggered the eject.',
     goalProgress: 1.1, progressVal: '22 / 20 paying', progressNote: 'Goal cleared → graduated to standalone',
     spend: 0, revenue: 320, users: '22', usersLbl: 'paying users', net: 320,
     signal: 'STRONG', status: 'Graduated',
-    plan: 'Handed off to its own company — the factory no longer operates it day to day.',
-    nba: 'None — this bet has graduated.',
+    plan: 'Handed off to its own company - the factory no longer operates it day to day.',
+    nba: 'None - this bet has graduated.',
     recent: [
       { t: 'Crossed 20 paying users', time: '2w' },
       { t: 'Eject approved & executed', time: '9d' },
       { t: 'Handoff docs transferred', time: '8d' }
     ],
-    risk: 'None to the portfolio — it now stands on its own P&L.',
+    risk: 'None to the portfolio - it now stands on its own P&L.',
     approval: null,
     rec: 'EJECT', recNote: 'Did exactly what a bet should: found a real, paid, repeatable need and outgrew the factory.',
     docs: {
       foundation: [
-        { h: 'Thesis', p: 'Cross-border invoices arrive in the wrong language and the wrong format. TranslatorBill normalized both automatically — a boring, painful, recurring job people gladly paid to erase.' },
+        { h: 'Thesis', p: 'Cross-border invoices arrive in the wrong language and the wrong format. TranslatorBill normalized both automatically - a boring, painful, recurring job people gladly paid to erase.' },
         { h: 'Why it graduated', p: 'Hit 20 paying users with strong retention and a clear expansion path. At that point it deserved dedicated ownership, not portfolio time.' }
       ],
       product: [
@@ -849,32 +849,32 @@ const COMPANIES = [
       growth: [
         { k: 'Peak MRR', v: '$320/mo (last recorded in-factory)' },
         { k: 'Paying users', v: '22 at eject' },
-        { k: 'Outcome', v: 'Graduated — standalone company' }
+        { k: 'Outcome', v: 'Graduated - standalone company' }
       ],
       budget: { spend: '$0 (now standalone)', rev: '$320/mo (last recorded)', net: 'Off portfolio', runway: 'Independent', note: 'No longer draws from or contributes to the factory\'s active totals.' }
     }
   },
   {
     id: 'redditpainbot', name: 'RedditPainBot', stage: 'Killed', dead: true,
-    desc: 'Mined Reddit for recurring product pains — killed on weak willingness-to-pay.',
-    goal: '<b>MISSED</b> — nobody would pay. Killed after 3 weeks.',
+    desc: 'Mined Reddit for recurring product pains - killed on weak willingness-to-pay.',
+    goal: '<b>MISSED</b> - nobody would pay. Killed after 3 weeks.',
     goalProgress: 0.1, progressVal: 'Goal missed', progressNote: 'Willingness-to-pay never materialized',
     spend: 0, revenue: 0, users: '0', usersLbl: 'paying users', net: 0,
     signal: 'WEAK', status: 'Stopped',
-    plan: 'Post-mortem written and filed — the lesson is kept, the spend stopped.',
-    nba: 'None — this bet is closed.',
+    plan: 'Post-mortem written and filed - the lesson is kept, the spend stopped.',
+    nba: 'None - this bet is closed.',
     recent: [
       { t: 'Interviews showed weak intent', time: '3w' },
       { t: 'Kill decision approved', time: '18d' },
       { t: 'Post-mortem written', time: '17d' }
     ],
-    risk: 'Retired risk — stopped before it could cost more than a few weeks.',
+    risk: 'Retired risk - stopped before it could cost more than a few weeks.',
     approval: null,
     rec: 'KILL', recNote: 'Correct call. People loved the demo, but insight ≠ willingness to pay. Killed cheaply, lesson banked.',
     docs: {
       foundation: [
         { h: 'Thesis', p: 'Reddit is full of people describing product pain in their own words. RedditPainBot mined it into a ranked feed of opportunities.' },
-        { h: 'Why it died', p: 'The output was genuinely interesting — and that was the trap. "Interesting" is not "I will pay monthly." Willingness-to-pay tested weak across the board.' }
+        { h: 'Why it died', p: 'The output was genuinely interesting - and that was the trap. "Interesting" is not "I will pay monthly." Willingness-to-pay tested weak across the board.' }
       ],
       product: [
         { h: 'What it did', p: 'Scraped subreddits, clustered complaints, surfaced recurring pains with example quotes.' },
@@ -995,7 +995,7 @@ function renderPortfolio() {
     '<div>' +
       '<div class="eyebrow">Zoom out · all bets</div>' +
       '<h1 class="pf-title">The portfolio</h1>' +
-      '<p class="pf-sub">Six AI-operated bets across every stage. You approve the few calls that matter — the factory runs the rest.</p>' +
+      '<p class="pf-sub">Six AI-operated bets across every stage. You approve the few calls that matter - the factory runs the rest.</p>' +
     '</div>';
   const totals = el('div', 'totals');
   totals.innerHTML =
@@ -1331,7 +1331,7 @@ function renderNew() {
   root.innerHTML =
     '<div class="nb-ico">' + ICON.plus + '</div>' +
     '<h2>Start a new bet</h2>' +
-    '<p>Describe the idea in one plain sentence. The factory frames it, sets a validation goal, and starts working — you only approve the calls that matter.</p>' +
+    '<p>Describe the idea in one plain sentence. The factory frames it, sets a validation goal, and starts working - you only approve the calls that matter.</p>' +
     '<div class="nb-input">' +
       '<input type="text" id="nbInput" placeholder="e.g. Auto-generates weekly changelogs from git commits…" aria-label="New bet idea">' +
       '<button class="btn btn-primary" id="nbGo">' + ICON.spark + 'Draft it</button>' +
@@ -1342,7 +1342,7 @@ function renderNew() {
       '<span class="nb-step">3 · Validate</span>' +
       '<span class="nb-step">4 · Build / kill</span>' +
     '</div>' +
-    '<div class="nb-hint">This prototype starts every bet in the Idea stage — validate the pain before spending a cent.</div>';
+    '<div class="nb-hint">This prototype starts every bet in the Idea stage - validate the pain before spending a cent.</div>';
   return root;
 }
 
@@ -1353,13 +1353,13 @@ function bindDynamic() {
   document.querySelectorAll('[data-kill]').forEach(b => b.onclick = e => { e.stopPropagation(); resolve(b.dataset.kill, 'killed'); });
   document.querySelectorAll('[data-undo]').forEach(b => b.onclick = e => { e.stopPropagation(); undo(b.dataset.undo); });
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = e => { e.stopPropagation(); go(b.dataset.open); });
-  document.querySelectorAll('[data-open-approve]').forEach(b => b.onclick = e => { e.stopPropagation(); const id = b.dataset.openApprove; if (co(id).approval && !resolved[id]) resolve(id, 'approved'); else toast('Continuing ' + co(id).name + ' — AI proceeds with its plan'); });
-  document.querySelectorAll('[data-eject]').forEach(b => b.onclick = e => { e.stopPropagation(); toast('Eject needs a goal-hit — ' + co(b.dataset.eject).name + ' isn\'t there yet'); });
+  document.querySelectorAll('[data-open-approve]').forEach(b => b.onclick = e => { e.stopPropagation(); const id = b.dataset.openApprove; if (co(id).approval && !resolved[id]) resolve(id, 'approved'); else toast('Continuing ' + co(id).name + ' - AI proceeds with its plan'); });
+  document.querySelectorAll('[data-eject]').forEach(b => b.onclick = e => { e.stopPropagation(); toast('Eject needs a goal-hit - ' + co(b.dataset.eject).name + ' isn\'t there yet'); });
 
   const nbGo = $('#nbGo');
   if (nbGo) nbGo.onclick = () => {
     const val = ($('#nbInput').value || '').trim();
-    toast(val ? 'Drafting "' + val.slice(0, 40) + (val.length > 40 ? '…' : '') + '" — framing as a new Idea bet' : 'Type a one-line idea first');
+    toast(val ? 'Drafting "' + val.slice(0, 40) + (val.length > 40 ? '…' : '') + '" - framing as a new Idea bet' : 'Type a one-line idea first');
   };
 
   // animate progress fills

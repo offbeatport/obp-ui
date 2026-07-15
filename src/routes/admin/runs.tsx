@@ -17,7 +17,7 @@ function Runs() {
     const [history, setHistory] = useState<History | null>(null);
     const [runId, setRunId] = useState<string | null>(null);
 
-    // Actions (all statuses — listQueue.actions is unfiltered).
+    // Actions (all statuses - listQueue.actions is unfiltered).
     useEffect(() => {
         const load = () => listQueue().then(setQ);
         void load();
@@ -123,7 +123,7 @@ function Runs() {
                         ))}
                     </div>
                 ) : (
-                    <Empty>No actions yet — enqueue one from the Queue tab.</Empty>
+                    <Empty>No actions yet - enqueue one from the Queue tab.</Empty>
                 )}
             </div>
 

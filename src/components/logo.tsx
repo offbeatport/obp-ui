@@ -21,7 +21,7 @@ export function LogoMark({ className }: { className?: string }) {
 
 function Brace({ children }: { children: string }) {
     return (
-        <span className="font-display text-2xl leading-none text-primary opacity-[0.55]">
+        <span className="font-display text-2xl leading-none text-primary opacity-[0.4]">
             {children}
         </span>
     );

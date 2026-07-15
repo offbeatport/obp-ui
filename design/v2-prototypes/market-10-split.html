@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>C Slop Slop · The public marketplace — public product, private cockpit</title>
+<title>C Slop Slop · The public marketplace - public product, private cockpit</title>
 <script>
 /* pre-paint theme: no flash */
 (function () {
@@ -304,7 +304,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 22px 90px; }
 .face.back { transform: rotateY(180deg); border-color: color-mix(in srgb, var(--violet) 40%, var(--line)); }
 .fcard.feat .face.front { border-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
 
-/* front — the public product */
+/* front - the public product */
 .mock {
   position: relative; border: none; text-align: left; color: #fff;
   padding: 12px 14px 16px; min-height: 156px; width: 100%;
@@ -389,7 +389,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 22px 90px; }
 }
 .peek-btn:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--violet) 22%, transparent); }
 
-/* back — the private cockpit (blurred, never real numbers) */
+/* back - the private cockpit (blurred, never real numbers) */
 .face.back { background: var(--paper); }
 .back-tab {
   display: flex; align-items: center; gap: 9px; padding: 12px 14px;
@@ -622,7 +622,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 22px 90px; }
   <section class="hero">
     <span class="eyebrow"><span class="g"></span> Built with AI · shipping live</span>
     <h1>The <span class="pub">product</span> is public. The <span class="prv">cockpit</span> stays yours.</h1>
-    <p class="sub">Every free company on C&nbsp;Slop&nbsp;Slop ships public by default — you see the product, the maker, and the traction. Flip any card to learn what never leaves the operator's private cockpit.</p>
+    <p class="sub">Every free company on C&nbsp;Slop&nbsp;Slop ships public by default - you see the product, the maker, and the traction. Flip any card to learn what never leaves the operator's private cockpit.</p>
     <div class="microcue"><span class="lock">🔒</span> public by default · privacy is a paid upgrade</div>
   </section>
 
@@ -633,7 +633,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 22px 90px; }
       <ul>
         <li><span class="mk">🌍</span> The live product &amp; what it does</li>
         <li><span class="mk">👥</span> Users, leads &amp; signal</li>
-        <li><span class="mk">💵</span> Revenue — only if the maker shares it</li>
+        <li><span class="mk">💵</span> Revenue - only if the maker shares it</li>
         <li><span class="mk">@</span> The maker's handle</li>
       </ul>
     </div>
@@ -672,7 +672,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 22px 90px; }
   <!-- build CTA -->
   <section class="foot" id="build">
     <h3>Make yours public → it appears right here.</h3>
-    <p>Describe a problem. The factory builds, tests and ships a real company for you — public by default, so it lands in this marketplace as your storefront. Your cockpit stays private.</p>
+    <p>Describe a problem. The factory builds, tests and ships a real company for you - public by default, so it lands in this marketplace as your storefront. Your cockpit stays private.</p>
     <a class="cta" href="#" style="font-size:14.5px;padding:11px 18px" id="footBuild">Build your own company <span aria-hidden="true">→</span></a>
     <div class="fine"><span class="lock">🔒</span> public by default · privacy is a paid upgrade · your cockpit never ships to this page</div>
   </section>
@@ -756,7 +756,7 @@ var DATA = [
     features: ["Snap a photo of your fridge", "AI builds a full week of meals", "Auto-generates the shopping list"] },
 
   { name: "GymStreak", handle: "theo", category: "Fitness", stage: "Testing",
-    blurb: "Text your workout — it logs and progresses it for you.",
+    blurb: "Text your workout - it logs and progresses it for you.",
     usersLabel: "48 beta", users: 48, revenue: null, revState: "none",
     signal: "Promising", fresh: "shipped v2 today", days: 0, featured: false,
     features: ["Text your workout in plain English", "Logs sets, reps and weight", "Progresses the plan automatically"] },
@@ -868,7 +868,7 @@ function cardHTML(c) {
   return (
     '<div class="fcard' + (c.archived ? ' muted' : '') + (c.featured ? ' feat' : '') + '" data-id="' + c.id + '" style="--c:var(--' + c.color + ')">' +
       '<div class="flip-inner">' +
-        /* FRONT — public product */
+        /* FRONT - public product */
         '<div class="face front">' +
           '<button class="mock" data-open="' + c.id + '" aria-label="Open ' + esc(c.name) + '">' +
             (ribbon) +
@@ -896,7 +896,7 @@ function cardHTML(c) {
             '</div>' +
           '</div>' +
         '</div>' +
-        /* BACK — private cockpit */
+        /* BACK - private cockpit */
         '<div class="face back">' +
           '<div class="back-tab"><span class="lk">🔒</span><span class="bt-title">Private · the cockpit</span><span class="bt-who">@' + esc(c.handle) + ' only</span></div>' +
           '<div class="back-canvas">' +
@@ -904,7 +904,7 @@ function cardHTML(c) {
             '<div class="lock-veil">' +
               '<span class="lock-badge">🔒</span>' +
               '<span class="lv-title">This stays private</span>' +
-              '<span class="lv-sub">Budget, the AI\'s plan, approvals &amp; the risk log live in <b>@' + esc(c.handle) + '</b>\'s cockpit — never on this page.</span>' +
+              '<span class="lv-sub">Budget, the AI\'s plan, approvals &amp; the risk log live in <b>@' + esc(c.handle) + '</b>\'s cockpit - never on this page.</span>' +
             '</div>' +
           '</div>' +
           '<div class="back-foot">' +
@@ -932,7 +932,7 @@ function userCardHTML(u) {
             '</span>' +
             '<span class="mock-hero">' +
               '<span class="mock-name">Your Company</span>' +
-              '<span class="mock-tag">Your one-liner ships here — public by default, the moment it\'s built.</span>' +
+              '<span class="mock-tag">Your one-liner ships here - public by default, the moment it\'s built.</span>' +
               '<span class="mock-btn">Try it →</span>' +
             '</span>' +
           '</button>' +
@@ -955,7 +955,7 @@ function userCardHTML(u) {
             '<div class="lock-veil">' +
               '<span class="lock-badge">🔒</span>' +
               '<span class="lv-title">Yours to keep</span>' +
-              '<span class="lv-sub">Your budget, the AI\'s plan, approvals &amp; risk log stay in <b>your</b> cockpit — this page only ever shows the product.</span>' +
+              '<span class="lv-sub">Your budget, the AI\'s plan, approvals &amp; risk log stay in <b>your</b> cockpit - this page only ever shows the product.</span>' +
             '</div>' +
           '</div>' +
           '<div class="back-foot">' +
@@ -973,7 +973,7 @@ function addCardHTML() {
     '<button class="addcard" id="addCard" aria-label="Make your company public">' +
       '<span class="plus" aria-hidden="true">+</span>' +
       '<h3>Make yours public</h3>' +
-      '<p>Describe a problem — the factory ships a company that lands right here.</p>' +
+      '<p>Describe a problem - the factory ships a company that lands right here.</p>' +
       '<span class="loop">describe → <span>build</span> → <span>ship</span> → appears here ↺</span>' +
       '<span class="go">Add your company <span aria-hidden="true">→</span></span>' +
     '</button>'
@@ -1073,7 +1073,7 @@ function spawnUserCard() {
   var count = 12 + userCards.length;
   $("#livecount").textContent = count;
   $("#grid").scrollIntoView({ block: "start" });
-  toast("Public by default — this is how your company would appear in the marketplace.");
+  toast("Public by default - this is how your company would appear in the marketplace.");
 }
 
 /* ---------- flip all ---------- */
@@ -1116,11 +1116,11 @@ function openDetail(id) {
   } else if (c.revState === "hidden") {
     revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">🔒 kept private</span></div>';
   } else {
-    revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">— pre-revenue</span></div>';
+    revBlock = '<div class="d-stat"><span class="k">Revenue</span><span class="v priv">- pre-revenue</span></div>';
   }
   var signalBlock = c.signal
     ? '<div class="d-stat"><span class="k">Signal</span><span class="v">' + esc(c.signal) + '</span></div>'
-    : '<div class="d-stat"><span class="k">Signal</span><span class="v priv">— validating</span></div>';
+    : '<div class="d-stat"><span class="k">Signal</span><span class="v priv">- validating</span></div>';
 
   var feats = c.features.map(function (f) {
     return '<li><span class="tick" aria-hidden="true">✓</span>' + esc(f) + '</li>';
@@ -1160,7 +1160,7 @@ function openDetail(id) {
     '</div>' +
     '<div class="d-private-hint">' +
       '<span class="lk">🔒</span>' +
-      '<span>You\'re seeing the <b>public product</b>. The operator\'s cockpit — budget &amp; spend, the AI\'s plan, the approval queue and risk log — stays private. <b>Public by default; privacy is a paid upgrade.</b></span>' +
+      '<span>You\'re seeing the <b>public product</b>. The operator\'s cockpit - budget &amp; spend, the AI\'s plan, the approval queue and risk log - stays private. <b>Public by default; privacy is a paid upgrade.</b></span>' +
     '</div>';
 
   lastFocus = document.activeElement;
@@ -1169,7 +1169,7 @@ function openDetail(id) {
   document.body.style.overflow = "hidden";
 
   $("#dClose").addEventListener("click", closeDetail);
-  $("#dTry").addEventListener("click", function () { toast("This is a public demo — sign in to try " + c.name + " live."); });
+  $("#dTry").addEventListener("click", function () { toast("This is a public demo - sign in to try " + c.name + " live."); });
   $("#dClose").focus();
 }
 

@@ -352,7 +352,7 @@ const CLUSTERS = [
   { id:'watch', name:'Watch', health:'amber', x:804, y:130, w:384, h:566,
     blurb:'Flat or still pre-revenue', ids:['datadrop','translatorbill'] },
   { id:'blocked', name:'Blocked', health:'red', x:100, y:560, w:372, h:300,
-    blurb:'Paused — waiting on you', ids:['redditpainbot'] }
+    blurb:'Paused - waiting on you', ids:['redditpainbot'] }
 ];
 
 const CO = [
@@ -362,7 +362,7 @@ const CO = [
     x:152, y:214 },
   { id:'leadsift', name:'LeadSift', c:'accent', best:null, status:'Growing', tone:'green',
     cluster:'healthy', stage:'live · growing', mrr:'$180', mrrN:180, delta:'↑ $40', users:12, work:'Ship “daily digest”', wtag:'ship',
-    need:{ h:'Needs you', t:'Ship · daily digest', s:'Passed check — ready to approve.', ok:true },
+    need:{ h:'Needs you', t:'Ship · daily digest', s:'Passed check - ready to approve.', ok:true },
     x:452, y:256 },
   { id:'datadrop', name:'DataDrop', c:'green', best:null, status:'Flat', tone:'slate',
     cluster:'watch', stage:'live · flat', mrr:'$95', mrrN:95, delta:null, users:6, work:'Queued “saved chart views”', wtag:'queued',
@@ -589,7 +589,7 @@ function openFocus(id){
       '<div class="f-cell"><div class="fl">MRR</div><div class="fv">'+co.mrr+deltaCell+'</div></div>'+
       '<div class="f-cell"><div class="fl">Users</div><div class="fv">'+co.users+'</div></div>'+
       '<div class="f-cell"><div class="fl">Status</div><div class="fv" style="font-size:15px;color:var(--'+co.tone+')">'+co.status+'</div></div>'+
-      '<div class="f-cell"><div class="fl">Best?</div><div class="fv" style="font-size:15px">'+(co.best?'★ top':'—')+'</div></div>'+
+      '<div class="f-cell"><div class="fl">Best?</div><div class="fv" style="font-size:15px">'+(co.best?'★ top':'-')+'</div></div>'+
     '</div>'+
     '<div class="f-sec">Current work</div>'+
     '<div class="f-work"><span class="wtag">'+co.wtag+'</span>'+co.work+'</div>'+

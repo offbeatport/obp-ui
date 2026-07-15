@@ -23,7 +23,7 @@ function run(name, args) {
   p.stdout.on("data", (d) => process.stdout.write(tag(name, d)));
   p.stderr.on("data", (d) => process.stderr.write(tag(name, d)));
   p.on("exit", (code) => {
-    console.log(`[dev] ${name} exited (${code}) — shutting down`);
+    console.log(`[dev] ${name} exited (${code}) - shutting down`);
     shutdown();
   });
   procs.push(p);
@@ -47,4 +47,4 @@ process.on("SIGTERM", shutdown);
 
 run("web", ["run", "dev:web"]);
 run("engine", ["run", "dev:engine"]);
-console.log("[dev] web + engine starting — http://localhost:3000");
+console.log("[dev] web + engine starting - http://localhost:3000");

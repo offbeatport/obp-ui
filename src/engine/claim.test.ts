@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { sqlite } from "../db/index.js";
 import { claimNext } from "./claim.js";
 
-// The atomic CAS claim — the core of the run-executor spine. No AI/mocks needed; pure DB.
+// The atomic CAS claim - the core of the run-executor spine. No AI/mocks needed; pure DB.
 
 function clearAll() {
     sqlite.exec("DELETE FROM run; DELETE FROM action; DELETE FROM company;");

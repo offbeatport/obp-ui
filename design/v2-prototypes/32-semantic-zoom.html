@@ -429,7 +429,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -457,7 +457,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -466,27 +466,27 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
 /* ============ EXTRA DATA (verbatim from _BRIEF_3.md) ============ */
-const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world actions
+const QUEUE = [ // universal "Needs you" - heterogeneous proposed real-world actions
   { id:'q1', kind:'ship_feature', company:'LeadSift', title:'Ship: daily digest of top leads',
     evidence:'doneWhen green · localhost:4019/digest/preview', gated:false, autopilot:true, rung:'doneWhen',
     diff:DATA.companies[0].approval.diff, previewUrl:'http://localhost:4019/digest/preview' },
@@ -495,17 +495,17 @@ const QUEUE = [ // universal "Needs you" — heterogeneous proposed real-world a
     draft:'Shipped today: LeadSift now scores every inbound lead and emails you the top 10 at 8am ☕ No more digging your inbox for the ones worth calling. → leadsift.app' },
   { id:'q3', kind:'cold_batch', company:'TranslatorBill', title:'Cold email: 25 cross-border freelancers (batch 2 of 3)', gated:true, channel:'outbound', rung:'adoption',
     evidence:'batch 1: 25 sent → 36% open → 8% reply',
-    draft:'Subject: the invoice-translation thing\n\nHi {{name}} — you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? — V' },
+    draft:'Subject: the invoice-translation thing\n\nHi {{name}} - you invoice clients in 3 currencies. TranslatorBill auto-translates + reformats each invoice to local norms in ~5s. Worth a look? - V' },
   { id:'q4', kind:'support_reply', company:'QuietInbox', title:'Reply: “snooze a whole label, not just a thread?”', gated:true, rung:'adoption',
     evidence:'3rd request this week → candidate feature',
-    draft:'Great question — today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
-  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test — “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
+    draft:'Great question - today snooze is per-thread, but “snooze a label” is now on our list (you’re the 3rd to ask). I’ll ping you the moment it ships.' },
+  { id:'q5', kind:'authorize_spend', company:'DataDrop', title:'Authorize $50 Google Ads test - “csv to dashboard”', gated:true, channel:'ads', amountUsd:50, rung:'test-payment',
     evidence:'organic SEO page converts 3.1% → worth a paid test' },
 ];
 
 const OUTBOUND = {
   twitter:[ // build-in-public stream
-    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it — lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
+    { status:'posted', t:'2d', text:'Day 41: LeadSift crossed $180 MRR. One feature did most of it - lead scoring. Doubling down.', stats:'2.2k impressions · 14 likes · 3 signups' },
     { status:'draft',  t:'now', text:'Shipped today: LeadSift now emails you your top 10 leads at 8am. → leadsift.app', stats:'awaiting your approval' },
   ],
   cold:[ // sequences (per company)
@@ -515,7 +515,7 @@ const OUTBOUND = {
 
 const SUPPORT = [ // inbound = evidence stream
   { id:'t1', company:'QuietInbox', user:'maria@acme.co', subject:'Snooze a whole label?',      status:'needs_reply', signal:'feature request ×3',        body:'Love the per-thread snooze. Any way to snooze an entire label at once?' },
-  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am — I’m in PST, expected 8am local.' },
+  { id:'t2', company:'LeadSift',   user:'devon@dgsales.io', subject:'Digest came at 6am not 8am', status:'needs_reply', signal:'bug → timezone',           body:'My digest arrived at 6am - I’m in PST, expected 8am local.' },
   { id:'t3', company:'DataDrop',   user:'sam@sheetly.app', subject:'Can I save a chart view?',  status:'answered',    signal:'matches backlog feature 6', body:'Is there a way to save a dashboard layout so I don’t rebuild it each time?' },
 ];
 
@@ -681,7 +681,7 @@ function gateInner(q){
   }
   if(q.kind==='authorize_spend'){
     return `<div class="amt mono">$${q.amountUsd}.00 · Google Ads test</div>
-      <div class="draftbox"><div class="dlabel">what you're authorizing</div>Campaign: keyword "csv to dashboard" · daily cap $50 · auto-pause if CPA &gt; $25. Spends real money — gated to you.</div>`;
+      <div class="draftbox"><div class="dlabel">what you're authorizing</div>Campaign: keyword "csv to dashboard" · daily cap $50 · auto-pause if CPA &gt; $25. Spends real money - gated to you.</div>`;
   }
   // tweet / cold / support → draft
   return `<div class="draftbox"><div class="dlabel">${q.kind==='tweet'?'draft post':q.kind==='cold_batch'?'draft email (×25)':'draft reply'}</div>${escHtml(q.draft)}</div>`;
@@ -724,9 +724,9 @@ function wireGate(card,q){
   approve.onclick=()=>{
     handled[q.id]='approved';
     approve.style.display='none'; reject.style.display='none'; form.classList.remove('show');
-    cOk.style.display='flex'; cOk.innerHTML=`✓ ${verbs[q.kind]} — recorded as evidence`;
+    cOk.style.display='flex'; cOk.innerHTML=`✓ ${verbs[q.kind]} - recorded as evidence`;
     toast('✓',`${verbs[q.kind]} · ${q.company}`,'var(--green)');
-    pushLive(q.company,'comms',`${verbs[q.kind].toLowerCase()} — ${q.title}`);
+    pushLive(q.company,'comms',`${verbs[q.kind].toLowerCase()} - ${q.title}`);
     setTimeout(()=>{ ex.classList.remove('open'); card.style.opacity='.5'; },1400);
   };
   reject.onclick=()=>{ form.classList.add('show'); reject.style.display='none'; approve.style.display='none'; $('input',form).focus(); };
@@ -761,14 +761,14 @@ function slicesByJob(c){
       else if(sl.title.toLowerCase().includes('digest')||sl.title.toLowerCase().includes('slack')) map.Distribute.push(sl);
       else map.Build.push(sl);
     });
-    map.Monetize.push({n:'$',title:'Stripe test payment — gated to you',status:'todo'});
+    map.Monetize.push({n:'$',title:'Stripe test payment - gated to you',status:'todo'});
     map.Measure.push({n:'M',title:'Adoption: 12 users · digest open-rate probe',status:'building',step:'tracking'});
-    map.Steer.push({n:'∿',title:'Keep — MRR climbing, evidence positive',status:'shipped'});
+    map.Steer.push({n:'∿',title:'Keep - MRR climbing, evidence positive',status:'shipped'});
   } else {
     const cs=c.currentSlice;
     map.Build.push({n:cs.n,title:cs.title,status:cs.status,step:cs.step});
     map.Measure.push({n:'M',title:`${c.slicesShipped} slices shipped · ${c.users} users`,status:'shipped'});
-    map.Steer.push({n:'∿',title:c.status==='paused'?'Paused — no progress, decide keep/kill':'Keep — building',status:c.status==='paused'?'blocked':'building'});
+    map.Steer.push({n:'∿',title:c.status==='paused'?'Paused - no progress, decide keep/kill':'Keep - building',status:c.status==='paused'?'blocked':'building'});
     if(c.mrr>0) map.Monetize.push({n:'$',title:`$${c.mrr} MRR`,status:'shipped'});
   }
   return map;
@@ -845,9 +845,9 @@ function renderComms(c){
   const body=$('#commsbody');
   // inward chat
   const chatMsgs=(c.id==='leadsift'?DATA.chat:[
-    {role:'assistant',text:`${c.name}: ${c.currentSlice?('working slice '+c.currentSlice.n+' — '+c.currentSlice.step):'idle'}.`},
+    {role:'assistant',text:`${c.name}: ${c.currentSlice?('working slice '+c.currentSlice.n+' - '+c.currentSlice.step):'idle'}.`},
     {role:'user',text:'what needs me?'},
-    {role:'assistant',text: QUEUE.some(q=>q.company===c.name)?'You have an item in the Needs-you queue for this company.':'Nothing gated right now — autopilot is handling it.'},
+    {role:'assistant',text: QUEUE.some(q=>q.company===c.name)?'You have an item in the Needs-you queue for this company.':'Nothing gated right now - autopilot is handling it.'},
   ]);
   const out=OUTBOUND.twitter.map(tw=>`
     <div class="obitem">
@@ -865,7 +865,7 @@ function renderComms(c){
   const sup=SUPPORT.filter(t=>!c.slices||t.company===c.name||c.id==='leadsift').map(t=>`
     <div class="supitem">
       <div class="ob-head"><b>${escHtml(t.subject)}</b><span class="ob-stat ${t.status==='answered'?'answered':'needs'}">${t.status.replace('_',' ')}</span></div>
-      <div class="ob-txt" style="color:var(--dim)">${escHtml(t.user)} — ${escHtml(t.body)}</div>
+      <div class="ob-txt" style="color:var(--dim)">${escHtml(t.user)} - ${escHtml(t.body)}</div>
       <div class="sig">↳ signal: ${escHtml(t.signal)} (evidence)</div>
     </div>`).join('')||'<div class="empty-job">No support tickets for this company.</div>';
 
@@ -881,7 +881,7 @@ function renderComms(c){
   const send=()=>{ const v=inp.value.trim(); if(!v)return;
     const me=el('div','chatmsg user',`<div class="av me">V</div><div class="ct">${escHtml(v)}</div>`);
     cb.before(me); inp.value='';
-    setTimeout(()=>{ const ai=el('div','chatmsg',`<div class="av ai">AI</div><div class="ct">On it — I'll surface anything gated in your Needs-you queue.</div>`); cb.before(ai); },500);
+    setTimeout(()=>{ const ai=el('div','chatmsg',`<div class="av ai">AI</div><div class="ct">On it - I'll surface anything gated in your Needs-you queue.</div>`); cb.before(ai); },500);
   };
   $('button',cb).onclick=send; inp.onkeydown=e=>{if(e.key==='Enter')send();};
   // outbound "open in needs-you"
@@ -923,7 +923,7 @@ function renderFeature(coId, slice){
 
     ${isDigest?`
     <div class="ft-gate">
-      <div class="ft-gate-h"><span class="ft-glyph" style="width:34px;height:34px;font-size:16px;border-radius:9px">⚡</span><span class="gh-t">Approval gate — LeadSift digest</span><span class="gh-tag">autopilot can ship · reversible</span></div>
+      <div class="ft-gate-h"><span class="ft-glyph" style="width:34px;height:34px;font-size:16px;border-radius:9px">⚡</span><span class="gh-t">Approval gate - LeadSift digest</span><span class="gh-tag">autopilot can ship · reversible</span></div>
       <div id="ft-gate-slot"></div>
     </div>`:`
     <div class="ft-gate" style="border-color:var(--line)">
@@ -943,9 +943,9 @@ function renderFeature(coId, slice){
     // wire (standalone, since not a qcard)
     const approve=$('.btn-approve',slot),reject=$('.btn-reject',slot),form=$('.rejectform',slot),cOk=$('.confirm.ok',slot),cNo=$('.confirm.no',slot);
     approve.onclick=()=>{ approve.style.display='none';reject.style.display='none';form.classList.remove('show');
-      cOk.style.display='flex';cOk.innerHTML='✓ Shipped — live at localhost:4019, recorded as evidence';
+      cOk.style.display='flex';cOk.innerHTML='✓ Shipped - live at localhost:4019, recorded as evidence';
       toast('✓','Shipped · LeadSift digest','var(--green)'); handled.q1='approved';
-      pushLive('LeadSift','comms','shipped — daily digest of top leads'); };
+      pushLive('LeadSift','comms','shipped - daily digest of top leads'); };
     reject.onclick=()=>{ form.classList.add('show');reject.style.display='none';approve.style.display='none';$('input',form).focus(); };
     form.onsubmit=e=>{e.preventDefault();const fb=$('input',form).value.trim()||'(no detail)';form.classList.remove('show');
       cNo.style.display='flex';cNo.innerHTML=`↩ Rejected · agent will revise: “${escHtml(fb)}”`;
@@ -998,8 +998,8 @@ $('#qcount').textContent=qn+' actions · '+QUEUE.filter(q=>q.gated).length+' gat
 syncChrome();
 
 // simulate a couple of live ticks for "feels alive"
-setTimeout(()=>pushLive('QuietInbox','comms','reply drafted — “snooze a whole label?”'),3500);
-setTimeout(()=>pushLive('TranslatorBill','comms','cold batch 2 queued — awaiting your approval'),8000);
+setTimeout(()=>pushLive('QuietInbox','comms','reply drafted - “snooze a whole label?”'),3500);
+setTimeout(()=>pushLive('TranslatorBill','comms','cold batch 2 queued - awaiting your approval'),8000);
 </script>
 </body>
 </html>

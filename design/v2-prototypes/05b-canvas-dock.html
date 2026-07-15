@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 /* ============================================================
-   C SLOP SLOP — fixed app shell over ambient canvas
+   C SLOP SLOP - fixed app shell over ambient canvas
    Synthesis: hud-over-canvas base + solid-frame center HUD
    + focus-dock card richness. Tokens verbatim.
    ============================================================ */
@@ -273,7 +273,7 @@ body{
 .cocard .cmetrics .m b{ font-family:'JetBrains Mono',monospace; font-size:16px; display:block; line-height:1; }
 .cocard .cmetrics .m span{ font-size:8px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; margin-top:6px; display:block; font-family:'JetBrains Mono',monospace; }
 
-/* slice pipeline — segmented pips (graft from focus-dock) */
+/* slice pipeline - segmented pips (graft from focus-dock) */
 .cocard .cprog{ margin-top:14px; }
 .cocard .cprog-top{
   display:flex; align-items:center; justify-content:space-between; margin-bottom:7px;
@@ -289,7 +289,7 @@ body{
 .cocard .seg i.todo{ background:var(--slate); opacity:.5; }
 @keyframes segpulse{ 0%,100%{opacity:.55} 50%{opacity:1} }
 
-/* live build line — pinned at card bottom */
+/* live build line - pinned at card bottom */
 .cocard .ccurrent{
   margin-top:auto; padding-top:14px;
   font-family:'JetBrains Mono',monospace; font-size:11px;
@@ -481,7 +481,7 @@ body{
   </div>
   <div class="dock-scroll">
 
-    <!-- 1) LeadSift — NEEDS YOU -->
+    <!-- 1) LeadSift - NEEDS YOU -->
     <div class="cocard needsyou" data-co="LeadSift">
       <div class="needsbadge">needs you</div>
       <div class="ctop">
@@ -510,7 +510,7 @@ body{
       </div>
     </div>
 
-    <!-- 2) QuietInbox — building -->
+    <!-- 2) QuietInbox - building -->
     <div class="cocard building" data-co="QuietInbox">
       <div class="ctop">
         <span class="dotstatus s-active"></span>
@@ -538,7 +538,7 @@ body{
       </div>
     </div>
 
-    <!-- 3) TranslatorBill — building -->
+    <!-- 3) TranslatorBill - building -->
     <div class="cocard building" data-co="TranslatorBill">
       <div class="ctop">
         <span class="dotstatus s-active"></span>
@@ -566,7 +566,7 @@ body{
       </div>
     </div>
 
-    <!-- 4) DataDrop — todo/queued -->
+    <!-- 4) DataDrop - todo/queued -->
     <div class="cocard" data-co="DataDrop">
       <div class="ctop">
         <span class="dotstatus s-active"></span>
@@ -589,12 +589,12 @@ body{
       </div>
       <div class="ccurrent">
         <span class="pulse" style="background:var(--slate)"></span>
-        <span class="cs-label">slice 6 · saved chart views — queued</span>
+        <span class="cs-label">slice 6 · saved chart views - queued</span>
         <span class="sbadge sb-todo">todo</span>
       </div>
     </div>
 
-    <!-- 5) RedditPainBot — paused / blocked -->
+    <!-- 5) RedditPainBot - paused / blocked -->
     <div class="cocard paused" data-co="RedditPainBot">
       <div class="ctop">
         <span class="dotstatus s-paused"></span>
@@ -617,7 +617,7 @@ body{
       </div>
       <div class="ccurrent">
         <span class="pulse" style="background:var(--red)"></span>
-        <span class="cs-label" style="color:var(--red)">slice 8 blocked · stopped — no progress</span>
+        <span class="cs-label" style="color:var(--red)">slice 8 blocked · stopped - no progress</span>
         <span class="sbadge sb-blocked">blocked</span>
       </div>
     </div>
@@ -636,12 +636,12 @@ body{
 
     <div class="msg assistant">
       <span class="m-from">copilot</span>
-      LeadSift just shipped a daily digest. It's live at localhost:4019 and the check passed — want to approve it?
+      LeadSift just shipped a daily digest. It's live at localhost:4019 and the check passed - want to approve it?
     </div>
 
     <div class="ctx-chip">
       <span class="cc-dot"></span>
-      <span class="cc-text"><b>LeadSift · slice 5</b> — doneWhen ✓ passed · in the queue above</span>
+      <span class="cc-text"><b>LeadSift · slice 5</b> - doneWhen ✓ passed · in the queue above</span>
     </div>
 
     <div class="msg user">
@@ -651,12 +651,12 @@ body{
 
     <div class="msg assistant">
       <span class="m-from">copilot</span>
-      Here's the slice — one new component + a scheduler. Preview URL + green check are in the approval queue above.
+      Here's the slice - one new component + a scheduler. Preview URL + green check are in the approval queue above.
     </div>
 
   </div>
   <div class="chat-input">
-    <input id="chatInput" placeholder="Direct the portfolio — approve, promote, unblock…" />
+    <input id="chatInput" placeholder="Direct the portfolio - approve, promote, unblock…" />
     <button class="send" id="chatSend">↑</button>
   </div>
 </div>
@@ -673,7 +673,7 @@ body{
     item.classList.add('resolved', kind);
     var tag = item.querySelector('.ap-resolved-tag');
     var co = item.getAttribute('data-co') || 'slice';
-    tag.textContent = (kind === 'approved' ? '✓ Approved & shipped' : '✕ Rejected — sent back');
+    tag.textContent = (kind === 'approved' ? '✓ Approved & shipped' : '✕ Rejected - sent back');
     refreshCount();
     if(kind === 'approved') echo('Shipped ' + co + ' to production. doneWhen stays green; I\'ll watch the first runs.');
     else echo('Rejected ' + co + '. I\'ll reopen the slice and queue a fix.');
@@ -707,7 +707,7 @@ body{
     if(!v) return;
     addMsg(v, 'user');
     input.value = '';
-    echo('On it — scanning the portfolio for "' + v.slice(0,48) + '". The top of the approval queue is still LeadSift · slice 5.');
+    echo('On it - scanning the portfolio for "' + v.slice(0,48) + '". The top of the approval queue is still LeadSift · slice 5.');
   }
   send.addEventListener('click', handleSend);
   input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); handleSend(); } });
@@ -717,7 +717,7 @@ body{
     card.addEventListener('click', function(){
       var name = card.getAttribute('data-co');
       addMsg('Open ' + name, 'user');
-      echo('Pulling up ' + name + ' — latest slice, live build line, and metrics. What do you want to do with it?');
+      echo('Pulling up ' + name + ' - latest slice, live build line, and metrics. What do you want to do with it?');
     });
   });
 })();

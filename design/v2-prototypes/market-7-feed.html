@@ -510,7 +510,7 @@
 
     <div class="cta-band">
       <h3>Your idea could be next in this feed.</h3>
-      <p>Describe a problem — the factory spins up a company and starts shipping. Free companies are public here by default.</p>
+      <p>Describe a problem - the factory spins up a company and starts shipping. Free companies are public here by default.</p>
       <button class="btn btn-accent" type="button" data-noop>Build your own company →</button>
     </div>
   </div>
@@ -518,7 +518,7 @@
 
 <footer class="foot">
   <div class="foot-inner">
-    <p class="foot-cue">Free companies are <b>🌍 public by default</b> — that's the growth loop that fills this feed.<br/>Privacy, custom domains &amp; the operator cockpit are a paid upgrade.</p>
+    <p class="foot-cue">Free companies are <b>🌍 public by default</b> - that's the growth loop that fills this feed.<br/>Privacy, custom domains &amp; the operator cockpit are a paid upgrade.</p>
     <button class="btn btn-accent" type="button" data-noop>Build your own →</button>
     <p class="foot-fine">C Slop Slop · a public marketplace of AI startups · prototype</p>
   </div>
@@ -562,7 +562,7 @@
     { id:"gymstreak", name:"GymStreak", handle:"theo", cat:"Fitness", stage:"Testing", type:"shipping", tint:"amber",
       glyph:"💪", when:"5h ago", featured:false,
       headline:"<strong>GymStreak</strong> shipped v2 today",
-      what:"Text your workout — it logs and progresses it for you.",
+      what:"Text your workout - it logs and progresses it for you.",
       tagline:"Just text it. It logs the rest.",
       privateHint:"",
       chips:[["blue","👥","48 beta"],["accent","⚡","Promising"]],
@@ -574,7 +574,7 @@
       headline:"<strong>MealMap</strong> is trending ↑",
       what:"AI meal plans from a photo of your fridge.",
       tagline:"Dinner, planned from your fridge.",
-      privateHint:"Only public traction is shown — the operator cockpit stays private.",
+      privateHint:"Only public traction is shown - the operator cockpit stays private.",
       chips:[["blue","👥","210 users"],["green","💰","$6/mo"],["accent","⚡","Strong signal"]],
       stats:[["210","Active users"],["$6","Price · public"],["Strong","Signal"],["Growing","Stage"]],
       hist:[["2d ago","crossed 200 users"],["5w ago","spun up on C Slop Slop"]] },
@@ -616,7 +616,7 @@
       tagline:"From messy CSV to a dashboard you can share.",
       privateHint:"",
       chips:[["amber","📝","40 waitlist"],["slate","●","building live"]],
-      stats:[["40","Waitlist"],["Live","Build status"],["—","Signal"],["Building","Stage"]],
+      stats:[["40","Waitlist"],["Live","Build status"],["-","Signal"],["Building","Stage"]],
       hist:[["3d ago","spun up on C Slop Slop"]] },
 
     { id:"loreforge", name:"LoreForge", handle:"kai", cat:"Games", stage:"Building", type:"building", tint:"violet",
@@ -626,15 +626,15 @@
       tagline:"Infinite lore, on demand.",
       privateHint:"",
       chips:[["amber","📝","300 waitlist"],["slate","●","building live"]],
-      stats:[["300","Waitlist"],["Live","Build status"],["—","Signal"],["Building","Stage"]],
+      stats:[["300","Waitlist"],["Live","Build status"],["-","Signal"],["Building","Stage"]],
       hist:[["3d ago","spun up on C Slop Slop"]] },
 
     { id:"quietinbox", name:"QuietInbox", handle:"devan", cat:"Email", stage:"Testing", type:"building", tint:"blue",
       glyph:"✉️", when:"4d ago", featured:false,
       headline:"<strong>QuietInbox</strong> opened a private beta",
       what:"Email triage that auto-drafts the replies you approve.",
-      tagline:"Inbox zero — but you still hit send.",
-      privateHint:"Revenue is set to private — that’s a paid upgrade @devan chose.",
+      tagline:"Inbox zero - but you still hit send.",
+      privateHint:"Revenue is set to private - that’s a paid upgrade @devan chose.",
       chips:[["blue","👥","6 beta users"],["slate","🔒","revenue private"],["accent","⚡","Promising"]],
       stats:[["6","Beta users"],["🔒","MRR · private"],["Promising","Signal"],["Testing","Stage"]],
       hist:[["1w ago","opened private beta"],["2w ago","spun up on C Slop Slop"]] },
@@ -646,17 +646,17 @@
       tagline:"Never miss a competitor price move.",
       privateHint:"",
       chips:[["violet","🎤","15 interviews"],["slate","●","coming soon"]],
-      stats:[["15","Interviews"],["—","Revenue"],["Validating","Signal"],["Idea","Stage"]],
+      stats:[["15","Interviews"],["-","Revenue"],["Validating","Signal"],["Idea","Stage"]],
       hist:[["1w ago","started customer interviews"]] },
 
     { id:"plantpal", name:"PlantPal", handle:"sol", cat:"Home", stage:"Idea", type:"validating", tint:"green",
       glyph:"🪴", when:"6d ago", featured:false,
-      headline:"<strong>PlantPal</strong> — coming soon",
+      headline:"<strong>PlantPal</strong> - coming soon",
       what:"Diagnose your houseplant from a photo.",
       tagline:"Know what your plant needs.",
       privateHint:"",
       chips:[["slate","🌱","validating"],["slate","●","coming soon"]],
-      stats:[["—","Users"],["—","Revenue"],["Validating","Signal"],["Idea","Stage"]],
+      stats:[["-","Users"],["-","Revenue"],["Validating","Signal"],["Idea","Stage"]],
       hist:[["4d ago","validating the idea"]] },
 
     { id:"redditpainbot", name:"RedditPainBot", handle:"omar", cat:"Research", stage:"Killed", type:"killed", tint:"slate",
@@ -666,7 +666,7 @@
       tagline:"A good idea the data said no to.",
       privateHint:"",
       chips:[["slate","🗄️","archived"],["slate","📄","post-mortem public"]],
-      stats:[["—","Users"],["—","Revenue"],["Post-mortem","Outcome"],["Killed","Stage"]],
+      stats:[["-","Users"],["-","Revenue"],["Post-mortem","Outcome"],["Killed","Stage"]],
       hist:[["3w ago","shut down · post-mortem published"],["6w ago","spun up on C Slop Slop"]] },
   ];
 
@@ -774,12 +774,12 @@
       +   '<div class="stats">' + statHtml(c) + '</div>'
       +   '<div class="privacy-card"><div class="privacy-ic">🔒</div><div>'
       +     '<h4>The cockpit stays private</h4>'
-      +     '<p>You’re seeing the product and its public traction. @' + c.handle + '’s budget, the AI’s plan, the approval queue and the risk log live in a private operator view — <em>public by default, privacy is a paid upgrade.</em></p>'
+      +     '<p>You’re seeing the product and its public traction. @' + c.handle + '’s budget, the AI’s plan, the approval queue and the risk log live in a private operator view - <em>public by default, privacy is a paid upgrade.</em></p>'
       +   '</div></div>'
       +   '<div class="tl-title">Milestones</div>'
       +   '<ol class="tl-list">' + histHtml(c) + '</ol>'
       +   '<div class="sheet-foot"><div class="sheet-foot-txt"><p class="sheet-foot-h">Want your own on this feed?</p>'
-      +     '<p class="sheet-foot-s">Free companies are public by default — that’s how they get discovered.</p></div>'
+      +     '<p class="sheet-foot-s">Free companies are public by default - that’s how they get discovered.</p></div>'
       +     '<button class="btn btn-accent" type="button" data-noop>Build your own →</button></div>'
       + '</div>';
 

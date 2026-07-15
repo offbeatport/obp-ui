@@ -461,7 +461,7 @@ const STAGE={
 const COMPANIES=[
   {id:'leadsift',sym:'LDSF',name:'LeadSift',stage:'LIVE-GROWING',tag:'',mrr:180,series:[60,90,120,140,160,180],users:12,usersWk:3,churn:0,churnNa:false,cost:22,costParts:[['infra',9],['email',5],['domain',1],['api',7]],net:158,
    auto:{make:1,grow:0,run:1},conn:{Stripe:1,domain:1,ESP:1,PH:1,X:0},
-   build:{state:'SHIP-READY',lines:['slice5 "daily digest" awaiting SHIP — doneWhen ✓','slice8 blocked → backlog']},
+   build:{state:'SHIP-READY',lines:['slice5 "daily digest" awaiting SHIP - doneWhen ✓','slice8 blocked → backlog']},
    grow:{state:'L0',lines:['launched on Product Hunt 3wk ago (+8 users)','4 SEO posts → 320 visits/mo','signup funnel 18%']},
    run:{state:'L1',lines:['2 support tickets · ~4h to clear','uptime 99.9%','1 refund issued']}},
   {id:'quietinbox',sym:'QTIB',name:'QuietInbox',stage:'LIVE-SCALING',tag:'BEST ROI',mrr:420,series:[120,210,300,360,400,420],users:38,usersWk:0,churn:2,churnNa:false,cost:48,costParts:[['infra',26],['api',12],['email',8],['domain',2]],net:372,
@@ -473,23 +473,23 @@ const COMPANIES=[
    auto:{make:1,grow:0,run:0},conn:{Stripe:0,domain:0,ESP:0},
    build:{state:'BUILDING',lines:['building slice6 "re-format invoice to buyer locale"','InvoiceFormatter.tsx in progress']},
    grow:{state:'L0',lines:['not launched yet','needs domain + entity / ToS (SIGN gate)']},
-   run:{state:'—',lines:['n/a — pre-revenue']}},
+   run:{state:'-',lines:['n/a - pre-revenue']}},
   {id:'datadrop',sym:'DDRP',name:'DataDrop',stage:'LIVE-FLAT',tag:'WATCH',mrr:95,series:[80,88,92,95,95,95],users:6,usersWk:0,churn:4,churnNa:false,cost:19,costParts:[['infra',10],['api',5],['email',3],['domain',1]],net:76,
    auto:{make:1,grow:0,run:1},conn:{Stripe:1,domain:1,ESP:1},
    build:{state:'QUEUED',lines:['slice6 queued "saved chart views"','matches inbound support request']},
-   grow:{state:'L0',lines:['1 directory listing live','low traffic — needs a distribution push']},
+   grow:{state:'L0',lines:['1 directory listing live','low traffic - needs a distribution push']},
    run:{state:'L1',lines:['1 support ticket open']}},
   {id:'redditpainbot',sym:'RPBT',name:'RedditPainBot',stage:'PAUSED-BLOCKED',tag:'KILL?',mrr:0,series:[0,0,0,0,0,0],users:0,usersWk:0,churn:0,churnNa:true,cost:4,costParts:[['infra',4]],net:-4,
    auto:{make:-1,grow:-1,run:-1},conn:{},
-   build:{state:'BLOCKED',lines:['slice8 BLOCKED "dedupe pains" — stuck ×3','needs UNBLOCK decision']},
-   grow:{state:'—',lines:['never launched']},
-   run:{state:'—',lines:['n/a']}}
+   build:{state:'BLOCKED',lines:['slice8 BLOCKED "dedupe pains" - stuck ×3','needs UNBLOCK decision']},
+   grow:{state:'-',lines:['never launched']},
+   run:{state:'-',lines:['n/a']}}
 ];
 
 let GATES=[
   {id:'g1',type:'SHIP',co:'leadsift',detail:'slice5 · "daily digest"',ev:'doneWhen <b>✓</b> · /digest/preview → <b>200</b>',status:'active',resolved:null},
   {id:'g2',type:'SPEND',co:'quietinbox',detail:'$40 · Product Hunt launch',ev:'est. <b>~120</b> signups · newsletter <b>1.2k</b>',status:'active',resolved:null,amount:40},
-  {id:'g3',type:'UNBLOCK',co:'redditpainbot',detail:'slice8 · "dedupe pains"',ev:'stuck <b>×3</b> — kill or unblock',status:'active',resolved:null},
+  {id:'g3',type:'UNBLOCK',co:'redditpainbot',detail:'slice8 · "dedupe pains"',ev:'stuck <b>×3</b> - kill or unblock',status:'active',resolved:null},
   {id:'g4',type:'SIGN',co:'translatorbill',detail:'entity + ToS',ev:'blocks launch · also needs <b>domain</b>',status:'upcoming',resolved:null},
   {id:'g5',type:'POST',co:'datadrop',detail:'launch thread · r/SaaS',ev:'1 listing live · <b>low</b> traffic',status:'upcoming',resolved:null}
 ];
@@ -520,9 +520,9 @@ let OPPS=[
 ];
 
 const RECS=[
-  {g:'▲',c:'var(--green)',t:'Double-down <b>QuietInbox</b> — raise GROW → L2',cmd:'open quietinbox'},
+  {g:'▲',c:'var(--green)',t:'Double-down <b>QuietInbox</b> - raise GROW → L2',cmd:'open quietinbox'},
   {g:'→',c:'var(--blue)',t:'Push <b>DataDrop</b> distribution, or keep watching',cmd:'open datadrop'},
-  {g:'✕',c:'var(--red)',t:'Kill <b>RedditPainBot</b> — blocked, never launched',cmd:'kill redditpainbot'},
+  {g:'✕',c:'var(--red)',t:'Kill <b>RedditPainBot</b> - blocked, never launched',cmd:'kill redditpainbot'},
   {g:'✦',c:'var(--violet)',t:'Spin <b>PayoutReconciler</b> (score 82)',cmd:'spin payoutreconciler'}
 ];
 
@@ -531,7 +531,7 @@ const $=s=>document.querySelector(s);
 const byId=id=>COMPANIES.find(c=>c.id===id);
 const bySym=s=>COMPANIES.find(c=>c.sym===s);
 function deltaPct(s){const a=s[s.length-2],b=s[s.length-1];if(!a)return 0;return ((b-a)/a)*100;}
-function fmtPct(p){if(p>0.05)return'▲ '+p.toFixed(1)+'%';if(p<-0.05)return'▼ '+Math.abs(p).toFixed(1)+'%';return'— 0.0%';}
+function fmtPct(p){if(p>0.05)return'▲ '+p.toFixed(1)+'%';if(p<-0.05)return'▼ '+Math.abs(p).toFixed(1)+'%';return'- 0.0%';}
 function cls(p){return p>0.05?'up':p<-0.05?'down':'flat';}
 
 function spark(series,w=64,h=20,color){
@@ -586,7 +586,7 @@ function areaChart(series,color,opts={}){
 
 function autoDots(level){
   const col={0:'var(--slate)',1:'var(--blue)',2:'var(--green)'};
-  if(level<0)return '<span class="auto na">—</span>';
+  if(level<0)return '<span class="auto na">-</span>';
   let d='';for(let i=0;i<3;i++)d+=`<i class="adot" style="${i<=level?'background:'+col[level]+(level===2?';box-shadow:0 0 5px '+col[level]:''):''}"></i>`;
   return `<span class="auto l${level}">L${level}<span class="adots">${d}</span></span>`;
 }
@@ -760,7 +760,7 @@ function openCompany(id){
   const connHtml=conn.length?conn.map(k=>`<span class="conn ${c.conn[k]?'on':'off'}">${c.conn[k]?'✓':'✗'} ${k}</span>`).join(''):`<span class="conn">none connected</span>`;
   const costMax=Math.max(...c.costParts.map(p=>p[1]));
   const myGates=GATES.filter(g=>g.co===id);
-  const churn=c.churnNa?'—':c.churn+'%';
+  const churn=c.churnNa?'-':c.churn+'%';
   $('#drillCard').innerHTML=`
     <div class="d-head">
       <div>

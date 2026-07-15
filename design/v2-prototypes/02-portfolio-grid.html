@@ -512,7 +512,7 @@ const DATA = {
         {n:5, title:'User gets a daily email digest of top leads', status:'awaiting_approval', check:'green', priority:91},
         {n:6, title:'User can export leads to CSV',                status:'todo',              priority:74},
         {n:7, title:'Slack ping on a hot lead',                    status:'todo',              priority:60, dependsOn:[5]},
-        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress — same failure ×3'},
+        {n:8, title:'Inbound webhook integration',                 status:'blocked',           note:'no progress - same failure ×3'},
       ],
       approval:{
         slice:5, title:'User gets a daily email digest of top leads',
@@ -540,7 +540,7 @@ const DATA = {
       currentSlice:{n:6, title:'Saved chart views', status:'todo', step:'queued'}, slicesShipped:5 },
     { id:'redditpainbot', name:'RedditPainBot', thesis:'Mine subreddits for pain posts → ranked micro-SaaS ideas.',
       status:'paused', domain:null, previewUrl:null, mrr:0, users:0, needsYou:false,
-      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped — no progress'}, slicesShipped:2 },
+      currentSlice:{n:8, title:'Dedupe near-identical pains', status:'blocked', step:'stopped - no progress'}, slicesShipped:2 },
   ],
   opportunities: [
     { id:'o1', thought:'freelancers hate reconciling stripe payouts by hand', title:'PayoutReconciler', thesis:'Match Stripe payouts to invoices automatically.', score:82, status:'candidate' },
@@ -549,22 +549,22 @@ const DATA = {
     { id:'o4', thought:'shopify stores need quick refund triage',             title:'RefundTriage',     thesis:'Prioritize refund requests by risk.',              score:38, status:'killed' },
   ],
   activity: [
-    { co:'TranslatorBill', kind:'building',     text:'building slice 6 — writing DigestScheduler.tsx',        t:'now', running:true },
-    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 — running doneWhen probe',   t:'12s', running:true },
+    { co:'TranslatorBill', kind:'building',     text:'building slice 6 - writing DigestScheduler.tsx',        t:'now', running:true },
+    { co:'QuietInbox',     kind:'deploy',       text:'deployed to localhost:4021 - running doneWhen probe',   t:'12s', running:true },
     { co:'LeadSift',       kind:'await',        text:'slice 5 awaiting your approval',                        t:'2m' },
-    { co:'LeadSift',       kind:'check',        text:'doneWhen passed — GET /digest/preview → 200',           t:'2m' },
-    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog — slice 6 now top',              t:'5m' },
-    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked — no progress (same failure ×3)',       t:'18m' },
+    { co:'LeadSift',       kind:'check',        text:'doneWhen passed - GET /digest/preview → 200',           t:'2m' },
+    { co:'DataDrop',       kind:'reprioritize', text:'re-prioritized backlog - slice 6 now top',              t:'5m' },
+    { co:'RedditPainBot',  kind:'blocked',      text:'slice 8 blocked - no progress (same failure ×3)',       t:'18m' },
   ],
   nextMoves: [
-    'Approve LeadSift slice 5 (daily digest) — it’s live and the check is green',
+    'Approve LeadSift slice 5 (daily digest) - it’s live and the check is green',
     'Unblock RedditPainBot slice 8, or pause the company',
     'Promote “PayoutReconciler” (score 82) to a company',
   ],
   chat: [
-    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed — want to approve it?' },
+    { role:'assistant', text:'LeadSift just shipped a daily digest. It’s live at localhost:4019 and the check passed - want to approve it?' },
     { role:'user',      text:'show me the diff first' },
-    { role:'assistant', text:'Here’s the slice — one new component + a scheduler. Preview URL + green check are attached above.' },
+    { role:'assistant', text:'Here’s the slice - one new component + a scheduler. Preview URL + green check are attached above.' },
   ],
 };
 
@@ -608,7 +608,7 @@ function stageBar(co){
     }
     bars += '<i class="'+cls+'"></i>';
   }
-  const lbl = total ? (shipped+'/'+ (co.slices? total : '∞')) : '—';
+  const lbl = total ? (shipped+'/'+ (co.slices? total : '∞')) : '-';
   return '<span class="stagebar">'+bars+'</span>';
 }
 
@@ -711,11 +711,11 @@ function companyRow(co){
   // status
   tr.appendChild(td('', '<span class="pill '+co.status+'"><span class="pd"></span>'+co.status+'</span>'));
   // mrr
-  tr.appendChild(td('num', co.mrr ? '$'+co.mrr : '<span style="color:var(--txt-3)">—</span>'));
+  tr.appendChild(td('num', co.mrr ? '$'+co.mrr : '<span style="color:var(--txt-3)">-</span>'));
   // users
-  tr.appendChild(td('num', co.users ? co.users : '<span style="color:var(--txt-3)">—</span>'));
+  tr.appendChild(td('num', co.users ? co.users : '<span style="color:var(--txt-3)">-</span>'));
   // current slice
-  let curHtml = '<span style="color:var(--txt-3)">—</span>';
+  let curHtml = '<span style="color:var(--txt-3)">-</span>';
   if(cur){
     curHtml = '<span class="currentslice">#'+cur.n+' <b>'+cur.title+'</b></span>';
   }
@@ -725,10 +725,10 @@ function companyRow(co){
   // slices count
   tr.appendChild(td('num', shippedCount(co)));
   // needs you
-  tr.appendChild(td('', co.needsYou ? '<span class="needs-yes">approve</span>' : '<span class="needs-no">—</span>'));
+  tr.appendChild(td('', co.needsYou ? '<span class="needs-yes">approve</span>' : '<span class="needs-no">-</span>'));
   // last activity
   const act = DATA.activity.find(a=>a.co===co.name);
-  tr.appendChild(td('', act ? '<span class="when">'+act.t+'</span> <span style="color:var(--txt-2)">'+act.kind+'</span>' : '<span class="when">—</span>'));
+  tr.appendChild(td('', act ? '<span class="when">'+act.t+'</span> <span style="color:var(--txt-2)">'+act.kind+'</span>' : '<span class="when">-</span>'));
   // domain
   tr.appendChild(td('', co.domain ? '<span class="domain">'+co.domain+'</span>' : '<span class="domain none">no domain</span>'));
   // preview
@@ -758,23 +758,23 @@ function oppRow(o){
         : isPromoted ? '<span class="pill active"><span class="pd"></span>promoted</span>'
         : '<span class="pill todo"><span class="pd"></span>candidate</span>';
   tr.appendChild(td('', st));
-  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
-  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">-</span>'));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">-</span>'));
   // thought as current
   tr.appendChild(td('', '<span class="thesis">“'+o.thought+'”</span>'));
   // score in "stage" column
   const pct = Math.round(o.score);
   tr.appendChild(td('', '<span class="score-wrap"><span class="score-bar'+(killed?' killed':'')+'"><i style="width:'+pct+'%"></i></span><span class="score-v" style="color:'+(killed?'var(--red)':'var(--indigo)')+'">'+o.score+'</span></span>'));
-  tr.appendChild(td('num', '<span style="color:var(--txt-3)">—</span>'));
+  tr.appendChild(td('num', '<span style="color:var(--txt-3)">-</span>'));
   // needs you -> promote affordance
   let promoCell;
-  if(killed) promoCell = '<span class="needs-no">—</span>';
+  if(killed) promoCell = '<span class="needs-no">-</span>';
   else if(isPromoted) promoCell = '<span class="needs-yes" style="color:var(--green)">✓ company</span>';
   else promoCell = '<button class="btn-promote" data-opp="'+o.id+'">↑ Promote</button>';
   tr.appendChild(td('', promoCell));
   tr.appendChild(td('', '<span class="thesis">'+o.thesis+'</span>'));
-  tr.appendChild(td('', '<span class="domain none">—</span>'));
-  tr.appendChild(td('', '<span class="preview-link none">—</span>'));
+  tr.appendChild(td('', '<span class="domain none">-</span>'));
+  tr.appendChild(td('', '<span class="preview-link none">-</span>'));
   tr.appendChild(el('td','c-add',''));
 
   const pb = tr.querySelector('.btn-promote');
@@ -801,7 +801,7 @@ function expanderRow(co){
   // sub-grid
   const sub = el('table','subgrid');
   sub.innerHTML = '<thead><tr>'
-    + '<th class="s-n">#</th><th>Slice — user can…</th><th>Status</th><th>Check</th><th>Priority</th><th>Depends</th>'
+    + '<th class="s-n">#</th><th>Slice - user can…</th><th>Status</th><th>Check</th><th>Priority</th><th>Depends</th>'
     + '</tr></thead>';
   const tb = el('tbody');
 
@@ -811,14 +811,14 @@ function expanderRow(co){
     const row = el('tr','slice-row'+(isGate?' gate':'')+(isGate&&openGate?' open':''));
     const muted = (s.status==='todo'||s.status==='blocked') ? ' muted' : '';
     let title = (isGate ? '<span class="disc2">▶</span>' : '') + s.title;
-    if(s.note) title += ' <span class="blknote">— '+s.note+'</span>';
+    if(s.note) title += ' <span class="blknote">- '+s.note+'</span>';
     row.innerHTML =
       '<td class="s-n">'+s.n+'</td>'
       + '<td class="s-title'+muted+'">'+title+'</td>'
       + '<td><span class="pill '+s.status+'"><span class="pd"></span>'+statusLabel(s.status)+'</span></td>'
-      + '<td>'+(s.check==='green' ? '<span class="check-ok">✓ green</span>' : '<span class="check-na">—</span>')+'</td>'
-      + '<td>'+(s.priority ? '<span class="pri'+(s.priority<70?' lo':'')+'">'+s.priority+'</span>' : '<span class="check-na">—</span>')+'</td>'
-      + '<td>'+(s.dependsOn ? '<span class="deps">→ #'+s.dependsOn.join(', #')+'</span>' : '<span class="check-na">—</span>')+'</td>';
+      + '<td>'+(s.check==='green' ? '<span class="check-ok">✓ green</span>' : '<span class="check-na">-</span>')+'</td>'
+      + '<td>'+(s.priority ? '<span class="pri'+(s.priority<70?' lo':'')+'">'+s.priority+'</span>' : '<span class="check-na">-</span>')+'</td>'
+      + '<td>'+(s.dependsOn ? '<span class="deps">→ #'+s.dependsOn.join(', #')+'</span>' : '<span class="check-na">-</span>')+'</td>';
     tb.appendChild(row);
     if(isGate){
       row.addEventListener('click', ()=>{ openGate=!openGate; renderGrid(); });
@@ -895,7 +895,7 @@ function gateRow(co){
           fb = $('#rejectFb'), send = $('#rejectSend'), inp = $('#rejectInput');
     if(!ap) return;
     ap.addEventListener('click', (e)=>{ e.stopPropagation();
-      conf.className='gate-confirm ok show'; conf.textContent='✓ Approved — shipping slice 5';
+      conf.className='gate-confirm ok show'; conf.textContent='✓ Approved - shipping slice 5';
       ap.disabled=true; rj.disabled=true; fb.classList.remove('show');
       toast('<span class="tick">✓</span> LeadSift slice 5 approved & shipped');
     });
@@ -905,7 +905,7 @@ function gateRow(co){
     send.addEventListener('click', (e)=>{ e.stopPropagation();
       conf.className='gate-confirm rej show'; conf.textContent='↩ Sent back to build loop';
       fb.classList.remove('show');
-      toast('Feedback sent — LeadSift will rebuild slice 5');
+      toast('Feedback sent - LeadSift will rebuild slice 5');
     });
     inp && inp.addEventListener('click', e=>e.stopPropagation());
   });
@@ -963,7 +963,7 @@ function overviewRail(){
 
   // global command chat
   const chat = el('div','chat-rail');
-  chat.innerHTML = '<div class="rail-h" style="border-bottom:1px solid var(--line-soft)">Command bar — the spine</div>';
+  chat.innerHTML = '<div class="rail-h" style="border-bottom:1px solid var(--line-soft)">Command bar - the spine</div>';
   const stream = el('div','chat-stream');
   DATA.chat.forEach(m=>{
     const msg = el('div','msg '+m.role);
@@ -971,7 +971,7 @@ function overviewRail(){
     stream.appendChild(msg);
   });
   chat.appendChild(stream);
-  chat.appendChild(cmdbar('Ask, direct, or promote — e.g. “approve LeadSift slice 5”'));
+  chat.appendChild(cmdbar('Ask, direct, or promote - e.g. “approve LeadSift slice 5”'));
   wrap.appendChild(chat);
   return wrap;
 }
@@ -993,7 +993,7 @@ function companyChatRail(co){
   chat.innerHTML = '<div class="rail-h" style="border-bottom:1px solid var(--line-soft)">'+co.name+' chat</div>';
   const stream = el('div','chat-stream');
   const msgs = (co.id==='leadsift') ? DATA.chat : [
-    {role:'assistant', text:co.name+' is '+(cur?('on slice #'+cur.n+' — '+cur.title):'idle')+'. '+(co.previewUrl?'Live at '+co.previewUrl.replace('http://','')+'.':'Currently offline.')}
+    {role:'assistant', text:co.name+' is '+(cur?('on slice #'+cur.n+' - '+cur.title):'idle')+'. '+(co.previewUrl?'Live at '+co.previewUrl.replace('http://','')+'.':'Currently offline.')}
   ];
   msgs.forEach(m=>{
     const msg = el('div','msg '+m.role);
@@ -1038,7 +1038,7 @@ function renderActivity(){
   if(running.length>1){
     collapsed.appendChild(el('span','more', '+'+(running.length-1)+' more building · '+(DATA.activity.length)+' events'));
   } else {
-    collapsed.appendChild(el('span','more', DATA.activity.length+' events — expand'));
+    collapsed.appendChild(el('span','more', DATA.activity.length+' events - expand'));
   }
 
   // expanded: grouped by company

@@ -613,7 +613,7 @@
     <div class="hero-inner">
       <span class="live-badge"><span class="dot"></span> factory floor · live</span>
       <h1><span class="num" id="heroNum">0</span> companies being<br>built right now</h1>
-      <p class="hero-sub">Not a static app gallery — a working factory. Real makers, real products, shipping in public. Watch the line hum: what spun up, what shipped, what graduated.</p>
+      <p class="hero-sub">Not a static app gallery - a working factory. Real makers, real products, shipping in public. Watch the line hum: what spun up, what shipped, what graduated.</p>
       <div class="hero-stats" id="heroStats"></div>
     </div>
   </section>
@@ -641,13 +641,13 @@
   <!-- Bottom CTA -->
   <section class="cta-band">
     <h2>Your idea could be humming here by tonight.</h2>
-    <p>Describe it once. The factory validates, builds, ships — in public, from day one.</p>
+    <p>Describe it once. The factory validates, builds, ships - in public, from day one.</p>
     <button class="btn btn-primary" data-build>Build your own company →</button>
     <div class="cta-sub">free tier is public by default · privacy is a paid upgrade</div>
   </section>
 
   <footer>
-    <span>C Slop Slop · <b>the startup factory</b> — a public build feed</span>
+    <span>C Slop Slop · <b>the startup factory</b> - a public build feed</span>
     <span>every free company ships in public · <b>ops stay private</b></span>
   </footer>
 
@@ -697,7 +697,7 @@
       traction: '210 users', revenue: '$6/mo', revenuePublic: true, signal: 'Strong',
       activity: 'trending ↑', fresh: 'live', featured: true },
     { name: 'GymStreak', handle: 'theo', category: 'Fitness', stage: 'Testing', phase: 'building',
-      desc: 'Text your workout — it logs and progresses it for you.',
+      desc: 'Text your workout - it logs and progresses it for you.',
       traction: '48 beta', revenue: null, revenuePublic: false, signal: 'Promising',
       activity: 'shipped v2', fresh: 'today', featured: false },
     { name: 'InvoiceSnap', handle: 'noor', category: 'Finance', stage: 'Growing', phase: 'live',
@@ -764,7 +764,7 @@
                '<div class="mk-chips"><span>🔥 hot</span><span>call now</span></div>';
       case 'Email':
         return '<div class="mk-line w70"></div>' +
-               '<div class="mk-draft">Re: your quote — reply drafted ✓ approve?</div>' +
+               '<div class="mk-draft">Re: your quote - reply drafted ✓ approve?</div>' +
                '<div class="mk-line w50"></div>';
       case 'Data':
         return '<div class="mk-chart"><i style="height:40%"></i><i style="height:72%"></i><i style="height:54%"></i><i style="height:90%"></i><i style="height:33%"></i><i style="height:64%"></i></div>' +
@@ -812,7 +812,7 @@
     var v = splitVal(c.traction);
     var rev = c.revenuePublic ? '<span class="t-rev">' + esc(c.revenue) + '</span>' : '';
     var sig = c.signal ? '<span class="t-sig">' + esc(c.signal) + '</span>' : '';
-    return '<article class="card ' + st.cls + ' ph-' + c.phase + (c.featured ? ' feat' : '') + '" role="button" tabindex="0" data-i="' + i + '" aria-label="Open ' + esc(c.name) + ' — ' + esc(c.category) + ', ' + esc(c.stage) + '">' +
+    return '<article class="card ' + st.cls + ' ph-' + c.phase + (c.featured ? ' feat' : '') + '" role="button" tabindex="0" data-i="' + i + '" aria-label="Open ' + esc(c.name) + ' - ' + esc(c.category) + ', ' + esc(c.stage) + '">' +
              '<div class="card-live"><span class="pulse ' + pulseClass(c) + '"></span><span class="cl-txt"><b>' + esc(c.activity) + '</b> · ' + esc(c.fresh) + '</span></div>' +
              mockBlock(c) +
              '<div class="card-body">' +
@@ -823,7 +823,7 @@
                  '<span class="t-main"><b>' + esc(v.n) + '</b> ' + esc(v.c) + '</span>' + rev + sig +
                '</div>' +
                '<div class="card-foot"><span class="try">' + ctaLabel(c) + '</span>' +
-                 '<span class="priv" title="Ops stay private — budget, the AI’s plan, approvals &amp; risk log are never shown here">🔒 private</span></div>' +
+                 '<span class="priv" title="Ops stay private - budget, the AI’s plan, approvals &amp; risk log are never shown here">🔒 private</span></div>' +
              '</div>' +
            '</article>';
   }
@@ -951,7 +951,7 @@
              '<div class="d-by">built by <b class="h">@' + esc(c.handle) + '</b> on <b>C Slop Slop</b> · public by default</div>' +
              '<div class="d-private">' +
                '<div class="d-private-h">🔒 The operator cockpit stays private</div>' +
-               '<p>Budget &amp; spend, the AI’s plan, the approval queue and the risk log live with the maker — never here. The marketplace only ever shows the product and its public traction.</p>' +
+               '<p>Budget &amp; spend, the AI’s plan, the approval queue and the risk log live with the maker - never here. The marketplace only ever shows the product and its public traction.</p>' +
              '</div>' +
            '</div>';
   }
@@ -1000,7 +1000,7 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-try]');
     var b = e.target.closest('[data-build]');
-    if (t) { showToast('▶ Demo — the live product would open here.'); }
+    if (t) { showToast('▶ Demo - the live product would open here.'); }
     else if (b) { showToast('✎ This is where you’d describe your idea and spin one up.'); }
   });
 
