@@ -16,7 +16,6 @@ import {
 import { type ReactNode, useState } from "react";
 import { AgentConsole } from "~/components/agent-console";
 import { Logo, LogoMark } from "~/components/logo";
-import { ThemeToggle } from "~/components/theme-toggle";
 import { UserMenu } from "~/components/user-menu";
 import { cn } from "~/lib/utils";
 
@@ -38,17 +37,10 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
                     onToggle={() => setCollapsed((c) => !c)}
                 />
                 <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
-                    <div className="flex-1">{children}</div>
-                    <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
-                        <span>
-                            <span className="text-primary">{"{"}</span> C Slop Slop{" "}
-                            <span className="text-primary">{"}"}</span> - from a thought to bag.
-                        </span>
-                        <ThemeToggle />
-                    </footer>
+                    {children}
                 </main>
             </div>
-            {/* Global overlay — kept OUT of the grid so its root div can't take a grid cell. */}
+            {/* Global overlay - kept OUT of the grid so its root div can't take a grid cell. */}
             <AgentConsole />
         </>
     );
@@ -91,10 +83,10 @@ function Rail({
                 />
             </button>
 
-            {/* Glow-C wordmark (V7) — links home */}
+            {/* Glow-C wordmark (V7) - links home */}
             <Link
                 to="/"
-                aria-label="C Slop Slop — home"
+                aria-label="C Slop Slop - home"
                 className={cn(
                     "flex items-center px-4 pb-3.5 pt-5",
                     collapsed && "justify-center px-0",
