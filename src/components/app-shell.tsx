@@ -3,6 +3,7 @@ import {
     ChevronLeft,
     CreditCard,
     Diamond,
+    FlaskConical,
     Home,
     Inbox,
     LayoutGrid,
@@ -259,16 +260,25 @@ function CompaniesNav() {
                         <span
                             className={cn(
                                 "relative grid size-8 flex-none place-items-center rounded-[10px] text-[13px] font-semibold text-primary-foreground",
-                                TONE[c.tone].solid,
+                                // Draft: an incubating icon on a muted fill instead of the tone
+                                // letter avatar. Live companies keep their tone avatar + status dot.
+                                draft ? "bg-neutral text-card" : TONE[c.tone].solid,
                             )}
+                            aria-label={draft ? "Draft (incubating)" : undefined}
                         >
-                            {initials(c.name)}
-                            <span
-                                className={cn(
-                                    "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
-                                    STATUS_DOT[c.status],
-                                )}
-                            />
+                            {draft ? (
+                                <FlaskConical className="size-4" />
+                            ) : (
+                                <>
+                                    {initials(c.name)}
+                                    <span
+                                        className={cn(
+                                            "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
+                                            STATUS_DOT[c.status],
+                                        )}
+                                    />
+                                </>
+                            )}
                         </span>
                         <span className="min-w-0 flex-1">
                             <span className="flex items-center gap-1.5 text-[13.5px] font-[550]">
