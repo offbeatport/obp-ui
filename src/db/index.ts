@@ -32,8 +32,14 @@ function openDatabase(): Database.Database {
     return s;
 }
 
-// Boot-time CREATE TABLE - greenfield, no migrations yet (SPEC). Idempotent, so it
-// running in both processes is fine.
+// Boot-time CREATE TABLE - deliberately NOT a migration system. It's idempotent
+// (IF NOT EXISTS + the guarded ALTERs below), so running it in BOTH processes (web +
+// executor) is safe, and it applies cleanly to already-populated DBs. drizzle-kit
+// migrations were assessed and rejected: they emit bare `CREATE TABLE` (no IF NOT
+// EXISTS), so `migrate()` would fail to boot on any existing DB that predates a
+// `__drizzle_migrations` record - and it adds a generate step + migrations folder for
+// a single-node greenfield app. The one cost is that this DDL is hand-kept in sync
+// with schema.ts (edit both together; add new columns to the ALTER list below).
 function createTables(s: Database.Database) {
     s.exec(`
     CREATE TABLE IF NOT EXISTS opportunity (
