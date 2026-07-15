@@ -3,6 +3,7 @@ import {
     ChevronLeft,
     CreditCard,
     Diamond,
+    FlaskConical,
     Home,
     Inbox,
     LayoutGrid,
@@ -237,9 +238,10 @@ function CompaniesNav() {
                         {c.name}
                     </span>
                     {c.status === "draft" ? (
-                        <span className="flex-none rounded bg-neutral-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.05em] text-neutral">
-                            draft
-                        </span>
+                        <FlaskConical
+                            className="size-3.5 flex-none text-faint"
+                            aria-label="Draft (incubating)"
+                        />
                     ) : (
                         c.needsYou && (
                             <span
