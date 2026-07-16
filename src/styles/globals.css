@@ -108,8 +108,9 @@
     --approval-soft: rgba(167, 139, 250, 0.16);
     --neutral: #8a93a8;
     --neutral-soft: rgba(120, 140, 200, 0.12);
-    --destructive: #f87171;
-    --destructive-soft: rgba(248, 113, 113, 0.15);
+    --destructive: #dd6b62; /* warmer, less-neon red - readable as text on dark paper */
+    --destructive-foreground: #fbe9e6; /* soft warm off-white (not harsh pure white on red) */
+    --destructive-soft: rgba(221, 107, 98, 0.15);
 
     --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.55);
     --shadow-e2: 0 2px 6px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65);
