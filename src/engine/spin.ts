@@ -514,48 +514,157 @@ async function persistCompanySpec(
 
 // ---- AI drivers (never throw - deterministic fallback) -----------------------------------
 
+// Market research runs in TWO fast stages so no single call is big enough to time out. The old
+// one-shot "return 5 FULL specs" call blew past the 90s budget every time and SILENTLY fell back
+// to junk names (the founder's phrase + a suffix, e.g. "Snowflake clone Pro"). Now:
+//   1. ideate  - ONE small call → 5 genuinely distinct, well-NAMED opportunity seeds (fast).
+//   2. expand  - 5 PARALLEL calls, one per seed → each seed's full spec. Each is small enough to
+//                finish; a failed expansion keeps the seed's real name + deterministic scores.
 async function scoutCandidates(
     thought: string,
     guardrails: Guardrails | undefined,
     criteria?: string,
 ): Promise<Candidate[]> {
-    const fb = fallbackCandidates(thought);
-    const extra = criteria ? `\nExtra criteria from the founder (MUST honor): ${criteria}` : "";
+    const seeds = await ideateOpportunities(thought, guardrails, criteria);
+    if (seeds.length === 0) {
+        dlog("spin", "market: ideation failed → deterministic fallback");
+        return fallbackCandidates(thought); // ideation itself failed → deterministic fallback
+    }
+    dlog("spin", `market: ideated ${seeds.length} seed(s) → expanding in parallel`);
+    const specs = await Promise.all(
+        seeds.map((seed, i) => expandOpportunity(seed, thought, guardrails, i)),
+    );
+    // Rank by overall score (best bet first) - the UI leads with the strongest candidate.
+    return specs.sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
+}
+
+// One tight seed: a real, well-named opportunity angle. `title` is the product NAME and must
+// never echo the founder's words - the ideation prompt enforces that hard.
+type Seed = { title: string; wedge: string; icp: string; pain: string; whyNow?: string };
+
+// Stage 1 - fast ideation. Small output → completes well inside the timeout. Returns [] on any
+// failure (the caller then falls back deterministically).
+async function ideateOpportunities(
+    thought: string,
+    guardrails: Guardrails | undefined,
+    criteria?: string,
+): Promise<Seed[]> {
+    const extra = criteria ? `\nExtra criteria the founder requires: ${criteria}` : "";
     try {
         const r = await dispatchAI("market", {
             system:
-                "You are a market-research analyst finding small, solo-buildable SaaS bets. Return " +
-                "ONLY a minified JSON array of EXACTLY 5 FULL opportunity specs - no prose, no code " +
-                "fences. Each object has ALL of these keys:\n" +
-                '{"title":string,"description":string,"pain":string,"icp":string,"wedge":string,' +
-                '"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,' +
+                "You are a sharp startup analyst AND a world-class brand namer. From a founder's raw " +
+                "thought, propose 5 GENUINELY DISTINCT, real, solo-buildable SaaS opportunities. Return " +
+                "ONLY a minified JSON array of exactly 5 objects - no prose, no code fences: " +
+                '{"title":string,"wedge":string,"icp":string,"pain":string,"whyNow":string}.\n' +
+                "HARD RULES on `title` (the product NAME):\n" +
+                "• It MUST be a real, brandable, memorable startup name - an invented word, an evocative " +
+                "compound, or a short real word (think Linear, Notion, Vercel, Stripe, Floe, Parquet).\n" +
+                "• NEVER reuse, echo, translate, or lightly reword ANY word from the founder's thought, " +
+                "and NEVER take their phrase and bolt on a suffix (Pro, Hub, AI, Flow, Cloud, App, Kit, " +
+                '-ly). If the thought is "Snowflake clone", a name like "Snowflake Clone Pro" is BANNED; ' +
+                '"Floe" or "Parquet" is the bar.\n' +
+                "• Before answering, silently verify every title contains NO word from the thought; rename any that do.\n" +
+                "The 5 must each attack a DIFFERENT segment / wedge / angle - not one product renamed 5 " +
+                "ways. `icp` = a specific, reachable buyer. `pain` = the concrete recurring problem. " +
+                "`whyNow` = the timing reason it's winnable now. Be genuinely useful, never generic.",
+            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 5 genuinely distinct, real, brilliantly-named opportunities.`,
+            maxTokens: 1400,
+            signal: AbortSignal.timeout(DISPATCH_MS),
+        });
+        return extractJsonArray(r.text)
+            .map((raw): Seed | null => {
+                if (!raw || typeof raw !== "object") return null;
+                const o = raw as Record<string, unknown>;
+                const title = str(o.title ?? o.name, "", 48);
+                if (!title) return null;
+                return {
+                    title,
+                    wedge: str(o.wedge, "", 220),
+                    icp: str(o.icp, "", 160),
+                    pain: str(o.pain, "", 240),
+                    whyNow: str(o.whyNow, "", 240) || undefined,
+                };
+            })
+            .filter((s): s is Seed => s !== null)
+            .slice(0, 5);
+    } catch {
+        return [];
+    }
+}
+
+// Stage 2 - expand ONE seed into a full opportunity spec. Best-effort + never throws: on any
+// failure it returns a "light" candidate that KEEPS the seed's real name/wedge/ICP/pain and gives
+// it deterministic scores, so the founder always sees a genuinely-named opportunity.
+async function expandOpportunity(
+    seed: Seed,
+    thought: string,
+    guardrails: Guardrails | undefined,
+    idx: number,
+): Promise<Candidate> {
+    const light = lightCandidateFromSeed(seed, thought, idx);
+    try {
+        const r = await dispatchAI("market", {
+            system:
+                "You are a market-research analyst. Expand ONE given opportunity into a FULL spec. Return " +
+                "ONLY minified JSON - no prose, no code fences - with ALL of these keys:\n" +
+                '{"description":string,"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,' +
                 '"mrr":{"low":int,"high":int,"basis":string},' +
                 '"scores":{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
                 '"scoreWhy":{"buyer":string,"pain":string,"wtp":string,"timing":string,"build":string,"legal":string,"distro":string,"pricing":string},' +
                 '"competitors":[{"tool":string,"whyPay":string,"gap":string}],' +
                 '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
                 '"firstSlice":{"title":string,"doneWhen":string}}\n' +
-                "Rules: title is a short brandable angle (2-4 words). description is 2-3 sentences. " +
-                "scores are integers 0-10; scoreWhy gives a ONE-line justification for EACH of the 8 " +
-                "scores (why that number). mrr is realistic monthly-recurring-revenue in USD with a " +
-                "short basis. 2-3 competitors (tool = how buyers solve it today, whyPay = why they " +
-                "pay, gap = the critical weakness you exploit). 2-3 evidence items. whyNow = the " +
-                "timing signal. risk = the single biggest thing that could kill it. distribution = " +
-                "the concrete channel to reach the buyer. Make the 5 specs genuinely distinct angles.",
-            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nProduce 5 distinct, fully-specified SaaS opportunities a solo founder could ship.`,
-            maxTokens: 4800,
+                "Keep the opportunity's given name/wedge/ICP/pain - do NOT rename it. description is 2-3 " +
+                "sentences. scores are integers 0-10; scoreWhy gives a ONE-line justification for EACH of " +
+                "the 8 scores. mrr is realistic monthly-recurring-revenue in USD with a short basis. 2-3 " +
+                "competitors (tool = how buyers cope today, whyPay = why they pay, gap = the weakness you " +
+                "exploit). 2-3 evidence items. risk = the single biggest thing that could kill it. " +
+                "distribution = the concrete channel to reach the buyer.",
+            prompt: `Opportunity to expand (keep this identity):\n- name: ${seed.title}\n- wedge: ${seed.wedge}\n- ICP: ${seed.icp}\n- pain: ${seed.pain}\n${seed.whyNow ? `- why now: ${seed.whyNow}\n` : ""}Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}\nWrite the full spec.`,
+            maxTokens: 1600,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
-        const arr = extractJsonArray(r.text);
-        const parsed = arr
-            .map((raw, i) => toCandidate(raw, fb[i % fb.length]))
-            .filter((c): c is Candidate => c !== null);
-        if (parsed.length === 0) return fb;
-        // Rank by overall score (best bet first) - the UI leads with the strongest candidate.
-        return parsed.sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
+        const j = extractJson(r.text);
+        if (!j) return light;
+        // The AI's detail wins, but the seed's identity (name/wedge/ICP/pain) is LOCKED so a
+        // sloppy expansion can't rename or drift the opportunity the founder is about to see.
+        return (
+            toCandidate(
+                { ...j, title: seed.title, wedge: seed.wedge, icp: seed.icp, pain: seed.pain },
+                light,
+            ) ?? light
+        );
     } catch {
-        return fb;
+        return light;
     }
+}
+
+// A real-but-un-enriched candidate straight from a seed (expansion offline/failed). Keeps the
+// genuine name; deterministic scores + justifications so it still ranks + renders.
+function lightCandidateFromSeed(seed: Seed, thought: string, idx: number): Candidate {
+    const scores = seededScores(seed.title + thought + idx, 0);
+    return {
+        id: randomUUID(),
+        name: seed.title,
+        icp: seed.icp || "A specific, reachable buyer who feels this pain weekly.",
+        wedge: seed.wedge || "A focused wedge into the problem.",
+        pain: seed.pain || thought.slice(0, 180),
+        scores,
+        evidence: [],
+        firstSlice: {
+            title: "A visitor can sign up on a live URL",
+            doneWhen: "The signup page is live and accepts an email.",
+        },
+        description: `${seed.title}: ${seed.wedge}`.slice(0, 600),
+        whyNow: seed.whyNow,
+        scoreWhy: Object.fromEntries(
+            SCORE_KEYS.map((k) => [
+                k,
+                `${SCORE_META[k].full}: ${scores[k]}/10 on ${SCORE_META[k].hint}.`,
+            ]),
+        ) as Partial<Record<ScoreKey, string>>,
+    };
 }
 
 async function draftSpecAndBranding(
@@ -765,34 +874,61 @@ function toPalette(v: unknown, fb: [string, string]): [string, string] {
 
 // ---- deterministic fallbacks (offline / parse-failure path) -------------------------------
 
+// Brandable names for the deterministic fallback - clean, real-sounding, and (crucially) NOT
+// the founder's phrase + a suffix. Picked by a seeded stride so a thought gets a stable set.
+const FALLBACK_NAMES = [
+    "Northwind",
+    "Cinch",
+    "Ledgerly",
+    "Fathom",
+    "Tally",
+    "Beacon",
+    "Cobalt",
+    "Quill",
+    "Cadence",
+    "Relay",
+    "Vantage",
+    "Drift",
+    "Anchor",
+    "Lumen",
+    "Forge",
+    "Slate",
+    "Nimbus",
+    "Orbit",
+    "Harbor",
+    "Method",
+    "Cove",
+    "Ember",
+    "Kite",
+    "Pace",
+];
+function fallbackNames(seed: string, n: number): string[] {
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+    const start = h % FALLBACK_NAMES.length;
+    return Array.from(
+        { length: n },
+        (_, i) => FALLBACK_NAMES[(start + i * 5) % FALLBACK_NAMES.length],
+    );
+}
+
 function fallbackCandidates(thought: string): Candidate[] {
-    const base = titleFromThought(thought);
-    const angles: { name: string; wedge: string; bias: number }[] = [
-        {
-            name: `${base} Pro`,
-            wedge: "The fastest path to the core outcome - nothing else.",
-            bias: 1,
-        },
-        { name: `${base} Flow`, wedge: "Automates the busywork around it end to end.", bias: 0 },
-        { name: `${base} Radar`, wedge: "Alerts the moment something needs attention.", bias: -1 },
-        {
-            name: `${base} Studio`,
-            wedge: "A focused workspace to do the whole job in one place.",
-            bias: 0,
-        },
-        {
-            name: `${base} Copilot`,
-            wedge: "An assistant that does the first draft for you.",
-            bias: 1,
-        },
+    const angles: { wedge: string; bias: number }[] = [
+        { wedge: "The fastest path to the core outcome - nothing else.", bias: 1 },
+        { wedge: "Automates the busywork around it end to end.", bias: 0 },
+        { wedge: "Alerts the moment something needs attention.", bias: -1 },
+        { wedge: "A focused workspace to do the whole job in one place.", bias: 0 },
+        { wedge: "An assistant that drafts the first version for you.", bias: 1 },
     ];
+    const names = fallbackNames(thought, angles.length);
     const pain =
         thought.slice(0, 180) || "A recurring, unglamorous problem worth paying to remove.";
     return angles.map((a, i) => {
         const scores = seededScores(thought + i, a.bias);
+        const name = names[i];
         return {
             id: randomUUID(),
-            name: a.name.slice(0, 48),
+            name,
             icp: "Solo operators and small teams who feel this pain weekly.",
             wedge: a.wedge,
             pain,
@@ -819,7 +955,7 @@ function fallbackCandidates(thought: string): Candidate[] {
                 doneWhen: "The signup page is live and accepts an email.",
             },
             // full-spec detail so an offline scan still yields readable specs + .md files
-            description: `${a.name}: ${a.wedge} Aimed at people who hit "${pain}" often enough to pay to make it go away.`,
+            description: `${name}: ${a.wedge} Aimed at people who hit "${pain}" often enough to pay to make it go away.`,
             whyBuy: "It removes a weekly, manual chore for less than the time it costs them.",
             whyNow: "Cheap AI + no-code plumbing make this shippable by one person for the first time.",
             risk: "Demand may be shallow - validate that people will pay before over-building.",
