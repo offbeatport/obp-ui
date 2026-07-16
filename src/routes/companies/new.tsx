@@ -51,7 +51,7 @@ function NewCompany() {
     };
 
     return (
-        <AppShell active="companies">
+        <AppShell>
             <div className="mx-auto flex min-h-[calc(100vh-120px)] w-full max-w-[680px] flex-col justify-center px-5 pb-3.5">
                 <div className="text-center">
                     <div className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-faint">

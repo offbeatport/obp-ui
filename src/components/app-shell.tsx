@@ -1,8 +1,7 @@
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useLocation, useParams } from "@tanstack/react-router";
 import {
     ChevronLeft,
     CreditCard,
-    Diamond,
     FlaskConical,
     Home,
     Inbox,
@@ -48,20 +47,11 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
     );
 }
 
-type NavKey =
-    | "home"
-    | "inbox"
-    | "guardrails"
-    | "opportunities"
-    | "companies"
-    | "chats"
-    | "admin"
-    | "settings";
+type NavKey = "home" | "inbox" | "guardrails" | "companies" | "chats" | "admin" | "settings";
 const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "home", label: "Home", icon: Home, to: "/" },
     { key: "inbox", label: "Inbox", icon: Inbox, to: "/inbox" },
     { key: "guardrails", label: "Guardrails", icon: SlidersHorizontal, to: "/guardrails" },
-    { key: "opportunities", label: "Opportunities", icon: Diamond, to: "/opportunities" },
     { key: "companies", label: "Portfolio", icon: LayoutGrid, to: "/companies" },
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
 ];
@@ -71,6 +61,8 @@ function Rail({
     collapsed,
     onToggle,
 }: { active?: NavKey; collapsed: boolean; onToggle: () => void }) {
+    // Highlight "New company" while on its route (it isn't in the NAV list, so drive it off the URL).
+    const onNewCompany = useLocation({ select: (l) => l.pathname === "/companies/new" });
     return (
         <aside className="relative flex flex-col border-r bg-secondary">
             {/* collapse toggle straddling the edge */}
@@ -102,6 +94,7 @@ function Rail({
                     icon={Plus}
                     label="New company"
                     to="/companies/new"
+                    active={onNewCompany}
                     collapsed={collapsed}
                     tint
                 />
