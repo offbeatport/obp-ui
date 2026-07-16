@@ -59,7 +59,17 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
         [run, companyId],
     );
     const reroll = useCallback(() => run(() => reSpin({ data: { companyId } })), [run, companyId]);
-    const back = useCallback(() => run(() => resetPick({ data: { companyId } })), [run, companyId]);
+    // Re-pick from the (still-visible) list at the specing/spec stage: reset the current pick, then
+    // pick the new one so the engine re-drafts the spec for it. No-op if it's already the pick.
+    const repick = useCallback(
+        (candidateId: string) =>
+            run(async () => {
+                if (spin?.pickedId === candidateId) return;
+                await resetPick({ data: { companyId } });
+                await pickOpportunity({ data: { companyId, candidateId } });
+            }),
+        [run, companyId, spin?.pickedId],
+    );
     const skipResearch = useCallback(
         () => run(() => continueWithoutResearch({ data: { companyId } })),
         [run, companyId],
@@ -113,20 +123,21 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     // message that announced it, so the founder's later questions continue the conversation BELOW
     // it instead of pushing above it. Loaders (scouting/specing/failed) stay at the bottom.
     const anchoredArtifact =
-        (stage === "proposals" || stage === "specing") && spin ? (
+        (stage === "proposals" || stage === "specing" || stage === "spec") && spin ? (
             <>
                 <ProposalsView
                     candidates={spin.candidates}
                     pickedId={spin.pickedId}
-                    onPick={pick}
-                    // Selecting advances us to 'specing' - keep the list VISIBLE with the picked
-                    // line marked, but lock further picks while the spec drafts.
+                    // The list stays VISIBLE through specing + spec with the picked line marked.
+                    // 'proposals' → pick to advance; 'spec' → click another row to re-pick (the
+                    // spec panel below updates). Locked only while the spec is drafting.
+                    onPick={stage === "proposals" ? pick : repick}
                     busy={busy || stage === "specing"}
                 />
                 {stage === "proposals" && skipRow}
+                {/* The drafted spec sits BELOW its opportunity list, not replacing it. */}
+                {stage === "spec" && <SpecView spin={spin} onCreate={approve} busy={busy} />}
             </>
-        ) : stage === "spec" && spin ? (
-            <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
         ) : null;
     const anchorId = anchoredArtifact ? announcementId(detail.messages, stage) : undefined;
 
@@ -192,11 +203,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
 // opportunities:" line, or the spec's "… spec - …" line) - the anchor the artifact renders after.
 function announcementId(messages: CompanyDetail["messages"], stage?: string): string | undefined {
     const marker =
-        stage === "proposals" || stage === "specing"
-            ? "opportunities:"
-            : stage === "spec"
-              ? "spec -"
-              : null;
+        stage === "proposals" || stage === "specing" || stage === "spec" ? "opportunities:" : null;
     if (!marker) return undefined;
     for (let i = messages.length - 1; i >= 0; i--) {
         const m = messages[i];
@@ -281,7 +288,7 @@ function ChatComposer({
                     onClick={() => void submit()}
                     disabled={sending || !text.trim()}
                     aria-label="Send"
-                    className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40"
+                    className="absolute right-3 bottom-2 grid size-9 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40"
                 >
                     {sending ? <Loader2 className="size-4 animate-spin" /> : "↑"}
                 </button>
