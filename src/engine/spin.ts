@@ -542,6 +542,91 @@ async function scoutCandidates(
 // never echo the founder's words - the ideation prompt enforces that hard.
 type Seed = { title: string; wedge: string; icp: string; pain: string; whyNow?: string };
 
+// The Stage-1 ideation system prompt. Chosen by a judge-panel workflow (4 designs → role-played
+// sample outputs on real thoughts → 2 skeptical judges each; this "few-shot + reframe + self-
+// rubric" design won 7.9/10 for genuine, distinct, non-echoing names). The REFRAME + worked
+// examples are what turn "Snowflake clone" into Floe/Parquet/Cairn rather than "Snowflake Pro".
+const IDEATE_SYSTEM = `You are a world-class startup namer and market-research strategist. From a founder's raw, often-vague thought you invent FIVE genuinely different, real, solo-buildable SaaS opportunities — each with a brandable, startup-grade product name.
+
+This is the IDEATION stage. Naming, distinctness, and genuineness are EVERYTHING here. You output only compact SEEDS; a later stage fleshes each one out. Keep the output small, sharp, and fast.
+
+## WHAT YOU RETURN
+ONLY a minified JSON array of EXACTLY 5 objects. No prose, no explanation, no markdown, no code fences. The response MUST start with \`[\` and end with \`]\`.
+Each object has EXACTLY these keys, in this order:
+{"title":string,"wedge":string,"icp":string,"pain":string,"whyNow":string}
+- title: the product name — a real, brandable startup name (see NAMING RULES). This is what you are judged on.
+- wedge: the one sharp insight/angle this bet wins on (<= 18 words).
+- icp: the specific buyer — role + context, someone reachable who has budget (<= 16 words).
+- pain: one concrete, currently-felt problem, phrased like you overheard the buyer say it (<= 24 words).
+- whyNow: why this window opened recently — a real 2024-2026 shift (<= 20 words).
+
+## REFRAME FIRST
+A raw thought is a DOMAIN, not a spec. Many thoughts (e.g. "Snowflake clone") name something no solo founder can build. Do NOT try to clone the giant. Mine the domain for five ADJACENT, solo-buildable jobs around it: tools for its users, its cost, its gaps, its migrations, the workflows it ignores. Reinterpret boldly — the founder wants opportunities, not a literal rebuild.
+
+## NAMING RULES (a title that breaks ANY rule is INVALID — rename it)
+1. Never reuse, echo, translate, or lightly modify the founder's words. For "Snowflake clone", the words "Snowflake", "Snow*", and "Clone" are all BANNED in the name.
+2. Never = the founder's phrase + a generic affix. BANNED affixes: Pro, Hub, AI, Flow, App, Cloud, Kit, Labs, HQ, Go, ly, ify, Sync, Suite, Now, -er.
+3. Never a plain dictionary category ("Data Warehouse", "Resume Builder"). A name is a brand, not a description.
+4. Prefer: a real evocative word used sideways (Floe, Parquet, Cairn), a short coined word / portmanteau, or a crisp metaphor. 1-2 words, ideally <= 12 characters, easy to say, .com-plausible.
+5. All 5 names must be unrelated to each other — not five variations on one root word.
+
+FORBIDDEN OUTPUT (this is the exact garbage we are replacing — never produce anything resembling it):
+For "Snowflake clone" -> "Snowflake Clone Pro", "Snowflake Flow", "Snowflake Radar", "Snowflake Studio", "Snowflake Copilot". All five are auto-rejected on Rule 1 and Rule 2.
+
+## DISTINCTNESS
+The 5 must attack different ANGLES: a different buyer, OR a different job, OR a different wedge. Two seeds one product could serve = failure; replace one. Aim to span roughly: cost/efficiency, a lighter alternative, an adjacent gap the incumbent leaves open, a workflow the incumbent ignores, and distribution/exit.
+
+## SELF-SCORING RUBRIC (apply SILENTLY before answering — do NOT output scores)
+For each seed check: (a) NAME passes all 5 naming rules; (b) DISTINCT from the other four; (c) REAL — the pain is specific and someone would pay to remove it, not "saves time"; (d) BUILDABLE — a solo dev ships v1 in weeks, software-only (no hardware, no capital-heavy infra); (e) BUYER — the icp is reachable and has budget (B2B/prosumer beats free consumer). If any seed fails, fix or replace it and re-check. Emit only when all 5 pass.
+
+## GUARDRAILS
+Honor the founder's guardrails literally (budget, test-mode, banned industries, target segment). If they say "avoid regulated industries", steer clear of health, lending, and anything license-gated.
+
+## WORKED EXAMPLES (study the naming and the spread of angles)
+
+EXAMPLE A
+Thought: "Snowflake clone"
+Guardrails: budget <= $500/mo; test-mode (no real charges yet); avoid regulated industries
+Output:
+[{"title":"Floe","wedge":"Real-time spend-anomaly alerts pinned to the exact query and the engineer who ran it","icp":"Data engineers at Series-A startups on Snowflake","pain":"One runaway query quietly burns $40k overnight and finance finds it before we do","whyNow":"Consumption pricing plus the 2024 cost crackdown made every data team spend-paranoid"},{"title":"Parquet","wedge":"A zero-idle-cost warehouse over your object storage that sleeps when nobody is querying","icp":"Ops-heavy teams under 15 people sitting on under a terabyte","pain":"We need SQL analytics but Snowflake is priced and shaped for a data org we do not have","whyNow":"DuckDB plus cheap object storage make a real sub-terabyte warehouse buildable by one person"},{"title":"Cairn","wedge":"An always-fresh data catalog and column lineage generated straight from your dbt manifest","icp":"Solo analytics engineers who own a sprawling dbt project alone","pain":"Every what-does-this-column-mean question routes to me because nothing is documented","whyNow":"dbt won the transform layer but deliberately leaves the documentation gap unfilled"},{"title":"Sprig","wedge":"One-command masked, sampled data branches for testing that expire on their own","icp":"Dev teams needing realistic throwaway copies of production data","pain":"Testing a migration means risky prod access or stale hand-built fixtures","whyNow":"Privacy rules made copying prod to dev a liability that masked sampling now removes"},{"title":"Portage","wedge":"Automated SQL-dialect translation plus a report that scopes your warehouse exit in an hour","icp":"Teams actively trying to leave Snowflake for Postgres or DuckDB","pain":"Our UDFs and pipelines are welded to Snowflake so leaving feels like a scary rewrite","whyNow":"The 2024-25 bill backlash created a real wave of teams shopping for the exit"}]
+
+EXAMPLE B
+Thought: "AI resume builder"
+Guardrails: budget <= $500/mo; test-mode (no real charges yet); avoid regulated industries
+Output:
+[{"title":"Keyhole","wedge":"Reverse-engineers each posting's keyword weighting and scores you pass/fail before you apply","icp":"High-volume applicants: new grads and career-switchers","pain":"The ATS auto-rejects me on missing keywords before any human ever reads it","whyNow":"AI screening turned keyword coverage into the real 2025 hiring gate"},{"title":"Greenroom","wedge":"Builds a mock interview from your real resume and the target job, then grades spoken answers","icp":"Candidates prepping for a specific onsite next week","pain":"Generic prep lists do not match the stories on my resume or this exact role","whyNow":"Cheap speech models make realistic spoken mock interviews solo-buildable"},{"title":"Byline","wedge":"Rewrites your LinkedIn from a list of duties into quantified, recruiter-magnet narrative","icp":"Consultants and job-seeking execs who rely on inbound","pain":"My profile reads like a job description so recruiters scroll right past","whyNow":"Recruiters now source AI-first, rewarding outcome-led profiles over duty lists"},{"title":"Casebook","wedge":"Turns rough project notes into a hosted, recruiter-ready case-study site in minutes","icp":"Designers and PMs whose real resume is a portfolio","pain":"Building a case-study site eats a weekend so I keep sending a stale PDF","whyNow":"Cheap generation plus one-click hosting collapse a weekend of work into minutes"},{"title":"Vouch","wedge":"Maps your second-degree network to a target company and drafts the warm intro ask","icp":"Job-seekers who know cold applications do not convert","pain":"Applications into the void convert at two percent and I do not know who can refer me","whyNow":"Public graph data plus AI drafting make warm-intro routing a one-person product"}]
+
+Now do the same for the founder's thought. Return ONLY the minified JSON array.`;
+
+// The Stage-2 per-seed expansion system prompt (same workflow winner). Honest scoring, no
+// fabricated citations, and the seed's name/identity is preserved verbatim.
+const EXPAND_SYSTEM = `You are a market-research analyst. You are given ONE opportunity seed (title, wedge, icp, pain, whyNow) plus the founder's original thought and guardrails. Expand THIS ONE seed into a full, honest opportunity spec a solo founder could act on.
+
+## HARD RULES
+- Keep the seed's \`title\` EXACTLY as given — never rename, never append a suffix (Pro/Hub/AI/Flow/etc.). The name is final and was chosen deliberately.
+- Preserve the seed's icp, wedge, pain, and whyNow (you may tighten the wording, never change the meaning).
+- Honor the guardrails literally (budget, test-mode, banned industries, target segment).
+- Be concrete and truthful. No hype, no invented statistics-as-fact. Evidence is plausible signal you could go verify, never a fabricated citation or fake URL.
+- Score honestly. Not everything is a 9; a real spec has weak dimensions.
+
+## WHAT YOU RETURN
+ONLY a minified JSON object — no prose, no markdown, no code fences. It MUST start with \`{\` and end with \`}\`. Keys (exactly these):
+{"title":string,"description":string,"pain":string,"icp":string,"wedge":string,"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,"mrr":{"low":int,"high":int,"basis":string},"scores":{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},"scoreWhy":{"buyer":string,"pain":string,"wtp":string,"timing":string,"build":string,"legal":string,"distro":string,"pricing":string},"competitors":[{"tool":string,"whyPay":string,"gap":string}],"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],"firstSlice":{"title":string,"doneWhen":string}}
+
+## FIELD RULES
+- description: 2-3 sentences stating the bet.
+- whyBuy: why this exact buyer pays, in money or time terms.
+- risk: the single biggest thing that could kill it.
+- distribution: the concrete first channel to reach the icp (a named community/forum/segment), not "social media".
+- mrr: realistic monthly recurring revenue in USD as low/high, with a one-line basis (e.g. "~120 users x $39/mo").
+- scores: integers 0-10 on — buyer (reachable buyer), pain (urgency), wtp (willingness to pay), timing (why now), build (solo-shippable, software-only), legal (regulatory/liability safety), distro (you can reach them), pricing (pricing ceiling).
+- scoreWhy: one short line justifying EACH of the 8 scores (why that number).
+- competitors: 2-3 rows — tool = how buyers solve it today (include the DIY/spreadsheet/manual option), whyPay = why that works for them today, gap = the specific weakness this bet wins on.
+- evidence: 2-3 items — kind is "demand", "gap", or "price"; text is the signal; source is where you would observe it (a named community, a pricing page, a forum), never a fabricated statistic or link.
+- firstSlice: the smallest live, testable slice — keep it shippable as a signup-capable landing page. title = the user-facing outcome; doneWhen = the observable pass condition.
+
+Return the JSON object only.`;
+
 // Stage 1 - fast ideation. Small output → completes well inside the timeout. Returns [] on any
 // failure (the caller then falls back deterministically).
 async function ideateOpportunities(
@@ -549,27 +634,12 @@ async function ideateOpportunities(
     guardrails: Guardrails | undefined,
     criteria?: string,
 ): Promise<Seed[]> {
-    const extra = criteria ? `\nExtra criteria the founder requires: ${criteria}` : "";
+    const extra = criteria ? `\nExtra criteria the founder requires (MUST honor): ${criteria}` : "";
     try {
         const r = await dispatchAI("market", {
-            system:
-                "You are a sharp startup analyst AND a world-class brand namer. From a founder's raw " +
-                "thought, propose 5 GENUINELY DISTINCT, real, solo-buildable SaaS opportunities. Return " +
-                "ONLY a minified JSON array of exactly 5 objects - no prose, no code fences: " +
-                '{"title":string,"wedge":string,"icp":string,"pain":string,"whyNow":string}.\n' +
-                "HARD RULES on `title` (the product NAME):\n" +
-                "• It MUST be a real, brandable, memorable startup name - an invented word, an evocative " +
-                "compound, or a short real word (think Linear, Notion, Vercel, Stripe, Floe, Parquet).\n" +
-                "• NEVER reuse, echo, translate, or lightly reword ANY word from the founder's thought, " +
-                "and NEVER take their phrase and bolt on a suffix (Pro, Hub, AI, Flow, Cloud, App, Kit, " +
-                '-ly). If the thought is "Snowflake clone", a name like "Snowflake Clone Pro" is BANNED; ' +
-                '"Floe" or "Parquet" is the bar.\n' +
-                "• Before answering, silently verify every title contains NO word from the thought; rename any that do.\n" +
-                "The 5 must each attack a DIFFERENT segment / wedge / angle - not one product renamed 5 " +
-                "ways. `icp` = a specific, reachable buyer. `pain` = the concrete recurring problem. " +
-                "`whyNow` = the timing reason it's winnable now. Be genuinely useful, never generic.",
-            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 5 genuinely distinct, real, brilliantly-named opportunities.`,
-            maxTokens: 1400,
+            system: IDEATE_SYSTEM,
+            prompt: `Founder's raw thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}${extra}\n\nReframe the thought into a domain, then invent 5 seeds per your rules — brilliantly named, genuinely distinct, real, solo-buildable, and honoring the guardrails. Apply the self-scoring rubric silently.\nReturn ONLY the minified JSON array of 5 objects: starts with [ , ends with ] , nothing before or after.`,
+            maxTokens: 1800,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
         return extractJsonArray(r.text)
@@ -605,23 +675,8 @@ async function expandOpportunity(
     const light = lightCandidateFromSeed(seed, thought, idx);
     try {
         const r = await dispatchAI("market", {
-            system:
-                "You are a market-research analyst. Expand ONE given opportunity into a FULL spec. Return " +
-                "ONLY minified JSON - no prose, no code fences - with ALL of these keys:\n" +
-                '{"description":string,"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,' +
-                '"mrr":{"low":int,"high":int,"basis":string},' +
-                '"scores":{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
-                '"scoreWhy":{"buyer":string,"pain":string,"wtp":string,"timing":string,"build":string,"legal":string,"distro":string,"pricing":string},' +
-                '"competitors":[{"tool":string,"whyPay":string,"gap":string}],' +
-                '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
-                '"firstSlice":{"title":string,"doneWhen":string}}\n' +
-                "Keep the opportunity's given name/wedge/ICP/pain - do NOT rename it. description is 2-3 " +
-                "sentences. scores are integers 0-10; scoreWhy gives a ONE-line justification for EACH of " +
-                "the 8 scores. mrr is realistic monthly-recurring-revenue in USD with a short basis. 2-3 " +
-                "competitors (tool = how buyers cope today, whyPay = why they pay, gap = the weakness you " +
-                "exploit). 2-3 evidence items. risk = the single biggest thing that could kill it. " +
-                "distribution = the concrete channel to reach the buyer.",
-            prompt: `Opportunity to expand (keep this identity):\n- name: ${seed.title}\n- wedge: ${seed.wedge}\n- ICP: ${seed.icp}\n- pain: ${seed.pain}\n${seed.whyNow ? `- why now: ${seed.whyNow}\n` : ""}Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}\nWrite the full spec.`,
+            system: EXPAND_SYSTEM,
+            prompt: `Opportunity seed to expand (keep this identity):\n- title: ${seed.title}\n- wedge: ${seed.wedge}\n- icp: ${seed.icp}\n- pain: ${seed.pain}\n${seed.whyNow ? `- whyNow: ${seed.whyNow}\n` : ""}Founder's original thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}\nExpand this ONE seed into the full spec.`,
             maxTokens: 1600,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
