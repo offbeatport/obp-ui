@@ -9,6 +9,12 @@ import { bootReclaim, killInFlight } from "./reaper.js";
 // WAL DB + per-run NDJSON log files. Kill it any time: all state is durable, so a fresh
 // boot reclaims orphaned runs and resumes.
 function main(): void {
+    // FIRST line so it's unmistakable that debug tracing is on for this run.
+    if (DEBUG)
+        console.log(
+            `[dbg] DEBUG MODE ON (CSLOP_DEBUG=${VERBOSE ? "verbose" : "1"}) — tracing model calls + engine passes${VERBOSE ? "; dumping full prompts + responses" : ""}`,
+        );
+
     const ctx = buildEngineContext();
     console.log(`[engine] instance ${ctx.instanceId} starting`);
 
@@ -19,10 +25,6 @@ function main(): void {
     console.log(
         `[engine] loop running - poll ${config.pollMs}ms, concurrency ${config.maxConcurrentRuns}, harness ${ctx.resolveHarness().kind}`,
     );
-    if (DEBUG)
-        console.log(
-            `[engine] CSLOP_DEBUG=${VERBOSE ? "verbose" : "on"} - tracing model calls + passes${VERBOSE ? " (incl. full prompts/responses)" : ""}`,
-        );
 
     // Safety net: a single stray subprocess/async error must never take down the whole
     // executor (all concurrent runs). Log and keep the loop alive; DB state stays durable.
