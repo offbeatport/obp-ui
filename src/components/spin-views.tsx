@@ -87,10 +87,8 @@ export function ScoutingView({ thought }: { thought: string }) {
     const elapsed = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
     return (
         <AssistantTurn>
-            <div className={ASSISTANT_BUBBLE}>
-                Researching your idea now — I'll propose a few distinct opportunities and score each
-                on real demand signals, then bring back the strongest bets.
-            </div>
+            {/* Narration is now a PERSISTED assistant message (see startSpinLogic); this card is
+                only the transient live-progress indicator, so it can safely disappear when done. */}
             <article className="overflow-hidden opacity-90">
                 <div className="pt-0 px-[2px] pb-[2px]">
                     <button
@@ -118,21 +116,20 @@ export function ScoutingView({ thought }: { thought: string }) {
                     </button>
                     <div className="mt-[12px]" hidden={!open}>
                         <p className="mb-[12px] text-[12.5px] leading-[1.5] text-muted-foreground">
-                            This is a real model call — no canned steps. Every opportunity it
-                            returns is scored 0–10 on these signals (willingness-to-pay counts
-                            double):
+                            Every opportunity it returns is scored 0–10 on these signals
+                            (willingness-to-pay counts double):
                         </p>
                         <div className="grid grid-cols-2 gap-x-[14px] gap-y-[9px]">
                             {SCORE_DISPLAY_ORDER.map((k) => {
                                 const meta = SCORE_META[k];
                                 return (
-                                    <div key={k} className="flex items-start gap-[8px] min-w-0">
+                                    <div key={k} className="flex items-start gap-[8px] min-w-0 p-2">
                                         <span className="mt-[5px] size-[6px] shrink-0 rounded-full bg-primary/70" />
                                         <span className="min-w-0">
-                                            <span className="block text-[12px] font-semibold text-foreground">
+                                            <span className="block text-sm font-semibold text-foreground">
                                                 {meta.full}
                                             </span>
-                                            <span className="block text-[11px] leading-[1.4] text-faint">
+                                            <span className="block text-xs leading-[1.4] text-faint">
                                                 {meta.hint}
                                             </span>
                                         </span>
@@ -140,8 +137,8 @@ export function ScoutingView({ thought }: { thought: string }) {
                                 );
                             })}
                         </div>
-                        <p className="mt-[14px] font-mono text-[10.5px] text-faint">
-                            usually 40–90s · scored proposals appear below when it's done
+                        <p className="mt-[14px] font-mono text-xs text-faint">
+                            scored proposals appear below when it's done
                         </p>
                     </div>
                 </div>
