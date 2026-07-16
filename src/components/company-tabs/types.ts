@@ -21,4 +21,5 @@ export type CompanyTabProps = {
     onReject: (actionId: string) => Promise<void>;
     onUpdate: (patch: CompanySettingsPatch) => Promise<void>;
     onDelete: () => Promise<void>; // permanently delete this company (Setup tab danger zone)
+    onRebuild: () => Promise<void>; // re-queue the build so the engine re-runs it (Setup tab)
 };

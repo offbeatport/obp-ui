@@ -1,4 +1,4 @@
-import { CreditCard, Globe, Mail, Server, Trash2, Wallet } from "lucide-react";
+import { CreditCard, Globe, Mail, RefreshCw, Server, Trash2, Wallet } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { CompanyTabProps } from "~/components/company-tabs/types";
 import {
@@ -68,7 +68,7 @@ const ghostBtn =
     "rounded-lg border border-border bg-secondary px-3 py-2 text-sm font-medium text-foreground disabled:opacity-50";
 
 export function SetupTab(props: CompanyTabProps) {
-    const { co, busy, onUpdate, onDelete } = props;
+    const { co, busy, onUpdate, onDelete, onRebuild } = props;
     const [confirming, setConfirming] = useState(false);
 
     // Local state seeded from props. Domain + budget cap + autopilot persist through onUpdate;
@@ -268,6 +268,29 @@ export function SetupTab(props: CompanyTabProps) {
                         <span className="font-mono text-xs text-muted-foreground">
                             ${spend} / ${cap}
                         </span>
+                    </Row>
+                </div>
+            </section>
+
+            {/* ---- Build ---- */}
+            <section className="mt-6">
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
+                    Build
+                </h3>
+                <div className="overflow-hidden rounded-xl border border-border bg-card">
+                    <Row
+                        icon={<RefreshCw className="size-4" />}
+                        label="Rebuild"
+                        sub="Re-queue the build so the engine re-runs it through the current agent."
+                    >
+                        <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => void onRebuild()}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-secondary px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+                        >
+                            <RefreshCw className="size-4" /> {busy ? "Queuing…" : "Rebuild"}
+                        </button>
                     </Row>
                 </div>
             </section>

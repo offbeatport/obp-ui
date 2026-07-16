@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { and, desc, eq, inArray, like } from "drizzle-orm";
+import { and, desc, eq, inArray, like, ne } from "drizzle-orm";
 import { type Guardrails, resolveGuardrails } from "../config/spin.js";
 import {
     type ActionPayload,
@@ -126,6 +126,32 @@ export const deleteCompany = createServerFn({ method: "POST" })
             .where(eq(appConfig.key, `scope.done.${data.companyId}`))
             .run();
         return { ok: true };
+    });
+
+// Re-queue a company's build work so the engine re-runs it through the CURRENT harness (e.g. after
+// switching from the no-op builder to the real Claude CLI). Flips its non-running `code` actions
+// back to 'queued' and releases the company lock so the loop can re-claim them. Tiny write only.
+export const rebuildCompany = createServerFn({ method: "POST" })
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => {
+        const c = db.select().from(companies).where(eq(companies.id, data.companyId)).get();
+        if (!c) return { ok: false, requeued: 0 };
+        const res = db
+            .update(actions)
+            .set({ status: "queued" })
+            .where(
+                and(
+                    eq(actions.companyId, data.companyId),
+                    eq(actions.type, "code"),
+                    ne(actions.status, "running"), // never disturb a live run
+                ),
+            )
+            .run();
+        db.update(companies)
+            .set({ lockedByRunId: null })
+            .where(eq(companies.id, data.companyId))
+            .run();
+        return { ok: true, requeued: res.changes };
     });
 
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the

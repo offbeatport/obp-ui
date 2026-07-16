@@ -16,7 +16,7 @@ import { cn } from "~/lib/utils";
 import {
     approveAction,
     deleteCompany,
-    messageCompany,
+    rebuildCompany,
     rejectAction,
     updateCompanySettings,
 } from "~/server/actions";
@@ -119,6 +119,17 @@ function CompanyWorkspace() {
             setBusy(false);
         }
     }, [companyId, busy, navigate, router]);
+    // Setup tab: re-queue the build so the engine re-runs it through the current harness.
+    const onRebuild = useCallback(async () => {
+        if (!companyId || busy) return;
+        setBusy(true);
+        try {
+            await rebuildCompany({ data: { companyId } });
+            await router.invalidate();
+        } finally {
+            setBusy(false);
+        }
+    }, [companyId, busy, router]);
 
     if (!base) {
         return (
@@ -227,6 +238,7 @@ function CompanyWorkspace() {
                                     onReject={reject}
                                     onUpdate={onUpdate}
                                     onDelete={onDelete}
+                                    onRebuild={onRebuild}
                                 />
                             ) : (
                                 <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">
