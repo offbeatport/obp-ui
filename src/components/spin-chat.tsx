@@ -149,9 +149,13 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     if (anchoredArtifact && !injected) thread.push(<div key="artifact">{anchoredArtifact}</div>);
 
     return (
-        <div className="flex h-full flex-col">
+        <div className="relative flex h-full flex-col">
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-                <div className="mx-auto w-full" style={{ maxWidth: 840, padding: "22px 20px 8px" }}>
+                {/* bottom padding clears the floating composer so the last message isn't hidden */}
+                <div
+                    className="mx-auto w-full"
+                    style={{ maxWidth: 840, padding: "22px 20px 148px" }}
+                >
                     <h1 className="font-display font-light text-4xl w-full p-20 text-center">
                         Start your new AI Company
                     </h1>
@@ -175,8 +179,12 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                 </div>
             </div>
 
-            <div className="mx-auto w-full" style={{ maxWidth: 840 }}>
-                <ChatComposer onSend={sendChat} stage={stage} />
+            {/* Floating composer — absolute at the bottom, over the thread. The gradient fades the
+                scrolling content out behind it; pointer-events pass through the transparent zone. */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
+                <div className="pointer-events-auto mx-auto w-full" style={{ maxWidth: 840 }}>
+                    <ChatComposer onSend={sendChat} stage={stage} />
+                </div>
             </div>
         </div>
     );
