@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import type { AiTask } from "../config/ai-catalog.js";
 import { type ResolvedTask, resolveTaskModel } from "../config/ai-tasks.js";
-import { dblock, dlog } from "./debug.js";
+import { dblock, dlog, dprompt } from "./debug.js";
 
 // dispatchAI - the AI proxy for the *thinking* tasks (opportunities · research · plan ·
 // write · chat · orchestrate). It is the brain, distinct from the build harness (the
@@ -44,8 +44,8 @@ export async function dispatchAI(
         "ai",
         `→ ${task} via ${route} · prompt ${input.prompt.length}c${input.system ? ` · system ${input.system.length}c` : ""}`,
     );
-    dblock("ai", `${task} system`, input.system ?? "(none)");
-    dblock("ai", `${task} prompt`, input.prompt);
+    dprompt("ai", `${task} system`, input.system ?? "(none)");
+    dprompt("ai", `${task} prompt`, input.prompt);
     const t0 = Date.now();
     try {
         const res = await (r.via === "claude-cli"

@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import type { Readable } from "node:stream";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
+import { dlog, dprompt } from "../debug.js";
 import type { Credentials } from "./credentials.js";
 import type { Harness, HarnessIO, HarnessResult, HarnessTask, Sandbox } from "./types.js";
 
@@ -84,6 +85,15 @@ export class ClaudeCliHarness implements Harness {
         else args.push("--session-id", task.runId);
         if (task.systemPrompt) args.push("--append-system-prompt", task.systemPrompt);
         if (task.maxTurns > 0) args.push("--max-turns", String(task.maxTurns));
+
+        // Debug: what we're about to run + the EXACT prompt(s) sent to claude for the build.
+        dlog(
+            "harness",
+            `→ ${this.bin} build · run ${task.runId} · ${task.sessionId ? "resume" : "new session"} · prompt ${task.prompt.length}c · system ${task.systemPrompt.length}c · maxTurns ${task.maxTurns}`,
+        );
+        dprompt("harness", "claude argv", `${this.bin} ${args.join(" ")}`);
+        dprompt("harness", "claude system prompt", task.systemPrompt || "(none)");
+        dprompt("harness", "claude prompt (stdin)", task.prompt);
 
         const proc = this.sandbox.spawn({
             cmd: this.bin,
