@@ -2,6 +2,7 @@ import { useRouter } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { useCallback, useState } from "react";
 import { CompanyLogo } from "~/components/company-logo";
+import { Markdown } from "~/components/markdown";
 import { cn } from "~/lib/utils";
 import { messageCompany } from "~/server/actions";
 import type { ChatMessage, CompanyDetail } from "~/server/data";
@@ -162,7 +163,7 @@ function Bubble({ m, co }: { m: ChatMessage; co: CompanyDetail }) {
                         : "max-w-[440px] rounded-[5px_14px_14px_14px] pt-0.5 pb-[3px] text-foreground",
                 )}
             >
-                <p>{m.content}</p>
+                {me ? <p>{m.content}</p> : <Markdown content={m.content} />}
                 <span
                     className={cn(
                         "mt-[7px] block font-mono text-[10px]",
