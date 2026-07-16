@@ -1,5 +1,6 @@
 import { config } from "./config.js";
 import { buildEngineContext } from "./context.js";
+import { DEBUG, VERBOSE } from "./debug.js";
 import { startLoop } from "./loop.js";
 import { bootReclaim, killInFlight } from "./reaper.js";
 
@@ -18,6 +19,10 @@ function main(): void {
     console.log(
         `[engine] loop running - poll ${config.pollMs}ms, concurrency ${config.maxConcurrentRuns}, harness ${ctx.resolveHarness().kind}`,
     );
+    if (DEBUG)
+        console.log(
+            `[engine] CSLOP_DEBUG=${VERBOSE ? "verbose" : "on"} - tracing model calls + passes${VERBOSE ? " (incl. full prompts/responses)" : ""}`,
+        );
 
     // Safety net: a single stray subprocess/async error must never take down the whole
     // executor (all concurrent runs). Log and keep the loop alive; DB state stays durable.

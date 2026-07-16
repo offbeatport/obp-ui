@@ -5,6 +5,7 @@ import type { Checkpoint, CodePayload } from "../db/schema.js";
 import type { Claim } from "./claim.js";
 import { config } from "./config.js";
 import type { EngineContext } from "./context.js";
+import { dlog } from "./debug.js";
 import { RunLog } from "./log.js";
 import type { HarnessIO } from "./seams/types.js";
 import { BLOCK_ACTION, FAIL_RUN, REQUEUE_ACTION, UNLOCK_COMPANY } from "./terminal.js";
@@ -144,6 +145,10 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
     const wall = setTimeout(() => ac.abort(), config.wallClockMs);
     const harness = ctx.resolveHarness();
     const real = harness.kind !== "noop";
+    dlog(
+        "run",
+        `start · company ${claim.companyId} · action ${claim.actionId} · attempt ${claim.attempt} · harness ${harness.kind}`,
+    );
     log.write({
         type: "status",
         msg: `run started (action ${claim.actionId}, attempt ${claim.attempt})`,
@@ -192,6 +197,7 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
             if (res.costUsd > 0) SET_COST.run(res.costUsd, claim.runId);
             if (!res.ok) throw new Error("harness reported failure / aborted");
             finishSucceed.immediate(claim);
+            dlog("run", `done · run ${claim.runId} · noop succeeded`);
             log.write({ type: "end", status: "succeeded" });
             return;
         }
@@ -284,6 +290,10 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
         // run log tells the whole story: build (×N) → deploy → validate → (approve) → ship.
         const auto = shouldAutopilot(claim.actionId);
         finishAwait.immediate(claim, auto);
+        dlog(
+            "run",
+            `done · run ${claim.runId} · green → ${auto ? "auto-approved (shipping)" : "awaiting approval"}`,
+        );
         log.write({
             type: "status",
             msg: auto
@@ -292,6 +302,7 @@ export async function runOne(ctx: EngineContext, claim: Claim): Promise<void> {
         });
     } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
+        dlog("run", `fail · run ${claim.runId} · ${msg}`);
         // Tear down any preview this run brought up, so a failed/aborted run never leaks a
         // live server holding its port (down() is idempotent - no-op if nothing was deployed).
         await ctx.deploy.down(claim.companyId).catch(() => {});
