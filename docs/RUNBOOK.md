@@ -51,7 +51,8 @@ The executor is quiet by default. To trace what the engine calls and with what m
 
 ```
 CSLOP_DEBUG=1 pnpm dev        # one-line trace: passes (scout/spec/chat/run), model route, timing, size, cost
-CSLOP_DEBUG=verbose pnpm dev  # the above + the FULL system prompt, prompt, and response for every model call
+CSLOP_DEBUG=prompts pnpm dev  # the above + the FULL prompt sent to claude (thinking calls AND the build harness)
+CSLOP_DEBUG=verbose pnpm dev  # the above + the full model responses too
 ```
 
 - `[dbg ai]` — every "thinking" model call through `dispatchAI` (task, route e.g. `claude-cli:sonnet`,

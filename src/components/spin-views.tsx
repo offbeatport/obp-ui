@@ -26,7 +26,7 @@ type Spin = NonNullable<CompanyDetail["spin"]>;
 
 // The assistant chat bubble renders flat: the prototype's .spin-msg.assistant .spin-bubble override
 // strips the bubble chrome (no bg/border/shadow/radius), leaving plain 16px body text.
-const ASSISTANT_BUBBLE = "max-w-[78%] text-[16px] leading-[1.55] py-[2px] my-10";
+const ASSISTANT_BUBBLE = "max-w-[78%] text-[16px] leading-[1.55] py-[2px]";
 // Every <p> inside a spec section: .bf-sec-body p wins the cascade over the per-class p rules
 // (higher specificity), so all inner paragraphs render at this one body size.
 const SPEC_P = "mt-[7px] text-[15.3px] leading-[1.62] text-muted-foreground";
@@ -35,7 +35,7 @@ const SPEC_P = "mt-[7px] text-[15.3px] leading-[1.62] text-muted-foreground";
 export function Bubble({ m }: { m: SpinMessage }) {
     const me = m.role === "user";
     return (
-        <div className={cn("flex gap-[12px] items-start", me && "flex-row-reverse")}>
+        <div className={cn("flex gap-[12px] items-start my-10", me && "flex-row-reverse")}>
             <div className="hidden">{me ? "V" : "C"}</div>
             <div
                 className="flex-1 min-w-0 flex flex-col gap-[11px]"

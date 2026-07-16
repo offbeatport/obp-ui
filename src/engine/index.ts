@@ -1,6 +1,6 @@
 import { config } from "./config.js";
 import { buildEngineContext } from "./context.js";
-import { DEBUG, VERBOSE } from "./debug.js";
+import { DEBUG, PROMPTS, VERBOSE } from "./debug.js";
 import { startLoop } from "./loop.js";
 import { bootReclaim, killInFlight } from "./reaper.js";
 
@@ -10,10 +10,14 @@ import { bootReclaim, killInFlight } from "./reaper.js";
 // boot reclaims orphaned runs and resumes.
 function main(): void {
     // FIRST line so it's unmistakable that debug tracing is on for this run.
-    if (DEBUG)
-        console.log(
-            `[dbg] DEBUG MODE ON (CSLOP_DEBUG=${VERBOSE ? "verbose" : "1"}) — tracing model calls + engine passes${VERBOSE ? "; dumping full prompts + responses" : ""}`,
-        );
+    if (DEBUG) {
+        const dump = VERBOSE
+            ? "dumping FULL prompts + responses"
+            : PROMPTS
+              ? "dumping FULL prompts sent to claude (set =verbose to also dump responses)"
+              : "one-line trace only (set CSLOP_DEBUG=prompts to see full prompts, =verbose for prompts+responses)";
+        console.log(`[dbg] DEBUG MODE ON — tracing model calls + engine passes; ${dump}`);
+    }
 
     const ctx = buildEngineContext();
     console.log(`[engine] instance ${ctx.instanceId} starting`);

@@ -10,15 +10,7 @@ export const DRIVABLE_HARNESSES = ["noop", "claude"] as const;
 export type HarnessKind = (typeof DRIVABLE_HARNESSES)[number];
 
 // The coarse AI tasks, grounded in the SPEC loop (thought → opportunities → company → actions).
-export const AI_TASKS = [
-    "build",
-    "opportunities",
-    "research",
-    "plan",
-    "write",
-    "chat",
-    "orchestrate",
-] as const;
+export const AI_TASKS = ["build", "opportunities", "research", "plan", "write", "chat", "orchestrate"] as const;
 export type AiTask = (typeof AI_TASKS)[number];
 
 // build is the one HARNESS (hands) task; the rest are MODEL (thinking) tasks.
@@ -28,7 +20,7 @@ export const TASK_META: Record<AiTask, { label: string; purpose: string }> = {
     build: { label: "Build", purpose: "Writes & ships code - the coding agent (hands)." },
     opportunities: {
         label: "Opportunities",
-        purpose: "Scores thoughts into ranked bets - cheap, high-volume.",
+        purpose: "Scores thoughts into ranked business opportunity - cheap, high-volume.",
     },
     research: {
         label: "Research",
@@ -114,11 +106,4 @@ export const SIMPLE_PRESETS: Record<string, { build: string }> = {
 };
 
 // Providers with a real HTTP API we can key directly (else route via OpenRouter).
-export const DIRECT_API_PROVIDERS = new Set([
-    "anthropic",
-    "openai",
-    "perplexity",
-    "xai",
-    "google",
-    "zai",
-]);
+export const DIRECT_API_PROVIDERS = new Set(["anthropic", "openai", "perplexity", "xai", "google", "zai"]);
