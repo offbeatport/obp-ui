@@ -1,6 +1,14 @@
-import { CreditCard, Globe, Mail, Server, Wallet } from "lucide-react";
+import { CreditCard, Globe, Mail, Server, Trash2, Wallet } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { CompanyTabProps } from "~/components/company-tabs/types";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "~/components/ui/dialog";
 
 // The "Setup" tab — wire a company to the outside world (Connections) and cap its spend (Budget).
 // Prototype ref: 08-chat-spine-pro-v7.html `setupTabHTML` / `.set2-*`. Only Domain, spend cap and
@@ -60,7 +68,8 @@ const ghostBtn =
     "rounded-lg border border-border bg-secondary px-3 py-2 text-sm font-medium text-foreground disabled:opacity-50";
 
 export function SetupTab(props: CompanyTabProps) {
-    const { co, busy, onUpdate } = props;
+    const { co, busy, onUpdate, onDelete } = props;
+    const [confirming, setConfirming] = useState(false);
 
     // Local state seeded from props. Domain + budget cap + autopilot persist through onUpdate;
     // email / payment / hosting are cosmetic (no server field) and stay client-side.
@@ -262,6 +271,62 @@ export function SetupTab(props: CompanyTabProps) {
                     </Row>
                 </div>
             </section>
+
+            {/* ---- Danger zone ---- */}
+            <section className="mt-6">
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-destructive">
+                    Danger zone
+                </h3>
+                <div className="overflow-hidden rounded-xl border border-destructive/40 bg-card">
+                    <Row
+                        icon={<Trash2 className="size-4" />}
+                        label="Delete company"
+                        sub={`Permanently remove ${co.name} and all its work — chat, tasks, runs. Can't be undone.`}
+                    >
+                        <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setConfirming(true)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/50 bg-destructive-soft px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-white disabled:opacity-50"
+                        >
+                            <Trash2 className="size-4" /> Delete company
+                        </button>
+                    </Row>
+                </div>
+            </section>
+
+            {/* Confirmation modal */}
+            <Dialog open={confirming} onOpenChange={(o) => !busy && setConfirming(o)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Delete {co.name}?</DialogTitle>
+                        <DialogDescription>
+                            This permanently removes <b className="text-foreground">{co.name}</b>{" "}
+                            and everything it owns — its chat, tasks, run history, and deploy. This
+                            can't be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => setConfirming(false)}
+                            className="rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => void onDelete()}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white transition hover:brightness-105 disabled:opacity-50"
+                        >
+                            <Trash2 className="size-4" />
+                            {busy ? "Deleting…" : "Delete forever"}
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

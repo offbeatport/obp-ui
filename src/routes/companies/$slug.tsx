@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { type CSSProperties, type ReactNode, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
@@ -16,6 +16,7 @@ import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { cn } from "~/lib/utils";
 import {
     approveAction,
+    deleteCompany,
     messageCompany,
     rejectAction,
     updateCompanySettings,
@@ -66,6 +67,7 @@ const TAB_COMPONENT: Record<string, (p: CompanyTabProps) => ReactNode> = {
 function CompanyWorkspace() {
     const { slug } = Route.useParams();
     const router = useRouter();
+    const navigate = useNavigate();
     const { detail, summary, actions, activity } = Route.useLoaderData();
     const base = detail ?? summary;
     const companyId = base?.id;
@@ -123,6 +125,18 @@ function CompanyWorkspace() {
         },
         [companyId, busy, router],
     );
+    // Setup tab "danger zone": permanently delete this company, then return to the portfolio.
+    const onDelete = useCallback(async () => {
+        if (!companyId || busy) return;
+        setBusy(true);
+        try {
+            await deleteCompany({ data: { companyId } });
+            await navigate({ to: "/companies" });
+            await router.invalidate();
+        } finally {
+            setBusy(false);
+        }
+    }, [companyId, busy, navigate, router]);
 
     if (!base) {
         return (
@@ -178,7 +192,7 @@ function CompanyWorkspace() {
                         />
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2.5">
-                                <span className="truncate font-display text-[17px] font-semibold tracking-[-0.01em]">
+                                <span className="truncate font-display text-lg font-semibold tracking-[-0.01em]">
                                     {co.name}
                                 </span>
                                 <LiveStatus co={co} />
@@ -306,6 +320,7 @@ function CompanyWorkspace() {
                                     onApprove={approve}
                                     onReject={reject}
                                     onUpdate={onUpdate}
+                                    onDelete={onDelete}
                                 />
                             ) : (
                                 <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">

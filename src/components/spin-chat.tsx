@@ -253,7 +253,7 @@ function ChatComposer({
                     placeholder={HINTS[stage ?? ""] ?? "Message…"}
                     // Big Space Grotesk title input (echoes the .spin-hero-q hero: display font,
                     // light weight, tight tracking).
-                    className="block max-h-48 min-h-14 w-full resize-none rounded-2xl bg-transparent px-5 py-4 pr-14 font-display text-2xl font-light leading-snug tracking-tight outline-none placeholder:text-muted-foreground/45"
+                    className="block max-h-48 min-h-14 w-full resize-none rounded-xl bg-transparent px-5 py-4 pr-14 leading-snug tracking-tight outline-none placeholder:text-muted-foreground/45"
                 />
                 <button
                     type="button"

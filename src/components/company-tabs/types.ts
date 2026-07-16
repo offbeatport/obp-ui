@@ -20,4 +20,5 @@ export type CompanyTabProps = {
     onApprove: (actionId: string) => Promise<void>;
     onReject: (actionId: string) => Promise<void>;
     onUpdate: (patch: CompanySettingsPatch) => Promise<void>;
+    onDelete: () => Promise<void>; // permanently delete this company (Setup tab danger zone)
 };
