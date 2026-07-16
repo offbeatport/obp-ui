@@ -97,6 +97,37 @@ export const updateCompanySettings = createServerFn({ method: "POST" })
         return { ok: true };
     });
 
+// Permanently delete a company and everything it owns. Kills any live deploy/agent process
+// groups its runs left behind (so nothing is orphaned), then removes rows in FK order
+// (run → action → message → company) plus its scope marker. Irreversible.
+export const deleteCompany = createServerFn({ method: "POST" })
+    .validator((d: { companyId: string }) => d)
+    .handler(async ({ data }) => {
+        const c = db.select().from(companies).where(eq(companies.id, data.companyId)).get();
+        if (!c) return { ok: false };
+        const companyRuns = db.select().from(runs).where(eq(runs.companyId, data.companyId)).all();
+        for (const r of companyRuns) {
+            for (const pgid of [r.checkpoint?.deployPgid, r.checkpoint?.agentPgid]) {
+                if (pgid && pgid > 0) {
+                    try {
+                        process.kill(-pgid, "SIGKILL");
+                    } catch {
+                        /* already gone */
+                    }
+                }
+            }
+        }
+        // runs FK-reference actions + company; actions + messages FK-reference company.
+        db.delete(runs).where(eq(runs.companyId, data.companyId)).run();
+        db.delete(actions).where(eq(actions.companyId, data.companyId)).run();
+        db.delete(messages).where(eq(messages.companyId, data.companyId)).run();
+        db.delete(companies).where(eq(companies.id, data.companyId)).run();
+        db.delete(appConfig)
+            .where(eq(appConfig.key, `scope.done.${data.companyId}`))
+            .run();
+        return { ok: true };
+    });
+
 // Post a message to a company's co-pilot chat. Tiny write only: insert the user turn; the
 // engine's chat pass (src/engine/chat.ts) picks it up and inserts the assistant reply.
 export const messageCompany = createServerFn({ method: "POST" })

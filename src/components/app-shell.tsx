@@ -119,8 +119,8 @@ function Rail({
                     />
                 ))}
 
-                <SectionHead collapsed={collapsed}>Companies</SectionHead>
-                {!collapsed && <CompaniesNav />}
+                <SectionLabel collapsed={collapsed}>Companies</SectionLabel>
+                <CompaniesNav collapsed={collapsed} />
             </div>
 
             {/* foot: credit · user menu */}
@@ -158,7 +158,7 @@ const SLICE_LBL: Record<NonNullable<CompanySummary["slice"]>["state"], string> =
 // #coList). Self-fetches + polls (5s + on focus) so a just-spun-up DRAFT company (created by
 // /companies/new before it navigates) shows without a manual refresh. Draft companies read as
 // "spinning up…" with a spinner (the prototype's .co-item.spinning). Empty → the .co-empty-cta.
-function CompaniesNav() {
+function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
     const [companies, setCompanies] = useState<CompanySummary[] | null>(null);
     // Which company page we're on (highlights that row). strict:false → undefined off the route.
     const params = useParams({ strict: false }) as { slug?: string };
@@ -189,15 +189,17 @@ function CompaniesNav() {
     if (companies === null) return null;
 
     if (companies.length === 0) {
+        // Collapsed rail: the "New company" nav item at the top already covers the empty case.
+        if (collapsed) return null;
         return (
-            <div className="mx-1 mt-1.5 mb-0.5 rounded-md border-[1.5px] border-dashed bg-secondary px-3.5 py-4 text-center">
-                <div className="text-[12.5px] font-[650] text-foreground">No companies yet</div>
-                <p className="mt-[3px] text-[11px] leading-[1.45] text-faint">
+            <div className="mx-1 mt-1.5 mb-0.5 rounded-md border-2 border-dashed bg-secondary px-3.5 py-4 text-center">
+                <div className="text-xs font-[650] text-foreground">No companies yet</div>
+                <p className="m-2 text-xs leading-[1.45] text-faint">
                     You bring the ideas - I build, launch and run them.
                 </p>
                 <Link
                     to="/companies/new"
-                    className="mt-[11px] inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-[12px] font-semibold text-muted-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
+                    className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
                 >
                     <Plus className="size-3.5" /> Start your first company
                 </Link>
@@ -206,13 +208,54 @@ function CompaniesNav() {
     }
 
     return (
-        <div>
+        <div className={cn(collapsed && "flex flex-col items-center gap-1")}>
             {companies.map((c) => {
-                const sel = params.slug === c.id;
+                // Highlight the open company — the URL param may be the name slug (active) or the
+                // immutable id (drafts / id links), so match either.
+                const sel = params.slug === c.slug || params.slug === c.id;
                 const draft = c.status === "draft";
                 const meta = draft
-                    ? null // rendered as spinner + "spinning up…" below
+                    ? "Draft"
                     : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
+                const avatar = draft ? (
+                    // Draft: an incubating icon on a muted fill (no logo generated yet).
+                    <span
+                        className="grid size-8 flex-none place-items-center rounded-lg bg-neutral text-card"
+                        aria-label="Draft (incubating)"
+                    >
+                        <FlaskConical className="size-4" />
+                    </span>
+                ) : (
+                    // Live: the generated company logo + a status dot.
+                    <span className="relative flex-none">
+                        <CompanyLogo name={c.name} branding={c.branding} size={32} />
+                        <span
+                            className={cn(
+                                "absolute -bottom-0.5 -right-0.5 size-2 rounded-full shadow-[0_0_0_2px_var(--secondary)]",
+                                STATUS_DOT[c.status],
+                            )}
+                        />
+                    </span>
+                );
+
+                // Collapsed rail: just the logo, with a native tooltip carrying the name + meta.
+                if (collapsed) {
+                    return (
+                        <Link
+                            key={c.id}
+                            to="/companies/$slug"
+                            params={{ slug: draft ? c.id : c.slug }}
+                            title={`${c.name}${meta ? ` · ${meta}` : ""}${c.needsYou ? " · needs you" : ""}`}
+                            className={cn(
+                                "grid place-items-center rounded-md p-1 transition-colors hover:bg-primary/[0.1]",
+                                sel && "bg-card shadow-e1",
+                            )}
+                        >
+                            {avatar}
+                        </Link>
+                    );
+                }
+
                 return (
                     <Link
                         key={c.id}
@@ -221,35 +264,15 @@ function CompaniesNav() {
                         // still volatile until graduation, so the slug would churn).
                         params={{ slug: draft ? c.id : c.slug }}
                         className={cn(
-                            "relative flex items-center gap-[11px] rounded-xl px-2.5 py-[9px] transition-colors hover:bg-primary/[0.07]",
-                            draft && "bg-primary/[0.06]",
+                            "relative flex items-center gap-3 rounded-md px-2.5 py-2 transition-colors hover:bg-primary/[0.1]",
                             // selected: paper fill + a terracotta bar hugging the rail edge
                             sel &&
-                                "bg-card shadow-e1 before:absolute before:-left-3 before:top-[9px] before:bottom-[9px] before:w-[3px] before:rounded-r-[3px] before:bg-primary before:content-['']",
+                                "bg-card shadow-e1 before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
                         )}
                     >
-                        {draft ? (
-                            // Draft: an incubating icon on a muted fill (no logo generated yet).
-                            <span
-                                className="grid size-8 flex-none place-items-center rounded-[10px] bg-neutral text-card"
-                                aria-label="Draft (incubating)"
-                            >
-                                <FlaskConical className="size-4" />
-                            </span>
-                        ) : (
-                            // Live: the generated company logo + a status dot.
-                            <span className="relative flex-none">
-                                <CompanyLogo name={c.name} branding={c.branding} size={32} />
-                                <span
-                                    className={cn(
-                                        "absolute -bottom-0.5 -right-0.5 size-[7px] rounded-full shadow-[0_0_0_2px_var(--secondary)]",
-                                        STATUS_DOT[c.status],
-                                    )}
-                                />
-                            </span>
-                        )}
+                        {avatar}
                         <span className="min-w-0 flex-1">
-                            <span className="flex items-center gap-1.5 text-[13.5px] font-[550]">
+                            <span className="flex items-center gap-1.5 text-sm font-semibold">
                                 <span className="truncate">{c.name}</span>
                                 {c.needsYou && (
                                     <span className="flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-white">
@@ -257,16 +280,7 @@ function CompaniesNav() {
                                     </span>
                                 )}
                             </span>
-                            <span className="block truncate text-[11.5px] text-faint">
-                                {draft ? (
-                                    <>
-                                        <span className="mr-1.5 inline-block size-2.5 animate-spin rounded-full border-2 border-border border-t-primary align-[-1px]" />
-                                        spinning up…
-                                    </>
-                                ) : (
-                                    meta
-                                )}
-                            </span>
+                            <span className="block truncate text-[11.5px] text-faint">{meta}</span>
                         </span>
                     </Link>
                 );
@@ -312,9 +326,9 @@ function NavItem({
         </>
     );
     const cls = cn(
-        "group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13.5px] font-semibold transition",
+        "group flex w-full items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-sm font-semibold transition",
         active && "bg-card text-foreground shadow-e1",
-        !locked && "text-muted-foreground hover:bg-primary/[0.15] hover:text-foreground",
+        !locked && "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
         // locked = disabled: dimmed, no hover, not interactive
         locked && "cursor-default text-muted-foreground opacity-40",
         tint && "nav-newco mb-1.5",
@@ -343,26 +357,8 @@ function NavItem({
 function SectionLabel({ collapsed, children }: { collapsed?: boolean; children: ReactNode }) {
     if (collapsed) return <div className="h-3.5" />;
     return (
-        <div className="px-2 pb-1.5 pt-3.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-faint">
+        <div className="px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70">
             {children}
-        </div>
-    );
-}
-
-function SectionHead({ collapsed, children }: { collapsed?: boolean; children: ReactNode }) {
-    if (collapsed) return <div className="h-3.5" />;
-    return (
-        <div className="flex items-center justify-between px-2 pb-1 pt-4 pr-1">
-            <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-faint">
-                {children}
-            </span>
-            <button
-                type="button"
-                className="grid size-5 place-items-center rounded-md text-faint transition hover:bg-accent hover:text-accent-foreground"
-                aria-label={`Add ${children}`}
-            >
-                <Plus className="size-4" />
-            </button>
         </div>
     );
 }
