@@ -186,7 +186,13 @@ export function ProposalsView({
                         return (
                             <div
                                 key={c.id}
-                                className="border-t border-border-soft first:border-t-0"
+                                className={cn(
+                                    "relative border-t border-border-soft first:border-t-0",
+                                    // Picked line: marked with a primary left rail + faint primary
+                                    // tint (never hidden - the whole list stays visible).
+                                    chosen &&
+                                        "bg-primary/[0.05] before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-primary before:content-['']",
+                                )}
                                 data-row={c.id}
                             >
                                 <div className="flex items-stretch">
@@ -196,7 +202,7 @@ export function ProposalsView({
                                             isOpen
                                                 ? "bg-secondary"
                                                 : chosen
-                                                  ? "bg-accent"
+                                                  ? "bg-transparent"
                                                   : "hover:bg-secondary",
                                         )}
                                         type="button"
@@ -207,7 +213,7 @@ export function ProposalsView({
                                         <span
                                             className={cn(
                                                 "font-mono font-bold text-[12px] w-[15px] shrink-0 text-center",
-                                                i === 0 ? "text-primary" : "text-faint",
+                                                chosen || i === 0 ? "text-primary" : "text-faint",
                                             )}
                                         >
                                             {i + 1}
@@ -217,7 +223,7 @@ export function ProposalsView({
                                                 className={cn(
                                                     "block text-[15px] font-semibold text-foreground",
                                                     chosen &&
-                                                        "after:content-['✓_picked'] after:ml-[9px] after:font-mono after:text-[9.5px] after:font-bold after:tracking-[0.03em] after:text-accent-foreground",
+                                                        "after:content-['✓_picked'] after:ml-[9px] after:font-mono after:text-[9.5px] after:font-bold after:tracking-[0.03em] after:text-primary",
                                                 )}
                                             >
                                                 {c.name}
@@ -347,12 +353,17 @@ export function ProposalsView({
                                             </div>
                                             <OpportunitySpecDialog c={c} rank={i + 1} />
                                             <button
-                                                className="font-sans text-[13px] font-semibold text-white bg-primary border-none rounded-[9px] py-[9px] px-[17px] cursor-pointer whitespace-nowrap hover:-translate-y-px hover:brightness-105"
+                                                className={cn(
+                                                    "font-sans text-[13px] font-semibold border-none rounded-[9px] py-[9px] px-[17px] whitespace-nowrap",
+                                                    chosen
+                                                        ? "bg-primary/10 text-primary cursor-default"
+                                                        : "text-white bg-primary cursor-pointer hover:-translate-y-px hover:brightness-105",
+                                                )}
                                                 type="button"
-                                                disabled={busy}
+                                                disabled={busy || chosen}
                                                 onClick={() => onPick(c.id)}
                                             >
-                                                Select this opportunity
+                                                {chosen ? "✓ Selected" : "Select this opportunity"}
                                             </button>
                                         </div>
                                     </div>
