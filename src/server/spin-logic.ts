@@ -50,6 +50,23 @@ export function startSpinLogic(
         })
         .returning()
         .get();
+    // Seed the incubation chat so the opening turns PERSIST in history: the founder's thought
+    // and the assistant's research ack. Previously the thought lived only in company.thesis and
+    // the "researching…" line was transient UI inside ScoutingView, so both vanished the moment
+    // proposals arrived. Explicit +1ms timestamps keep the order stable.
+    const now = Date.now();
+    db.insert(messages)
+        .values([
+            { companyId: company.id, role: "user", content: t, createdAt: new Date(now) },
+            {
+                companyId: company.id,
+                role: "assistant",
+                content:
+                    "Researching your idea now — I'll propose a few distinct opportunities and score each on real demand signals, then bring back the strongest bets.",
+                createdAt: new Date(now + 1),
+            },
+        ])
+        .run();
     return { id: company.id, slug: slugify(company.name) };
 }
 
