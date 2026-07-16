@@ -1,13 +1,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { CompanyLogo } from "~/components/company-logo";
 import { Markdown } from "~/components/markdown";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import {
     type Branding,
     type Candidate,
@@ -51,9 +45,10 @@ export function Bubble({ m }: { m: SpinMessage }) {
                 <div
                     className={cn(
                         "max-w-[78%] text-[16px] leading-[1.55]",
+                        // entrance: plays once on mount (stable message-id key → no replay on polls)
                         me
-                            ? "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] shadow-e1 bg-foreground text-background"
-                            : "py-[2px]",
+                            ? "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] shadow-e1 bg-foreground text-background animate-[msg-in_0.32s_cubic-bezier(0.22,0.7,0.24,1)_both]"
+                            : "py-[2px] animate-[msg-reveal_0.45s_cubic-bezier(0.22,0.7,0.24,1)_both]",
                     )}
                 >
                     {me ? m.content : <Markdown content={m.content} />}
@@ -101,9 +96,7 @@ export function ScoutingView({ thought }: { thought: string }) {
                         <span className="flex-1 min-w-0 group-hover:text-foreground [&_b]:text-foreground [&_b]:font-semibold">
                             Analyzing <b>{clip(thought, 46)}</b> — a live AI research pass…
                         </span>
-                        <span className="font-mono text-[11px] text-faint shrink-0 tabular-nums">
-                            {elapsed}
-                        </span>
+                        <span className="font-mono text-[11px] text-faint shrink-0 tabular-nums">{elapsed}</span>
                         <span
                             className={cn(
                                 "text-[28px] -mt-[6px] leading-none text-muted-foreground shrink-0",
@@ -116,8 +109,8 @@ export function ScoutingView({ thought }: { thought: string }) {
                     </button>
                     <div className="mt-[12px]" hidden={!open}>
                         <p className="mb-[12px] text-[12.5px] leading-[1.5] text-muted-foreground">
-                            Every opportunity it returns is scored 0–10 on these signals
-                            (willingness-to-pay counts double):
+                            Every opportunity it returns is scored 0–10 on these signals (willingness-to-pay counts
+                            double):
                         </p>
                         <div className="grid grid-cols-2 gap-x-[14px] gap-y-[9px]">
                             {SCORE_DISPLAY_ORDER.map((k) => {
@@ -129,9 +122,7 @@ export function ScoutingView({ thought }: { thought: string }) {
                                             <span className="block text-sm font-semibold text-foreground">
                                                 {meta.full}
                                             </span>
-                                            <span className="block text-xs leading-[1.4] text-faint">
-                                                {meta.hint}
-                                            </span>
+                                            <span className="block text-xs leading-[1.4] text-faint">{meta.hint}</span>
                                         </span>
                                     </div>
                                 );
@@ -165,8 +156,8 @@ export function ProposalsView({
         <AssistantTurn>
             <div className="flex flex-col items-baseline gap-3 py-10 flex-wrap text-[13.5px] text-muted-foreground leading-[1.5] mb-[4px] [&_b]:text-foreground [&_b]:font-semibold">
                 <div>
-                    <b>Same pain, {ranked.length} opportunities.</b> Ranked by <b>overall score</b>{" "}
-                    · willingness-to-pay counts 2×.
+                    <b>Same pain, {ranked.length} opportunities.</b> Ranked by <b>overall score</b> · willingness-to-pay
+                    counts 2×.
                 </div>
                 <div className="font-mono text-[11.5px] uppercase tracking-[0.07em] text-faint ml-auto">
                     ranked by overall score
@@ -196,11 +187,7 @@ export function ProposalsView({
                                     <button
                                         className={cn(
                                             "flex-1 min-w-0 flex items-center gap-[13px] py-[14px] px-[16px] bg-transparent border-none cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-primary focus-visible:[outline-offset:-2px]",
-                                            isOpen
-                                                ? "bg-secondary"
-                                                : chosen
-                                                  ? "bg-transparent"
-                                                  : "hover:bg-secondary",
+                                            isOpen ? "bg-secondary" : chosen ? "bg-transparent" : "hover:bg-secondary",
                                         )}
                                         type="button"
                                         title="Pick this opportunity"
@@ -265,12 +252,7 @@ export function ProposalsView({
                                         </svg>
                                     </button>
                                 </div>
-                                <div
-                                    className={cn(
-                                        isOpen ? "block" : "hidden",
-                                        "pt-[2px] px-[16px] pb-[16px]",
-                                    )}
-                                >
+                                <div className={cn(isOpen ? "block" : "hidden", "pt-[2px] px-[16px] pb-[16px]")}>
                                     <div className="font-sans w-full bg-card text-foreground py-[15px] px-[17px] flex flex-col gap-[12px]">
                                         <div className="flex items-start gap-[12px]">
                                             <div className="flex-1 min-w-0 flex flex-col gap-[4px]">
@@ -378,20 +360,14 @@ export function ProposalsView({
 // The row stays high-level; this modal is the WHOLE spec for one bet (the same fields the engine
 // wrote to slop/opportunities/NN-*.md). Opened per-opportunity from the proposal footer.
 function SpecLabel({ children }: { children: ReactNode }) {
-    return (
-        <span className="font-mono text-[11px] font-bold uppercase tracking-[0.07em] text-faint">
-            {children}
-        </span>
-    );
+    return <span className="font-mono text-[11px] font-bold uppercase tracking-[0.07em] text-faint">{children}</span>;
 }
 function SpecSection({ label, body }: { label: string; body?: string }) {
     if (!body?.trim()) return null;
     return (
         <div className="flex flex-col gap-[5px]">
             <SpecLabel>{label}</SpecLabel>
-            <p className="text-[13.5px] leading-[1.58] text-muted-foreground whitespace-pre-line">
-                {body}
-            </p>
+            <p className="text-[13.5px] leading-[1.58] text-muted-foreground whitespace-pre-line">{body}</p>
         </div>
     );
 }
@@ -428,14 +404,8 @@ export function OpportunitySpecDialog({ c, rank }: { c: Candidate; rank: number 
                     <DialogTitle className="text-[22px] font-semibold text-foreground leading-tight">
                         {c.name}
                     </DialogTitle>
-                    {c.wedge && (
-                        <p className="mt-[6px] text-[14px] text-muted-foreground leading-[1.5]">
-                            {c.wedge}
-                        </p>
-                    )}
-                    <DialogDescription className="sr-only">
-                        Full opportunity spec for {c.name}
-                    </DialogDescription>
+                    {c.wedge && <p className="mt-[6px] text-[14px] text-muted-foreground leading-[1.5]">{c.wedge}</p>}
+                    <DialogDescription className="sr-only">Full opportunity spec for {c.name}</DialogDescription>
                 </div>
 
                 <div className="px-[26px] py-[20px] flex flex-col gap-[18px]">
@@ -497,9 +467,7 @@ export function OpportunitySpecDialog({ c, rank }: { c: Candidate; rank: number 
                                         key={comp.tool}
                                         className="grid grid-cols-[1fr_1.3fr_1.3fr] gap-[10px] px-[13px] py-[10px] border-t border-border-soft text-[12.5px] leading-[1.45]"
                                     >
-                                        <span className="font-medium text-foreground">
-                                            {comp.tool}
-                                        </span>
+                                        <span className="font-medium text-foreground">{comp.tool}</span>
                                         <span className="text-muted-foreground">{comp.whyPay}</span>
                                         <span className="text-muted-foreground">{comp.gap}</span>
                                     </div>
@@ -617,21 +585,16 @@ export function SpecView({
                 <hr className="h-px bg-border border-0 mt-[26px]" />
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        1
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">1</div>
                     <div>
-                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
-                            The company
-                        </h3>
+                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">The company</h3>
                         <p className={SPEC_P}>
                             <b>{spec.product}</b>
                             {picked ? (
                                 <>
                                     {" "}
-                                    grew from the{" "}
-                                    <em className="italic text-foreground">{picked.name}</em>{" "}
-                                    opportunity — {picked.pain}
+                                    grew from the <em className="italic text-foreground">{picked.name}</em> opportunity
+                                    — {picked.pain}
                                 </>
                             ) : null}
                         </p>
@@ -639,25 +602,17 @@ export function SpecView({
                 </section>
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        2
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">2</div>
                     <div>
-                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
-                            Who it's for
-                        </h3>
+                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">Who it's for</h3>
                         <p className={SPEC_P}>{spec.icp}</p>
                     </div>
                 </section>
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        3
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">3</div>
                     <div>
-                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
-                            Branding
-                        </h3>
+                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">Branding</h3>
                         <div className="flex gap-[18px] items-center flex-wrap">
                             <div className="shrink-0 flex flex-col items-center gap-[6px]">
                                 <BrandLogo branding={branding} size={52} />
@@ -683,19 +638,15 @@ export function SpecView({
                 </section>
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        4
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">4</div>
                     <div>
                         <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
                             What we'll build
-                            <sup className="text-[0.58em] text-primary align-super ml-[2px] not-italic">
-                                †
-                            </sup>
+                            <sup className="text-[0.58em] text-primary align-super ml-[2px] not-italic">†</sup>
                         </h3>
                         <p className={SPEC_P}>
-                            A first version in {spec.slices.length} slices. The first is your single
-                            sanity-check — proof the core loop works before anything else.
+                            A first version in {spec.slices.length} slices. The first is your single sanity-check —
+                            proof the core loop works before anything else.
                         </p>
                         <ol className="list-none mt-[15px] p-0 border-t border-border-soft">
                             {spec.slices.map((s, i) => {
@@ -713,9 +664,7 @@ export function SpecView({
                                         <span
                                             className={cn(
                                                 "text-[14.5px] leading-[1.5]",
-                                                isCheck
-                                                    ? "text-primary font-semibold"
-                                                    : "font-medium text-faint",
+                                                isCheck ? "text-primary font-semibold" : "font-medium text-faint",
                                             )}
                                         >
                                             3.{i + 1}
@@ -733,9 +682,7 @@ export function SpecView({
                                             </div>
                                             {i === 0 && s.doneWhen ? (
                                                 <p className={SPEC_P}>
-                                                    <span className="italic text-accent-foreground">
-                                                        Done when
-                                                    </span>{" "}
+                                                    <span className="italic text-accent-foreground">Done when</span>{" "}
                                                     {s.doneWhen}
                                                 </p>
                                             ) : (
@@ -750,13 +697,9 @@ export function SpecView({
                 </section>
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        5
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">5</div>
                     <div>
-                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
-                            Name &amp; domain
-                        </h3>
+                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">Name &amp; domain</h3>
                         <div>
                             <div className="flex items-center gap-[11px] flex-wrap">
                                 <span className="font-mono text-[15px] font-bold text-foreground">
@@ -792,21 +735,16 @@ export function SpecView({
                                 </span>
                             </div>
                             <p className={SPEC_P}>
-                                I only propose names whose <b>.com</b> is unregistered and ready to
-                                buy.
+                                I only propose names whose <b>.com</b> is unregistered and ready to buy.
                             </p>
                         </div>
                     </div>
                 </section>
 
                 <section className="grid grid-cols-[27px_1fr] gap-[17px] mt-[25px]">
-                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">
-                        6
-                    </div>
+                    <div className="text-[17px] font-semibold leading-[1.5] text-[color:var(--draft-brand)]">6</div>
                     <div>
-                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">
-                            Terms
-                        </h3>
+                        <h3 className="text-[17px] font-semibold leading-[1.5] text-foreground">Terms</h3>
                         <dl className="m-0 p-0 border-t border-border-soft">
                             <div className="grid grid-cols-[90px_1fr] gap-[14px] py-[9px] border-b border-border-soft">
                                 <dt className="font-serif text-[11px] font-semibold tracking-[0.12em] uppercase text-faint pt-[3px]">
@@ -838,15 +776,14 @@ export function SpecView({
                 </section>
 
                 <p className="mt-[24px] text-[12.5px] italic leading-[1.5] text-faint">
-                    <span className="not-italic text-primary mr-[5px]">†</span> Built with{" "}
-                    {spec.stack.join(", ")}.
+                    <span className="not-italic text-primary mr-[5px]">†</span> Built with {spec.stack.join(", ")}.
                 </p>
             </article>
 
             <div className="max-w-[820px] mt-[18px] mx-auto flex flex-col gap-[14px]">
                 <div className={ASSISTANT_BUBBLE}>
-                    Ready to build <b>{spec.product}</b>? I'll register the domain, build v1 in test
-                    mode, then deploy it.
+                    Ready to build <b>{spec.product}</b>? I'll register the domain, build v1 in test mode, then deploy
+                    it.
                 </div>
                 <div className="flex items-end justify-between gap-[20px] flex-wrap bg-secondary border border-border rounded-[14px] py-[16px] px-[18px]">
                     <button
@@ -864,12 +801,7 @@ export function SpecView({
                         disabled={busy}
                         onClick={onCreate}
                     >
-                        <svg
-                            className="w-[17px] h-[17px]"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            aria-hidden="true"
-                        >
+                        <svg className="w-[17px] h-[17px]" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                             <path
                                 d="M3 8.5l3 3 7-7.5"
                                 stroke="currentColor"
@@ -919,17 +851,8 @@ export function CreatingView({ product }: { product: string }) {
         <div className="flex justify-center py-[56px] px-[24px]">
             <div className="bg-card border border-border rounded-[22px] shadow-e2 py-[40px] px-[44px] max-w-[440px] w-full text-center">
                 <div className="w-[56px] h-[56px] mx-auto mb-[22px]">
-                    <svg
-                        className="w-full h-full -rotate-90"
-                        viewBox="0 0 50 50"
-                        aria-hidden="true"
-                    >
-                        <circle
-                            className="fill-none stroke-border [stroke-width:4]"
-                            cx="25"
-                            cy="25"
-                            r="20"
-                        />
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 50 50" aria-hidden="true">
+                        <circle className="fill-none stroke-border [stroke-width:4]" cx="25" cy="25" r="20" />
                         <circle
                             className="fill-none stroke-primary [stroke-width:4] [stroke-linecap:round] [stroke-dasharray:90_60] animate-[cc-rot_0.9s_linear_infinite]"
                             cx="25"
@@ -938,9 +861,7 @@ export function CreatingView({ product }: { product: string }) {
                         />
                     </svg>
                 </div>
-                <h2 className="font-semibold text-[22px] text-foreground m-0 mb-[6px]">
-                    Creating {product}…
-                </h2>
+                <h2 className="font-semibold text-[22px] text-foreground m-0 mb-[6px]">Creating {product}…</h2>
                 <p className="text-[14px] text-muted-foreground m-0 mb-[24px]">
                     Spinning up everything it needs to go live.
                 </p>
@@ -952,9 +873,7 @@ export function CreatingView({ product }: { product: string }) {
                                 key={s}
                                 className={cn(
                                     "flex items-center gap-[12px] text-[14px] transition-[opacity,color] duration-300",
-                                    isDone
-                                        ? "opacity-100 text-foreground"
-                                        : "opacity-50 text-faint",
+                                    isDone ? "opacity-100 text-foreground" : "opacity-50 text-faint",
                                 )}
                             >
                                 <span

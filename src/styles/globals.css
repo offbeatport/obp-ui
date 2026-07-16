@@ -289,6 +289,36 @@ summary {
     }
 }
 
+/* Chat message entrance - a message "materializes" in (fade + rise) instead of popping.
+   Applied per-bubble; React keeps the same DOM node across polling re-renders (keyed by
+   message id), so it plays ONCE on mount and never replays. `both` fill-mode holds the end
+   state. The assistant variant adds a soft blur-clear so replies feel like they form. */
+@keyframes msg-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes msg-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+        filter: blur(2px);
+    }
+    60% {
+        filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
 /* ============================================================================
    Animation keyframes for the inline-Tailwind ports (were in the deleted
    command-center/*.css). Components reference these via arbitrary utilities,
