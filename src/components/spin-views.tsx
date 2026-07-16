@@ -141,7 +141,7 @@ export function ScoutingView({ thought }: { thought: string }) {
                             })}
                         </div>
                         <p className="mt-[14px] font-mono text-[10.5px] text-faint">
-                            usually 10–40s · scored proposals appear below when it's done
+                            usually 40–90s · scored proposals appear below when it's done
                         </p>
                     </div>
                 </div>
