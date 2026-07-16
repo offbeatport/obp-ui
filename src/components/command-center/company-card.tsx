@@ -147,8 +147,8 @@ export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem
             // Route by the unique name slug (default); drafts keep their stable id while volatile.
             params={{ slug: c.status === "draft" ? c.id : c.slug }}
             className={cn(
-                "relative flex flex-col gap-4 rounded-[18px] border border-border bg-card p-[22px] shadow-e1 transition-[box-shadow,border-color,transform]",
-                "hover:-translate-y-[2px] hover:border-[color:color-mix(in_srgb,var(--co-tone)_40%,var(--border))] hover:shadow-e2",
+                "relative flex flex-col gap-4 rounded-[18px] border border-border bg-card p-[22px] shadow-e1 !transition-all max-w-3xs",
+                " hover:border-[color:color-mix(in_srgb,var(--co-tone)_40%,var(--border))] ",
                 dead && "opacity-60 hover:opacity-85",
             )}
             // --co-bc feeds the brandmark tint; --co-tone feeds the hover border color-mix.
