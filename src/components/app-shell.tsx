@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import {
     ChevronLeft,
     CreditCard,
@@ -8,16 +8,33 @@ import {
     LayoutGrid,
     Lock,
     type LucideIcon,
+    MoreHorizontal,
     Plus,
     SlidersHorizontal,
+    Trash2,
     Wrench,
 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { AgentConsole } from "~/components/agent-console";
 import { CompanyLogo } from "~/components/company-logo";
 import { Logo, LogoMark } from "~/components/logo";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "~/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { UserMenu } from "~/components/user-menu";
 import { cn } from "~/lib/utils";
+import { deleteCompany } from "~/server/actions";
 import { type CompanySummary, listCompanies } from "~/server/data";
 
 // The app shell - left rail + main workspace - reproducing
@@ -153,8 +170,29 @@ const SLICE_LBL: Record<NonNullable<CompanySummary["slice"]>["state"], string> =
 // "spinning up…" with a spinner (the prototype's .co-item.spinning). Empty → the .co-empty-cta.
 function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
     const [companies, setCompanies] = useState<CompanySummary[] | null>(null);
+    // The company queued for deletion (opens the confirm dialog) + an in-flight flag.
+    const [pendingDelete, setPendingDelete] = useState<CompanySummary | null>(null);
+    const [deleting, setDeleting] = useState(false);
+    const navigate = useNavigate();
     // Which company page we're on (highlights that row). strict:false → undefined off the route.
     const params = useParams({ strict: false }) as { slug?: string };
+
+    const confirmDelete = async () => {
+        const target = pendingDelete;
+        if (!target || deleting) return;
+        setDeleting(true);
+        try {
+            await deleteCompany({ data: { companyId: target.id } });
+            setCompanies((prev) => prev?.filter((x) => x.id !== target.id) ?? null);
+            setPendingDelete(null);
+            // If we're viewing the deleted company, bounce back to the portfolio.
+            if (params.slug === target.slug || params.slug === target.id) {
+                await navigate({ to: "/companies" });
+            }
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     useEffect(() => {
         let stopped = false;
@@ -213,7 +251,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                 const avatar = draft ? (
                     // Draft: an incubating icon on a muted fill (no logo generated yet).
                     <span
-                        className="grid size-8 flex-none place-items-center rounded-lg bg-neutral text-card"
+                        className="grid size-8 flex-none place-items-center rounded-lg bg-primary/15 text-primary"
                         aria-label="Draft (incubating)"
                     >
                         <FlaskConical className="size-4" />
@@ -250,34 +288,94 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                 }
 
                 return (
-                    <Link
-                        key={c.id}
-                        to="/companies/$slug"
-                        // Active → the pretty name slug (the default); drafts → id (their name is
-                        // still volatile until graduation, so the slug would churn).
-                        params={{ slug: draft ? c.id : c.slug }}
-                        className={cn(
-                            "relative flex items-center gap-3 rounded-md px-2.5 py-2 transition-colors hover:bg-primary/[0.1]",
-                            // selected: paper fill + a terracotta bar hugging the rail edge
-                            sel &&
-                                "bg-card shadow-e1 before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
-                        )}
-                    >
-                        {avatar}
-                        <span className="min-w-0 flex-1">
-                            <span className="flex items-center gap-1.5 text-sm font-semibold">
-                                <span className="truncate">{c.name}</span>
-                                {c.needsYou && (
-                                    <span className="flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-white">
-                                        INBOX
-                                    </span>
-                                )}
+                    <div key={c.id} className="group relative">
+                        <Link
+                            to="/companies/$slug"
+                            // Active → the pretty name slug (the default); drafts → id (their name
+                            // is still volatile until graduation, so the slug would churn).
+                            params={{ slug: draft ? c.id : c.slug }}
+                            className={cn(
+                                "relative flex items-center gap-3 rounded-md py-2 pl-2.5 pr-8 transition-colors hover:bg-primary/[0.1]",
+                                // selected: paper fill + a terracotta bar hugging the rail edge
+                                sel &&
+                                    "bg-card shadow-e1 before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
+                            )}
+                        >
+                            {avatar}
+                            <span className="min-w-0 flex-1">
+                                <span className="flex items-center gap-1.5 text-sm font-semibold">
+                                    <span className="truncate">{c.name}</span>
+                                    {c.needsYou && (
+                                        <span className="flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-white">
+                                            INBOX
+                                        </span>
+                                    )}
+                                </span>
+                                <span className="block truncate text-[11.5px] text-faint">
+                                    {meta}
+                                </span>
                             </span>
-                            <span className="block truncate text-[11.5px] text-faint">{meta}</span>
-                        </span>
-                    </Link>
+                        </Link>
+                        {/* hover ⋯ menu (sits above the Link so it doesn't navigate) */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    type="button"
+                                    aria-label={`${c.name} actions`}
+                                    className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-faint opacity-0 transition hover:bg-primary/20 hover:text-foreground group-hover:opacity-100 data-[state=open]:bg-primary/20 data-[state=open]:opacity-100"
+                                >
+                                    <MoreHorizontal className="size-4" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuItem
+                                    onSelect={() => setPendingDelete(c)}
+                                    className="gap-2 text-destructive focus:bg-destructive-soft focus:text-destructive"
+                                >
+                                    <Trash2 className="size-4" /> Delete{" "}
+                                    {draft ? "draft" : "company"}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 );
             })}
+
+            {/* delete confirmation (shared across rows) */}
+            <Dialog
+                open={!!pendingDelete}
+                onOpenChange={(o) => !deleting && !o && setPendingDelete(null)}
+            >
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Delete {pendingDelete?.name}?</DialogTitle>
+                        <DialogDescription>
+                            Permanently removes{" "}
+                            <b className="text-foreground">{pendingDelete?.name}</b> and everything
+                            it owns — chat, tasks, runs. This can't be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <button
+                            type="button"
+                            disabled={deleting}
+                            onClick={() => setPendingDelete(null)}
+                            className="rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            disabled={deleting}
+                            onClick={() => void confirmDelete()}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white transition hover:brightness-105 disabled:opacity-50"
+                        >
+                            <Trash2 className="size-4" />
+                            {deleting ? "Deleting…" : "Delete forever"}
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
