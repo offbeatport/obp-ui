@@ -11,7 +11,7 @@ export const Route = createFileRoute("/admin")({
 function AdminLayout() {
     return (
         <AppShell active="admin">
-            <div className="mx-auto max-w-4xl px-6 py-8">
+            <div className="mx-10 my-5 max-w-4xl px-6 py-8">
                 <h1 className="font-display text-3xl font-light">Admin</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
                     Engine internals - invisible to the founder surface.
