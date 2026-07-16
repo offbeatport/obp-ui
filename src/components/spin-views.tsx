@@ -66,37 +66,22 @@ function AssistantTurn({ children }: { children: React.ReactNode }) {
     );
 }
 
-// ---- scouting: the ambient scout card (spinner + sources + log + progress) -------------------
-const SCOUT_SOURCES = [
-    "r/startups",
-    "Google Trends",
-    "competitor pricing",
-    "IndieHackers",
-    "review sites",
-    "product forums",
-];
-const SCOUT_LOG = [
-    "scanning communities for demand signals",
-    "reading competitor pricing pages",
-    "measuring willingness to pay",
-    "spotting gaps the incumbents miss",
-    "clustering opportunities & scoring demand…",
-];
+// ---- scouting: an HONEST live-research indicator. The scout is a single AI research pass (no web
+// scraping), so we show only what's real: the idea, a live elapsed clock, and the actual rubric the
+// model scores every candidate on (config/spin SCORE_META). No fabricated "sources scanned".
 export function ScoutingView({ thought }: { thought: string }) {
-    const [tick, setTick] = useState(0);
-    // The "thinking" detail is collapsible (prototype default: collapsed) — the headline line is a
-    // toggle button, the sources/log/progress live in the collapsible panel (hidden when closed).
+    const [secs, setSecs] = useState(0);
     const [open, setOpen] = useState(false);
     useEffect(() => {
-        const t = setInterval(() => setTick((x) => x + 1), 1300);
+        const t = setInterval(() => setSecs((s) => s + 1), 1000);
         return () => clearInterval(t);
     }, []);
-    const done = Math.min(SCOUT_SOURCES.length, tick + 1);
-    const shownLogs = Math.min(SCOUT_LOG.length, tick + 1);
+    const elapsed = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
     return (
         <AssistantTurn>
             <div className={ASSISTANT_BUBBLE}>
-                On it · researching now. I'll surface receipts as I find them.
+                Researching your idea now — I'll propose a few distinct opportunities and score each
+                on real demand signals, then bring back the strongest bets.
             </div>
             <article className="overflow-hidden opacity-90">
                 <div className="pt-0 px-[2px] pb-[2px]">
@@ -108,11 +93,10 @@ export function ScoutingView({ thought }: { thought: string }) {
                     >
                         <span className="w-[13px] h-[13px] shrink-0 rounded-full border-2 border-border border-t-faint animate-[spin-rot_0.7s_linear_infinite]" />
                         <span className="flex-1 min-w-0 group-hover:text-foreground [&_b]:text-foreground [&_b]:font-semibold">
-                            Scouting around <b>{clip(thought, 46)}</b> · scanning{" "}
-                            {SCOUT_SOURCES.length} sources for demand signals…
+                            Analyzing <b>{clip(thought, 46)}</b> — a live AI research pass…
                         </span>
-                        <span className="font-mono text-[11px] text-faint shrink-0">
-                            {done} / {SCOUT_SOURCES.length}
+                        <span className="font-mono text-[11px] text-faint shrink-0 tabular-nums">
+                            {elapsed}
                         </span>
                         <span
                             className={cn(
@@ -125,67 +109,32 @@ export function ScoutingView({ thought }: { thought: string }) {
                         </span>
                     </button>
                     <div className="mt-[12px]" hidden={!open}>
-                        <div className="flex flex-wrap gap-[7px] mb-[16px]">
-                            {SCOUT_SOURCES.map((s, i) => {
-                                const state =
-                                    i < done - 1 ? "done" : i === done - 1 ? "run" : "queued";
+                        <p className="mb-[12px] text-[12.5px] leading-[1.5] text-muted-foreground">
+                            This is a real model call — no canned steps. Every opportunity it
+                            returns is scored 0–10 on these signals (willingness-to-pay counts
+                            double):
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-[14px] gap-y-[9px]">
+                            {SCORE_DISPLAY_ORDER.map((k) => {
+                                const meta = SCORE_META[k];
                                 return (
-                                    <span
-                                        key={s}
-                                        className={cn(
-                                            "inline-flex items-center gap-[6px] font-mono text-[11px] rounded-[8px] border border-transparent px-0 py-[2px] text-faint",
-                                            state === "run" && "text-muted-foreground",
-                                            state === "queued" && "opacity-60",
-                                        )}
-                                    >
-                                        <span
-                                            className={cn(
-                                                "w-[6px] h-[6px] rounded-full shrink-0",
-                                                state === "done" && "bg-faint",
-                                                state === "run" &&
-                                                    "bg-muted-foreground animate-[spin-pulse_1.3s_ease-in-out_infinite]",
-                                                state === "queued" && "bg-neutral",
-                                            )}
-                                        />
-                                        {s}
-                                    </span>
-                                );
-                            })}
-                        </div>
-                        <div className="font-mono text-[11px] leading-[1.65] text-faint">
-                            {SCOUT_LOG.slice(0, shownLogs).map((line, i) => {
-                                const isCur = i === shownLogs - 1;
-                                return (
-                                    <div
-                                        key={line}
-                                        className={cn(
-                                            "flex gap-[9px] items-baseline",
-                                            isCur &&
-                                                "text-muted-foreground after:content-['▋'] after:text-faint after:animate-[spin-blink_1s_step-end_infinite]",
-                                        )}
-                                    >
-                                        <span className="font-mono text-faint shrink-0 w-[42px]">
-                                            0:{String(2 + i * 4).padStart(2, "0")}
-                                        </span>
-                                        <span className="flex-1">
-                                            {line}
-                                            {i < shownLogs - 1 && (
-                                                <span className="text-faint"> ✓</span>
-                                            )}
+                                    <div key={k} className="flex items-start gap-[8px] min-w-0">
+                                        <span className="mt-[5px] size-[6px] shrink-0 rounded-full bg-primary/70" />
+                                        <span className="min-w-0">
+                                            <span className="block text-[12px] font-semibold text-foreground">
+                                                {meta.full}
+                                            </span>
+                                            <span className="block text-[11px] leading-[1.4] text-faint">
+                                                {meta.hint}
+                                            </span>
                                         </span>
                                     </div>
                                 );
                             })}
                         </div>
-                        <div className="mt-[12px] h-[4px] rounded-[20px] bg-secondary border border-transparent overflow-hidden">
-                            <div className="h-full w-[64%] rounded-[20px] bg-border relative overflow-hidden" />
-                        </div>
-                        <div className="flex justify-between mt-[7px] font-mono text-[10.5px] text-faint">
-                            <span>
-                                {done} / {SCOUT_SOURCES.length} sources scanned
-                            </span>
-                            <span>scoring opportunities</span>
-                        </div>
+                        <p className="mt-[14px] font-mono text-[10.5px] text-faint">
+                            usually 10–40s · scored proposals appear below when it's done
+                        </p>
                     </div>
                 </div>
             </article>

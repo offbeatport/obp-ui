@@ -2,12 +2,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { AppShell } from "~/components/app-shell";
-import {
-    type GuardRow,
-    GuardrailLedger,
-    defaultRows,
-    rowsToGuardrails,
-} from "~/components/guardrail-ledger";
+import { type GuardRow, GuardrailLedger, defaultRows, rowsToGuardrails } from "~/components/guardrail-ledger";
 import { GuardrailMenu } from "~/components/guardrail-menu";
 import type { Guardrails } from "~/config/spin";
 import { startSpin } from "~/server/actions";
@@ -35,8 +30,7 @@ function NewCompany() {
 
     // Build the guardrails to send. For a preset the server re-resolves the canonical values, so we
     // only send the key; for "custom" we serialize the ledger rows into Guardrails.
-    const buildGuardrails = (): Guardrails =>
-        preset === "custom" ? rowsToGuardrails(rows) : { preset };
+    const buildGuardrails = (): Guardrails => (preset === "custom" ? rowsToGuardrails(rows) : { preset });
 
     const submit = async () => {
         const t = thought.trim();
@@ -58,7 +52,7 @@ function NewCompany() {
                         {"// thought → company"}
                     </div>
                     <h1 className="my-2.5 font-display text-[42px] font-light leading-[2.05] tracking-[-0.025em] text-foreground">
-                        Start your new AI company
+                        Start your new AI cosmpany
                     </h1>
                     <p className="mx-auto mt-3.5 mb-[30px] max-w-[520px] text-base leading-[1.6] text-muted-foreground">
                         I'll find the opportunities
@@ -80,9 +74,9 @@ function NewCompany() {
                             className="block w-full resize-none border-0 bg-transparent text-base leading-[1.5] text-foreground outline-none placeholder:text-faint"
                         />
                         <div className="mt-2 flex items-center justify-end gap-2.5">
-                            <span className="mr-auto">
+                            <div className="mr-auto">
                                 <GuardrailMenu value={preset} onChange={setPreset} />
-                            </span>
+                            </div>
                             <button
                                 type="button"
                                 onClick={() => void submit()}
