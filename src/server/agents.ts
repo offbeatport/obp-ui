@@ -50,6 +50,12 @@ export const getAgentConfig = createServerFn({ method: "GET" }).handler(async ()
     accountName: getConfig<string>("account.name") ?? "Vlad",
 }));
 
+// The company workspace layout: the React Flow "canvas" Overview (default) or the "classic"
+// tabbed view. Read in the $slug loader; written via saveConfig from the Setup tab.
+export const getUiLayout = createServerFn({ method: "GET" }).handler(
+    async () => getConfig<"canvas" | "classic">("ui.company_layout") ?? "canvas",
+);
+
 // One upsert per field. secret=true routes to the server-only secret store.
 export const saveConfig = createServerFn({ method: "POST" })
     .validator((d: { key: string; value: unknown; secret?: boolean }) => d)

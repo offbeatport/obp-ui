@@ -381,3 +381,49 @@ summary {
         box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
     }
 }
+
+/* ============================================================================
+   React Flow (company Overview infinite canvas). We import @xyflow/react's
+   base.css (un-themed) and own the look here so it matches the paper theme in
+   light + dark. --rf-edge/--rf-dot feed the dotted connectors + dot grid.
+   ========================================================================== */
+:root {
+    --rf-edge: color-mix(in srgb, var(--primary) 45%, var(--border));
+    --rf-dot: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+.dark {
+    --rf-edge: color-mix(in srgb, var(--primary) 55%, var(--border));
+    --rf-dot: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+.react-flow {
+    background: transparent;
+}
+.react-flow__edge-path {
+    stroke: var(--rf-edge);
+    stroke-width: 1.4;
+    stroke-dasharray: 5 7;
+}
+.react-flow__handle {
+    border: 0;
+}
+.react-flow__controls {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-e1);
+}
+.react-flow__controls-button {
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--card);
+    color: var(--muted-foreground);
+}
+.react-flow__controls-button:hover {
+    background: var(--secondary);
+    color: var(--foreground);
+}
+.react-flow__controls-button svg {
+    fill: currentColor;
+}
+.react-flow__attribution {
+    display: none;
+}

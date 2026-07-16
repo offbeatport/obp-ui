@@ -1,6 +1,8 @@
 import { Link, createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { ChevronDown } from "lucide-react";
 import { type ReactNode, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
+import { CompanyCanvasClient } from "~/components/canvas/company-canvas-client";
 import { TONE_VAR } from "~/components/command-center/tone";
 import { CompanyChat } from "~/components/company-chat";
 import { GrowthTab } from "~/components/company-tabs/growth";
@@ -11,6 +13,12 @@ import { SourceCodeTab } from "~/components/company-tabs/source-code";
 import type { CompanySettingsPatch, CompanyTabProps } from "~/components/company-tabs/types";
 import { WorkspaceTab } from "~/components/company-tabs/workspace";
 import { SpinChat } from "~/components/spin-chat";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { cn } from "~/lib/utils";
 import {
@@ -20,17 +28,19 @@ import {
     rejectAction,
     updateCompanySettings,
 } from "~/server/actions";
-import type { ActivityItem, ChatMessage, CompanyDetail } from "~/server/data";
+import { getUiLayout } from "~/server/agents";
+import type { ActivityItem, CompanyDetail } from "~/server/data";
 import { getCompany, listActivity, listCompanies, listCompanyActions } from "~/server/data";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
         // params.slug is usually the immutable company id (create navigates by id), but may
         // be a human slug from a portfolio link - resolve either.
-        const [detail, companies, activity] = await Promise.all([
+        const [detail, companies, activity, layout] = await Promise.all([
             getCompany({ data: params.slug }),
             listCompanies(),
             listActivity(),
+            getUiLayout(),
         ]);
         const summary =
             companies.find((c) => c.id === params.slug || c.slug === params.slug) ?? null;
@@ -42,6 +52,7 @@ export const Route = createFileRoute("/companies/$slug")({
             detail,
             summary,
             actions,
+            layout,
             activity: co ? activity.filter((a) => a.companySlug === co.slug) : [],
         };
     },
@@ -67,7 +78,7 @@ function CompanyWorkspace() {
     const { slug } = Route.useParams();
     const router = useRouter();
     const navigate = useNavigate();
-    const { detail, summary, actions, activity } = Route.useLoaderData();
+    const { detail, summary, actions, activity, layout } = Route.useLoaderData();
     const base = detail ?? summary;
     const companyId = base?.id;
     const [tab, setTab] = useState("Overview");
@@ -148,7 +159,6 @@ function CompanyWorkspace() {
     }
 
     const co = base as CompanyDetail;
-    const TabComp = TAB_COMPONENT[tab];
 
     // A draft company is still incubating: render the spin-up chat (scout → proposals → spec →
     // approve) as its page. Approving graduates it and this same page becomes the workspace below.
@@ -162,9 +172,27 @@ function CompanyWorkspace() {
         );
     }
 
-    const messages = detail?.messages ?? [];
     const url = co.domain ?? co.liveUrl?.replace(/^https?:\/\//, "") ?? "not deployed";
     const href = co.domain ? `https://${co.domain}` : (co.liveUrl ?? "#");
+
+    const tabProps: CompanyTabProps = {
+        co,
+        actions,
+        busy,
+        onApprove: approve,
+        onReject: reject,
+        onUpdate,
+        onDelete,
+        onRebuild,
+        layout,
+    };
+    const overviewProps = {
+        co,
+        thesis: detail?.thesis,
+        activity,
+        onApprove: approve,
+        onReject: reject,
+    };
 
     return (
         <AppShell active="companies">
@@ -172,87 +200,223 @@ function CompanyWorkspace() {
                 {/* ============ LEFT · co-pilot chat ============ */}
                 <CompanyChat co={co} />
 
-                {/* ============ RIGHT · company view ============ */}
-                <div className="min-h-0 overflow-y-auto bg-background px-6">
-                    <div className="mx-auto flex max-w-[820px] flex-col">
-                        <div className="sticky top-0 z-[4] mb-[18px] flex items-end gap-0.5 border-b border-border bg-[linear-gradient(var(--background)_68%,transparent)] pt-2">
-                            {CO_TABS.map((t) => (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    onClick={() => setTab(t)}
-                                    className={cn(
-                                        "relative inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-t-[8px] px-[15px] pt-[9px] pb-[13px] text-[13px] transition-colors after:absolute after:-bottom-px after:right-[15px] after:left-[15px] after:h-0.5 after:rounded-t-[2px] after:bg-primary after:transition-[opacity,transform] after:duration-200 after:content-['']",
-                                        t === tab
-                                            ? "font-semibold text-foreground after:opacity-100 after:[transform:scaleX(1)]"
-                                            : "font-medium text-faint after:opacity-0 after:[transform:scaleX(0.35)] hover:text-muted-foreground",
-                                    )}
-                                >
-                                    {t}
-                                    {t === "Overview" && co.needsYou && (
-                                        <span className="rounded-[10px] bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
-                                            1
-                                        </span>
-                                    )}
-                                </button>
-                            ))}
-                            <span className="mb-1.5 ml-auto inline-flex items-center gap-2.5 self-center">
-                                <a
-                                    className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-[11.5px] text-faint no-underline transition hover:bg-card hover:text-muted-foreground"
-                                    href={href}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    <svg
-                                        className="size-[13px]"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        aria-hidden="true"
-                                    >
-                                        <path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                                    </svg>
-                                    {url}
-                                </a>
-                            </span>
-                        </div>
-
-                        <div className="py-2">
-                            {tab === "Overview" ? (
-                                <Overview
-                                    co={co}
-                                    thesis={detail?.thesis}
-                                    activity={activity}
-                                    onApprove={approve}
-                                    onReject={reject}
-                                />
-                            ) : TabComp ? (
-                                <TabComp
-                                    co={co}
-                                    actions={actions}
-                                    busy={busy}
-                                    onApprove={approve}
-                                    onReject={reject}
-                                    onUpdate={onUpdate}
-                                    onDelete={onDelete}
-                                    onRebuild={onRebuild}
-                                />
-                            ) : (
-                                <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">
-                                    <div className="px-3 py-2 text-[13px] text-faint">
-                                        The {tab} surface is generated and maintained by {co.name}'s
-                                        build loop.
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                {/* ============ RIGHT · company view (canvas Overview | classic tabs) ============ */}
+                {layout === "classic" ? (
+                    <ClassicRight
+                        tab={tab}
+                        setTab={setTab}
+                        tabProps={tabProps}
+                        overviewProps={overviewProps}
+                        needsYou={!!co.needsYou}
+                        name={co.name}
+                        url={url}
+                        href={href}
+                    />
+                ) : (
+                    <CanvasRight
+                        co={co}
+                        tab={tab}
+                        setTab={setTab}
+                        tabProps={tabProps}
+                        name={co.name}
+                        url={url}
+                        href={href}
+                    />
+                )}
             </div>
         </AppShell>
+    );
+}
+
+// A live-URL chip shown in both layouts' tab bars.
+function LiveUrl({ url, href }: { url: string; href: string }) {
+    return (
+        <a
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-[11.5px] text-faint no-underline transition hover:bg-card hover:text-muted-foreground"
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+        >
+            <svg
+                className="size-[13px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+            >
+                <path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+            {url}
+        </a>
+    );
+}
+
+// The body of a non-Overview tab: its tab component, or a "generated surface" placeholder.
+function renderTabBody(tab: string, tabProps: CompanyTabProps, name: string) {
+    const TabComp = TAB_COMPONENT[tab];
+    if (TabComp) return <TabComp {...tabProps} />;
+    return (
+        <div className="mx-auto max-w-[760px] px-[26px] pt-1 pb-[46px] text-foreground">
+            <div className="px-3 py-2 text-[13px] text-faint">
+                The {tab} surface is generated and maintained by {name}'s build loop.
+            </div>
+        </div>
+    );
+}
+
+// CLASSIC layout - the original tabbed right column, verbatim (the rollback target).
+function ClassicRight({
+    tab,
+    setTab,
+    tabProps,
+    overviewProps,
+    needsYou,
+    name,
+    url,
+    href,
+}: {
+    tab: string;
+    setTab: (t: string) => void;
+    tabProps: CompanyTabProps;
+    overviewProps: Parameters<typeof Overview>[0];
+    needsYou: boolean;
+    name: string;
+    url: string;
+    href: string;
+}) {
+    return (
+        <div className="min-h-0 overflow-y-auto bg-background px-6">
+            <div className="mx-auto flex max-w-[820px] flex-col">
+                <div className="sticky top-0 z-[4] mb-[18px] flex items-end gap-0.5 border-b border-border bg-[linear-gradient(var(--background)_68%,transparent)] pt-2">
+                    {CO_TABS.map((t) => (
+                        <button
+                            key={t}
+                            type="button"
+                            onClick={() => setTab(t)}
+                            className={cn(
+                                "relative inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-t-[8px] px-[15px] pt-[9px] pb-[13px] text-[13px] transition-colors after:absolute after:-bottom-px after:right-[15px] after:left-[15px] after:h-0.5 after:rounded-t-[2px] after:bg-primary after:transition-[opacity,transform] after:duration-200 after:content-['']",
+                                t === tab
+                                    ? "font-semibold text-foreground after:opacity-100 after:[transform:scaleX(1)]"
+                                    : "font-medium text-faint after:opacity-0 after:[transform:scaleX(0.35)] hover:text-muted-foreground",
+                            )}
+                        >
+                            {t}
+                            {t === "Overview" && needsYou && (
+                                <span className="rounded-[10px] bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
+                                    1
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                    <span className="mb-1.5 ml-auto inline-flex items-center gap-2.5 self-center">
+                        <LiveUrl url={url} href={href} />
+                    </span>
+                </div>
+
+                <div className="py-2">
+                    {tab === "Overview" ? (
+                        <Overview {...overviewProps} />
+                    ) : (
+                        renderTabBody(tab, tabProps, name)
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// CANVAS layout - top-right tab select (Overview = React Flow canvas · Tasks · Source Code · More)
+// over a full-height right pane. `tab` keeps canonical keys; only Overview renders differently.
+function CanvasRight({
+    co,
+    tab,
+    setTab,
+    tabProps,
+    name,
+    url,
+    href,
+}: {
+    co: CompanyDetail;
+    tab: string;
+    setTab: (t: string) => void;
+    tabProps: CompanyTabProps;
+    name: string;
+    url: string;
+    href: string;
+}) {
+    const MORE = ["Workspace", "Product", "Growth", "Setup"];
+    const inMore = MORE.includes(tab);
+    const tabBtn = (active: boolean) =>
+        cn(
+            "inline-flex cursor-pointer items-center gap-1.5 rounded-[8px] px-[13px] py-[7px] text-[13px] transition-colors",
+            active
+                ? "bg-card font-semibold text-foreground shadow-e1"
+                : "font-medium text-faint hover:text-muted-foreground",
+        );
+    return (
+        <div className="flex min-h-0 flex-col bg-background">
+            <div className="flex flex-wrap items-center gap-1 border-b border-border px-4 py-2">
+                <span className="mr-auto">
+                    <LiveUrl url={url} href={href} />
+                </span>
+                <button
+                    type="button"
+                    className={tabBtn(tab === "Overview")}
+                    onClick={() => setTab("Overview")}
+                >
+                    Overview
+                    {co.needsYou && (
+                        <span className="rounded-[10px] bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
+                            1
+                        </span>
+                    )}
+                </button>
+                <button
+                    type="button"
+                    className={tabBtn(tab === "Pipeline")}
+                    onClick={() => setTab("Pipeline")}
+                >
+                    Tasks
+                </button>
+                <button
+                    type="button"
+                    className={tabBtn(tab === "Source Code")}
+                    onClick={() => setTab("Source Code")}
+                >
+                    Source Code
+                </button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button type="button" className={tabBtn(inMore)}>
+                            {inMore ? tab : "More"}
+                            <ChevronDown className="size-3.5" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        {MORE.map((t) => (
+                            <DropdownMenuItem key={t} onSelect={() => setTab(t)}>
+                                {t}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+            {tab === "Overview" ? (
+                <div className="relative min-h-0 flex-1">
+                    <CompanyCanvasClient detail={co} />
+                </div>
+            ) : (
+                <div className="min-h-0 flex-1 overflow-y-auto px-6 py-3">
+                    <div className="mx-auto max-w-[820px]">
+                        {renderTabBody(tab, tabProps, name)}
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }
 

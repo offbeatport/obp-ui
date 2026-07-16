@@ -1,4 +1,5 @@
-import { CreditCard, Globe, Mail, RefreshCw, Server, Trash2, Wallet } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
+import { CreditCard, Globe, Mail, Network, RefreshCw, Server, Trash2, Wallet } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import type { CompanyTabProps } from "~/components/company-tabs/types";
 import {
@@ -9,6 +10,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from "~/components/ui/dialog";
+import { cn } from "~/lib/utils";
+import { saveConfig } from "~/server/agents";
 
 // The "Setup" tab — wire a company to the outside world (Connections) and cap its spend (Budget).
 // Prototype ref: 08-chat-spine-pro-v7.html `setupTabHTML` / `.set2-*`. Only Domain, spend cap and
@@ -70,6 +73,15 @@ const ghostBtn =
 export function SetupTab(props: CompanyTabProps) {
     const { co, busy, onUpdate, onDelete, onRebuild } = props;
     const [confirming, setConfirming] = useState(false);
+    const router = useRouter();
+    const layout = props.layout ?? "canvas";
+    // Flip the workspace layout (canvas ↔ classic) - a global app_config setting; re-invalidate so
+    // the $slug loader re-reads it and swaps the right column. Reachable in BOTH layouts (classic
+    // tab bar; canvas "More" menu), so classic is always one flip away.
+    const setLayout = async (value: "canvas" | "classic") => {
+        await saveConfig({ data: { key: "ui.company_layout", value } });
+        await router.invalidate();
+    };
 
     // Local state seeded from props. Domain + budget cap + autopilot persist through onUpdate;
     // email / payment / hosting are cosmetic (no server field) and stay client-side.
@@ -291,6 +303,39 @@ export function SetupTab(props: CompanyTabProps) {
                         >
                             <RefreshCw className="size-4" /> {busy ? "Queuing…" : "Rebuild"}
                         </button>
+                    </Row>
+                </div>
+            </section>
+
+            {/* ---- Appearance ---- */}
+            <section className="mt-6">
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
+                    Appearance
+                </h3>
+                <div className="overflow-hidden rounded-xl border border-border bg-card">
+                    <Row
+                        icon={<Network className="size-4" />}
+                        label="Workspace layout"
+                        sub="Overview as an infinite canvas (idea → company → product → features + GTM), or the classic tabs."
+                    >
+                        <div className="inline-flex overflow-hidden rounded-lg border border-border">
+                            {(["canvas", "classic"] as const).map((v) => (
+                                <button
+                                    key={v}
+                                    type="button"
+                                    disabled={busy || layout === v}
+                                    onClick={() => void setLayout(v)}
+                                    className={cn(
+                                        "px-3 py-2 text-sm font-medium capitalize transition-colors",
+                                        layout === v
+                                            ? "bg-primary text-primary-foreground"
+                                            : "bg-secondary text-muted-foreground hover:text-foreground",
+                                    )}
+                                >
+                                    {v}
+                                </button>
+                            ))}
+                        </div>
                     </Row>
                 </div>
             </section>
