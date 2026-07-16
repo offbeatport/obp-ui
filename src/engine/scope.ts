@@ -131,7 +131,7 @@ function fallbackOpp(thought: string): Opp {
 async function scoreOpportunity(thought: string): Promise<Opp> {
     const fb = fallbackOpp(thought);
     try {
-        const r = await dispatchAI("opportunities", {
+        const r = await dispatchAI("market", {
             system: 'Return ONLY minified JSON: {"title":string,"thesis":string,"score":number}. score is demand 0-100. No prose, no code fences.',
             prompt: `Thought: ${thought}\nName and score this as a small SaaS opportunity.`,
             maxTokens: 400,

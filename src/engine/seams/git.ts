@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 import type { Git } from "./types.js";
 
@@ -35,7 +35,7 @@ export class LocalGitProvider implements Git {
     async ensureRepo(companyId: string): Promise<{ workdir: string }> {
         const workdir = this.dir(companyId);
         if (!existsSync(join(workdir, ".git"))) {
-            await mkdir(join(workdir, "slop", "research"), { recursive: true });
+            await mkdir(join(workdir, "slop", "opportunities"), { recursive: true });
             await git(workdir, "init", "-q", "-b", "main");
             await git(workdir, "config", "user.email", "agent@cslopslop.local");
             await git(workdir, "config", "user.name", "cslopslop agent");
@@ -56,6 +56,31 @@ export class LocalGitProvider implements Git {
 
     seedSha(companyId: string): Promise<string> {
         return git(this.dir(companyId), "rev-parse", "HEAD");
+    }
+
+    // Persist pipeline artifacts (opportunity specs, company spec, GTM plan) onto `main` and
+    // commit. Called only from the DRAFT-phase spin passes (single-flighted per company, before
+    // any run branch exists), so staying on `main` never fights a live run's worktree. Ensures
+    // the repo first (idempotent) and skips the commit when nothing changed.
+    async writeDoc(
+        companyId: string,
+        files: { path: string; content: string }[],
+        msg: string,
+    ): Promise<void> {
+        const { workdir } = await this.ensureRepo(companyId);
+        await gitTry(workdir, "checkout", "-q", "main");
+        for (const f of files) {
+            const abs = join(workdir, f.path);
+            await mkdir(dirname(abs), { recursive: true });
+            await writeFile(abs, f.content);
+        }
+        await git(workdir, "add", "-A");
+        await gitTry(workdir, "commit", "-q", "-m", msg); // no-op (nonzero) when unchanged
+    }
+
+    // Drop the whole company repo - a cancelled draft / deleted company. Best-effort.
+    async removeRepo(companyId: string): Promise<void> {
+        await rm(this.dir(companyId), { recursive: true, force: true });
     }
 
     // Start a run on a fresh branch cut from committed `main`, with a CLEAN tree - so the
@@ -121,7 +146,8 @@ ONE validated, user-facing feature and persist your reasoning back to \`slop/dec
 
 - \`slop/spec.md\` - the bet: what it is, who it's for, the wedge.
 - \`slop/decisions.md\` - append-only one-liners (what + why).
-- \`slop/research/\` - the opportunity report (point-in-time demand evidence).
+- \`slop/opportunities/\` - the 5 scored opportunity specs the company was chosen from.
+- \`slop/gtm.md\` - the go-to-market outline (channels, pricing, first moves).
 
 CLAUDE.md / CODEX.md point here. \`git clone + claude\` continues this company with no platform.
 `;

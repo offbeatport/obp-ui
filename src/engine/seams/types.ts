@@ -73,6 +73,15 @@ export interface Git {
     kind: string;
     ensureRepo(companyId: string): Promise<{ workdir: string }>;
     seedSha(companyId: string): Promise<string>;
+    // Persist a pipeline artifact (opportunity specs, company spec, GTM plan) onto `main` and
+    // commit it - the staged "each step lands in git" write. Idempotent (ensures the repo).
+    writeDoc(
+        companyId: string,
+        files: { path: string; content: string }[],
+        msg: string,
+    ): Promise<void>;
+    // Best-effort delete of the whole company repo (a cancelled draft / deleted company).
+    removeRepo(companyId: string): Promise<void>;
     // start a run on a CLEAN branch cut from main, so the agent never inherits a prior
     // (possibly failed/unapproved) run's tree and run branches are siblings off main.
     prepareRun(workdir: string, runId: string): Promise<void>;

@@ -3,8 +3,8 @@ import type { AiTask } from "../config/ai-catalog.js";
 import { type ResolvedTask, resolveTaskModel } from "../config/ai-tasks.js";
 import { dblock, dlog, dprompt } from "./debug.js";
 
-// dispatchAI - the AI proxy for the *thinking* tasks (opportunities · research · plan ·
-// write · chat · orchestrate). It is the brain, distinct from the build harness (the
+// dispatchAI - the AI proxy for the *thinking* tasks (market · plan · write · chat ·
+// orchestrate). It is the brain, distinct from the build harness (the
 // hands, src/engine/seams/harness.ts). One resolver (resolveTaskModel) picks the route;
 // this executes it over three transports:
 //   • claude-cli - the keyless default: one-shot `claude -p` on the host subscription.

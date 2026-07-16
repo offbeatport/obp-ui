@@ -61,17 +61,39 @@ export const SCORE_DISPLAY_ORDER: ScoreKey[] = [
 export type EvidenceKind = "demand" | "gap" | "price";
 export type Evidence = { kind: EvidenceKind; text: string; source: string };
 
-// One scored opportunity candidate (a bet).
+// One row of the opportunity's competitor analysis: how buyers solve it today, why they pay,
+// and the gap we exploit.
+export type OppCompetitor = {
+    tool: string; // the competing tool / current workaround
+    whyPay: string; // why people pay for it today
+    gap: string; // the gap / critical weakness we win on
+};
+
+// A FULL opportunity spec (a bet) - the market-research pass produces 5 of these. The first
+// block is always present (also synthesized by fallbacks + the "skip research" path); the
+// second block is the rich detail the AI fills in and the "full spec" modal + the .md file
+// render. All rich fields are optional so a deterministic/offline spec stays valid.
 export type Candidate = {
     id: string;
-    name: string; // short product angle, e.g. "Auto-Nudge"
-    icp: string; // who it's for
-    wedge: string; // the specific angle / how it wins
+    name: string; // the opportunity title / product angle, e.g. "Auto-Nudge"
+    icp: string; // ICP buyer - who it's for
+    wedge: string; // the winning insight / specific angle it wins on
     pain: string; // the problem, one sentence
-    scores: OppScores;
+    scores: OppScores; // the 8 numeric signals (ranking + the score pips)
     evidence: Evidence[];
-    firstSlice: { title: string; doneWhen: string }; // the one sanity-check to ship first
+    firstSlice: { title: string; doneWhen: string }; // the first buildable, testable slice
+    // ---- full spec (optional: absent on deterministic fallbacks / skip-research) ----------
+    scoreWhy?: Partial<Record<ScoreKey, string>>; // per-signal justification (why this score)
+    description?: string; // the opportunity in 2-3 sentences (what the bet is)
+    whyBuy?: string; // why the buyer pays for this
+    whyNow?: string; // timing - why this window is open now
+    risk?: string; // the key risk / what could kill it
+    distribution?: string; // how you reach the buyer (channels)
+    mrr?: { low: number; high: number; basis: string }; // expected MRR + how it's estimated
+    competitors?: OppCompetitor[]; // the competitor-analysis table
 };
+// The richer, self-documenting name for the same shape - used where we mean the full spec.
+export type OpportunitySpec = Candidate;
 
 export type SpecSlice = { title: string; sub: string; doneWhen?: string };
 export type Competitor = { name: string; price: string; weakness: string };
@@ -210,4 +232,183 @@ export function paletteFor(seed: string): [string, string] {
     let h = 0;
     for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
     return PALETTES[h % PALETTES.length];
+}
+
+// ---- markdown serialization: the .md files persisted in git per pipeline step ---------------
+// Client-safe (no fs) so the same renderer drives the UI preview and the engine's file write.
+
+function mdSlug(s: string): string {
+    return (
+        s
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 48) || "opportunity"
+    );
+}
+// Escape a value for a single markdown table cell - pipes and newlines would break the row.
+function cell(s: string): string {
+    const t = (s || "")
+        .replace(/\|/g, "\\|")
+        .replace(/\s*\n\s*/g, " ")
+        .trim();
+    return t || "-";
+}
+
+// Stable, human filename for an opportunity's .md (e.g. "01-auto-nudge.md").
+export function opportunitySpecFilename(c: Candidate, rank: number): string {
+    return `${String(rank).padStart(2, "0")}-${mdSlug(c.name)}.md`;
+}
+
+// Render a full opportunity spec as a standalone markdown doc (slop/opportunities/NN-slug.md,
+// and the "full spec" modal reads the same fields). Empty sections are omitted.
+export function opportunitySpecMd(c: Candidate): string {
+    const L: string[] = [`# ${c.name}`, ""];
+    if (c.wedge) L.push(`**${c.wedge}**`, "");
+    L.push(`> Overall score: **${scoreTotal(c.scores).toFixed(1)} / 10**`, "");
+    const section = (title: string, body?: string) => {
+        if (body?.trim()) L.push(`## ${title}`, "", body.trim(), "");
+    };
+    section("Opportunity", c.description);
+    section("The pain", c.pain);
+    section("ICP — who buys", c.icp);
+    section("Why they buy", c.whyBuy);
+    section("Why now", c.whyNow);
+    L.push("## Scores", "", "| Signal | Score | Why |", "| --- | :---: | --- |");
+    for (const k of SCORE_DISPLAY_ORDER) {
+        L.push(
+            `| ${SCORE_META[k].full} | ${c.scores[k] ?? 0}/10 | ${cell(c.scoreWhy?.[k] ?? "")} |`,
+        );
+    }
+    L.push("");
+    if (c.competitors?.length) {
+        L.push(
+            "## Competitor analysis",
+            "",
+            "| Tool | Why people pay | Gap / critical weakness |",
+            "| --- | --- | --- |",
+        );
+        for (const comp of c.competitors) {
+            L.push(`| ${cell(comp.tool)} | ${cell(comp.whyPay)} | ${cell(comp.gap)} |`);
+        }
+        L.push("");
+    }
+    section("Distribution", c.distribution);
+    if (c.mrr) {
+        section(
+            "Expected MRR",
+            `$${c.mrr.low.toLocaleString()}–$${c.mrr.high.toLocaleString()}/mo — ${c.mrr.basis}`,
+        );
+    }
+    section("Risk", c.risk);
+    if (c.firstSlice?.title) {
+        section("First slice", `**${c.firstSlice.title}** — done when ${c.firstSlice.doneWhen}`);
+    }
+    if (c.evidence?.length) {
+        L.push("## Evidence", "");
+        for (const e of c.evidence) L.push(`- \`${e.kind}\` ${e.text} — _${e.source}_`);
+        L.push("");
+    }
+    return `${L.join("\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()}\n`;
+}
+
+// Render the full COMPANY spec as slop/spec.md (replaces the seed placeholder at 'specing').
+export function companySpecMd(
+    spec: CompanySpec,
+    branding?: Branding,
+    guardrails?: Guardrails,
+): string {
+    const L: string[] = [`# ${spec.product}`, ""];
+    if (spec.tagline) L.push(`**${spec.tagline}**`, "");
+    L.push(
+        `- **Pricing:** $${spec.pricingUsd}/mo${spec.trialDays ? ` · ${spec.trialDays}-day trial` : ""}`,
+    );
+    L.push(`- **ICP:** ${spec.icp}`);
+    if (branding?.domain) L.push(`- **Domain:** ${branding.domain}`);
+    if (guardrails) L.push(`- **Guardrails:** ${guardrailsText(guardrails)}`);
+    L.push(
+        "",
+        "## Stack",
+        "",
+        spec.stack.map((s) => `- ${s}`).join("\n"),
+        "",
+        "## Roadmap slices",
+        "",
+    );
+    spec.slices.forEach((s, i) => {
+        const sub = s.sub ? ` — ${s.sub}` : "";
+        const dw = s.doneWhen ? ` _(done when ${s.doneWhen})_` : "";
+        L.push(`${i + 1}. **${s.title}**${sub}${dw}`);
+    });
+    const m = spec.market;
+    L.push(
+        "",
+        "## Market",
+        "",
+        `- **Persona:** ${m.persona}`,
+        `- **Expected MRR:** $${m.mrrLow.toLocaleString()}–$${m.mrrHigh.toLocaleString()}/mo`,
+        `- **WTP:** ${m.wtpQuote}`,
+        "",
+    );
+    if (m.competitors.length) {
+        L.push("### Competitors", "", "| Tool | Price | Weakness |", "| --- | --- | --- |");
+        for (const comp of m.competitors) {
+            L.push(`| ${cell(comp.name)} | ${cell(comp.price)} | ${cell(comp.weakness)} |`);
+        }
+        L.push("");
+    }
+    if (branding) {
+        L.push(
+            "## Branding",
+            "",
+            `- **Mark:** ${branding.mark}`,
+            `- **Palette:** ${branding.palette.join(" → ")}`,
+        );
+        if (branding.style) L.push(`- **Style:** ${branding.style}`);
+        L.push("");
+    }
+    return `${L.join("\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()}\n`;
+}
+
+// Render the initial GTM outline as slop/gtm.md (step 5, seeded at 'specing' from the spec's
+// market/pricing). A scaffold the growth work refines post-launch, not a full campaign plan.
+export function gtmOutlineMd(spec: CompanySpec, branding?: Branding): string {
+    const m = spec.market;
+    const site = branding?.domain ?? `${mdSlug(spec.product)}.app`;
+    const L: string[] = [
+        `# ${spec.product} — Go-to-market`,
+        "",
+        `**Target buyer:** ${m.persona || spec.icp}`,
+        "",
+        "## Positioning",
+        "",
+        spec.tagline || `The fastest way to solve this for ${spec.icp}.`,
+        "",
+        "## Pricing",
+        "",
+        `- $${spec.pricingUsd}/mo${spec.trialDays ? ` · ${spec.trialDays}-day free trial` : ""}`,
+        `- Willingness-to-pay signal: ${m.wtpQuote}`,
+        `- Revenue target: $${m.mrrLow.toLocaleString()}–$${m.mrrHigh.toLocaleString()} MRR`,
+        "",
+        "## Channels (first moves)",
+        "",
+        "1. Post the wedge where the buyer already complains (niche subreddits, Slack/Discord, forums).",
+        `2. A one-page site with the promise + email capture, live at ${site}.`,
+        "3. Direct outreach to 20 ideal buyers for the first conversations.",
+        "",
+        "## First week",
+        "",
+        "- [ ] Landing page live and collecting emails",
+        "- [ ] 3 posts / 20 outreach messages sent",
+        "- [ ] First 5 conversations booked",
+        "",
+        "_Seeded from the company spec; refine as real signal comes in._",
+    ];
+    return `${L.join("\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()}\n`;
 }

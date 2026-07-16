@@ -1,3 +1,5 @@
+import { rm } from "node:fs/promises";
+import { join } from "node:path";
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray, like, ne } from "drizzle-orm";
 import { type Guardrails, resolveGuardrails } from "../config/spin.js";
@@ -125,6 +127,12 @@ export const deleteCompany = createServerFn({ method: "POST" })
         db.delete(appConfig)
             .where(eq(appConfig.key, `scope.done.${data.companyId}`))
             .run();
+        // Drop the company's git repo (opportunity specs, spec.md, source) - best-effort so a
+        // filesystem hiccup never leaves the DB delete half-done.
+        await rm(join(process.cwd(), "companies", data.companyId), {
+            recursive: true,
+            force: true,
+        }).catch(() => {});
         return { ok: true };
     });
 
