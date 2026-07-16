@@ -10,15 +10,7 @@ import {
     resetPick,
 } from "~/server/actions";
 import type { CompanyDetail } from "~/server/data";
-import {
-    Bubble,
-    CreatingView,
-    FailedView,
-    ProposalsView,
-    ScoutingView,
-    SpecView,
-    SpecingView,
-} from "./spin-views";
+import { Bubble, CreatingView, FailedView, ProposalsView, ScoutingView, SpecView, SpecingView } from "./spin-views";
 
 // The "spin up a company" chat, rendered INSIDE the company page while status='draft'. It's the
 // company's own message thread (Bubbles) + the current-stage artifact card + a chat composer.
@@ -103,12 +95,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     // it instead of pushing above it. Loaders (scouting/specing/failed) stay at the bottom.
     const anchoredArtifact =
         stage === "proposals" && spin ? (
-            <ProposalsView
-                candidates={spin.candidates}
-                pickedId={spin.pickedId}
-                onPick={pick}
-                busy={busy}
-            />
+            <ProposalsView candidates={spin.candidates} pickedId={spin.pickedId} onPick={pick} busy={busy} />
         ) : stage === "spec" && spin ? (
             <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
         ) : null;
@@ -120,9 +107,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     let injected = false;
     for (const m of detail.messages) {
         if (m.role === "system") continue;
-        thread.push(
-            <Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />,
-        );
+        thread.push(<Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />);
         if (anchoredArtifact && m.id === anchorId) {
             thread.push(<div key={`${m.id}-artifact`}>{anchoredArtifact}</div>);
             injected = true;
@@ -134,17 +119,14 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
         <div className="flex h-full flex-col">
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
                 <div className="mx-auto w-full" style={{ maxWidth: 840, padding: "22px 20px 8px" }}>
+                    <h1 className="font-display font-light text-4xl w-full p-20 text-center">
+                        Start your new AI Company
+                    </h1>
                     {thread}
                     {showTyping && <Typing />}
-
                     {stage === "scouting" && <ScoutingView thought={detail.thesis} />}
                     {stage === "specing" && spin && (
-                        <SpecingView
-                            name={
-                                spin.candidates.find((c) => c.id === spin.pickedId)?.name ??
-                                "your pick"
-                            }
-                        />
+                        <SpecingView name={spin.candidates.find((c) => c.id === spin.pickedId)?.name ?? "your pick"} />
                     )}
                     {stage === "failed" && <FailedView onRetry={reroll} busy={busy} />}
                 </div>
@@ -210,13 +192,7 @@ const HINTS: Record<string, string> = {
     spec: "“drop Stripe”, “raise price to $29”, “build it”, or ask anything…",
     failed: "Tell me what to try instead…",
 };
-function ChatComposer({
-    onSend,
-    stage,
-}: {
-    onSend: (text: string) => Promise<void>;
-    stage?: string;
-}) {
+function ChatComposer({ onSend, stage }: { onSend: (text: string) => Promise<void>; stage?: string }) {
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
     const ref = useRef<HTMLTextAreaElement>(null);

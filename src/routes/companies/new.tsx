@@ -52,7 +52,7 @@ function NewCompany() {
                         {"// thought → company"}
                     </div>
                     <h1 className="my-2.5 font-display text-[42px] font-light leading-[2.05] tracking-[-0.025em] text-foreground">
-                        Start your new AI cosmpany
+                        Start your new AI company
                     </h1>
                     <p className="mx-auto mt-3.5 mb-[30px] max-w-[520px] text-base leading-[1.6] text-muted-foreground">
                         I'll find the opportunities

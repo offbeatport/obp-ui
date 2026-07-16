@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { CompanyLogo } from "~/components/company-logo";
+import { Markdown } from "~/components/markdown";
 import {
     type Branding,
     type Candidate,
@@ -48,7 +49,7 @@ export function Bubble({ m }: { m: SpinMessage }) {
                             : "py-[2px]",
                     )}
                 >
-                    {m.content}
+                    {me ? m.content : <Markdown content={m.content} />}
                 </div>
             </div>
         </div>
