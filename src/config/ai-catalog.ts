@@ -9,8 +9,10 @@ import type { ProviderId as LogoId } from "~/components/provider-logos";
 export const DRIVABLE_HARNESSES = ["noop", "claude"] as const;
 export type HarnessKind = (typeof DRIVABLE_HARNESSES)[number];
 
-// The coarse AI tasks, grounded in the SPEC loop (thought → opportunities → company → actions).
-export const AI_TASKS = ["build", "opportunities", "research", "plan", "write", "chat", "orchestrate"] as const;
+// The coarse AI tasks, grounded in the SPEC loop (thought → market → company → actions).
+// `market` is ONE task (web-grounded demand research → 5 full opportunity specs); it replaced
+// the former split `opportunities` (cheap scoring) + `research` (web report) - same job now.
+export const AI_TASKS = ["build", "market", "plan", "write", "chat", "orchestrate"] as const;
 export type AiTask = (typeof AI_TASKS)[number];
 
 // build is the one HARNESS (hands) task; the rest are MODEL (thinking) tasks.
@@ -18,13 +20,9 @@ export const MODEL_TASKS = AI_TASKS.filter((t) => t !== "build") as Exclude<AiTa
 
 export const TASK_META: Record<AiTask, { label: string; purpose: string }> = {
     build: { label: "Build", purpose: "Writes & ships code - the coding agent (hands)." },
-    opportunities: {
-        label: "Opportunities",
-        purpose: "Scores thoughts into ranked business opportunity - cheap, high-volume.",
-    },
-    research: {
-        label: "Research",
-        purpose: "Web-grounded demand research → the opportunity report.",
+    market: {
+        label: "Market Research",
+        purpose: "Web-grounded demand research → 5 full, scored opportunity specs.",
     },
     plan: { label: "Planning", purpose: "Decomposes a promoted bet into the first actions." },
     write: { label: "Messaging", purpose: "Drafts posts, cold outreach, support replies." },
@@ -77,8 +75,7 @@ export const PROVIDERS: { id: ProviderId; label: string; models: string[]; logo?
 // OpenRouter model per task - used when an OpenRouter key is present (the "preferred" mode).
 export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: string }> = {
     build: { provider: "noop", model: "" },
-    opportunities: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
-    research: { provider: "openrouter", model: "perplexity/sonar" },
+    market: { provider: "openrouter", model: "perplexity/sonar" },
     plan: { provider: "openrouter", model: "anthropic/claude-3.7-sonnet" },
     write: { provider: "openrouter", model: "anthropic/claude-3.7-sonnet" },
     chat: { provider: "openrouter", model: "anthropic/claude-3.5-haiku" },
@@ -90,8 +87,7 @@ export const DEFAULT_TASK_ROUTING: Record<AiTask, { provider: string; model: str
 // that's the reason to add an OpenRouter key and route research to Perplexity.)
 export const CLAUDE_TASK_MODEL: Record<AiTask, string> = {
     build: "",
-    opportunities: "claude-3.5-haiku",
-    research: "claude-3.7-sonnet",
+    market: "claude-3.7-sonnet",
     plan: "claude-3.7-sonnet",
     write: "claude-3.7-sonnet",
     chat: "claude-3.5-haiku",
@@ -106,4 +102,11 @@ export const SIMPLE_PRESETS: Record<string, { build: string }> = {
 };
 
 // Providers with a real HTTP API we can key directly (else route via OpenRouter).
-export const DIRECT_API_PROVIDERS = new Set(["anthropic", "openai", "perplexity", "xai", "google", "zai"]);
+export const DIRECT_API_PROVIDERS = new Set([
+    "anthropic",
+    "openai",
+    "perplexity",
+    "xai",
+    "google",
+    "zai",
+]);

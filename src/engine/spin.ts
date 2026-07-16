@@ -6,11 +6,18 @@ import {
     type Evidence,
     type EvidenceKind,
     type Guardrails,
+    type OppCompetitor,
     type OppScores,
     SCORE_KEYS,
+    SCORE_META,
+    type ScoreKey,
     type SpecSlice,
     type SpinData,
+    companySpecMd,
+    gtmOutlineMd,
     guardrailsText,
+    opportunitySpecFilename,
+    opportunitySpecMd,
     paletteFor,
     scoreTotal,
 } from "../config/spin.js";
@@ -19,7 +26,13 @@ import { graduateCompany } from "../server/spin-logic.js";
 import { extractJson, extractJsonArray, str } from "./coerce.js";
 import { clip, dlog } from "./debug.js";
 import { dispatchAI } from "./dispatch.js";
+import { LocalGitProvider } from "./seams/git.js";
 import { singleFlight } from "./single-flight.js";
+
+// The company git backbone - used to persist each pipeline step's .md artifact onto `main`.
+// Instantiated directly (like the sqlite handle above) since the spin passes run without an
+// engine context. Writes happen only in the single-flighted DRAFT passes, before any run.
+const git = new LocalGitProvider();
 
 // spin.ts - the engine passes behind the "spin up a company" chat. A DRAFT COMPANY (company row,
 // status='draft') is one spin session: company.thesis is the thought, company.spinStatus the
@@ -76,7 +89,7 @@ const advance = sqlite.transaction(
     },
 );
 
-// ---- pass 1: scout - a fresh thought → 3 scored opportunity candidates -------------------
+// ---- pass 1: scout - a fresh thought → 5 full, scored opportunity specs (market research) --
 export async function spinScout(inflight: Set<string>): Promise<void> {
     const row = PICK_SCOUTING.get() as DraftRow | undefined;
     if (!row) return;
@@ -86,6 +99,9 @@ export async function spinScout(inflight: Set<string>): Promise<void> {
             dlog("spin", `scout: company ${row.id} · "${clip(row.thought, 60)}"`);
             const candidates = await scoutCandidates(row.thought, spin.guardrails, spin.criteria);
             dlog("spin", `scout: company ${row.id} → ${candidates.length} candidates → proposals`);
+            // Persist the 5 full opportunity specs to git (step 1 of the pipeline) before we flip
+            // to 'proposals'. Best-effort: the specs are in the DB regardless of a git failure.
+            await persistOpportunities(row.id, candidates);
             // clear criteria once consumed (undefined drops from the merged JSON)
             advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
             // Open the chat with the result so it reads as a conversation.
@@ -129,6 +145,8 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
                 data.guardrails,
                 data.editNote,
             );
+            // Persist the full company spec + GTM outline to git (steps 2 & 5 of the pipeline).
+            await persistCompanySpec(row.id, spec, branding, data.guardrails);
             // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
             // discard this now-stale spec. Undefined (defensive candidates[0] fallback) → no guard.
             // Clear editNote once applied.
@@ -451,6 +469,49 @@ function matchCandidate(text: string, candidates: Candidate[]): Candidate | unde
     return bestHits > 0 ? best : undefined;
 }
 
+// ---- git persistence of the pipeline artifacts (best-effort; never blocks the flow) --------
+
+// Step 1: write one .md per opportunity spec under slop/opportunities/ (ranked order).
+async function persistOpportunities(companyId: string, candidates: Candidate[]): Promise<void> {
+    try {
+        const files = candidates.map((c, i) => ({
+            path: `slop/opportunities/${opportunitySpecFilename(c, i + 1)}`,
+            content: opportunitySpecMd(c),
+        }));
+        await git.writeDoc(
+            companyId,
+            files,
+            `docs: ${files.length} opportunity specs (market research)`,
+        );
+        dlog("spin", `scout: company ${companyId} → wrote ${files.length} opportunity spec .md`);
+    } catch (e) {
+        dlog("spin", `scout: company ${companyId} → .md persist skipped: ${(e as Error).message}`);
+    }
+}
+
+// Steps 2 & 5: write the full company spec (slop/spec.md, replacing the seed) + the GTM
+// outline (slop/gtm.md) once the picked bet has been specced.
+async function persistCompanySpec(
+    companyId: string,
+    spec: CompanySpec,
+    branding: Branding,
+    guardrails?: Guardrails,
+): Promise<void> {
+    try {
+        await git.writeDoc(
+            companyId,
+            [
+                { path: "slop/spec.md", content: companySpecMd(spec, branding, guardrails) },
+                { path: "slop/gtm.md", content: gtmOutlineMd(spec, branding) },
+            ],
+            "docs: company spec + GTM outline",
+        );
+        dlog("spin", `spec: company ${companyId} → wrote slop/spec.md + slop/gtm.md`);
+    } catch (e) {
+        dlog("spin", `spec: company ${companyId} → .md persist skipped: ${(e as Error).message}`);
+    }
+}
+
 // ---- AI drivers (never throw - deterministic fallback) -----------------------------------
 
 async function scoutCandidates(
@@ -461,17 +522,28 @@ async function scoutCandidates(
     const fb = fallbackCandidates(thought);
     const extra = criteria ? `\nExtra criteria from the founder (MUST honor): ${criteria}` : "";
     try {
-        const r = await dispatchAI("research", {
+        const r = await dispatchAI("market", {
             system:
-                "You are a startup scout finding small, solo-buildable SaaS bets. Return ONLY a " +
-                "minified JSON array of exactly 5 objects - no prose, no code fences. Each object: " +
-                '{"name":string,"icp":string,"wedge":string,"pain":string,"scores":' +
-                '{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
+                "You are a market-research analyst finding small, solo-buildable SaaS bets. Return " +
+                "ONLY a minified JSON array of EXACTLY 5 FULL opportunity specs - no prose, no code " +
+                "fences. Each object has ALL of these keys:\n" +
+                '{"title":string,"description":string,"pain":string,"icp":string,"wedge":string,' +
+                '"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,' +
+                '"mrr":{"low":int,"high":int,"basis":string},' +
+                '"scores":{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},' +
+                '"scoreWhy":{"buyer":string,"pain":string,"wtp":string,"timing":string,"build":string,"legal":string,"distro":string,"pricing":string},' +
+                '"competitors":[{"tool":string,"whyPay":string,"gap":string}],' +
                 '"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],' +
-                '"firstSlice":{"title":string,"doneWhen":string}}. scores are integers 0-10. ' +
-                "Give 2-3 evidence items each. name is a short product angle (2-3 words).",
-            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nPropose 5 distinct, scored SaaS opportunities that a solo founder could ship.`,
-            maxTokens: 2200,
+                '"firstSlice":{"title":string,"doneWhen":string}}\n' +
+                "Rules: title is a short brandable angle (2-4 words). description is 2-3 sentences. " +
+                "scores are integers 0-10; scoreWhy gives a ONE-line justification for EACH of the 8 " +
+                "scores (why that number). mrr is realistic monthly-recurring-revenue in USD with a " +
+                "short basis. 2-3 competitors (tool = how buyers solve it today, whyPay = why they " +
+                "pay, gap = the critical weakness you exploit). 2-3 evidence items. whyNow = the " +
+                "timing signal. risk = the single biggest thing that could kill it. distribution = " +
+                "the concrete channel to reach the buyer. Make the 5 specs genuinely distinct angles.",
+            prompt: `Founder's thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}.${extra}\nProduce 5 distinct, fully-specified SaaS opportunities a solo founder could ship.`,
+            maxTokens: 4800,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
         const arr = extractJsonArray(r.text);
@@ -479,7 +551,7 @@ async function scoutCandidates(
             .map((raw, i) => toCandidate(raw, fb[i % fb.length]))
             .filter((c): c is Candidate => c !== null);
         if (parsed.length === 0) return fb;
-        // Rank by average score (best bet first) - the UI leads with the strongest candidate.
+        // Rank by overall score (best bet first) - the UI leads with the strongest candidate.
         return parsed.sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
     } catch {
         return fb;
@@ -524,23 +596,72 @@ async function draftSpecAndBranding(
 function toCandidate(raw: unknown, fb: Candidate): Candidate | null {
     if (!raw || typeof raw !== "object") return null;
     const o = raw as Record<string, unknown>;
+    const slice = (o.firstSlice ?? {}) as Record<string, unknown>;
     return {
         id: randomUUID(),
-        name: str(o.name, fb.name, 48),
+        // accept "title" (new full-spec key) or legacy "name"
+        name: str(o.title ?? o.name, fb.name, 48),
         icp: str(o.icp, fb.icp, 120),
         wedge: str(o.wedge, fb.wedge, 160),
         pain: str(o.pain, fb.pain, 200),
         scores: toScores(o.scores, fb.scores),
         evidence: toEvidence(o.evidence, fb.evidence),
         firstSlice: {
-            title: str((o.firstSlice as Record<string, unknown>)?.title, fb.firstSlice.title, 100),
-            doneWhen: str(
-                (o.firstSlice as Record<string, unknown>)?.doneWhen,
-                fb.firstSlice.doneWhen,
-                120,
-            ),
+            title: str(slice.title, fb.firstSlice.title, 100),
+            doneWhen: str(slice.doneWhen, fb.firstSlice.doneWhen, 120),
         },
+        // ---- full-spec fields (undefined when the model omits them → per-field fallback) ----
+        description: str(o.description, fb.description ?? "", 600) || undefined,
+        whyBuy: str(o.whyBuy, fb.whyBuy ?? "", 400) || undefined,
+        whyNow: str(o.whyNow, fb.whyNow ?? "", 400) || undefined,
+        risk: str(o.risk, fb.risk ?? "", 400) || undefined,
+        distribution: str(o.distribution, fb.distribution ?? "", 400) || undefined,
+        mrr: toMrr(o.mrr, fb.mrr),
+        scoreWhy: toScoreWhy(o.scoreWhy, fb.scoreWhy),
+        competitors: toOppCompetitors(o.competitors, fb.competitors),
     };
+}
+
+// Per-signal justification map (scoreWhy). Keep only the 8 known keys; fall back per-key.
+function toScoreWhy(
+    v: unknown,
+    fb?: Partial<Record<ScoreKey, string>>,
+): Partial<Record<ScoreKey, string>> | undefined {
+    const o = (v ?? {}) as Record<string, unknown>;
+    const out: Partial<Record<ScoreKey, string>> = {};
+    for (const k of SCORE_KEYS) {
+        const s = str(o[k], fb?.[k] ?? "", 240);
+        if (s) out[k] = s;
+    }
+    return Object.keys(out).length ? out : fb;
+}
+
+function toMrr(
+    v: unknown,
+    fb?: { low: number; high: number; basis: string },
+): { low: number; high: number; basis: string } | undefined {
+    if (!v || typeof v !== "object") return fb;
+    const o = v as Record<string, unknown>;
+    const low = clampInt(o.low, fb?.low ?? 0, 0, 10_000_000);
+    const high = clampInt(o.high, fb?.high ?? 0, 0, 10_000_000);
+    const basis = str(o.basis, fb?.basis ?? "", 240);
+    if (!low && !high && !basis) return fb;
+    return { low, high: Math.max(low, high), basis };
+}
+
+function toOppCompetitors(v: unknown, fb?: OppCompetitor[]): OppCompetitor[] | undefined {
+    if (!Array.isArray(v)) return fb;
+    const out = v
+        .map((c): OppCompetitor | null => {
+            if (!c || typeof c !== "object") return null;
+            const o = c as Record<string, unknown>;
+            const tool = str(o.tool ?? o.name, "", 60);
+            if (!tool) return null;
+            return { tool, whyPay: str(o.whyPay, "", 200), gap: str(o.gap ?? o.weakness, "", 200) };
+        })
+        .filter((c): c is OppCompetitor => c !== null)
+        .slice(0, 4);
+    return out.length ? out : fb;
 }
 
 function toScores(v: unknown, fb: OppScores): OppScores {
@@ -665,27 +786,66 @@ function fallbackCandidates(thought: string): Candidate[] {
             bias: 1,
         },
     ];
-    return angles.map((a, i) => ({
-        id: randomUUID(),
-        name: a.name.slice(0, 48),
-        icp: "Solo operators and small teams who feel this pain weekly.",
-        wedge: a.wedge,
-        pain: thought.slice(0, 180) || "A recurring, unglamorous problem worth paying to remove.",
-        scores: seededScores(thought + i, a.bias),
-        evidence: [
-            {
-                kind: "demand",
-                text: "People repeatedly ask for this in niche communities.",
-                source: "forums",
+    const pain =
+        thought.slice(0, 180) || "A recurring, unglamorous problem worth paying to remove.";
+    return angles.map((a, i) => {
+        const scores = seededScores(thought + i, a.bias);
+        return {
+            id: randomUUID(),
+            name: a.name.slice(0, 48),
+            icp: "Solo operators and small teams who feel this pain weekly.",
+            wedge: a.wedge,
+            pain,
+            scores,
+            evidence: [
+                {
+                    kind: "demand" as const,
+                    text: "People repeatedly ask for this in niche communities.",
+                    source: "forums",
+                },
+                {
+                    kind: "gap" as const,
+                    text: "Incumbents are bloated or enterprise-priced.",
+                    source: "market",
+                },
+                {
+                    kind: "price" as const,
+                    text: "Comparable tools charge $20-80/mo.",
+                    source: "pricing pages",
+                },
+            ],
+            firstSlice: {
+                title: "A visitor can sign up on a live URL",
+                doneWhen: "The signup page is live and accepts an email.",
             },
-            { kind: "gap", text: "Incumbents are bloated or enterprise-priced.", source: "market" },
-            { kind: "price", text: "Comparable tools charge $20-80/mo.", source: "pricing pages" },
-        ],
-        firstSlice: {
-            title: "A visitor can sign up on a live URL",
-            doneWhen: "The signup page is live and accepts an email.",
-        },
-    }));
+            // full-spec detail so an offline scan still yields readable specs + .md files
+            description: `${a.name}: ${a.wedge} Aimed at people who hit "${pain}" often enough to pay to make it go away.`,
+            whyBuy: "It removes a weekly, manual chore for less than the time it costs them.",
+            whyNow: "Cheap AI + no-code plumbing make this shippable by one person for the first time.",
+            risk: "Demand may be shallow - validate that people will pay before over-building.",
+            distribution:
+                "Post where the buyer already complains: niche subreddits, Slack/Discord, forums.",
+            mrr: { low: 500, high: 4000, basis: "≈50-200 users at $20-40/mo" },
+            scoreWhy: Object.fromEntries(
+                SCORE_KEYS.map((k) => [
+                    k,
+                    `${SCORE_META[k].full}: scored ${scores[k]}/10 on ${SCORE_META[k].hint}.`,
+                ]),
+            ) as Partial<Record<ScoreKey, string>>,
+            competitors: [
+                {
+                    tool: "An incumbent SaaS",
+                    whyPay: "It's the known, trusted default.",
+                    gap: "Bloated, slow, and priced for teams not solo buyers.",
+                },
+                {
+                    tool: "A DIY spreadsheet / manual process",
+                    whyPay: "Free and infinitely flexible.",
+                    gap: "Breaks at scale, no automation, easy to forget.",
+                },
+            ],
+        };
+    });
 }
 
 function fallbackSpec(

@@ -19,6 +19,7 @@ import {
     SpecView,
     SpecingView,
 } from "./spin-views";
+import { Button } from "./ui/button";
 
 // The "spin up a company" chat, rendered INSIDE the company page while status='draft'. It's the
 // company's own message thread (Bubbles) + the current-stage artifact card + a chat composer.
@@ -101,15 +102,10 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     // opportunities list (and the scouting loader), not a floating control above the composer.
     const skipRow =
         stage === "scouting" || stage === "proposals" ? (
-            <div className="mt-3 pl-[52px] text-[13px]">
-                <button
-                    type="button"
-                    onClick={skipResearch}
-                    disabled={busy}
-                    className="font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
-                >
+            <div className="mt-3 pl-[52px] text-[13px] text-center p-5">
+                <Button onClick={skipResearch} disabled={busy} variant="ghost">
                     Continue without market research →
-                </button>
+                </Button>
             </div>
         ) : null;
 

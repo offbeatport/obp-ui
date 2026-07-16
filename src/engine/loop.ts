@@ -30,7 +30,7 @@ export function startLoop(ctx: EngineContext): () => void {
         // guard Sets and do all AI outside any DB transaction.
         void scopeNext(scoping); // fresh company thought → opportunity + spec + first action
         void answerNext(chatting); // an unanswered user turn in a scoped company's chat
-        void spinScout(scouting); // a 'scouting' draft → 3 scored opportunity candidates
+        void spinScout(scouting); // a 'scouting' draft → 5 full opportunity specs (+ .md in git)
         void spinSpec(specing); // a 'specing' draft (picked) → full company spec + branding
         void spinChat(spinChatting); // an unanswered chat turn in a spin draft → reply + intent
         while (active.size < config.maxConcurrentRuns) {
