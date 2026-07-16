@@ -113,15 +113,17 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     // message that announced it, so the founder's later questions continue the conversation BELOW
     // it instead of pushing above it. Loaders (scouting/specing/failed) stay at the bottom.
     const anchoredArtifact =
-        stage === "proposals" && spin ? (
+        (stage === "proposals" || stage === "specing") && spin ? (
             <>
                 <ProposalsView
                     candidates={spin.candidates}
                     pickedId={spin.pickedId}
                     onPick={pick}
-                    busy={busy}
+                    // Selecting advances us to 'specing' - keep the list VISIBLE with the picked
+                    // line marked, but lock further picks while the spec drafts.
+                    busy={busy || stage === "specing"}
                 />
-                {skipRow}
+                {stage === "proposals" && skipRow}
             </>
         ) : stage === "spec" && spin ? (
             <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
@@ -189,7 +191,12 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
 // The id of the assistant message that announced the current artifact (the scout's "I found …
 // opportunities:" line, or the spec's "… spec - …" line) - the anchor the artifact renders after.
 function announcementId(messages: CompanyDetail["messages"], stage?: string): string | undefined {
-    const marker = stage === "proposals" ? "opportunities:" : stage === "spec" ? "spec -" : null;
+    const marker =
+        stage === "proposals" || stage === "specing"
+            ? "opportunities:"
+            : stage === "spec"
+              ? "spec -"
+              : null;
     if (!marker) return undefined;
     for (let i = messages.length - 1; i >= 0; i--) {
         const m = messages[i];
