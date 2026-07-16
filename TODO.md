@@ -31,3 +31,10 @@ Deferred work — things pulled out of the product for now, to revisit later.
       table + a "capability gap" signal emitted during a run → a spin pass that authors the skill →
       validated the same way products are (deploy→verify) before joining the pool. Payoff: compounding
       capability across companies instead of every run starting cold.
+
+## Opportunities page
+
+- [ ] **Opportunities page** — the standalone `/opportunities` feed (scored demand candidates from
+      the engine's scope pass). Removed from the nav + route for now (`src/routes/opportunities.tsx`
+      deleted; `opportunities` NavKey removed). `listOpportunities` server fn + the `opportunity`
+      table remain. Re-add when the surface earns a dedicated page (or fold it into the home feed).

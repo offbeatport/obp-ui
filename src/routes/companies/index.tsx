@@ -57,7 +57,7 @@ function Portfolio() {
                     </p>
 
                     {companies.length > 0 && (
-                        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-2xl border border-border bg-card px-6 py-4 shadow-e1">
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 px-6 py-4 shadow-e1">
                             {stats.map((s) => (
                                 <div key={s.label} className="text-center">
                                     <div
