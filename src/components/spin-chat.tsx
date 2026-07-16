@@ -10,7 +10,15 @@ import {
     resetPick,
 } from "~/server/actions";
 import type { CompanyDetail } from "~/server/data";
-import { Bubble, CreatingView, FailedView, ProposalsView, ScoutingView, SpecView, SpecingView } from "./spin-views";
+import {
+    Bubble,
+    CreatingView,
+    FailedView,
+    ProposalsView,
+    ScoutingView,
+    SpecView,
+    SpecingView,
+} from "./spin-views";
 
 // The "spin up a company" chat, rendered INSIDE the company page while status='draft'. It's the
 // company's own message thread (Bubbles) + the current-stage artifact card + a chat composer.
@@ -88,14 +96,37 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     const lastIsUser = detail.messages.at(-1)?.role === "user";
     const working = stage === "scouting" || stage === "specing";
     const showTyping = (working || lastIsUser) && stage !== "scouting";
-    const canSkip = stage === "scouting" || stage === "proposals";
+
+    // "Continue without market research" — a trailing option that flows in continuation of the
+    // opportunities list (and the scouting loader), not a floating control above the composer.
+    const skipRow =
+        stage === "scouting" || stage === "proposals" ? (
+            <div className="mt-3 pl-[52px] text-[13px]">
+                <button
+                    type="button"
+                    onClick={skipResearch}
+                    disabled={busy}
+                    className="font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
+                >
+                    Continue without market research →
+                </button>
+            </div>
+        ) : null;
 
     // The interactive artifact (proposals / spec) is anchored INLINE, right after the assistant
     // message that announced it, so the founder's later questions continue the conversation BELOW
     // it instead of pushing above it. Loaders (scouting/specing/failed) stay at the bottom.
     const anchoredArtifact =
         stage === "proposals" && spin ? (
-            <ProposalsView candidates={spin.candidates} pickedId={spin.pickedId} onPick={pick} busy={busy} />
+            <>
+                <ProposalsView
+                    candidates={spin.candidates}
+                    pickedId={spin.pickedId}
+                    onPick={pick}
+                    busy={busy}
+                />
+                {skipRow}
+            </>
         ) : stage === "spec" && spin ? (
             <SpecView spin={spin} onCreate={approve} onBack={back} busy={busy} />
         ) : null;
@@ -107,7 +138,9 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     let injected = false;
     for (const m of detail.messages) {
         if (m.role === "system") continue;
-        thread.push(<Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />);
+        thread.push(
+            <Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />,
+        );
         if (anchoredArtifact && m.id === anchorId) {
             thread.push(<div key={`${m.id}-artifact`}>{anchoredArtifact}</div>);
             injected = true;
@@ -124,27 +157,25 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                     </h1>
                     {thread}
                     {showTyping && <Typing />}
-                    {stage === "scouting" && <ScoutingView thought={detail.thesis} />}
+                    {stage === "scouting" && (
+                        <>
+                            <ScoutingView thought={detail.thesis} />
+                            {skipRow}
+                        </>
+                    )}
                     {stage === "specing" && spin && (
-                        <SpecingView name={spin.candidates.find((c) => c.id === spin.pickedId)?.name ?? "your pick"} />
+                        <SpecingView
+                            name={
+                                spin.candidates.find((c) => c.id === spin.pickedId)?.name ??
+                                "your pick"
+                            }
+                        />
                     )}
                     {stage === "failed" && <FailedView onRetry={reroll} busy={busy} />}
                 </div>
             </div>
 
             <div className="mx-auto w-full" style={{ maxWidth: 840 }}>
-                {canSkip && (
-                    <div className="px-5 pt-1 text-center">
-                        <button
-                            type="button"
-                            onClick={skipResearch}
-                            disabled={busy}
-                            className="text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
-                        >
-                            Continue without market research →
-                        </button>
-                    </div>
-                )}
                 <ChatComposer onSend={sendChat} stage={stage} />
             </div>
         </div>
@@ -192,7 +223,10 @@ const HINTS: Record<string, string> = {
     spec: "“drop Stripe”, “raise price to $29”, “build it”, or ask anything…",
     failed: "Tell me what to try instead…",
 };
-function ChatComposer({ onSend, stage }: { onSend: (text: string) => Promise<void>; stage?: string }) {
+function ChatComposer({
+    onSend,
+    stage,
+}: { onSend: (text: string) => Promise<void>; stage?: string }) {
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
     const ref = useRef<HTMLTextAreaElement>(null);
