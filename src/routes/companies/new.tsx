@@ -2,12 +2,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { AppShell } from "~/components/app-shell";
-import {
-    type GuardRow,
-    GuardrailLedger,
-    defaultRows,
-    rowsToGuardrails,
-} from "~/components/guardrail-ledger";
+import { type GuardRow, GuardrailLedger, defaultRows, rowsToGuardrails } from "~/components/guardrail-ledger";
 import { GuardrailMenu } from "~/components/guardrail-menu";
 import type { Guardrails } from "~/config/spin";
 import { startSpin } from "~/server/actions";
@@ -35,8 +30,7 @@ function NewCompany() {
 
     // Build the guardrails to send. For a preset the server re-resolves the canonical values, so we
     // only send the key; for "custom" we serialize the ledger rows into Guardrails.
-    const buildGuardrails = (): Guardrails =>
-        preset === "custom" ? rowsToGuardrails(rows) : { preset };
+    const buildGuardrails = (): Guardrails => (preset === "custom" ? rowsToGuardrails(rows) : { preset });
 
     const submit = async () => {
         const t = thought.trim();
@@ -64,7 +58,7 @@ function NewCompany() {
                         I'll find the opportunities
                     </p>
 
-                    <div className="rounded-xl border border-border bg-card p-5 text-left shadow-e2 transition-colors focus-within:border-primary">
+                    <div className="rounded-xl border border-border bg-card pt-5 p-3 text-left focus-within:border-primary">
                         <textarea
                             id="spin-thought"
                             rows={2}
@@ -77,18 +71,16 @@ function NewCompany() {
                                 }
                             }}
                             placeholder="What are you passionate about?"
-                            className="block w-full resize-none border-0 bg-transparent text-base leading-[1.5] text-foreground outline-none placeholder:text-faint"
+                            className="block m-2 w-full resize-none border-0 bg-transparent text-base leading-[1.5] text-foreground outline-none placeholder:text-faint"
                         />
-                        <div className="mt-2 flex items-center justify-end gap-2.5">
-                            <div className="mr-auto">
-                                <GuardrailMenu value={preset} onChange={setPreset} />
-                            </div>
+                        <div className="mt-2 flex items-center justify-between gap-2.5">
+                            <GuardrailMenu value={preset} onChange={setPreset} />
                             <button
                                 type="button"
                                 onClick={() => void submit()}
                                 disabled={busy || !thought.trim()}
                                 aria-label="Send to agent"
-                                className="grid size-10 flex-none place-items-center rounded-full bg-primary text-white shadow-[0_2px_8px_-1px_rgba(200,100,60,0.5)] transition hover:-translate-y-px hover:brightness-[1.06] active:translate-y-0 disabled:opacity-40"
+                                className="grid size-10 flex-none place-items-center rounded-full bg-primary text-white shadow-[0_2px_8px_-1px_rgba(200,100,60,0.5)] hover:-translate-y-px hover:brightness-[1.06] active:translate-y-0 disabled:opacity-40"
                             >
                                 {busy ? (
                                     <Loader2 className="size-[18px] animate-spin" />

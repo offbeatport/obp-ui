@@ -49,14 +49,8 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
                 className="grid grid-rows-1 h-screen overflow-hidden transition-[grid-template-columns] duration-300"
                 style={{ gridTemplateColumns: collapsed ? "60px 1fr" : "264px 1fr" }}
             >
-                <Rail
-                    active={active}
-                    collapsed={collapsed}
-                    onToggle={() => setCollapsed((c) => !c)}
-                />
-                <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
-                    {children}
-                </main>
+                <Rail active={active} collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+                <main className="flex min-w-0 flex-col overflow-y-auto bg-background">{children}</main>
             </div>
             {/* Global overlay - kept OUT of the grid so its root div can't take a grid cell. */}
             <AgentConsole />
@@ -73,11 +67,7 @@ const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
 ];
 
-function Rail({
-    active,
-    collapsed,
-    onToggle,
-}: { active?: NavKey; collapsed: boolean; onToggle: () => void }) {
+function Rail({ active, collapsed, onToggle }: { active?: NavKey; collapsed: boolean; onToggle: () => void }) {
     // Highlight "New company" while on its route (it isn't in the NAV list, so drive it off the URL).
     const onNewCompany = useLocation({ select: (l) => l.pathname === "/companies/new" });
     return (
@@ -89,24 +79,19 @@ function Rail({
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 className="absolute -right-3 top-5 z-10 grid size-6 place-items-center rounded-full border bg-card text-foreground shadow-e2 transition-transform hover:bg-primary hover:text-primary-foreground"
             >
-                <ChevronLeft
-                    className={cn("size-3.5 transition-transform", collapsed && "rotate-180")}
-                />
+                <ChevronLeft className={cn("size-3.5 transition-transform", collapsed && "rotate-180")} />
             </button>
 
             {/* Glow-C wordmark (V7) - links home */}
             <Link
                 to="/"
                 aria-label="C Slop Slop - home"
-                className={cn(
-                    "flex items-center px-4 pb-3.5 pt-5",
-                    collapsed && "justify-center px-0",
-                )}
+                className={cn("flex items-center px-4 pb-3.5 pt-5", collapsed && "justify-center px-0")}
             >
                 {collapsed ? <LogoMark /> : <Logo />}
             </Link>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-2">
+            <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-4 pt-2">
                 <NavItem
                     icon={Plus}
                     label="New company"
@@ -230,7 +215,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                 </p>
                 <Link
                     to="/companies/new"
-                    className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
+                    className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-xs font-semibold text-muted-foreground hover:border-primary hover:bg-accent hover:text-accent-foreground"
                 >
                     <Plus className="size-3.5" /> Start your first company
                 </Link>
@@ -245,9 +230,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                 // immutable id (drafts / id links), so match either.
                 const sel = params.slug === c.slug || params.slug === c.id;
                 const draft = c.status === "draft";
-                const meta = draft
-                    ? "Draft"
-                    : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
+                const meta = draft ? "Draft" : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
                 const avatar = draft ? (
                     // Draft: an incubating icon on a muted fill (no logo generated yet).
                     <span
@@ -278,8 +261,8 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                             params={{ slug: draft ? c.id : c.slug }}
                             title={`${c.name}${meta ? ` · ${meta}` : ""}${c.needsYou ? " · needs you" : ""}`}
                             className={cn(
-                                "grid place-items-center rounded-md p-1 transition-colors hover:bg-primary/[0.1]",
-                                sel && "bg-card shadow-e1",
+                                "grid place-items-center rounded-md p-1 hover:bg-primary/[0.1]",
+                                sel && "bg-card",
                             )}
                         >
                             {avatar}
@@ -290,10 +273,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                 return (
                     // Hover bg lives on the wrapper so hovering the ⋯ menu (a sibling overlapping
                     // the Link) lights the whole row too.
-                    <div
-                        key={c.id}
-                        className="group relative rounded-md transition-colors hover:bg-primary/[0.1]"
-                    >
+                    <div key={c.id} className="group relative rounded-md hover:bg-primary/[0.1]">
                         <Link
                             to="/companies/$slug"
                             // Active → the pretty name slug (the default); drafts → id (their name
@@ -303,7 +283,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                 "relative flex items-center gap-3 rounded-md py-2 pl-2.5 pr-8",
                                 // selected: paper fill + a terracotta bar hugging the rail edge
                                 sel &&
-                                    "bg-card shadow-e1 before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
+                                    "bg-card before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
                             )}
                         >
                             {avatar}
@@ -316,9 +296,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                         </span>
                                     )}
                                 </span>
-                                <span className="block truncate text-[11.5px] text-faint">
-                                    {meta}
-                                </span>
+                                <span className="block truncate text-[11.5px] text-faint">{meta}</span>
                             </span>
                         </Link>
                         {/* hover ⋯ menu (sits above the Link so it doesn't navigate) */}
@@ -327,7 +305,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                 <button
                                     type="button"
                                     aria-label={`${c.name} actions`}
-                                    className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-faint opacity-0 transition hover:bg-primary/20 hover:text-foreground group-hover:opacity-100 data-[state=open]:bg-primary/20 data-[state=open]:opacity-100"
+                                    className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-faint opacity-0 transition hover:bg-neutral/30 hover:text-foreground group-hover:opacity-100 data-[state=open]:bg-primary/20 data-[state=open]:opacity-100"
                                 >
                                     <MoreHorizontal className="size-4" />
                                 </button>
@@ -337,8 +315,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                     onSelect={() => setPendingDelete(c)}
                                     className="gap-2 text-destructive focus:bg-destructive-soft focus:text-destructive"
                                 >
-                                    <Trash2 className="size-4" /> Delete{" "}
-                                    {draft ? "draft" : "company"}
+                                    <Trash2 className="size-4" /> Delete {draft ? "draft" : "company"}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -347,16 +324,12 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
             })}
 
             {/* delete confirmation (shared across rows) */}
-            <Dialog
-                open={!!pendingDelete}
-                onOpenChange={(o) => !deleting && !o && setPendingDelete(null)}
-            >
+            <Dialog open={!!pendingDelete} onOpenChange={(o) => !deleting && !o && setPendingDelete(null)}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Delete {pendingDelete?.name}?</DialogTitle>
                         <DialogDescription>
-                            Permanently removes{" "}
-                            <b className="text-foreground">{pendingDelete?.name}</b> and everything
+                            Permanently removes <b className="text-foreground">{pendingDelete?.name}</b> and everything
                             it owns — chat, tasks, runs. This can't be undone.
                         </DialogDescription>
                     </DialogHeader>
@@ -373,7 +346,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                             type="button"
                             disabled={deleting}
                             onClick={() => void confirmDelete()}
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white transition hover:brightness-105 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition hover:bg-destructive/90 disabled:opacity-50 dark:bg-destructive/60 dark:hover:bg-destructive/70"
                         >
                             <Trash2 className="size-4" />
                             {deleting ? "Deleting…" : "Delete forever"}
@@ -422,8 +395,8 @@ function NavItem({
         </>
     );
     const cls = cn(
-        "group flex w-full items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-sm font-semibold transition",
-        active && "bg-card text-foreground shadow-e1",
+        "group flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-left text-sm font-semibold transition",
+        active && "bg-card text-foreground",
         !locked && "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
         // locked = disabled: dimmed, no hover, not interactive
         locked && "cursor-default text-muted-foreground opacity-40",
@@ -438,13 +411,7 @@ function NavItem({
         );
     }
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            disabled={locked}
-            aria-disabled={locked}
-            className={cls}
-        >
+        <button type="button" onClick={onClick} disabled={locked} aria-disabled={locked} className={cls}>
             {inner}
         </button>
     );
@@ -452,9 +419,5 @@ function NavItem({
 
 function SectionLabel({ collapsed, children }: { collapsed?: boolean; children: ReactNode }) {
     if (collapsed) return <div className="h-3.5" />;
-    return (
-        <div className="px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70">
-            {children}
-        </div>
-    );
+    return <div className="px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70">{children}</div>;
 }
