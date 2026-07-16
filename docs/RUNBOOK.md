@@ -43,3 +43,21 @@ Once deploy+validate exist, the bar is **cold-run ≈≥7/10 over ~10 runs** for
   Unset → "subscription" mode (host `claude` login).
 - `OPENROUTER_API_KEY` - default AI proxy for the *thinking* tasks (scoring/planning), later.
 - `STRIPE_TEST_SECRET_KEY` - Stripe **test-mode** for the monetize action, later.
+
+## Debugging the engine (what the AI is doing)
+
+The executor is quiet by default. To trace what the engine calls and with what messages, set
+`CSLOP_DEBUG` on the engine process (it prints to that terminal — server-side, not the UI):
+
+```
+CSLOP_DEBUG=1 pnpm dev        # one-line trace: passes (scout/spec/chat/run), model route, timing, size, cost
+CSLOP_DEBUG=verbose pnpm dev  # the above + the FULL system prompt, prompt, and response for every model call
+```
+
+- `[dbg ai]` — every "thinking" model call through `dispatchAI` (task, route e.g. `claude-cli:sonnet`,
+  duration, chars, cost; verbose adds the exact prompt/response).
+- `[dbg spin]` — the spin passes (scout → proposals, spec, chat intent) per company.
+- `[dbg chat]` — the company co-pilot chat pass.
+- `[dbg run]` — build-run lifecycle (start/harness, green→approve/ship, fail).
+
+Off = zero overhead. Build-run detail is also always in the UI's agent console + per-run logs.

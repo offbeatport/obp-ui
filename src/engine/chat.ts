@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { sqlite } from "../db/index.js";
+import { dlog } from "./debug.js";
 import { dispatchAI } from "./dispatch.js";
 import { singleFlight } from "./single-flight.js";
 
@@ -69,6 +70,7 @@ export async function answerNext(inflight: Set<string>): Promise<void> {
     if (!row) return;
     await singleFlight(inflight, row.companyId, async () => {
         try {
+            dlog("chat", `co-pilot: company ${row.companyId} answering user turn`);
             const text = await answer(row.companyId);
             // .immediate() + catch: the guarded insert is atomic and idempotent, so a transient
             // SQLITE_BUSY under web contention is swallowed and the turn is retried next tick

@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import type { AiTask } from "../config/ai-catalog.js";
 import { type ResolvedTask, resolveTaskModel } from "../config/ai-tasks.js";
+import { dblock, dlog } from "./debug.js";
 
 // dispatchAI - the AI proxy for the *thinking* tasks (opportunities · research · plan ·
 // write · chat · orchestrate). It is the brain, distinct from the build harness (the
@@ -33,9 +34,35 @@ export async function dispatchAI(
     if (r.kind === "harness") {
         throw new Error(`dispatchAI: '${task}' resolves to a build harness, not a thinking task`);
     }
-    if (r.via === "claude-cli") return dispatchClaudeCli(r, input, env);
-    if (r.provider === "anthropic" && r.via === "direct") return dispatchAnthropic(r, input);
-    return dispatchOpenAICompat(r, input);
+    // Debug trace (CSLOP_DEBUG): every thinking-task model call, its route, and — in verbose —
+    // the exact system + prompt it sent and the text it got back.
+    const route =
+        r.via === "claude-cli"
+            ? `claude-cli:${toClaudeCliModel(r.model) ?? "default"}`
+            : `${r.via}:${r.model}`;
+    dlog(
+        "ai",
+        `→ ${task} via ${route} · prompt ${input.prompt.length}c${input.system ? ` · system ${input.system.length}c` : ""}`,
+    );
+    dblock("ai", `${task} system`, input.system ?? "(none)");
+    dblock("ai", `${task} prompt`, input.prompt);
+    const t0 = Date.now();
+    try {
+        const res = await (r.via === "claude-cli"
+            ? dispatchClaudeCli(r, input, env)
+            : r.provider === "anthropic" && r.via === "direct"
+              ? dispatchAnthropic(r, input)
+              : dispatchOpenAICompat(r, input));
+        dlog(
+            "ai",
+            `← ${task} ok in ${Date.now() - t0}ms · ${res.text.length}c${res.costUsd ? ` · $${res.costUsd.toFixed(4)}` : ""}`,
+        );
+        dblock("ai", `${task} response`, res.text || "(empty)");
+        return res;
+    } catch (e) {
+        dlog("ai", `✗ ${task} failed in ${Date.now() - t0}ms: ${(e as Error).message}`);
+        throw e;
+    }
 }
 
 // One-shot `claude -p` on the host login (subscription). `--output-format json` gives a

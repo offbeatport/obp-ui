@@ -17,6 +17,7 @@ import {
 import { sqlite } from "../db/index.js";
 import { graduateCompany } from "../server/spin-logic.js";
 import { extractJson, extractJsonArray, str } from "./coerce.js";
+import { clip, dlog } from "./debug.js";
 import { dispatchAI } from "./dispatch.js";
 import { singleFlight } from "./single-flight.js";
 
@@ -82,7 +83,9 @@ export async function spinScout(inflight: Set<string>): Promise<void> {
     await singleFlight(inflight, row.id, async () => {
         try {
             const spin = parseData(row.spin);
+            dlog("spin", `scout: company ${row.id} · "${clip(row.thought, 60)}"`);
             const candidates = await scoutCandidates(row.thought, spin.guardrails, spin.criteria);
+            dlog("spin", `scout: company ${row.id} → ${candidates.length} candidates → proposals`);
             // clear criteria once consumed (undefined drops from the merged JSON)
             advance.immediate(row.id, "scouting", "proposals", { candidates, criteria: undefined });
             // Open the chat with the result so it reads as a conversation.
@@ -119,6 +122,7 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
             return;
         }
         try {
+            dlog("spin", `spec: company ${row.id} · picked "${picked.name}"`);
             const { spec, branding } = await draftSpecAndBranding(
                 picked,
                 row.thought,
@@ -203,12 +207,17 @@ export async function spinChat(inflight: Set<string>): Promise<void> {
         const data = parseData(row.spin);
         try {
             const transcript = READ_TRANSCRIPT.all(row.id) as ChatMsg[];
+            dlog(
+                "spin",
+                `chat: company ${row.id} · stage ${row.status ?? "spec"} · ${transcript.length} msgs`,
+            );
             const { reply, action } = await chatTurn(
                 row.thought,
                 row.status ?? "spec",
                 data,
                 transcript,
             );
+            dlog("spin", `chat: company ${row.id} → action=${action.type}`);
             // Always answer; then route the intent (status-gated so it can't corrupt a pass).
             INSERT_MSG.run(randomUUID(), row.id, "assistant", reply, Date.now());
             applyChatAction(row.id, action, data);
