@@ -39,7 +39,10 @@ const ASSISTANT_BUBBLE = "max-w-[78%] text-[16px] leading-[1.55] py-[2px]";
 const SPEC_P = "mt-[7px] text-[15.3px] leading-[1.62] text-muted-foreground";
 
 // ---- chat bubble (spin-msg / spin-av / spin-stream-body / spin-bubble) -----------------------
-export function Bubble({ m }: { m: SpinMessage }) {
+// `delayMs` staggers the entrance (used for the messages present at FIRST mount, so the opening
+// exchange cascades in instead of popping with the page). `both` fill-mode keeps a delayed bubble
+// invisible until its turn. Live messages arriving later pass 0 and animate immediately.
+export function Bubble({ m, delayMs = 0 }: { m: SpinMessage; delayMs?: number }) {
     const me = m.role === "user";
     return (
         <div className={cn("flex gap-[12px] items-start my-10", me && "flex-row-reverse")}>
@@ -56,6 +59,7 @@ export function Bubble({ m }: { m: SpinMessage }) {
                             ? "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] shadow-e1 bg-foreground text-background animate-[msg-in_0.32s_cubic-bezier(0.22,0.7,0.24,1)_both]"
                             : "py-[2px] animate-[msg-reveal_0.45s_cubic-bezier(0.22,0.7,0.24,1)_both]",
                     )}
+                    style={delayMs > 0 ? { animationDelay: `${delayMs}ms` } : undefined}
                 >
                     {me ? m.content : <Markdown content={m.content} />}
                 </div>
