@@ -1,6 +1,6 @@
 # BurningDemand — Product Requirements Document
 
-**Version:** 1.0 · 2026-07-17 · Owner: Vlad Palos
+**Version:** 1.1 · 2026-07-17 · Owner: Vlad Palos
 **For:** a builder agent implementing the product end-to-end. This document is self-contained; where it references cslopslop it names exact files to lift code from.
 
 ---
@@ -16,6 +16,8 @@ Domain: `burningdemand.com` (owned). Deliverable name: the **Demand Report**.
 - **The trust asymmetry.** The founder has no audience and no track record. "Trust my AI to build your company" requires maximum trust; "pay $29 for a report you can verify in five minutes" requires minimum trust. This product deliberately sits at the bottom of the trust ladder. Everything about it must be **verifiable by the buyer**: every evidence item cites a real URL they can click; every number names its basis.
 - **The differentiation.** "AI idea generators" are a red-ocean commodity (one prompt, plausible prose, zero evidence). BurningDemand sells **evidence-scored validation**, not ideas: licensed web-grounded citations, real search-volume numbers, named competitors with the gap you'd exploit, a named channel where the buyer already congregates, and a falsifiable kill criterion. It's a validation *playbook*, not a horoscope.
 - **The engine already exists.** cslopslop's `market` module (two-stage ideation→expansion, judge-panel-validated prompts, 8-signal rubric with per-score justifications, anti-echo naming) produces the core content. This product wraps it in evidence grounding + payments + delivery.
+
+**The honest moat (internal — guides decisions, never appears in copy):** the pipeline itself is thin-moat; a competent builder could clone it in a weekend, and deep-research chat tools produce adjacent output. What the buyer actually pays for: the *reframe* (5 better versions of their question), the fixed rubric + an opinionated verdict, quantitative keyword data chat tools don't return, verified-or-refunded citations, and a finished artifact requiring zero prompting skill. What defends the business over time is NOT the tech — it's distribution (the Daily Burn feed + build-in-public), brand trust, and the proprietary dataset of ideas → evidence → outcomes. Consequences: ship fast, don't over-engineer the pipeline, never publish the prompts.
 
 ## 3. Target user & JTBD
 
@@ -46,7 +48,7 @@ Willingness-to-pay is episodic → **one-shot pricing, never subscription** (val
 7. **Failure path:** if generation fails after 3 retries → status `failed`, automatic apology email + automatic Stripe refund + alert to the operator (email). Never leave a paid customer hanging silently.
 8. **Credit redemption** (`/redeem`): enter code + idea + email → same pipeline, no payment.
 
-**That is all of v0.** See Non-goals (§11) before adding anything.
+**That is all of v0.** See Non-goals (§12) before adding anything.
 
 ## 6. The Demand Report — exact content spec
 
@@ -119,17 +121,39 @@ Mirror the proven cslopslop pattern (the builder agent may reuse code freely —
 
 **Reuse pointers (cslopslop repo):** `src/engine/spin.ts` (IDEATE_SYSTEM, EXPAND_SYSTEM, two-stage flow, coercion), `src/config/spin.ts` (score rubric/meta/formula, markdown serializers), `src/engine/dispatch.ts` (provider dispatch), the two-process worker pattern (`scripts/dev.mjs`, `src/engine/loop.ts`).
 
-## 10. Brand & positioning constraints
+## 10. Brand, positioning & copy rules
 
+**Sell the decision, not the stack.** The buyer's alternative is not another tool — it's *guessing*: building for three months and finding out the hard way. That's the enemy in all copy.
+
+- **Never** name or compare against AI tools/models anywhere on the site ("Perplexity", "ChatGPT", "GPT", "Claude" are banned strings in marketing copy). "AI-powered" must not appear in the hero or above the fold — in 2026 it's table stakes at best, slop-signal at worst. The differentiated claim is *"every source verified, or your money back."*
+- AI appears at most in one quiet FAQ answer: *"How is it made? An analyst-grade research pipeline; every source is independently verified before delivery — that's the part we guarantee."*
+- **Hero copy (use this, or equivalent in the same register):**
+  > **"Find out if anyone will pay — before you build it."**
+  > One idea in. Five sharper versions out — scored on 8 demand signals, with verified sources, real search volumes, named competitors, and the cheapest experiment to prove each one. In 10 minutes. Money-back if the evidence doesn't check out.
+- Supporting lines: "Validation with receipts — every citation is a real link you can click." · "A kill criterion for every idea, so you stop before it costs you a quarter." · "What a good analyst would do in two days, for $29."
+- **The sample report is the argument** — show, don't claim. It carries more conversion weight than any copy.
 - Sell under **BurningDemand** only. cslopslop is a codename/show brand — it must not appear on the paid product (unprofessional to card-paying buyers).
-- Landing copy leads with evidence: "5 opportunities. 8 scored signals. Real cited sources. A kill criterion for each." Show, don't claim: the sample report *is* the marketing.
 - Required legal: Terms, Privacy (email stored for delivery; deletion on request), footer disclaimer: *"Research assistance, not financial or investment advice."*
+- **Confidentiality:** this repo stays closed-source/private. The generation + validator prompts and (later) the Daily Burn discovery logic are trade secrets — never publish or open-source them. (Open-source lives on the cslopslop side — the engine spine + the `slop/` contract — per the portfolio strategy, and only after v0 revenue.) The generated-reports dataset is never shared or sold.
 
-## 11. Non-goals (v0) — the builder must NOT add these
+## 11. Roadmap (context only — later phases are NOT v0 scope)
 
-Accounts/logins · subscriptions · dashboards · an API · team seats · PDF generation (print CSS suffices) · free report generation (the sample is static; a rate-limited free teaser is v0.1 at the earliest) · multi-language · the cslopslop platform features (building/deploying the companies) · fine-tuning/training.
+The free/paid line across every phase: **the generic radar is free; *your* idea, fully analyzed with verified receipts, is paid.**
 
-## 12. Risks & mitigations
+| Phase | Scope | Notes |
+|---|---|---|
+| **v0** (now, ~2 wks) | The paid one-shot report — exactly §5 | Revenue proof first. Nothing else ships until a stranger pays. |
+| **v0.5** (+~1 wk) | **The Daily Burn** — automated daily scan → 1–5 FREE public opportunity *briefs*, email-list capture, auto-post to X | The distribution flywheel + show fuel. Discovery from licensed sources only: search-volume deltas (DataForSEO / Google Trends), rising HN threads (Algolia), PH launches, app-review pain clusters. A brief is the LITE format — 1 opportunity, 2 evidence links, scores without justifications, no keyword tables — **same evidence bar as paid, lighter body, never lower quality**. One public page per day (compounding SEO). Cost bound ≤ $5/day. No accounts. |
+| **v1** | Accounts + freemium | Verified email → 1 free **lite** personal report (~$0.30 COGS, hard caps, disposable-email defense); credits + purchases attach to the account. |
+| **v2** | **Demand monitoring** | User-defined niche/keyword/channel watchlists + alerts when signals spike — the natural subscription ($9–19/mo): monitoring is continuous where validation is episodic. |
+
+v0.5+ are documented here so v0 leaves the right seams — the job worker generalizes to scheduled scans; the report renderer supports a `brief` variant — but the builder agent ships **v0 alone** first.
+
+## 12. Non-goals (v0) — the builder must NOT add these
+
+Accounts/logins (v1) · subscriptions (v2) · the Daily Burn feed (v0.5) · dashboards · an API · team seats · PDF generation (print CSS suffices) · free report generation (the public sample is static) · multi-language · the cslopslop platform features (building/deploying the companies) · fine-tuning/training.
+
+## 13. Risks & mitigations
 
 | Risk | Severity | Mitigation |
 |---|---|---|
@@ -137,18 +161,19 @@ Accounts/logins · subscriptions · dashboards · an API · team seats · PDF ge
 | Platform ToS (Reddit et al.) | High | §8: licensed providers only; the old scraper pipeline is retired |
 | Provider dependency/outage (Sonar/DataForSEO) | Med | Abstraction seam per source; at least one fallback provider wired; degrade gracefully (report ships with fewer volume items, flagged) |
 | Cost blowout per report | Med | Per-stage token caps; per-report cost tracking; $4 alert; staged small calls |
-| Low conversion (no audience) | High | Not solved in-product: launch via build-in-public + PH; sample report is the funnel; $19 launch code |
+| Low conversion (no audience) | High | Not solved in-product: launch via build-in-public + PH; sample report is the funnel; $19 launch code; the Daily Burn (v0.5) is the compounding fix |
+| Free-feed quality dilution (v0.5) | Med | Briefs pass the same evidence bar as paid — fewer items, never lower quality |
 | Refund abuse / chargebacks | Low | One-shot low price; deliver value fast; auto-refund failures before disputes |
 | Prompt injection / abusive input | Med | §7 delimiters + moderation pre-check |
 | Deliverability (emails in spam) | Med | Resend with verified domain/DKIM; report link also shown on the post-checkout success page |
 | LLM quality drift | Med | Prompts are versioned; validator gate catches regressions; sample-input regression test in CI |
 
-## 13. Success metrics & kill criteria
+## 14. Success metrics & kill criteria
 
 - **Primary:** first paying (non-friend) customer within **30 days of launch**. Miss → reposition (per portfolio strategy).
 - Report success rate ≥ 95% without manual retry; p95 delivery ≤ 10 min; refund rate < 5%; COGS ≤ $2; every shipped report passes URL validation 100%.
 
-## 14. Launch checklist (agent-executable)
+## 15. Launch checklist (agent-executable)
 
 1. All 5 SKUs/flows tested with Stripe test cards (buy 1, buy 3, redeem credit, promo code, refund).
 2. Generate 5 real reports on diverse ideas ("Snowflake clone", "Notion for lawyers", a consumer app, a hardware-ish idea, a vague one-worder) — hand-check every URL resolves and every name passes anti-echo.
