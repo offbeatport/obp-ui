@@ -33,6 +33,8 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     const [busy, setBusy] = useState(false);
     const [creating, setCreating] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    // How many messages existed when this chat first mounted - those get the staggered entrance.
+    const initialCount = useRef(detail.messages.length);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on any thread change
     useEffect(() => {
@@ -143,13 +145,23 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
 
     // Build the thread, injecting the artifact right after its anchor message (or at the end if the
     // anchor isn't found - e.g. an offline run that skipped the announcement).
+    // Messages already present at FIRST mount get a staggered entrance delay (the whole page swaps
+    // in at once on navigation, so without the cascade the opening exchange reads as static).
+    // Later (live) messages get 0 delay and animate the moment they arrive.
     const thread: ReactNode[] = [];
     let injected = false;
+    let idx = 0;
     for (const m of detail.messages) {
         if (m.role === "system") continue;
+        const delayMs = idx < initialCount.current ? Math.min(idx, 6) * 260 : 0;
         thread.push(
-            <Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} />,
+            <Bubble
+                key={m.id}
+                m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }}
+                delayMs={delayMs}
+            />,
         );
+        idx += 1;
         if (anchoredArtifact && m.id === anchorId) {
             thread.push(<div key={`${m.id}-artifact`}>{anchoredArtifact}</div>);
             injected = true;
@@ -171,10 +183,15 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                     {thread}
                     {showTyping && <Typing />}
                     {stage === "scouting" && (
-                        <>
+                        // Cascades in AFTER the seeded opening messages (their stagger ends ~700ms).
+                        // Delay is inline style so it can't lose the cascade to the animate shorthand.
+                        <div
+                            className="animate-[msg-in_0.4s_cubic-bezier(0.22,0.7,0.24,1)_both]"
+                            style={{ animationDelay: "640ms" }}
+                        >
                             <ScoutingView thought={detail.thesis} />
                             {skipRow}
-                        </>
+                        </div>
                     )}
                     {stage === "specing" && spin && (
                         <SpecingView
