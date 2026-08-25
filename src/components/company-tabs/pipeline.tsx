@@ -98,7 +98,7 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
 
     return (
         <div className="flex flex-col gap-5">
-            {/* HEADER — identity + the three headline metrics */}
+            {/* HEADER - identity + the three headline metrics */}
             <header className="flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-border bg-card p-5 shadow-e1">
                 <div className="flex items-center gap-4">
                     <CompanyLogo name={co.name} branding={co.branding} size={40} />
@@ -116,16 +116,8 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Metric
-                        label="MRR"
-                        value={`$${co.mrr}`}
-                        sub={co.mrr > 0 ? "recurring" : "pre-revenue"}
-                    />
-                    <Metric
-                        label="users"
-                        value={`${co.users}`}
-                        sub={co.users > 0 ? "active" : "landing first"}
-                    />
+                    <Metric label="MRR" value={`$${co.mrr}`} sub={co.mrr > 0 ? "recurring" : "pre-revenue"} />
+                    <Metric label="users" value={`${co.users}`} sub={co.users > 0 ? "active" : "landing first"} />
                     <Metric
                         label="net / mo"
                         value={`${net >= 0 ? "+" : "−"}$${Math.abs(Math.round(net))}`}
@@ -134,7 +126,7 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                 </div>
             </header>
 
-            {/* LIVING PIPELINE — the five-stage loop, current stage highlighted */}
+            {/* LIVING PIPELINE - the five-stage loop, current stage highlighted */}
             <section className="rounded-2xl border border-border bg-card p-5 shadow-e1">
                 <div className="mb-6 flex items-center justify-between">
                     <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
@@ -155,14 +147,10 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                     />
                     <div className="grid grid-cols-5">
                         {STAGES.map((stage, i) => {
-                            const state =
-                                i === currentIdx ? "active" : i <= reachedIdx ? "done" : "todo";
+                            const state = i === currentIdx ? "active" : i <= reachedIdx ? "done" : "todo";
                             const isGate = stage.key === "ship" && gate;
                             return (
-                                <div
-                                    key={stage.key}
-                                    className="flex flex-col items-center gap-2 px-1 text-center"
-                                >
+                                <div key={stage.key} className="flex flex-col items-center gap-2 px-1 text-center">
                                     <div
                                         className={`relative z-10 grid size-12 place-items-center rounded-xl border transition-colors ${
                                             state === "active"
@@ -187,9 +175,7 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                                     >
                                         {stage.label}
                                     </div>
-                                    <div className="text-[11px] italic text-muted-foreground">
-                                        {stage.verb}
-                                    </div>
+                                    <div className="text-[11px] italic text-muted-foreground">{stage.verb}</div>
                                     <span
                                         className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
                                             state === "active"
@@ -206,7 +192,7 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                 </div>
             </section>
 
-            {/* FOCUS — the one thing that needs a human, or a calm autopilot state */}
+            {/* FOCUS - the one thing that needs a human, or a calm autopilot state */}
             {gate ? (
                 <section
                     className={`rounded-2xl border p-5 shadow-e2 ${
@@ -243,9 +229,7 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
 
                     <div className="mt-4 rounded-xl border border-border-soft bg-card p-4">
                         <div className="flex items-center gap-2 font-mono text-[11px] text-faint">
-                            <span className="rounded bg-secondary px-1.5 py-0.5">
-                                {gate.title ? `#${gate.n}` : ""}
-                            </span>
+                            <span className="rounded bg-secondary px-1.5 py-0.5">{gate.title ? `#${gate.n}` : ""}</span>
                             Drafted by agent · {gate.attempts} attempt
                             {gate.attempts === 1 ? "" : "s"}
                             {gate.latestRun?.error ? ` · ${gate.latestRun.error}` : ""}
@@ -299,14 +283,14 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                         <div className="font-display text-sm font-medium">Running on autopilot</div>
                         <div className="text-sm text-muted-foreground">
                             {building.length
-                                ? `Building ${building[0].title} — nothing needs you right now.`
+                                ? `Building ${building[0].title} - nothing needs you right now.`
                                 : "No approvals waiting. The loop is shipping, monitoring, and growing on its own."}
                         </div>
                     </div>
                 </section>
             )}
 
-            {/* RECENT — what the factory ran on its own */}
+            {/* RECENT - what the factory ran on its own */}
             <footer className="rounded-2xl border border-border bg-card p-4 shadow-e1">
                 <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                     <span className="size-1.5 rounded-full bg-success" />
@@ -321,15 +305,13 @@ export function PipelineTab({ co, actions, busy, onApprove, onReject }: CompanyT
                             >
                                 <span className="size-1.5 rounded-full bg-success" />
                                 <span className="text-foreground">Shipped {a.title}</span>
-                                <span className="font-mono text-[10px] text-faint">
-                                    {timeAgo(a.createdAt)}
-                                </span>
+                                <span className="font-mono text-[10px] text-faint">{timeAgo(a.createdAt)}</span>
                             </span>
                         ))}
                     </div>
                 ) : (
                     <div className="text-sm text-muted-foreground">
-                        Nothing shipped yet — the first slice is on its way.
+                        Nothing shipped yet - the first slice is on its way.
                     </div>
                 )}
             </footer>
@@ -341,9 +323,7 @@ function Metric({ label, value, sub }: { label: string; value: string; sub: stri
     return (
         <div className="min-w-[92px] rounded-xl border border-border-soft bg-secondary px-3.5 py-2.5">
             <div className="font-display text-xl font-medium tracking-tight">{value}</div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-faint">
-                {label}
-            </div>
+            <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-faint">{label}</div>
             <div className="mt-0.5 text-[11px] text-muted-foreground">{sub}</div>
         </div>
     );

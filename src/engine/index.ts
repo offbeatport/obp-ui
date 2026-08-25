@@ -16,7 +16,7 @@ function main(): void {
             : PROMPTS
               ? "dumping FULL prompts sent to claude (set =verbose to also dump responses)"
               : "one-line trace only (set CSLOP_DEBUG=prompts to see full prompts, =verbose for prompts+responses)";
-        console.log(`[dbg] DEBUG MODE ON — tracing model calls + engine passes; ${dump}`);
+        console.log(`[dbg] DEBUG MODE ON - tracing model calls + engine passes; ${dump}`);
     }
 
     const ctx = buildEngineContext();
@@ -32,12 +32,8 @@ function main(): void {
 
     // Safety net: a single stray subprocess/async error must never take down the whole
     // executor (all concurrent runs). Log and keep the loop alive; DB state stays durable.
-    process.on("uncaughtException", (e) =>
-        console.error("[engine] uncaughtException (kept alive):", e),
-    );
-    process.on("unhandledRejection", (e) =>
-        console.error("[engine] unhandledRejection (kept alive):", e),
-    );
+    process.on("uncaughtException", (e) => console.error("[engine] uncaughtException (kept alive):", e));
+    process.on("unhandledRejection", (e) => console.error("[engine] unhandledRejection (kept alive):", e));
 
     const shutdown = (sig: string) => {
         const killed = killInFlight();

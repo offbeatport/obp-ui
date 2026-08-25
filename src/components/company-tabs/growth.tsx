@@ -1,14 +1,4 @@
-import {
-    AtSign,
-    FileText,
-    type LucideIcon,
-    MessageCircle,
-    Minus,
-    Plus,
-    Rocket,
-    Sprout,
-    Target,
-} from "lucide-react";
+import { AtSign, FileText, type LucideIcon, MessageCircle, Minus, Plus, Rocket, Sprout, Target } from "lucide-react";
 import { useState } from "react";
 import type { CompanyTabProps } from "~/components/company-tabs/types";
 import type { Channel } from "~/db/schema";
@@ -57,7 +47,7 @@ const STRATS: Strat[] = [
         kind: "outbound",
         name: "Twitter / X",
         Icon: AtSign,
-        status: "Share build-in-public wins & tips daily — compounding reach.",
+        status: "Share build-in-public wins & tips daily - compounding reach.",
         doing: "Sharing build-in-public updates this week.",
         primary: "cadence",
         fields: [
@@ -139,8 +129,7 @@ function initState(channels: Channel[]): GrowthState {
             if (money && ch.budgetIntentUsd != null) values[money.f] = String(ch.budgetIntentUsd);
             const primary = st.fields.find((f) => f.f === st.primary);
             if (primary && ch.status) {
-                if (primary.type === "seg" && primary.opts.includes(ch.status))
-                    values[primary.f] = ch.status;
+                if (primary.type === "seg" && primary.opts.includes(ch.status)) values[primary.f] = ch.status;
                 else if (primary.type === "txt") values[primary.f] = ch.status;
             }
         }
@@ -149,7 +138,7 @@ function initState(channels: Channel[]): GrowthState {
     return out;
 }
 
-// Rebuild the full Channel[] from current UI state — one entry per enabled strategy.
+// Rebuild the full Channel[] from current UI state - one entry per enabled strategy.
 function toChannels(state: GrowthState): Channel[] {
     const out: Channel[] = [];
     for (const st of STRATS) {
@@ -174,8 +163,7 @@ export function GrowthTab(props: CompanyTabProps) {
         setState(next);
         void onUpdate({ channels: toChannels(next) });
     };
-    const toggle = (key: string) =>
-        persist({ ...state, [key]: { ...state[key], on: !state[key].on } });
+    const toggle = (key: string) => persist({ ...state, [key]: { ...state[key], on: !state[key].on } });
     const setField = (key: string, f: string, v: string) =>
         persist({
             ...state,
@@ -260,14 +248,10 @@ export function GrowthTab(props: CompanyTabProps) {
                     <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">
                         {co.name} · Growth
                     </div>
-                    <h1 className="mt-1 font-display text-2xl font-semibold text-foreground">
-                        Growth strategies
-                    </h1>
+                    <h1 className="mt-1 font-display text-2xl font-semibold text-foreground">Growth strategies</h1>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm">
-                    <span
-                        className={`size-1.5 rounded-full ${activeCount ? "bg-success" : "bg-neutral"}`}
-                    />
+                    <span className={`size-1.5 rounded-full ${activeCount ? "bg-success" : "bg-neutral"}`} />
                     <b className="font-semibold text-foreground">{activeCount}</b>
                     <span className="text-muted-foreground">active</span>
                 </div>
@@ -276,10 +260,8 @@ export function GrowthTab(props: CompanyTabProps) {
             <div className="flex items-center gap-3 rounded-xl border border-border-soft bg-secondary px-4 py-3 text-sm text-muted-foreground">
                 <Sprout className="size-4 shrink-0 text-success" />
                 <span>
-                    <b className="font-medium text-foreground">
-                        Start with one — it's usually all you need.
-                    </b>{" "}
-                    Add more whenever you want.
+                    <b className="font-medium text-foreground">Start with one - it's usually all you need.</b> Add more
+                    whenever you want.
                 </span>
             </div>
 
@@ -287,34 +269,25 @@ export function GrowthTab(props: CompanyTabProps) {
                 {STRATS.map((st) => {
                     const on = state[st.key]?.on;
                     return (
-                        <div
-                            key={st.key}
-                            className="overflow-hidden rounded-xl border border-border bg-card"
-                        >
+                        <div key={st.key} className="overflow-hidden rounded-xl border border-border bg-card">
                             <div className="flex items-center gap-3 p-4">
                                 <span
                                     className={`grid size-9 shrink-0 place-items-center rounded-lg ${
-                                        on
-                                            ? "bg-accent text-primary"
-                                            : "bg-secondary text-muted-foreground"
+                                        on ? "bg-accent text-primary" : "bg-secondary text-muted-foreground"
                                     }`}
                                 >
                                     <st.Icon className="size-[18px]" />
                                 </span>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-display font-semibold text-foreground">
-                                            {st.name}
-                                        </span>
+                                        <span className="font-display font-semibold text-foreground">{st.name}</span>
                                         {st.rec && (
                                             <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-accent-foreground">
                                                 Recommended
                                             </span>
                                         )}
                                     </div>
-                                    <div className="mt-0.5 truncate text-[13px] text-muted-foreground">
-                                        {st.status}
-                                    </div>
+                                    <div className="mt-0.5 truncate text-[13px] text-muted-foreground">{st.status}</div>
                                 </div>
                                 <button
                                     type="button"
@@ -337,21 +310,14 @@ export function GrowthTab(props: CompanyTabProps) {
                             {on && (
                                 <div className="flex flex-col gap-3 border-t border-border-soft px-4 py-4">
                                     {st.fields.map((f) => (
-                                        <div
-                                            key={f.f}
-                                            className="grid grid-cols-[110px_1fr] items-center gap-3"
-                                        >
-                                            <span className="text-xs font-medium text-muted-foreground">
-                                                {f.lab}
-                                            </span>
+                                        <div key={f.f} className="grid grid-cols-[110px_1fr] items-center gap-3">
+                                            <span className="text-xs font-medium text-muted-foreground">{f.lab}</span>
                                             {control(st, f)}
                                         </div>
                                     ))}
                                     <div className="flex items-center gap-2 text-xs text-success">
                                         <span className="size-1.5 animate-pulse rounded-full bg-success" />
-                                        <span className="font-mono uppercase tracking-wide">
-                                            Live
-                                        </span>
+                                        <span className="font-mono uppercase tracking-wide">Live</span>
                                         <span className="text-muted-foreground">{st.doing}</span>
                                     </div>
                                 </div>

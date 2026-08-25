@@ -31,12 +31,9 @@ function deriveName(thought: string): string {
     );
 }
 
-// "Spin up" — create the draft company. Returns its id; the UI routes to /companies/<id> where
+// "Spin up" - create the draft company. Returns its id; the UI routes to /companies/<id> where
 // the incubation chat lives. The engine's spinScout pass then fills spin.candidates.
-export function startSpinLogic(
-    thought: string,
-    guardrails: Guardrails,
-): { id: string; slug: string } {
+export function startSpinLogic(thought: string, guardrails: Guardrails): { id: string; slug: string } {
     const t = thought.trim();
     if (!t) throw new Error("Describe the idea first.");
     const company = db
@@ -62,7 +59,7 @@ export function startSpinLogic(
                 companyId: company.id,
                 role: "assistant",
                 content:
-                    "Researching your idea now — I'll propose a few distinct opportunities and score each on real demand signals, then bring back the strongest bets.",
+                    "Researching your idea now - I'll propose a few distinct opportunities and score each on real demand signals, then bring back the strongest bets.",
                 createdAt: new Date(now + 1),
             },
         ])
@@ -70,7 +67,7 @@ export function startSpinLogic(
     return { id: company.id, slug: slugify(company.name) };
 }
 
-// The spin payload of a draft company currently at one of `from` (else null — not actionable).
+// The spin payload of a draft company currently at one of `from` (else null - not actionable).
 function draftAt(companyId: string, from: string[]): SpinData | null {
     const c = db.select().from(companies).where(eq(companies.id, companyId)).get();
     if (!c || c.status !== "draft" || !c.spinStatus || !from.includes(c.spinStatus)) return null;
@@ -99,7 +96,7 @@ export function reSpinLogic(companyId: string): { ok: boolean } {
     return { ok: true };
 }
 
-// Back to the candidate list from a drafted spec ("choose a different angle") — keeps candidates.
+// Back to the candidate list from a drafted spec ("choose a different angle") - keeps candidates.
 export function resetPickLogic(companyId: string): { ok: boolean } {
     const spin = draftAt(companyId, ["specing", "spec"]);
     if (!spin) return { ok: false };
@@ -113,7 +110,7 @@ export function resetPickLogic(companyId: string): { ok: boolean } {
     return { ok: true };
 }
 
-// "Continue without market research" — skip scouting/proposals entirely and go straight to a spec
+// "Continue without market research" - skip scouting/proposals entirely and go straight to a spec
 // drafted from the raw idea. Synthesizes ONE candidate from the thought, marks it picked, and
 // advances scouting|proposals → specing so the engine's spinSpec pass drafts the spec + branding.
 // Status-gated so a double-click (or a scout finishing first) is a harmless no-op.
@@ -137,7 +134,7 @@ export function continueWithoutResearchLogic(companyId: string): { ok: boolean }
         .values({
             companyId,
             role: "assistant",
-            content: "Skipping market research — I'll draft a spec straight from your idea.",
+            content: "Skipping market research - I'll draft a spec straight from your idea.",
         })
         .run();
     return { ok: true };
@@ -152,7 +149,7 @@ function thoughtCandidate(thought: string): Candidate {
         id: randomUUID(),
         name: deriveName(t),
         icp: "Early adopters who feel this pain and want it gone.",
-        wedge: "The most direct build of the idea — nothing extra.",
+        wedge: "The most direct build of the idea - nothing extra.",
         pain: t.slice(0, 180) || "A recurring problem worth paying to remove.",
         scores,
         evidence: [],
@@ -223,7 +220,7 @@ export function graduateCompany(companyId: string): { ok: boolean; id?: string; 
             {
                 companyId,
                 role: "assistant",
-                content: `${spec.product} is live as a company — building the first slice now.`,
+                content: `${spec.product} is live as a company - building the first slice now.`,
                 createdAt: new Date(now),
             },
             {

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-// A small, dependency-free Markdown renderer for chat messages — handles the subset models actually
+// A small, dependency-free Markdown renderer for chat messages - handles the subset models actually
 // emit: headings, bold/italic, inline + fenced code, links, bullet/ordered lists, blockquotes, and
 // paragraphs (single newlines → line breaks). Builds React nodes, so there's no HTML injection.
 // Not a full CommonMark parser; good enough for agent replies. Inherits font-size/color from parent.
@@ -10,8 +10,7 @@ const CODE_INLINE = "rounded bg-black/[0.06] px-1 py-px font-mono text-[0.85em] 
 // Inline spans: `code`, **bold**, __bold__, *italic*, _italic_, [text](url).
 function inline(text: string, kp: string): ReactNode[] {
     const out: ReactNode[] = [];
-    const re =
-        /(`[^`]+`)|(\*\*[^*]+\*\*)|(__[^_]+__)|(\*[^*\n]+\*)|(_[^_\n]+_)|(\[[^\]]+\]\([^)\s]+\))/g;
+    const re = /(`[^`]+`)|(\*\*[^*]+\*\*)|(__[^_]+__)|(\*[^*\n]+\*)|(_[^_\n]+_)|(\[[^\]]+\]\([^)\s]+\))/g;
     let last = 0;
     let n = 0;
     let m = re.exec(text);
@@ -110,11 +109,7 @@ export function Markdown({ content, className }: { content: string; className?: 
         if (h) {
             const lvl = h[1].length;
             const cls =
-                lvl <= 1
-                    ? "text-[1.15em] font-semibold"
-                    : lvl === 2
-                      ? "text-[1.08em] font-semibold"
-                      : "font-semibold";
+                lvl <= 1 ? "text-[1.15em] font-semibold" : lvl === 2 ? "text-[1.08em] font-semibold" : "font-semibold";
             blocks.push(
                 <div key={key} className={cls}>
                     {inline(h[2], key)}
@@ -137,10 +132,7 @@ export function Markdown({ content, className }: { content: string; className?: 
                 i++;
             }
             blocks.push(
-                <blockquote
-                    key={key}
-                    className="border-l-2 border-border pl-3 text-muted-foreground"
-                >
+                <blockquote key={key} className="border-l-2 border-border pl-3 text-muted-foreground">
                     {inlineLines(q, key)}
                 </blockquote>,
             );

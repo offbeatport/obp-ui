@@ -17,7 +17,7 @@ export interface Credentials {
 
 // DB-backed credentials: env still wins, but keys/config also come from app_config/secret
 // (set via Settings/onboarding) and are read lazily per call, so a save applies without a
-// daemon restart. (aiProxy/Stripe accessors were removed as dead — re-add behind this seam
+// daemon restart. (aiProxy/Stripe accessors were removed as dead - re-add behind this seam
 // when hosted metering / the payments seam actually land.)
 export class DbBackedCredentials implements Credentials {
     harnessEnv(): Record<string, string> {

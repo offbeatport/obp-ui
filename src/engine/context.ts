@@ -11,7 +11,7 @@ import { HttpValidator } from "./seams/validator.js";
 
 // DI root: wire the seams once at boot. A fresh instanceId stamps every run this
 // executor owns (single-executor invariant + crash-recovery ownership). (sandbox + credentials
-// are locals below, consumed by deploy + ClaudeCliHarness — nothing downstream reads them.)
+// are locals below, consumed by deploy + ClaudeCliHarness - nothing downstream reads them.)
 export type EngineContext = {
     instanceId: string;
     // resolved PER-RUN (reads app_config/env each call) so a Settings/onboarding save picks a
@@ -40,9 +40,7 @@ export function buildEngineContext(): EngineContext {
         if (process.env.CSLOP_HARNESS === "fixture") return fixture;
         if (process.env.CSLOP_HARNESS === "fixture-flaky") return fixtureFlaky;
         const cfg = resolveAgentConfig();
-        return cfg.harnessKind === "claude"
-            ? new ClaudeCliHarness(sandbox, credentials, cfg.harnessBin)
-            : noop;
+        return cfg.harnessKind === "claude" ? new ClaudeCliHarness(sandbox, credentials, cfg.harnessBin) : noop;
     };
 
     return {

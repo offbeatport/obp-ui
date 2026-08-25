@@ -190,10 +190,7 @@ export function AgentConsole() {
                     setLines((prev) => {
                         const next: Record<string, ConsoleLine[]> = { ...prev };
                         for (const p of resp.panes) {
-                            if (p.lines.length)
-                                next[p.slug] = [...(next[p.slug] ?? []), ...p.lines].slice(
-                                    -MAX_LINES,
-                                );
+                            if (p.lines.length) next[p.slug] = [...(next[p.slug] ?? []), ...p.lines].slice(-MAX_LINES);
                             cursorsRef.current[p.slug] = p.cursor;
                         }
                         return next;
@@ -234,7 +231,7 @@ export function AgentConsole() {
                 title="Open agent console (Ctrl+`)"
                 className={cn(
                     "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-[11px] font-semibold tracking-[0.04em] text-muted-foreground shadow-[0_-3px_16px_rgba(0,0,0,0.16)] transition-[transform,color] duration-[140ms] hover:-translate-y-0.5 hover:text-foreground",
-                    // "skirt" pinned beneath the tab — lifts with the hover so no page
+                    // "skirt" pinned beneath the tab - lifts with the hover so no page
                     // background shows below the raised button.
                     "after:absolute after:-left-px after:-right-px after:top-[calc(100%-1px)] after:h-2 after:border-x after:border-border after:bg-card after:content-['']",
                     // hidden while open, and when the pre-paint tab-off pref is set on <html>.
@@ -291,17 +288,9 @@ export function AgentConsole() {
 
                 <div className="grid min-h-0 flex-1 grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-px overflow-auto bg-border">
                     {panes.map((p) => (
-                        <section
-                            className="flex min-h-[210px] min-w-0 flex-col bg-card"
-                            key={p.slug}
-                        >
+                        <section className="flex min-h-[210px] min-w-0 flex-col bg-card" key={p.slug}>
                             <div className="flex flex-none items-center gap-2 border-b border-border px-3 py-[9px]">
-                                <CompanyLogo
-                                    name={p.name}
-                                    branding={p.branding}
-                                    size={22}
-                                    radius={6}
-                                />
+                                <CompanyLogo name={p.name} branding={p.branding} size={22} radius={6} />
                                 <span className="overflow-hidden text-ellipsis whitespace-nowrap text-[12.5px] font-semibold text-foreground">
                                     {p.name}
                                 </span>
@@ -335,10 +324,7 @@ function PaneLog({ lines, active }: { lines: ConsoleLine[]; active: boolean }) {
         if (nearBottom) el.scrollTop = el.scrollHeight;
     }, [lines]);
     return (
-        <div
-            ref={ref}
-            className="min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3 font-mono text-[11px] leading-[1.65]"
-        >
+        <div ref={ref} className="min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3 font-mono text-[11px] leading-[1.65]">
             {lines.map((l, i) => (
                 <div
                     // biome-ignore lint/suspicious/noArrayIndexKey: append-only capped buffer
@@ -346,14 +332,7 @@ function PaneLog({ lines, active }: { lines: ConsoleLine[]; active: boolean }) {
                     className="flex gap-[9px]"
                 >
                     <span className="flex-none text-faint">{hms(l.t)}</span>
-                    <span
-                        className={cn(
-                            "min-w-0 break-words",
-                            KIND_TEXT[l.kind] ?? "text-foreground",
-                        )}
-                    >
-                        {l.msg}
-                    </span>
+                    <span className={cn("min-w-0 break-words", KIND_TEXT[l.kind] ?? "text-foreground")}>{l.msg}</span>
                 </div>
             ))}
             {active && (

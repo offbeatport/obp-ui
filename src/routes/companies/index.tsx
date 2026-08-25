@@ -5,7 +5,7 @@ import { CompanyCard } from "~/components/command-center/company-card";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { getPortfolioMetrics, listActivity, listCompanies } from "~/server/data";
 
-// The Portfolio — every company you've started, as a card grid, with a portfolio stats strip.
+// The Portfolio - every company you've started, as a card grid, with a portfolio stats strip.
 // Reuses the prototype-faithful CompanyCard; the wrapper is inline Tailwind.
 export const Route = createFileRoute("/companies/")({
     loader: async () => {
@@ -47,12 +47,10 @@ function Portfolio() {
                     <div className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-faint">
                         {"// Portfolio"}
                     </div>
-                    <h1 className="mt-2 font-display text-[32px] font-light tracking-[-0.02em]">
-                        Portfolio
-                    </h1>
+                    <h1 className="mt-2 font-display text-[32px] font-light tracking-[-0.02em]">Portfolio</h1>
                     <p className="mt-1.5 text-sm text-muted-foreground">
                         {companies.length === 0
-                            ? "No companies yet — start your first one."
+                            ? "No companies yet - start your first one."
                             : `${companies.length} ${companies.length === 1 ? "company" : "companies"} in your portfolio.`}
                     </p>
 
@@ -78,7 +76,7 @@ function Portfolio() {
                 {companies.length === 0 ? (
                     <div className="mx-auto mt-10 max-w-md rounded-2xl border border-dashed border-border bg-secondary/40 p-10 text-center">
                         <p className="text-sm text-muted-foreground">
-                            You bring the ideas — I build, launch and run them.
+                            You bring the ideas - I build, launch and run them.
                         </p>
                         <Link
                             to="/companies/new"
@@ -90,11 +88,7 @@ function Portfolio() {
                 ) : (
                     <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[22px]">
                         {companies.map((c) => (
-                            <CompanyCard
-                                key={c.id}
-                                c={c}
-                                feed={activity.filter((a) => a.companySlug === c.slug)}
-                            />
+                            <CompanyCard key={c.id} c={c} feed={activity.filter((a) => a.companySlug === c.slug)} />
                         ))}
                     </div>
                 )}

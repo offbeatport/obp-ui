@@ -2,12 +2,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { AppShell } from "~/components/app-shell";
-import {
-    type GuardRow,
-    GuardrailLedger,
-    defaultRows,
-    rowsToGuardrails,
-} from "~/components/guardrail-ledger";
+import { type GuardRow, GuardrailLedger, defaultRows, rowsToGuardrails } from "~/components/guardrail-ledger";
 import { GuardrailMenu } from "~/components/guardrail-menu";
 import type { Guardrails } from "~/config/spin";
 import { startSpin } from "~/server/actions";
@@ -23,7 +18,7 @@ export const Route = createFileRoute("/companies/new")({
     component: NewCompany,
 });
 
-// The composer — the ONLY step at /companies/new. "Spin up" creates a DRAFT company and routes to
+// The composer - the ONLY step at /companies/new. "Spin up" creates a DRAFT company and routes to
 // its page (/companies/<id>), where the incubation chat (scout → proposals → spec → approve) lives.
 function NewCompany() {
     const navigate = useNavigate();
@@ -35,8 +30,7 @@ function NewCompany() {
 
     // Build the guardrails to send. For a preset the server re-resolves the canonical values, so we
     // only send the key; for "custom" we serialize the ledger rows into Guardrails.
-    const buildGuardrails = (): Guardrails =>
-        preset === "custom" ? rowsToGuardrails(rows) : { preset };
+    const buildGuardrails = (): Guardrails => (preset === "custom" ? rowsToGuardrails(rows) : { preset });
 
     const submit = async () => {
         const t = thought.trim();

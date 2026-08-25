@@ -13,7 +13,7 @@ import {
 import { cn } from "~/lib/utils";
 import { saveConfig } from "~/server/agents";
 
-// The "Setup" tab — wire a company to the outside world (Connections) and cap its spend (Budget).
+// The "Setup" tab - wire a company to the outside world (Connections) and cap its spend (Budget).
 // Prototype ref: 08-chat-spine-pro-v7.html `setupTabHTML` / `.set2-*`. Only Domain, spend cap and
 // autopilot are persisted via onUpdate; Email / Payment / Hosting are cosmetic local-only seams.
 
@@ -21,17 +21,7 @@ const HOSTS = ["Vercel", "Netlify", "Fly.io", "Cloudflare", "Render"] as const;
 const CAPS = [50, 100, 250, 500] as const;
 
 // A connection/budget row: icon chip + label/sub on the left, control(s) on the right.
-function Row({
-    icon,
-    label,
-    sub,
-    children,
-}: {
-    icon: ReactNode;
-    label: string;
-    sub: string;
-    children: ReactNode;
-}) {
+function Row({ icon, label, sub, children }: { icon: ReactNode; label: string; sub: string; children: ReactNode }) {
     return (
         <div className="flex items-center justify-between gap-4 border-t border-border-soft px-4 py-4 first:border-t-0">
             <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -43,9 +33,7 @@ function Row({
                     <span className="mt-0.5 truncate text-xs text-muted-foreground">{sub}</span>
                 </span>
             </div>
-            <div className="flex flex-none flex-wrap items-center justify-end gap-2">
-                {children}
-            </div>
+            <div className="flex flex-none flex-wrap items-center justify-end gap-2">{children}</div>
         </div>
     );
 }
@@ -65,8 +53,7 @@ function Pill({ ok, okLabel, pendLabel }: { ok: boolean; okLabel: string; pendLa
 }
 
 const inputCls = "rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground";
-const primaryBtn =
-    "rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50";
+const primaryBtn = "rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50";
 const ghostBtn =
     "rounded-lg border border-border bg-secondary px-3 py-2 text-sm font-medium text-foreground disabled:opacity-50";
 
@@ -105,18 +92,14 @@ export function SetupTab(props: CompanyTabProps) {
             <header className="mb-6 flex items-end justify-between gap-4">
                 <div>
                     <h2 className="font-display text-xl font-semibold text-foreground">Setup</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Wire {co.name} to the outside world.
-                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">Wire {co.name} to the outside world.</p>
                 </div>
                 <span className="font-mono text-xs text-faint">{connected} of 4 connected</span>
             </header>
 
             {/* ---- Connections ---- */}
             <section>
-                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
-                    Connections
-                </h3>
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">Connections</h3>
                 <div className="overflow-hidden rounded-xl border border-border bg-card">
                     <Row
                         icon={<Globe className="size-4" />}
@@ -215,9 +198,7 @@ export function SetupTab(props: CompanyTabProps) {
 
             {/* ---- Budget ---- */}
             <section className="mt-6">
-                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
-                    Budget
-                </h3>
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">Budget</h3>
                 <div className="overflow-hidden rounded-xl border border-border bg-card">
                     <Row
                         icon={<Wallet className="size-4" />}
@@ -267,9 +248,7 @@ export function SetupTab(props: CompanyTabProps) {
                                 }`}
                             />
                         </button>
-                        <span className="font-mono text-xs text-muted-foreground">
-                            {autopilotOn ? "on" : "off"}
-                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">{autopilotOn ? "on" : "off"}</span>
                     </Row>
 
                     <Row
@@ -286,9 +265,7 @@ export function SetupTab(props: CompanyTabProps) {
 
             {/* ---- Build ---- */}
             <section className="mt-6">
-                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
-                    Build
-                </h3>
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">Build</h3>
                 <div className="overflow-hidden rounded-xl border border-border bg-card">
                     <Row
                         icon={<RefreshCw className="size-4" />}
@@ -309,9 +286,7 @@ export function SetupTab(props: CompanyTabProps) {
 
             {/* ---- Appearance ---- */}
             <section className="mt-6">
-                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">
-                    Appearance
-                </h3>
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-faint">Appearance</h3>
                 <div className="overflow-hidden rounded-xl border border-border bg-card">
                     <Row
                         icon={<Network className="size-4" />}
@@ -342,14 +317,12 @@ export function SetupTab(props: CompanyTabProps) {
 
             {/* ---- Danger zone ---- */}
             <section className="mt-6">
-                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-destructive">
-                    Danger zone
-                </h3>
+                <h3 className="mb-2.5 font-mono text-[11px] uppercase tracking-wider text-destructive">Danger zone</h3>
                 <div className="overflow-hidden rounded-xl border border-destructive/40 bg-card">
                     <Row
                         icon={<Trash2 className="size-4" />}
                         label="Delete company"
-                        sub={`Permanently remove ${co.name} and all its work — chat, tasks, runs. Can't be undone.`}
+                        sub={`Permanently remove ${co.name} and all its work - chat, tasks, runs. Can't be undone.`}
                     >
                         <button
                             type="button"
@@ -369,9 +342,8 @@ export function SetupTab(props: CompanyTabProps) {
                     <DialogHeader>
                         <DialogTitle>Delete {co.name}?</DialogTitle>
                         <DialogDescription>
-                            This permanently removes <b className="text-foreground">{co.name}</b>{" "}
-                            and everything it owns — its chat, tasks, run history, and deploy. This
-                            can't be undone.
+                            This permanently removes <b className="text-foreground">{co.name}</b> and everything it owns
+                            - its chat, tasks, run history, and deploy. This can't be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

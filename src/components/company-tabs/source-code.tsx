@@ -4,7 +4,7 @@ import type { CompanyTabProps } from "~/components/company-tabs/types";
 
 // The "Source Code" tab: a lightweight, read-only repo viewer (file tree + file
 // viewer + version bar). There is no real repo data yet, so this renders an
-// HONEST preview — a representative scaffold derived from the spec's stack,
+// HONEST preview - a representative scaffold derived from the spec's stack,
 // clearly labeled as a skeleton until the build loop pushes its first commit.
 
 type Lang = "ts" | "tsx" | "json" | "md";
@@ -75,8 +75,7 @@ const KEYWORDS = new Set([
 // Tiny hand-rolled syntax tint: comments faint, strings green, keywords tinted.
 function CodeLine({ text, lang }: { text: string; lang: Lang }) {
     if (lang === "md") {
-        if (/^#{1,6}\s/.test(text))
-            return <span className="font-semibold text-foreground">{text}</span>;
+        if (/^#{1,6}\s/.test(text)) return <span className="font-semibold text-foreground">{text}</span>;
         if (/^\s*[-*]\s/.test(text)) return <span className="text-muted-foreground">{text}</span>;
         return <span className="text-muted-foreground">{text}</span>;
     }
@@ -159,8 +158,7 @@ function RepoView({ co }: { co: CompanyTabProps["co"] }) {
                     </span>
                 )}
                 <span className="ml-auto font-mono text-[11px] text-faint">
-                    Preview — the live repository appears here once the build loop pushes its first
-                    commit.
+                    Preview - the live repository appears here once the build loop pushes its first commit.
                 </span>
             </div>
 
@@ -213,7 +211,7 @@ function RepoView({ co }: { co: CompanyTabProps["co"] }) {
                             <i className="size-2.5 rounded-full bg-success" />
                         </span>
                         <span className="truncate font-mono text-[12px] text-muted-foreground">
-                            {active?.path ?? "—"}
+                            {active?.path ?? "-"}
                         </span>
                     </div>
                     {/* Tabbar (single open file) */}
@@ -235,11 +233,7 @@ function RepoView({ co }: { co: CompanyTabProps["co"] }) {
                             {lines.map((ln, i) => (
                                 // biome-ignore lint/suspicious/noArrayIndexKey: static source lines
                                 <div key={i} className="whitespace-pre">
-                                    {ln === "" ? (
-                                        " "
-                                    ) : (
-                                        <CodeLine text={ln} lang={active?.lang ?? "ts"} />
-                                    )}
+                                    {ln === "" ? " " : <CodeLine text={ln} lang={active?.lang ?? "ts"} />}
                                 </div>
                             ))}
                         </div>
@@ -251,7 +245,7 @@ function RepoView({ co }: { co: CompanyTabProps["co"] }) {
 }
 
 // ---------------------------------------------------------------------------
-// Preview snippet bodies — short, clearly-scaffold placeholders (not live code).
+// Preview snippet bodies - short, clearly-scaffold placeholders (not live code).
 // ---------------------------------------------------------------------------
 
 const PKG = `{
@@ -275,13 +269,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  // landing route — replaced by the build loop
+  // landing route - replaced by the build loop
   return <main>hello</main>;
 }`;
 
 const CHECKOUT = `import { stripe } from "~/lib/stripe";
 
-// POST /api/checkout — create a Stripe Checkout session.
+// POST /api/checkout - create a Stripe Checkout session.
 export async function createCheckout(priceId: string) {
   return stripe.checkout.sessions.create({ mode: "subscription" });
 }`;
@@ -295,16 +289,16 @@ export const users = sqliteTable("users", {
 });`;
 
 const APP = `export function App() {
-  // top-level shell — routes render inside here.
+  // top-level shell - routes render inside here.
   return <div className="app">scaffold preview</div>;
 }`;
 
 const STRIPE = `import Stripe from "stripe";
 
-// Configured from env — no live keys in the preview.
+// Configured from env - no live keys in the preview.
 export const stripe = new Stripe(process.env.STRIPE_KEY ?? "");`;
 
-const ENV = `// Typed environment access — filled in by the build loop.
+const ENV = `// Typed environment access - filled in by the build loop.
 export const env = {
   DATABASE_URL: process.env.DATABASE_URL ?? "",
 };`;
