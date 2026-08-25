@@ -1,0 +1,41 @@
+/* ============================================================================
+   Self-hosted type. Import this BEFORE @paperkit/ui/styles.css.
+
+   The web app used to pull these four families off the Google Fonts CDN; a
+   local-first desktop app can't (no network, and Tauri's CSP blocks the host),
+   so the faces ship with the package. Both apps now load byte-identical files,
+   which is the only way "same look and feel" survives being offline.
+
+   Weight axes cover everything the design system asks for:
+     Inter          400/450/500/600/700 + italic   (variable 100-900)
+     Space Grotesk  300/400/500/600/700            (variable 300-700)
+     JetBrains Mono 400/500/600/700                (variable 100-800)
+     Spectral       400/500/600 + italic           (static - listed per weight)
+
+   Subsets are gated by unicode-range, so a browser fetches only what the text
+   needs; a packaged desktop build carries them all, which is what you want when
+   company names are arbitrary LLM-generated text.
+
+   NOTE: the family names below are what these packages register - "Inter
+   Variable", not "Inter". tokens.css lists both, variable first.
+   ========================================================================== */
+
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/inter/wght-italic.css";
+
+@import "@fontsource-variable/space-grotesk/wght.css";
+
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
+@import "@fontsource/spectral/latin-400.css";
+@import "@fontsource/spectral/latin-400-italic.css";
+@import "@fontsource/spectral/latin-500.css";
+@import "@fontsource/spectral/latin-500-italic.css";
+@import "@fontsource/spectral/latin-600.css";
+@import "@fontsource/spectral/latin-600-italic.css";
+@import "@fontsource/spectral/latin-ext-400.css";
+@import "@fontsource/spectral/latin-ext-400-italic.css";
+@import "@fontsource/spectral/latin-ext-500.css";
+@import "@fontsource/spectral/latin-ext-500-italic.css";
+@import "@fontsource/spectral/latin-ext-600.css";
+@import "@fontsource/spectral/latin-ext-600-italic.css";
