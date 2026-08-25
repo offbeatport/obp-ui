@@ -47,13 +47,3 @@ export const TONE_VAR: Record<Tone, string> = {
     amber: "var(--warning)",
     red: "var(--destructive)",
 };
-
-// Tone → the prototype's stage class on `.co-card` (drives hover tint / area tone).
-export const STAGE_CLASS: Record<Tone, string> = {
-    green: "co-s-growing",
-    blue: "co-s-building",
-    violet: "co-s-ejected",
-    slate: "co-s-idea",
-    amber: "co-s-testing",
-    red: "co-s-killed",
-};
