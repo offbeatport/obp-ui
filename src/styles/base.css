@@ -1,0 +1,80 @@
+@layer base {
+    * {
+        border-color: var(--border);
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.55;
+        letter-spacing: -0.005em;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: "liga" 1, "calt" 1;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-display);
+        letter-spacing: -0.02em;
+    }
+    ::selection {
+        background: var(--accent);
+        color: var(--accent-foreground);
+    }
+    /* soft editorial scrollbars */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--foreground) 18%, transparent);
+        border-radius: 10px;
+        border: 3px solid var(--background);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: color-mix(in srgb, var(--foreground) 30%, transparent);
+    }
+}
+
+/* elevation utilities matching the prototype's soft shadows */
+@utility shadow-e1 {
+    box-shadow: var(--shadow-e1);
+}
+@utility shadow-e2 {
+    box-shadow: var(--shadow-e2);
+}
+
+/* Instant hover feedback - buttons, links, and menu/tab items snap their hover
+   color/background with no fade. Everything else (sidebar collapse slide, the new-company
+   spring icon, keyframe @animations) keeps its timing. Applies to all future ones too. */
+button,
+a,
+[role="menuitem"],
+[role="menuitemcheckbox"],
+[role="menuitemradio"],
+[role="tab"],
+summary {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+}
+
+/* Interactive elements get the pointer cursor (Tailwind v4 preflight no longer sets it). */
+button:not(:disabled),
+a[href],
+[role="button"]:not([aria-disabled="true"]),
+[role="menuitem"],
+[role="tab"],
+label[for],
+summary {
+    cursor: pointer;
+}
