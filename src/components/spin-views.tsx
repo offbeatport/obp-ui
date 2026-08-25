@@ -22,7 +22,7 @@ type Spin = NonNullable<CompanyDetail["spin"]>;
 // The spin-flow view surfaces, ported to the design prototype's EXACT markup (08-chat-spine-pro-v7)
 // but with the styling INLINED as Tailwind v4 utilities (the old command-center/*.css files are no
 // longer needed for this file). Tokens map to the app theme in globals.css; keyframes (spin-rot,
-// spin-pulse, spin-blink, cc-rot) are registered globally there. Score math + labels come from
+// cc-rot) are registered globally there. Score math + labels come from
 // config/spin.ts (one source of truth for engine + UI).
 
 // The assistant chat bubble renders flat: the prototype's .spin-msg.assistant .spin-bubble override
