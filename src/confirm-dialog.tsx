@@ -1,5 +1,15 @@
 import { type ReactNode, useState } from "react";
-import { Button, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./primitives";
+import {
+    Button,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./primitives";
 
 // Confirm-before-acting wrapper. Wrap any trigger (usually a Button) to require a
 // modal confirmation; awaits onConfirm, then closes.
