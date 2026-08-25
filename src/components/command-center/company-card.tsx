@@ -64,7 +64,7 @@ function LoopNode({ area, state, focus }: { area: Area; state: NodeState; focus:
     const areaVars = AREA_VAR[area];
     // Focus glow (was `.co-focus .co-node` box-shadow). Kept in inline style rather than a
     // shadow-[…] utility because Tailwind v4 hoists the shadow color into --tw-shadow-color and
-    // mangles the color-mix() (dropping the 50%/transparent) — this preserves it exactly.
+    // mangles the color-mix() (dropping the 50%/transparent) - this preserves it exactly.
     const focusShadow = !isFocus
         ? undefined
         : state === "needs"
@@ -94,8 +94,7 @@ function LoopNode({ area, state, focus }: { area: Area; state: NodeState; focus:
                         !isFocus &&
                         "border-[color:color-mix(in_srgb,var(--primary)_60%,var(--border))]",
                     state === "idle" && "border-border bg-card text-muted-foreground",
-                    state === "off" &&
-                        "border-dashed border-border bg-secondary text-faint opacity-50",
+                    state === "off" && "border-dashed border-border bg-secondary text-faint opacity-50",
                     isFocus &&
                         "scale-[1.14] after:absolute after:inset-[-6px] after:animate-[co-halo_2.2s_ease-out_infinite] after:rounded-full after:border-[1.5px] after:border-solid after:content-[''] motion-reduce:after:animate-none",
                     isFocus &&
@@ -120,12 +119,7 @@ function LoopNode({ area, state, focus }: { area: Area; state: NodeState; focus:
                 </svg>
             </div>
             <span className="whitespace-nowrap text-center font-mono text-[9.5px] tracking-[0.04em] text-faint">
-                <b
-                    className={cn(
-                        "font-semibold",
-                        state === "off" ? "text-faint" : "text-foreground",
-                    )}
-                >
+                <b className={cn("font-semibold", state === "off" ? "text-faint" : "text-foreground")}>
                     {area.toUpperCase()}
                 </b>
             </span>
@@ -137,8 +131,7 @@ function LoopNode({ area, state, focus }: { area: Area; state: NodeState; focus:
 // Ported from design/v2-prototypes/08-chat-spine-pro-v7.html (coCardHTML / .co-card).
 export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem[] }) {
     const st = loopStates(c);
-    const focus: Area =
-        st.build !== "idle" && st.build !== "off" ? "build" : st.grow === "active" ? "grow" : "run";
+    const focus: Area = st.build !== "idle" && st.build !== "off" ? "build" : st.grow === "active" ? "grow" : "run";
     const dead = c.status === "archived";
 
     return (
@@ -203,9 +196,7 @@ export function CompanyCard({ c, feed }: { c: CompanySummary; feed: ActivityItem
                                 >
                                     {TAG[a.tone].toUpperCase()}
                                 </span>
-                                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                                    {a.text}
-                                </span>
+                                <span className="overflow-hidden text-ellipsis whitespace-nowrap">{a.text}</span>
                             </div>
                         ))
                     ) : (

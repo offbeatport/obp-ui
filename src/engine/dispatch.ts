@@ -34,12 +34,10 @@ export async function dispatchAI(
     if (r.kind === "harness") {
         throw new Error(`dispatchAI: '${task}' resolves to a build harness, not a thinking task`);
     }
-    // Debug trace (CSLOP_DEBUG): every thinking-task model call, its route, and — in verbose —
+    // Debug trace (CSLOP_DEBUG): every thinking-task model call, its route, and - in verbose -
     // the exact system + prompt it sent and the text it got back.
     const route =
-        r.via === "claude-cli"
-            ? `claude-cli:${toClaudeCliModel(r.model) ?? "default"}`
-            : `${r.via}:${r.model}`;
+        r.via === "claude-cli" ? `claude-cli:${toClaudeCliModel(r.model) ?? "default"}` : `${r.via}:${r.model}`;
     dlog(
         "ai",
         `→ ${task} via ${route} · prompt ${input.prompt.length}c${input.system ? ` · system ${input.system.length}c` : ""}`,
@@ -156,8 +154,7 @@ async function dispatchAnthropic(
         }),
         signal: input.signal ?? AbortSignal.timeout(60_000),
     });
-    if (!res.ok)
-        throw new Error(`dispatchAI: Anthropic HTTP ${res.status} - ${await snippet(res)}`);
+    if (!res.ok) throw new Error(`dispatchAI: Anthropic HTTP ${res.status} - ${await snippet(res)}`);
     const j = (await res.json()) as { content?: Array<{ type?: string; text?: string }> };
     const text = (j.content ?? [])
         .filter((c) => c.type === "text")
@@ -186,8 +183,7 @@ async function dispatchOpenAICompat(
         }),
         signal: input.signal ?? AbortSignal.timeout(60_000),
     });
-    if (!res.ok)
-        throw new Error(`dispatchAI: ${r.provider} HTTP ${res.status} - ${await snippet(res)}`);
+    if (!res.ok) throw new Error(`dispatchAI: ${r.provider} HTTP ${res.status} - ${await snippet(res)}`);
     const j = (await res.json()) as {
         choices?: Array<{ message?: { content?: string } }>;
     };

@@ -28,10 +28,7 @@ type Group = { title: string; sub?: string; doneWhen?: string; tasks: CompanyAct
 // Group actions by feature. Spec slices are the feature groups; an action maps to slice i when
 // its 1-based order (action.n) matches i+1. Anything past the last slice lands in "Backlog".
 // With no spec, everything collapses into a single "Roadmap" group.
-function groupActions(
-    actions: CompanyAction[],
-    slices?: { title: string; sub: string; doneWhen?: string }[],
-): Group[] {
+function groupActions(actions: CompanyAction[], slices?: { title: string; sub: string; doneWhen?: string }[]): Group[] {
     if (!slices || slices.length === 0) {
         return [{ title: "Roadmap", tasks: actions }];
     }
@@ -66,12 +63,10 @@ export function ProductTab(props: CompanyTabProps) {
 
     return (
         <div className="mx-auto max-w-[720px] py-1">
-            {/* header — title + one-line intent + live counts */}
+            {/* header - title + one-line intent + live counts */}
             <div className="mb-4 flex items-baseline justify-between gap-3">
                 <div>
-                    <span className="font-display text-[15px] font-semibold text-foreground">
-                        Product
-                    </span>
+                    <span className="font-display text-[15px] font-semibold text-foreground">Product</span>
                     <span className="text-[12.5px] text-muted-foreground">
                         {" · the full task list the agent works through"}
                     </span>
@@ -102,7 +97,7 @@ export function ProductTab(props: CompanyTabProps) {
 
                             {g.tasks.length === 0 ? (
                                 <p className="rounded-xl border border-dashed border-border bg-card px-3.5 py-3 text-[12.5px] text-faint">
-                                    No task yet — queued on the roadmap.
+                                    No task yet - queued on the roadmap.
                                 </p>
                             ) : (
                                 <ul className="flex list-none flex-col gap-[7px] p-0">
@@ -113,7 +108,7 @@ export function ProductTab(props: CompanyTabProps) {
                                         const run = a.latestRun;
                                         return (
                                             <li key={a.id}>
-                                                {/* row — the toggle button */}
+                                                {/* row - the toggle button */}
                                                 <button
                                                     type="button"
                                                     onClick={() => setOpenId(open ? null : a.id)}
@@ -139,7 +134,7 @@ export function ProductTab(props: CompanyTabProps) {
                                                     />
                                                 </button>
 
-                                                {/* expanded panel — the details the task runs against */}
+                                                {/* expanded panel - the details the task runs against */}
                                                 {open && (
                                                     <div className="mt-1.5 rounded-xl border border-border bg-secondary px-3.5 py-3 text-[13px]">
                                                         {doneWhen && (
@@ -147,9 +142,7 @@ export function ProductTab(props: CompanyTabProps) {
                                                                 <span className="mr-2 font-mono text-[10px] uppercase tracking-wide text-faint">
                                                                     done when
                                                                 </span>
-                                                                <span className="text-foreground">
-                                                                    {doneWhen}
-                                                                </span>
+                                                                <span className="text-foreground">{doneWhen}</span>
                                                             </div>
                                                         )}
 
@@ -162,9 +155,7 @@ export function ProductTab(props: CompanyTabProps) {
                                                                     run:{" "}
                                                                     <span
                                                                         className={
-                                                                            run.status ===
-                                                                                "failed" ||
-                                                                            run.error
+                                                                            run.status === "failed" || run.error
                                                                                 ? "text-destructive"
                                                                                 : "text-foreground"
                                                                         }
@@ -201,15 +192,13 @@ export function ProductTab(props: CompanyTabProps) {
                                                             </a>
                                                         )}
 
-                                                        {/* gate — approve / reject a task waiting on you */}
+                                                        {/* gate - approve / reject a task waiting on you */}
                                                         {a.state === "awaiting_approval" && (
                                                             <div className="mt-3 flex items-center gap-2">
                                                                 <button
                                                                     type="button"
                                                                     disabled={busy}
-                                                                    onClick={() =>
-                                                                        void onApprove(a.id)
-                                                                    }
+                                                                    onClick={() => void onApprove(a.id)}
                                                                     className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[12px] font-medium text-primary transition hover:brightness-95 disabled:opacity-50"
                                                                 >
                                                                     <Check className="h-3.5 w-3.5" />
@@ -218,9 +207,7 @@ export function ProductTab(props: CompanyTabProps) {
                                                                 <button
                                                                     type="button"
                                                                     disabled={busy}
-                                                                    onClick={() =>
-                                                                        void onReject(a.id)
-                                                                    }
+                                                                    onClick={() => void onReject(a.id)}
                                                                     className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-[12px] font-medium text-muted-foreground transition hover:text-destructive disabled:opacity-50"
                                                                 >
                                                                     <X className="h-3.5 w-3.5" />

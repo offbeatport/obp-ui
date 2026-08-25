@@ -14,25 +14,8 @@ export const SPIN_STATUSES = [
 export type SpinStatus = (typeof SPIN_STATUSES)[number];
 
 // 8-dimension opportunity score (0-10 each), from the prototype's segmented-pip brief.
-export type ScoreKey =
-    | "buyer"
-    | "pain"
-    | "wtp"
-    | "timing"
-    | "build"
-    | "legal"
-    | "distro"
-    | "pricing";
-export const SCORE_KEYS: ScoreKey[] = [
-    "buyer",
-    "pain",
-    "wtp",
-    "timing",
-    "build",
-    "legal",
-    "distro",
-    "pricing",
-];
+export type ScoreKey = "buyer" | "pain" | "wtp" | "timing" | "build" | "legal" | "distro" | "pricing";
+export const SCORE_KEYS: ScoreKey[] = ["buyer", "pain", "wtp", "timing", "build", "legal", "distro", "pricing"];
 export type OppScores = Record<ScoreKey, number>;
 // One home for the 8 signals: `lab` = the short pip label, `full` = the long name, `hint` = the
 // tooltip reason. Both the engine and the UI read this (no separate copy in the components).
@@ -164,11 +147,8 @@ export function guardrailsText(g: Guardrails | undefined): string {
     if (!g) return "balanced";
     const parts: string[] = [];
     if (g.budgetUsd != null)
-        parts.push(
-            g.budgetUsd === 0 ? "$0 budget (free tools only)" : `budget ≤ $${g.budgetUsd}/mo`,
-        );
-    if (g.mode)
-        parts.push(g.mode === "test" ? "test-mode (no real charges yet)" : "charge from day one");
+        parts.push(g.budgetUsd === 0 ? "$0 budget (free tools only)" : `budget ≤ $${g.budgetUsd}/mo`);
+    if (g.mode) parts.push(g.mode === "test" ? "test-mode (no real charges yet)" : "charge from day one");
     for (const c of g.constraints ?? []) if (c.trim()) parts.push(c.trim());
     return parts.length ? parts.join("; ") : g.preset;
 }
@@ -271,14 +251,12 @@ export function opportunitySpecMd(c: Candidate): string {
     };
     section("Opportunity", c.description);
     section("The pain", c.pain);
-    section("ICP — who buys", c.icp);
+    section("ICP - who buys", c.icp);
     section("Why they buy", c.whyBuy);
     section("Why now", c.whyNow);
     L.push("## Scores", "", "| Signal | Score | Why |", "| --- | :---: | --- |");
     for (const k of SCORE_DISPLAY_ORDER) {
-        L.push(
-            `| ${SCORE_META[k].full} | ${c.scores[k] ?? 0}/10 | ${cell(c.scoreWhy?.[k] ?? "")} |`,
-        );
+        L.push(`| ${SCORE_META[k].full} | ${c.scores[k] ?? 0}/10 | ${cell(c.scoreWhy?.[k] ?? "")} |`);
     }
     L.push("");
     if (c.competitors?.length) {
@@ -295,18 +273,15 @@ export function opportunitySpecMd(c: Candidate): string {
     }
     section("Distribution", c.distribution);
     if (c.mrr) {
-        section(
-            "Expected MRR",
-            `$${c.mrr.low.toLocaleString()}–$${c.mrr.high.toLocaleString()}/mo — ${c.mrr.basis}`,
-        );
+        section("Expected MRR", `$${c.mrr.low.toLocaleString()}–$${c.mrr.high.toLocaleString()}/mo - ${c.mrr.basis}`);
     }
     section("Risk", c.risk);
     if (c.firstSlice?.title) {
-        section("First slice", `**${c.firstSlice.title}** — done when ${c.firstSlice.doneWhen}`);
+        section("First slice", `**${c.firstSlice.title}** - done when ${c.firstSlice.doneWhen}`);
     }
     if (c.evidence?.length) {
         L.push("## Evidence", "");
-        for (const e of c.evidence) L.push(`- \`${e.kind}\` ${e.text} — _${e.source}_`);
+        for (const e of c.evidence) L.push(`- \`${e.kind}\` ${e.text} - _${e.source}_`);
         L.push("");
     }
     return `${L.join("\n")
@@ -315,30 +290,16 @@ export function opportunitySpecMd(c: Candidate): string {
 }
 
 // Render the full COMPANY spec as slop/spec.md (replaces the seed placeholder at 'specing').
-export function companySpecMd(
-    spec: CompanySpec,
-    branding?: Branding,
-    guardrails?: Guardrails,
-): string {
+export function companySpecMd(spec: CompanySpec, branding?: Branding, guardrails?: Guardrails): string {
     const L: string[] = [`# ${spec.product}`, ""];
     if (spec.tagline) L.push(`**${spec.tagline}**`, "");
-    L.push(
-        `- **Pricing:** $${spec.pricingUsd}/mo${spec.trialDays ? ` · ${spec.trialDays}-day trial` : ""}`,
-    );
+    L.push(`- **Pricing:** $${spec.pricingUsd}/mo${spec.trialDays ? ` · ${spec.trialDays}-day trial` : ""}`);
     L.push(`- **ICP:** ${spec.icp}`);
     if (branding?.domain) L.push(`- **Domain:** ${branding.domain}`);
     if (guardrails) L.push(`- **Guardrails:** ${guardrailsText(guardrails)}`);
-    L.push(
-        "",
-        "## Stack",
-        "",
-        spec.stack.map((s) => `- ${s}`).join("\n"),
-        "",
-        "## Roadmap slices",
-        "",
-    );
+    L.push("", "## Stack", "", spec.stack.map((s) => `- ${s}`).join("\n"), "", "## Roadmap slices", "");
     spec.slices.forEach((s, i) => {
-        const sub = s.sub ? ` — ${s.sub}` : "";
+        const sub = s.sub ? ` - ${s.sub}` : "";
         const dw = s.doneWhen ? ` _(done when ${s.doneWhen})_` : "";
         L.push(`${i + 1}. **${s.title}**${sub}${dw}`);
     });
@@ -360,12 +321,7 @@ export function companySpecMd(
         L.push("");
     }
     if (branding) {
-        L.push(
-            "## Branding",
-            "",
-            `- **Mark:** ${branding.mark}`,
-            `- **Palette:** ${branding.palette.join(" → ")}`,
-        );
+        L.push("## Branding", "", `- **Mark:** ${branding.mark}`, `- **Palette:** ${branding.palette.join(" → ")}`);
         if (branding.style) L.push(`- **Style:** ${branding.style}`);
         L.push("");
     }
@@ -380,7 +336,7 @@ export function gtmOutlineMd(spec: CompanySpec, branding?: Branding): string {
     const m = spec.market;
     const site = branding?.domain ?? `${mdSlug(spec.product)}.app`;
     const L: string[] = [
-        `# ${spec.product} — Go-to-market`,
+        `# ${spec.product} - Go-to-market`,
         "",
         `**Target buyer:** ${m.persona || spec.icp}`,
         "",

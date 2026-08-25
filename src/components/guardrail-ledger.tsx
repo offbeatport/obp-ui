@@ -21,21 +21,12 @@ import {
 import { type Guardrails, resolveGuardrails } from "~/config/spin";
 import { cn } from "~/lib/utils";
 
-// The "Guardrail Ledger" — the prototype's Custom-guardrails editor (design/08-chat-spine-pro-v7,
+// The "Guardrail Ledger" - the prototype's Custom-guardrails editor (design/08-chat-spine-pro-v7,
 // .spin-hero-ledger / .spin-guards). A categorized list of rules the agent must respect: each row
 // is a color-coded category + a curated-value select (or free text), addable/removable, plus
 // free-form "custom" rows. Unlike the prototype (which never serialized), this feeds Guardrails.
 
-type Cat =
-    | "budget"
-    | "mode"
-    | "audience"
-    | "avoid"
-    | "timeline"
-    | "integrations"
-    | "stack"
-    | "compliance"
-    | "custom";
+type Cat = "budget" | "mode" | "audience" | "avoid" | "timeline" | "integrations" | "stack" | "compliance" | "custom";
 
 type Meta = {
     label: string;
@@ -61,12 +52,7 @@ const META: Record<Exclude<Cat, "custom">, Meta> = {
         icon: ShieldCheck,
         ic: "bg-info-soft text-info",
         def: "Test-mode first · no real money",
-        opts: [
-            "Test-mode first · no real money",
-            "Real money from day one",
-            "Free · no monetization yet",
-            CUSTOM,
-        ],
+        opts: ["Test-mode first · no real money", "Real money from day one", "Free · no monetization yet", CUSTOM],
     },
     audience: {
         label: "Audience",
@@ -159,11 +145,7 @@ export function rowsToGuardrails(rows: GuardRow[]): Guardrails {
         if (r.cat === "budget") {
             budgetUsd = parseBudget(v);
         } else if (r.cat === "mode") {
-            mode = /test/i.test(v)
-                ? "test"
-                : /real money|day one|live/i.test(v)
-                  ? "live"
-                  : undefined;
+            mode = /test/i.test(v) ? "test" : /real money|day one|live/i.test(v) ? "live" : undefined;
             if (v) constraints.push(`Mode: ${v}`);
         } else if (v) {
             const label = r.label.trim() || "Rule";
@@ -182,13 +164,7 @@ function parseBudget(v: string): number | undefined {
 }
 
 // The value control: a curated dropdown (chevron), with "Custom…" flipping to a free-text input.
-function ValueControl({
-    row,
-    onChange,
-}: {
-    row: GuardRow;
-    onChange: (patch: Partial<GuardRow>) => void;
-}) {
+function ValueControl({ row, onChange }: { row: GuardRow; onChange: (patch: Partial<GuardRow>) => void }) {
     if (row.cat === "custom" || row.freeText) {
         return (
             <input
@@ -223,11 +199,7 @@ function ValueControl({
                             {CUSTOM} <span className="ml-1 text-faint">write your own</span>
                         </DropdownMenuItem>
                     ) : (
-                        <DropdownMenuItem
-                            key={o}
-                            className="text-[13px]"
-                            onSelect={() => onChange({ value: o })}
-                        >
+                        <DropdownMenuItem key={o} className="text-[13px]" onSelect={() => onChange({ value: o })}>
                             {o}
                         </DropdownMenuItem>
                     ),
@@ -237,13 +209,7 @@ function ValueControl({
     );
 }
 
-export function GuardrailLedger({
-    rows,
-    onChange,
-}: {
-    rows: GuardRow[];
-    onChange: (rows: GuardRow[]) => void;
-}) {
+export function GuardrailLedger({ rows, onChange }: { rows: GuardRow[]; onChange: (rows: GuardRow[]) => void }) {
     const uid = useId();
     const [seq, setSeq] = useState(0);
     const present = new Set(rows.map((r) => r.cat));
@@ -263,10 +229,7 @@ export function GuardrailLedger({
             },
         ]);
     const addCustom = () =>
-        onChange([
-            ...rows,
-            { id: `${uid}-c${seq}`, cat: "custom", label: "", value: "", freeText: true },
-        ]);
+        onChange([...rows, { id: `${uid}-c${seq}`, cat: "custom", label: "", value: "", freeText: true }]);
     const bump = () => setSeq((s) => s + 1);
 
     return (
@@ -364,12 +327,7 @@ export function GuardrailLedger({
                                 onSelect={() => addRow(c)}
                                 className="gap-2 text-[13px]"
                             >
-                                <span
-                                    className={cn(
-                                        "grid size-5 flex-none place-items-center rounded-md",
-                                        META[c].ic,
-                                    )}
-                                >
+                                <span className={cn("grid size-5 flex-none place-items-center rounded-md", META[c].ic)}>
                                     {(() => {
                                         const I = META[c].icon;
                                         return <I className="size-3" />;
@@ -378,10 +336,7 @@ export function GuardrailLedger({
                                 {META[c].label}
                             </DropdownMenuItem>
                         ))}
-                        <DropdownMenuItem
-                            onSelect={addCustom}
-                            className="gap-2 text-[13px] text-muted-foreground"
-                        >
+                        <DropdownMenuItem onSelect={addCustom} className="gap-2 text-[13px] text-muted-foreground">
                             <span className="grid size-5 flex-none place-items-center rounded-md bg-secondary text-faint">
                                 <Plus className="size-3" />
                             </span>

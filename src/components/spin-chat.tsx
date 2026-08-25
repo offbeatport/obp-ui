@@ -10,15 +10,7 @@ import {
     resetPick,
 } from "~/server/actions";
 import type { CompanyDetail } from "~/server/data";
-import {
-    Bubble,
-    CreatingView,
-    FailedView,
-    ProposalsView,
-    ScoutingView,
-    SpecView,
-    SpecingView,
-} from "./spin-views";
+import { Bubble, CreatingView, FailedView, ProposalsView, ScoutingView, SpecView, SpecingView } from "./spin-views";
 import { Button } from "./ui/button";
 
 // The "spin up a company" chat, rendered INSIDE the company page while status='draft'. It's the
@@ -110,7 +102,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
     const working = stage === "scouting" || stage === "specing";
     const showTyping = (working || lastIsUser) && stage !== "scouting";
 
-    // "Continue without market research" — a trailing option that flows in continuation of the
+    // "Continue without market research" - a trailing option that flows in continuation of the
     // opportunities list (and the scouting loader), not a floating control above the composer.
     const skipRow =
         stage === "scouting" || stage === "proposals" ? (
@@ -155,11 +147,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
         if (m.role === "system") continue;
         const delayMs = idx < initialCount.current ? Math.min(idx, 6) * 260 : 0;
         thread.push(
-            <Bubble
-                key={m.id}
-                m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }}
-                delayMs={delayMs}
-            />,
+            <Bubble key={m.id} m={{ id: m.id, role: m.role, content: m.content, ago: m.ago }} delayMs={delayMs} />,
         );
         idx += 1;
         if (anchoredArtifact && m.id === anchorId) {
@@ -173,10 +161,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
         <div className="relative flex h-full flex-col">
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
                 {/* bottom padding clears the floating composer so the last message isn't hidden */}
-                <div
-                    className="mx-auto w-full"
-                    style={{ maxWidth: 840, padding: "22px 20px 148px" }}
-                >
+                <div className="mx-auto w-full" style={{ maxWidth: 840, padding: "22px 20px 148px" }}>
                     <h1 className="font-display font-light text-4xl w-full p-20 text-center">
                         Start your new AI Company
                     </h1>
@@ -194,18 +179,13 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
                         </div>
                     )}
                     {stage === "specing" && spin && (
-                        <SpecingView
-                            name={
-                                spin.candidates.find((c) => c.id === spin.pickedId)?.name ??
-                                "your pick"
-                            }
-                        />
+                        <SpecingView name={spin.candidates.find((c) => c.id === spin.pickedId)?.name ?? "your pick"} />
                     )}
                     {stage === "failed" && <FailedView onRetry={reroll} busy={busy} />}
                 </div>
             </div>
 
-            {/* Floating composer — absolute at the bottom, over the thread. The gradient fades the
+            {/* Floating composer - absolute at the bottom, over the thread. The gradient fades the
                 scrolling content out behind it; pointer-events pass through the transparent zone. */}
             <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
                 <div className="pointer-events-auto mx-auto w-full" style={{ maxWidth: 840 }}>
@@ -219,8 +199,7 @@ export function SpinChat({ detail }: { detail: CompanyDetail }) {
 // The id of the assistant message that announced the current artifact (the scout's "I found …
 // opportunities:" line, or the spec's "… spec - …" line) - the anchor the artifact renders after.
 function announcementId(messages: CompanyDetail["messages"], stage?: string): string | undefined {
-    const marker =
-        stage === "proposals" || stage === "specing" || stage === "spec" ? "opportunities:" : null;
+    const marker = stage === "proposals" || stage === "specing" || stage === "spec" ? "opportunities:" : null;
     if (!marker) return undefined;
     for (let i = messages.length - 1; i >= 0; i--) {
         const m = messages[i];
@@ -229,7 +208,7 @@ function announcementId(messages: CompanyDetail["messages"], stage?: string): st
     return undefined;
 }
 
-// Assistant "typing" turn — matches spin-views' AssistantTurn (hidden avatar + flat stream body).
+// Assistant "typing" turn - matches spin-views' AssistantTurn (hidden avatar + flat stream body).
 function Typing() {
     return (
         <div className="flex items-start gap-[12px]">
@@ -258,10 +237,7 @@ const HINTS: Record<string, string> = {
     spec: "“drop Stripe”, “raise price to $29”, “build it”, or ask anything…",
     failed: "Tell me what to try instead…",
 };
-function ChatComposer({
-    onSend,
-    stage,
-}: { onSend: (text: string) => Promise<void>; stage?: string }) {
+function ChatComposer({ onSend, stage }: { onSend: (text: string) => Promise<void>; stage?: string }) {
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
     const ref = useRef<HTMLTextAreaElement>(null);

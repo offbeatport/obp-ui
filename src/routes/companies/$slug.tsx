@@ -1,10 +1,10 @@
 import { Link, createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
 import { type ReactNode, useCallback, useState } from "react";
 import { AppShell } from "~/components/app-shell";
 import { CompanyCanvasClient } from "~/components/canvas/company-canvas-client";
 import { TONE_VAR } from "~/components/command-center/tone";
 import { CompanyChat } from "~/components/company-chat";
+import { CompanySegmentedTabs, type SegTab } from "~/components/company-segmented-tabs";
 import { GrowthTab } from "~/components/company-tabs/growth";
 import { PipelineTab } from "~/components/company-tabs/pipeline";
 import { ProductTab } from "~/components/company-tabs/product";
@@ -13,12 +13,6 @@ import { SourceCodeTab } from "~/components/company-tabs/source-code";
 import type { CompanySettingsPatch, CompanyTabProps } from "~/components/company-tabs/types";
 import { WorkspaceTab } from "~/components/company-tabs/workspace";
 import { SpinChat } from "~/components/spin-chat";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { usePollInvalidate } from "~/lib/use-poll-invalidate";
 import { cn } from "~/lib/utils";
 import {
@@ -29,17 +23,24 @@ import {
     updateCompanySettings,
 } from "~/server/actions";
 import { getUiLayout } from "~/server/agents";
-import type { ActivityItem, CompanyDetail } from "~/server/data";
-import { getCompany, listActivity, listCompanies, listCompanyActions } from "~/server/data";
+import type { ActivityItem, CompanyDetail, CompanySummary, OpportunityItem } from "~/server/data";
+import {
+    getCompany,
+    listActivity,
+    listCompanies,
+    listCompanyActions,
+    listOpportunities,
+} from "~/server/data";
 
 export const Route = createFileRoute("/companies/$slug")({
     loader: async ({ params }) => {
         // params.slug is usually the immutable company id (create navigates by id), but may
         // be a human slug from a portfolio link - resolve either.
-        const [detail, companies, activity, layout] = await Promise.all([
+        const [detail, companies, activity, opportunities, layout] = await Promise.all([
             getCompany({ data: params.slug }),
             listCompanies(),
             listActivity(),
+            listOpportunities(),
             getUiLayout(),
         ]);
         const summary =
@@ -53,6 +54,9 @@ export const Route = createFileRoute("/companies/$slug")({
             summary,
             actions,
             layout,
+            companies, // full portfolio - powers the command-surface canvas
+            opportunities,
+            activityAll: activity, // unfiltered - the canvas shows the whole portfolio's stream
             activity: co ? activity.filter((a) => a.companySlug === co.slug) : [],
         };
     },
@@ -78,7 +82,8 @@ function CompanyWorkspace() {
     const { slug } = Route.useParams();
     const router = useRouter();
     const navigate = useNavigate();
-    const { detail, summary, actions, activity, layout } = Route.useLoaderData();
+    const { detail, summary, actions, activity, layout, companies, opportunities, activityAll } =
+        Route.useLoaderData();
     const base = detail ?? summary;
     const companyId = base?.id;
     const [tab, setTab] = useState("Overview");
@@ -221,6 +226,13 @@ function CompanyWorkspace() {
                         name={co.name}
                         url={url}
                         href={href}
+                        companies={companies}
+                        opportunities={opportunities}
+                        activityAll={activityAll}
+                        onOpenCompany={(s) =>
+                            navigate({ to: "/companies/$slug", params: { slug: s } })
+                        }
+                        onNewCompany={() => navigate({ to: "/companies/new" })}
                     />
                 )}
             </div>
@@ -328,8 +340,9 @@ function ClassicRight({
     );
 }
 
-// CANVAS layout - top-right tab select (Overview = React Flow canvas · Tasks · Source Code · More)
-// over a full-height right pane. `tab` keeps canonical keys; only Overview renders differently.
+// CANVAS layout - the Overview is the dark "command surface" infinite canvas (the whole portfolio),
+// the other tabs render their surface as a scrollable overlay. A segmented-pill tab-select is pinned
+// top-right; the live-URL chip shows top-left EXCEPT on Overview (the canvas has its own HUD there).
 function CanvasRight({
     co,
     tab,
@@ -338,6 +351,11 @@ function CanvasRight({
     name,
     url,
     href,
+    companies,
+    opportunities,
+    activityAll,
+    onOpenCompany,
+    onNewCompany,
 }: {
     co: CompanyDetail;
     tab: string;
@@ -346,76 +364,56 @@ function CanvasRight({
     name: string;
     url: string;
     href: string;
+    companies: CompanySummary[];
+    opportunities: OpportunityItem[];
+    activityAll: ActivityItem[];
+    onOpenCompany: (slug: string) => void;
+    onNewCompany: () => void;
 }) {
-    const MORE = ["Workspace", "Product", "Growth", "Setup"];
-    const inMore = MORE.includes(tab);
-    const tabBtn = (active: boolean) =>
-        cn(
-            "inline-flex cursor-pointer items-center gap-1.5 rounded-[8px] px-[13px] py-[7px] text-[13px] transition-colors",
-            active
-                ? "bg-card font-semibold text-foreground shadow-e1"
-                : "font-medium text-faint hover:text-muted-foreground",
-        );
+    const tabs: SegTab[] = [
+        { key: "Overview", label: "Overview", badge: co.needsYou ? 1 : undefined },
+        { key: "Pipeline", label: "Tasks" },
+        { key: "Workspace", label: "Workspace" },
+        { key: "Product", label: "Product" },
+        { key: "Growth", label: "Growth" },
+        { key: "Setup", label: "Setup" },
+        { key: "Source Code", label: "Code" },
+    ];
+    const isOverview = tab === "Overview";
     return (
-        <div className="flex min-h-0 flex-col bg-background">
-            <div className="flex flex-wrap items-center gap-1 border-b border-border px-4 py-2">
-                <span className="mr-auto">
-                    <LiveUrl url={url} href={href} />
-                </span>
-                <button
-                    type="button"
-                    className={tabBtn(tab === "Overview")}
-                    onClick={() => setTab("Overview")}
-                >
-                    Overview
-                    {co.needsYou && (
-                        <span className="rounded-[10px] bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
-                            1
-                        </span>
-                    )}
-                </button>
-                <button
-                    type="button"
-                    className={tabBtn(tab === "Pipeline")}
-                    onClick={() => setTab("Pipeline")}
-                >
-                    Tasks
-                </button>
-                <button
-                    type="button"
-                    className={tabBtn(tab === "Source Code")}
-                    onClick={() => setTab("Source Code")}
-                >
-                    Source Code
-                </button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button type="button" className={tabBtn(inMore)}>
-                            {inMore ? tab : "More"}
-                            <ChevronDown className="size-3.5" />
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {MORE.map((t) => (
-                            <DropdownMenuItem key={t} onSelect={() => setTab(t)}>
-                                {t}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-
-            {tab === "Overview" ? (
-                <div className="relative min-h-0 flex-1">
-                    <CompanyCanvasClient detail={co} />
+        <div className="relative h-full min-h-0 overflow-hidden bg-background">
+            {/* base layer - the command-surface canvas, or a tab surface overlaid on it */}
+            {isOverview ? (
+                <div className="absolute inset-0">
+                    <CompanyCanvasClient
+                        companies={companies}
+                        opportunities={opportunities}
+                        activity={activityAll}
+                        currentId={co.id}
+                        onOpenCompany={onOpenCompany}
+                        onNewCompany={onNewCompany}
+                    />
                 </div>
             ) : (
-                <div className="min-h-0 flex-1 overflow-y-auto px-6 py-3">
+                <div className="absolute inset-0 overflow-y-auto bg-background px-6 pb-8 pt-[78px]">
                     <div className="mx-auto max-w-[820px]">
                         {renderTabBody(tab, tabProps, name)}
                     </div>
                 </div>
             )}
+
+            {/* floating chrome - segmented-pill tabs (top-right); live-URL chip (top-left) only off
+                the Overview, where the canvas owns the top-left with its portfolio HUD. */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-wrap items-start gap-3 p-4">
+                {!isOverview && (
+                    <span className="pointer-events-auto rounded-xl border border-border bg-card/80 shadow-e1 backdrop-blur">
+                        <LiveUrl url={url} href={href} />
+                    </span>
+                )}
+                <div className="pointer-events-auto ml-auto">
+                    <CompanySegmentedTabs tabs={tabs} active={tab} onSelect={setTab} />
+                </div>
+            </div>
         </div>
     );
 }

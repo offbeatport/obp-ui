@@ -3,16 +3,7 @@ import { join } from "node:path";
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq, inArray, like, ne } from "drizzle-orm";
 import { type Guardrails, resolveGuardrails } from "../config/spin.js";
-import {
-    type ActionPayload,
-    type Channel,
-    actions,
-    appConfig,
-    companies,
-    db,
-    messages,
-    runs,
-} from "../db/index.js";
+import { type ActionPayload, type Channel, actions, appConfig, companies, db, messages, runs } from "../db/index.js";
 import {
     continueWithoutResearchLogic,
     graduateCompany,
@@ -35,7 +26,7 @@ const DEMO_NAME = "Demo Co";
 // statuses gate each step so a double-click / stale poll is a harmless no-op.
 // ============================================================================
 
-// "Spin up" — create the draft company from a thought + guardrails. Returns its id; the UI routes
+// "Spin up" - create the draft company from a thought + guardrails. Returns its id; the UI routes
 // to /companies/<id> where the incubation chat lives. Guardrails are re-resolved server-side (the
 // client sends a preset key + any custom overrides) so a preset is never trusted to be complete.
 export const startSpin = createServerFn({ method: "POST" })
@@ -70,7 +61,7 @@ export const approveCompany = createServerFn({ method: "POST" })
     .validator((d: { companyId: string }) => d)
     .handler(async ({ data }) => graduateCompany(data.companyId));
 
-// Setup/Growth tabs — patch a company's own config (domain, budget cap, autopilot, pricing,
+// Setup/Growth tabs - patch a company's own config (domain, budget cap, autopilot, pricing,
 // channels, git remote). Tiny write only; only the provided keys are applied.
 export const updateCompanySettings = createServerFn({ method: "POST" })
     .validator(
@@ -155,10 +146,7 @@ export const rebuildCompany = createServerFn({ method: "POST" })
                 ),
             )
             .run();
-        db.update(companies)
-            .set({ lockedByRunId: null })
-            .where(eq(companies.id, data.companyId))
-            .run();
+        db.update(companies).set({ lockedByRunId: null }).where(eq(companies.id, data.companyId)).run();
         return { ok: true, requeued: res.changes };
     });
 
@@ -171,9 +159,7 @@ export const messageCompany = createServerFn({ method: "POST" })
         if (!text) return { ok: false };
         const exists = db.select().from(companies).where(eq(companies.id, data.companyId)).get();
         if (!exists) return { ok: false };
-        db.insert(messages)
-            .values({ companyId: data.companyId, role: "user", content: text })
-            .run();
+        db.insert(messages).values({ companyId: data.companyId, role: "user", content: text }).run();
         return { ok: true };
     });
 
@@ -248,23 +234,14 @@ export const rejectAction = createServerFn({ method: "POST" })
                     /* already gone */
                 }
             }
-            db.update(runs)
-                .set({ status: "failed", error: "rejected" })
-                .where(eq(runs.id, run.id))
-                .run();
+            db.update(runs).set({ status: "failed", error: "rejected" }).where(eq(runs.id, run.id)).run();
         }
         // Drop previewUrl: the deploy behind it was just SIGKILLed above, so leaving it would
         // make getCompany/listActionRuns project a dead link until the next deploy overwrites it.
         const { previewUrl: _dead, ...rest } = (action.payload ?? {}) as Record<string, unknown>;
         const payload = { ...rest, feedback: data.feedback ?? "" } as unknown as ActionPayload;
-        db.update(actions)
-            .set({ status: "queued", payload })
-            .where(eq(actions.id, data.actionId))
-            .run();
-        db.update(companies)
-            .set({ lockedByRunId: null })
-            .where(eq(companies.id, action.companyId))
-            .run();
+        db.update(actions).set({ status: "queued", payload }).where(eq(actions.id, data.actionId)).run();
+        db.update(companies).set({ lockedByRunId: null }).where(eq(companies.id, action.companyId)).run();
         return { ok: true };
     });
 
@@ -305,12 +282,7 @@ export const listQueue = createServerFn({ method: "GET" }).handler(async () => {
 export const listActionRuns = createServerFn({ method: "GET" })
     .validator((actionId: string) => actionId)
     .handler(async ({ data: actionId }) => {
-        const rows = db
-            .select()
-            .from(runs)
-            .where(eq(runs.actionId, actionId))
-            .orderBy(desc(runs.createdAt))
-            .all();
+        const rows = db.select().from(runs).where(eq(runs.actionId, actionId)).orderBy(desc(runs.createdAt)).all();
         const action = db.select().from(actions).where(eq(actions.id, actionId)).get();
         const previewUrl = (action?.payload as { previewUrl?: string } | undefined)?.previewUrl;
         return {

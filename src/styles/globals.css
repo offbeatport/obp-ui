@@ -403,9 +403,9 @@ summary {
     background: transparent;
 }
 .react-flow__edge-path {
+    /* fallback only - each edge sets its own stroke/width/dash inline (buildCanvas/toEdge). */
     stroke: var(--rf-edge);
     stroke-width: 1.4;
-    stroke-dasharray: 5 7;
 }
 .react-flow__handle {
     border: 0;
@@ -430,4 +430,21 @@ summary {
 }
 .react-flow__attribution {
     display: none;
+}
+/* Build·Measure·Learn board: flowing "live" loop arc + the BUILD-stage spinner. */
+.rf-flow {
+    animation: rf-flow 1s linear infinite;
+}
+@keyframes rf-flow {
+    to {
+        stroke-dashoffset: -11;
+    }
+}
+.rf-spin {
+    animation: rf-spin 0.8s linear infinite;
+}
+@keyframes rf-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

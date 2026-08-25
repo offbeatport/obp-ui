@@ -3,7 +3,7 @@ import { CompanyLogo } from "~/components/company-logo";
 import type { CompanyTabProps } from "~/components/company-tabs/types";
 import type { CompanyAction } from "~/server/data";
 
-// The Workspace tab — an asset gallery of "everything the company is made of": Foundation
+// The Workspace tab - an asset gallery of "everything the company is made of": Foundation
 // (brand/story/positioning), Product (the slices users use), and Go-to-market (the assets that
 // reach buyers). Each asset is a card with a tiny mock preview + a state pill (live/building/planned),
 // all derived from the real CompanyDetail (spec / branding / channels) and the task list (actions).
@@ -38,11 +38,7 @@ function Bar({ w, h = 4 }: { w: string; h?: number }) {
     return <span className="block rounded-full bg-border-soft" style={{ width: w, height: h }} />;
 }
 
-function MockWindow({
-    children,
-    center,
-    overlay,
-}: { children: ReactNode; center?: boolean; overlay?: ReactNode }) {
+function MockWindow({ children, center, overlay }: { children: ReactNode; center?: boolean; overlay?: ReactNode }) {
     return (
         <div className="relative aspect-[16/9] overflow-hidden rounded-lg border border-border-soft bg-background">
             <div className="flex items-center gap-1 border-b border-border-soft bg-secondary px-2 py-1.5">
@@ -52,9 +48,7 @@ function MockWindow({
             </div>
             <div
                 className={
-                    center
-                        ? "grid h-[calc(100%-1.75rem)] place-items-center p-2"
-                        : "flex flex-col gap-1.5 p-2.5"
+                    center ? "grid h-[calc(100%-1.75rem)] place-items-center p-2" : "flex flex-col gap-1.5 p-2.5"
                 }
             >
                 {children}
@@ -132,10 +126,7 @@ function BrandMock({ palette }: { palette?: [string, string] }) {
     );
 }
 
-function LogoMock({
-    name,
-    branding,
-}: { name: string; branding?: CompanyTabProps["co"]["branding"] }) {
+function LogoMock({ name, branding }: { name: string; branding?: CompanyTabProps["co"]["branding"] }) {
     return (
         <MockWindow center>
             <CompanyLogo name={name} branding={branding} size={44} />
@@ -173,14 +164,10 @@ function AssetCard({ asset }: { asset: Asset }) {
             {asset.mock}
             <div className="mt-2.5">
                 <div className="flex items-center justify-between gap-2">
-                    <span className="truncate font-display text-sm font-semibold text-foreground">
-                        {asset.name}
-                    </span>
+                    <span className="truncate font-display text-sm font-semibold text-foreground">{asset.name}</span>
                     <StatePill state={asset.state} />
                 </div>
-                <p className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground">
-                    {asset.sum}
-                </p>
+                <p className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground">{asset.sum}</p>
             </div>
         </div>
     );
@@ -192,7 +179,13 @@ function Section({
     title,
     sub,
     assets,
-}: { icon: ReactNode; tint: string; title: string; sub: string; assets: Asset[] }) {
+}: {
+    icon: ReactNode;
+    tint: string;
+    title: string;
+    sub: string;
+    assets: Asset[];
+}) {
     const live = assets.filter((a) => a.state === "live").length;
     return (
         <section className="mb-8">
@@ -291,8 +284,8 @@ export function WorkspaceTab({ co, actions }: CompanyTabProps) {
                 </span>
                 <p className="font-display text-sm font-semibold text-foreground">No assets yet</p>
                 <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-                    Assets appear as the company is built — brief, landing page, product slices and
-                    go-to-market channels.
+                    Assets appear as the company is built - brief, landing page, product slices and go-to-market
+                    channels.
                 </p>
             </div>
         );
@@ -303,7 +296,7 @@ export function WorkspaceTab({ co, actions }: CompanyTabProps) {
     const foundation: Asset[] = [
         {
             name: "Company Brief",
-            sum: `Mission, ICP & pricing — ${spec.icp}.`,
+            sum: `Mission, ICP & pricing - ${spec.icp}.`,
             state: "live",
             mock: <DocMock />,
         },
@@ -316,7 +309,7 @@ export function WorkspaceTab({ co, actions }: CompanyTabProps) {
         { name: "Landing page", sum: `The pitch: ${pitch}`, state: "live", mock: <LandingMock /> },
         {
             name: "Branding & design",
-            sum: co.branding?.style || "Palette, type & voice — one coherent look.",
+            sum: co.branding?.style || "Palette, type & voice - one coherent look.",
             state: has(co.branding),
             mock: <BrandMock palette={co.branding?.palette} />,
         },
@@ -343,8 +336,7 @@ export function WorkspaceTab({ co, actions }: CompanyTabProps) {
             name: s.title,
             sum: s.sub || s.doneWhen || "Part of the core product loop.",
             state,
-            mock:
-                state === "planned" ? <PlannedMock /> : <UiMock building={state === "building"} />,
+            mock: state === "planned" ? <PlannedMock /> : <UiMock building={state === "building"} />,
         };
     });
 
@@ -357,12 +349,7 @@ export function WorkspaceTab({ co, actions }: CompanyTabProps) {
                       ? `Budget intent: $${c.budgetIntentUsd}/mo.`
                       : "A channel that reaches buyers.",
                   state,
-                  mock:
-                      state === "planned" ? (
-                          <PlannedMock />
-                      ) : (
-                          <DocMock building={state === "building"} />
-                      ),
+                  mock: state === "planned" ? <PlannedMock /> : <DocMock building={state === "building"} />,
               };
           })
         : [

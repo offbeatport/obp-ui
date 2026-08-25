@@ -49,14 +49,8 @@ export function AppShell({ active, children }: { active?: NavKey; children: Reac
                 className="grid grid-rows-1 h-screen overflow-hidden transition-[grid-template-columns] duration-300"
                 style={{ gridTemplateColumns: collapsed ? "60px 1fr" : "264px 1fr" }}
             >
-                <Rail
-                    active={active}
-                    collapsed={collapsed}
-                    onToggle={() => setCollapsed((c) => !c)}
-                />
-                <main className="flex min-w-0 flex-col overflow-y-auto bg-background">
-                    {children}
-                </main>
+                <Rail active={active} collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+                <main className="flex min-w-0 flex-col overflow-y-auto bg-background">{children}</main>
             </div>
             {/* Global overlay - kept OUT of the grid so its root div can't take a grid cell. */}
             <AgentConsole />
@@ -73,11 +67,7 @@ const NAV: { key: NavKey; label: string; icon: LucideIcon; to?: string }[] = [
     { key: "admin", label: "Admin", icon: Wrench, to: "/admin/queue" },
 ];
 
-function Rail({
-    active,
-    collapsed,
-    onToggle,
-}: { active?: NavKey; collapsed: boolean; onToggle: () => void }) {
+function Rail({ active, collapsed, onToggle }: { active?: NavKey; collapsed: boolean; onToggle: () => void }) {
     // Highlight "New company" while on its route (it isn't in the NAV list, so drive it off the URL).
     const onNewCompany = useLocation({ select: (l) => l.pathname === "/companies/new" });
     return (
@@ -89,19 +79,14 @@ function Rail({
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 className="absolute -right-3 top-5 z-10 grid size-6 place-items-center rounded-full border bg-card text-foreground shadow-e2 transition-transform hover:bg-primary hover:text-primary-foreground"
             >
-                <ChevronLeft
-                    className={cn("size-3.5 transition-transform", collapsed && "rotate-180")}
-                />
+                <ChevronLeft className={cn("size-3.5 transition-transform", collapsed && "rotate-180")} />
             </button>
 
             {/* Glow-C wordmark (V7) - links home */}
             <Link
                 to="/"
                 aria-label="C Slop Slop - home"
-                className={cn(
-                    "flex items-center px-4 pb-3.5 pt-5",
-                    collapsed && "justify-center px-0",
-                )}
+                className={cn("flex items-center px-4 pb-3.5 pt-5", collapsed && "justify-center px-0")}
             >
                 {collapsed ? <LogoMark /> : <Logo />}
             </Link>
@@ -164,7 +149,7 @@ const SLICE_LBL: Record<NonNullable<CompanySummary["slice"]>["state"], string> =
     blocked: "blocked",
 };
 
-// Live company list in the rail — the prototype's `.co-item` rows (design/08-chat-spine-pro-v7,
+// Live company list in the rail - the prototype's `.co-item` rows (design/08-chat-spine-pro-v7,
 // #coList). Self-fetches + polls (5s + on focus) so a just-spun-up DRAFT company (created by
 // /companies/new before it navigates) shows without a manual refresh. Draft companies read as
 // "spinning up…" with a spinner (the prototype's .co-item.spinning). Empty → the .co-empty-cta.
@@ -241,13 +226,11 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
     return (
         <div className={cn(collapsed && "flex flex-col items-center gap-1")}>
             {companies.map((c) => {
-                // Highlight the open company — the URL param may be the name slug (active) or the
+                // Highlight the open company - the URL param may be the name slug (active) or the
                 // immutable id (drafts / id links), so match either.
                 const sel = params.slug === c.slug || params.slug === c.id;
                 const draft = c.status === "draft";
-                const meta = draft
-                    ? "Draft"
-                    : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
+                const meta = draft ? "Draft" : (c.mrr ? `$${c.mrr}/mo · ` : "") + SLICE_LBL[c.slice?.state ?? "todo"];
                 const avatar = draft ? (
                     // Draft: an incubating icon on a muted fill (no logo generated yet).
                     <span
@@ -313,9 +296,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                         </span>
                                     )}
                                 </span>
-                                <span className="block truncate text-[11.5px] text-faint">
-                                    {meta}
-                                </span>
+                                <span className="block truncate text-[11.5px] text-faint">{meta}</span>
                             </span>
                         </Link>
                         {/* hover ⋯ menu (sits above the Link so it doesn't navigate) */}
@@ -334,8 +315,7 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
                                     onSelect={() => setPendingDelete(c)}
                                     className="gap-2 text-destructive focus:bg-destructive-soft focus:text-destructive"
                                 >
-                                    <Trash2 className="size-4" /> Delete{" "}
-                                    {draft ? "draft" : "company"}
+                                    <Trash2 className="size-4" /> Delete {draft ? "draft" : "company"}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -344,17 +324,13 @@ function CompaniesNav({ collapsed }: { collapsed?: boolean }) {
             })}
 
             {/* delete confirmation (shared across rows) */}
-            <Dialog
-                open={!!pendingDelete}
-                onOpenChange={(o) => !deleting && !o && setPendingDelete(null)}
-            >
+            <Dialog open={!!pendingDelete} onOpenChange={(o) => !deleting && !o && setPendingDelete(null)}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Delete {pendingDelete?.name}?</DialogTitle>
                         <DialogDescription>
-                            Permanently removes{" "}
-                            <b className="text-foreground">{pendingDelete?.name}</b> and everything
-                            it owns — chat, tasks, runs. This can't be undone.
+                            Permanently removes <b className="text-foreground">{pendingDelete?.name}</b> and everything
+                            it owns - chat, tasks, runs. This can't be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -435,13 +411,7 @@ function NavItem({
         );
     }
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            disabled={locked}
-            aria-disabled={locked}
-            className={cls}
-        >
+        <button type="button" onClick={onClick} disabled={locked} aria-disabled={locked} className={cls}>
             {inner}
         </button>
     );
@@ -449,9 +419,5 @@ function NavItem({
 
 function SectionLabel({ collapsed, children }: { collapsed?: boolean; children: ReactNode }) {
     if (collapsed) return <div className="h-3.5" />;
-    return (
-        <div className="px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70">
-            {children}
-        </div>
-    );
+    return <div className="px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70">{children}</div>;
 }

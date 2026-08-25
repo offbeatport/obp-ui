@@ -1,4 +1,4 @@
-// Defensive coercion for LLM output — shared by the thinking passes (scope.ts, spin.ts) so the
+// Defensive coercion for LLM output - shared by the thinking passes (scope.ts, spin.ts) so the
 // parser + `str` live in one place (no pass importing a util from another pass).
 
 // Strip code fences, take the first balanced {…} (or […] for arrays), JSON.parse or null.

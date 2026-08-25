@@ -1,141 +1,164 @@
-import type { CompanyDetail } from "../server/data.js";
-// CLIENT-SAFE canvas projection (no sqlite/fs, like config/spin.ts). Turns a CompanyDetail into
-// the node/edge graph the React Flow Overview renders: the founder's idea → the company → the
-// product → each feature (spec slice) + the GTM outline. Pure + deterministic: the same detail
-// yields identical nodes/positions, so v1 needs NO saved layout (v2 will overlay slop/canvas.json).
+import type { CompanySummary, OpportunityItem } from "../server/data.js";
 import type { Branding } from "./spin.js";
 
-export type CanvasNodeType = "idea" | "company" | "product" | "feature" | "gtm";
+// CLIENT-SAFE canvas projection (no sqlite/fs). Turns the PORTFOLIO (all companies + opportunities)
+// into the node/edge graph the React Flow Overview renders as the "Infinite Canvas · command
+// surface" (v2 prototype design/v2-prototypes/05-infinite-canvas.html): a dark, glowing board where
+// every company is a node in the PORTFOLIO region and every opportunity sits in the OPPORTUNITIES
+// cluster, wired with faint connectors. Pure + deterministic (same input → identical layout).
 
-// Discriminated on `kind` so each node renderer narrows without casts.
+export type SliceState = "building" | "awaiting_approval" | "blocked" | "todo" | "shipped";
+
 export type CanvasNodeData =
-    | { kind: "idea"; thesis: string }
     | {
           kind: "company";
+          id: string;
+          slug: string;
           name: string;
-          domain?: string;
           branding?: Branding;
-          status: CompanyDetail["status"];
+          status: CompanySummary["status"];
+          mrr: number;
+          users: number;
+          shipped: number;
+          needsYou: boolean;
+          current?: { n: number; title: string; state: SliceState };
+          isCurrent: boolean; // the company whose page we're on → "you are here"
       }
     | {
-          kind: "product";
-          product: string;
-          tagline: string;
-          icp: string;
-          pricingUsd: number;
-          trialDays: number;
-          stack: string[];
+          kind: "opportunity";
+          id: string;
+          title: string;
+          thesis: string;
+          score: number;
+          status: OpportunityItem["status"];
       }
-    | { kind: "feature"; n: number; title: string; sub: string; doneWhen?: string }
-    | {
-          kind: "gtm";
-          persona: string;
-          mrrLow: number;
-          mrrHigh: number;
-          wtpQuote: string;
-          competitorCount: number;
-          pricingUsd: number;
-          trialDays: number;
-      };
+    | { kind: "region"; label: string };
 
+export type CanvasNodeType = "company" | "opportunity" | "region";
 export type CanvasNode = {
     id: string;
     type: CanvasNodeType;
     data: CanvasNodeData;
     position: { x: number; y: number };
 };
-export type CanvasEdge = { id: string; source: string; target: string };
+export type CanvasEdge = {
+    id: string;
+    source: string;
+    target: string;
+    variant: "mesh" | "bridge";
+};
 export type Canvas = { nodes: CanvasNode[]; edges: CanvasEdge[] };
 
-// Column-per-depth layout: idea(0) → company(1) → product(2) → [features + gtm](3, stacked).
-// The trunk (idea/company/product) is vertically centered on the right-hand stack.
-const COL_W = 340;
-const ROW_H = 128;
+// Portfolio region: a staggered 2-column grid on the left. Opportunities cluster to the right.
+const CO_COLS = 2;
+const CO_COL_W = 322;
+const CO_ROW_H = 214;
+const CO_STAGGER = 70;
+const OPP_X = 1040;
+const OPP_COL_W = 250;
+const OPP_ROW_H = 156;
 
-export function buildCanvas(detail: CompanyDetail): Canvas {
-    const spec = detail.spec;
+export function buildCanvas(
+    companies: CompanySummary[],
+    opportunities: OpportunityItem[] = [],
+    currentId?: string,
+): Canvas {
     const nodes: CanvasNode[] = [];
     const edges: CanvasEdge[] = [];
 
-    // Column 3 (rightmost): one node per feature slice, then the GTM node - only when specced.
-    const right: CanvasNode[] = [];
-    if (spec) {
-        spec.slices.forEach((s, i) => {
-            right.push({
-                id: `feature-${i}`,
-                type: "feature",
-                data: {
-                    kind: "feature",
-                    n: i + 1,
-                    title: s.title,
-                    sub: s.sub,
-                    doneWhen: s.doneWhen,
-                },
-                position: { x: 3 * COL_W, y: 0 },
-            });
-        });
-        right.push({
-            id: "gtm",
-            type: "gtm",
-            data: {
-                kind: "gtm",
-                persona: spec.market.persona,
-                mrrLow: spec.market.mrrLow,
-                mrrHigh: spec.market.mrrHigh,
-                wtpQuote: spec.market.wtpQuote,
-                competitorCount: spec.market.competitors.length,
-                pricingUsd: spec.pricingUsd,
-                trialDays: spec.trialDays,
-            },
-            position: { x: 3 * COL_W, y: 0 },
-        });
-    }
-    // Center the right column around y=0, then the trunk sits at that center.
-    right.forEach((node, i) => {
-        node.position.y = (i - (right.length - 1) / 2) * ROW_H;
-    });
-
     nodes.push({
-        id: "idea",
-        type: "idea",
-        data: { kind: "idea", thesis: detail.thesis },
-        position: { x: 0, y: 0 },
+        id: "region-portfolio",
+        type: "region",
+        data: { kind: "region", label: "// portfolio · companies" },
+        position: { x: 0, y: -56 },
     });
-    nodes.push({
-        id: "company",
-        type: "company",
-        data: {
-            kind: "company",
-            name: spec?.product ?? detail.name,
-            domain: detail.domain ?? detail.branding?.domain,
-            branding: detail.branding,
-            status: detail.status,
-        },
-        position: { x: COL_W, y: 0 },
-    });
-    edges.push({ id: "e-idea-company", source: "idea", target: "company" });
-
-    if (spec) {
+    if (opportunities.length)
         nodes.push({
-            id: "product",
-            type: "product",
-            data: {
-                kind: "product",
-                product: spec.product,
-                tagline: spec.tagline,
-                icp: spec.icp,
-                pricingUsd: spec.pricingUsd,
-                trialDays: spec.trialDays,
-                stack: spec.stack,
-            },
-            position: { x: 2 * COL_W, y: 0 },
+            id: "region-opps",
+            type: "region",
+            data: { kind: "region", label: "// opportunities · inbox" },
+            position: { x: OPP_X, y: -56 },
         });
-        edges.push({ id: "e-company-product", source: "company", target: "product" });
-        for (const node of right) {
-            edges.push({ id: `e-product-${node.id}`, source: "product", target: node.id });
+
+    companies.forEach((c, i) => {
+        const col = i % CO_COLS;
+        const row = Math.floor(i / CO_COLS);
+        nodes.push({
+            id: `co-${c.id}`,
+            type: "company",
+            data: {
+                kind: "company",
+                id: c.id,
+                slug: c.slug,
+                name: c.name,
+                branding: c.branding,
+                status: c.status,
+                mrr: c.mrr,
+                users: c.users,
+                shipped: c.shipped,
+                needsYou: !!c.needsYou,
+                current: c.slice ? { n: c.slice.n, title: c.slice.title, state: c.slice.state } : undefined,
+                isCurrent: c.id === currentId,
+            },
+            position: { x: col * CO_COL_W + (row % 2) * CO_STAGGER, y: row * CO_ROW_H },
+        });
+        if (i > 0) {
+            edges.push({
+                id: `mesh-${i}`,
+                source: `co-${companies[i - 1].id}`,
+                target: `co-${c.id}`,
+                variant: "mesh",
+            });
         }
-        nodes.push(...right);
+    });
+
+    opportunities.forEach((o, i) => {
+        nodes.push({
+            id: `opp-${o.id}`,
+            type: "opportunity",
+            data: {
+                kind: "opportunity",
+                id: o.id,
+                title: o.title,
+                thesis: o.thesis,
+                score: o.score,
+                status: o.status,
+            },
+            position: { x: OPP_X + (i % 2) * OPP_COL_W, y: i * OPP_ROW_H + 40 },
+        });
+    });
+    // Bridge the two regions so the board reads as one wired system.
+    if (companies.length && opportunities.length) {
+        edges.push({
+            id: "bridge",
+            source: `co-${companies[0].id}`,
+            target: `opp-${opportunities[0].id}`,
+            variant: "bridge",
+        });
     }
 
     return { nodes, edges };
+}
+
+// The top-left portfolio HUD: headline stats + the 3 most useful next moves.
+export function portfolioSummary(companies: CompanySummary[], opportunities: OpportunityItem[]) {
+    const stats = {
+        mrr: companies.reduce((s, c) => s + c.mrr, 0),
+        users: companies.reduce((s, c) => s + c.users, 0),
+        active: companies.filter((c) => c.status === "active").length,
+        shipped: companies.reduce((s, c) => s + c.shipped, 0),
+        needsYou: companies.filter((c) => c.needsYou).length,
+    };
+
+    const moves: string[] = [];
+    for (const c of companies) {
+        if (c.needsYou && c.slice) moves.push(`Approve ${c.name} - ${c.slice.title}`);
+    }
+    for (const c of companies) {
+        if (c.slice?.state === "blocked") moves.push(`Unblock ${c.name} slice ${c.slice.n}, or pause it`);
+    }
+    const topOpp = opportunities.find((o) => o.status === "candidate");
+    if (topOpp) moves.push(`Promote “${topOpp.title}” (score ${topOpp.score}) to a company`);
+
+    return { stats, moves: moves.slice(0, 3) };
 }

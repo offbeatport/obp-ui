@@ -62,12 +62,8 @@ const PICK_SPECING = sqlite.prepare(`
   WHERE status = 'draft' AND spin_status = 'specing' ORDER BY created_at ASC LIMIT 1
 `);
 const READ_STATUS = sqlite.prepare("SELECT spin_status AS status, spin FROM company WHERE id = ?");
-const WRITE_SPIN = sqlite.prepare(
-    "UPDATE company SET spin_status = ?, spin = ? WHERE id = ? AND spin_status = ?",
-);
-const FAIL_SPIN = sqlite.prepare(
-    "UPDATE company SET spin_status = 'failed' WHERE id = ? AND spin_status = ?",
-);
+const WRITE_SPIN = sqlite.prepare("UPDATE company SET spin_status = ?, spin = ? WHERE id = ? AND spin_status = ?");
+const FAIL_SPIN = sqlite.prepare("UPDATE company SET spin_status = 'failed' WHERE id = ? AND spin_status = ?");
 
 // Atomic spinStatus advance: re-read the row inside the txn, bail unless it's still in `from`
 // (an earlier tick / another pass may have moved it), then merge `patch` into spin + flip to
@@ -78,9 +74,7 @@ const FAIL_SPIN = sqlite.prepare(
 // + re-pick) while the AI ran, an in-flight spec for the old candidate must NOT overwrite it.
 const advance = sqlite.transaction(
     (id: string, from: string, to: string, patch: Partial<SpinData>, expectPickedId?: string) => {
-        const row = READ_STATUS.get(id) as
-            | { status: string | null; spin: string | null }
-            | undefined;
+        const row = READ_STATUS.get(id) as { status: string | null; spin: string | null } | undefined;
         if (!row || row.status !== from) return;
         const current = parseData(row.spin);
         if (expectPickedId !== undefined && current.pickedId !== expectPickedId) return;
@@ -139,24 +133,13 @@ export async function spinSpec(inflight: Set<string>): Promise<void> {
         }
         try {
             dlog("spin", `spec: company ${row.id} · picked "${picked.name}"`);
-            const { spec, branding } = await draftSpecAndBranding(
-                picked,
-                row.thought,
-                data.guardrails,
-                data.editNote,
-            );
+            const { spec, branding } = await draftSpecAndBranding(picked, row.thought, data.guardrails, data.editNote);
             // Persist the full company spec + GTM outline to git (steps 2 & 5 of the pipeline).
             await persistCompanySpec(row.id, spec, branding, data.guardrails);
             // Guard on the pick-time pickedId: a mid-flight re-pick (reset → pick another) must
             // discard this now-stale spec. Undefined (defensive candidates[0] fallback) → no guard.
             // Clear editNote once applied.
-            advance.immediate(
-                row.id,
-                "specing",
-                "spec",
-                { spec, branding, editNote: undefined },
-                data.pickedId,
-            );
+            advance.immediate(row.id, "specing", "spec", { spec, branding, editNote: undefined }, data.pickedId);
             if ((READ_STATUS.get(row.id) as { status: string })?.status === "spec") {
                 INSERT_MSG.run(
                     randomUUID(),
@@ -197,16 +180,12 @@ const READ_TRANSCRIPT = sqlite.prepare(
     "SELECT role, content FROM message WHERE company_id = ? ORDER BY created_at ASC, rowid ASC LIMIT 24",
 );
 // Non-commit intents mutate spin + spinStatus in one guarded write (status re-checked inside).
-const APPLY_CHAT = sqlite.transaction(
-    (id: string, patch: Partial<SpinData>, to: string, allowed: string[]) => {
-        const row = READ_STATUS.get(id) as
-            | { status: string | null; spin: string | null }
-            | undefined;
-        if (!row || !row.status || !allowed.includes(row.status)) return false;
-        WRITE_SPIN.run(to, JSON.stringify({ ...parseData(row.spin), ...patch }), id, row.status);
-        return true;
-    },
-);
+const APPLY_CHAT = sqlite.transaction((id: string, patch: Partial<SpinData>, to: string, allowed: string[]) => {
+    const row = READ_STATUS.get(id) as { status: string | null; spin: string | null } | undefined;
+    if (!row || !row.status || !allowed.includes(row.status)) return false;
+    WRITE_SPIN.run(to, JSON.stringify({ ...parseData(row.spin), ...patch }), id, row.status);
+    return true;
+});
 
 type ChatMsg = { role: string; content: string };
 type ChatAction =
@@ -225,16 +204,8 @@ export async function spinChat(inflight: Set<string>): Promise<void> {
         const data = parseData(row.spin);
         try {
             const transcript = READ_TRANSCRIPT.all(row.id) as ChatMsg[];
-            dlog(
-                "spin",
-                `chat: company ${row.id} · stage ${row.status ?? "spec"} · ${transcript.length} msgs`,
-            );
-            const { reply, action } = await chatTurn(
-                row.thought,
-                row.status ?? "spec",
-                data,
-                transcript,
-            );
+            dlog("spin", `chat: company ${row.id} · stage ${row.status ?? "spec"} · ${transcript.length} msgs`);
+            const { reply, action } = await chatTurn(row.thought, row.status ?? "spec", data, transcript);
             dlog("spin", `chat: company ${row.id} → action=${action.type}`);
             // Always answer; then route the intent (status-gated so it can't corrupt a pass).
             INSERT_MSG.run(randomUUID(), row.id, "assistant", reply, Date.now());
@@ -297,8 +268,7 @@ function resolveCandidate(ref: string, candidates: Candidate[]): Candidate | und
     const n = Number.parseInt(s.replace(/[^0-9]/g, ""), 10);
     if (Number.isFinite(n) && n >= 1 && n <= candidates.length) return candidates[n - 1];
     return (
-        candidates.find((c) => c.id === ref) ??
-        candidates.find((c) => c.name.toLowerCase().includes(s) && s.length > 1)
+        candidates.find((c) => c.id === ref) ?? candidates.find((c) => c.name.toLowerCase().includes(s) && s.length > 1)
     );
 }
 
@@ -309,9 +279,7 @@ async function chatTurn(
     transcript: ChatMsg[],
 ): Promise<{ reply: string; action: ChatAction }> {
     const state = describeState(thought, status, data);
-    const convo = transcript
-        .map((m) => `${m.role === "user" ? "Founder" : "You"}: ${m.content}`)
-        .join("\n");
+    const convo = transcript.map((m) => `${m.role === "user" ? "Founder" : "You"}: ${m.content}`).join("\n");
     try {
         const r = await dispatchAI("chat", {
             system:
@@ -353,10 +321,7 @@ function describeState(thought: string, status: string, data: SpinData): string 
     if (data.candidates?.length) {
         parts.push(
             `candidates:\n${data.candidates
-                .map(
-                    (c, i) =>
-                        `  ${i + 1}. ${c.name} - ${c.wedge} (score ${scoreTotal(c.scores).toFixed(1)}/10)`,
-                )
+                .map((c, i) => `  ${i + 1}. ${c.name} - ${c.wedge} (score ${scoreTotal(c.scores).toFixed(1)}/10)`)
                 .join("\n")}`,
         );
     }
@@ -397,17 +362,9 @@ function fallbackReply(status: string): string {
 
 // Deterministic routing (the offline path AND the fallback when a weak model answers in prose):
 // detect the founder's intent from keywords + candidate-name overlap.
-function heuristicTurn(
-    text: string,
-    status: string,
-    candidates: Candidate[],
-): { reply: string; action: ChatAction } {
+function heuristicTurn(text: string, status: string, candidates: Candidate[]): { reply: string; action: ChatAction } {
     const t = text.toLowerCase();
-    if (
-        /\b(re-?scout|different|other ideas|another (set|angle|idea)|not these|something else)\b/.test(
-            t,
-        )
-    ) {
+    if (/\b(re-?scout|different|other ideas|another (set|angle|idea)|not these|something else)\b/.test(t)) {
         return {
             reply: "Re-scouting with that in mind.",
             action: { type: "rescout", criteria: text },
@@ -427,18 +384,10 @@ function heuristicTurn(
         }
     }
     if (status === "spec") {
-        if (
-            /\b(create|build|ship|make) it\b|\blet'?s (go|build|ship)\b|\bcommit\b|\bgo live\b/.test(
-                t,
-            )
-        ) {
+        if (/\b(create|build|ship|make) it\b|\blet'?s (go|build|ship)\b|\bcommit\b|\bgo live\b/.test(t)) {
             return { reply: "Creating the company now.", action: { type: "commit" } };
         }
-        if (
-            /\b(cheaper|price|pricing|\$|stack|slice|drop|add|change|remove|rename|tagline|trial|target)\b/.test(
-                t,
-            )
-        ) {
+        if (/\b(cheaper|price|pricing|\$|stack|slice|drop|add|change|remove|rename|tagline|trial|target)\b/.test(t)) {
             return { reply: "Updating the spec.", action: { type: "editSpec", note: text } };
         }
     }
@@ -458,9 +407,7 @@ function matchCandidate(text: string, candidates: Candidate[]): Candidate | unde
     for (const c of candidates) {
         const name = c.name.toLowerCase();
         if (name.length > 2 && text.includes(name)) return c;
-        const hits = name
-            .split(/[^a-z0-9]+/)
-            .filter((w) => w.length > 3 && text.includes(w)).length;
+        const hits = name.split(/[^a-z0-9]+/).filter((w) => w.length > 3 && text.includes(w)).length;
         if (hits > bestHits) {
             bestHits = hits;
             best = c;
@@ -478,11 +425,7 @@ async function persistOpportunities(companyId: string, candidates: Candidate[]):
             path: `slop/opportunities/${opportunitySpecFilename(c, i + 1)}`,
             content: opportunitySpecMd(c),
         }));
-        await git.writeDoc(
-            companyId,
-            files,
-            `docs: ${files.length} opportunity specs (market research)`,
-        );
+        await git.writeDoc(companyId, files, `docs: ${files.length} opportunity specs (market research)`);
         dlog("spin", `scout: company ${companyId} → wrote ${files.length} opportunity spec .md`);
     } catch (e) {
         dlog("spin", `scout: company ${companyId} → .md persist skipped: ${(e as Error).message}`);
@@ -531,9 +474,7 @@ async function scoutCandidates(
         return fallbackCandidates(thought); // ideation itself failed → deterministic fallback
     }
     dlog("spin", `market: ideated ${seeds.length} seed(s) → expanding in parallel`);
-    const specs = await Promise.all(
-        seeds.map((seed, i) => expandOpportunity(seed, thought, guardrails, i)),
-    );
+    const specs = await Promise.all(seeds.map((seed, i) => expandOpportunity(seed, thought, guardrails, i)));
     // Rank by overall score (best bet first) - the UI leads with the strongest candidate.
     return specs.sort((a, b) => scoreTotal(b.scores) - scoreTotal(a.scores));
 }
@@ -546,7 +487,7 @@ type Seed = { title: string; wedge: string; icp: string; pain: string; whyNow?: 
 // sample outputs on real thoughts → 2 skeptical judges each; this "few-shot + reframe + self-
 // rubric" design won 7.9/10 for genuine, distinct, non-echoing names). The REFRAME + worked
 // examples are what turn "Snowflake clone" into Floe/Parquet/Cairn rather than "Snowflake Pro".
-const IDEATE_SYSTEM = `You are a world-class startup namer and market-research strategist. From a founder's raw, often-vague thought you invent FIVE genuinely different, real, solo-buildable SaaS opportunities — each with a brandable, startup-grade product name.
+const IDEATE_SYSTEM = `You are a world-class startup namer and market-research strategist. From a founder's raw, often-vague thought you invent FIVE genuinely different, real, solo-buildable SaaS opportunities - each with a brandable, startup-grade product name.
 
 This is the IDEATION stage. Naming, distinctness, and genuineness are EVERYTHING here. You output only compact SEEDS; a later stage fleshes each one out. Keep the output small, sharp, and fast.
 
@@ -554,30 +495,30 @@ This is the IDEATION stage. Naming, distinctness, and genuineness are EVERYTHING
 ONLY a minified JSON array of EXACTLY 5 objects. No prose, no explanation, no markdown, no code fences. The response MUST start with \`[\` and end with \`]\`.
 Each object has EXACTLY these keys, in this order:
 {"title":string,"wedge":string,"icp":string,"pain":string,"whyNow":string}
-- title: the product name — a real, brandable startup name (see NAMING RULES). This is what you are judged on.
+- title: the product name - a real, brandable startup name (see NAMING RULES). This is what you are judged on.
 - wedge: the one sharp insight/angle this bet wins on (<= 18 words).
-- icp: the specific buyer — role + context, someone reachable who has budget (<= 16 words).
+- icp: the specific buyer - role + context, someone reachable who has budget (<= 16 words).
 - pain: one concrete, currently-felt problem, phrased like you overheard the buyer say it (<= 24 words).
-- whyNow: why this window opened recently — a real 2024-2026 shift (<= 20 words).
+- whyNow: why this window opened recently - a real 2024-2026 shift (<= 20 words).
 
 ## REFRAME FIRST
-A raw thought is a DOMAIN, not a spec. Many thoughts (e.g. "Snowflake clone") name something no solo founder can build. Do NOT try to clone the giant. Mine the domain for five ADJACENT, solo-buildable jobs around it: tools for its users, its cost, its gaps, its migrations, the workflows it ignores. Reinterpret boldly — the founder wants opportunities, not a literal rebuild.
+A raw thought is a DOMAIN, not a spec. Many thoughts (e.g. "Snowflake clone") name something no solo founder can build. Do NOT try to clone the giant. Mine the domain for five ADJACENT, solo-buildable jobs around it: tools for its users, its cost, its gaps, its migrations, the workflows it ignores. Reinterpret boldly - the founder wants opportunities, not a literal rebuild.
 
-## NAMING RULES (a title that breaks ANY rule is INVALID — rename it)
+## NAMING RULES (a title that breaks ANY rule is INVALID - rename it)
 1. Never reuse, echo, translate, or lightly modify the founder's words. For "Snowflake clone", the words "Snowflake", "Snow*", and "Clone" are all BANNED in the name.
 2. Never = the founder's phrase + a generic affix. BANNED affixes: Pro, Hub, AI, Flow, App, Cloud, Kit, Labs, HQ, Go, ly, ify, Sync, Suite, Now, -er.
 3. Never a plain dictionary category ("Data Warehouse", "Resume Builder"). A name is a brand, not a description.
 4. Prefer: a real evocative word used sideways (Floe, Parquet, Cairn), a short coined word / portmanteau, or a crisp metaphor. 1-2 words, ideally <= 12 characters, easy to say, .com-plausible.
-5. All 5 names must be unrelated to each other — not five variations on one root word.
+5. All 5 names must be unrelated to each other - not five variations on one root word.
 
-FORBIDDEN OUTPUT (this is the exact garbage we are replacing — never produce anything resembling it):
+FORBIDDEN OUTPUT (this is the exact garbage we are replacing - never produce anything resembling it):
 For "Snowflake clone" -> "Snowflake Clone Pro", "Snowflake Flow", "Snowflake Radar", "Snowflake Studio", "Snowflake Copilot". All five are auto-rejected on Rule 1 and Rule 2.
 
 ## DISTINCTNESS
 The 5 must attack different ANGLES: a different buyer, OR a different job, OR a different wedge. Two seeds one product could serve = failure; replace one. Aim to span roughly: cost/efficiency, a lighter alternative, an adjacent gap the incumbent leaves open, a workflow the incumbent ignores, and distribution/exit.
 
-## SELF-SCORING RUBRIC (apply SILENTLY before answering — do NOT output scores)
-For each seed check: (a) NAME passes all 5 naming rules; (b) DISTINCT from the other four; (c) REAL — the pain is specific and someone would pay to remove it, not "saves time"; (d) BUILDABLE — a solo dev ships v1 in weeks, software-only (no hardware, no capital-heavy infra); (e) BUYER — the icp is reachable and has budget (B2B/prosumer beats free consumer). If any seed fails, fix or replace it and re-check. Emit only when all 5 pass.
+## SELF-SCORING RUBRIC (apply SILENTLY before answering - do NOT output scores)
+For each seed check: (a) NAME passes all 5 naming rules; (b) DISTINCT from the other four; (c) REAL - the pain is specific and someone would pay to remove it, not "saves time"; (d) BUILDABLE - a solo dev ships v1 in weeks, software-only (no hardware, no capital-heavy infra); (e) BUYER - the icp is reachable and has budget (B2B/prosumer beats free consumer). If any seed fails, fix or replace it and re-check. Emit only when all 5 pass.
 
 ## GUARDRAILS
 Honor the founder's guardrails literally (budget, test-mode, banned industries, target segment). If they say "avoid regulated industries", steer clear of health, lending, and anything license-gated.
@@ -596,21 +537,21 @@ Guardrails: budget <= $500/mo; test-mode (no real charges yet); avoid regulated 
 Output:
 [{"title":"Keyhole","wedge":"Reverse-engineers each posting's keyword weighting and scores you pass/fail before you apply","icp":"High-volume applicants: new grads and career-switchers","pain":"The ATS auto-rejects me on missing keywords before any human ever reads it","whyNow":"AI screening turned keyword coverage into the real 2025 hiring gate"},{"title":"Greenroom","wedge":"Builds a mock interview from your real resume and the target job, then grades spoken answers","icp":"Candidates prepping for a specific onsite next week","pain":"Generic prep lists do not match the stories on my resume or this exact role","whyNow":"Cheap speech models make realistic spoken mock interviews solo-buildable"},{"title":"Byline","wedge":"Rewrites your LinkedIn from a list of duties into quantified, recruiter-magnet narrative","icp":"Consultants and job-seeking execs who rely on inbound","pain":"My profile reads like a job description so recruiters scroll right past","whyNow":"Recruiters now source AI-first, rewarding outcome-led profiles over duty lists"},{"title":"Casebook","wedge":"Turns rough project notes into a hosted, recruiter-ready case-study site in minutes","icp":"Designers and PMs whose real resume is a portfolio","pain":"Building a case-study site eats a weekend so I keep sending a stale PDF","whyNow":"Cheap generation plus one-click hosting collapse a weekend of work into minutes"},{"title":"Vouch","wedge":"Maps your second-degree network to a target company and drafts the warm intro ask","icp":"Job-seekers who know cold applications do not convert","pain":"Applications into the void convert at two percent and I do not know who can refer me","whyNow":"Public graph data plus AI drafting make warm-intro routing a one-person product"}]
 
-Now do the same for the founder's thought. If it happens to match a worked example above, invent ENTIRELY FRESH names and angles — never reuse the example's titles. Return ONLY the minified JSON array.`;
+Now do the same for the founder's thought. If it happens to match a worked example above, invent ENTIRELY FRESH names and angles - never reuse the example's titles. Return ONLY the minified JSON array.`;
 
 // The Stage-2 per-seed expansion system prompt (same workflow winner). Honest scoring, no
 // fabricated citations, and the seed's name/identity is preserved verbatim.
 const EXPAND_SYSTEM = `You are a market-research analyst. You are given ONE opportunity seed (title, wedge, icp, pain, whyNow) plus the founder's original thought and guardrails. Expand THIS ONE seed into a full, honest opportunity spec a solo founder could act on.
 
 ## HARD RULES
-- Keep the seed's \`title\` EXACTLY as given — never rename, never append a suffix (Pro/Hub/AI/Flow/etc.). The name is final and was chosen deliberately.
+- Keep the seed's \`title\` EXACTLY as given - never rename, never append a suffix (Pro/Hub/AI/Flow/etc.). The name is final and was chosen deliberately.
 - Preserve the seed's icp, wedge, pain, and whyNow (you may tighten the wording, never change the meaning).
 - Honor the guardrails literally (budget, test-mode, banned industries, target segment).
 - Be concrete and truthful. No hype, no invented statistics-as-fact. Evidence is plausible signal you could go verify, never a fabricated citation or fake URL.
 - Score honestly. Not everything is a 9; a real spec has weak dimensions.
 
 ## WHAT YOU RETURN
-ONLY a minified JSON object — no prose, no markdown, no code fences. It MUST start with \`{\` and end with \`}\`. Keys (exactly these):
+ONLY a minified JSON object - no prose, no markdown, no code fences. It MUST start with \`{\` and end with \`}\`. Keys (exactly these):
 {"title":string,"description":string,"pain":string,"icp":string,"wedge":string,"whyBuy":string,"whyNow":string,"risk":string,"distribution":string,"mrr":{"low":int,"high":int,"basis":string},"scores":{"buyer":int,"pain":int,"wtp":int,"timing":int,"build":int,"legal":int,"distro":int,"pricing":int},"scoreWhy":{"buyer":string,"pain":string,"wtp":string,"timing":string,"build":string,"legal":string,"distro":string,"pricing":string},"competitors":[{"tool":string,"whyPay":string,"gap":string}],"evidence":[{"kind":"demand"|"gap"|"price","text":string,"source":string}],"firstSlice":{"title":string,"doneWhen":string}}
 
 ## FIELD RULES
@@ -619,11 +560,11 @@ ONLY a minified JSON object — no prose, no markdown, no code fences. It MUST s
 - risk: the single biggest thing that could kill it.
 - distribution: the concrete first channel to reach the icp (a named community/forum/segment), not "social media".
 - mrr: realistic monthly recurring revenue in USD as low/high, with a one-line basis (e.g. "~120 users x $39/mo").
-- scores: integers 0-10 on — buyer (reachable buyer), pain (urgency), wtp (willingness to pay), timing (why now), build (solo-shippable, software-only), legal (regulatory/liability safety), distro (you can reach them), pricing (pricing ceiling).
+- scores: integers 0-10 on - buyer (reachable buyer), pain (urgency), wtp (willingness to pay), timing (why now), build (solo-shippable, software-only), legal (regulatory/liability safety), distro (you can reach them), pricing (pricing ceiling).
 - scoreWhy: one short line justifying EACH of the 8 scores (why that number).
-- competitors: 2-3 rows — tool = how buyers solve it today (include the DIY/spreadsheet/manual option), whyPay = why that works for them today, gap = the specific weakness this bet wins on.
-- evidence: 2-3 items — kind is "demand", "gap", or "price"; text is the signal; source is where you would observe it (a named community, a pricing page, a forum), never a fabricated statistic or link.
-- firstSlice: the smallest live, testable slice — keep it shippable as a signup-capable landing page. title = the user-facing outcome; doneWhen = the observable pass condition.
+- competitors: 2-3 rows - tool = how buyers solve it today (include the DIY/spreadsheet/manual option), whyPay = why that works for them today, gap = the specific weakness this bet wins on.
+- evidence: 2-3 items - kind is "demand", "gap", or "price"; text is the signal; source is where you would observe it (a named community, a pricing page, a forum), never a fabricated statistic or link.
+- firstSlice: the smallest live, testable slice - keep it shippable as a signup-capable landing page. title = the user-facing outcome; doneWhen = the observable pass condition.
 
 Return the JSON object only.`;
 
@@ -638,7 +579,7 @@ async function ideateOpportunities(
     try {
         const r = await dispatchAI("market", {
             system: IDEATE_SYSTEM,
-            prompt: `Founder's raw thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}${extra}\n\nReframe the thought into a domain, then invent 5 seeds per your rules — brilliantly named, genuinely distinct, real, solo-buildable, and honoring the guardrails. Apply the self-scoring rubric silently.\nReturn ONLY the minified JSON array of 5 objects: starts with [ , ends with ] , nothing before or after.`,
+            prompt: `Founder's raw thought: ${thought}\nGuardrails (MUST honor): ${guardrailsText(guardrails)}${extra}\n\nReframe the thought into a domain, then invent 5 seeds per your rules - brilliantly named, genuinely distinct, real, solo-buildable, and honoring the guardrails. Apply the self-scoring rubric silently.\nReturn ONLY the minified JSON array of 5 objects: starts with [ , ends with ] , nothing before or after.`,
             maxTokens: 1800,
             signal: AbortSignal.timeout(DISPATCH_MS),
         });
@@ -685,10 +626,7 @@ async function expandOpportunity(
         // The AI's detail wins, but the seed's identity (name/wedge/ICP/pain) is LOCKED so a
         // sloppy expansion can't rename or drift the opportunity the founder is about to see.
         return (
-            toCandidate(
-                { ...j, title: seed.title, wedge: seed.wedge, icp: seed.icp, pain: seed.pain },
-                light,
-            ) ?? light
+            toCandidate({ ...j, title: seed.title, wedge: seed.wedge, icp: seed.icp, pain: seed.pain }, light) ?? light
         );
     } catch {
         return light;
@@ -714,10 +652,7 @@ function lightCandidateFromSeed(seed: Seed, thought: string, idx: number): Candi
         description: `${seed.title}: ${seed.wedge}`.slice(0, 600),
         whyNow: seed.whyNow,
         scoreWhy: Object.fromEntries(
-            SCORE_KEYS.map((k) => [
-                k,
-                `${SCORE_META[k].full}: ${scores[k]}/10 on ${SCORE_META[k].hint}.`,
-            ]),
+            SCORE_KEYS.map((k) => [k, `${SCORE_META[k].full}: ${scores[k]}/10 on ${SCORE_META[k].hint}.`]),
         ) as Partial<Record<ScoreKey, string>>,
     };
 }
@@ -787,10 +722,7 @@ function toCandidate(raw: unknown, fb: Candidate): Candidate | null {
 }
 
 // Per-signal justification map (scoreWhy). Keep only the 8 known keys; fall back per-key.
-function toScoreWhy(
-    v: unknown,
-    fb?: Partial<Record<ScoreKey, string>>,
-): Partial<Record<ScoreKey, string>> | undefined {
+function toScoreWhy(v: unknown, fb?: Partial<Record<ScoreKey, string>>): Partial<Record<ScoreKey, string>> | undefined {
     const o = (v ?? {}) as Record<string, unknown>;
     const out: Partial<Record<ScoreKey, string>> = {};
     for (const k of SCORE_KEYS) {
@@ -842,9 +774,7 @@ function toEvidence(v: unknown, fb: Evidence[]): Evidence[] {
         .map((e): Evidence | null => {
             if (!e || typeof e !== "object") return null;
             const o = e as Record<string, unknown>;
-            const kind = kinds.includes(o.kind as EvidenceKind)
-                ? (o.kind as EvidenceKind)
-                : "demand";
+            const kind = kinds.includes(o.kind as EvidenceKind) ? (o.kind as EvidenceKind) : "demand";
             const text = str(o.text, "", 200);
             if (!text) return null;
             return { kind, text, source: str(o.source, "signal", 80) };
@@ -961,10 +891,7 @@ function fallbackNames(seed: string, n: number): string[] {
     let h = 0;
     for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
     const start = h % FALLBACK_NAMES.length;
-    return Array.from(
-        { length: n },
-        (_, i) => FALLBACK_NAMES[(start + i * 5) % FALLBACK_NAMES.length],
-    );
+    return Array.from({ length: n }, (_, i) => FALLBACK_NAMES[(start + i * 5) % FALLBACK_NAMES.length]);
 }
 
 function fallbackCandidates(thought: string): Candidate[] {
@@ -976,8 +903,7 @@ function fallbackCandidates(thought: string): Candidate[] {
         { wedge: "An assistant that drafts the first version for you.", bias: 1 },
     ];
     const names = fallbackNames(thought, angles.length);
-    const pain =
-        thought.slice(0, 180) || "A recurring, unglamorous problem worth paying to remove.";
+    const pain = thought.slice(0, 180) || "A recurring, unglamorous problem worth paying to remove.";
     return angles.map((a, i) => {
         const scores = seededScores(thought + i, a.bias);
         const name = names[i];
@@ -1014,14 +940,10 @@ function fallbackCandidates(thought: string): Candidate[] {
             whyBuy: "It removes a weekly, manual chore for less than the time it costs them.",
             whyNow: "Cheap AI + no-code plumbing make this shippable by one person for the first time.",
             risk: "Demand may be shallow - validate that people will pay before over-building.",
-            distribution:
-                "Post where the buyer already complains: niche subreddits, Slack/Discord, forums.",
+            distribution: "Post where the buyer already complains: niche subreddits, Slack/Discord, forums.",
             mrr: { low: 500, high: 4000, basis: "≈50-200 users at $20-40/mo" },
             scoreWhy: Object.fromEntries(
-                SCORE_KEYS.map((k) => [
-                    k,
-                    `${SCORE_META[k].full}: scored ${scores[k]}/10 on ${SCORE_META[k].hint}.`,
-                ]),
+                SCORE_KEYS.map((k) => [k, `${SCORE_META[k].full}: scored ${scores[k]}/10 on ${SCORE_META[k].hint}.`]),
             ) as Partial<Record<ScoreKey, string>>,
             competitors: [
                 {
@@ -1039,13 +961,8 @@ function fallbackCandidates(thought: string): Candidate[] {
     });
 }
 
-function fallbackSpec(
-    picked: Candidate,
-    thought: string,
-): { spec: CompanySpec; branding: Branding } {
-    const product =
-        picked.name.replace(/\s+(Pro|Flow|Radar|Studio|Copilot)$/i, "").trim() ||
-        titleFromThought(thought);
+function fallbackSpec(picked: Candidate, thought: string): { spec: CompanySpec; branding: Branding } {
+    const product = picked.name.replace(/\s+(Pro|Flow|Radar|Studio|Copilot)$/i, "").trim() || titleFromThought(thought);
     const palette = paletteFor(product);
     return {
         spec: {

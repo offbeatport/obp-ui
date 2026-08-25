@@ -8,7 +8,7 @@ import { messageCompany } from "~/server/actions";
 import type { ChatMessage, CompanyDetail } from "~/server/data";
 
 // The company's left co-pilot chat panel (prototype .cl-head / .cpg-chat): a company-identity
-// header, the message thread, and a composer to steer the company. Self-contained — it owns the
+// header, the message thread, and a composer to steer the company. Self-contained - it owns the
 // composer state + posts via messageCompany, then invalidates the route so the reply streams in.
 // Extracted from routes/companies/$slug.tsx (this surface grows with richer chat features).
 export function CompanyChat({ co }: { co: CompanyDetail }) {
@@ -42,8 +42,7 @@ export function CompanyChat({ co }: { co: CompanyDetail }) {
                     size={40}
                     radius={12}
                     style={{
-                        boxShadow:
-                            "inset 0 1px 1px rgba(255,255,255,.22), 0 2px 8px rgba(0,0,0,.12)",
+                        boxShadow: "inset 0 1px 1px rgba(255,255,255,.22), 0 2px 8px rgba(0,0,0,.12)",
                     }}
                 />
                 <div className="min-w-0 flex-1">
@@ -54,9 +53,7 @@ export function CompanyChat({ co }: { co: CompanyDetail }) {
                         <LiveStatus co={co} />
                     </div>
                     {co.thesis && (
-                        <p className="mt-1 truncate text-xs leading-[1.45] text-muted-foreground">
-                            {co.thesis}
-                        </p>
+                        <p className="mt-1 truncate text-xs leading-[1.45] text-muted-foreground">{co.thesis}</p>
                     )}
                 </div>
             </div>
@@ -111,9 +108,7 @@ export function CompanyChat({ co }: { co: CompanyDetail }) {
 // uppercase label. "building" while a slice is in flight, else "live"/"paused"/"archived".
 function LiveStatus({ co }: { co: CompanyDetail }) {
     const building =
-        co.slice?.state === "building" ||
-        co.slice?.state === "awaiting_approval" ||
-        co.slice?.state === "blocked";
+        co.slice?.state === "building" || co.slice?.state === "awaiting_approval" || co.slice?.state === "blocked";
     const s =
         co.status === "paused"
             ? { label: "paused", dot: "bg-warning", ring: "var(--warning-soft)" }
@@ -124,10 +119,7 @@ function LiveStatus({ co }: { co: CompanyDetail }) {
                 : { label: "live", dot: "bg-success", ring: "var(--success-soft)" };
     return (
         <span className="inline-flex flex-none items-center gap-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.05em] text-muted-foreground">
-            <span
-                className={cn("size-1.5 rounded-full", s.dot)}
-                style={{ boxShadow: `0 0 0 3px ${s.ring}` }}
-            />
+            <span className={cn("size-1.5 rounded-full", s.dot)} style={{ boxShadow: `0 0 0 3px ${s.ring}` }} />
             {s.label}
         </span>
     );
@@ -164,12 +156,7 @@ function Bubble({ m, co }: { m: ChatMessage; co: CompanyDetail }) {
                 )}
             >
                 {me ? <p>{m.content}</p> : <Markdown content={m.content} />}
-                <span
-                    className={cn(
-                        "mt-[7px] block font-mono text-[10px]",
-                        me ? "text-white/70" : "text-faint",
-                    )}
-                >
+                <span className={cn("mt-[7px] block font-mono text-[10px]", me ? "text-white/70" : "text-faint")}>
                     {m.ago}
                 </span>
             </div>

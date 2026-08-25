@@ -1,4 +1,4 @@
-# Build Plan — company workspace + 5 follow-ups
+# Build Plan - company workspace + 5 follow-ups
 
 Grounded in a full read of the codebase + `design/v2-prototypes/08-chat-spine-pro-v7.html`.
 Every claim below was verified by research agents (file:line references in the notes).
@@ -8,33 +8,36 @@ Every claim below was verified by research agents (file:line references in the n
 - `/companies/<slug>` renders **only the Overview tab**; the other 6 (Pipeline, Workspace,
   Product, Growth, Setup, Source Code) all fall through to ONE placeholder line.
 - **Branding is destroyed at graduation.** `graduateCompany` sets `spin: null`, keeping only
-  `branding.domain`. The generated logo (`mark` + `palette` gradient) is lost — there is no
+  `branding.domain`. The generated logo (`mark` + `palette` gradient) is lost - there is no
   `branding` column. This is why every company shows initials-on-tone, not its real logo.
-- The prototype has a **1:1 design for all 7 tabs** — nothing needs to be invented, only ported.
+- The prototype has a **1:1 design for all 7 tabs** - nothing needs to be invented, only ported.
 - The active-company co-pilot chat re-implements the prototype's `.cl-*` header/composer in
   bespoke Tailwind (those classes were never ported) and its bubble avatars drifted.
 
 ---
 
-## Phase 0 — Foundation (everything depends on this; do first)
+## Phase 0 - Foundation (everything depends on this; do first)
 
 **0a. Persist branding + spec + guardrails across graduation.**
+
 - `schema.ts` company: add JSON columns `branding` (`Branding`), `spec` (`CompanySpec`),
   `guardrails` (`Guardrails`).
 - `db/index.ts`: add the 3 cols to `CREATE TABLE` + to the guarded `ALTER TABLE ADD COLUMN` loop
   (boot-DDL migration for existing DBs).
 - `spin-logic.ts graduateCompany`: persist `branding` (with a deterministic fallback:
-  `mark = product[0]`, `palette = paletteFor(product)`), `spec`, `guardrails` — instead of dropping
+  `mark = product[0]`, `palette = paletteFor(product)`), `spec`, `guardrails` - instead of dropping
   them with `spin: null`.
 - `enqueueDemo`: stamp a fallback branding so the demo company has a logo.
 
 **0b. View-model plumbing (`data.ts`).**
+
 - `CompanySummary.branding?` populated in `toSummary` from `c.branding`.
 - `CompanyDetail` inherits it (+ project `spec`, `pricing`, `channels`, `budgetCapUsd`,
   `autopilot`, `gitRemote` for the tabs).
 - `InboxItem.branding?` from the company row.
 
 **0c. New per-company server fns.**
+
 - `listCompanyActions(companyId)` → full ordered action list + latest run status per action
   (Pipeline/Product tabs). Current `listQueue` is global + primitives-only.
 - `getCompanySettings` / `updateCompanySettings(companyId, patch)` → domain, budgetCapUsd,
@@ -42,36 +45,38 @@ Every claim below was verified by research agents (file:line references in the n
 - `listActivity` gains an optional `companyId` filter (Overview feed).
 
 **0d. Shared `CompanyLogo` component** (`src/components/company-logo.tsx`).
+
 - Props `{ name, branding?, size, className }`. Renders `mark` on a `linear-gradient(145deg,…)`
   from `palette`; falls back to `mark = name[0]`, `palette = paletteFor(name)` when no branding.
 - `spin-views.tsx BrandLogo` delegates to it (identical SpecView look).
 
 ---
 
-## Phase 1 — Company workspace tabs (the primary ask)
+## Phase 1 - Company workspace tabs (the primary ask)
 
 Replace the single placeholder `else` branch in `$slug.tsx` with a per-tab renderer. Build each
 tab as its own component, ported from the prototype (classes already in `proto.css`, extend the
 generator/CSS where a tab's classes aren't ported yet).
 
-| Tab | Prototype source | Content | Data |
-|-----|------------------|---------|------|
-| **Pipeline** | `hy-v3` / `HY3_HTML` | Autonomous factory: Idea→Build→Ship→Grow→Revenue loop + the ONE human gate | `listCompanyActions` + slice states (prototype is a static mock → bind to real actions) |
-| **Workspace** | `assetsTabHTML` | Asset gallery in 3 groups (Foundation/Product/GTM), card mini-mocks + view toggle | spec docs, features, channels |
-| **Product** | `productTabHTML` | Full task backlog grouped by feature; click a task → prompt drawer | `listCompanyActions` grouped; `spec.slices` |
-| **Growth** | `growthTabHTML` | 5 channel rows (Reddit/X/SEO/Ads/Launch), toggle + per-channel config | `channels`, `updateCompanySettings` |
-| **Setup** | `setupTabHTML` | Connections (domain/email/payment/hosting) + Budget (cap/auto-approve/spend) | `getCompanySettings`/`updateCompanySettings` |
-| **Source Code** | `sourceTabHTML` | Repo tree + file viewer (drop Monaco; use the lightweight highlighter fallback) | `gitRemote`, run `checkpoint.gitSha`; tree stub until the engine writes a repo |
+| Tab             | Prototype source     | Content                                                                           | Data                                                                                    |
+| --------------- | -------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Pipeline**    | `hy-v3` / `HY3_HTML` | Autonomous factory: Idea→Build→Ship→Grow→Revenue loop + the ONE human gate        | `listCompanyActions` + slice states (prototype is a static mock → bind to real actions) |
+| **Workspace**   | `assetsTabHTML`      | Asset gallery in 3 groups (Foundation/Product/GTM), card mini-mocks + view toggle | spec docs, features, channels                                                           |
+| **Product**     | `productTabHTML`     | Full task backlog grouped by feature; click a task → prompt drawer                | `listCompanyActions` grouped; `spec.slices`                                             |
+| **Growth**      | `growthTabHTML`      | 5 channel rows (Reddit/X/SEO/Ads/Launch), toggle + per-channel config             | `channels`, `updateCompanySettings`                                                     |
+| **Setup**       | `setupTabHTML`       | Connections (domain/email/payment/hosting) + Budget (cap/auto-approve/spend)      | `getCompanySettings`/`updateCompanySettings`                                            |
+| **Source Code** | `sourceTabHTML`      | Repo tree + file viewer (drop Monaco; use the lightweight highlighter fallback)   | `gitRemote`, run `checkpoint.gitSha`; tree stub until the engine writes a repo          |
 
-Notes: Pipeline & Source Code are the heaviest. Pipeline's prototype is a static LeadSift mock — I'll
+Notes: Pipeline & Source Code are the heaviest. Pipeline's prototype is a static LeadSift mock - I'll
 bind it to real slice/action data. Source Code: I'll ship the tree + read-only viewer without the
 Monaco CDN dependency (keeps it offline + light).
 
 ---
 
-## Phase 2 — Custom guardrails, exact to the prototype (#2)
+## Phase 2 - Custom guardrails, exact to the prototype (#2)
 
 Rebuild `CustomGuardrails` (`new.tsx`) as the prototype's **Guardrail Ledger**:
+
 - Inside `.spin-hero-box`: `.spin-hero-ledger` → `.spin-constraints` → `Guardrails` label +
   `.gl-count` "N guardrails" + `.gl-hint`.
 - `.spin-guards` list, seeded with 4 default rows (Budget, Mode, Audience, Avoid). 8 categories
@@ -85,20 +90,21 @@ Rebuild `CustomGuardrails` (`new.tsx`) as the prototype's **Guardrail Ledger**:
 
 ---
 
-## Phase 3 — Portfolio page + rename (#3)
+## Phase 3 - Portfolio page + rename (#3)
 
 - Build the real grid in `src/routes/companies/index.tsx` (currently a Placeholder), reusing the
   existing `CompanyCard` (already matches the prototype `.co-card`): loader = `listCompanies` +
   `listActivity` + `getPortfolioMetrics`; `.allco-head` header + a `.pf-line` stats strip +
   `.home-cos > .co-grid` of cards. Keep the `/companies` URL (home + back-links target it).
 - Rename **nav label** "Companies" → "Portfolio" in `app-shell.tsx` (keep route, icon, NavKey).
-- (Cost/net P&L table is skipped — `mrr`/`users` exist but there's no per-company cost data.)
+- (Cost/net P&L table is skipped - `mrr`/`users` exist but there's no per-company cost data.)
 
 ---
 
-## Phase 4 — Fix the agent chat design (#4)
+## Phase 4 - Fix the agent chat design (#4)
 
 Active-company co-pilot chat in `$slug.tsx`:
+
 - Header → match `.cl-head`: borderless, `.cl-logo` inset+drop shadow (now a `CompanyLogo`),
   17px name, `.cl-live` pill = tone dot + soft ring + **mono uppercase label** ("LIVE"/"BUILDING").
 - Bubbles: assistant avatar = `CompanyLogo`; user avatar = a user-icon (not empty). Composer →
@@ -108,7 +114,7 @@ Active-company co-pilot chat in `$slug.tsx`:
 
 ---
 
-## Phase 5 — Branding icons everywhere (#5)
+## Phase 5 - Branding icons everywhere (#5)
 
 Swap all 9 avatar sites to `<CompanyLogo>` (depends on Phase 0):
 sidebar `CompaniesNav`, `$slug` header, `$slug` empty-chat placeholder, `$slug` chat bubble,
@@ -118,9 +124,10 @@ sidebar `CompaniesNav`, `$slug` header, `$slug` empty-chat placeholder, `$slug` 
 
 ---
 
-## Phase 6 — CSS → Tailwind (#1)  ⚠ NEEDS A DECISION
+## Phase 6 - CSS → Tailwind (#1) ⚠ NEEDS A DECISION
 
 Research strongly advises **against a full inline conversion**:
+
 - `spin-proto.css` (~3,300 lines) + `proto.css` (~1,840) are **generated verbatim** from the
   prototype by `scripts/extract-spin-css.mjs` ("regenerate, don't hand-edit"). Inlining destroys
   that regenerate-from-design workflow.
@@ -128,22 +135,25 @@ Research strongly advises **against a full inline conversion**:
   gradient shimmers, CSS checkmarks), parent-state→child combinators (`.host.open .ql-cv`),
   attribute selectors, and the `--co-tone` / `color-mix` cascade.
 - The ~65% "simple" rules convert to arbitrary-value soup (`text-[11.5px] tracking-[.07em]`), which
-  is *less* readable than the named rules, balloons classNames, and gives no bundle win.
+  is _less_ readable than the named rules, balloons classNames, and gives no bundle win.
 
 **Recommended (pragmatic):** keep the generated prototype CSS; use Tailwind + existing tokens for
-all *new* components (tabs, ledger, portfolio); register the fractional type scale + letter-spacings
+all _new_ components (tabs, ledger, portfolio); register the fractional type scale + letter-spacings
 as `@theme` tokens; inline only small standalone rules. Skip the lossy full rewrite.
 
 Options for your call:
-1. **Pragmatic/partial** (recommended) — above.
-2. **Full inline** — convert everything convertible; keep only the ~30% that can't. High effort/risk,
-   loses the regenerate workflow.
-3. **Skip for now** — ship features; revisit CSS later.
 
-### Outcome (you chose "Full inline") — DONE
+1. **Pragmatic/partial** (recommended) - above.
+2. **Full inline** - convert everything convertible; keep only the ~30% that can't. High effort/risk,
+   loses the regenerate workflow.
+3. **Skip for now** - ship features; revisit CSS later.
+
+### Outcome (you chose "Full inline") - DONE
+
 The full conversion is complete. **`proto.css` (1841 lines) + `spin-proto.css` (3298 lines) + the
 `extract-spin-css.mjs` generator are deleted** (5,139 lines of bespoke CSS gone). Every surface is
 now inline Tailwind:
+
 - `spin-views.tsx` (all spin artifacts), `spin-chat.tsx`, `$slug.tsx` (Overview + tab bar +
   `cpg-chat` bubbles), `company-card.tsx`, home `index.tsx`, `inbox.tsx`, portfolio, and the hero.
 - The **10 `@keyframes`** (the one thing that can't be a utility) are registered centrally in
@@ -156,7 +166,7 @@ now inline Tailwind:
 
 Verified: `tsc` 0, `biome` clean, 64 tests, `vite build` ✓, and the built CSS emits every keyframe +
 `color-mix` + `animate-[…]` utility. **Residual risk:** no visual-diff harness ran, so pixel
-regressions are possible on the converted surfaces — worth a visual pass; each conversion is an
+regressions are possible on the converted surfaces - worth a visual pass; each conversion is an
 isolated commit, so anything off is easy to spot + revert. The trade-off you accepted: the
 regenerate-from-prototype workflow is gone (the design HTML in `design/` is still the reference).
 
@@ -172,7 +182,8 @@ Each phase gated by: `pnpm exec tsc --noEmit` (0), `pnpm exec biome check src` (
 fns and branding persistence. Conventional-commit per coherent unit, no Claude co-author trailer.
 
 ## Risks / notes
-- Schema change is additive (nullable columns, guarded ALTERs) — safe on the existing DB.
+
+- Schema change is additive (nullable columns, guarded ALTERs) - safe on the existing DB.
 - Some tabs (Growth channels, Source Code repo) show data the **engine doesn't write yet**; those
   tabs will render real config where it exists and sensible empty/stub states otherwise (flagged in
   code), rather than faking data.
