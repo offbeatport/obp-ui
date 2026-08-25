@@ -1,0 +1,14 @@
+/* new-company icon - the ONE hover kept animated, exactly like the prototype (.nav-newco):
+   transform spring-rotates over .22s, background/color ease over .15s. Higher specificity +
+   !important so it survives the global instant-transition rule above. */
+.newco-ic {
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s, color
+        0.15s !important;
+}
+/* Direct transform (not Tailwind's var-based rotate, which can't interpolate) so the spring
+   actually plays - the tile rotates 90° through a diamond, filling terracotta with a white +. */
+.nav-newco:hover .newco-ic {
+    transform: rotate(90deg);
+    background-color: var(--primary);
+    color: #fff;
+}
