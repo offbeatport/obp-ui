@@ -4,13 +4,8 @@
     "private": true,
     "type": "module",
     "description": "Paperkit - the editorial \"paper\" design system: tokens, primitives and presentational components shared by the web app and the desktop (Tauri) app.",
-    "sideEffects": [
-        "**/*.css"
-    ],
-    "files": [
-        "src",
-        "README.md"
-    ],
+    "sideEffects": ["**/*.css"],
+    "files": ["src", "README.md"],
     "style": "./src/styles/index.css",
     "exports": {
         ".": {
