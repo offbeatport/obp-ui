@@ -14,6 +14,40 @@ export { cn } from "./lib/cn";
 export { ClientOnly } from "./lib/client-only";
 export { createDomClassPref, type DomClassPref } from "./lib/dom-class-pref";
 export { consoleTabPref, type PrePaintClassPref, prePaintScript } from "./lib/prepaint";
+export {
+    contrastRatio,
+    hexToHsv,
+    hexToRgb,
+    type Hsv,
+    hsvToHex,
+    hsvToRgb,
+    luminance,
+    readableOn,
+    type Rgb,
+    rgbToHex,
+    rgbToHsv,
+} from "./lib/color";
+export {
+    applyPalette,
+    createThemePalette,
+    CUSTOM_PALETTE_ID,
+    DEFAULT_PALETTE_ID,
+    getCustomPalette,
+    getPalette,
+    getPaletteId,
+    initPalette,
+    onPaletteChange,
+    setCustomPalette,
+    setPaletteId,
+    THEME_PALETTES,
+    type ThemePalette,
+    themePalette,
+    type ThemePaletteColors,
+    type ThemePaletteController,
+    themePaletteFor,
+    themePaletteStyle,
+    themePaletteSwatch,
+} from "./lib/palette";
 export { configureStorage, type PrefStorage, prefStorage } from "./lib/storage";
 export {
     createTheme,
@@ -60,5 +94,6 @@ export * from "./status";
 // ── standalone components ─────────────────────────────────────────────────────
 export { ConfirmDialog } from "./confirm-dialog";
 export { Markdown } from "./markdown";
+export { PalettePicker, type PalettePickerProps } from "./palette-picker";
 export * from "./provider-logos";
 export { ThemeToggle } from "./theme-toggle";
