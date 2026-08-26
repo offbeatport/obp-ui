@@ -38,7 +38,7 @@ const ICON: Record<EmptyStateVariant, string> = {
 };
 
 const TITLE: Record<EmptyStateVariant, string> = {
-    rail: "text-xs font-[650] text-foreground",
+    rail: "text-sm font-[650] text-foreground",
     // The Portfolio panel ships without a heading today; this matches the plate's scale for
     // callers that want one.
     panel: "font-display text-lg",
@@ -46,7 +46,7 @@ const TITLE: Record<EmptyStateVariant, string> = {
 };
 
 const BODY: Record<EmptyStateVariant, string> = {
-    rail: "m-2 text-xs leading-[1.45] text-faint",
+    rail: "m-2 text-sm leading-[1.45] text-faint",
     panel: "text-sm text-muted-foreground",
     plate: "mt-1 font-mono text-[12px] text-muted-foreground",
 };
@@ -82,12 +82,8 @@ export function EmptyState({
     const body = (
         <>
             {Icon && <Icon className={ICON[variant]} />}
-            {title !== undefined && (
-                <Title className={cn(TITLE[variant], titleClassName)}>{title}</Title>
-            )}
-            {children !== undefined && (
-                <p className={cn(BODY[variant], bodyClassName)}>{children}</p>
-            )}
+            {title !== undefined && <Title className={cn(TITLE[variant], titleClassName)}>{title}</Title>}
+            {children !== undefined && <p className={cn(BODY[variant], bodyClassName)}>{children}</p>}
             {action}
         </>
     );
