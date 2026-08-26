@@ -1,5 +1,5 @@
-import { LogoMark, ThemeToggle, UIProvider, cn } from "@paperkit/ui";
-import { type ReactNode, useEffect, useState } from "react";
+import { LogoMark, PalettePicker, ThemeToggle, UIProvider, cn } from "@paperkit/ui";
+import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { Section } from "./kit";
 import { BrandSection } from "./sections/brand";
 import { CanvasSection } from "./sections/canvas";
@@ -8,6 +8,7 @@ import { ConsoleSection } from "./sections/console";
 import { DataDisplaySection } from "./sections/data-display";
 import { NavSection } from "./sections/nav";
 import { NavUiSection } from "./sections/nav-ui";
+import { PalettesSection } from "./sections/palettes";
 import { PrimitivesSection } from "./sections/primitives";
 import { ShellSection } from "./sections/shell";
 import { StatusSection } from "./sections/status";
@@ -37,10 +38,17 @@ const SECTIONS: SectionDef[] = [
         Body: TokensSection,
     },
     {
+        id: "palettes",
+        label: "Palettes",
+        title: "Palettes",
+        blurb: "The same design system in ten sets of clothes, plus a custom editor. A palette overrides token values and nothing else - no component knows it exists.",
+        Body: PalettesSection,
+    },
+    {
         id: "primitives",
         label: "Primitives",
         title: "Primitives",
-        blurb: "The 17 shadcn primitives, re-themed with paperkit tokens. Every variant and every size the cva declares.",
+        blurb: "Eighteen shadcn primitives re-themed with paperkit tokens, plus the colour picker shadcn does not ship. Every variant and every size the cva declares.",
         Body: PrimitivesSection,
     },
     {
@@ -115,17 +123,52 @@ const SECTIONS: SectionDef[] = [
     },
 ];
 
+type SubNavItem = { id: string; label: string };
+
+const slug = (s: string) =>
+    s
+        .trim()
+        .replace(/[^a-zA-Z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
+        .toLowerCase();
+
+/** The topmost element still inside the reading band. */
+const topmost = (entries: IntersectionObserverEntry[]) =>
+    entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]?.target.id;
+
 export function App() {
     const [active, setActive] = useState(SECTIONS[0].id);
+    const [activeSpec, setActiveSpec] = useState<string | null>(null);
+    const [subs, setSubs] = useState<Record<string, SubNavItem[]>>({});
 
-    // Scroll spy: the topmost section inside the reading band wins.
+    // The sub-navigation is READ OFF THE PAGE, not declared next to it. Every <Spec> stamps its
+    // own name; this assigns each one an anchor id namespaced by the section it landed in and
+    // collects the result. Add a Spec anywhere and it appears in the sidebar with no second
+    // edit - and a list that cannot drift is worth the one DOM pass.
+    useLayoutEffect(() => {
+        const found: Record<string, SubNavItem[]> = {};
+        for (const s of SECTIONS) {
+            const root = document.getElementById(s.id);
+            if (!root) continue;
+            found[s.id] = [...root.querySelectorAll<HTMLElement>("[data-spec]")].map((el) => {
+                // "Input · Textarea · Label" navs as "Input" - the rest is in the heading.
+                const first = (el.dataset.spec ?? "").split("·")[0].trim();
+                const id = `${s.id}--${slug(first)}`;
+                el.id = id;
+                return { id, label: first };
+            });
+        }
+        setSubs(found);
+    }, []);
+
+    // Two scroll spies, one band: which section is being read, and which Spec within it.
     useEffect(() => {
         const io = new IntersectionObserver(
             (entries) => {
-                const seen = entries
-                    .filter((e) => e.isIntersecting)
-                    .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-                if (seen[0]) setActive(seen[0].target.id);
+                const id = topmost(entries);
+                if (id) setActive(id);
             },
             { rootMargin: "-96px 0px -70% 0px" },
         );
@@ -136,10 +179,26 @@ export function App() {
         return () => io.disconnect();
     }, []);
 
+    // Safe to run once: the layout effect above has already stamped every id by the time a
+    // passive effect fires, so `target.id` is never the empty string here.
+    useEffect(() => {
+        const specs = document.querySelectorAll<HTMLElement>("[data-spec]");
+        if (specs.length === 0) return;
+        const io = new IntersectionObserver(
+            (entries) => {
+                const id = topmost(entries);
+                if (id) setActiveSpec(id);
+            },
+            { rootMargin: "-100px 0px -60% 0px" },
+        );
+        for (const el of specs) io.observe(el);
+        return () => io.disconnect();
+    }, []);
+
     return (
         <UIProvider>
             <div className="min-h-screen bg-background text-foreground">
-                <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border bg-secondary lg:flex">
+                <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-secondary lg:flex">
                     <div className="flex items-center gap-2.5 px-5 pb-4 pt-6">
                         <LogoMark />
                         <span className="font-display text-lg font-semibold tracking-tight">
@@ -147,27 +206,51 @@ export function App() {
                         </span>
                     </div>
                     <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-6">
-                        {SECTIONS.map((s) => (
-                            <a
-                                key={s.id}
-                                href={`#${s.id}`}
-                                className={cn(
-                                    "block rounded-md px-3 py-2 text-sm font-semibold",
-                                    active === s.id
-                                        ? "bg-card text-foreground"
-                                        : "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
-                                )}
-                            >
-                                {s.label}
-                            </a>
-                        ))}
+                        {SECTIONS.map((s) => {
+                            const open = active === s.id;
+                            return (
+                                <div key={s.id}>
+                                    <a
+                                        href={`#${s.id}`}
+                                        className={cn(
+                                            "block rounded-md px-3 py-2 text-sm font-semibold",
+                                            open
+                                                ? "bg-card text-foreground"
+                                                : "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
+                                        )}
+                                    >
+                                        {s.label}
+                                    </a>
+                                    {/* Only the section being read expands - twelve sections'
+                                        worth of Specs at once is a wall, not navigation. */}
+                                    {open && subs[s.id]?.length > 0 && (
+                                        <div className="mt-0.5 mb-1 ml-3 border-l border-border pl-2">
+                                            {subs[s.id].map((sub) => (
+                                                <a
+                                                    key={sub.id}
+                                                    href={`#${sub.id}`}
+                                                    className={cn(
+                                                        "block truncate rounded-md px-2.5 py-1 text-sm",
+                                                        activeSpec === sub.id
+                                                            ? "font-medium text-primary"
+                                                            : "text-muted-foreground hover:text-foreground",
+                                                    )}
+                                                >
+                                                    {sub.label}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </nav>
                     <div className="border-t border-border px-5 py-4 font-mono text-sm text-faint">
                         pnpm ui
                     </div>
                 </aside>
 
-                <div className="lg:pl-60">
+                <div className="lg:pl-64">
                     <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
                         <div className="mx-auto flex max-w-6xl items-center gap-4 px-8 py-4">
                             <h1 className="font-display text-xl font-light tracking-tight">
@@ -176,7 +259,8 @@ export function App() {
                             <p className="hidden text-sm text-muted-foreground md:block">
                                 every export, in both themes
                             </p>
-                            <div className="ml-auto">
+                            <div className="ml-auto flex items-center gap-1">
+                                <PalettePicker />
                                 <ThemeToggle />
                             </div>
                         </div>

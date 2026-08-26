@@ -27,7 +27,15 @@ export function Section({
     );
 }
 
-/** One exported component: its name in mono, what it is for, and its real variants. */
+/**
+ * One exported component: its name in mono, what it is for, and its real variants.
+ *
+ * `name` doubles as the sidebar's sub-navigation entry. The sidebar reads these off the DOM
+ * after mount rather than repeating a hand-written list in app.tsx - a list that would go
+ * stale the first time someone adds a Spec and forgets. Compound names ("Input · Textarea ·
+ * Label") nav under their first part; the anchor id is assigned by the sidebar, which is the
+ * only place that knows which section a Spec landed in.
+ */
 export function Spec({
     name,
     note,
@@ -35,7 +43,7 @@ export function Spec({
     bare,
     className,
 }: {
-    name: ReactNode;
+    name: string;
     note: ReactNode;
     children: ReactNode;
     /** Drop the card frame - for demos that bring their own surface. */
@@ -43,7 +51,7 @@ export function Spec({
     className?: string;
 }) {
     return (
-        <article className="space-y-3">
+        <article data-spec={name} className="scroll-mt-24 space-y-3">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                 <h3 className="font-mono text-sm font-semibold text-foreground">{name}</h3>
                 <p className="text-sm text-muted-foreground">{note}</p>

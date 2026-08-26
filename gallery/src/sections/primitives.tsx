@@ -11,6 +11,8 @@ import {
     Checkbox,
     CheckboxField,
     type CheckedState,
+    ColorField,
+    ColorPicker,
     Dialog,
     DialogClose,
     DialogContent,
@@ -36,6 +38,9 @@ import {
     DropdownMenuTrigger,
     Input,
     Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     RadioGroup,
     RadioGroupItem,
     ScrollArea,
@@ -67,6 +72,8 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
+    contrastRatio,
+    readableOn,
 } from "@paperkit/ui";
 import {
     Bot,
@@ -148,6 +155,8 @@ const PROFILES = [
 ];
 
 export function PrimitivesSection() {
+    const [brandColor, setBrandColor] = useState("#c8643c");
+    const [inkColor, setInkColor] = useState("#2c2926");
     const [plan, setPlan] = useState("scale");
     const [autopilot, setAutopilot] = useState(true);
     const [cadence, setCadence] = useState("daily");
@@ -674,6 +683,88 @@ export function PrimitivesSection() {
                         <span className="font-mono">{cadence}</span>
                     </Note>
                 </Row>
+            </Spec>
+
+            <Spec
+                name="Popover"
+                note="the floating panel with no menu semantics - a form, a filter, a picker. DropdownMenu owns the arrow keys; this does not."
+            >
+                <Row>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline">Open a popover</Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start">
+                            <p className="text-sm font-semibold">Anything goes in here</p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Same border, surface, elevation and entrance as SelectContent, so
+                                the two read as one object when opened side by side.
+                            </p>
+                            <div className="mt-3 flex gap-2">
+                                <Input placeholder="Type freely" />
+                                <Button size="sm">Save</Button>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                    <Note>arrow keys, typing and focus all behave normally inside.</Note>
+                </Row>
+            </Spec>
+
+            <Spec
+                name="ColorPicker"
+                note="saturation/brightness field, hue rail, hex entry, presets - and an eyedropper where the browser has one. Never the OS colour panel."
+            >
+                <div className="flex flex-wrap items-start gap-8">
+                    <div className="w-64">
+                        <ColorPicker
+                            value={brandColor}
+                            onChange={setBrandColor}
+                            swatches={[
+                                "#c8643c",
+                                "#1e85cb",
+                                "#349150",
+                                "#9d6cbf",
+                                "#a77d00",
+                                "#2c2926",
+                            ]}
+                        />
+                    </div>
+                    <div className="space-y-3">
+                        <Note>
+                            Live value: <span className="font-mono">{brandColor}</span>
+                        </Note>
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="grid size-16 place-items-center rounded-lg border border-border font-medium"
+                                style={{ background: brandColor, color: readableOn(brandColor) }}
+                            >
+                                Aa
+                            </span>
+                            <Note>
+                                readableOn() picks the label colour;
+                                <br />
+                                contrast{" "}
+                                {contrastRatio(brandColor, readableOn(brandColor)).toFixed(2)}
+                                :1
+                            </Note>
+                        </div>
+                        <Note>
+                            Drag saturation to zero and the hue rail stays where you left it - hue
+                            is undefined for grey, so the picker remembers it rather than
+                            re-deriving it.
+                        </Note>
+                    </div>
+                </div>
+            </Spec>
+
+            <Spec
+                name="ColorField"
+                note="the form-control shape: a labelled swatch that opens the picker in a popover."
+            >
+                <div className="grid max-w-lg gap-2 sm:grid-cols-2">
+                    <ColorField label="Brand" value={brandColor} onChange={setBrandColor} />
+                    <ColorField label="Ink" value={inkColor} onChange={setInkColor} />
+                </div>
             </Spec>
 
             <Spec
