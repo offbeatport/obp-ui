@@ -134,50 +134,23 @@ html.is-desktop
 /* ============================================================================
    3. Scrollbars - give macOS its own back
 
-   base.css styles ::-webkit-scrollbar (10px, tokenised thumb). That is right in
-   a browser tab, but in WebKit ANY author rule on that pseudo-element switches
-   the element to a "custom scrollbar", and custom scrollbars are never overlay:
-   they sit in the layout and reserve a permanent 10px gutter next to every pane.
-   On macOS, where the OS hides scrollbars until you scroll, that gutter is the
-   single loudest tell that the window is a web page.
+   Nothing to declare here, and that is the point.
 
-   You cannot un-declare a pseudo-element rule. The one supported way back is the
-   standard property: per CSSWG issue 9856, a `scrollbar-width` (or
-   `scrollbar-color`) value OTHER than `auto` makes the UA ignore
-   ::-webkit-scrollbar entirely. WebKit shipped `scrollbar-width` in Safari 18.2
-   (macOS 15.2); `auto` is explicitly not enough, so we ask for `thin` - macOS
-   overlay bars are thin anyway, so this is the native look, not a compromise.
+   In WebKit, any author rule on ::-webkit-scrollbar makes the element a "custom
+   scrollbar", and a custom scrollbar is never an overlay: it is always visible and
+   always in the layout. `scrollbar-width: thin` looks like the escape hatch - it
+   does make the UA drop the custom bar - but what you get back is a thin CLASSIC
+   scrollbar, still permanent and coloured by the UA rather than by the theme. On a
+   dark panel that reads as a pale stripe down the side of every pane.
 
-   `scrollbar-width` does not inherit, hence the descendant selector.
+   The only way to get the real macOS bar - hidden until you scroll, coloured by the
+   OS against the content behind it - is for the page to say nothing at all. So
+   base.css scopes its editorial scrollbar to everything except
+   `html.is-desktop[data-os="macos"]`, and this file adds no rule of its own.
+
+   Windows and Linux webviews draw classic in-layout scrollbars natively, so the
+   editorial bar from base.css is the better match there and they keep it.
    ========================================================================== */
-@supports (scrollbar-width: thin) {
-    html.is-desktop[data-os="macos"],
-    html.is-desktop[data-os="macos"] * {
-        scrollbar-width: thin;
-    }
-}
-
-/* Older WebKit (macOS 15.1 and down) keeps the custom scrollbar, so soften it
-   instead: narrower track, no 3px ring around the thumb, and a thumb that only
-   surfaces on hover - as close to the overlay behaviour as a custom scrollbar
-   gets. Guarded so it never fights the block above. */
-@supports not (scrollbar-width: thin) {
-    html.is-desktop[data-os="macos"] ::-webkit-scrollbar {
-        width: 7px;
-        height: 7px;
-    }
-    html.is-desktop[data-os="macos"] ::-webkit-scrollbar-thumb {
-        background: color-mix(in srgb, var(--foreground) 12%, transparent);
-        border: 0;
-        border-radius: 7px;
-    }
-    html.is-desktop[data-os="macos"] :hover::-webkit-scrollbar-thumb {
-        background: color-mix(in srgb, var(--foreground) 26%, transparent);
-    }
-}
-
-/* Windows and Linux webviews draw classic in-layout scrollbars natively, so the
-   editorial bar from base.css is the better match there - left untouched. */
 
 /* ============================================================================
    4. Drag regions and the titlebar

@@ -71,3 +71,42 @@
         box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
     }
 }
+
+/* ============================================================================
+   Checkbox. The tick is *drawn* rather than swapped in: the path carries
+   pathLength="1", so normalising the dash to 1 makes a single keyframe work at
+   any size or geometry. `both` fill-mode holds the drawn end state. The box
+   squashes once as it fills, and the indeterminate dash wipes out from the
+   middle. Every one of these is switched off by motion-reduce at the call site.
+   ========================================================================== */
+@keyframes pk-check-draw {
+    from {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+    }
+    to {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes pk-dash-in {
+    from {
+        opacity: 0;
+        transform: scaleX(0.15);
+    }
+    to {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+@keyframes pk-check-pop {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(0.88);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

@@ -28,20 +28,31 @@
         background: var(--accent);
         color: var(--accent-foreground);
     }
-    /* soft editorial scrollbars */
-    ::-webkit-scrollbar {
+    /* Soft editorial scrollbars - everywhere EXCEPT a macOS desktop window.
+       In WebKit, any author rule on ::-webkit-scrollbar turns the element into a
+       "custom scrollbar", and a custom scrollbar is never an overlay one: it is
+       always visible and always in the layout. On macOS that is wrong twice over -
+       the OS hides its bars until you scroll, and it colours them itself. The only
+       way back is to declare nothing at all, so these selectors leave that case out.
+       Windows and Linux draw in-layout bars natively, so the editorial one is the
+       better match there and they keep it. */
+    html:not(.is-desktop) ::-webkit-scrollbar,
+    html.is-desktop:not([data-os="macos"]) ::-webkit-scrollbar {
         width: 10px;
         height: 10px;
     }
-    ::-webkit-scrollbar-track {
+    html:not(.is-desktop) ::-webkit-scrollbar-track,
+    html.is-desktop:not([data-os="macos"]) ::-webkit-scrollbar-track {
         background: transparent;
     }
-    ::-webkit-scrollbar-thumb {
+    html:not(.is-desktop) ::-webkit-scrollbar-thumb,
+    html.is-desktop:not([data-os="macos"]) ::-webkit-scrollbar-thumb {
         background: color-mix(in srgb, var(--foreground) 18%, transparent);
         border-radius: 10px;
         border: 3px solid var(--background);
     }
-    ::-webkit-scrollbar-thumb:hover {
+    html:not(.is-desktop) ::-webkit-scrollbar-thumb:hover,
+    html.is-desktop:not([data-os="macos"]) ::-webkit-scrollbar-thumb:hover {
         background: color-mix(in srgb, var(--foreground) 30%, transparent);
     }
 }
