@@ -8,6 +8,9 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
+    Checkbox,
+    CheckboxField,
+    type CheckedState,
     Dialog,
     DialogClose,
     DialogContent,
@@ -65,11 +68,21 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@paperkit/ui";
-import { Check, Plus, Rocket, Settings2, Trash2 } from "lucide-react";
+import {
+    Bot,
+    Check,
+    Gauge,
+    Plus,
+    Rocket,
+    Settings2,
+    ShieldCheck,
+    Sparkles,
+    Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
-// The 16 shadcn primitives, themed with paperkit tokens. Every variant AND size the cva
+// The 17 shadcn primitives, themed with paperkit tokens. Every variant AND size the cva
 // declares is on this page - if a variant exists and is not below, the gallery is wrong.
 
 const BUTTON_VARIANTS = [
@@ -114,6 +127,26 @@ const ROWS = [
     { slice: "email-capture", state: "queued", cost: "-" },
 ];
 
+const CHANNELS = [
+    { id: "email", label: "Email", description: "The daily burn digest, 08:00 local." },
+    { id: "slack", label: "Slack", description: "Only when a run is waiting on you." },
+    { id: "sms", label: "SMS", description: "Kill switches and hard failures." },
+];
+
+const PROFILES = [
+    { id: "ruthless", label: "Ruthless operator", description: "Kills anything without a buyer." },
+    {
+        id: "builder",
+        label: "Patient builder",
+        description: "Gives a thesis nine slices to prove itself.",
+    },
+    {
+        id: "auditor",
+        label: "Compliance auditor",
+        description: "Ships nothing that leaks a secret.",
+    },
+];
+
 export function PrimitivesSection() {
     const [plan, setPlan] = useState("scale");
     const [autopilot, setAutopilot] = useState(true);
@@ -121,6 +154,14 @@ export function PrimitivesSection() {
     const [showCosts, setShowCosts] = useState(true);
     const [sort, setSort] = useState("recent");
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [unattended, setUnattended] = useState<CheckedState>(true);
+    const [channels, setChannels] = useState<string[]>(["email"]);
+    const [profile, setProfile] = useState("ruthless");
+    const [provider, setProvider] = useState("anthropic");
+    const [runtime, setRuntime] = useState("node");
+
+    const allChannels = channels.length === CHANNELS.length;
+    const someChannels = channels.length > 0 && !allChannels;
 
     return (
         <TooltipProvider>
@@ -229,9 +270,21 @@ export function PrimitivesSection() {
 
             <Spec
                 name="Select"
-                note="both trigger sizes; opens, filters and reports the picked value."
+                note="three trigger heights that match Button; a grouped list with a label, a separator and a disabled row."
             >
                 <Row className="items-end gap-6">
+                    <Cell label='size="sm"'>
+                        <Select value={sort} onValueChange={setSort}>
+                            <SelectTrigger size="sm" className="w-44">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="recent">Most recent</SelectItem>
+                                <SelectItem value="mrr">Highest MRR</SelectItem>
+                                <SelectItem value="risk">Most at risk</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Cell>
                     <Cell label='size="default"'>
                         <Select value={plan} onValueChange={setPlan}>
                             <SelectTrigger className="w-56">
@@ -254,23 +307,213 @@ export function PrimitivesSection() {
                             </SelectContent>
                         </Select>
                     </Cell>
-                    <Cell label='size="sm"'>
-                        <Select value={sort} onValueChange={setSort}>
-                            <SelectTrigger size="sm" className="w-44">
+                    <Cell label='size="lg"'>
+                        <Select value={runtime} onValueChange={setRuntime}>
+                            <SelectTrigger size="lg" className="w-52">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="recent">Most recent</SelectItem>
-                                <SelectItem value="mrr">Highest MRR</SelectItem>
-                                <SelectItem value="risk">Most at risk</SelectItem>
+                                <SelectItem value="node">Node 22</SelectItem>
+                                <SelectItem value="bun">Bun 1.2</SelectItem>
+                                <SelectItem value="deno">Deno 2</SelectItem>
                             </SelectContent>
                         </Select>
                     </Cell>
-                    <Note>
-                        picked: <span className="font-mono">{plan}</span> ·{" "}
-                        <span className="font-mono">{sort}</span>
-                    </Note>
+                    <Cell label="disabled">
+                        <Select value="solo" disabled>
+                            <SelectTrigger className="w-40">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="solo">Solo</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Cell>
                 </Row>
+                <Row className="mt-6 items-end gap-6">
+                    <Cell label="description={…}">
+                        <Select value={profile} onValueChange={setProfile}>
+                            <SelectTrigger className="w-60">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="max-w-[22rem]">
+                                {PROFILES.map((p) => (
+                                    <SelectItem key={p.id} value={p.id} description={p.description}>
+                                        {p.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </Cell>
+                    <Cell label="icon={…}">
+                        <Select value={provider} onValueChange={setProvider}>
+                            <SelectTrigger className="w-56">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="anthropic" icon={<Sparkles />}>
+                                    Claude
+                                </SelectItem>
+                                <SelectItem value="openrouter" icon={<Bot />}>
+                                    OpenRouter
+                                </SelectItem>
+                                <SelectItem
+                                    value="local"
+                                    icon={<ShieldCheck />}
+                                    description="Never leaves the machine."
+                                >
+                                    Local (Ollama)
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Cell>
+                    <Cell label="icon + description">
+                        <Select value={cadence} onValueChange={setCadence}>
+                            <SelectTrigger className="w-60">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="max-w-[22rem]">
+                                <SelectItem
+                                    value="daily"
+                                    icon={<Gauge />}
+                                    description="One mail a day, every day."
+                                >
+                                    Daily burn
+                                </SelectItem>
+                                <SelectItem
+                                    value="weekly"
+                                    icon={<Rocket />}
+                                    description="Monday morning, everything at once."
+                                >
+                                    Weekly digest
+                                </SelectItem>
+                                <SelectItem
+                                    value="never"
+                                    icon={<Settings2 />}
+                                    description="You will have to come looking."
+                                    disabled
+                                >
+                                    Never (locked)
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </Cell>
+                </Row>
+                <Note>
+                    picked: <span className="font-mono">{plan}</span> ·{" "}
+                    <span className="font-mono">{sort}</span> ·{" "}
+                    <span className="font-mono">{runtime}</span> ·{" "}
+                    <span className="font-mono">{profile}</span> ·{" "}
+                    <span className="font-mono">{provider}</span> ·{" "}
+                    <span className="font-mono">{cadence}</span>. `icon` and `description` are drawn
+                    outside ItemText on purpose - the trigger keeps showing the label alone.
+                </Note>
+            </Spec>
+
+            <Spec
+                name="Checkbox"
+                note="two sizes over every state. The tick is drawn rather than swapped in, and motion-reduce stills it."
+            >
+                <Row className="gap-8">
+                    <Cell label='size="default"'>
+                        <Row className="gap-4">
+                            <Checkbox aria-label="Unchecked" />
+                            <Checkbox defaultChecked aria-label="Checked" />
+                            <Checkbox checked="indeterminate" aria-label="Indeterminate" />
+                        </Row>
+                    </Cell>
+                    <Cell label='size="sm"'>
+                        <Row className="gap-4">
+                            <Checkbox size="sm" aria-label="Unchecked, small" />
+                            <Checkbox size="sm" defaultChecked aria-label="Checked, small" />
+                            <Checkbox
+                                size="sm"
+                                checked="indeterminate"
+                                aria-label="Indeterminate, small"
+                            />
+                        </Row>
+                    </Cell>
+                    <Cell label="disabled">
+                        <Row className="gap-4">
+                            <Checkbox disabled aria-label="Disabled" />
+                            <Checkbox disabled defaultChecked aria-label="Disabled, checked" />
+                        </Row>
+                    </Cell>
+                    <Cell label="aria-invalid">
+                        <Row className="gap-4">
+                            <Checkbox aria-invalid aria-label="Invalid" />
+                            <Checkbox aria-invalid defaultChecked aria-label="Invalid, checked" />
+                        </Row>
+                    </Cell>
+                </Row>
+            </Spec>
+
+            <Spec
+                name="CheckboxField"
+                note="checkbox + label + optional description as one hit target - the whole row toggles, and a column of them lines up."
+            >
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <div className="grid gap-4">
+                        <CheckboxField
+                            label="Run unattended"
+                            description="The agent ships slices without stopping for approval, up to the budget cap."
+                            checked={unattended}
+                            onCheckedChange={setUnattended}
+                        />
+                        <CheckboxField
+                            size="sm"
+                            label="Include costs in the digest"
+                            description='size="sm", for dense rows.'
+                            defaultChecked
+                        />
+                        <CheckboxField
+                            label="Sell to enterprises"
+                            description="Locked until the company has a signed DPA."
+                            disabled
+                            defaultChecked
+                        />
+                        <CheckboxField
+                            label="I accept the guardrails"
+                            description="Required before the first real-money run."
+                            aria-invalid
+                        />
+                    </div>
+
+                    <div>
+                        <CheckboxField
+                            label="All channels"
+                            description="A parent row reports indeterminate while the list is split."
+                            checked={allChannels ? true : someChannels ? "indeterminate" : false}
+                            onCheckedChange={(v) =>
+                                setChannels(v === true ? CHANNELS.map((c) => c.id) : [])
+                            }
+                        />
+                        <div className="mt-3 grid gap-3 border-l border-border-soft pl-4">
+                            {CHANNELS.map((c) => (
+                                <CheckboxField
+                                    key={c.id}
+                                    size="sm"
+                                    label={c.label}
+                                    description={c.description}
+                                    checked={channels.includes(c.id)}
+                                    onCheckedChange={(v) =>
+                                        setChannels((prev) =>
+                                            v === true
+                                                ? [...prev, c.id]
+                                                : prev.filter((id) => id !== c.id),
+                                        )
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <div className="mt-3">
+                            <Note>
+                                on:{" "}
+                                <span className="font-mono">{channels.join(" · ") || "none"}</span>
+                            </Note>
+                        </div>
+                    </div>
+                </div>
             </Spec>
 
             <Spec
@@ -524,8 +767,12 @@ export function PrimitivesSection() {
                 <Api
                     items={[
                         {
-                            name: "buttonVariants · badgeVariants · tabsListVariants",
+                            name: "buttonVariants · badgeVariants · tabsListVariants · checkboxVariants · selectTriggerVariants",
                             note: "the cva functions. Need a new look? Add a variant here - never restyle inline, never fork the file (DESIGN.md rule 2).",
+                        },
+                        {
+                            name: "CheckedState",
+                            note: "radix's checkbox value: true | false | \"indeterminate\". Type a parent row's state with it.",
                         },
                         {
                             name: "DialogPortal · DialogOverlay",

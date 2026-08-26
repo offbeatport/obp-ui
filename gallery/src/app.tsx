@@ -40,7 +40,7 @@ const SECTIONS: SectionDef[] = [
         id: "primitives",
         label: "Primitives",
         title: "Primitives",
-        blurb: "The 16 shadcn primitives, re-themed with paperkit tokens. Every variant and every size the cva declares.",
+        blurb: "The 17 shadcn primitives, re-themed with paperkit tokens. Every variant and every size the cva declares.",
         Body: PrimitivesSection,
     },
     {
