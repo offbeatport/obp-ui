@@ -43,7 +43,9 @@ export function EmptyStateCard({
             )}
         >
             <div className="text-sm font-[650] text-foreground">{title}</div>
-            {description !== undefined && <p className="m-2 text-sm leading-[1.45] text-faint">{description}</p>}
+            {description !== undefined && (
+                <p className="m-2 text-sm leading-[1.45] text-faint">{description}</p>
+            )}
             {actionLabel !== undefined &&
                 (actionHref ? (
                     <Link href={actionHref} className={ACTION}>

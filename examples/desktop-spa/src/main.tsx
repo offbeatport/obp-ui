@@ -106,8 +106,8 @@ function Probe() {
                         </div>
                         <h1 className="font-display text-4xl font-light">Same kit, no router</h1>
                         <p className="mt-2 max-w-xl font-serif text-[17px] italic text-muted-foreground">
-                            Rendered by a plain Vite SPA - no SSR, no server functions, no TanStack Router. Every part
-                            below comes from @paperkit/ui.
+                            Rendered by a plain Vite SPA - no SSR, no server functions, no TanStack
+                            Router. Every part below comes from @paperkit/ui.
                         </p>
 
                         <TabNav
@@ -172,10 +172,17 @@ function Probe() {
                                             ["var(--info)", "Building checkout", "now"],
                                             ["var(--neutral)", "Pricing page", "queued"],
                                         ].map(([dot, title, meta]) => (
-                                            <TimelineItem key={title} dot={<TimelineDot color={dot} />}>
+                                            <TimelineItem
+                                                key={title}
+                                                dot={<TimelineDot color={dot} />}
+                                            >
                                                 <div className="min-w-0">
-                                                    <div className="text-sm font-semibold">{title}</div>
-                                                    <div className="font-mono text-[11px] text-faint">{meta}</div>
+                                                    <div className="text-sm font-semibold">
+                                                        {title}
+                                                    </div>
+                                                    <div className="font-mono text-[11px] text-faint">
+                                                        {meta}
+                                                    </div>
                                                 </div>
                                             </TimelineItem>
                                         ))}
@@ -186,10 +193,19 @@ function Probe() {
 
                         <div className="mt-8 h-[320px]">
                             <ChatPanel
-                                composer={<ChatComposer placeholder="Message the company..." onSend={async () => {}} />}
+                                composer={
+                                    <ChatComposer
+                                        placeholder="Message the company..."
+                                        onSend={async () => {}}
+                                    />
+                                }
                             >
                                 {/* biome-ignore lint/a11y/useValidAriaRole: ChatBubble's own speaker prop, not the ARIA attribute - it is consumed, never spread onto a DOM node */}
-                                <ChatBubble role="user" text="Make the onboarding shorter." timestamp="2m" />
+                                <ChatBubble
+                                    role="user"
+                                    text="Make the onboarding shorter."
+                                    timestamp="2m"
+                                />
                                 {/* biome-ignore lint/a11y/useValidAriaRole: as above */}
                                 <ChatBubble
                                     role="assistant"

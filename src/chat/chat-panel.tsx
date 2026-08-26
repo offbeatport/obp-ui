@@ -72,13 +72,17 @@ export function ChatPanel({
     }
 
     return (
-        <aside className={cn("flex min-h-0 flex-col border-r bg-secondary/40 lg:h-full", className)}>
+        <aside
+            className={cn("flex min-h-0 flex-col border-r bg-secondary/40 lg:h-full", className)}
+        >
             {header}
             <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
                 {isEmpty && empty !== undefined ? (
                     empty
                 ) : (
-                    <div className={cn("flex flex-col gap-4 px-1.5 pt-2 pb-2.5", bodyClassName)}>{children}</div>
+                    <div className={cn("flex flex-col gap-4 px-1.5 pt-2 pb-2.5", bodyClassName)}>
+                        {children}
+                    </div>
                 )}
             </div>
             {composer}
@@ -97,16 +101,28 @@ export type ChatPanelHeaderProps = {
     className?: string;
 };
 
-export function ChatPanelHeader({ avatar, title, badge, subtitle, className }: ChatPanelHeaderProps) {
+export function ChatPanelHeader({
+    avatar,
+    title,
+    badge,
+    subtitle,
+    className,
+}: ChatPanelHeaderProps) {
     return (
         <div className={cn("flex items-start gap-3 px-[18px] py-[15px]", className)}>
             {avatar}
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2.5">
-                    <span className="truncate font-display text-lg font-semibold tracking-[-0.01em]">{title}</span>
+                    <span className="truncate font-display text-lg font-semibold tracking-[-0.01em]">
+                        {title}
+                    </span>
                     {badge}
                 </div>
-                {subtitle && <p className="mt-1 truncate text-sm leading-[1.45] text-muted-foreground">{subtitle}</p>}
+                {subtitle && (
+                    <p className="mt-1 truncate text-sm leading-[1.45] text-muted-foreground">
+                        {subtitle}
+                    </p>
+                )}
             </div>
         </div>
     );
@@ -122,7 +138,12 @@ export type ChatEmptyStateProps = {
 
 export function ChatEmptyState({ avatar, title, description, className }: ChatEmptyStateProps) {
     return (
-        <div className={cn("flex h-full flex-col items-center justify-center px-6 text-center", className)}>
+        <div
+            className={cn(
+                "flex h-full flex-col items-center justify-center px-6 text-center",
+                className,
+            )}
+        >
             {avatar}
             <p className="mt-3 text-sm font-medium">{title}</p>
             {description !== undefined && <p className="mt-1 text-sm text-faint">{description}</p>}

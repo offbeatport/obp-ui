@@ -6,6 +6,8 @@ TanStack Start web app (`apps/web`) and the Tauri v2 desktop app render from the
 
 - **The law:** [`DESIGN.md`](./DESIGN.md) - tokens only, compose don't fork, both themes work.
   Read it before adding UI.
+- **The gallery:** `pnpm ui` - every export in one page, no app required. See
+  [The gallery](#the-gallery).
 - **The showcase:** the `/design` route lives in the web app (`apps/web/src/routes/design.tsx`).
 - **No app in here.** No router, no server functions, no database, no cslopslop domain data - see
   [What is NOT in here](#what-is-not-in-here).
@@ -18,7 +20,34 @@ src/
   nav/        UIProvider · Link · TabNav · SegmentedTabs
   lib/        cn · theme · storage · prepaint · dom-class-pref · client-only
   markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · provider-logos.tsx
+gallery/      the kitchen sink (`pnpm ui`) - a small Vite app, one page, every export
 ```
+
+---
+
+## The gallery
+
+```bash
+pnpm ui                       # from the repo root - or from packages/ui
+```
+
+A small Vite + React app in [`gallery/`](./gallery) that serves **one page on
+http://localhost:5180** showing every component in the public barrel: the tokens themselves
+(surfaces, brand, the full status language with its `-soft` fills, radius, elevation, type), the
+16 primitives with every variant *and* every size, brand marks, the status atoms, the data-display
+surfaces, the nav seam, all ten `nav-ui` tab treatments, both chat surfaces, the agent console,
+the shell (inside a fixed frame, so it makes sense on a page that is not an app), and the
+`@paperkit/ui/canvas` boards behind the optional `@xyflow/react` peer.
+
+Kitchen sink, not Storybook: no extra tooling, no stories to keep in sync. The interactive
+components are really wired (dialogs open, selects select, the composer sends, the boards pan), and
+the header's `<ThemeToggle />` flips light ↔ dark - both must look right, that is rule 4 in
+[`DESIGN.md`](./DESIGN.md).
+
+Two things worth copying from it: `gallery/src/app.css` is the exact app-entry stylesheet described
+below, and the sections import the kit **by name** (`@paperkit/ui`, `@paperkit/ui/canvas`) through
+the package's own `exports` map, so every demo is also a usage example. If a component is exported
+and not on that page, the gallery is wrong - add it.
 
 ---
 
