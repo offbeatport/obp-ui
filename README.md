@@ -1,6 +1,6 @@
 # @paperkit/ui
 
-The editorial **"paper"** design system: design tokens, 16 shadcn primitives, the shared shell
+The editorial **"paper"** design system: design tokens, 17 shadcn primitives, the shared shell
 pieces, self-hosted fonts, and a router-agnostic nav seam. One package, two hosts - the
 TanStack Start web app (`apps/web`) and the Tauri v2 desktop app render from the same bytes.
 
@@ -34,7 +34,7 @@ pnpm ui                       # from the repo root - or from packages/ui
 A small Vite + React app in [`gallery/`](./gallery) that serves **one page on
 http://localhost:5180** showing every component in the public barrel: the tokens themselves
 (surfaces, brand, the full status language with its `-soft` fills, radius, elevation, type), the
-16 primitives with every variant *and* every size, brand marks, the status atoms, the data-display
+17 primitives with every variant *and* every size, brand marks, the status atoms, the data-display
 surfaces, the nav seam, all ten `nav-ui` tab treatments, both chat surfaces, the agent console,
 the shell (inside a fixed frame, so it makes sense on a page that is not an app), and the
 `@paperkit/ui/canvas` boards behind the optional `@xyflow/react` peer.
