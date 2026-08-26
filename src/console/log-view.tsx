@@ -35,7 +35,15 @@ export type LogViewProps = {
     className?: string;
 };
 
-export function LogView({ lines, variant = "console", empty, footer, formatTime, ref, className }: LogViewProps) {
+export function LogView({
+    lines,
+    variant = "console",
+    empty,
+    footer,
+    formatTime,
+    ref,
+    className,
+}: LogViewProps) {
     const body = (
         <>
             {lines.length

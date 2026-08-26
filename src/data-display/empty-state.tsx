@@ -82,8 +82,12 @@ export function EmptyState({
     const body = (
         <>
             {Icon && <Icon className={ICON[variant]} />}
-            {title !== undefined && <Title className={cn(TITLE[variant], titleClassName)}>{title}</Title>}
-            {children !== undefined && <p className={cn(BODY[variant], bodyClassName)}>{children}</p>}
+            {title !== undefined && (
+                <Title className={cn(TITLE[variant], titleClassName)}>{title}</Title>
+            )}
+            {children !== undefined && (
+                <p className={cn(BODY[variant], bodyClassName)}>{children}</p>
+            )}
             {action}
         </>
     );
