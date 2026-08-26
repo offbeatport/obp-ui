@@ -18,7 +18,7 @@ import { LogLine, type LogLineData, type LogVariant } from "./log-line";
 
 const VIEW: Record<LogVariant, string> = {
     console: "min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3 font-mono text-[11px] leading-[1.65]",
-    run: "gap-0 overflow-y-auto rounded-xl border bg-secondary p-3 font-mono text-xs leading-relaxed",
+    run: "gap-0 overflow-y-auto rounded-xl border bg-secondary p-3 font-mono text-sm leading-relaxed",
 };
 
 export type LogViewProps = {
@@ -35,15 +35,7 @@ export type LogViewProps = {
     className?: string;
 };
 
-export function LogView({
-    lines,
-    variant = "console",
-    empty,
-    footer,
-    formatTime,
-    ref,
-    className,
-}: LogViewProps) {
+export function LogView({ lines, variant = "console", empty, footer, formatTime, ref, className }: LogViewProps) {
     const body = (
         <>
             {lines.length

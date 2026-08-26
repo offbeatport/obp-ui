@@ -8,15 +8,11 @@ function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrim
     return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
-function DropdownMenuPortal({
-    ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
+function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
     return <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
-function DropdownMenuTrigger({
-    ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
+function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
     return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
@@ -93,9 +89,7 @@ function DropdownMenuCheckboxItem({
     );
 }
 
-function DropdownMenuRadioGroup({
-    ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) {
+function DropdownMenuRadioGroup({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) {
     return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
 
@@ -140,10 +134,7 @@ function DropdownMenuLabel({
     );
 }
 
-function DropdownMenuSeparator({
-    className,
-    ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
     return (
         <DropdownMenuPrimitive.Separator
             data-slot="dropdown-menu-separator"
@@ -157,7 +148,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"spa
     return (
         <span
             data-slot="dropdown-menu-shortcut"
-            className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
+            className={cn("ml-auto text-sm tracking-widest text-muted-foreground", className)}
             {...props}
         />
     );
