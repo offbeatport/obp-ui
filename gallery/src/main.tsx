@@ -1,4 +1,4 @@
-import { initPalette, initTheme } from "@paperkit/ui";
+import { initPalette, initTheme } from "obp-ui";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app";

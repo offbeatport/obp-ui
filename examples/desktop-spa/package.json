@@ -1,11 +1,11 @@
 {
-    "name": "@paperkit/example-desktop-spa",
+    "name": "obp-ui-example-desktop-spa",
     "private": true,
     "version": "0.0.0",
     "type": "module",
     "scripts": { "build": "vite build", "preview": "vite preview", "typecheck": "tsc --noEmit" },
     "dependencies": {
-        "@paperkit/ui": "workspace:*",
+        "obp-ui": "workspace:*",
         "@xyflow/react": "^12.11.2",
         "lucide-react": "^0.474.0",
         "react": "^19.0.0",

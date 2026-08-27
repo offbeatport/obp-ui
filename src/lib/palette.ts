@@ -572,7 +572,7 @@ export type ThemePaletteController = {
     initPalette(): () => void;
 };
 
-const EVENT = "paperkit:palettechange";
+const EVENT = "obp:palettechange";
 
 export function createThemePalette(opts: { namespace?: string } = {}): ThemePaletteController {
     const ns = opts.namespace ?? DEFAULT_NAMESPACE;

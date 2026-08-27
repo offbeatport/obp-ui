@@ -1,4 +1,4 @@
-import { LogoMark, PalettePicker, ThemeToggle, UIProvider, cn } from "@paperkit/ui";
+import { LogoMark, PalettePicker, ThemeToggle, UIProvider, cn } from "obp-ui";
 import { type ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { Section } from "./kit";
 import { BrandSection } from "./sections/brand";
@@ -15,7 +15,7 @@ import { StatusSection } from "./sections/status";
 import { TokensSection } from "./sections/tokens";
 import { UtilitiesSection } from "./sections/utilities";
 
-// The kitchen sink: every family in @paperkit/ui's public barrel, stacked in one page.
+// The kitchen sink: every family in obp-ui's public barrel, stacked in one page.
 //
 // The whole tree is wrapped in <UIProvider> with NO Link supplied, so nav components degrade
 // to plain <a href> and the gallery needs no router. That degradation is a documented part of
@@ -48,7 +48,7 @@ const SECTIONS: SectionDef[] = [
         id: "primitives",
         label: "Primitives",
         title: "Primitives",
-        blurb: "Eighteen shadcn primitives re-themed with paperkit tokens, plus the colour picker shadcn does not ship. Every variant and every size the cva declares.",
+        blurb: "Eighteen shadcn primitives re-themed with obp-ui tokens, plus the colour picker shadcn does not ship. Every variant and every size the cva declares.",
         Body: PrimitivesSection,
     },
     {
@@ -111,7 +111,7 @@ const SECTIONS: SectionDef[] = [
         id: "canvas",
         label: "Canvas",
         title: "Canvas",
-        blurb: "The separate @paperkit/ui/canvas entry, behind the optional @xyflow/react peer: the board, the card vocabulary, the flavors and the ten layouts.",
+        blurb: "The separate obp-ui/canvas entry, behind the optional @xyflow/react peer: the board, the card vocabulary, the flavors and the ten layouts.",
         Body: CanvasSection,
     },
     {
@@ -202,7 +202,7 @@ export function App() {
                     <div className="flex items-center gap-2.5 px-5 pb-4 pt-6">
                         <LogoMark />
                         <span className="font-display text-lg font-semibold tracking-tight">
-                            paperkit
+                            obp-ui
                         </span>
                     </div>
                     <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-6">
@@ -254,7 +254,7 @@ export function App() {
                     <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
                         <div className="mx-auto flex max-w-6xl items-center gap-4 px-8 py-4">
                             <h1 className="font-display text-xl font-light tracking-tight">
-                                @paperkit/ui
+                                obp-ui
                             </h1>
                             <p className="hidden text-sm text-muted-foreground md:block">
                                 every export, in both themes

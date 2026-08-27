@@ -17,7 +17,7 @@ import {
     TypingIndicator,
     cn,
     useEntranceStagger,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 

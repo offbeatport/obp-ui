@@ -1,15 +1,14 @@
-# @paperkit/ui
+# obp-ui
 
-The editorial **"paper"** design system: design tokens, 19 primitives, the shared shell
-pieces, self-hosted fonts, and a router-agnostic nav seam. One package, two hosts - the
-TanStack Start web app (`apps/web`) and the Tauri v2 desktop app render from the same bytes.
+The Offbeatport design system: design tokens, ten palettes, 19 primitives, the shared shell
+pieces, self-hosted fonts, and a router-agnostic nav seam. One package, every app - a TanStack
+Start web app, a Tauri v2 desktop app and a Next app all render from the same bytes.
 
 - **The law:** [`DESIGN.md`](./DESIGN.md) - tokens only, compose don't fork, both themes work.
   Read it before adding UI.
 - **The gallery:** `pnpm ui` - every export in one page, no app required. See
   [The gallery](#the-gallery).
-- **The showcase:** the `/design` route lives in the web app (`apps/web/src/routes/design.tsx`).
-- **No app in here.** No router, no server functions, no database, no cslopslop domain data - see
+- **No app in here.** No router, no server functions, no database, no product domain data - see
   [What is NOT in here](#what-is-not-in-here).
 
 ```
@@ -28,7 +27,7 @@ gallery/      the kitchen sink (`pnpm ui`) - a small Vite app, one page, every e
 ## The gallery
 
 ```bash
-pnpm ui                       # from the repo root - or from packages/ui
+pnpm install && pnpm ui       # from the repo root
 ```
 
 A small Vite + React app in [`gallery/`](./gallery) that serves **one page on
@@ -37,7 +36,7 @@ http://localhost:5180** showing every component in the public barrel: the tokens
 19 primitives with every variant *and* every size, brand marks, the status atoms, the data-display
 surfaces, the nav seam, all ten `nav-ui` tab treatments, both chat surfaces, the agent console,
 the shell (inside a fixed frame, so it makes sense on a page that is not an app), and the
-`@paperkit/ui/canvas` boards behind the optional `@xyflow/react` peer.
+`obp-ui/canvas` boards behind the optional `@xyflow/react` peer.
 
 Kitchen sink, not Storybook: no extra tooling, no stories to keep in sync. The interactive
 components are really wired (dialogs open, selects select, the composer sends, the boards pan), and
@@ -45,7 +44,7 @@ the header's `<ThemeToggle />` flips light ↔ dark - both must look right, that
 [`DESIGN.md`](./DESIGN.md).
 
 Two things worth copying from it: `gallery/src/app.css` is the exact app-entry stylesheet described
-below, and the sections import the kit **by name** (`@paperkit/ui`, `@paperkit/ui/canvas`) through
+below, and the sections import the kit **by name** (`obp-ui`, `obp-ui/canvas`) through
 the package's own `exports` map, so every demo is also a usage example. If a component is exported
 and not on that page, the gallery is wrong - add it.
 
@@ -53,19 +52,14 @@ and not on that page, the gallery is wrong - add it.
 
 ## Install
 
-### A new app inside this monorepo
-
-`pnpm-workspace.yaml` already globs `apps/*` and `packages/*`, so a workspace protocol dependency
-is all it takes:
+The library **is** the root package of this repo. That is deliberate: it lets a consumer name the
+repo directly, with no subdirectory fragment.
 
 ```jsonc
-// apps/desktop/package.json
+// any app's package.json
 {
-  "name": "@cslopslop/desktop",
-  "private": true,
-  "type": "module",
   "dependencies": {
-    "@paperkit/ui": "workspace:*",
+    "obp-ui": "git+ssh://git@github.com/offbeatport/obp-ui.git#main",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -78,49 +72,36 @@ is all it takes:
 }
 ```
 
-```bash
-pnpm install                       # from the repo root
-```
+Pin a tag instead of `main` (`#v0.2.0`) once you have more than one consumer and want them to
+move independently. pnpm records the resolved commit SHA in the lockfile either way, so an app
+never drifts on its own - it moves when you run `pnpm update obp-ui`.
 
-`react`, `react-dom` and `tailwindcss` are **peer** dependencies - the app owns those versions, so
+`react`, `react-dom` and `tailwindcss` are **peer** dependencies: the app owns those versions, so
 there is exactly one React and one Tailwind in the tree. `@xyflow/react` is an optional peer; only
-install it if you import `@paperkit/ui/canvas`.
+install it if you import `obp-ui/canvas`.
 
-### An app in a separate repo
-
-The package is `private: true` and is not published. Consume it from a checkout or straight from
-git:
-
-```jsonc
-// package.json
-{
-  "dependencies": {
-    // a sibling checkout
-    "@paperkit/ui": "file:../cslopslop/packages/ui",
-    // …or the subdirectory of the git repo
-    "@paperkit/ui": "git+ssh://git@github.com/<org>/cslopslop.git#main&path:/packages/ui"
-  }
-}
-```
-
-**The git form is exact.** `path:` is only honoured as the second half of a `<ref>&path:/<dir>`
-fragment, and the directory needs its leading slash. Get it wrong and pnpm does not complain - it
-drops the parameter and installs **the package at the repo root, from the default branch**, under
-whatever name that package.json carries. Verified against this repo: `#path:/packages/ui` with no
-ref silently installed a completely different package and reported success.
-
-Three things that bite in a separate repo:
+### Four things that bite
 
 1. **It ships TypeScript source, not a build.** `exports` point at `./src/index.ts`, so the
-   consumer's bundler compiles it. With Vite that is automatic for a symlinked (`workspace:`/
-   `file:`) dependency; for a git dependency it lands as a real directory in `node_modules` and
-   gets dep-pre-bundled, so exclude it: `optimizeDeps: { exclude: ["@paperkit/ui"] }`.
+   consumer's bundler compiles it. As a git dependency it lands as a real directory in
+   `node_modules` and gets dep-pre-bundled, so exclude it: `optimizeDeps: { exclude: ["obp-ui"] }`.
 2. **`moduleResolution` must be `"Bundler"`** (or `"NodeNext"`) in the consumer's `tsconfig.json`,
-   otherwise TypeScript ignores the `exports` map and cannot find `@paperkit/ui/canvas`.
-3. **Deduplicate React** - two copies is the classic "invalid hook call". See the Vite config in the
-   Tauri checklist.
+   otherwise TypeScript ignores the `exports` map and cannot find `obp-ui/canvas`.
+3. **Deduplicate React** - two copies is the classic "invalid hook call". See the Vite config in
+   the Tauri checklist.
+4. **Private repo, so builds need credentials.** Locally your SSH agent covers it. In CI or
+   Coolify the build container does not inherit the credential that cloned the app repo - add a
+   deploy key or PAT as a build secret and teach git to use it:
+   `git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com/".insteadOf "git@github.com:"`.
 
----
+### Working on the kit and an app at the same time
+
+A git dependency is a snapshot, so a local edit to this repo will not show up in an app. For the
+tight loop, override the dependency to your checkout and remember to drop it before committing:
+
+```bash
+pnpm --filter <app> add obp-ui@link:../../obp-ui   # or a pnpm.overrides entry
+```
 
 ## The app stylesheet entry
 
@@ -130,10 +111,10 @@ file:
 ```css
 @import "tailwindcss" source(none);
 
-@import "@paperkit/ui/fonts.css";
-@import "@paperkit/ui/styles.css";
-@import "@paperkit/ui/canvas.css";     /* only if the app ships the canvas */
-@import "@paperkit/ui/desktop.css";    /* desktop only */
+@import "obp-ui/fonts.css";
+@import "obp-ui/styles.css";
+@import "obp-ui/canvas.css";     /* only if the app ships the canvas */
+@import "obp-ui/desktop.css";    /* desktop only */
 
 @source "../**/*.{ts,tsx}";
 @source "<relative path to packages/ui/src>";
@@ -150,7 +131,7 @@ Three traps, all of which have cost us time:
   class set exactly the `@source` lines below it - which is the only way "the desktop app looks
   identical" is a fact rather than a hope.
 - **Never write `@source not …` in an app.** Source negations are global: a single `@source not`
-  anywhere switches off the automatic source detection that `@paperkit/ui`'s own `@source "../"`
+  anywhere switches off the automatic source detection that `obp-ui`'s own `@source "../"`
   relies on, and the package's classes silently vanish from the output. Nothing errors; buttons
   just lose their padding.
 - **A `**` glob inside a CSS comment ends the comment early.** The `*/` in the middle of
@@ -174,7 +155,7 @@ what is active without the package ever importing a router.
 
 ```tsx
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { UIProvider } from "@paperkit/ui";
+import { UIProvider } from "obp-ui";
 
 function Providers({ children }: { children: React.ReactNode }) {
     const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -198,7 +179,7 @@ function Providers({ children }: { children: React.ReactNode }) {
 "current screen":
 
 ```tsx
-import { UIProvider } from "@paperkit/ui";
+import { UIProvider } from "obp-ui";
 
 const [screen, setScreen] = useState("/");
 
@@ -243,7 +224,7 @@ the same origin should namespace its own controller: `createTheme({ namespace: "
 Redefine the token *values* after importing the package stylesheet:
 
 ```css
-@import "@paperkit/ui/styles.css";
+@import "obp-ui/styles.css";
 
 /* This company is cool, tighter and violet-branded. */
 :root {
@@ -281,7 +262,7 @@ rewrites exactly this block.
 
 ## Fonts
 
-`@paperkit/ui/fonts.css` self-hosts all four families - no CDN, because the desktop app has to work
+`obp-ui/fonts.css` self-hosts all four families - no CDN, because the desktop app has to work
 offline and Tauri's CSP blocks `fonts.googleapis.com` by default:
 
 | token | family | package |
@@ -319,7 +300,7 @@ which means it cannot be a React effect and cannot import anything - it is a str
 ### TanStack Start
 
 ```tsx
-import { prePaintScript } from "@paperkit/ui";
+import { prePaintScript } from "obp-ui";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -527,7 +508,7 @@ If the CLI complains that it cannot find an import alias, add
 `"paths": { "@/*": ["./src/*"] }` to `packages/ui/tsconfig.json` - it is only used to resolve the
 write target, and step 1 removes the aliases again.
 
-`apps/web/components.json` now points its `ui` and `utils` aliases at `@paperkit/ui`, so running
+`apps/web/components.json` now points its `ui` and `utils` aliases at `obp-ui`, so running
 the CLI from the app writes imports that resolve to the package instead of quietly re-creating
 `apps/web/src/components/ui`. That directory is gone and should stay gone.
 

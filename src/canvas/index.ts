@@ -1,11 +1,11 @@
-// @paperkit/ui/canvas - the React Flow visual vocabulary.
+// obp-ui/canvas - the React Flow visual vocabulary.
 //
 // A separate entry point so apps that don't ship a board never pull @xyflow/react in
 // (it is an OPTIONAL peer). This is the only subtree in the package allowed to import it.
 //
 // The stylesheets are not JS - import them yourself, in this order:
 //   import "@xyflow/react/dist/base.css";   // un-themed React Flow primitives
-//   import "@paperkit/ui/canvas.css";       // the paper theming on top
+//   import "obp-ui/canvas.css";       // the paper theming on top
 //
 // What ships here: the board (locked interaction config, backdrop, controls, minimap),
 // the card vocabulary, the flavor skins, and the 10 layouts. What does NOT ship here:

@@ -21,7 +21,7 @@ import { cn } from "../lib/cn";
 // JS and this package can't import them for you:
 //
 //   import "@xyflow/react/dist/base.css";   // un-themed React Flow primitives
-//   import "@paperkit/ui/canvas.css";       // the paper theming on top
+//   import "obp-ui/canvas.css";       // the paper theming on top
 
 /**
  * Interaction is fully locked - the user can pan/zoom the infinite canvas but can NOT

@@ -13,7 +13,7 @@ import {
     UnderlineSlide,
     VerticalRail,
     withTabIcons,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Hammer, LayoutGrid, type LucideIcon, Rocket, Settings2, TrendingUp } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Note, Spec } from "../kit";

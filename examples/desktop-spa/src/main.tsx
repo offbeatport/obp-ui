@@ -36,7 +36,7 @@ import {
     WindowControls,
     WindowControlsProvider,
     createTheme,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Home, Inbox, LayoutGrid, Plus, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -70,7 +70,7 @@ function Probe() {
             <UIProvider pathname="/">
                 <AppShell
                     collapsed={collapsed}
-                    titleBar={<TitleBar title="paperkit probe" actions={<WindowControls />} />}
+                    titleBar={<TitleBar title="obp-ui probe" actions={<WindowControls />} />}
                     rail={
                         <Rail
                             brand={<LogoMark letter="P" />}
@@ -102,12 +102,12 @@ function Probe() {
                 >
                     <div className="mx-auto w-full max-w-4xl px-8 py-10">
                         <div className="mb-2 text-sm font-semibold uppercase tracking-[0.14em] text-faint">
-                            paperkit / desktop probe
+                            obp-ui / desktop probe
                         </div>
                         <h1 className="font-display text-4xl font-light">Same kit, no router</h1>
                         <p className="mt-2 max-w-xl font-serif text-[17px] italic text-muted-foreground">
                             Rendered by a plain Vite SPA - no SSR, no server functions, no TanStack
-                            Router. Every part below comes from @paperkit/ui.
+                            Router. Every part below comes from obp-ui.
                         </p>
 
                         <TabNav

@@ -1,5 +1,5 @@
 /* ============================================================================
-   Self-hosted type. Import this BEFORE @paperkit/ui/styles.css.
+   Self-hosted type. Import this BEFORE obp-ui/styles.css.
 
    The web app used to pull these four families off the Google Fonts CDN; a
    local-first desktop app can't (no network, and Tauri's CSP blocks the host),

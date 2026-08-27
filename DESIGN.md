@@ -1,6 +1,6 @@
 # Design system - read this before building or extending any UI
 
-cslopslop has **one** visual language, and it lives in this package (`@paperkit/ui`). Every screen
+cslopslop has **one** visual language, and it lives in this package (`obp-ui`). Every screen
 in the platform, the desktop app, and every app cslopslop builds for a company is composed from the
 same tokens + components. You do not invent styles; you compose the existing ones. This is what
 keeps feature #70 look like feature #1.
@@ -21,14 +21,14 @@ generous radius, soft shadows, light **and** dark. Grounded in
 
 - **Fonts:** `font-sans` = Inter (body) · `font-display` = Space Grotesk (headings, use `font-light`) ·
   `font-serif` = Spectral italic (theses / editorial voice) · `font-mono` = JetBrains Mono (numbers, ids, code).
-  The faces are self-hosted in this package (`@paperkit/ui/fonts.css`) - no CDN, because the desktop
+  The faces are self-hosted in this package (`obp-ui/fonts.css`) - no CDN, because the desktop
   app is offline.
 
 ## Hard rules
 1. **Tokens only - never hardcode a color, radius, or shadow.** Use Tailwind utilities backed by the
    token layer: `bg-background bg-card bg-primary text-muted-foreground border shadow-e1`, etc.
    No `#hex`, no `text-[#...]`, no raw `rgb()` in components.
-2. **Reuse `@paperkit/ui` - compose, don't fork.** Need a variant? Add it to the component's
+2. **Reuse `obp-ui` - compose, don't fork.** Need a variant? Add it to the component's
    `cva` variants (see how `src/primitives/badge.tsx` gained the status variants), don't restyle
    inline or copy the file. Nothing visual belongs in `apps/web/src/components/ui` - that directory
    does not exist any more, on purpose.

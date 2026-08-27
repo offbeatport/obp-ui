@@ -14,7 +14,7 @@ import { DEFAULT_NAMESPACE } from "./theme";
 
 /** Extra "<html> class remembered in storage" preferences to resolve before paint. */
 export type PrePaintClassPref = {
-    /** Storage key, e.g. "cslopslop-console-tab". */
+    /** Storage key, e.g. "obp-console-tab". */
     key: string;
     /** Class added to <html> when the stored value matches `whenValue`. */
     className: string;

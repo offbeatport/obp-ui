@@ -20,7 +20,7 @@ import {
     useRail,
     useRailCollapsed,
     useWindowControls,
-} from "@paperkit/ui";
+} from "obp-ui";
 import {
     Home,
     Inbox,
@@ -107,7 +107,7 @@ export function ShellSection() {
                                     <span className="flex items-center gap-2">
                                         <LogoMark />
                                         <span className="font-display text-lg font-semibold tracking-tight">
-                                            paperkit
+                                            obp-ui
                                         </span>
                                     </span>
                                 }

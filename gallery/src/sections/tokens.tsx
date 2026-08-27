@@ -1,4 +1,4 @@
-import { Badge, StatusDot } from "@paperkit/ui";
+import { Badge, StatusDot } from "obp-ui";
 import { Note, Row, Spec } from "../kit";
 
 // The token layer everything else is built from. Branding a product = overriding these

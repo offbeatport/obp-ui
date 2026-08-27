@@ -1,5 +1,5 @@
 /* ============================================================================
-   @paperkit/ui - the one stylesheet an app imports.
+   obp-ui - the one stylesheet an app imports.
 
    It deliberately does NOT import "tailwindcss" itself: the consuming app owns
    that, and importing it twice emits preflight twice. An app's entry stylesheet
@@ -12,9 +12,9 @@
    up stray classes from docs/prototypes the other app will not have.
 
    Optional entries, kept separate because they cost bytes not every app wants:
-     @paperkit/ui/fonts.css    self-hosted Inter / Space Grotesk / JetBrains Mono / Spectral
-     @paperkit/ui/canvas.css   React Flow theming (only if you ship the canvas)
-     @paperkit/ui/desktop.css  native-window affordances for the Tauri shell
+     obp-ui/fonts.css    self-hosted Inter / Space Grotesk / JetBrains Mono / Spectral
+     obp-ui/canvas.css   React Flow theming (only if you ship the canvas)
+     obp-ui/desktop.css  native-window affordances for the Tauri shell
    ========================================================================== */
 
 @import "tw-animate-css";

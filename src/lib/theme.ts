@@ -15,12 +15,18 @@ import { prefStorage } from "./storage";
 export type Theme = "light" | "dark"; // resolved / applied
 export type ThemePref = "light" | "dark" | "system"; // user preference
 
-/** Preference namespace used when a host doesn't pick one. */
-export const DEFAULT_NAMESPACE = "cslopslop";
+/**
+ * Preference namespace used when a host doesn't pick one.
+ *
+ * Every app SHOULD pass its own via createTheme({ namespace }) - two apps on the same origin
+ * (or a Tauri webview with a stale store) would otherwise fight over one key. This is only the
+ * fallback for a host that has not bothered.
+ */
+export const DEFAULT_NAMESPACE = "obp";
 
 export const themeKey = (ns: string = DEFAULT_NAMESPACE) => `${ns}-theme`;
 
-const EVENT = "paperkit:themechange";
+const EVENT = "obp:themechange";
 
 function systemPrefersDark(): boolean {
     return (
@@ -99,9 +105,8 @@ export function createTheme(opts: { namespace?: string } = {}): ThemeController 
 }
 
 /**
- * Default controller on the `cslopslop` namespace. Kept as the default so existing
- * users keep their stored preference - a new key would silently reset everyone to
- * "system". A desktop app should create its own with createTheme({ namespace }).
+ * Default controller on the shared `obp` namespace. An app with real users should create its
+ * own with createTheme({ namespace }) rather than share this one.
  */
 export const theme: ThemeController = createTheme();
 
