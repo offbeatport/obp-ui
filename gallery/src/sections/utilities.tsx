@@ -4,6 +4,13 @@ import {
     ConfirmDialog,
     DEFAULT_NAMESPACE,
     Markdown,
+    type ProviderId,
+    ProviderLogo,
+    RADIUS_STEPS,
+    SPACE_STEPS,
+    THEME_PALETTES,
+    THEME_PRESETS,
+    TYPE_PAIRINGS,
     type ThemePref,
     ThemeToggle,
     cn,
@@ -11,7 +18,9 @@ import {
     createTheme,
     getTheme,
     getThemePref,
+    getThemePresetId,
     onThemeChange,
+    onThemePresetChange,
     prePaintScript,
     prefStorage,
     setThemePref,
@@ -19,10 +28,21 @@ import {
     toggleTheme,
 } from "obp-ui";
 import { useEffect, useState } from "react";
-import { Api, Note, Row, Spec } from "../kit";
+import { Api, Cell, Note, Row, Spec } from "../kit";
 
 // The pieces with no chrome of their own: the markdown renderer chat replies go through, the
-// confirm wrapper, and the theme / storage / pre-paint plumbing every host wires up once.
+// confirm wrapper, the provider marks, and the theme / storage / pre-paint plumbing every host
+// wires up once.
+
+const PROVIDERS: ProviderId[] = [
+    "anthropic",
+    "openai",
+    "google",
+    "perplexity",
+    "xai",
+    "openrouter",
+    "zai",
+];
 
 const SAMPLE = `## What I found
 
@@ -87,6 +107,53 @@ function ThemeReadout() {
     );
 }
 
+/** The preset controller, read live - it must agree with the header picker at all times. */
+function PresetReadout() {
+    const [, bump] = useState(0);
+    useEffect(() => onThemePresetChange(() => bump((n) => n + 1)), []);
+    return (
+        <Api
+            items={[
+                {
+                    name: "<ThemePicker />",
+                    note: "the control itself, drawn ONCE - in this page's header. A second live picker on the page would be a second thing claiming to be the current theme. Its editor is also where all six presets are compared in both modes at once.",
+                },
+                {
+                    name: "getThemePresetId()",
+                    note: "the selected preset. Selecting the default removes the stored key.",
+                    value: getThemePresetId(),
+                },
+                {
+                    name: "initThemePreset()",
+                    note: "apply the stored preset and keep applying it across light/dark changes. Call once at boot, next to initTheme(). Returns a teardown.",
+                },
+                {
+                    name: "createThemePresets({ namespace })",
+                    note: "an independent controller for an app that must not share the default preference key.",
+                },
+                {
+                    name: "setThemePresetId / setCustomTheme / getCustomTheme",
+                    note: "select a preset, or persist the user's own four axes through the same storage seam. Applying the default REMOVES every managed property rather than restating it, so the authored theme cannot drift.",
+                },
+                {
+                    name: "themePresetStyle / themePresetSwatch",
+                    note: "a preset's tokens as an inline style object, and the four colours that identify it - what draws a theme that is not the active one.",
+                },
+                {
+                    name: "THEME_PRESETS · THEME_PALETTES",
+                    note: "the six bundles, and the ten colour palettes they draw from.",
+                    value: `${THEME_PRESETS.length} · ${THEME_PALETTES.length}`,
+                },
+                {
+                    name: "TYPE_PAIRINGS · RADIUS_STEPS · SPACE_STEPS",
+                    note: "the three non-colour axes. --spacing is the whole density axis: Tailwind v4 compiles every spacing utility as calc(var(--spacing) * N), so one value re-measures the kit.",
+                    value: `${TYPE_PAIRINGS.length} · ${RADIUS_STEPS.length} · ${SPACE_STEPS.length}`,
+                },
+            ]}
+        />
+    );
+}
+
 export function UtilitiesSection() {
     const [killed, setKilled] = useState(false);
 
@@ -115,6 +182,20 @@ export function UtilitiesSection() {
                     the gallery uses the default one, which is why the header toggle and these
                     buttons stay in sync. <code>initTheme()</code> runs once in{" "}
                     <code>main.tsx</code>.
+                </Note>
+            </Spec>
+
+            <Spec
+                name="ThemePicker · preset controller"
+                note="the four-axis theme - colour, type, radius, density - written as token values on <html> and nothing else. No component knows it exists."
+            >
+                <PresetReadout />
+                <Note>
+                    Theme configuration has no section of its own on this page: it is the{" "}
+                    <code>ThemePicker</code> in the header. A picker is only honest where it can
+                    re-skin the whole page, and the comparison that used to justify a section -
+                    every preset in light and dark, side by side - now sits inside that picker's
+                    editor, next to the controls that act on it.
                 </Note>
             </Spec>
 
@@ -201,6 +282,23 @@ export function UtilitiesSection() {
                         },
                     ]}
                 />
+            </Spec>
+
+            <Spec
+                name="ProviderLogo"
+                note="model-provider marks. Colour brands draw in their own colour; monochrome ones inherit currentColor."
+            >
+                <Row className="gap-8">
+                    {PROVIDERS.map((id) => (
+                        <Cell key={id} label={id}>
+                            <ProviderLogo id={id} className="size-7" />
+                        </Cell>
+                    ))}
+                </Row>
+                <Note>
+                    Someone else's marks, drawn to their own rules - the one place the kit is
+                    allowed a literal colour, because a provider's blue is not ours to tokenise.
+                </Note>
             </Spec>
         </>
     );

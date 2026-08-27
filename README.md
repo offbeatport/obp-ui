@@ -1,6 +1,7 @@
 # obp-ui
 
-The Offbeatport design system: design tokens, ten palettes, 19 primitives, self-hosted fonts, a
+The Offbeatport design system: design tokens, six theme presets over four axes, 19 primitives,
+self-hosted fonts, a
 router-agnostic nav seam, and - behind their own entry points - one product's shell, console, chat
 and board. One package under several independent products, on every host: a TanStack Start web
 app, a Tauri v2 desktop app and a Next app all render from the same bytes.
@@ -9,24 +10,24 @@ app, a Tauri v2 desktop app and a Next app all render from the same bytes.
   fork, both themes, the contrast floors) binds every product; the tokens are a vocabulary each
   product varies; the shell/console/chat/nav-ui archetype is opt-in (and `canvas` is opt-in for a
   dependency reason). Read it before adding UI.
-- **The gallery:** `pnpm ui` - every export in one page, no app required. See
-  [The gallery](#the-gallery).
+- **The dev app:** `pnpm dev` - two pages, no app required. It opens on *Showcase*, the system
+  laid out as a designed page; *Gallery*, one click away in the header, is every export in one
+  page. See [The dev app](#the-dev-app).
 - **No app in here.** No router, no server functions, no database, no product domain data - see
   [What is NOT in here](#what-is-not-in-here).
 
 ```
 src/                                                     ← the root barrel, tiers 1-2
-  styles/       tokens.css · base.css · shell.css · keyframes.css · fonts.css · canvas.css · desktop.css
+  styles/       tokens.css · base.css · shell.css · keyframes.css · fonts.css · fonts-alt.css · canvas.css · desktop.css
   primitives/   badge button card checkbox color-picker dialog dropdown-menu input label popover
                 radio-group scroll-area select separator switch table tabs textarea tooltip  (19)
   nav/          UIProvider · Link · TabNav · SegmentedTabs
   status/       StatusPill · StatusDot · LiveDot · PulsePill · SignalBars · StatTile · ActivityRow
-  data-display/ EmptyState · Timeline · TaskCard · ExpandableRow
-  brand/        LogoMark · GradientMark
-  lib/          cn · theme · palette · color · storage · prepaint · dom-class-pref · client-only
-  markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · palette-picker.tsx · provider-logos.tsx
+  data-display/ EmptyState · Timeline · TaskCard · ExpandableRow · GradientMark
+  lib/          cn · theme (light/dark) · theme-preset (4 axes) · palette · color · storage · prepaint · dom-class-pref · client-only
+  markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · theme-picker.tsx · provider-logos.tsx
   shell/ console/ chat/ nav-ui/ canvas/                  ← tier 3, own entry points only
-gallery/        the kitchen sink (`pnpm ui`) - a small Vite app, one page, every export
+gallery/        the dev app (`pnpm dev`) - Gallery (every export) + Showcase (the system, laid out)
 ```
 
 ---
@@ -38,7 +39,7 @@ one. Five subtrees sit behind their own entry points instead.
 
 | Import from | You get | Why it is separate |
 | --- | --- | --- |
-| `obp-ui` | tokens, primitives, `cn`, the nav seam + `UIProvider`, status atoms (`StatusPill`, `StatTile`, `LiveDot`, …), data-display (`EmptyState`, `Timeline`, `TaskCard`, `ExpandableRow`), brand marks, `Markdown`, `ConfirmDialog`, `ThemeToggle`, palettes | the default - nothing here carries a product's identity |
+| `obp-ui` | tokens, primitives, `cn`, the nav seam + `UIProvider`, status atoms (`StatusPill`, `StatTile`, `LiveDot`, …), data-display (`EmptyState`, `Timeline`, `TaskCard`, `ExpandableRow`, `GradientMark`), `ProviderLogo`, `Markdown`, `ConfirmDialog`, `ThemeToggle`, theme presets | the default - nothing here carries a product's identity |
 | `obp-ui/canvas` | the React Flow board, node vocabulary, flavors, 10 layouts | **dependency**: `@xyflow/react` is an optional peer, and apps without a board must not pay for it |
 | `obp-ui/shell` | `AppShell`, `Rail`, `NavItem`, `EntityRow`, `TitleBar`, account + window controls | **identity** |
 | `obp-ui/console` | `ConsoleDock`, `ConsolePane`, `LogView`, `LogLine` | **identity** |
@@ -59,17 +60,25 @@ the first product's look?* If not, it goes behind its own entry point.
 
 ---
 
-## The gallery
+## The dev app
 
 ```bash
-pnpm install && pnpm ui       # from the repo root
+pnpm install && pnpm dev      # from the repo root (`pnpm ui` still works)
 ```
 
-A small Vite + React app in [`gallery/`](./gallery) that serves **one page on
-http://localhost:5180** showing every component in the public barrel: the tokens themselves
+A small Vite + React app in [`gallery/`](./gallery) on **http://localhost:5180**, with two pages
+behind one header switch.
+
+**Showcase is the front door** - it is what `pnpm dev` opens on. Its nine sections are a strict
+content *subset* of the gallery (every one of them is covered by a Spec next door), so it does not
+earn being a peer; what it has that a catalogue cannot have is that it reads as a **designed page**.
+One page has a purpose, the other has a job. Arrive at the purpose, switch to the job.
+
+**Gallery** is the exhaustive inventory: every component in the public barrel - the tokens themselves
 (surfaces, brand, the full status language with its `-soft` fills, radius, elevation, type), the
-19 primitives with every variant *and* every size, brand marks, the status atoms, the data-display
-surfaces, the nav seam, all ten `nav-ui` tab treatments, both chat surfaces, the agent console,
+19 primitives with every variant *and* every size, the status atoms, the data-display surfaces
+(the entity mark among them), the nav seam, all ten `nav-ui` tab treatments, both chat surfaces,
+the agent console,
 the shell (inside a fixed frame, so it makes sense on a page that is not an app), and the
 `obp-ui/canvas` boards behind the optional `@xyflow/react` peer.
 
@@ -77,6 +86,19 @@ Kitchen sink, not Storybook: no extra tooling, no stories to keep in sync. The i
 components are really wired (dialogs open, selects select, the composer sends, the boards pan), and
 the header's `<ThemeToggle />` flips light ↔ dark - both must look right, that is rule 4 in
 [`DESIGN.md`](./DESIGN.md).
+
+The gallery's sidebar is **flat and always expanded**: a section label, then every Spec in that
+section, ~60 items that scroll, with a scroll spy tracking the one you are reading. It is not an
+accordion - the item you want is almost always in a section you have not reached yet, so opening
+the section you are already in costs a click and hides the rest. The Spec list is read off the DOM
+(`[data-spec]`) after mount rather than hand-written, so adding a Spec adds a nav entry with no
+second edit.
+
+**Theme configuration has no section.** It is the `<ThemePicker />` in the header, and nowhere
+else: a picker is only honest where it can re-skin the whole page, and a second live one would be
+a second thing claiming to be the current theme. The comparison that would justify a section -
+all six presets, light and dark, side by side - is inside that picker's editor, next to the
+controls that act on it.
 
 Two things worth copying from it: `gallery/src/app.css` is the exact app-entry stylesheet described
 below, and the sections import the kit **by name** (`obp-ui`, `obp-ui/canvas`, `obp-ui/shell`, …)
@@ -151,6 +173,7 @@ file:
 @import "tailwindcss" source(none);
 
 @import "obp-ui/fonts.css";
+@import "obp-ui/fonts-alt.css";  /* only if a theme preset names those families */
 @import "obp-ui/styles.css";
 @import "obp-ui/canvas.css";     /* only if the app ships the canvas */
 @import "obp-ui/desktop.css";    /* desktop only */
@@ -298,16 +321,18 @@ else - see rule 1 in [`DESIGN.md`](./DESIGN.md).
 
 Three ways to do it, cheapest first:
 
-1. **Ship a palette.** `THEME_PALETTES` holds ten, `<PalettePicker />` swaps them at runtime, and
-   `initPalette()` re-applies them across theme flips (the values are mode-specific). Nothing to
-   write. Selecting Paper *removes* the overrides rather than restating them, so the default can
-   never drift from `tokens.css`.
+1. **Ship a theme preset.** `THEME_PRESETS` holds six, `<ThemePicker />` swaps them at runtime,
+   and `initThemePreset()` re-applies them across light/dark flips (the colour half is
+   mode-specific). Nothing to write - see [Theme presets](#theme-presets-the-four-axes) below.
+   Selecting Paper *removes* the overrides rather than restating them, so the default can never
+   drift from `tokens.css`.
 2. **Override the block above** for one fixed brand. This is what BuyDiff does: same primitives,
    same fonts, same radius, teal at 5.33:1 on the page.
-3. **Add a palette** to `src/lib/palette.ts` when two products want the same one. Its header
-   records how the ten were built - achromatic surfaces, brand at 90% of the sRGB ceiling solved
-   jointly with lightness against 4.5:1 on the page - and a new one that skips that will not sit
-   next to the others.
+3. **Add a palette** to `src/lib/palette.ts` when two products want the same colours, or a preset
+   to `src/lib/theme-preset.ts` when they want the same *bundle*. The palette header records how
+   the ten were built - achromatic surfaces, brand at 90% of the sRGB ceiling solved jointly with
+   lightness against 4.5:1 on the page - and a new one that skips that will not sit next to the
+   others.
 
 **Verify before you ship.** The kit exports `contrastRatio(a, b)`; the floors are in DESIGN.md §1
 (`--faint` on `--card` ≥ 4.55:1, `--primary` on `--background` ≥ 4.5:1 because it is the
@@ -316,17 +341,93 @@ inverts the brand - `--primary` goes light and `--primary-foreground` goes dark 
 passes in light can land at 1.17:1 in dark.
 
 **Beyond colour:** the six `--type-*` steps (and their `-leading` pairs), `--radius`,
-`--radius-card`, `--measure` and the two shadows are token overrides too - components name a
-*step* (`text-sm`, `text-lg`) and never a value or a font family, so a product resizes the whole
-kit from the same block. Radius is the partial one: 35 literal `rounded-[Npx]` in the composed
-kits (21 of them in `canvas/`) do not follow `--radius`.
+`--radius-card`, `--spacing`, `--measure` and the two shadows are token overrides too - components
+name a *step* (`text-sm`, `text-lg`) and never a value or a font family, so a product resizes the
+whole kit from the same block. Radius is the partial one: 35 literal `rounded-[Npx]` in the
+composed kits (21 of them in `canvas/`) do not follow `--radius`.
 
-**What you do not override:** the status hues. They are identical in every palette on purpose -
+**What you do not override:** the status hues. They are identical in every preset on purpose -
 vocabulary, not skin. Only their `-soft` fills are re-mixed, against your page.
 
 **What you cannot override yet:** anything with no token behind it - a fluid type step, a
 brand-tinted shadow, a third radius. That is the archetype gap in DESIGN.md's last section, and it
 is the reason PicSuper is not on this kit. Add the token, don't fork the components.
+
+---
+
+## Theme presets: the four axes
+
+A **theme preset** is a curated bundle of four token groups. Names first, because there is a live
+collision to keep straight: `Theme` in this package means `"light" | "dark"` - that is the **mode**,
+and `initTheme()` / `<ThemeToggle />` own it. A **preset** is the other thing, and it renders in
+either mode.
+
+| axis | tokens | catalogue |
+|---|---|---|
+| colour | the 13 surface/ink/brand tokens, x light and dark | `THEME_PALETTES` (10) |
+| type | `--font-sans` `--font-display` `--font-mono` `--font-serif` | `TYPE_PAIRINGS` (6) |
+| radius | `--radius` `--radius-card` | `RADIUS_STEPS` (sharp / default / soft / round) |
+| space | `--spacing` | `SPACE_STEPS` (compact / default / airy) |
+
+```tsx
+import { initTheme, initThemePreset, ThemePicker } from "obp-ui";
+
+initTheme();        // resolves the MODE first…
+initThemePreset();  // …then writes the four axes for whichever mode won
+
+<ThemePicker />     // six presets in a popover + a custom editor
+```
+
+**Density is one token.** Tailwind v4 compiles every spacing utility as a multiple of `--spacing`
+- measured in the built gallery CSS, 254 declarations of the form
+`.h-9{height:calc(var(--spacing) * 9)}`, `.px-4{padding-inline:calc(var(--spacing) * 4)}`,
+`.gap-2`, `.p-5`. So the density axis needs **no new tokens and no edits to any primitive**.
+Tailwind declares `--spacing:.25rem` inside `@layer theme` on `:root,:host`; an inline property on
+`<html>` is in no layer and outranks it. Measured in headless Chrome on a real `<Button>` (`h-9`):
+
+| step | `--spacing` | control height |
+|---|---|---|
+| compact | `0.22rem` | 31.67px |
+| default | `0.25rem` | 36.00px |
+| airy | `0.28rem` | 40.32px |
+
+Removing the inline property returns it to exactly 36.00px, which is the mechanism the default
+preset relies on.
+
+**Paper applies by clearing.** `applyThemePreset()` removes every managed property before writing,
+and returns early for the default - so the authored theme is byte-exact whatever `tokens.css` says
+today, and can never drift. The consequence: `MANAGED` in `src/lib/theme-preset.ts` has to list
+**every** property any axis can write. A property missing from it survives the switch back to
+Paper, and a stuck radius or a stuck font is invisible until someone picks the default and gets
+the previous preset's measurements.
+
+**A preset names families; it does not load them.** See [Fonts](#fonts) - if the app has not
+imported the stylesheet carrying the faces a preset names, the token falls silently through its
+fallback stack to `system-ui` and the preset looks like it did nothing.
+
+The six: **Paper** (the authored theme, all four axes), **Console** (slate + Geist/Space Grotesk +
+sharp + compact), **Editorial** (claret + Fraunces + soft + airy), **Technical** (teal + IBM Plex
++ sharp + compact), **Soft** (ochre + Instrument Serif + round + airy), **Mono** (graphite + Geist
++ authored radius and density). Console and Technical deliberately share a density and a radius -
+that is the shape of a tool you sit in front of all day; what separates them is voice, not
+measurement.
+
+**The editor** (`<ThemePicker />` → *Compare presets…*) opens seeded from whatever preset you were
+on. It leads with **all six presets drawn in both modes at once** - twelve tiles carrying their own
+tokens inline, so corners, padding and type differ per tile rather than being described; clicking
+one starts you from all four of its axes. Below that it takes those axes apart: the ten palettes as
+chips (**colour only** - your type, radius and density survive a palette click, which is the point
+of the widening) plus twelve colour pickers, a font pairing, a radius step, a density step. Colour
+edits **one mode at a time** and
+says which - a colour that works on cream rarely works on near-black - while type, radius and
+space are mode-independent and apply to both. It persists through the `prefStorage` seam like
+every other preference.
+
+**Opening it costs nothing.** The seed is held in React state, not written through the controller,
+so browsing the twelve tiles and closing leaves you on the preset you arrived with - `<html>` keeps
+its zero inline properties and nothing is stored. Only an actual edit makes you *Custom*. That
+matters because Custom is a frozen snapshot: it restates all 46 properties, so a user converted to
+it by accident silently stops tracking later edits to `tokens.css`.
 
 ---
 
@@ -358,6 +459,37 @@ than looking broken. If type suddenly feels a little too wide, check the family 
 
 Skipping `fonts.css` entirely is legal (the plain names and the system fallbacks are still in the
 stack) - you just get whatever the host machine has.
+
+### `obp-ui/fonts-alt.css` - the faces the other presets name
+
+The five non-default [theme presets](#theme-presets-the-four-axes) name families `fonts.css` does
+not carry. They live in a **second, separately-imported stylesheet** on purpose: `fonts.css` is the
+authored pairing that every app pays for, and this file is another ~3.6MB of woff2 on disk. An app
+should pay only for the faces its chosen theme uses.
+
+| token value | family | package |
+|---|---|---|
+| `"Geist Variable"` | Geist (100-900 + italic) | `@fontsource-variable/geist` |
+| `"Geist Mono Variable"` | Geist Mono (100-900) | `@fontsource-variable/geist-mono` |
+| `"IBM Plex Sans Variable"` | IBM Plex Sans (100-700 + italic) | `@fontsource-variable/ibm-plex-sans` |
+| `"Fraunces Variable"` | Fraunces (100-900 + italic, `wght` axis only) | `@fontsource-variable/fraunces` |
+| `"Instrument Serif"` | Instrument Serif (400 + italic - all it ships) | `@fontsource/instrument-serif` |
+
+**A consuming app must import the stylesheet its preset's families come from.** A preset only
+writes family *names* into `--font-*`; nothing loads a face on its behalf. Ship Editorial without
+`obp-ui/fonts-alt.css` and `--font-display` names `"Fraunces Variable"`, no `@font-face` claims
+that family, and the headings quietly render in Georgia - the same silent failure the paragraph
+above describes, one level up. The rule of thumb:
+
+| preset | needs |
+|---|---|
+| Paper | `fonts.css` |
+| Console, Technical, Editorial, Soft, Mono | `fonts.css` **and** `fonts-alt.css` |
+
+(The non-Paper presets still name JetBrains Mono, Space Grotesk or Spectral in at least one role,
+so `fonts-alt.css` is an addition, never a replacement.) The gallery imports both, because it
+draws every preset. Note the same `<Family> Variable` trap applies: four of the five register
+under the Variable name, and only Instrument Serif - a static face - uses its plain name.
 
 ---
 
@@ -604,9 +736,14 @@ Deliberately, and permanently:
 If something you are extracting needs one of those, it is not a design-system component yet - split
 it until the presentational half has no opinions about where its data came from.
 
-**Two leaks the rule has not caught yet**, both in the anonymous barrel, both worth knowing before
-you mount them in a second product: `brand/palettes.ts` is a verbatim copy of the cslopslop app's
-`config/spin.ts` gradient table (duplicated on purpose - the app's engine runs in a plain Node
-process that must not pull React in - but it is still one product's data), and `LogoMark`'s
-defaults reproduce the cslopslop "C" tile exactly, so a product that mounts it without passing
-`letter`/`tint`/`highlight` draws someone else's mark. Pass the props, or bring your own palettes.
+**Someone else's identity** is the leak this rule keeps catching. There used to be a `brand/`
+family here holding a `LogoMark` whose defaults drew the cslopslop "C" tile exactly and a
+`palettes.ts` that was a verbatim copy of that app's `config/spin.ts` gradient table. Both are
+gone: a product's mark and a product's six hexes are the product's, not the kit's. What survived
+is `GradientMark` - an avatar for a row, now in `data-display/` - which derives its two stops from
+the seed and the live `--primary` instead of reading a table (see the file header for the
+contrast measurements that decided it).
+
+The one deliberate exception left is `provider-logos.tsx`: Anthropic's and OpenAI's marks in
+Anthropic's and OpenAI's colours. Those are third-party identities, not ours, and no token can
+express them.

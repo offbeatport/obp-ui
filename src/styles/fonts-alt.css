@@ -1,0 +1,50 @@
+/* ============================================================================
+   The faces the NON-DEFAULT theme presets name. Opt-in, exactly like fonts.css.
+
+   Deliberately NOT folded into fonts.css. fonts.css is the authored pairing and
+   every app pays for it; this file is ~3.6MB of woff2 on disk for five more
+   families, and an app that ships one preset should pay for one preset. Import
+   whichever of the two files covers the families your theme names:
+
+     obp-ui/fonts.css      Inter · Space Grotesk · JetBrains Mono · Spectral
+     obp-ui/fonts-alt.css  Geist · Geist Mono · IBM Plex Sans · Fraunces ·
+                           Instrument Serif
+
+   A preset whose faces are not loaded does not error - it falls silently back
+   through the token's fallback stack to system-ui, which looks like the preset
+   simply did not apply. That is the failure mode to watch for.
+
+   Coverage against what TYPE_PAIRINGS asks of each face:
+     Geist          400/450/500/600/700 + italic   (variable 100-900)
+     Geist Mono     400/500/600/700                (variable 100-900)
+     IBM Plex Sans  400/500/600/700 + italic       (variable 100-700)
+     Fraunces       300-700 + italic               (variable 100-900)
+     Instrument Serif 400 + italic                 (static - 400 is all it has)
+
+   THE FAMILY-NAME TRAP, same one fonts.css documents: the variable packages
+   register "<Family> Variable" - "Geist Variable", "IBM Plex Sans Variable" -
+   so a token that names plain "Geist" matches nothing and silently falls
+   through. TYPE_PAIRINGS lists the Variable name first and the plain name
+   second, for a host that already has the static family installed.
+   Instrument Serif is static, so it registers under its plain name.
+
+   Fraunces ships opsz/soft/wonk axes as well; we import wght only. The extra
+   axes are a display-face luxury that would cost another file per subset, and
+   nothing in the kit sets font-variation-settings.
+   ========================================================================== */
+
+@import "@fontsource-variable/geist/wght.css";
+@import "@fontsource-variable/geist/wght-italic.css";
+
+@import "@fontsource-variable/geist-mono/wght.css";
+
+@import "@fontsource-variable/ibm-plex-sans/wght.css";
+@import "@fontsource-variable/ibm-plex-sans/wght-italic.css";
+
+@import "@fontsource-variable/fraunces/wght.css";
+@import "@fontsource-variable/fraunces/wght-italic.css";
+
+@import "@fontsource/instrument-serif/latin-400.css";
+@import "@fontsource/instrument-serif/latin-400-italic.css";
+@import "@fontsource/instrument-serif/latin-ext-400.css";
+@import "@fontsource/instrument-serif/latin-ext-400-italic.css";

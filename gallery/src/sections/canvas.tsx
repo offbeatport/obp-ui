@@ -1,5 +1,5 @@
 import { type Node, type NodeProps, type NodeTypes, Panel } from "@xyflow/react";
-import { Button, PALETTES, type Signal, SignalBars, cn } from "obp-ui";
+import { Button, type Signal, SignalBars, cn, gradientPairFor } from "obp-ui";
 import {
     AvatarHeader,
     BRIDGE_STROKE,
@@ -98,7 +98,7 @@ const GRAPH: CanvasGraph<CardData> = {
                 title: "Ledgerly",
                 sub: "ledgerly.app",
                 mark: "L",
-                palette: PALETTES[0],
+                palette: gradientPairFor("Ledgerly"),
                 chips: ["TanStack", "SQLite", "Stripe"],
             },
         },
@@ -211,7 +211,7 @@ function CompanyNode({ data }: NP) {
         <FlavorShell f={f} accentColor={a} width={248} data={data}>
             <AvatarHeader
                 mark={d.mark ?? "?"}
-                palette={d.palette ?? PALETTES[0]}
+                palette={d.palette ?? gradientPairFor(d.title)}
                 title={d.title}
                 sub={d.sub}
                 titleClassName={f.title}
