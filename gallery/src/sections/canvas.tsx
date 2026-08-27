@@ -1,3 +1,4 @@
+import { type Node, type NodeProps, type NodeTypes, Panel } from "@xyflow/react";
 import { Button, PALETTES, type Signal, SignalBars, cn } from "obp-ui";
 import {
     AvatarHeader,
@@ -40,7 +41,6 @@ import {
     useNodeActions,
     withAccentPalette,
 } from "obp-ui/canvas";
-import { type Node, type NodeProps, type NodeTypes, Panel } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 

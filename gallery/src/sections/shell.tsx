@@ -1,4 +1,14 @@
 import {
+    Home,
+    Inbox,
+    LayoutGrid,
+    LogOut,
+    Plus,
+    Settings2,
+    ShieldCheck,
+    Trash2,
+} from "lucide-react";
+import {
     AccountButton,
     AccountMenu,
     type AccountMenuItem,
@@ -21,16 +31,6 @@ import {
     useRailCollapsed,
     useWindowControls,
 } from "obp-ui";
-import {
-    Home,
-    Inbox,
-    LayoutGrid,
-    LogOut,
-    Plus,
-    Settings2,
-    ShieldCheck,
-    Trash2,
-} from "lucide-react";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 

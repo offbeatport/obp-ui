@@ -228,7 +228,7 @@ export function CanvasCommandBar({
             <button
                 type="button"
                 onClick={send}
-                className="nodrag nopan rounded-[9px] bg-[color:var(--info)] px-3.5 py-1.5 text-[12px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="nodrag nopan rounded-[9px] bg-[color:var(--info)] px-3.5 py-1.5 text-[12px] font-semibold text-info-foreground transition-opacity hover:opacity-90"
             >
                 {submitLabel}
             </button>

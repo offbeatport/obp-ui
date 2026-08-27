@@ -2,6 +2,7 @@ import {
     PalettePicker,
     THEME_PALETTES,
     type ThemePalette,
+    cn,
     themePaletteStyle,
     themePaletteSwatch,
 } from "obp-ui";
@@ -15,7 +16,9 @@ import { Api, Note, Spec } from "../kit";
 function PaletteCard({ palette: p, mode }: { palette: ThemePalette; mode: "light" | "dark" }) {
     return (
         <div
-            className="rounded-lg border border-border bg-background p-3"
+            // The token values come from the style; the class is what stops the PAGE's `dark:`
+            // utilities applying to a light preview (and vice versa) - see tokens.css.
+            className={cn("rounded-lg border border-border bg-background p-3", mode)}
             style={themePaletteStyle(p[mode], mode) as CSSProperties}
         >
             <div className="rounded-md border border-border bg-card p-3 shadow-e1">

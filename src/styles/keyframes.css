@@ -63,12 +63,15 @@
         opacity: 0.85;
     }
 }
+/* The ring rides on currentColor, not white: the pill's fill is --primary, and in dark mode a
+   palette's --primary is a LIGHT colour, where a white ring is invisible. currentColor is
+   --primary-foreground, which every palette guarantees is readable on its own primary. */
 @keyframes co-pip {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 60%, transparent);
     }
     100% {
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+        box-shadow: 0 0 0 6px transparent;
     }
 }
 

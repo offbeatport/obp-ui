@@ -42,7 +42,7 @@ export function GradientMark({
                 height: size,
                 borderRadius: radius ?? Math.round(size * 0.26),
                 background: `linear-gradient(145deg, ${palette[0]}, ${palette[1]})`,
-                color: "#fff",
+                color: "var(--primary-foreground)",
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
                 fontSize: Math.round(size * 0.42),
