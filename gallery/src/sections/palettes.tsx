@@ -62,7 +62,7 @@ export function PalettesSection() {
 
             <Spec
                 name="THEME_PALETTES"
-                note="Ten palettes, each shown in both modes. Every one reuses the authored theme's OKLCH ladder and changes only hue, so the contrast relationships are the same in all of them."
+                note="Ten palettes, each drawn in both modes. Nine of them keep the paper near-neutral and let the BRAND carry the identity - a tinted page is the first thing that looks wrong on a screen you do not control. Paper, the authored theme, is the exception."
                 bare
             >
                 <div className="grid gap-4 sm:grid-cols-2">
