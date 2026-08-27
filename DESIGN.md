@@ -7,21 +7,23 @@ API), **PicSuper** (a consumer one-screen utility) and the microsaas portfolio -
 contrast, or how a variant gets added. Hence three tiers: know which one you are standing in
 before you type.
 
-**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all ten palettes.
+**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all six theme
+presets (and the ten palettes their colour axis draws from).
 
 ## 1. Shared law - binding on every product
 
 Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · `src/primitives/*` ·
-`src/nav/*` · `src/status/*` · `src/data-display/*` · `src/brand/*`.
+`src/nav/*` · `src/status/*` · `src/data-display/*`.
 
 1. **Tokens only - never hardcode a colour, radius or shadow.** Use utilities backed by the token
    layer: `bg-background bg-card bg-primary text-muted-foreground border shadow-e1`. No `#hex`,
    no `text-[#…]`, no raw `rgb()` in a component. Literal colour is legal in one kind of file: a
-   `tokens.css` - this package's, or a product's override block after the import. (20 hex literals
-   survive in components - 14 in `canvas/flavors.ts`, 3 in `nav-ui/`, and three prop or input
-   defaults in `brand/logo-mark.tsx`, `canvas/nodes.tsx` and `palette-picker.tsx`. Verbatim
-   prototype ports, same as the radius debt in §2: debt, not licence. `provider-logos.tsx` is the
-   one real exception - a brand mark has to draw in its own colour.)
+   `tokens.css` - this package's, or a product's override block after the import. (19 hex literals
+   survive in components - 14 in `canvas/flavors.ts`, 3 in `nav-ui/`, and two prop defaults in
+   `canvas/nodes.tsx` and `theme-picker.tsx`. Verbatim prototype ports, same as the radius debt in
+   §2: debt, not licence. `provider-logos.tsx` is the one real exception - a third party's mark has
+   to draw in its own colour. The two hexes in `data-display/gradient-mark.tsx` are contrast
+   measurements written down in a comment; nothing paints them.)
 2. **Compose, don't fork.** Need a variant? Add it to the component's `cva` (see how
    `src/primitives/badge.tsx` gained the status variants). Never restyle inline, never copy the
    file into the app. A product-local `components/ui/` directory is a fork with extra steps.
@@ -42,7 +44,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      mode's white-on-hue only runs 3.0-5.3:1, which is why the chip vocabulary is a soft fill plus
      status text (`bg-success-soft text-success`) and filled chips stay on the deeper hues.
 5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
-   are deliberately identical in every palette, and no product re-hues them. The *meanings* in the
+   are deliberately identical in every palette and every preset, and no product re-hues them. The *meanings* in the
    table are cslopslop's reading of them; a product with no approval queue maps its own meanings
    onto the same six tokens rather than inventing a seventh hue.
 6. **Focus stays visible; motion has a stop.** Keep the `focus-visible:ring-ring/50` a primitive
@@ -76,12 +78,18 @@ redeclaring token **values** in its own `tokens.css` after the import - `:root {
 #0c736f; --radius: 0.5rem }` and the same again under `.dark` - never by editing a component.
 What is yours to set:
 
-- **Palette.** The ten in `src/lib/palette.ts` are presets over *hue*: achromatic surfaces, brand
+- **Theme preset.** The six in `src/lib/theme-preset.ts` bundle all four axes below at once, and
+  `<ThemePicker />` swaps them at runtime. "Theme" there means the **preset**; `Theme` in
+  `src/lib/theme.ts` means `light | dark`, the **mode**. Presets are the cheapest way to vary the
+  look, and the default applies by *removing* every override so it cannot drift.
+- **Palette.** The ten in `src/lib/palette.ts` are the colour axis: achromatic surfaces, brand
   at 90% of the sRGB ceiling solved against 4.5:1 on the page. Ship one, ship the picker, or write
   your own values - a new one has to clear the floors in §1.
 - **Fonts.** Nothing in the kit hardcodes a family: `base.css` reads `var(--font-sans)` and
   `var(--font-display)`, and that is the only place a family is named. Swap all four, or skip
-  `fonts.css` and take the system stack.
+  `fonts.css` and take the system stack. A preset's type axis is exactly this override - but it
+  only names families, so the app still has to import the stylesheet that loads them
+  (`obp-ui/fonts.css`, `obp-ui/fonts-alt.css`) or the token falls silently through to `system-ui`.
 - **Type sizes.** The six `--type-*` values and their `-leading` pairs. Redefine them and the
   whole kit resizes: the 167 type classes in `src` name a *step* (`text-sm`, `text-lg`), never a
   value. What you cannot vary is the number of steps or their nature - six static rem values, no
@@ -89,8 +97,11 @@ What is yours to set:
 - **Radius and elevation.** `--radius`, `--radius-card`, `--shadow-e1/e2`. (35 literal
   `rounded-[Npx]` survive, 21 of them in `canvas/` - verbatim prototype ports that do *not* follow
   `--radius`. Debt, not licence.)
-- **Density and measure.** `--measure` (the 42rem editorial column), spacing, and which primitives
-  you mount at all.
+- **Density and measure.** `--measure` (the 42rem editorial column), `--spacing`, and which
+  primitives you mount at all. `--spacing` is the whole density axis on its own: Tailwind v4
+  compiles every spacing utility as `calc(var(--spacing) * N)`, so one value moves control
+  heights, gaps, padding and icon boxes together. Measured on a real `<Button>` (`h-9`):
+  `0.22rem` → 31.67px, `0.25rem` → 36.00px, `0.28rem` → 40.32px.
 
 BuyDiff shows the range: same primitives, same fonts, same radius, a teal brand at 5.33:1 on the
 page - and it does not read as cslopslop. WebInvoke shows the other half: it kept the terracotta
@@ -124,12 +135,15 @@ marketing surface and a data-intensive one. The rule that stops that becoming th
   component tree. §3 is not the counter-example: `shell/` and `console/` are one product's
   *composed screens*, and a second archetype may earn its own entry point of composed screens the
   same way. What it may never have is a second copy of a primitive, a token or a scale.
-- **A scale has to exist as a token before an archetype may vary it.** Type does now
-  (`--type-sm` … `--type-3xl`). Density, radius steps and motion do not: `--radius-sm/md/lg/xl`
-  look like steps but are `calc()` off `--radius` inside `@theme inline`, so they are substituted
-  into the utilities at build time and cannot be set independently; density is not tokenised at
-  all - every primitive spells its own `h-9 px-4 gap-2`. Add the token first; if varying a scale
-  means touching a component, the token is what is missing.
+- **A scale has to exist as a token before an archetype may vary it.** Type does
+  (`--type-sm` … `--type-3xl`), and so does **density** - that entry used to read "not tokenised
+  at all - every primitive spells its own `h-9 px-4 gap-2`", and that was wrong. Those utilities
+  compile to `calc(var(--spacing) * N)`; 254 such declarations in the built gallery CSS, all
+  against one `--spacing`. The whole kit re-measures from one inline property and no primitive
+  changes. Radius steps and motion are still the gap: `--radius-sm/md/lg/xl` look like steps but
+  are `calc()` off `--radius` inside `@theme inline`, so they are substituted into the utilities
+  at build time and cannot be set independently. Add the token first; if varying a scale means
+  touching a component, the token is what is missing.
 - **No archetype gets built until two real surfaces need it.** One product's need is a token
   override. Two is a preset.
 

@@ -8,7 +8,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import type { ReactNode } from "react";
-import { GradientMark, type GradientMarkBranding } from "../brand/gradient-mark";
+import { GradientMark, type GradientMarkBranding } from "../data-display/gradient-mark";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
 import {

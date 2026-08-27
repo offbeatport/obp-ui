@@ -1,6 +1,10 @@
 @import "tailwindcss" source(none);
 
 @import "obp-ui/fonts.css";
+/* The gallery imports the alternates too, because it draws EVERY preset - without them the
+   five non-authored pairings would fall through to system-ui and the type axis would look
+   like it does nothing. A real app imports only the file its chosen preset needs. */
+@import "obp-ui/fonts-alt.css";
 @import "obp-ui/styles.css";
 
 /* The canvas section only. Un-themed React Flow primitives first, the paper theming on top -

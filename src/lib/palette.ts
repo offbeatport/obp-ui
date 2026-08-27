@@ -1,5 +1,10 @@
-// Palettes: the whole design system re-skinned by overriding token VALUES, which is exactly
-// what DESIGN.md says branding a product means. No component knows this file exists.
+// THE COLOUR AXIS. Ten palettes, each a set of token VALUES - which is exactly what DESIGN.md
+// says branding a product means. No component knows this file exists.
+//
+// A palette is one of the four axes a ThemePreset bundles (colour · type · radius · space);
+// see ./theme-preset.ts for the other three, for how a preset is applied to <html>, and for
+// the controller. This file is only the colours, and it is deliberately free of any DOM,
+// storage or React: it is data.
 //
 // HOW THE NINE WERE BUILT, because it matters if you add a tenth:
 //
@@ -38,15 +43,6 @@
 //
 // Paper is exempt from all of it. It is the authored theme and stays exactly as tokens.css
 // wrote it, tinted paper and all.
-//
-// APPLYING one writes inline custom properties on <html>, which outrank both :root and .dark.
-// They are mode-specific, so the controller re-applies on every theme change. Selecting Paper
-// REMOVES them all rather than re-writing them, so the default is always byte-exact whatever
-// tokens.css says today.
-
-import { prefStorage } from "./storage";
-import { onThemeChange } from "./theme";
-import { DEFAULT_NAMESPACE } from "./theme";
 
 export type ThemePaletteColors = {
     /** The page. */
@@ -80,8 +76,8 @@ export type ThemePalette = {
     dark: ThemePaletteColors;
 };
 
+/** The authored colours. A preset that names it applies by CLEARING - see theme-preset.ts. */
 export const DEFAULT_PALETTE_ID = "paper";
-export const CUSTOM_PALETTE_ID = "custom";
 
 export const THEME_PALETTES: ThemePalette[] = [
     {
@@ -428,246 +424,3 @@ export const THEME_PALETTES: ThemePalette[] = [
 
 export const themePaletteFor = (id: string): ThemePalette | undefined =>
     THEME_PALETTES.find((p) => p.id === id);
-
-/**
- * The four colours that identify a palette at a glance - what the picker draws as a chip.
- * Page, paper, the soft brand fill and the brand: with the surfaces deliberately near-neutral,
- * a chip built from page/paper/line/brand would be three identical stops in every palette.
- */
-export const themePaletteSwatch = (p: ThemePalette, mode: "light" | "dark"): string[] => [
-    p[mode].background,
-    p[mode].card,
-    p[mode].accent,
-    p[mode].primary,
-];
-
-// The tokens a palette owns. Anything not listed here - the status hues, radius, type - is the
-// same in every palette on purpose: they are the app's vocabulary, not its skin.
-const VARS: [keyof ThemePaletteColors, string][] = [
-    ["background", "--background"],
-    ["card", "--card"],
-    ["card", "--popover"],
-    ["foreground", "--card-foreground"],
-    ["foreground", "--popover-foreground"],
-    ["foreground", "--foreground"],
-    ["secondary", "--secondary"],
-    ["secondary", "--muted"],
-    ["foreground", "--secondary-foreground"],
-    ["mutedForeground", "--muted-foreground"],
-    ["faint", "--faint"],
-    ["border", "--border"],
-    ["border", "--input"],
-    ["borderSoft", "--border-soft"],
-    ["primary", "--primary"],
-    ["primary", "--ring"],
-    ["primaryForeground", "--primary-foreground"],
-    ["accent", "--accent"],
-    ["accentForeground", "--accent-foreground"],
-];
-
-// The status hues are the SAME in every palette - they are the app's vocabulary, not its skin -
-// but they are not the same in every MODE, so they have to be restated here.
-//
-// The reason is that .dark is a class on <html>, and a preview that draws a palette's dark mode
-// inside a light page is not inside that class. Without these it would take the surfaces from
-// the palette and the status hues from whatever mode the page happens to be in - a dark card
-// with light-mode chips on it. Writing them makes themePaletteStyle() a COMPLETE token set for
-// one mode, which is exactly what both a preview and <html> want.
-//
-// Copied from tokens.css. If a status hue changes there, change it here too - the value is the
-// same in both places on purpose, and the gallery draws both, so a drift is visible immediately.
-/** The label on a filled status chip in dark mode. Deep enough for 5.7:1 on the darkest of them. */
-const STATUS_INK = "#101216";
-
-const STATUS: Record<"light" | "dark", Record<string, string>> = {
-    light: {
-        "--success": "#4f8a52",
-        "--warning": "#c08a2e",
-        "--info": "#4a72b0",
-        "--approval": "#7a5ea8",
-        "--neutral": "#8a8579",
-        "--destructive": "#b6483f",
-        "--success-foreground": "#ffffff",
-        "--warning-foreground": "#ffffff",
-        "--info-foreground": "#ffffff",
-        "--approval-foreground": "#ffffff",
-        "--neutral-foreground": "#ffffff",
-        "--destructive-foreground": "#ffffff",
-    },
-    // The dark hues are LIGHT colours - mint, amber, sky, violet - so their labels go dark, the
-    // same inversion the brand makes. tokens.css leaves these as white, inherited from :root,
-    // which puts white on mint at about 2:1 on a filled success button. A palette is allowed to
-    // fix that; Paper, which applies by clearing, keeps the authored behaviour.
-    dark: {
-        "--success": "#34d399",
-        "--warning": "#fbbf24",
-        "--info": "#60a5fa",
-        "--approval": "#a78bfa",
-        "--neutral": "#8a93a8",
-        "--destructive": "#dd6b62",
-        "--success-foreground": STATUS_INK,
-        "--warning-foreground": STATUS_INK,
-        "--info-foreground": STATUS_INK,
-        "--approval-foreground": STATUS_INK,
-        "--neutral-foreground": STATUS_INK,
-        "--destructive-foreground": STATUS_INK,
-    },
-};
-
-// Their tinted fills ARE re-mixed per palette, against the page - so a chip on Nordic's cold
-// paper is a cold chip, not the cream one tokens.css authored for Paper.
-const SOFT = ["success", "warning", "info", "approval", "neutral", "destructive"];
-
-const MANAGED = [
-    ...VARS.map(([, v]) => v),
-    ...Object.keys(STATUS.light),
-    ...SOFT.map((s) => `--${s}-soft`),
-    "--shadow-e1",
-    "--shadow-e2",
-];
-
-/**
- * Every token value for one palette in one mode, as a style object.
- *
- * Complete on purpose: apply it to any element and that subtree is that palette in that mode,
- * whatever the page around it is doing. The controller writes it to <html>; the gallery writes
- * it to a card to show ten palettes' dark modes on a light page.
- */
-export function themePaletteStyle(
-    colors: ThemePaletteColors,
-    mode: "light" | "dark",
-): Record<string, string> {
-    const out: Record<string, string> = { ...STATUS[mode] };
-    for (const [key, cssVar] of VARS) {
-        const value = colors[key];
-        if (value) out[cssVar] = value;
-    }
-    for (const s of SOFT) {
-        out[`--${s}-soft`] =
-            `color-mix(in srgb, var(--${s}) ${mode === "dark" ? 20 : 14}%, var(--background))`;
-    }
-    if (mode === "dark") {
-        out["--shadow-e1"] = "0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.55)";
-        out["--shadow-e2"] = "0 2px 6px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65)";
-    } else if (colors.shadowTint) {
-        const t = colors.shadowTint;
-        out["--shadow-e1"] = `0 1px 2px rgba(${t}, 0.04), 0 8px 28px rgba(${t}, 0.07)`;
-        out["--shadow-e2"] = `0 2px 6px rgba(${t}, 0.06), 0 22px 60px rgba(${t}, 0.13)`;
-    }
-    return out;
-}
-
-export type ThemePaletteController = {
-    getPaletteId(): string;
-    setPaletteId(id: string): void;
-    /** The user's own colours, or null if they have never opened the custom editor. */
-    getCustomPalette(): ThemePalette | null;
-    setCustomPalette(palette: ThemePalette): void;
-    /** The palette in force, custom included. */
-    getPalette(): ThemePalette;
-    /** Re-write the vars for the theme currently on <html>. */
-    applyPalette(): void;
-    onPaletteChange(fn: () => void): () => void;
-    /** Apply now and keep applying across theme changes. Call once, at boot. Returns a teardown. */
-    initPalette(): () => void;
-};
-
-const EVENT = "obp:palettechange";
-
-export function createThemePalette(opts: { namespace?: string } = {}): ThemePaletteController {
-    const ns = opts.namespace ?? DEFAULT_NAMESPACE;
-    const idKey = `${ns}-palette`;
-    const customKey = `${ns}-palette-custom`;
-
-    function getCustomPalette(): ThemePalette | null {
-        const raw = prefStorage().get(customKey);
-        if (!raw) return null;
-        try {
-            const parsed = JSON.parse(raw) as ThemePalette;
-            return parsed?.light && parsed?.dark ? parsed : null;
-        } catch {
-            return null; // a hand-edited or half-written value must not brick the app
-        }
-    }
-
-    function getPaletteId(): string {
-        const id = prefStorage().get(idKey);
-        if (id === CUSTOM_PALETTE_ID) return getCustomPalette() ? id : DEFAULT_PALETTE_ID;
-        return id && themePaletteFor(id) ? id : DEFAULT_PALETTE_ID;
-    }
-
-    function getPalette(): ThemePalette {
-        const id = getPaletteId();
-        if (id === CUSTOM_PALETTE_ID) {
-            const custom = getCustomPalette();
-            if (custom) return custom;
-        }
-        return themePaletteFor(id) ?? THEME_PALETTES[0];
-    }
-
-    function applyPalette(): void {
-        if (typeof document === "undefined") return;
-        const el = document.documentElement;
-        for (const v of MANAGED) el.style.removeProperty(v);
-        const id = getPaletteId();
-        // Paper is the authored theme. Clearing IS applying it - and it cannot drift.
-        if (id === DEFAULT_PALETTE_ID) return;
-        const mode = el.classList.contains("dark") ? "dark" : "light";
-        const style = themePaletteStyle(getPalette()[mode], mode);
-        for (const [k, v] of Object.entries(style)) el.style.setProperty(k, v);
-    }
-
-    function announce(): void {
-        applyPalette();
-        if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent(EVENT));
-    }
-
-    function setPaletteId(id: string): void {
-        if (id === DEFAULT_PALETTE_ID) prefStorage().remove(idKey);
-        else prefStorage().set(idKey, id);
-        announce();
-    }
-
-    function setCustomPalette(palette: ThemePalette): void {
-        prefStorage().set(customKey, JSON.stringify({ ...palette, id: CUSTOM_PALETTE_ID }));
-        prefStorage().set(idKey, CUSTOM_PALETTE_ID);
-        announce();
-    }
-
-    function onPaletteChange(fn: () => void): () => void {
-        window.addEventListener(EVENT, fn);
-        return () => window.removeEventListener(EVENT, fn);
-    }
-
-    function initPalette(): () => void {
-        applyPalette();
-        if (typeof window === "undefined") return () => {};
-        // The vars are mode-specific, so a light/dark flip has to re-resolve them.
-        return onThemeChange(applyPalette);
-    }
-
-    return {
-        getPaletteId,
-        setPaletteId,
-        getCustomPalette,
-        setCustomPalette,
-        getPalette,
-        applyPalette,
-        onPaletteChange,
-        initPalette,
-    };
-}
-
-/** Default controller, on the same namespace as the default theme controller. */
-export const themePalette: ThemePaletteController = createThemePalette();
-
-export const {
-    getPaletteId,
-    setPaletteId,
-    getCustomPalette,
-    setCustomPalette,
-    getPalette,
-    applyPalette,
-    onPaletteChange,
-    initPalette,
-} = themePalette;

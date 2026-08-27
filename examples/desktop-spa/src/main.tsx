@@ -13,7 +13,6 @@ import {
     GradientMark,
     Input,
     LiveDot,
-    LogoMark,
     SegmentedTabs,
     StatTile,
     StatusDot,
@@ -77,7 +76,7 @@ function Probe() {
                     titleBar={<TitleBar title="obp-ui probe" actions={<WindowControls />} />}
                     rail={
                         <Rail
-                            brand={<LogoMark letter="P" />}
+                            brand={<GradientMark name="Probe" size={28} />}
                             footer={
                                 <AccountMenu
                                     trigger={<AccountButton initial="V" name="Vlad" sub="probe" />}

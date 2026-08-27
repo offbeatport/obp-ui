@@ -4,17 +4,28 @@ import {
     EmptyState,
     ExpandableRow,
     ExpandableRowList,
+    GradientMark,
+    type GradientMarkBranding,
     TaskCard,
     TaskStateChip,
     Timeline,
     TimelineDot,
     TimelineItem,
+    gradientPairFor,
 } from "obp-ui";
 import { useState } from "react";
-import { Frame, Note, Row, Spec } from "../kit";
+import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 
-// Lists of things that happened - and the list that is empty. Chrome only: every label,
-// colour and piece of copy below is a prop.
+// Lists of things that happened, the list that is empty, and the mark at the head of a row.
+// Chrome only: every label, colour and piece of copy below is a prop.
+
+const ENTITIES: { name: string; branding?: GradientMarkBranding }[] = [
+    { name: "Ledgerly" },
+    { name: "Postmark Studio" },
+    { name: "Quietbill" },
+    { name: "Harbourline" },
+    { name: "Nudge" },
+];
 
 const OPPORTUNITIES = [
     {
@@ -83,6 +94,61 @@ export function DataDisplaySection() {
 
     return (
         <>
+            <Spec
+                name="GradientMark · gradientPairFor"
+                note="the avatar at the head of a row: one letter on a gradient derived from the name and the live --primary. Flip the theme (or a preset) and every mark follows."
+            >
+                <Row className="gap-6">
+                    {ENTITIES.map((e) => (
+                        <Cell key={e.name} label={e.name}>
+                            <GradientMark name={e.name} branding={e.branding} size={44} />
+                        </Cell>
+                    ))}
+                </Row>
+                <Row className="mt-6 gap-6">
+                    <Cell label="size={24}">
+                        <GradientMark name="Ledgerly" size={24} />
+                    </Cell>
+                    <Cell label="size={32} (rail default)">
+                        <GradientMark name="Ledgerly" size={32} />
+                    </Cell>
+                    <Cell label="size={56} radius={28}">
+                        <GradientMark name="Ledgerly" size={56} radius={28} />
+                    </Cell>
+                    <Cell label="branding.palette (opt out)">
+                        <GradientMark
+                            name="Quietbill"
+                            branding={{
+                                mark: "QB",
+                                palette: ["var(--info)", "var(--success)"],
+                            }}
+                            size={56}
+                            radius={28}
+                        />
+                    </Cell>
+                </Row>
+                <Api
+                    items={[
+                        {
+                            name: 'gradientPairFor("Ledgerly")',
+                            note: "one of twelve 30deg hue steps around --primary; the stops straddle its lightness by ±0.07.",
+                            value: gradientPairFor("Ledgerly")[0],
+                        },
+                        {
+                            name: 'gradientPairFor("Harbourline")',
+                            note: "a different seed, a different step - stable per seed, in any process.",
+                            value: gradientPairFor("Harbourline")[0],
+                        },
+                    ]}
+                />
+                <Note>
+                    No branding row yet? It falls back to the first letter and{" "}
+                    <code>gradientPairFor(name)</code>, so a draft still gets a stable mark. In an
+                    achromatic palette (Graphite) there is no hue to rotate and every mark draws the
+                    same tile - that palette's whole point, and the letter still separates them.
+                </Note>
+            </Spec>
+
             <Spec
                 name="EmptyState"
                 note='three framings of "nothing here yet": the rail CTA, the page panel, and the tab-sized plate.'

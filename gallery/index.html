@@ -6,11 +6,20 @@
         <title>obp-ui - component gallery</title>
         <script>
             // Pre-paint: apply the stored theme before first paint so the page never flashes
-            // light-then-dark. Mirrors obp-ui's prePaintScript() on the default
-            // "cslopslop" namespace - the same key <ThemeToggle> writes.
+            // light-then-dark. Mirrors obp-ui's prePaintScript() on the default "obp"
+            // namespace - the same key <ThemeToggle> writes.
+            //
+            // The key MUST match DEFAULT_NAMESPACE in src/lib/theme.ts. It read
+            // "cslopslop-theme" until now, left behind by the rename, so this script had been
+            // dead: getItem returned null, the stored choice was ignored and the branch fell
+            // through to prefers-color-scheme. Measured on a light OS with dark chosen, <html>
+            // still had no `dark` class after this ran. Nothing flashed only because Vite puts
+            // the module script in <head>, so initTheme() lands at 14ms - before the first
+            // painted frame (16ms) and while <body> is still empty. That is luck, not design:
+            // any host that defers the bundle repaints light-then-dark.
             try {
                 var d = document.documentElement;
-                var t = localStorage.getItem("cslopslop-theme");
+                var t = localStorage.getItem("obp-theme");
                 if (t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches))
                     d.classList.add("dark");
             } catch (e) {}

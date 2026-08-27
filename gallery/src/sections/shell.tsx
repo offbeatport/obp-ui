@@ -8,7 +8,7 @@ import {
     ShieldCheck,
     Trash2,
 } from "lucide-react";
-import { Badge, Button, LogoMark, StatusPill, type Tone } from "obp-ui";
+import { Badge, Button, GradientMark, StatusPill, type Tone } from "obp-ui";
 import {
     AccountButton,
     AccountMenu,
@@ -104,14 +104,14 @@ export function ShellSection() {
                         rail={
                             <Rail
                                 brand={
-                                    <span className="flex items-center gap-2">
-                                        <LogoMark />
-                                        <span className="font-display text-lg font-semibold tracking-tight">
-                                            obp-ui
-                                        </span>
+                                    <span className="font-display text-lg font-semibold tracking-tight">
+                                        obp<span className="text-primary">-ui</span>
                                     </span>
                                 }
-                                brandCollapsed={<LogoMark />}
+                                // The collapsed rail has ~28px of width for a mark, so this is the
+                                // one slot that needs a glyph rather than a wordmark. A demo app's
+                                // GradientMark stands in - the kit ships no product tile.
+                                brandCollapsed={<GradientMark name="obp-ui" size={28} />}
                                 brandHref="#shell"
                                 brandLabel="Home"
                                 footer={
@@ -219,7 +219,7 @@ export function ShellSection() {
                 <WindowControlsProvider value={win}>
                     <Frame>
                         <TitleBar
-                            leading={<LogoMark />}
+                            leading={<GradientMark name="Ledgerly" size={28} />}
                             title="Ledgerly - slice 3 of 9"
                             actions={<WindowControls />}
                         />

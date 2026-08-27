@@ -2,6 +2,7 @@
 //
 // Import styles separately (they are not JS):
 //   import "obp-ui/fonts.css";    // self-hosted faces          (recommended)
+//   import "obp-ui/fonts-alt.css";// the faces the non-default theme presets name
 //   import "obp-ui/styles.css";   // tokens + base + keyframes  (required)
 //   import "obp-ui/canvas.css";   // React Flow theming         (canvas only)
 //   import "obp-ui/desktop.css";  // native-window affordances  (Tauri only)
@@ -46,27 +47,47 @@ export {
     rgbToHex,
     rgbToHsv,
 } from "./lib/color";
+// The colour axis on its own - the ten palettes a preset picks from.
 export {
-    applyPalette,
-    createThemePalette,
-    CUSTOM_PALETTE_ID,
     DEFAULT_PALETTE_ID,
-    getCustomPalette,
-    getPalette,
-    getPaletteId,
-    initPalette,
-    onPaletteChange,
-    setCustomPalette,
-    setPaletteId,
     THEME_PALETTES,
     type ThemePalette,
-    themePalette,
     type ThemePaletteColors,
-    type ThemePaletteController,
     themePaletteFor,
-    themePaletteStyle,
-    themePaletteSwatch,
 } from "./lib/palette";
+// The four-axis theme: colour · type · radius · space. "Theme" below still means light/dark -
+// that is the MODE, and it is a separate controller (./lib/theme). A PRESET renders in either.
+export {
+    applyThemePreset,
+    createThemePresets,
+    CUSTOM_PRESET_ID,
+    DEFAULT_PRESET_ID,
+    DEFAULT_RADIUS_ID,
+    DEFAULT_SPACE_ID,
+    getCustomTheme,
+    getThemePreset,
+    getThemePresetId,
+    initThemePreset,
+    onThemePresetChange,
+    RADIUS_STEPS,
+    type RadiusStep,
+    radiusStepFor,
+    setCustomTheme,
+    setThemePresetId,
+    SPACE_STEPS,
+    type SpaceStep,
+    spaceStepFor,
+    THEME_PRESETS,
+    type ThemePreset,
+    type ThemePresetController,
+    themePresetFor,
+    themePresets,
+    themePresetStyle,
+    themePresetSwatch,
+    TYPE_PAIRINGS,
+    type TypePairing,
+    typePairingFor,
+} from "./lib/theme-preset";
 export { configureStorage, type PrefStorage, prefStorage } from "./lib/storage";
 export {
     createTheme,
@@ -103,13 +124,12 @@ export {
 
 // ── composed presentational kits ──────────────────────────────────────────────
 // chat, console, nav-ui and shell are NOT here on purpose - see the header.
-export * from "./brand";
 export * from "./data-display";
 export * from "./status";
 
 // ── standalone components ─────────────────────────────────────────────────────
 export { ConfirmDialog } from "./confirm-dialog";
 export { Markdown } from "./markdown";
-export { PalettePicker, type PalettePickerProps } from "./palette-picker";
 export * from "./provider-logos";
+export { ThemePicker, type ThemePickerProps } from "./theme-picker";
 export { ThemeToggle } from "./theme-toggle";
