@@ -97,11 +97,17 @@ git:
   "dependencies": {
     // a sibling checkout
     "@paperkit/ui": "file:../cslopslop/packages/ui",
-    // …or the subdirectory of the git repo (pnpm's `path:` parameter)
-    "@paperkit/ui": "github:<org>/cslopslop#path:/packages/ui"
+    // …or the subdirectory of the git repo
+    "@paperkit/ui": "git+ssh://git@github.com/<org>/cslopslop.git#main&path:/packages/ui"
   }
 }
 ```
+
+**The git form is exact.** `path:` is only honoured as the second half of a `<ref>&path:/<dir>`
+fragment, and the directory needs its leading slash. Get it wrong and pnpm does not complain - it
+drops the parameter and installs **the package at the repo root, from the default branch**, under
+whatever name that package.json carries. Verified against this repo: `#path:/packages/ui` with no
+ref silently installed a completely different package and reported success.
 
 Three things that bite in a separate repo:
 
