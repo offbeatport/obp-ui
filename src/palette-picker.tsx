@@ -351,7 +351,9 @@ function CustomPaletteDialog({
 function Preview({ colors, mode }: { colors: ThemePaletteColors; mode: Theme }) {
     return (
         <div
-            className="rounded-lg border border-border bg-background p-4"
+            // `mode` as a class, not just tokens: it is what keeps the page's `dark:` utilities
+            // out of a light preview and vice versa - see the custom variant in tokens.css.
+            className={cn("rounded-lg border border-border bg-background p-4", mode)}
             style={themePaletteStyle(colors, mode) as React.CSSProperties}
         >
             <div className="rounded-md border border-border bg-card p-3 shadow-e1">

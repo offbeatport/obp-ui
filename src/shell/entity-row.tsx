@@ -142,7 +142,7 @@ export function EntityRow({
                         {badge !== undefined && badge !== null && badge !== false && (
                             <span
                                 className={cn(
-                                    "flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-white",
+                                    "flex-none rounded-full bg-approval px-1.5 py-px text-[9.5px] font-bold tracking-[0.03em] text-approval-foreground",
                                     badgeClassName,
                                 )}
                             >

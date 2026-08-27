@@ -36,7 +36,7 @@ const PANEL_USER_AVATAR =
     "mt-px grid size-7 shrink-0 place-items-center overflow-hidden rounded-[9px] bg-secondary font-display text-sm font-bold text-muted-foreground";
 const PANEL_BODY = "text-[13.5px] leading-normal";
 const PANEL_USER_BODY =
-    "max-w-[300px] rounded-[14px_5px_14px_14px] bg-primary px-3.5 py-2.5 text-white";
+    "max-w-[300px] rounded-[14px_5px_14px_14px] bg-primary px-3.5 py-2.5 text-primary-foreground";
 const PANEL_ASSISTANT_BODY =
     "max-w-[440px] rounded-[5px_14px_14px_14px] pt-0.5 pb-[3px] text-foreground";
 const PANEL_TIME = "mt-[7px] block font-mono text-[10px]";
@@ -128,7 +128,9 @@ export function ChatBubble({
             <div className={cn(PANEL_BODY, me ? PANEL_USER_BODY : PANEL_ASSISTANT_BODY)}>
                 {body}
                 {timestamp !== undefined && (
-                    <span className={cn(PANEL_TIME, me ? "text-white/70" : "text-faint")}>
+                    <span
+                        className={cn(PANEL_TIME, me ? "text-primary-foreground/70" : "text-faint")}
+                    >
                         {timestamp}
                     </span>
                 )}

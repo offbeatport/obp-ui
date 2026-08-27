@@ -1,4 +1,15 @@
 import {
+    Bot,
+    Check,
+    Gauge,
+    Plus,
+    Rocket,
+    Settings2,
+    ShieldCheck,
+    Sparkles,
+    Trash2,
+} from "lucide-react";
+import {
     Badge,
     Button,
     Card,
@@ -75,17 +86,6 @@ import {
     contrastRatio,
     readableOn,
 } from "obp-ui";
-import {
-    Bot,
-    Check,
-    Gauge,
-    Plus,
-    Rocket,
-    Settings2,
-    ShieldCheck,
-    Sparkles,
-    Trash2,
-} from "lucide-react";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 

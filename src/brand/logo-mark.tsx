@@ -40,7 +40,7 @@ export function LogoMark({
                 ...style,
             }}
             className={cn(
-                "grid size-7 flex-none place-items-center rounded-[9px] text-sm font-bold text-white",
+                "grid size-7 flex-none place-items-center rounded-[9px] text-sm font-bold text-primary-foreground",
                 className,
             )}
         >

@@ -1,3 +1,4 @@
+import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import {
     Button,
     EmptyState,
@@ -9,7 +10,6 @@ import {
     TimelineDot,
     TimelineItem,
 } from "obp-ui";
-import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { Frame, Note, Row, Spec } from "../kit";
 
