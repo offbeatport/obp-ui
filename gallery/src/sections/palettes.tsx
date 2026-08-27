@@ -4,7 +4,7 @@ import {
     type ThemePalette,
     themePaletteStyle,
     themePaletteSwatch,
-} from "@paperkit/ui";
+} from "obp-ui";
 import type { CSSProperties } from "react";
 import { Api, Note, Spec } from "../kit";
 

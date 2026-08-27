@@ -17,7 +17,7 @@ import {
     setThemePref,
     themeKey,
     toggleTheme,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { useEffect, useState } from "react";
 import { Api, Note, Row, Spec } from "../kit";
 

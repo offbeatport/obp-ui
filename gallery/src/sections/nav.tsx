@@ -7,7 +7,7 @@ import {
     UIProvider,
     useIsActive,
     useNav,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { useState } from "react";
 import { Api, Note, Row, Spec } from "../kit";
 

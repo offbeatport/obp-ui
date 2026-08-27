@@ -8,7 +8,7 @@ import {
     Timeline,
     TimelineDot,
     TimelineItem,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { Frame, Note, Row, Spec } from "../kit";

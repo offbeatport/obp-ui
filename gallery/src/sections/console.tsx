@@ -18,7 +18,7 @@ import {
     createDomClassPref,
     hms,
     localeTime,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 
 // The live agent console. Transport-free by design: <ConsoleDock> takes a `fetchDigest`

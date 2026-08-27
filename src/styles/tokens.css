@@ -1,10 +1,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
-   cslopslop design system - editorial "paper" theme
+   obp-ui design system - editorial "paper" theme
    Grounded in design/v2-prototypes/08-chat-spine-pro-v7.html.
    This is the ONE style + archetype (SPEC "design system - engine, invisible").
-   Branding a company = override these token VALUES; components never change.
+   Branding a product = override these token VALUES; components never change.
    ========================================================================== */
 
 :root {
@@ -61,7 +61,7 @@
     --shadow-e1: 0 1px 2px rgba(60, 50, 38, 0.04), 0 8px 28px rgba(60, 50, 38, 0.07);
     --shadow-e2: 0 2px 6px rgba(60, 50, 38, 0.06), 0 22px 60px rgba(60, 50, 38, 0.13);
 
-    /* fonts - faces come from @paperkit/ui/fonts.css. The variable packages register
+    /* fonts - faces come from obp-ui/fonts.css. The variable packages register
        "<Family> Variable"; the plain name is kept as a fallback for a host that already
        has the static family (and for an app that skips fonts.css entirely). */
     --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;

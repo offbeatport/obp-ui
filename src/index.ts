@@ -1,12 +1,12 @@
-// @paperkit/ui - public surface.
+// obp-ui - public surface.
 //
 // Import styles separately (they are not JS):
-//   import "@paperkit/ui/fonts.css";    // self-hosted faces          (recommended)
-//   import "@paperkit/ui/styles.css";   // tokens + base + keyframes  (required)
-//   import "@paperkit/ui/canvas.css";   // React Flow theming         (canvas only)
-//   import "@paperkit/ui/desktop.css";  // native-window affordances  (Tauri only)
+//   import "obp-ui/fonts.css";    // self-hosted faces          (recommended)
+//   import "obp-ui/styles.css";   // tokens + base + keyframes  (required)
+//   import "obp-ui/canvas.css";   // React Flow theming         (canvas only)
+//   import "obp-ui/desktop.css";  // native-window affordances  (Tauri only)
 //
-// The canvas kit is deliberately NOT re-exported here: it lives at "@paperkit/ui/canvas" so
+// The canvas kit is deliberately NOT re-exported here: it lives at "obp-ui/canvas" so
 // apps without a board never pull the optional @xyflow/react peer into their bundle.
 
 // ── foundations ───────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ export {
     toggleTheme,
 } from "./lib/theme";
 
-// ── primitives (shadcn, themed with paperkit tokens) ──────────────────────────
+// ── primitives (shadcn, themed with obp-ui tokens) ──────────────────────────
 export * from "./primitives";
 
 // ── navigation seam ───────────────────────────────────────────────────────────

@@ -1,13 +1,13 @@
 /* ============================================================================
-   @paperkit/ui/desktop.css - native-window affordances for a Tauri shell.
+   obp-ui/desktop.css - native-window affordances for a Tauri shell.
 
    OPT-IN. The web app does not import this file, and nothing in here can reach
    it: every rule is scoped to `.is-desktop` on <html> (or, for the OS-specific
-   bits, `.is-desktop[data-os="…"]`). Import it AFTER @paperkit/ui/styles.css so
+   bits, `.is-desktop[data-os="…"]`). Import it AFTER obp-ui/styles.css so
    it wins the cascade against the base layer it deliberately overrides.
 
-       @import "@paperkit/ui/styles.css";
-       @import "@paperkit/ui/desktop.css";
+       @import "obp-ui/styles.css";
+       @import "obp-ui/desktop.css";
 
    The two hooks the host must set on <html>, before first paint:
 

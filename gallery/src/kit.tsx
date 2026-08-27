@@ -1,4 +1,4 @@
-import { cn } from "@paperkit/ui";
+import { cn } from "obp-ui";
 import type { CSSProperties, ReactNode } from "react";
 
 // The gallery's own chrome. Deliberately thin - anything that looks like a component the kit

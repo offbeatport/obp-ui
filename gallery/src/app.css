@@ -1,13 +1,13 @@
 @import "tailwindcss" source(none);
 
-@import "@paperkit/ui/fonts.css";
-@import "@paperkit/ui/styles.css";
+@import "obp-ui/fonts.css";
+@import "obp-ui/styles.css";
 
 /* The canvas section only. Un-themed React Flow primitives first, the paper theming on top -
    that order is load-bearing, which is why both live here rather than in a JS import (module
    evaluation order would decide the cascade). */
 @import "@xyflow/react/dist/base.css";
-@import "@paperkit/ui/canvas.css";
+@import "obp-ui/canvas.css";
 
 @source "../src";
 @source "../../src";

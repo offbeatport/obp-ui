@@ -6,7 +6,7 @@ import {
     type ProviderId,
     ProviderLogo,
     paletteFor,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
 // Brand marks: the product tile and the per-entity avatar. A product WORDMARK is not part of

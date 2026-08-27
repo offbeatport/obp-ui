@@ -1,9 +1,9 @@
 @import "tailwindcss" source(none);
 
-@import "@paperkit/ui/fonts.css";
-@import "@paperkit/ui/styles.css";
-@import "@paperkit/ui/canvas.css";
-@import "@paperkit/ui/desktop.css";
+@import "obp-ui/fonts.css";
+@import "obp-ui/styles.css";
+@import "obp-ui/canvas.css";
+@import "obp-ui/desktop.css";
 
 @source "../src";
 @source "../../../packages/ui/src";

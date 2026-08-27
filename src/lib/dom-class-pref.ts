@@ -13,7 +13,7 @@ export type DomClassPref = {
 };
 
 export function createDomClassPref(opts: {
-    /** Storage key, e.g. "cslopslop-console-tab". */
+    /** Storage key, e.g. "obp-console-tab". */
     storageKey: string;
     /** Class toggled on <html>. */
     className: string;
@@ -24,7 +24,7 @@ export function createDomClassPref(opts: {
     event?: string;
 }): DomClassPref {
     const { storageKey, className, onValue = "off", offValue = "on" } = opts;
-    const event = opts.event ?? `paperkit:pref:${storageKey}`;
+    const event = opts.event ?? `obp:pref:${storageKey}`;
 
     return {
         get() {

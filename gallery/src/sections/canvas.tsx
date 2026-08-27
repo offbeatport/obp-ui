@@ -1,4 +1,4 @@
-import { Button, PALETTES, type Signal, SignalBars, cn } from "@paperkit/ui";
+import { Button, PALETTES, type Signal, SignalBars, cn } from "obp-ui";
 import {
     AvatarHeader,
     BRIDGE_STROKE,
@@ -39,14 +39,14 @@ import {
     indexGraph,
     useNodeActions,
     withAccentPalette,
-} from "@paperkit/ui/canvas";
+} from "obp-ui/canvas";
 import { type Node, type NodeProps, type NodeTypes, Panel } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 
-// The optional peer. Everything here comes from the "@paperkit/ui/canvas" entry so an app
+// The optional peer. Everything here comes from the "obp-ui/canvas" entry so an app
 // without a board never pulls @xyflow/react into its bundle. The two stylesheets it needs
-// (@xyflow/react/dist/base.css, then @paperkit/ui/canvas.css) are imported by app.css - in
+// (@xyflow/react/dist/base.css, then obp-ui/canvas.css) are imported by app.css - in
 // that order, because the paper theming has to land on top.
 
 // ── the logical graph both boards below are drawn from ────────────────────────

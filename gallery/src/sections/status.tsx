@@ -10,7 +10,7 @@ import {
     TONE,
     TONE_VAR,
     type Tone,
-} from "@paperkit/ui";
+} from "obp-ui";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
 // The atoms that express state. Every colour decision is the caller's: these ship the shape,

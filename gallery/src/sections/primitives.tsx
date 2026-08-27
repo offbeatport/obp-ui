@@ -74,7 +74,7 @@ import {
     TooltipTrigger,
     contrastRatio,
     readableOn,
-} from "@paperkit/ui";
+} from "obp-ui";
 import {
     Bot,
     Check,
@@ -89,7 +89,7 @@ import {
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
-// The 17 shadcn primitives, themed with paperkit tokens. Every variant AND size the cva
+// The 17 shadcn primitives, themed with obp-ui tokens. Every variant AND size the cva
 // declares is on this page - if a variant exists and is not below, the gallery is wrong.
 
 const BUTTON_VARIANTS = [
