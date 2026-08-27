@@ -41,7 +41,7 @@ const SECTIONS: SectionDef[] = [
         id: "palettes",
         label: "Palettes",
         title: "Palettes",
-        blurb: "The same design system in ten sets of clothes, plus a custom editor. A palette overrides token values and nothing else - no component knows it exists. Nine of the ten are built for screens you cannot calibrate: neutral paper, a deep brand solved to read as text on it, and every step darker than the authored theme.",
+        blurb: "The same design system in ten sets of clothes, plus a custom editor. A palette overrides token values and nothing else - no component knows it exists. Nine of the ten are built for screens you cannot calibrate: achromatic surfaces, a brand pushed to 90% of the sRGB ceiling but still readable as text on the page, and every step darker than the authored theme.",
         Body: PalettesSection,
     },
     {
