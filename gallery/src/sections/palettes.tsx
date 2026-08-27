@@ -62,7 +62,7 @@ export function PalettesSection() {
 
             <Spec
                 name="THEME_PALETTES"
-                note="Ten palettes, each drawn in both modes. Nine of them keep the paper near-neutral and let the BRAND carry the identity - a tinted page is the first thing that looks wrong on a screen you do not control. Paper, the authored theme, is the exception."
+                note="Ten palettes, each drawn in both modes. Nine of them hold the surfaces achromatic and put every bit of the identity in the brand, which runs as saturated as sRGB allows at a lightness that still reads 4.5:1 on the page. Paper, the authored theme, is the exception."
                 bare
             >
                 <div className="grid gap-4 sm:grid-cols-2">
