@@ -40,7 +40,7 @@ export type CanvasCurrentLineProps = {
 export function CanvasCurrentLine({ color, text, pulse, className }: CanvasCurrentLineProps) {
     return (
         <div
-            className={cn("flex items-center gap-2 font-mono text-[11px]", className)}
+            className={cn("flex items-center gap-2 font-mono text-sm", className)}
             style={{ color }}
         >
             <StatusDot size="md" color={color} pulse={pulse} className="flex-none" />
@@ -51,7 +51,7 @@ export function CanvasCurrentLine({ color, text, pulse, className }: CanvasCurre
 
 // -------------------------------------------------------------------- ribbon
 const RIBBON =
-    "absolute -top-2.5 right-3.5 rounded-full px-2 py-[3px] font-mono text-[9.5px] font-bold uppercase tracking-[0.12em]";
+    "absolute -top-2.5 right-3.5 rounded-full px-2 py-[3px] font-mono text-sm font-bold uppercase tracking-[0.12em]";
 
 export type CanvasRibbonProps = {
     children: ReactNode;
@@ -128,10 +128,13 @@ export function CanvasEntityCard({
     style,
 }: CanvasEntityCardProps) {
     const ring = accent ?? hoverAccent;
+    // w-[280px], up from 260. The header is name + slug on one line and both sit on the 14px
+    // floor now: an 11-character name (100px at text-base bold) beside a 14-character domain
+    // (118px of mono) plus the dot and gaps wants 244px, which 260 - 32 of padding could not give.
     return (
         <div
             className={cn(
-                "group relative w-[260px] cursor-pointer rounded-[14px] border p-4 transition-[transform,border-color] duration-200 hover:-translate-y-[3px]",
+                "group relative w-[280px] cursor-pointer rounded-[14px] border p-4 transition-[transform,border-color] duration-200 hover:-translate-y-[3px]",
                 className,
             )}
             style={{
@@ -157,12 +160,15 @@ export function CanvasEntityCard({
 
             <div className="mb-2.5 flex items-center gap-2">
                 <StatusDot size="xl" color={statusColor} glow={statusGlow} className="flex-none" />
-                <span className="text-[15px] font-bold tracking-[-0.01em] text-foreground">
+                {/* min-w-0 + truncate: the card is a fixed 260px and the meta key is 14px now,
+                    so a long entity name has to ellipsise rather than shove the slug off the
+                    card's right edge. */}
+                <span className="min-w-0 truncate text-base font-bold tracking-[-0.01em] text-foreground">
                     {name}
                 </span>
                 {badge}
                 {meta !== undefined && (
-                    <span className="ml-auto font-mono text-[10.5px] text-faint">{meta}</span>
+                    <span className="ml-auto flex-none font-mono text-sm text-faint">{meta}</span>
                 )}
             </div>
 
@@ -170,10 +176,10 @@ export function CanvasEntityCard({
                 <div className="mb-3 flex gap-3.5 border-t border-border pt-2.5">
                     {stats.map((s) => (
                         <div key={s.label} className="flex flex-col gap-px">
-                            <b className="font-mono text-[14px] font-semibold text-foreground">
+                            <b className="font-mono text-sm font-semibold text-foreground">
                                 {s.value}
                             </b>
-                            <span className="font-mono text-[9.5px] uppercase tracking-[0.08em] text-faint">
+                            <span className="font-mono text-sm uppercase tracking-[0.08em] text-faint">
                                 {s.label}
                             </span>
                         </div>
@@ -191,7 +197,7 @@ export function CanvasEntityCard({
 /** The inline "you are here" chip that sits after an entity card's name. */
 export function CanvasHereBadge({ children }: { children: ReactNode }) {
     return (
-        <span className="rounded bg-[color:var(--info)]/15 px-1.5 py-px font-mono text-[8.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--info)]">
+        <span className="flex-none rounded bg-[color:var(--info)]/15 px-1.5 py-px font-mono text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--info)]">
             {children}
         </span>
     );
@@ -244,15 +250,15 @@ export function CanvasOpportunityCard({
                 />
             )}
             <div className="mb-1.5 flex items-center gap-2">
-                <span className="text-[13.5px] font-bold text-foreground">{title}</span>
+                <span className="min-w-0 truncate text-sm font-bold text-foreground">{title}</span>
                 <span
-                    className="ml-auto rounded-[7px] px-1.5 py-0.5 font-mono text-[13px] font-bold"
+                    className="ml-auto flex-none rounded-[7px] px-1.5 py-0.5 font-mono text-sm font-bold"
                     style={{ color: scoreColor, background: "rgba(255,255,255,.04)" }}
                 >
                     {score}
                 </span>
             </div>
-            <p className="text-[11px] leading-[1.4] text-muted-foreground">{thesis}</p>
+            <p className="text-sm leading-[1.4] text-muted-foreground">{thesis}</p>
             {footer}
         </div>
     );
@@ -266,7 +272,7 @@ export function CanvasNodeNotice({
     return (
         <div
             className={cn(
-                "mt-2.5 rounded-lg border border-[color:var(--destructive)]/25 bg-[color:var(--destructive)]/8 py-1.5 text-center font-mono text-[10.5px] uppercase tracking-[0.05em] text-[color:var(--destructive)]",
+                "mt-2.5 rounded-lg border border-[color:var(--destructive)]/25 bg-[color:var(--destructive)]/8 py-1.5 text-center font-mono text-sm uppercase tracking-[0.05em] text-[color:var(--destructive)]",
                 className,
             )}
         >
@@ -293,7 +299,7 @@ export function CanvasNodeAction({
                 onClick?.();
             }}
             className={cn(
-                "nodrag nopan mt-2.5 w-full rounded-lg border border-[color:var(--approval)]/30 bg-[color:var(--approval)]/12 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.05em] text-[color:var(--approval)] transition-colors hover:bg-[color:var(--approval)]/25",
+                "nodrag nopan mt-2.5 w-full rounded-lg border border-[color:var(--approval)]/30 bg-[color:var(--approval)]/12 py-1.5 font-mono text-sm uppercase tracking-[0.05em] text-[color:var(--approval)] transition-colors hover:bg-[color:var(--approval)]/25",
                 className,
             )}
         >
@@ -320,7 +326,7 @@ export function CanvasRegionLabel({
     return (
         <div
             className={cn(
-                "pointer-events-none whitespace-nowrap font-mono text-[13px] uppercase tracking-[0.35em] text-faint",
+                "pointer-events-none whitespace-nowrap font-mono text-sm uppercase tracking-[0.35em] text-faint",
                 className,
             )}
         >

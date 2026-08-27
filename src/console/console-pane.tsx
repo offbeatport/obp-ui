@@ -15,9 +15,9 @@ import { useNearBottomScroll } from "./use-near-bottom";
 
 const HEADER = "flex flex-none items-center gap-2 border-b border-border px-3 py-[9px]";
 const TITLE =
-    "overflow-hidden text-ellipsis whitespace-nowrap text-[12.5px] font-semibold text-foreground";
+    "overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-foreground";
 const CHIP =
-    "ml-auto flex-none rounded-[5px] px-[7px] py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.05em]";
+    "ml-auto flex-none rounded-[5px] px-[7px] py-0.5 font-mono text-sm font-semibold uppercase tracking-[0.05em]";
 
 /** A pane's state chip: the word, plus the token colour pair the app picked for it. */
 export type ConsoleStatusChip = {

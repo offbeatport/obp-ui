@@ -94,7 +94,16 @@ const RADII = [
     { cls: "rounded-xl", token: "--radius-card (18px)" },
 ];
 
-const TYPE_SCALE = ["text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl"];
+// utility → the token that moves it. Both halves are shown so the override knob is discoverable:
+// rebranding the type scale means redefining --type-* in tokens.css, exactly like a colour.
+const TYPE_SCALE: [string, string][] = [
+    ["text-sm", "--type-sm"],
+    ["text-base", "--type-base"],
+    ["text-lg", "--type-lg"],
+    ["text-xl", "--type-xl"],
+    ["text-2xl", "--type-2xl"],
+    ["text-3xl", "--type-3xl"],
+];
 
 function SwatchGrid({ items }: { items: Swatch[] }) {
     return (
@@ -200,9 +209,11 @@ export function TokensSection() {
                     </p>
                 </div>
                 <div className="mt-6 space-y-1 border-t border-border-soft pt-4">
-                    {TYPE_SCALE.map((t) => (
-                        <p key={t} className={t}>
-                            <span className="font-mono text-faint">{t}</span> - the quick brown fox
+                    {TYPE_SCALE.map(([cls, token]) => (
+                        <p key={cls} className={cls}>
+                            <span className="font-mono text-faint">{cls}</span>{" "}
+                            <span className="font-mono text-faint/70">{token}</span> - the quick
+                            brown fox
                         </p>
                     ))}
                 </div>

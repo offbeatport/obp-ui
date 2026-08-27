@@ -8,35 +8,35 @@ import {
     ShieldCheck,
     Trash2,
 } from "lucide-react";
+import { Badge, Button, LogoMark, StatusPill, type Tone } from "obp-ui";
 import {
     AccountButton,
     AccountMenu,
     type AccountMenuItem,
     AppShell,
-    Badge,
-    Button,
     EmptyStateCard,
     EntityRow,
-    LogoMark,
     NavItem,
     Rail,
     SectionLabel,
-    StatusPill,
     TitleBar,
-    type Tone,
     WindowControls,
     type WindowControlsApi,
     WindowControlsProvider,
     useRail,
     useRailCollapsed,
     useWindowControls,
-} from "obp-ui";
+} from "obp-ui/shell";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 
 // The application frame. Every piece is content-free: nav arrays, company rows, menu entries
 // and copy are domain data that arrive as props - which is why the fixtures below live here
 // and not in the package.
+//
+// Note the two import lines. The frame comes from "obp-ui/shell", not the root barrel, because
+// mounting it makes an app look like this one - see the header of src/index.ts. The gallery
+// writes what a consumer writes, so the seam is visible here too.
 
 const COMPANIES: { name: string; meta: string; tone: Tone; badge?: string }[] = [
     { name: "Ledgerly", meta: "$1.2k/mo · building", tone: "blue", badge: "INBOX" },

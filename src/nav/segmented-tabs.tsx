@@ -63,7 +63,7 @@ export function SegmentedTabs({
                         type="button"
                         onClick={() => onSelect(t.key)}
                         className={cn(
-                            "relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[12.5px] transition-colors",
+                            "relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm transition-colors",
                             on
                                 ? "font-semibold text-foreground"
                                 : "font-medium text-faint hover:text-foreground",
@@ -71,7 +71,7 @@ export function SegmentedTabs({
                     >
                         {t.label}
                         {t.badge != null && (
-                            <span className="rounded-full bg-approval-soft px-1.5 py-px font-mono text-[9.5px] font-bold text-approval">
+                            <span className="rounded-full bg-approval-soft px-1.5 py-px font-mono text-sm font-bold text-approval">
                                 {t.badge}
                             </span>
                         )}

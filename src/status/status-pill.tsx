@@ -17,8 +17,8 @@ import { StatusDot } from "./status-dot";
 export type StatusPillVariant = "bare" | "soft";
 
 const PILL: Record<StatusPillVariant, string> = {
-    bare: "inline-flex flex-none items-center gap-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.05em] text-muted-foreground",
-    soft: "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide",
+    bare: "inline-flex flex-none items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.05em] text-muted-foreground",
+    soft: "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-sm uppercase tracking-wide",
 };
 
 export type StatusPillProps = {

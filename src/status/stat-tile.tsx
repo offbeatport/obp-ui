@@ -21,17 +21,17 @@ const FRAME: Record<StatTileVariant, string> = {
 
 const VALUE: Record<StatTileVariant, string> = {
     metric: "font-display text-xl font-medium tracking-tight",
-    cell: "block font-mono text-[15px]",
+    cell: "block font-mono text-base",
     bare: "font-mono text-lg font-semibold text-foreground",
 };
 
 const LABEL: Record<StatTileVariant, string> = {
-    metric: "font-mono text-[10px] uppercase tracking-[0.1em] text-faint",
-    cell: "font-mono text-[8px] uppercase tracking-[0.04em] text-faint",
-    bare: "font-mono text-[10px] uppercase tracking-wide text-faint",
+    metric: "font-mono text-sm uppercase tracking-[0.1em] text-faint",
+    cell: "font-mono text-sm uppercase tracking-[0.04em] text-faint",
+    bare: "font-mono text-sm uppercase tracking-wide text-faint",
 };
 
-const SUB = "mt-0.5 text-[11px] text-muted-foreground";
+const SUB = "mt-0.5 text-sm text-muted-foreground";
 
 export type StatTileProps = {
     variant?: StatTileVariant;

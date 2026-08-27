@@ -65,7 +65,7 @@ function Badge({ v, tone = "approval" }: { v?: string | number; tone?: string })
     if (v == null) return null;
     return (
         <span
-            className="rounded-full px-1.5 py-px font-mono text-[9.5px] font-bold"
+            className="rounded-full px-1.5 py-px font-mono text-sm font-bold"
             style={{
                 background: `color-mix(in srgb, var(--${tone}) 16%, transparent)`,
                 color: `var(--${tone})`,
@@ -89,7 +89,7 @@ export function UnderlineSlide({ tabs, active, onSelect, badges }: TabSelectorPr
                     type="button"
                     onClick={() => onSelect(t)}
                     className={cn(
-                        "inline-flex items-center gap-2 whitespace-nowrap px-3.5 pb-3 pt-2 text-[13px] transition-colors",
+                        "inline-flex items-center gap-2 whitespace-nowrap px-3.5 pb-3 pt-2 text-sm transition-colors",
                         t === active
                             ? "font-semibold text-foreground"
                             : "font-medium text-faint hover:text-muted-foreground",
@@ -130,7 +130,7 @@ export function SegmentedPill({ tabs, active, onSelect, badges }: TabSelectorPro
                     type="button"
                     onClick={() => onSelect(t)}
                     className={cn(
-                        "relative z-10 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12.5px] transition-colors",
+                        "relative z-10 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition-colors",
                         t === active
                             ? "font-semibold text-foreground"
                             : "font-medium text-faint hover:text-foreground",
@@ -158,7 +158,7 @@ export function IconPills(p: TabSelectorProps) {
                         type="button"
                         onClick={() => onSelect(t)}
                         className={cn(
-                            "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[12.5px] transition-all",
+                            "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-all",
                             on
                                 ? "border-primary bg-accent font-semibold text-accent-foreground shadow-e1"
                                 : "border-border bg-card font-medium text-muted-foreground hover:border-border-soft hover:text-foreground",
@@ -175,12 +175,12 @@ export function IconPills(p: TabSelectorProps) {
 }
 
 // ------------------------------------------------------------- 4. Command bar
+// flex-wrap + max-w-full: every tab carries a 14px label AND a 14px kbd hint, which puts a
+// five-tab bar past 720px. Unwrapped it ran out of its container and clipped the last shortcut.
 export function CommandBar({ tabs, active, onSelect, badges }: TabSelectorProps) {
     return (
-        <div className="inline-flex items-center gap-1 rounded-xl border border-border bg-card p-1.5 shadow-e1">
-            <span className="px-2 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
-                ⌘
-            </span>
+        <div className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-xl border border-border bg-card p-1.5 shadow-e1">
+            <span className="px-2 font-mono text-sm uppercase tracking-[0.16em] text-faint">⌘</span>
             {tabs.map((t, idx) => {
                 const on = t === active;
                 return (
@@ -189,7 +189,7 @@ export function CommandBar({ tabs, active, onSelect, badges }: TabSelectorProps)
                         type="button"
                         onClick={() => onSelect(t)}
                         className={cn(
-                            "group inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] transition-colors",
+                            "group inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-colors",
                             on
                                 ? "bg-primary font-semibold text-primary-foreground"
                                 : "font-medium text-muted-foreground hover:bg-secondary",
@@ -199,7 +199,7 @@ export function CommandBar({ tabs, active, onSelect, badges }: TabSelectorProps)
                         <Badge v={badges?.[t]} tone={on ? "primary" : "approval"} />
                         <kbd
                             className={cn(
-                                "rounded border px-1 font-mono text-[9px] transition-colors",
+                                "rounded border px-1 font-mono text-sm transition-colors",
                                 on
                                     ? "border-primary-foreground/40 text-primary-foreground/80"
                                     : "border-border text-faint",
@@ -238,7 +238,7 @@ export function VerticalRail(p: TabSelectorProps) {
                         type="button"
                         onClick={() => onSelect(t)}
                         className={cn(
-                            "inline-flex items-center gap-3 rounded-xl py-2 pl-4 pr-5 text-[12.5px] transition-colors",
+                            "inline-flex items-center gap-3 rounded-xl py-2 pl-4 pr-5 text-sm transition-colors",
                             on
                                 ? "bg-accent font-semibold text-accent-foreground"
                                 : "font-medium text-muted-foreground hover:bg-secondary",
@@ -288,13 +288,15 @@ export function FloatingDock(p: TabSelectorProps) {
                             <Icon className="size-4.5" strokeWidth={2} />
                         </span>
                         {badges?.[t] != null && (
-                            <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-approval font-mono text-[8px] font-bold text-approval-foreground">
+                            // size-5, not size-4: a 14px numeral in a 16px disc left no ring of
+                            // fill around it and read as a clipped square.
+                            <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-approval font-mono text-sm font-bold text-approval-foreground">
                                 {badges[t]}
                             </span>
                         )}
                         <span
                             className={cn(
-                                "pointer-events-none absolute -top-7 whitespace-nowrap rounded-md bg-foreground px-2 py-0.5 text-[10px] font-medium text-background transition-opacity",
+                                "pointer-events-none absolute -top-7 whitespace-nowrap rounded-md bg-foreground px-2 py-0.5 text-sm font-medium text-background transition-opacity",
                                 lift ? "opacity-100" : "opacity-0",
                             )}
                         >
@@ -332,7 +334,7 @@ export function NumberedTicker({ tabs, active, onSelect, badges }: TabSelectorPr
                         >
                             <span
                                 className={cn(
-                                    "font-mono text-[10px] transition-colors",
+                                    "font-mono text-sm transition-colors",
                                     on ? "text-primary" : "text-faint",
                                 )}
                             >
@@ -340,7 +342,7 @@ export function NumberedTicker({ tabs, active, onSelect, badges }: TabSelectorPr
                             </span>
                             <span
                                 className={cn(
-                                    "text-[13px] transition-colors",
+                                    "text-sm transition-colors",
                                     on
                                         ? "font-semibold text-foreground"
                                         : "font-medium text-faint group-hover:text-muted-foreground",
@@ -393,7 +395,7 @@ export function GlowTabs({ tabs, active, onSelect, badges }: TabSelectorProps) {
                             type="button"
                             onClick={() => onSelect(t)}
                             className={cn(
-                                "relative z-10 inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-[12.5px] transition-colors",
+                                "relative z-10 inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm transition-colors",
                                 on
                                     ? "font-semibold text-white"
                                     : "font-medium text-[#8790b8] hover:text-[#c9cfe8]",
@@ -423,7 +425,7 @@ export function MorphDropdown(p: TabSelectorProps) {
                     <span className="grid size-7 place-items-center rounded-lg bg-primary text-primary-foreground">
                         <Icon className="size-4" strokeWidth={2} />
                     </span>
-                    <span className="text-[13px] font-semibold text-foreground">{active}</span>
+                    <span className="text-sm font-semibold text-foreground">{active}</span>
                     <Badge v={badges?.[active]} />
                     <ChevronDown className="size-4 text-faint" />
                 </button>
@@ -449,7 +451,7 @@ export function MorphDropdown(p: TabSelectorProps) {
                                     )}
                                     strokeWidth={2}
                                 />
-                                <span className="flex items-center gap-1.5 text-[12px] font-medium">
+                                <span className="flex items-center gap-1.5 text-sm font-medium">
                                     {t}
                                     <Badge v={badges?.[t]} />
                                 </span>
@@ -477,7 +479,7 @@ export function StatusTabs({ tabs, active, onSelect, badges }: TabSelectorProps)
                         type="button"
                         onClick={() => onSelect(t)}
                         className={cn(
-                            "inline-flex items-center gap-2 rounded-lg border-l-[3px] py-1.5 pl-2.5 pr-3 text-[12.5px] transition-all",
+                            "inline-flex items-center gap-2 rounded-lg border-l-[3px] py-1.5 pl-2.5 pr-3 text-sm transition-all",
                             on
                                 ? "bg-card font-semibold text-foreground shadow-e1"
                                 : "border-l-transparent font-medium text-faint hover:bg-secondary hover:text-muted-foreground",

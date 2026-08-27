@@ -14,7 +14,7 @@ import {
     UnderlineSlide,
     VerticalRail,
     withTabIcons,
-} from "obp-ui";
+} from "obp-ui/nav-ui";
 import { type ReactNode, useState } from "react";
 import { Note, Spec } from "../kit";
 
@@ -63,12 +63,17 @@ function Selector({ def, name }: { def: TabSelectorDef; name: string }) {
                 <p className="text-sm text-muted-foreground">{def.blurb}</p>
             </div>
             {/* Several of these are wider than half a column; they scroll inside their own box
-                rather than pushing the page sideways. */}
+                rather than pushing the page sideways.
+
+                py-7, not p-5: overflow-x-auto makes this a scroll container in BOTH axes, and
+                FloatingDock's hover label is an absolute -top-7 chip that grew to 24px tall at
+                the 14px floor. With 20px of padding its top landed 3px inside the border and
+                read as clipped; 28px puts it back inside the frame. */}
             <div
                 className={
                     def.dark
-                        ? "dark flex min-h-28 items-center overflow-x-auto rounded-xl border border-border bg-background p-5"
-                        : "flex min-h-28 items-center overflow-x-auto rounded-xl border border-border bg-card p-5 shadow-e1"
+                        ? "dark flex min-h-28 items-center overflow-x-auto rounded-xl border border-border bg-background px-5 py-7"
+                        : "flex min-h-28 items-center overflow-x-auto rounded-xl border border-border bg-card px-5 py-7 shadow-e1"
                 }
             >
                 {body}

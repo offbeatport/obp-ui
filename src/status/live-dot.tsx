@@ -20,7 +20,7 @@ export type LiveDotVariant = "ping" | "blink";
 
 // The company card's caption lockup (was the `.co-feed h4` rule).
 const LOCKUP =
-    "flex items-center gap-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-faint";
+    "flex items-center gap-2 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-faint";
 
 export type LiveDotProps = {
     variant?: LiveDotVariant;

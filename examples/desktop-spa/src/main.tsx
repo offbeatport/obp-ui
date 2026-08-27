@@ -1,28 +1,19 @@
 import "./app.css";
 import "@xyflow/react/dist/base.css";
 
+import { Home, Inbox, LayoutGrid, Plus, SlidersHorizontal } from "lucide-react";
 import {
-    AccountButton,
-    AccountMenu,
-    AppShell,
     Badge,
     Button,
     Card,
     CardContent,
     CardHeader,
     CardTitle,
-    ChatBubble,
-    ChatComposer,
-    ChatPanel,
     EmptyState,
-    EntityRow,
     GradientMark,
     Input,
     LiveDot,
     LogoMark,
-    NavItem,
-    Rail,
-    SectionLabel,
     SegmentedTabs,
     StatTile,
     StatusDot,
@@ -31,18 +22,31 @@ import {
     Timeline,
     TimelineDot,
     TimelineItem,
-    TitleBar,
     UIProvider,
-    WindowControls,
-    WindowControlsProvider,
     createTheme,
 } from "obp-ui";
-import { Home, Inbox, LayoutGrid, Plus, SlidersHorizontal } from "lucide-react";
+import { ChatBubble, ChatComposer, ChatPanel } from "obp-ui/chat";
+import {
+    AccountButton,
+    AccountMenu,
+    AppShell,
+    EntityRow,
+    NavItem,
+    Rail,
+    SectionLabel,
+    TitleBar,
+    WindowControls,
+    WindowControlsProvider,
+} from "obp-ui/shell";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 
 // A Tauri frontend has no router by default. The nav seam degrades to plain <a href>, which is
 // exactly what this probe exercises: no UIProvider Link is supplied.
+//
+// Three import lines, not one, and that is the point: the root barrel is anonymous, while
+// "obp-ui/shell" and "obp-ui/chat" are the archetype - adopting this frame and this co-pilot is
+// a decision, so it is spelled out here. See the header of src/index.ts.
 const theme = createTheme({ namespace: "probe" });
 theme.initTheme();
 document.documentElement.classList.add("is-desktop");
@@ -105,7 +109,7 @@ function Probe() {
                             obp-ui / desktop probe
                         </div>
                         <h1 className="font-display text-4xl font-light">Same kit, no router</h1>
-                        <p className="mt-2 max-w-xl font-serif text-[17px] italic text-muted-foreground">
+                        <p className="mt-2 max-w-xl font-serif text-lg italic text-muted-foreground">
                             Rendered by a plain Vite SPA - no SSR, no server functions, no TanStack
                             Router. Every part below comes from obp-ui.
                         </p>
@@ -180,7 +184,7 @@ function Probe() {
                                                     <div className="text-sm font-semibold">
                                                         {title}
                                                     </div>
-                                                    <div className="font-mono text-[11px] text-faint">
+                                                    <div className="font-mono text-sm text-faint">
                                                         {meta}
                                                     </div>
                                                 </div>

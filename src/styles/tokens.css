@@ -77,6 +77,33 @@
     --font-display: "Space Grotesk Variable", "Space Grotesk", "Inter Variable", sans-serif;
     --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
     --font-serif: "Spectral", Georgia, serif;
+
+    /* TYPE SCALE. Six steps, mapped into Tailwind's --text-* namespace below.
+       THE FLOOR IS --type-sm (14px) AND IT IS THE SMALLEST TYPE THE KIT DRAWS. Before this
+       existed the components carried 113 arbitrary text-[Npx] literals in 15 sizes between 8px
+       and 16px - text-[12px] and text-[12.5px] both, which is noise, not a scale. 12px was
+       judged too small (so text-xs is banned outright) and a 9.5px uppercase mono label - which
+       is what a status pill, a canvas chip and the rail's section headings all used to be - is
+       simply unreadable on a laptop screen at arm's length.
+
+       Sizes are the only part of the kit's identity a token override could not reach while they
+       were baked into class strings. Declared here, an archetype preset moves the whole kit by
+       redefining these six values - same contract as the colours. */
+    --type-sm: 0.875rem; /* 14px - the floor: labels, chips, meta, log lines */
+    --type-base: 1rem; /* 16px - body copy, chat bubbles */
+    --type-lg: 1.125rem; /* 18px - card and panel titles */
+    --type-xl: 1.25rem; /* 20px - section headings, stat values */
+    --type-2xl: 1.5rem; /* 24px - page headings */
+    --type-3xl: 1.875rem; /* 30px - hero / display */
+
+    /* Paired line heights. Tailwind's own defaults, kept explicit so a preset that grows the
+       scale can grow the leading with it instead of inheriting body's 1.55 at every step. */
+    --type-sm-leading: 1.25rem;
+    --type-base-leading: 1.5rem;
+    --type-lg-leading: 1.75rem;
+    --type-xl-leading: 1.75rem;
+    --type-2xl-leading: 2rem;
+    --type-3xl-leading: 2.25rem;
 }
 
 .dark {
@@ -180,4 +207,19 @@
     --font-display: var(--font-display);
     --font-mono: var(--font-mono);
     --font-serif: var(--font-serif);
+
+    /* type scale - text-sm … text-3xl. text-xs is deliberately NOT declared: Tailwind still
+       ships its 0.75rem default, but nothing in the kit may use it (see DESIGN.md rule 7). */
+    --text-sm: var(--type-sm);
+    --text-sm--line-height: var(--type-sm-leading);
+    --text-base: var(--type-base);
+    --text-base--line-height: var(--type-base-leading);
+    --text-lg: var(--type-lg);
+    --text-lg--line-height: var(--type-lg-leading);
+    --text-xl: var(--type-xl);
+    --text-xl--line-height: var(--type-xl-leading);
+    --text-2xl: var(--type-2xl);
+    --text-2xl--line-height: var(--type-2xl-leading);
+    --text-3xl: var(--type-3xl);
+    --text-3xl--line-height: var(--type-3xl-leading);
 }

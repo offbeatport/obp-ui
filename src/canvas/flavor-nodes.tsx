@@ -86,7 +86,7 @@ export function AvatarHeader({
     return (
         <div className={cn("flex items-center gap-3", className)}>
             <span
-                className="grid size-9 flex-none place-items-center rounded-[9px] font-display text-[15px] font-bold text-white"
+                className="grid size-9 flex-none place-items-center rounded-[9px] font-display text-base font-bold text-white"
                 style={{ background: `linear-gradient(145deg, ${palette[0]}, ${palette[1]})` }}
             >
                 {mark}
@@ -94,7 +94,7 @@ export function AvatarHeader({
             <div className="min-w-0">
                 <div className={cn("truncate", titleClassName)}>{title}</div>
                 {sub !== undefined && (
-                    <div className="truncate font-mono text-[11px] text-faint">{sub}</div>
+                    <div className="truncate font-mono text-sm text-faint">{sub}</div>
                 )}
             </div>
         </div>
@@ -135,15 +135,15 @@ export function BrowserPreview({
                 <StatusDot size="sm" colorClassName="bg-destructive/60" />
                 <StatusDot size="sm" colorClassName="bg-warning/60" />
                 <StatusDot size="sm" colorClassName="bg-success/60" />
-                <span className="ml-1 truncate font-mono text-[9px] text-faint">{url}</span>
+                <span className="ml-1 truncate font-mono text-sm text-faint">{url}</span>
             </div>
             <div className="px-2.5 py-2">
-                <div className={cn("line-clamp-2 text-[12px] font-semibold", titleClassName)}>
+                <div className={cn("line-clamp-2 text-sm font-semibold", titleClassName)}>
                     {headline}
                 </div>
                 {cta !== undefined && (
                     <div
-                        className="mt-1.5 inline-block rounded-[5px] px-2 py-0.5 text-[9px] font-semibold text-white"
+                        className="mt-1.5 inline-block rounded-[5px] px-2 py-0.5 text-sm font-semibold text-white"
                         style={{ background: ctaColor }}
                     >
                         {cta}
@@ -174,7 +174,7 @@ export function LaneNode({ data }: ChromeProps) {
             }}
         >
             <div
-                className="px-4 pt-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em]"
+                className="px-4 pt-3 font-mono text-sm font-bold uppercase tracking-[0.16em]"
                 style={{ color: a }}
             >
                 {data.label}
@@ -188,7 +188,7 @@ export function ColHeadNode({ data }: ChromeProps) {
     const a = data.accent ?? "var(--foreground)";
     return (
         <div
-            className="flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.14em]"
+            className="flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-sm font-bold uppercase tracking-[0.14em]"
             style={{
                 width: data.w ?? 200,
                 background: `color-mix(in srgb, ${a} 12%, var(--card))`,

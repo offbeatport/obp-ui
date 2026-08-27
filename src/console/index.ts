@@ -1,5 +1,9 @@
-// console - the bottom-docked live agent console and the log surfaces it shares with the
-// rest of the app.
+// obp-ui/console - the bottom-docked live agent console and the log surfaces it shares with
+// the rest of the app.
+//
+// Its own entry point, not part of the root barrel: a dock pinned to the bottom of every page
+// is a strong claim about what an app IS (one that watches long-running agents). Only products
+// making that claim should get it, and they should have to say so at the import line.
 //
 // Transport-free: <ConsoleDock> takes a `fetchDigest` function and <LogView> takes `lines`,
 // so the same UI runs over a TanStack server function, an SSE tail, or a Tauri command.

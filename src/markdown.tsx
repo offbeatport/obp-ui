@@ -3,9 +3,12 @@ import type { ReactNode } from "react";
 // A small, dependency-free Markdown renderer for chat messages - handles the subset models actually
 // emit: headings, bold/italic, inline + fenced code, links, bullet/ordered lists, blockquotes, and
 // paragraphs (single newlines → line breaks). Builds React nodes, so there's no HTML injection.
-// Not a full CommonMark parser; good enough for agent replies. Inherits font-size/color from parent.
+// Not a full CommonMark parser; good enough for agent replies. Colour and the PARAGRAPH size are
+// inherited from the parent bubble; only headings and code name a step of the kit's type scale.
+// They used to be em multiples (0.85 / 1.08 / 1.15), which put code at 11.9px inside the 14px
+// panel bubble - under the kit's text-sm floor, and unreachable by any token override.
 
-const CODE_INLINE = "rounded bg-black/[0.06] px-1 py-px font-mono text-[0.85em] dark:bg-white/10";
+const CODE_INLINE = "rounded bg-black/[0.06] px-1 py-px font-mono text-sm dark:bg-white/10";
 
 // Inline spans: `code`, **bold**, __bold__, *italic*, _italic_, [text](url).
 function inline(text: string, kp: string): ReactNode[] {
@@ -98,7 +101,7 @@ export function Markdown({ content, className }: { content: string; className?: 
             blocks.push(
                 <pre
                     key={key}
-                    className="overflow-x-auto rounded-lg bg-black/[0.06] p-3 font-mono text-[0.85em] leading-relaxed dark:bg-white/10"
+                    className="overflow-x-auto rounded-lg bg-black/[0.06] p-3 font-mono text-sm leading-relaxed dark:bg-white/10"
                 >
                     <code>{code.join("\n")}</code>
                 </pre>,
@@ -111,9 +114,9 @@ export function Markdown({ content, className }: { content: string; className?: 
             const lvl = h[1].length;
             const cls =
                 lvl <= 1
-                    ? "text-[1.15em] font-semibold"
+                    ? "text-lg font-semibold"
                     : lvl === 2
-                      ? "text-[1.08em] font-semibold"
+                      ? "text-base font-semibold"
                       : "font-semibold";
             blocks.push(
                 <div key={key} className={cls}>

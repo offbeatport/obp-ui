@@ -11,13 +11,25 @@
             "types": "./src/index.ts",
             "default": "./src/index.ts"
         },
-        "./types": {
-            "types": "./src/types/index.ts",
-            "default": "./src/types/index.ts"
-        },
         "./canvas": {
             "types": "./src/canvas/index.ts",
             "default": "./src/canvas/index.ts"
+        },
+        "./chat": {
+            "types": "./src/chat/index.ts",
+            "default": "./src/chat/index.ts"
+        },
+        "./console": {
+            "types": "./src/console/index.ts",
+            "default": "./src/console/index.ts"
+        },
+        "./nav-ui": {
+            "types": "./src/nav-ui/index.ts",
+            "default": "./src/nav-ui/index.ts"
+        },
+        "./shell": {
+            "types": "./src/shell/index.ts",
+            "default": "./src/shell/index.ts"
         },
         "./styles.css": "./src/styles/index.css",
         "./tokens.css": "./src/styles/tokens.css",
@@ -76,5 +88,6 @@
     "repository": {
         "type": "git",
         "url": "git+ssh://git@github.com/offbeatport/obp-ui.git"
-    }
+    },
+    "packageManager": "pnpm@10.30.3+sha256.ff0a72140f6a6d66c0b284f6c9560aff605518e28c29aeac25fb262b74331588"
 }

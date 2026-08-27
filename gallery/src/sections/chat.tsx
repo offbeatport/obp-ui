@@ -1,8 +1,7 @@
+import { Badge, Button, GradientMark, StatusPill, cn } from "obp-ui";
 import {
     ASSISTANT_BUBBLE,
     AssistantTurn,
-    Badge,
-    Button,
     ChatBubble,
     ChatComposer,
     ChatEmptyState,
@@ -12,12 +11,9 @@ import {
     ChatSystemLine,
     ENTRANCE_MAX_STEPS,
     ENTRANCE_STEP_MS,
-    GradientMark,
-    StatusPill,
     TypingIndicator,
-    cn,
     useEntranceStagger,
-} from "obp-ui";
+} from "obp-ui/chat";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 
@@ -84,7 +80,7 @@ export function ChatSection() {
         <>
             <Spec
                 name='ChatPanel variant="panel" · ChatPanelHeader · ChatBubble · ChatSystemLine · ChatComposer'
-                note="the docked co-pilot column: identity header, 13.5px bubbles, composer in normal flow. Type and press Enter."
+                note="the docked co-pilot column: identity header, 14px bubbles, composer in normal flow. Type and press Enter."
                 bare
             >
                 <Frame className="h-[520px] w-full max-w-lg">

@@ -37,7 +37,7 @@ export type CanvasHudProps = {
     /** Prose lines under the hairline. Strings, so each is its own stable key. */
     moves?: string[];
     movesLabel?: ReactNode;
-    /** Override when the stat count is not five. */
+    /** Override to change how the stat cells wrap (default: three per row). */
     statsClassName?: string;
     className?: string;
 };
@@ -49,15 +49,21 @@ export function CanvasHud({
     stats,
     moves = [],
     movesLabel = "// next moves",
-    statsClassName = "grid grid-cols-5 gap-2",
+    statsClassName = "grid grid-cols-3 gap-2",
     className,
 }: CanvasHudProps) {
+    // Three stat columns, not five. A cell's label is mono uppercase, and at the kit's 14px floor
+    // "CHANNELS" measures 72px of glyphs+tracking plus 12px of px-1.5 = 84px. Five of those need
+    // 428px of content - a 460px panel, which is no longer a corner overlay. Three fit the
+    // unchanged 330px panel (94px per cell) with every label on one line, at the cost of a second
+    // row. The width is deliberately NOT grown: the activity strip is centred over the same board
+    // and a wider HUD starts colliding with it.
     return (
         <CanvasPanel className={cn("w-[330px] px-4 py-3.5", className)}>
             <div className="mb-3 flex items-center gap-2">
-                <span className="font-mono text-[13px] font-bold tracking-[0.04em]">{title}</span>
+                <span className="font-mono text-sm font-bold tracking-[0.04em]">{title}</span>
                 {note !== undefined && (
-                    <span className="ml-auto font-mono text-[9.5px] tracking-[0.08em] text-faint">
+                    <span className="ml-auto font-mono text-sm tracking-[0.08em] text-faint">
                         {note}
                     </span>
                 )}
@@ -75,13 +81,13 @@ export function CanvasHud({
             </div>
             {moves.length > 0 && (
                 <div className="mt-3 border-t border-border pt-2.5">
-                    <div className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.14em] text-faint">
+                    <div className="mb-1.5 font-mono text-sm uppercase tracking-[0.14em] text-faint">
                         {movesLabel}
                     </div>
                     {moves.map((m, i) => (
                         <div
                             key={m}
-                            className="mb-1.5 flex gap-2 text-[11.5px] leading-[1.4] text-muted-foreground last:mb-0"
+                            className="mb-1.5 flex gap-2 text-sm leading-[1.4] text-muted-foreground last:mb-0"
                         >
                             <span className="flex-none font-mono text-[color:var(--info)]">
                                 {i + 1}.
@@ -143,10 +149,10 @@ export function CanvasActivityStrip({
                     pulse
                     className="flex-none"
                 />
-                <span className="flex-1 truncate font-mono text-[11.5px] text-muted-foreground">
+                <span className="flex-1 truncate font-mono text-sm text-muted-foreground">
                     <b className="text-[color:var(--info)]">{latest.group}</b> · {latest.text}
                 </span>
-                <span className="flex-none font-mono text-[10px] tracking-[0.08em] text-faint">
+                <span className="flex-none font-mono text-sm tracking-[0.08em] text-faint">
                     {open ? collapseLabel : expandLabel}
                 </span>
             </button>
@@ -157,17 +163,17 @@ export function CanvasActivityStrip({
                             key={group}
                             className="border-b border-border px-3.5 py-2.5 last:border-b-0"
                         >
-                            <div className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.14em] text-faint">
+                            <div className="mb-1.5 font-mono text-sm uppercase tracking-[0.14em] text-faint">
                                 {group}
                             </div>
                             {list.map((a) => (
                                 <div
                                     key={a.id}
-                                    className="mb-1.5 flex items-center gap-2 font-mono text-[11px] text-muted-foreground last:mb-0"
+                                    className="mb-1.5 flex items-center gap-2 font-mono text-sm text-muted-foreground last:mb-0"
                                 >
                                     <StatusDot size="sm" color={a.color} className="flex-none" />
                                     <span className="flex-1 truncate">{a.text}</span>
-                                    <span className="flex-none font-mono text-[9.5px] text-faint">
+                                    <span className="flex-none font-mono text-sm text-faint">
                                         {a.ago}
                                     </span>
                                 </div>
@@ -223,12 +229,12 @@ export function CanvasCommandBar({
                 onChange={(e) => setV(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
                 placeholder={placeholder}
-                className="nodrag nopan flex-1 bg-transparent text-[13.5px] text-foreground outline-none placeholder:text-faint"
+                className="nodrag nopan flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-faint"
             />
             <button
                 type="button"
                 onClick={send}
-                className="nodrag nopan rounded-[9px] bg-[color:var(--info)] px-3.5 py-1.5 text-[12px] font-semibold text-info-foreground transition-opacity hover:opacity-90"
+                className="nodrag nopan rounded-[9px] bg-[color:var(--info)] px-3.5 py-1.5 text-sm font-semibold text-info-foreground transition-opacity hover:opacity-90"
             >
                 {submitLabel}
             </button>

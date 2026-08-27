@@ -251,7 +251,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                 onClick={() => setOpen(true)}
                 title="Open agent console (Ctrl+`)"
                 className={cn(
-                    "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-[11px] font-semibold tracking-[0.04em] text-muted-foreground shadow-[0_-3px_16px_rgba(0,0,0,0.16)] transition-[transform,color] duration-[140ms] hover:-translate-y-0.5 hover:text-foreground",
+                    "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-sm font-semibold tracking-[0.04em] text-muted-foreground shadow-[0_-3px_16px_rgba(0,0,0,0.16)] transition-[transform,color] duration-[140ms] hover:-translate-y-0.5 hover:text-foreground",
                     // "skirt" pinned beneath the tab - lifts with the hover so no page
                     // background shows below the raised button.
                     "after:absolute after:-left-px after:-right-px after:top-[calc(100%-1px)] after:h-2 after:border-x after:border-border after:bg-card after:content-['']",
@@ -264,7 +264,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
             >
                 <LiveDot />
                 <span>{launcherLabel}</span>
-                <span className="text-[10px] text-faint">⌃`</span>
+                <span className="text-sm text-faint">⌃`</span>
             </button>
 
             <section
@@ -287,14 +287,16 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                     className="relative h-2 flex-none cursor-ns-resize touch-none outline-none after:absolute after:left-1/2 after:top-0.5 after:h-[3px] after:w-11 after:-translate-x-1/2 after:rounded-[3px] after:bg-border after:transition-colors after:content-[''] hover:after:bg-muted-foreground focus-visible:after:bg-muted-foreground"
                 />
                 <div className="flex flex-none items-center gap-3 border-b border-border bg-secondary px-[18px] py-[11px]">
-                    <div className="flex items-center gap-[9px] font-mono text-[13px] font-bold tracking-[0.02em] text-foreground">
+                    {/* text-base, not text-sm: the subtitle beside it is at the 14px floor now,
+                        and two same-size runs in one lockup read as one sentence. */}
+                    <div className="flex items-center gap-[9px] font-mono text-base font-bold tracking-[0.02em] text-foreground">
                         <LiveDot /> {title}{" "}
-                        <span className="font-mono text-[10.5px] font-normal tracking-[0.03em] text-muted-foreground">
+                        <span className="font-mono text-sm font-normal tracking-[0.03em] text-muted-foreground">
                             {subtitle}
                         </span>
                     </div>
                     <div className="ml-auto flex items-center gap-3">
-                        <span className="flex gap-[3px] [&_kbd]:rounded-[4px] [&_kbd]:border [&_kbd]:border-border [&_kbd]:bg-muted [&_kbd]:px-[5px] [&_kbd]:py-px [&_kbd]:font-mono [&_kbd]:text-[10px] [&_kbd]:text-muted-foreground">
+                        <span className="flex gap-[3px] [&_kbd]:rounded-[4px] [&_kbd]:border [&_kbd]:border-border [&_kbd]:bg-muted [&_kbd]:px-[5px] [&_kbd]:py-px [&_kbd]:font-mono [&_kbd]:text-sm [&_kbd]:text-muted-foreground">
                             <kbd>Ctrl</kbd>
                             <kbd>`</kbd>
                         </span>
@@ -302,14 +304,17 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                             type="button"
                             onClick={() => setOpen(false)}
                             aria-label="Close console"
-                            className="grid size-[26px] place-items-center rounded-[7px] border border-border bg-transparent text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                            className="grid size-[26px] place-items-center rounded-[7px] border border-border bg-transparent text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                         >
                             ✕
                         </button>
                     </div>
                 </div>
 
-                <div className="grid min-h-0 flex-1 grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-px overflow-auto bg-border">
+                {/* minmax(340px): a pane header is logo + name + state chip on one line, and at
+                    the 14px floor "BUILDING" alone is 84px. At the old 300px the name started
+                    ellipsising after ~11 characters. */}
+                <div className="grid min-h-0 flex-1 grid-cols-[repeat(auto-fit,minmax(340px,1fr))] gap-px overflow-auto bg-border">
                     {panes.map((p) => (
                         <ConsolePane
                             key={p.slug}

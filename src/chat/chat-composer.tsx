@@ -28,7 +28,7 @@ const PANEL_SHELL = "relative px-3.5 pb-3.5 pt-2";
 const PANEL_TEXTAREA =
     "block max-h-[260px] min-h-[120px] w-full resize-none rounded-xl border bg-card px-3.5 py-[13px] pr-12 text-sm leading-relaxed outline-none focus:border-primary";
 const PANEL_SEND =
-    "absolute right-6 bottom-6 grid size-[30px] place-items-center rounded-full bg-primary text-[15px] text-primary-foreground active:scale-95 disabled:opacity-40";
+    "absolute right-6 bottom-6 grid size-[30px] place-items-center rounded-full bg-primary text-base text-primary-foreground active:scale-95 disabled:opacity-40";
 
 const DOCK_SHELL = "px-5 pb-10 pt-2";
 const DOCK_FIELD =

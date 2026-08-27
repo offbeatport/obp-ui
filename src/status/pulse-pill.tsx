@@ -9,7 +9,7 @@ import { cn } from "../lib/cn";
 // must not affect layout). motion-reduce stills it.
 
 const PULSE_PILL =
-    "inline-flex flex-none items-center gap-[5px] rounded-full bg-primary px-2 py-[3px] font-mono text-[10px] font-semibold tracking-[0.03em] text-primary-foreground before:size-1.5 before:animate-[co-pip_1.6s_ease-out_infinite] before:rounded-full before:bg-current before:content-[''] motion-reduce:before:animate-none";
+    "inline-flex flex-none items-center gap-[5px] rounded-full bg-primary px-2 py-[3px] font-mono text-sm font-semibold tracking-[0.03em] text-primary-foreground before:size-1.5 before:animate-[co-pip_1.6s_ease-out_infinite] before:rounded-full before:bg-current before:content-[''] motion-reduce:before:animate-none";
 
 export type PulsePillProps = { children: ReactNode; className?: string };
 
