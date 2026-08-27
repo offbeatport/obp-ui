@@ -89,8 +89,9 @@ import {
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
-// The 17 shadcn primitives, themed with obp-ui tokens. Every variant AND size the cva
-// declares is on this page - if a variant exists and is not below, the gallery is wrong.
+// The 18 shadcn primitives, themed with obp-ui tokens, plus color-picker (19 files in
+// src/primitives) which shadcn does not ship. Every variant AND size the cva declares is on
+// this page - if a variant exists and is not below, the gallery is wrong.
 
 const BUTTON_VARIANTS = [
     "default",
@@ -281,7 +282,7 @@ export function PrimitivesSection() {
                 name="Select"
                 note="three trigger heights that match Button; a grouped list with a label, a separator and a disabled row."
             >
-                <Row className="items-end gap-6">
+                <Row className="gap-6">
                     <Cell label='size="sm"'>
                         <Select value={sort} onValueChange={setSort}>
                             <SelectTrigger size="sm" className="w-44">
@@ -339,7 +340,7 @@ export function PrimitivesSection() {
                         </Select>
                     </Cell>
                 </Row>
-                <Row className="mt-6 items-end gap-6">
+                <Row className="mt-6 gap-6">
                     <Cell label="description={…}">
                         <Select value={profile} onValueChange={setProfile}>
                             <SelectTrigger className="w-60">

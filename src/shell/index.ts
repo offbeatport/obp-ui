@@ -1,4 +1,9 @@
-// shell - the application frame.
+// obp-ui/shell - the application frame.
+//
+// Its own entry point, not part of the root barrel: this frame IS a product's identity, and an
+// app that mounts it inherits that look wholesale. Two of the five consuming repos carry this
+// directory and mount none of it - they wanted their own page frame. So the root barrel stays
+// anonymous and adopting the archetype costs one deliberate import line.
 //
 // The pieces an app arranges into a window: the two-column AppShell, the collapsible Rail and
 // its contents (nav items, section labels, entity rows, an empty state), the account button +

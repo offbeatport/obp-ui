@@ -42,14 +42,14 @@ export function AccountButton({
             )}
             {...props}
         >
-            <span className="grid size-8 flex-none place-items-center rounded-[9px] bg-primary text-[13px] font-bold text-primary-foreground">
+            <span className="grid size-8 flex-none place-items-center rounded-[9px] bg-primary text-sm font-bold text-primary-foreground">
                 {initial}
             </span>
             {!collapsed && (
                 <>
                     <span className="min-w-0 flex-1">
-                        <span className="block text-[13px] font-semibold">{name}</span>
-                        <span className="block truncate text-[11px] text-faint">{sub}</span>
+                        <span className="block text-sm font-semibold">{name}</span>
+                        <span className="block truncate text-sm text-faint">{sub}</span>
                     </span>
                     <ChevronUp className="size-4 flex-none text-faint" />
                 </>

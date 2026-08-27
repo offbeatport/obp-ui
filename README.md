@@ -1,26 +1,61 @@
 # obp-ui
 
-The Offbeatport design system: design tokens, ten palettes, 19 primitives, the shared shell
-pieces, self-hosted fonts, and a router-agnostic nav seam. One package, every app - a TanStack
-Start web app, a Tauri v2 desktop app and a Next app all render from the same bytes.
+The Offbeatport design system: design tokens, ten palettes, 19 primitives, self-hosted fonts, a
+router-agnostic nav seam, and - behind their own entry points - one product's shell, console, chat
+and board. One package under several independent products, on every host: a TanStack Start web
+app, a Tauri v2 desktop app and a Next app all render from the same bytes.
 
-- **The law:** [`DESIGN.md`](./DESIGN.md) - tokens only, compose don't fork, both themes work.
-  Read it before adding UI.
+- **The law:** [`DESIGN.md`](./DESIGN.md) - three tiers. Shared law (tokens only, compose don't
+  fork, both themes, the contrast floors) binds every product; the tokens are a vocabulary each
+  product varies; the shell/console/chat/nav-ui archetype is opt-in (and `canvas` is opt-in for a
+  dependency reason). Read it before adding UI.
 - **The gallery:** `pnpm ui` - every export in one page, no app required. See
   [The gallery](#the-gallery).
 - **No app in here.** No router, no server functions, no database, no product domain data - see
   [What is NOT in here](#what-is-not-in-here).
 
 ```
-src/
-  styles/     tokens.css · base.css · shell.css · keyframes.css · fonts.css · canvas.css · desktop.css
-  primitives/ button card badge dialog dropdown-menu input label radio-group scroll-area
-              select separator switch table tabs textarea tooltip
-  nav/        UIProvider · Link · TabNav · SegmentedTabs
-  lib/        cn · theme · storage · prepaint · dom-class-pref · client-only
-  markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · provider-logos.tsx
-gallery/      the kitchen sink (`pnpm ui`) - a small Vite app, one page, every export
+src/                                                     ← the root barrel, tiers 1-2
+  styles/       tokens.css · base.css · shell.css · keyframes.css · fonts.css · canvas.css · desktop.css
+  primitives/   badge button card checkbox color-picker dialog dropdown-menu input label popover
+                radio-group scroll-area select separator switch table tabs textarea tooltip  (19)
+  nav/          UIProvider · Link · TabNav · SegmentedTabs
+  status/       StatusPill · StatusDot · LiveDot · PulsePill · SignalBars · StatTile · ActivityRow
+  data-display/ EmptyState · Timeline · TaskCard · ExpandableRow
+  brand/        LogoMark · GradientMark
+  lib/          cn · theme · palette · color · storage · prepaint · dom-class-pref · client-only
+  markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · palette-picker.tsx · provider-logos.tsx
+  shell/ console/ chat/ nav-ui/ canvas/                  ← tier 3, own entry points only
+gallery/        the kitchen sink (`pnpm ui`) - a small Vite app, one page, every export
 ```
+
+---
+
+## Entry points
+
+The root barrel is **anonymous**: parts any product can use without coming to resemble another
+one. Five subtrees sit behind their own entry points instead.
+
+| Import from | You get | Why it is separate |
+| --- | --- | --- |
+| `obp-ui` | tokens, primitives, `cn`, the nav seam + `UIProvider`, status atoms (`StatusPill`, `StatTile`, `LiveDot`, …), data-display (`EmptyState`, `Timeline`, `TaskCard`, `ExpandableRow`), brand marks, `Markdown`, `ConfirmDialog`, `ThemeToggle`, palettes | the default - nothing here carries a product's identity |
+| `obp-ui/canvas` | the React Flow board, node vocabulary, flavors, 10 layouts | **dependency**: `@xyflow/react` is an optional peer, and apps without a board must not pay for it |
+| `obp-ui/shell` | `AppShell`, `Rail`, `NavItem`, `EntityRow`, `TitleBar`, account + window controls | **identity** |
+| `obp-ui/console` | `ConsoleDock`, `ConsolePane`, `LogView`, `LogLine` | **identity** |
+| `obp-ui/chat` | `ChatPanel`, `ChatBubble`, `ChatComposer`, `AssistantTurn` | **identity** |
+| `obp-ui/nav-ui` | the ten tab treatments | **identity** |
+
+"Identity" means: mounting those makes your app look like cslopslop. That is a perfectly good
+thing to choose - it is what the archetype is *for* - but it must be a **choice**, visible at the
+import line, not something that arrives because it happened to be in the default barrel.
+
+The measurement behind the split: across the five consuming repos, shell / console / chat /
+nav-ui have exactly **one** consumer. Two others carry the whole `shell/` directory in their
+forks and mount **zero** files of it - they hand-rolled their own page frames. A flat barrel gave
+them no signal that inheriting someone else's frame was the decision in front of them.
+
+Adding to the root barrel? The test is: *would a second product import this without also adopting
+the first product's look?* If not, it goes behind its own entry point.
 
 ---
 
@@ -44,9 +79,11 @@ the header's `<ThemeToggle />` flips light ↔ dark - both must look right, that
 [`DESIGN.md`](./DESIGN.md).
 
 Two things worth copying from it: `gallery/src/app.css` is the exact app-entry stylesheet described
-below, and the sections import the kit **by name** (`obp-ui`, `obp-ui/canvas`) through
-the package's own `exports` map, so every demo is also a usage example. If a component is exported
-and not on that page, the gallery is wrong - add it.
+below, and the sections import the kit **by name** (`obp-ui`, `obp-ui/canvas`, `obp-ui/shell`, …)
+through the package's own `exports` map, so every demo is also a usage example. The shell, console,
+chat and nav-ui sections each import from *two* modules - the anonymous parts from `obp-ui`, the
+archetype from its own entry - which is exactly what a consumer writes and the reason the split is
+legible on the page. If a component is exported and not on that page, the gallery is wrong - add it.
 
 ---
 
@@ -86,7 +123,9 @@ install it if you import `obp-ui/canvas`.
    consumer's bundler compiles it. As a git dependency it lands as a real directory in
    `node_modules` and gets dep-pre-bundled, so exclude it: `optimizeDeps: { exclude: ["obp-ui"] }`.
 2. **`moduleResolution` must be `"Bundler"`** (or `"NodeNext"`) in the consumer's `tsconfig.json`,
-   otherwise TypeScript ignores the `exports` map and cannot find `obp-ui/canvas`.
+   otherwise TypeScript ignores the `exports` map and every subpath fails to resolve - all five of
+   `obp-ui/canvas`, `/shell`, `/console`, `/chat`, `/nav-ui`. The bare `obp-ui` import keeps
+   working, which is what makes this one confusing to diagnose.
 3. **Deduplicate React** - two copies is the classic "invalid hook call". See the Vite config in
    the Tauri checklist.
 4. **Private repo, so builds need credentials.** Locally your SSH agent covers it. In CI or
@@ -221,7 +260,9 @@ the same origin should namespace its own controller: `createTheme({ namespace: "
 ## Theming a product
 
 **The only file you override is `tokens.css`.** Components never change - that is the entire deal.
-Redefine the token *values* after importing the package stylesheet:
+This is tier 2 in [`DESIGN.md`](./DESIGN.md): the tokens are a vocabulary every product is
+*expected* to vary, so two products on this kit should not look like each other. Redefine the
+token *values* after importing the package stylesheet:
 
 ```css
 @import "obp-ui/styles.css";
@@ -255,8 +296,37 @@ The `@theme inline` block in `tokens.css` maps every token onto a Tailwind colou
 automatically. Override *values*, never the mapping. Hex literals are legal **here** and nowhere
 else - see rule 1 in [`DESIGN.md`](./DESIGN.md).
 
-This is also how a company gets branded: cslopslop stamps this kit into the company repo and
-rewrites exactly this block.
+Three ways to do it, cheapest first:
+
+1. **Ship a palette.** `THEME_PALETTES` holds ten, `<PalettePicker />` swaps them at runtime, and
+   `initPalette()` re-applies them across theme flips (the values are mode-specific). Nothing to
+   write. Selecting Paper *removes* the overrides rather than restating them, so the default can
+   never drift from `tokens.css`.
+2. **Override the block above** for one fixed brand. This is what BuyDiff does: same primitives,
+   same fonts, same radius, teal at 5.33:1 on the page.
+3. **Add a palette** to `src/lib/palette.ts` when two products want the same one. Its header
+   records how the ten were built - achromatic surfaces, brand at 90% of the sRGB ceiling solved
+   jointly with lightness against 4.5:1 on the page - and a new one that skips that will not sit
+   next to the others.
+
+**Verify before you ship.** The kit exports `contrastRatio(a, b)`; the floors are in DESIGN.md §1
+(`--faint` on `--card` ≥ 4.55:1, `--primary` on `--background` ≥ 4.5:1 because it is the
+prose-link colour, a filled status chip's label ≥ 5.65:1 in dark). Check **both** modes: dark
+inverts the brand - `--primary` goes light and `--primary-foreground` goes dark - so a value that
+passes in light can land at 1.17:1 in dark.
+
+**Beyond colour:** the six `--type-*` steps (and their `-leading` pairs), `--radius`,
+`--radius-card`, `--measure` and the two shadows are token overrides too - components name a
+*step* (`text-sm`, `text-lg`) and never a value or a font family, so a product resizes the whole
+kit from the same block. Radius is the partial one: 35 literal `rounded-[Npx]` in the composed
+kits (21 of them in `canvas/`) do not follow `--radius`.
+
+**What you do not override:** the status hues. They are identical in every palette on purpose -
+vocabulary, not skin. Only their `-soft` fills are re-mixed, against your page.
+
+**What you cannot override yet:** anything with no token behind it - a fluid type step, a
+brand-tinted shadow, a third radius. That is the archetype gap in DESIGN.md's last section, and it
+is the reason PicSuper is not on this kit. Add the token, don't fork the components.
 
 ---
 
@@ -492,8 +562,7 @@ natively, and Electron's `-webkit-app-region` is not involved.
 not in the app:
 
 ```bash
-cd packages/ui
-npx shadcn@latest add <name>
+npx shadcn@latest add <name>      # from this repo's root - the library IS the root package
 ```
 
 Then, before committing:
@@ -501,16 +570,17 @@ Then, before committing:
 1. rewrite the generated `@/…` imports to relative ones (`../lib/cn`, `../primitives`) - the
    package has no path alias at runtime;
 2. add `"use client";` on line 1 if it uses hooks, handlers, browser APIs or context;
-3. re-theme it with tokens (the CLI emits raw shadcn colours);
-4. export it from `src/primitives/index.ts`.
+3. re-theme it with tokens (the CLI emits raw shadcn colours) - that is rule 1 in
+   [`DESIGN.md`](./DESIGN.md), and a primitive is tier 1, so it is binding on every product;
+4. export it from `src/primitives/index.ts`, and add it to the gallery.
 
 If the CLI complains that it cannot find an import alias, add
-`"paths": { "@/*": ["./src/*"] }` to `packages/ui/tsconfig.json` - it is only used to resolve the
-write target, and step 1 removes the aliases again.
+`"paths": { "@/*": ["./src/*"] }` to `tsconfig.json` - it is only used to resolve the write
+target, and step 1 removes the aliases again.
 
-`apps/web/components.json` now points its `ui` and `utils` aliases at `obp-ui`, so running
-the CLI from the app writes imports that resolve to the package instead of quietly re-creating
-`apps/web/src/components/ui`. That directory is gone and should stay gone.
+Point a **consuming app's** `components.json` at `obp-ui` for its `ui` and `utils` aliases, so
+running the CLI from the app writes imports that resolve to the package instead of quietly
+re-creating a local `src/components/ui`. A product-local copy of a primitive is a fork.
 
 ---
 
@@ -533,3 +603,10 @@ Deliberately, and permanently:
 
 If something you are extracting needs one of those, it is not a design-system component yet - split
 it until the presentational half has no opinions about where its data came from.
+
+**Two leaks the rule has not caught yet**, both in the anonymous barrel, both worth knowing before
+you mount them in a second product: `brand/palettes.ts` is a verbatim copy of the cslopslop app's
+`config/spin.ts` gradient table (duplicated on purpose - the app's engine runs in a plain Node
+process that must not pull React in - but it is still one product's data), and `LogoMark`'s
+defaults reproduce the cslopslop "C" tile exactly, so a product that mounts it without passing
+`letter`/`tint`/`highlight` draws someone else's mark. Pass the props, or bring your own palettes.

@@ -7,7 +7,7 @@ import { cn } from "../lib/cn";
 // "There is nothing here yet" - one component, three framings the app already draws. Every class
 // string is kept as-is, so each variant is pixel-identical to the surface it came from:
 //
-//   "rail"   the sidebar's no-companies CTA (app-shell CompaniesNav): tight dashed card, 12px
+//   "rail"   the sidebar's no-companies CTA (app-shell CompaniesNav): tight dashed card, small
 //            copy, a full-width outline button underneath.
 //   "panel"  the Portfolio page's dashed panel: centred, max-w-md, roomy 40px padding.
 //   "plate"  a tab-sized placeholder (Source Code's "No source yet"): a bordered card that fills
@@ -48,7 +48,7 @@ const TITLE: Record<EmptyStateVariant, string> = {
 const BODY: Record<EmptyStateVariant, string> = {
     rail: "m-2 text-sm leading-[1.45] text-faint",
     panel: "text-sm text-muted-foreground",
-    plate: "mt-1 font-mono text-[12px] text-muted-foreground",
+    plate: "mt-1 font-mono text-sm text-muted-foreground",
 };
 
 export type EmptyStateProps = {

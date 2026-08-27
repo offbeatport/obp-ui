@@ -1,54 +1,63 @@
-# Design system - read this before building or extending any UI
+# Design system - the law for every product built on obp-ui
 
-cslopslop has **one** visual language, and it lives in this package (`obp-ui`). Every screen
-in the platform, the desktop app, and every app cslopslop builds for a company is composed from the
-same tokens + components. You do not invent styles; you compose the existing ones. This is what
-keeps feature #70 look like feature #1.
+`obp-ui` is not one app's UI any more. Five independent products are in scope - **cslopslop** (an
+agent operator console), **BuyDiff** (a public comparison tool), **WebInvoke** (developer docs +
+API), **PicSuper** (a consumer one-screen utility) and the microsaas portfolio - and they are
+*supposed* to look different from one another. What they may not do is disagree about tokens,
+contrast, or how a variant gets added. Hence three tiers: know which one you are standing in
+before you type.
 
-**Same kit, both hosts:** the web app (`apps/web`, TanStack Start) and the Tauri desktop app import
-this identical package - same tokens, same primitives, same fonts. A component that only works in
-one of them is a bug. See `README.md` for wiring, and `src/styles/desktop.css` for the handful of
-native-window affordances the desktop shell opts into on top.
+**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all ten palettes.
 
-**See it live:** run `pnpm dev` and open **http://localhost:3000/design** - the kitchen sink shows
-every token and component in light + dark. `apps/web/src/routes/design.tsx` is also the best usage
-reference.
+## 1. Shared law - binding on every product
 
-## The aesthetic (one style, one archetype)
-Warm **editorial "paper"** - cream/paper surfaces, ink text, a single **terracotta** brand accent,
-generous radius, soft shadows, light **and** dark. Grounded in
-`design/v2-prototypes/08-chat-spine-pro-v7.html`. Calm, legible, a little literary - not a cold SaaS dashboard.
+Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · `src/primitives/*` ·
+`src/nav/*` · `src/status/*` · `src/data-display/*` · `src/brand/*`.
 
-- **Fonts:** `font-sans` = Inter (body) · `font-display` = Space Grotesk (headings, use `font-light`) ·
-  `font-serif` = Spectral italic (theses / editorial voice) · `font-mono` = JetBrains Mono (numbers, ids, code).
-  The faces are self-hosted in this package (`obp-ui/fonts.css`) - no CDN, because the desktop
-  app is offline.
-
-## Hard rules
-1. **Tokens only - never hardcode a color, radius, or shadow.** Use Tailwind utilities backed by the
-   token layer: `bg-background bg-card bg-primary text-muted-foreground border shadow-e1`, etc.
-   No `#hex`, no `text-[#...]`, no raw `rgb()` in components.
-2. **Reuse `obp-ui` - compose, don't fork.** Need a variant? Add it to the component's
-   `cva` variants (see how `src/primitives/badge.tsx` gained the status variants), don't restyle
-   inline or copy the file. Nothing visual belongs in `apps/web/src/components/ui` - that directory
-   does not exist any more, on purpose.
-3. **Add new primitives with the CLI, into the package:** run
-   `npx shadcn@latest add <name>` from `packages/ui` (its `components.json` writes to
-   `src/primitives`). Then theme it with tokens only, convert the generated `@/…` imports to
-   relative ones, add `"use client"`, and export it from `src/primitives/index.ts`.
-4. **Both themes must work.** Dark is a real product mode (`.dark` class on `<html>`). Never assume light.
-5. **Respect the status language** below - statuses are not ad-hoc colors.
-6. **No app in the package.** No router imports, no server functions, no DB, no cslopslop domain
+1. **Tokens only - never hardcode a colour, radius or shadow.** Use utilities backed by the token
+   layer: `bg-background bg-card bg-primary text-muted-foreground border shadow-e1`. No `#hex`,
+   no `text-[#…]`, no raw `rgb()` in a component. Literal colour is legal in one kind of file: a
+   `tokens.css` - this package's, or a product's override block after the import. (20 hex literals
+   survive in components - 14 in `canvas/flavors.ts`, 3 in `nav-ui/`, and three prop or input
+   defaults in `brand/logo-mark.tsx`, `canvas/nodes.tsx` and `palette-picker.tsx`. Verbatim
+   prototype ports, same as the radius debt in §2: debt, not licence. `provider-logos.tsx` is the
+   one real exception - a brand mark has to draw in its own colour.)
+2. **Compose, don't fork.** Need a variant? Add it to the component's `cva` (see how
+   `src/primitives/badge.tsx` gained the status variants). Never restyle inline, never copy the
+   file into the app. A product-local `components/ui/` directory is a fork with extra steps.
+3. **Both themes work.** Dark is a real product mode (`.dark` on `<html>`; a nested `.light`
+   interrupts it, which is what makes a scoped preview possible). A component that has only been
+   looked at in one mode is not finished.
+4. **Contrast floors**, measured across the ten palettes in `src/lib/palette.ts`, both modes:
+   - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light). It is the lightest ink the kit
+     ships; it still has to pass AA.
+   - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes) -
+     because `--primary` is the prose-link colour (`markdown.tsx`) and the focus ring at least as
+     often as it is a button fill, so it has to work as *text*. Paper, the authored theme, is the
+     one exception at 3.55:1; inherit its warmth, not that number.
+   - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 5.67 on
+     the ink `palette.ts` writes; warning reaches 11.3:1), from the matching `-foreground` token
+     and never `#fff` - dark inverts these hues, so white lands at 1.7-3.3:1 on them (warning the
+     worst at 1.67:1) and 1.17:1 on Graphite dark's `--primary`. Light
+     mode's white-on-hue only runs 3.0-5.3:1, which is why the chip vocabulary is a soft fill plus
+     status text (`bg-success-soft text-success`) and filled chips stay on the deeper hues.
+5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
+   are deliberately identical in every palette, and no product re-hues them. The *meanings* in the
+   table are cslopslop's reading of them; a product with no approval queue maps its own meanings
+   onto the same six tokens rather than inventing a seventh hue.
+6. **Focus stays visible; motion has a stop.** Keep the `focus-visible:ring-ring/50` a primitive
+   ships when you add a variant - never remove an outline without replacing it. Anything that
+   loops or draws needs a `motion-reduce:` escape at the call site.
+7. **Type comes off the scale.** Six steps - `--type-sm` … `--type-3xl`, mapped onto `text-sm` …
+   `text-3xl` - and `--type-sm` (14px) is the **floor**. No `text-xs` (Tailwind still ships the
+   utility; nothing here may use it), no `text-[Npx]`. The literals the scale replaced ran to 15
+   different sizes between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's
+   length. A micro-caption is `font-mono` + uppercase + tracking + `text-faint`, not smaller type.
+8. **No app in the package.** No router imports, no server functions, no DB, no product domain
    data. Content is a prop. See "What is NOT in here" in `README.md`.
 
-## Tokens (defined in `src/styles/tokens.css`)
-Surfaces: `background` (page) · `card` / `popover` (surfaces) · `secondary` / `muted` (subtle fills) ·
-`foreground` `muted-foreground` `faint` (text, darkest→lightest) · `border` `border-soft` · `input` `ring`.
-Brand: `primary` (terracotta) + `primary-foreground` · `accent` (soft hover) + `accent-foreground`.
-Radius: base `--radius` 12px (buttons/inputs/badges) · `--radius-card` 18px (cards). Elevation: `shadow-e1` `shadow-e2`.
-
 ### Status language (use the matching Badge variant / token - don't improvise)
-| meaning | token / `<Badge variant>` | color |
+| meaning | token / `<Badge variant>` | colour |
 |---|---|---|
 | shipped / done / live | `success` | green |
 | building / running / info | `info` | blue |
@@ -56,24 +65,79 @@ Radius: base `--radius` 12px (buttons/inputs/badges) · `--radius-card` 18px (ca
 | queued / todo / idle | `neutral` | slate |
 | at-risk / caution / reject | `warning` | amber |
 | blocked / killed / error | `destructive` | red |
-| autopilot / brand emphasis | `accent` / `default` | terracotta |
+| autopilot / brand emphasis | `accent` / `default` | brand |
 
-Each has a `-soft` fill token (e.g. `bg-success-soft text-success`) for chips and callouts.
+Each has a `-soft` fill token for chips and callouts.
 
-## Components available today
-`Button` (variants: default/success/outline/secondary/ghost/destructive/link · sizes sm/default/lg/icon) ·
-`Badge` (+ status variants above) · `Card` (+ Header/Title/Description/Action/Content/Footer) ·
-`Input` `Textarea` `Label` `Select` · `Tabs` · `Dialog` · `DropdownMenu` · `Tooltip` (wrap in `TooltipProvider`) ·
-`Table` · `Separator` · `ScrollArea` · `RadioGroup` · `Switch`.
-Plus the shared non-primitives: `Markdown` · `ConfirmDialog` · `ThemeToggle` · `TabNav` /
-`SegmentedTabs` · provider logos.
+## 2. Shared vocabulary - vary it freely
 
-## Per-company reuse (why this doc exists twice over)
-This kit is also the **template cslopslop stamps into every company repo**. Branding a company =
-**overriding the token values** in that repo's copy of `tokens.css` (palette/radius/fonts from the
-brand) - the components are copied unchanged. So a company's UI is on-brand *and* consistent, and
-`git clone + claude` keeps building it in the same language because the agent re-reads this contract
-every run. When the build archetype moves past the walking-skeleton
-(`apps/web/prompts/harness-system.md`), the harness system prompt points the agent here.
+The tokens and the 19 primitives are a *vocabulary*, not a look. A product changes its look by
+redeclaring token **values** in its own `tokens.css` after the import - `:root { --primary:
+#0c736f; --radius: 0.5rem }` and the same again under `.dark` - never by editing a component.
+What is yours to set:
 
-**One line:** tokens are the knob; components are shared; this file is the law.
+- **Palette.** The ten in `src/lib/palette.ts` are presets over *hue*: achromatic surfaces, brand
+  at 90% of the sRGB ceiling solved against 4.5:1 on the page. Ship one, ship the picker, or write
+  your own values - a new one has to clear the floors in §1.
+- **Fonts.** Nothing in the kit hardcodes a family: `base.css` reads `var(--font-sans)` and
+  `var(--font-display)`, and that is the only place a family is named. Swap all four, or skip
+  `fonts.css` and take the system stack.
+- **Type sizes.** The six `--type-*` values and their `-leading` pairs. Redefine them and the
+  whole kit resizes: the 167 type classes in `src` name a *step* (`text-sm`, `text-lg`), never a
+  value. What you cannot vary is the number of steps or their nature - six static rem values, no
+  fluid step. See the archetype section.
+- **Radius and elevation.** `--radius`, `--radius-card`, `--shadow-e1/e2`. (35 literal
+  `rounded-[Npx]` survive, 21 of them in `canvas/` - verbatim prototype ports that do *not* follow
+  `--radius`. Debt, not licence.)
+- **Density and measure.** `--measure` (the 42rem editorial column), spacing, and which primitives
+  you mount at all.
+
+BuyDiff shows the range: same primitives, same fonts, same radius, a teal brand at 5.33:1 on the
+page - and it does not read as cslopslop. WebInvoke shows the other half: it kept the terracotta
+tokens untouched and still reads as a different product. Neither difference came from the palette.
+Both came from tier 3.
+
+## 3. cslopslop's own - available, not prescribed
+
+`obp-ui/shell` · `obp-ui/console` · `obp-ui/chat` · `obp-ui/canvas` · `obp-ui/nav-ui`
+(plus the opt-in `obp-ui/canvas.css`).
+
+One product's archetype: a rail-and-canvas frame, a bottom-docked agent console, a co-pilot
+thread, an infinite board, ten tab treatments. They sit behind their own entry points rather than
+the root barrel because **mounting `AppShell` + `ConsoleDock` makes a product read as cslopslop in
+a different hue.** A fine thing to choose - it is what an archetype is for - but a choice with a
+consequence, so it has to be visible at the import line.
+
+A marketing surface or a data-dense app should expect to build its own frame; both that exist
+already did. BuyDiff and WebInvoke each carry the whole `shell/` directory in their forks and
+mount zero files of it. (`canvas` is separate for a second reason: `@xyflow/react` is an optional
+peer, and an app without a board must not pay for it.)
+
+## Archetypes - the next axis, not the next fork
+
+The kit encodes exactly **one** archetype today: an operator console - dense rails, mono
+micro-captions, calm motion, one editorial column. Two more are wanted, a customer-facing
+marketing surface and a data-intensive one. The rule that stops that becoming three forks:
+
+- **One kit, one token layer.** An archetype is a **preset over scales** - type, density, radius,
+  motion - exactly as a palette is a preset over hue. It ships as token values, not as a second
+  component tree. §3 is not the counter-example: `shell/` and `console/` are one product's
+  *composed screens*, and a second archetype may earn its own entry point of composed screens the
+  same way. What it may never have is a second copy of a primitive, a token or a scale.
+- **A scale has to exist as a token before an archetype may vary it.** Type does now
+  (`--type-sm` … `--type-3xl`). Density, radius steps and motion do not: `--radius-sm/md/lg/xl`
+  look like steps but are `calc()` off `--radius` inside `@theme inline`, so they are substituted
+  into the utilities at build time and cannot be set independently; density is not tokenised at
+  all - every primitive spells its own `h-9 px-4 gap-2`. Add the token first; if varying a scale
+  means touching a component, the token is what is missing.
+- **No archetype gets built until two real surfaces need it.** One product's need is a token
+  override. Two is a preset.
+
+The evidence that this is needed: **PicSuper left the system entirely.** It wanted fluid display
+type (`clamp()` on three steps), a brand-tinted CTA shadow, eight radius steps (`--radius` plus
+`-sm/md/lg/xl/cta/card/zone`) and light-only - and the kit has a slot for none of those,
+so PicSuper took none of the kit. That is the real cost of a single archetype: not that the
+products look alike, but that the ones that do not fit walk away with nothing.
+
+**One line:** tokens are the knob, primitives are shared, the archetype is opt-in, and this file
+is the law.

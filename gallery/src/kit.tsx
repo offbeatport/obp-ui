@@ -83,7 +83,12 @@ export function Cell({
     className?: string;
 }) {
     return (
-        <div className={cn("flex min-w-0 flex-col items-start gap-2", className)}>
+        // self-start, not the parent Row's items-center: a Cell hangs its label from the top, so
+        // a row of Cells whose bodies differ in height (the 24px icon-xs button beside the 44px
+        // lg one, a bare LiveDot beside a labelled one) would centre each Cell independently and
+        // scatter the labels down a 20px stagger. At the old 9.5px labels that read as noise; at
+        // the 14px floor it reads as a broken grid.
+        <div className={cn("flex min-w-0 flex-col items-start gap-2 self-start", className)}>
             <span className="font-mono text-sm text-faint">{label}</span>
             {children}
         </div>

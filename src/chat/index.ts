@@ -1,4 +1,8 @@
-// chat - the conversation surfaces: the frame, the bubbles, the composer.
+// obp-ui/chat - the conversation surfaces: the frame, the bubbles, the composer.
+//
+// Its own entry point, not part of the root barrel: these are one product's co-pilot, down to
+// the entrance stagger and the assistant turn. An app that wants "a chat" is usually not asking
+// for THIS chat, so the resemblance has to be chosen rather than inherited.
 //
 // Two chat surfaces exist in the product (the docked co-pilot panel and the full-page thread) and
 // they are near-duplicates of each other. Each family here ships ONE component with a `variant`

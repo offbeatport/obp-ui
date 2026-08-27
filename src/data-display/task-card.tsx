@@ -60,18 +60,18 @@ export function TaskCard({
         >
             <div className="flex items-center gap-2">
                 {n !== undefined && (
-                    <span className="font-mono text-[10px] font-bold text-faint">#{n}</span>
+                    <span className="font-mono text-sm font-bold text-faint">#{n}</span>
                 )}
-                <span className="min-w-0 flex-1 truncate text-[14px] font-semibold text-foreground">
+                <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
                     {title}
                 </span>
                 {chip !== undefined && <TaskStateChip color={accent}>{chip}</TaskStateChip>}
             </div>
             {sub !== undefined && (
-                <p className="mt-1 text-[12.5px] leading-[1.45] text-muted-foreground">{sub}</p>
+                <p className="mt-1 text-sm leading-[1.45] text-muted-foreground">{sub}</p>
             )}
             {meta !== undefined && (
-                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10.5px] text-faint">
+                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm text-faint">
                     {meta}
                 </div>
             )}
@@ -88,13 +88,14 @@ export type TaskStateChipProps = {
     className?: string;
 };
 
-// Deliberately NOT ../status/StatusPill: this chip is dot-less, one step smaller (9.5px/bold)
-// and `flex-none` so the title can truncate against it. Merging the two would move pixels.
+// Deliberately NOT ../status/StatusPill: this chip is dot-less, bold, and `flex-none` so the
+// title can truncate against it. (It used to also be a size smaller; the kit's 14px floor
+// collapsed that difference, but the other three still hold.)
 export function TaskStateChip({ children, color, className }: TaskStateChipProps) {
     return (
         <span
             className={cn(
-                "flex-none rounded-full px-2 py-0.5 font-mono text-[9.5px] font-bold uppercase tracking-wide",
+                "flex-none rounded-full px-2 py-0.5 font-mono text-sm font-bold uppercase tracking-wide",
                 className,
             )}
             style={

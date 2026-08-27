@@ -9,11 +9,11 @@ import { StatusDot } from "../status";
 // The chat message. Two looks, unified - both stay reachable through `variant`:
 //
 //   "panel"   the docked company co-pilot bubble (prototype `.cpg-chat .msg` / `.bubble`): a real
-//             avatar column, a 13.5px body, a tinted primary capsule for the founder and a flat
+//             avatar column, a text-sm body, a tinted primary capsule for the founder and a flat
 //             body for the company, with the relative timestamp under the text.
 //   "thread"  the full-page spin thread (prototype `.spin-msg` / `.spin-bubble`): NO avatar - the
 //             prototype keeps a hidden letter node so the stream body owns the whole column - a
-//             16px body, and a staggered entrance animation.
+//             text-base body, and a staggered entrance animation.
 //
 // The assistant bubble renders FLAT in BOTH variants: the prototype's
 // `.spin-msg.assistant .spin-bubble` override strips the bubble chrome (no bg/border/shadow/
@@ -28,23 +28,23 @@ export type ChatBubbleVariant = "panel" | "thread";
 
 // The flat assistant body, exported because artifact turns (a drafting line, a retry prompt) need
 // to match a real assistant bubble exactly.
-export const ASSISTANT_BUBBLE = "max-w-[78%] text-[16px] leading-[1.55] py-[2px]";
+export const ASSISTANT_BUBBLE = "max-w-[78%] text-base leading-[1.55] py-[2px]";
 
 // ---- panel ---------------------------------------------------------------------------------
 const PANEL_ROW = "flex max-w-full items-start gap-[11px]";
 const PANEL_USER_AVATAR =
     "mt-px grid size-7 shrink-0 place-items-center overflow-hidden rounded-[9px] bg-secondary font-display text-sm font-bold text-muted-foreground";
-const PANEL_BODY = "text-[13.5px] leading-normal";
+const PANEL_BODY = "text-sm leading-normal";
 const PANEL_USER_BODY =
     "max-w-[300px] rounded-[14px_5px_14px_14px] bg-primary px-3.5 py-2.5 text-primary-foreground";
 const PANEL_ASSISTANT_BODY =
     "max-w-[440px] rounded-[5px_14px_14px_14px] pt-0.5 pb-[3px] text-foreground";
-const PANEL_TIME = "mt-[7px] block font-mono text-[10px]";
+const PANEL_TIME = "mt-[7px] block font-mono text-sm";
 
 // ---- thread --------------------------------------------------------------------------------
 const THREAD_ROW = "flex gap-[12px] items-start my-10";
 const THREAD_COLUMN = "flex-1 min-w-0 flex flex-col gap-[11px]";
-const THREAD_BODY = "max-w-[78%] text-[16px] leading-[1.55]";
+const THREAD_BODY = "max-w-[78%] text-base leading-[1.55]";
 // entrance: plays once on mount (a stable message-id key → no replay on polls)
 const THREAD_USER_BODY =
     "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] shadow-e1 bg-foreground text-background animate-[msg-in_0.32s_cubic-bezier(0.22,0.7,0.24,1)_both]";
@@ -151,7 +151,7 @@ export function ChatSystemLine({ text, ago, className }: ChatSystemLineProps) {
     return (
         <div
             className={cn(
-                "flex items-center gap-2 px-1.5 py-px font-mono text-[10.5px] text-faint",
+                "flex items-center gap-2 px-1.5 py-px font-mono text-sm text-faint",
                 className,
             )}
         >

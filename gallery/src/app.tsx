@@ -221,7 +221,7 @@ export function App() {
                                     >
                                         {s.label}
                                     </a>
-                                    {/* Only the section being read expands - twelve sections'
+                                    {/* Only the section being read expands - thirteen sections'
                                         worth of Specs at once is a wall, not navigation. */}
                                     {open && subs[s.id]?.length > 0 && (
                                         <div className="mt-0.5 mb-1 ml-3 border-l border-border pl-2">
@@ -276,11 +276,11 @@ export function App() {
 
                     <footer className="mx-auto max-w-6xl px-8 pb-16 pt-4">
                         <p className="border-t border-border-soft pt-6 text-sm text-muted-foreground">
-                            The law is <span className="font-mono">packages/ui/DESIGN.md</span> -
-                            tokens only, compose don't fork, both themes work. If a component is
-                            exported and not on this page, the gallery is wrong. Every component
-                            also exports its own <span className="font-mono">*Props</span> type next
-                            to it; those are the only exports this page does not draw.
+                            The law is <span className="font-mono">DESIGN.md</span> - tokens only,
+                            compose don't fork, both themes work. If a component is exported and not
+                            on this page, the gallery is wrong. Every component also exports its own{" "}
+                            <span className="font-mono">*Props</span> type next to it; those are the
+                            only exports this page does not draw.
                         </p>
                     </footer>
                 </div>

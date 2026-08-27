@@ -17,7 +17,7 @@ import { LogLine, type LogLineData, type LogVariant } from "./log-line";
 // Sticking to the bottom is the caller's call: pass the ref from `useNearBottomScroll`.
 
 const VIEW: Record<LogVariant, string> = {
-    console: "min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3 font-mono text-[11px] leading-[1.65]",
+    console: "min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3 font-mono text-sm leading-[1.65]",
     run: "gap-0 overflow-y-auto rounded-xl border bg-secondary p-3 font-mono text-sm leading-relaxed",
 };
 

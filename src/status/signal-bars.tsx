@@ -9,6 +9,10 @@ import { cn } from "../lib/cn";
 //
 // `max` normalises the score scale (the lab data is 0-10); width is a runtime percentage, so it
 // has to be an inline style rather than an arbitrary utility.
+//
+// Each column is min-w-0 + truncate. A `1fr` grid track is min-content-floored, so at the 14px
+// type floor a label like "RETENTION" (76px) would push the whole grid - and therefore the canvas
+// node it sits in - wider than its declared width instead of ellipsising.
 
 export type Signal = { label: string; val: number };
 
@@ -26,14 +30,14 @@ export function SignalBars({ signals, color, max = 10, className }: SignalBarsPr
     return (
         <div className={cn("grid grid-cols-3 gap-1", className)}>
             {signals.map((s) => (
-                <div key={s.label} className="flex flex-col gap-0.5">
+                <div key={s.label} className="flex min-w-0 flex-col gap-0.5">
                     <div className="h-1 overflow-hidden rounded-full bg-[color:var(--border-soft)]">
                         <div
                             className="h-full rounded-full"
                             style={{ width: `${(s.val / max) * 100}%`, background: color }}
                         />
                     </div>
-                    <span className="font-mono text-[8.5px] uppercase tracking-wide text-faint">
+                    <span className="truncate font-mono text-sm uppercase tracking-wide text-faint">
                         {s.label}
                     </span>
                 </div>

@@ -21,7 +21,7 @@ export function SectionLabel({ collapsed: collapsedProp, children, className }: 
     return (
         <div
             className={cn(
-                "px-2 py-4 text-[11px] font-bold uppercase tracking-wide text-faint/70",
+                "px-2 py-4 text-sm font-bold uppercase tracking-wide text-faint/70",
                 className,
             )}
         >

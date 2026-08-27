@@ -1,12 +1,10 @@
+import { Badge, GradientMark, Label, consoleTabPref, createDomClassPref } from "obp-ui";
 import {
-    Badge,
     type ConsoleDigest,
     ConsoleDock,
     type ConsoleDockPane,
     ConsolePane,
     ConsoleTabToggle,
-    GradientMark,
-    Label,
     type LogKind,
     LogLine,
     type LogLineData,
@@ -14,11 +12,9 @@ import {
     NEAR_BOTTOM_PX,
     STATUS_VARIANT,
     ago,
-    consoleTabPref,
-    createDomClassPref,
     hms,
     localeTime,
-} from "obp-ui";
+} from "obp-ui/console";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 
 // The live agent console. Transport-free by design: <ConsoleDock> takes a `fetchDigest`

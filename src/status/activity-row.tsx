@@ -7,15 +7,18 @@ import { cn } from "../lib/cn";
 // BUILD/GROW/RUN chip), the prose, and an optional timestamp pushed to the end.
 //
 // The row is `overflow-hidden` and the text ellipsises: a feed line must never widen its card.
-// The tag is a fixed `w-11` so the prose of every line starts on the same x - that alignment is
+// The tag is a fixed width so the prose of every line starts on the same x - that alignment is
 // the whole point of the chip, so the width is not configurable.
+//
+// w-16 (64px), not the old w-11 (44px): at the kit's 14px floor JetBrains Mono advances 8.4px
+// per glyph, so "BUILD" is 42px of text plus 3.5px of 0.05em tracking plus 12px of px-1.5 =
+// 57.5px. At 44px the widest tag overflowed its own capsule and touched the prose.
 //
 // Tone→class mapping stays in the app (it is domain data); pass the colour pair on `tagClassName`.
 
-const ROW =
-    "flex items-center gap-[9px] overflow-hidden font-mono text-[11.5px] text-muted-foreground";
+const ROW = "flex items-center gap-[9px] overflow-hidden font-mono text-sm text-muted-foreground";
 const TAG =
-    "w-11 flex-none rounded-[5px] px-1.5 py-0.5 text-center text-[9px] font-semibold tracking-[0.05em]";
+    "w-16 flex-none rounded-[5px] px-1.5 py-0.5 text-center text-sm font-semibold tracking-[0.05em]";
 const TEXT = "overflow-hidden text-ellipsis whitespace-nowrap";
 const AGO = "ml-auto flex-none opacity-[0.65]";
 
