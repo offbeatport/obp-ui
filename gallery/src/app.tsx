@@ -25,70 +25,70 @@ const SECTIONS: SectionDef[] = [
         id: "tokens",
         label: "Tokens",
         title: "Tokens",
-        blurb: "Surfaces, brand, the status language and its -soft fills, radius, elevation, type. Everything else is built from these - branding a product means overriding these values and nothing else.",
+        blurb: "Surfaces, brand, status, radius, elevation, type. Everything else builds on these.",
         Body: TokensSection,
     },
     {
         id: "primitives",
         label: "Primitives",
         title: "Primitives",
-        blurb: "Eighteen shadcn-shaped primitives on Base UI, re-themed with obp-ui tokens, plus the colour picker shadcn does not ship. Every variant and every size the cva declares.",
+        blurb: "Eighteen primitives on Base UI, themed with obp-ui tokens. Every variant, every size.",
         Body: PrimitivesSection,
     },
     {
         id: "data-display",
         label: "Data display",
         title: "Data display",
-        blurb: "Lists of things that happened, the list that is empty, and the avatar that heads a row.",
+        blurb: "Activity lists, empty states, entity marks.",
         Body: DataDisplaySection,
     },
     {
         id: "nav",
         label: "Navigation",
         title: "Navigation",
-        blurb: "The router-agnostic nav seam, and the two tab bars the app actually routes through.",
+        blurb: "The router-agnostic nav seam and the two tab bars.",
         Body: NavSection,
     },
     {
         id: "nav-ui",
         label: "Tab selectors",
         title: "Tab selectors",
-        blurb: "nav-ui: ten page-level tab looks that are still being chosen between. All ten are live - click them.",
+        blurb: "Ten page-level tab looks. All live — click them.",
         Body: NavUiSection,
     },
     {
         id: "chat",
         label: "Chat",
         title: "Chat",
-        blurb: "The conversation surfaces: the docked co-pilot panel and the full-page thread, from one component per family.",
+        blurb: "The docked co-pilot panel and the full-page thread.",
         Body: ChatSection,
     },
     {
         id: "console",
         label: "Console",
         title: "Console",
-        blurb: "The bottom-docked live agent console and the log surfaces it shares with the rest of the app.",
+        blurb: "The bottom-docked agent console and its log surfaces.",
         Body: ConsoleSection,
     },
     {
         id: "shell",
         label: "Shell",
         title: "Shell",
-        blurb: "The application frame, rendered inside a fixed box so it makes sense on a page that is not an app.",
+        blurb: "The application frame, in a fixed box.",
         Body: ShellSection,
     },
     {
         id: "canvas",
         label: "Canvas",
         title: "Canvas",
-        blurb: "The separate obp-ui/canvas entry, behind the optional @xyflow/react peer: the board, the card vocabulary, the flavors and the ten layouts.",
+        blurb: "obp-ui/canvas: board, cards, flavors, layouts. Optional @xyflow/react peer.",
         Body: CanvasSection,
     },
     {
         id: "utilities",
         label: "Utilities",
         title: "Utilities & standalone",
-        blurb: "The pieces with no chrome of their own: markdown, confirm, and the plumbing a host wires up once - light/dark, the four-axis theme presets, storage, pre-paint. Theme CONFIGURATION is not a section here: it is the control in the page header, which is the only place it can be exercised honestly.",
+        blurb: "Markdown, confirm, and the host plumbing — theme, presets, storage, pre-paint.",
         Body: UtilitiesSection,
     },
 ];
@@ -238,15 +238,9 @@ export function App() {
 
                     <footer className="mx-auto max-w-6xl px-8 pb-16 pt-4">
                         <p className="border-t border-border-soft pt-6 text-sm text-muted-foreground">
-                            The law is <span className="font-mono">DESIGN.md</span> - tokens only,
-                            compose don't fork, both themes work. If a component is exported and not
-                            on this page, the gallery is wrong - with one deliberate exception:{" "}
-                            <span className="font-mono">ThemePicker</span> is drawn in the header
-                            and nowhere else, because a second live theme control on the same page
-                            is a second thing claiming to be the current theme. The twelve-tile
-                            preset comparison lives inside its editor. Every component also exports
-                            its own <span className="font-mono">*Props</span> type next to it; those
-                            are the only other exports this page does not draw.
+                            The law is <span className="font-mono">DESIGN.md</span>. Every export is
+                            on this page except <span className="font-mono">ThemePicker</span> (in
+                            the header) and the <span className="font-mono">*Props</span> types.
                         </p>
                     </footer>
                 </div>
