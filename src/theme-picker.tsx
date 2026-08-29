@@ -170,6 +170,8 @@ export function ThemePicker({
     );
 }
 
+const SWATCH_SLOTS = ["background", "card", "accent", "primary"] as const;
+
 function Chip({
     preset,
     mode,
@@ -183,12 +185,7 @@ function Chip({
             className="flex size-5 flex-none overflow-hidden rounded-full border border-border"
         >
             {themePresetSwatch(preset, mode).map((c, i) => (
-                <span
-                    // biome-ignore lint/suspicious/noArrayIndexKey: a fixed 4-stop chip, position IS the identity
-                    key={i}
-                    className="h-full flex-1"
-                    style={{ background: c }}
-                />
+                <span key={SWATCH_SLOTS[i]} className="h-full flex-1" style={{ background: c }} />
             ))}
         </span>
     );

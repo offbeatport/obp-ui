@@ -1,8 +1,3 @@
-# The library itself is the ROOT package - that is what lets a consumer write
-#   "obp-ui": "git+ssh://git@github.com/offbeatport/obp-ui.git#main"
-# with no `&path:` fragment, which pnpm silently mis-resolves when the package sits in a
-# subdirectory. The gallery is not a package at all (it self-references `obp-ui` through this
-# root's own exports map); only the example apps are workspace members.
 packages:
   - "examples/*"
 

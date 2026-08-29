@@ -206,13 +206,11 @@ function Probe() {
                                     />
                                 }
                             >
-                                {/* biome-ignore lint/a11y/useValidAriaRole: ChatBubble's own speaker prop, not the ARIA attribute - it is consumed, never spread onto a DOM node */}
                                 <ChatBubble
                                     role="user"
                                     text="Make the onboarding shorter."
                                     timestamp="2m"
                                 />
-                                {/* biome-ignore lint/a11y/useValidAriaRole: as above */}
                                 <ChatBubble
                                     role="assistant"
                                     text="Cutting it to one screen and shipping behind a flag."
