@@ -4,7 +4,7 @@
     "type": "module",
     "description": "The Offbeatport design system: tokens, primitives and presentational components shared across every app.",
     "sideEffects": ["**/*.css"],
-    "files": ["src", "README.md", "DESIGN.md"],
+    "files": ["src", "DESIGN.md"],
     "style": "./src/styles/index.css",
     "exports": {
         ".": {
