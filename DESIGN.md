@@ -34,7 +34,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 3. **Both themes work.** Dark is a real product mode (`.dark` on `<html>`; a nested `.light`
    interrupts it, which is what makes a scoped preview possible). A component that has only been
    looked at in one mode is not finished.
-4. **Contrast floors**, measured across the ten palettes in `src/lib/palette.ts`, both modes:
+4. **Contrast floors**, measured across the ten palettes in `src/lib/palette.ts`, both modes.
+   A palette is declared with `makePalette({ light: { primary, accent, accentForeground },
+   dark: { primary, accentForeground } })` - five hexes. The eight neutrals, both
+   `primaryForeground`s, `shadowTint` and the dark `accent` wash are derived from the primary's
+   hue against a shared lightness ladder, so they cannot drift between palettes. `tint: 0` gives a
+   pure achromatic set (Graphite). Paper stays a hand-written literal: it is the authored theme and
+   its warm neutrals and 3.55:1 primary are deliberate exceptions the generator must not reproduce.
    - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light). It is the lightest ink the kit
      ships; it still has to pass AA.
    - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes) -
