@@ -165,3 +165,35 @@ products look alike, but that the ones that do not fit walk away with nothing.
 
 **One line:** tokens are the knob, primitives are shared, the archetype is opt-in, and this file
 is the law.
+
+---
+
+## Re-branding a product
+
+One colour. `--primary` is the only thing you set; `--accent`, `--accent-foreground` and `--ring`
+derive from it in `tokens.css` via relative `oklch()`, so overriding it re-brands the whole app.
+
+```css
+@import "obp-ui/styles.css";
+
+:root  { --primary: #7c3aed; }
+.dark  { --primary: #c4b5fd; }
+```
+
+No JS, no flicker, works with JS disabled. The runtime path (`makePalette` + `setCustomTheme`)
+costs 5.5 kB gzip and flashes the default brand before it applies, because `prePaintScript`
+restores light/dark but not preset tokens - use it only for a live theme picker.
+
+Change the paper too, and it is eight more: `--background --card --secondary --foreground
+--muted-foreground --faint --border --border-soft`. The six status hues are never yours to change.
+
+## Two operational notes that used to live in the README
+
+**Tauri CSP.** `app.security.csp` (nested under `app` in v2, not at the root as in v1) can keep
+`style-src 'self'` - no `'unsafe-inline'`. Base UI has no `react-remove-scroll`, and `UIProvider`
+sets `CSPProvider disableStyleElements` because the one rule it would inject ships in `base.css`.
+`build.target` is `safari16` for Tailwind v4's `@property`.
+
+**One React.** `resolve: { dedupe: ["react", "react-dom"] }` in the consumer's vite config. pnpm's
+strict `node_modules` plus a symlinked package is the exact shape that yields two React copies; the
+symptom is "Invalid hook call" the first time a Base UI primitive mounts.
