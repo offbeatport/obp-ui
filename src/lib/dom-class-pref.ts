@@ -1,9 +1,3 @@
-// A boolean preference that lives as a class on <html>: persisted to storage and applied
-// before first paint by the pre-paint script, so it never flashes. The class is the source
-// of truth at runtime, which is what lets CSS react to it without a re-render.
-//
-// Generalised from the web app's console-tab preference.
-
 import { prefStorage } from "./storage";
 
 export type DomClassPref = {
@@ -13,14 +7,10 @@ export type DomClassPref = {
 };
 
 export function createDomClassPref(opts: {
-    /** Storage key, e.g. "obp-console-tab". */
     storageKey: string;
-    /** Class toggled on <html>. */
     className: string;
-    /** Stored value written when the class is on / off. */
     onValue?: string;
     offValue?: string;
-    /** Window event name used to keep multiple toggles in sync. */
     event?: string;
 }): DomClassPref {
     const { storageKey, className, onValue = "off", offValue = "on" } = opts;

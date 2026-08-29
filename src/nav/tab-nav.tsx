@@ -6,13 +6,6 @@ import { useNav } from "./ui-provider";
 
 export type TabNavItem = { href: string; label: string };
 
-/**
- * Underlined sub-navigation bar. Was two byte-identical files in the web app
- * (SettingsTabs / AdminTabs) that differed only in their tab array - which is now a prop.
- *
- * Active state comes from the UIProvider's pathname, matching the tab href or any child
- * route under it.
- */
 export function TabNav({ tabs, className }: { tabs: TabNavItem[]; className?: string }) {
     const { pathname } = useNav();
     return (

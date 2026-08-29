@@ -1,7 +1,10 @@
+"use client";
+
+import { useRender } from "@base-ui/react/use-render";
 import { type VariantProps, cva } from "class-variance-authority";
-import { Slot } from "radix-ui";
 import type * as React from "react";
 
+import { asChildRender, asChildVoid } from "../lib/base-ui-compat";
 import { cn } from "../lib/cn";
 
 const badgeVariants = cva(
@@ -17,7 +20,6 @@ const badgeVariants = cva(
                     "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
                 ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 [a&]:hover:underline",
-                // status language (soft fill + status text) - the app's chip vocabulary
                 success: "border-transparent bg-success-soft text-success font-semibold",
                 warning: "border-transparent bg-warning-soft text-warning font-semibold",
                 info: "border-transparent bg-info-soft text-info font-semibold",
@@ -36,18 +38,21 @@ function Badge({
     className,
     variant = "default",
     asChild = false,
+    children,
     ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-    const Comp = asChild ? Slot.Root : "span";
-
-    return (
-        <Comp
-            data-slot="badge"
-            data-variant={variant}
-            className={cn(badgeVariants({ variant }), className)}
-            {...props}
-        />
-    );
+    return useRender({
+        defaultTagName: "span",
+        render: asChildRender(asChild, children),
+        enabled: !asChildVoid(asChild, children),
+        props: {
+            "data-slot": "badge",
+            "data-variant": variant,
+            className: cn(badgeVariants({ variant }), className),
+            ...props,
+            ...(asChild ? {} : { children }),
+        },
+    });
 }
 
 export { Badge, badgeVariants };

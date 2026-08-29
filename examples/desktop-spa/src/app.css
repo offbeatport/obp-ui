@@ -6,4 +6,4 @@
 @import "obp-ui/desktop.css";
 
 @source "../src";
-@source "../../../packages/ui/src";
+@source "../../../src";

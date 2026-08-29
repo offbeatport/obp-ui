@@ -1,10 +1,3 @@
-// Tone → semantic token family (tokens.css maps the prototype's --green/--blue/… onto
-// success/info/approval/neutral/warning/destructive). One place owns the translation.
-//
-// Moved verbatim from apps/web/src/components/command-center/tone.ts. `Tone` is re-declared
-// here as a small local union rather than imported from the app's ~/server/data - the app's
-// `Tone` is structurally identical, so it stays assignable in both directions.
-
 export type Tone = "green" | "blue" | "violet" | "slate" | "amber" | "red";
 
 export type ToneClasses = { text: string; solid: string; soft: string; borderL: string };
@@ -43,7 +36,6 @@ export const TONE: Record<Tone, ToneClasses> = {
     },
 };
 
-// Tone → the underlying CSS custom property (for inline `--co-bc` brand tints etc).
 export const TONE_VAR: Record<Tone, string> = {
     green: "var(--success)",
     blue: "var(--info)",

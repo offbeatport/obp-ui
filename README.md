@@ -10,9 +10,8 @@ app, a Tauri v2 desktop app and a Next app all render from the same bytes.
   fork, both themes, the contrast floors) binds every product; the tokens are a vocabulary each
   product varies; the shell/console/chat/nav-ui archetype is opt-in (and `canvas` is opt-in for a
   dependency reason). Read it before adding UI.
-- **The dev app:** `pnpm dev` - two pages, no app required. It opens on *Showcase*, the system
-  laid out as a designed page; *Gallery*, one click away in the header, is every export in one
-  page. See [The dev app](#the-dev-app).
+- **The dev app:** `pnpm dev` - one page, no app required. The *Gallery*: every export, one block
+  per family, in both themes. See [The dev app](#the-dev-app).
 - **No app in here.** No router, no server functions, no database, no product domain data - see
   [What is NOT in here](#what-is-not-in-here).
 
@@ -22,12 +21,11 @@ src/                                                     ← the root barrel, ti
   primitives/   badge button card checkbox color-picker dialog dropdown-menu input label popover
                 radio-group scroll-area select separator switch table tabs textarea tooltip  (19)
   nav/          UIProvider · Link · TabNav · SegmentedTabs
-  status/       StatusPill · StatusDot · LiveDot · PulsePill · SignalBars · StatTile · ActivityRow
   data-display/ EmptyState · Timeline · TaskCard · ExpandableRow · GradientMark
   lib/          cn · theme (light/dark) · theme-preset (4 axes) · palette · color · storage · prepaint · dom-class-pref · client-only
   markdown.tsx · confirm-dialog.tsx · theme-toggle.tsx · theme-picker.tsx · provider-logos.tsx
   shell/ console/ chat/ nav-ui/ canvas/                  ← tier 3, own entry points only
-gallery/        the dev app (`pnpm dev`) - Gallery (every export) + Showcase (the system, laid out)
+gallery/        the dev app (`pnpm dev`) - the Gallery: every export, one block per family
 ```
 
 ---
@@ -39,7 +37,7 @@ one. Five subtrees sit behind their own entry points instead.
 
 | Import from | You get | Why it is separate |
 | --- | --- | --- |
-| `obp-ui` | tokens, primitives, `cn`, the nav seam + `UIProvider`, status atoms (`StatusPill`, `StatTile`, `LiveDot`, …), data-display (`EmptyState`, `Timeline`, `TaskCard`, `ExpandableRow`, `GradientMark`), `ProviderLogo`, `Markdown`, `ConfirmDialog`, `ThemeToggle`, theme presets | the default - nothing here carries a product's identity |
+| `obp-ui` | tokens, primitives, `cn`, the nav seam + `UIProvider`, the tone map (`TONE`, `TONE_VAR`), data-display (`EmptyState`, `Timeline`, `TaskCard`, `ExpandableRow`, `GradientMark`), `ProviderLogo`, `Markdown`, `ConfirmDialog`, `ThemeToggle`, theme presets | the default - nothing here carries a product's identity |
 | `obp-ui/canvas` | the React Flow board, node vocabulary, flavors, 10 layouts | **dependency**: `@xyflow/react` is an optional peer, and apps without a board must not pay for it |
 | `obp-ui/shell` | `AppShell`, `Rail`, `NavItem`, `EntityRow`, `TitleBar`, account + window controls | **identity** |
 | `obp-ui/console` | `ConsoleDock`, `ConsolePane`, `LogView`, `LogLine` | **identity** |
@@ -66,17 +64,13 @@ the first product's look?* If not, it goes behind its own entry point.
 pnpm install && pnpm dev      # from the repo root (`pnpm ui` still works)
 ```
 
-A small Vite + React app in [`gallery/`](./gallery) on **http://localhost:5180**, with two pages
-behind one header switch.
-
-**Showcase is the front door** - it is what `pnpm dev` opens on. Its nine sections are a strict
-content *subset* of the gallery (every one of them is covered by a Spec next door), so it does not
-earn being a peer; what it has that a catalogue cannot have is that it reads as a **designed page**.
-One page has a purpose, the other has a job. Arrive at the purpose, switch to the job.
+A small Vite + React app in [`gallery/`](./gallery) on **http://localhost:5180**. One page, no
+header switch: a second page whose sections were a strict content *subset* of the gallery was a
+second answer to the same question, and it is gone.
 
 **Gallery** is the exhaustive inventory: every component in the public barrel - the tokens themselves
 (surfaces, brand, the full status language with its `-soft` fills, radius, elevation, type), the
-19 primitives with every variant *and* every size, the status atoms, the data-display surfaces
+19 primitives with every variant *and* every size, the data-display surfaces
 (the entity mark among them), the nav seam, all ten `nav-ui` tab treatments, both chat surfaces,
 the agent console,
 the shell (inside a fixed frame, so it makes sense on a page that is not an app), and the
@@ -587,28 +581,42 @@ In Tauri v2 the key is nested under `app`, **not** at the root the way v1 had it
       "csp": {
         "default-src": "'self'",
         "script-src": "'self'",
-        "style-src": "'self' 'unsafe-inline'",
+        "style-src": "'self'",
         "font-src": "'self' data:",
         "img-src": "'self' asset: http://asset.localhost blob: data:",
         "connect-src": "ipc: http://ipc.localhost"
-      },
-      "dangerousDisableAssetCspModification": ["style-src"]
+      }
     }
   }
 }
 ```
 
-`style-src` needs `'unsafe-inline'` because Radix injects stylesheets at runtime:
-`react-remove-scroll` (Dialog, DropdownMenu, Select, Tooltip) goes through
-`react-style-singleton`, which creates a `<style>` element from JS with no nonce on it. Tailwind's
-own output is a normal bundled asset and does not need this.
+**`style-src` no longer needs `'unsafe-inline'`, and this is one of the things the move off Radix
+bought.** Radix pulled in `react-remove-scroll`, which scroll-locks via `react-style-singleton` -
+a `<style>` element created from JS with no nonce on it, on every Dialog, DropdownMenu, Select and
+Tooltip. Nothing could nonce it, so the directive had to be widened.
 
-**The part that is easy to get wrong:** at compile time Tauri appends its own nonces and hashes to
-the CSP directives for the assets it bundles - and per the CSP spec, as soon as a directive
-contains a nonce or hash, browsers **ignore `'unsafe-inline'` in that directive**. So the config
-above only works with `dangerousDisableAssetCspModification: ["style-src"]`, which tells Tauri to
-leave that one directive alone. Keep it as an array - passing `true` also disables nonce injection
-for `script-src`, which throws away the protection you actually want.
+Base UI has no `react-remove-scroll` dependency; it scroll-locks by setting style *attributes* from
+JavaScript, and CSP does not police those (`style-src-attr` only governs attributes parsed out of
+server-rendered HTML, not ones script assigns). The single `<style>` element it would still inject
+is the scrollbar-hiding rule used by `ScrollArea.Viewport` and `Select.Popup` - and `UIProvider`
+turns that off via Base UI's `CSPProvider disableStyleElements`, because the same rule ships as
+ordinary bundled CSS in `base.css`. Tailwind's output was always a normal bundled asset.
+
+Dropping `'unsafe-inline'` also retires the `dangerousDisableAssetCspModification` escape hatch
+that used to be required alongside it. The reason it was required is worth keeping in mind if you
+ever put `'unsafe-inline'` back: at compile time Tauri appends its own nonces and hashes to the
+directives for the assets it bundles, and per the CSP spec a directive containing a nonce or hash
+makes browsers **ignore `'unsafe-inline'` in that directive**. Setting it to `["style-src"]` told
+Tauri to leave that one alone. Never pass `true` - that also disables nonce injection for
+`script-src`, throwing away the protection you actually want.
+
+> Verified by reading Base UI 1.7's source and CSP docs, not yet by shipping a hardened Tauri
+> build. If a dialog or select misbehaves under the stricter policy, check the devtools console
+> for a CSP violation before assuming the component is broken.
+
+If you server-render (the web app, not the desktop one) and your policy blocks inline styles
+outright, pass a per-request nonce through: `<UIProvider nonce={nonce}>`.
 
 This only reproduces in a compiled build (`tauri build --debug`), never in `tauri dev`, because the
 injection happens at compile time. Dialogs that open with no styling and a CSP violation in the
@@ -651,8 +659,8 @@ resolve: { dedupe: ["react", "react-dom"] }
 ```
 
 pnpm's strict `node_modules` plus a symlinked workspace package is the exact shape that produces
-two React copies. The symptom is "Invalid hook call" the first time a Radix primitive mounts, or a
-`UIProvider` context that reads as empty inside the package.
+two React copies. The symptom is "Invalid hook call" the first time a Base UI primitive mounts, or
+a `UIProvider` context that reads as empty inside the package.
 
 ### 4. Drag regions need a capability
 
@@ -697,6 +705,10 @@ not in the app:
 npx shadcn@latest add <name>      # from this repo's root - the library IS the root package
 ```
 
+Since July 2026 the CLI emits **Base UI** components by default, which is the same headless layer
+this kit is on - so what it writes now lines up with `src/primitives` instead of fighting it. Do
+not pass `-b radix`: that asks for the lineage this repo deliberately left.
+
 Then, before committing:
 
 1. rewrite the generated `@/…` imports to relative ones (`../lib/cn`, `../primitives`) - the
@@ -704,7 +716,9 @@ Then, before committing:
 2. add `"use client";` on line 1 if it uses hooks, handlers, browser APIs or context;
 3. re-theme it with tokens (the CLI emits raw shadcn colours) - that is rule 1 in
    [`DESIGN.md`](./DESIGN.md), and a primitive is tier 1, so it is binding on every product;
-4. export it from `src/primitives/index.ts`, and add it to the gallery.
+4. keep the kit's `asChild` spelling rather than Base UI's `render`, via the adapters in
+   `src/lib/base-ui-compat.ts` - five apps are written against `asChild`;
+5. export it from `src/primitives/index.ts`, and add it to the gallery.
 
 If the CLI complains that it cannot find an import alias, add
 `"paths": { "@/*": ["./src/*"] }` to `tsconfig.json` - it is only used to resolve the write

@@ -1,8 +1,3 @@
-// data-display - the surfaces that render a list of things that happened (or a list that is
-// empty), plus the avatar that heads a row. Chrome only: every label, colour decision and piece
-// of copy is a prop or a slot, so the same components draw the web app's Build log and the
-// desktop app's.
-
 export {
     ExpandableRow,
     ExpandableRowList,

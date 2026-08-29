@@ -38,28 +38,6 @@ import {
     Separator,
 } from "./primitives";
 
-// The chrome for choosing a theme: six curated presets in a popover, and a custom editor that
-// takes the four axes apart - colour, type, radius, space.
-//
-// The editor edits ONE MODE AT A TIME, and says which. A colour that looks right on cream is
-// rarely the same colour that looks right on near-black, so a single set of pickers driving
-// both modes would only ever be half correct. The other three axes are mode-independent and
-// apply to both at once, which is why only the colour group sits under the mode switch.
-//
-// It seeds from whichever preset you were looking at, so "Editorial but our green and one step
-// tighter" is three clicks, not twenty-one controls.
-//
-// It also carries the SIDE-BY-SIDE comparison: all six presets, light and dark at once, at the
-// top of the editor. A popover row can only show the mode you are currently in, and comparing
-// twelve tiles is precisely the moment you decide to fork one - so the comparison and the
-// control that acts on it are the same surface.
-//
-// THE PREVIEW DRAWS ALL FOUR AXES. A colour-only preview cannot show a radius or a density
-// change at all - it would sit there looking identical while the two controls that just moved
-// did nothing visible. It carries the draft's tokens inline, and because custom properties
-// inherit, --spacing and --radius re-measure everything inside it and nothing outside.
-
-/** The order the editor lists them in - surfaces, then ink, then lines, then brand. */
 const FIELDS: { key: keyof ThemePreset["light"]; label: string; hint: string }[] = [
     { key: "background", label: "Page", hint: "The window behind everything" },
     { key: "card", label: "Paper", hint: "Cards, popovers, panels" },
@@ -75,7 +53,6 @@ const FIELDS: { key: keyof ThemePreset["light"]; label: string; hint: string }[]
     { key: "accentForeground", label: "Brand ink soft", hint: "Text on a brand-soft surface" },
 ];
 
-/** "Slate · Operator · Sharp · Compact" - the four axes of a preset, spelled out in the list. */
 function axisLine(p: ThemePreset): string {
     return [
         p.palette === CUSTOM_PRESET_ID ? "Custom colours" : (p.palette ?? "-"),
@@ -88,7 +65,6 @@ function axisLine(p: ThemePreset): string {
 export type ThemePickerProps = {
     presets?: ThemePresetController;
     theme?: ThemeController;
-    /** Drop the name, keep the chip. For a tight header or a toolbar. */
     compact?: boolean;
     className?: string;
 };
@@ -104,11 +80,8 @@ export function ThemePicker({
     const [mode, setMode] = useState<Theme>("light");
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState(false);
-    // The draft the editor OPENS on, held here rather than in storage. See startCustom.
     const [seed, setSeed] = useState<ThemePreset | null>(null);
 
-    // Read after mount: SSR and the pre-paint script disagree about nothing here, but the
-    // stored value is only readable in the browser.
     useEffect(() => {
         const sync = () => {
             setId(controller.getThemePresetId());
@@ -128,18 +101,6 @@ export function ThemePicker({
         id === CUSTOM_PRESET_ID && custom ? custom : (themePresetFor(id) ?? THEME_PRESETS[0]);
 
     const startCustom = () => {
-        // Seed from what is on screen, so the editor opens on the theme you were looking at -
-        // all four axes, not just its colours.
-        //
-        // The seed is handed to the dialog as a prop and NOT written through the controller.
-        // This entry point advertises "Compare presets", so most people who open it are here
-        // to look; committing on open converted them to Custom before they touched anything -
-        // measured: Paper went from 0 inline properties to 46, `obp-theme-preset` was set to
-        // "custom", and Escape did not undo it, so the header read "Custom" after a reload for
-        // a user who never customised anything. Worse, Custom is a frozen snapshot: that user
-        // silently stops tracking any later edit to tokens.css. Every mutation in the dialog
-        // goes through commit(), so writing nothing here means looking costs nothing and the
-        // first real edit is still what makes you Custom.
         setSeed({
             ...(custom ?? current),
             id: CUSTOM_PRESET_ID,
@@ -193,9 +154,6 @@ export function ThemePicker({
                         className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground"
                     >
                         <SlidersHorizontalIcon className="size-4" />
-                        {/* Names both jobs the dialog does. The rows above can only draw the
-                            mode you are in; "compare" is the word that says the twelve-tile
-                            light+dark grid is behind here. */}
                         {custom ? "Compare presets, edit yours…" : "Compare presets, make one…"}
                     </button>
                 </PopoverContent>
@@ -212,7 +170,6 @@ export function ThemePicker({
     );
 }
 
-/** The four-colour identity chip: page, paper, brand-soft, brand. */
 function Chip({
     preset,
     mode,
@@ -263,7 +220,6 @@ function PresetRow({
                 <span className="mt-0.5 block text-sm leading-snug text-muted-foreground">
                     {p.note}
                 </span>
-                {/* The four axes, named. Without this the list looks like ten more palettes. */}
                 <span className="mt-1 block font-mono text-sm capitalize text-faint">
                     {axisLine(p)}
                 </span>
@@ -273,7 +229,6 @@ function PresetRow({
     );
 }
 
-/** One labelled axis in the editor. */
 function Group({ label, hint, children }: { label: string; hint: string; children: ReactNode }) {
     return (
         <section className="space-y-2">
@@ -286,7 +241,6 @@ function Group({ label, hint, children }: { label: string; hint: string; childre
     );
 }
 
-/** Are all four of the draft's axes still exactly this preset's? */
 function isPreset(draft: ThemePreset, p: ThemePreset): boolean {
     return (
         draft.palette === p.palette &&
@@ -296,7 +250,6 @@ function isPreset(draft: ThemePreset, p: ThemePreset): boolean {
     );
 }
 
-/** A selectable tile in the type / radius / space groups. */
 function Option({
     selected,
     onSelect,
@@ -328,30 +281,14 @@ function Option({
     );
 }
 
-/**
- * One preset, one mode, at tile size - the unit the both-modes comparison is built from.
- *
- * Everything here is drawn from the preset's OWN tokens (inline) rather than the page's, which
- * is what lets twelve of these sit on screen at once while the app stays in one theme. The
- * inner utilities are the real ones: --spacing and --radius inherit, so `p-2`, `gap-1`, `h-6`
- * and the corners re-measure per tile and the density and radius axes are *visible* here, not
- * merely named in the caption above.
- *
- * All spans: this renders inside a <button>, where a <div> is invalid HTML.
- */
 function MiniPreview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
     return (
         <span
-            // `mode` as a class, not just tokens - it keeps the dialog's `dark:` utilities out
-            // of a light tile and vice versa (see the custom variant in tokens.css).
             className={cn("block rounded-lg border border-border bg-background p-2", mode)}
             style={themePresetStyle(preset, mode) as React.CSSProperties}
         >
             <span className="block rounded-xl border border-border bg-card p-2 shadow-e1">
                 <span className="flex items-baseline justify-between gap-1">
-                    {/* text-foreground is NOT redundant: a scoped preview must take its ink
-                        from its own tokens, or every dark tile draws its glyph in dark ink.
-                        font-display is the type axis showing itself. */}
                     <span className="font-display text-base text-foreground">Aa</span>
                     <span className="font-mono text-sm text-faint">{mode}</span>
                 </span>
@@ -376,7 +313,6 @@ function CustomThemeDialog({
     onOpenChange: (open: boolean) => void;
     controller: ThemePresetController;
     theme: ThemeController;
-    /** What to open on, from the picker. Not read from storage - opening must not write. */
     seed: ThemePreset | null;
 }) {
     const [draft, setDraft] = useState<ThemePreset | null>(null);
@@ -384,37 +320,30 @@ function CustomThemeDialog({
 
     useEffect(() => {
         if (!open) return;
-        // Prefer the seed the picker just computed; fall back to a stored custom theme so the
-        // dialog still opens if a host renders it without going through startCustom.
         setDraft(seed ?? controller.getCustomTheme());
         setMode(theme.getTheme());
     }, [open, seed, controller, theme]);
 
     if (!draft) return null;
 
-    // live - the window behind the dialog re-skins as you drag or click
     const commit = (next: ThemePreset) => {
         setDraft(next);
         controller.setCustomTheme(next);
     };
 
     const setColor = (key: keyof ThemePreset["light"], hex: string) =>
-        // A dragged picker makes the palette provenance a lie, so drop it: the row now reads
-        // "Custom colours" instead of still claiming to be Slate.
         commit({
             ...draft,
             palette: CUSTOM_PRESET_ID,
             [mode]: { ...draft[mode], [key]: hex },
         });
 
-    /** Swap the COLOUR axis only. Type, radius and space survive - that is the whole point. */
     const setPalette = (p: ThemePalette) =>
         commit({ ...draft, palette: p.id, light: p.light, dark: p.dark });
 
     const resetTo = (from: ThemePreset) =>
         commit({ ...from, id: CUSTOM_PRESET_ID, name: "Custom", note: "Your theme." });
 
-    // Every colour in the theme, offered as quick picks inside each picker.
     const swatches = [
         ...new Set(
             Object.values(draft[mode]).filter((v) => typeof v === "string" && v.startsWith("#")),
@@ -423,10 +352,6 @@ function CustomThemeDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {/* The `sm:` prefix is load-bearing. DialogContent's own base class ends in
-                `sm:max-w-lg`, and a media-query utility is emitted after every unprefixed one -
-                so a plain `max-w-4xl` here loses the cascade and the dialog silently stays
-                512px wide, which is what the four axes were being crammed into. */}
             <DialogContent className="sm:max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>Custom theme</DialogTitle>
@@ -446,7 +371,7 @@ function CustomThemeDialog({
                                 type="button"
                                 onClick={() => {
                                     setMode(m);
-                                    theme.setThemePref(m); // show the mode you are editing
+                                    theme.setThemePref(m);
                                 }}
                                 className={cn(
                                     "rounded px-3 py-1 text-sm font-medium capitalize",
@@ -465,12 +390,6 @@ function CustomThemeDialog({
                 </div>
 
                 <div className="max-h-[46vh] space-y-6 overflow-y-auto pr-1">
-                    {/* Every preset, both modes, on one screen. This is the comparison the
-                        gallery used to carry in a Palettes section, and it belongs here rather
-                        than there: the page you compare presets on should be the page you can
-                        act on the comparison from. It seeds ALL FOUR axes - which is exactly
-                        what the colour chips below deliberately do not do, hence both hints
-                        say so. */}
                     <Group
                         label="Preset"
                         hint="all six in both modes - click one to start from it, all four axes"
@@ -484,10 +403,6 @@ function CustomThemeDialog({
                                     title={p.note}
                                 >
                                     <span className="block text-sm font-medium">{p.name}</span>
-                                    {/* Wraps rather than truncates. Space is the last axis in
-                                        the line and the hardest one to see in a 90px tile, so
-                                        an ellipsis lands exactly on the word that most needs
-                                        reading ("Slate · Operator · Sharp · C…"). */}
                                     <span className="mt-0.5 block font-mono text-sm capitalize leading-snug text-faint">
                                         {axisLine(p)}
                                     </span>
@@ -549,7 +464,6 @@ function CustomThemeDialog({
                                     onSelect={() => commit({ ...draft, type: t.id })}
                                     title={t.note}
                                 >
-                                    {/* Drawn in its OWN faces, so the tile is the sample. */}
                                     <span
                                         className="block text-lg"
                                         style={{ fontFamily: t.display }}
@@ -583,9 +497,6 @@ function CustomThemeDialog({
                                     title={`${r.radius} / ${r.card}`}
                                     className="flex items-center gap-2"
                                 >
-                                    {/* Drawn at --radius on a 36px box, the size of the control
-                                        it governs. Drawing --radius-card instead turns the two
-                                        largest steps into indistinguishable circles. */}
                                     <span
                                         aria-hidden
                                         className="block size-9 flex-none border-2 border-current"
@@ -607,8 +518,6 @@ function CustomThemeDialog({
                                     title={s.note}
                                     className="flex items-center gap-2"
                                 >
-                                    {/* A bar at exactly the control height this step produces:
-                                        calc(--spacing * 9) is what .h-9 compiles to. */}
                                     <span
                                         aria-hidden
                                         className="block w-6 flex-none rounded-sm bg-current"
@@ -637,24 +546,13 @@ function CustomThemeDialog({
     );
 }
 
-/**
- * The theme drawn on itself, on all four axes. It carries its OWN token values inline, so it
- * shows the mode being edited even while the app around it is in the other one - and because
- * --spacing and --radius inherit, the padding, gaps and corners inside it are the ones the
- * draft would give the real app.
- */
 function Preview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
     return (
         <div
-            // `mode` as a class, not just tokens: it is what keeps the page's `dark:` utilities
-            // out of a light preview and vice versa - see the custom variant in tokens.css.
             className={cn("rounded-lg border border-border bg-background p-4", mode)}
             style={themePresetStyle(preset, mode) as React.CSSProperties}
         >
             <div className="rounded-xl border border-border bg-card p-5 shadow-e1">
-                {/* text-foreground is NOT redundant: this is a SCOPED preview, so its ink has
-                    to come from its own tokens. Inheriting would take the colour from the
-                    dialog around it and render the dark preview's heading in dark ink. */}
                 <p className="font-display text-xl text-foreground">Live preview</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                     Muted ink on paper. <span className="text-faint">Faint ink.</span>
@@ -665,8 +563,6 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
                 <p className="mt-1 font-mono text-sm text-faint">
                     mono · {spaceStepFor(preset.space)?.note ?? preset.space}
                 </p>
-                {/* Real utilities, not hand-set sizes: h-9/px-4/gap-2/rounded-lg are the ones
-                    the axes actually move, so the row re-measures itself as you click. */}
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                     <span className="flex h-9 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground">
                         Primary

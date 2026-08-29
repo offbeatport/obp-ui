@@ -8,7 +8,7 @@ import {
     ShieldCheck,
     Trash2,
 } from "lucide-react";
-import { Badge, Button, GradientMark, StatusPill, type Tone } from "obp-ui";
+import { Badge, Button, GradientMark, type Tone } from "obp-ui";
 import {
     AccountButton,
     AccountMenu,
@@ -30,14 +30,6 @@ import {
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 
-// The application frame. Every piece is content-free: nav arrays, company rows, menu entries
-// and copy are domain data that arrive as props - which is why the fixtures below live here
-// and not in the package.
-//
-// Note the two import lines. The frame comes from "obp-ui/shell", not the root barrel, because
-// mounting it makes an app look like this one - see the header of src/index.ts. The gallery
-// writes what a consumer writes, so the seam is visible here too.
-
 const COMPANIES: { name: string; meta: string; tone: Tone; badge?: string }[] = [
     { name: "Ledgerly", meta: "$1.2k/mo · building", tone: "blue", badge: "INBOX" },
     { name: "Quietbill", meta: "$0/mo · idle", tone: "slate" },
@@ -51,7 +43,6 @@ const ACCOUNT_ITEMS: AccountMenuItem[] = [
     { icon: <LogOut />, label: "Sign out", separatorBefore: true, destructive: true },
 ];
 
-/** Reads AppShell's collapse state off the rail context - no prop drilling. */
 function RailReadout() {
     const rail = useRail();
     const collapsed = useRailCollapsed();
@@ -67,7 +58,6 @@ function RailReadout() {
     );
 }
 
-/** null on the web (no provider) - callers must handle that. */
 function WindowReadout() {
     const win = useWindowControls();
     return (
@@ -81,8 +71,6 @@ export function ShellSection() {
     const [selected, setSelected] = useState("Ledgerly");
     const [maximized, setMaximized] = useState(false);
 
-    // A fake native window: on the web there is no provider and <WindowControls> renders
-    // nothing, so the gallery supplies one to make the buttons real.
     const win: WindowControlsApi = {
         platform: "windows",
         isMaximized: maximized,
@@ -108,9 +96,6 @@ export function ShellSection() {
                                         obp<span className="text-primary">-ui</span>
                                     </span>
                                 }
-                                // The collapsed rail has ~28px of width for a mark, so this is the
-                                // one slot that needs a glyph rather than a wordmark. A demo app's
-                                // GradientMark stands in - the kit ships no product tile.
                                 brandCollapsed={<GradientMark name="obp-ui" size={28} />}
                                 brandHref="#shell"
                                 brandLabel="Home"
@@ -171,12 +156,13 @@ export function ShellSection() {
                                     Portfolio
                                 </h4>
                                 <Badge variant="info">4 companies</Badge>
-                                <StatusPill
-                                    variant="soft"
-                                    className="ml-auto bg-success-soft text-success"
-                                >
+                                <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 font-mono text-sm uppercase tracking-wide text-success">
+                                    <span
+                                        aria-hidden="true"
+                                        className="size-1.5 rounded-full bg-current"
+                                    />
                                     all healthy
-                                </StatusPill>
+                                </span>
                             </div>
                             <p className="max-w-prose text-sm text-muted-foreground">
                                 The workspace column is a slot - AppShell owns nothing but the grid,

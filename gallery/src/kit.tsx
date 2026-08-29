@@ -1,9 +1,6 @@
 import { cn } from "obp-ui";
 import type { CSSProperties, ReactNode } from "react";
 
-// The gallery's own chrome. Deliberately thin - anything that looks like a component the kit
-// should own belongs in the kit, not here. Tokens only, and `text-sm` is the floor.
-
 export function Section({
     id,
     title,
@@ -16,7 +13,6 @@ export function Section({
     children: ReactNode;
 }) {
     return (
-        // scroll-mt clears the sticky header when a sidebar link jumps here.
         <section id={id} className="scroll-mt-24">
             <header className="border-b border-border-soft pb-4">
                 <h2 className="font-display text-3xl font-light tracking-tight">{title}</h2>
@@ -27,15 +23,6 @@ export function Section({
     );
 }
 
-/**
- * One exported component: its name in mono, what it is for, and its real variants.
- *
- * `name` doubles as the sidebar's sub-navigation entry. The sidebar reads these off the DOM
- * after mount rather than repeating a hand-written list in app.tsx - a list that would go
- * stale the first time someone adds a Spec and forgets. Compound names ("Input · Textarea ·
- * Label") nav under their first part; the anchor id is assigned by the sidebar, which is the
- * only place that knows which section a Spec landed in.
- */
 export function Spec({
     name,
     note,
@@ -46,7 +33,6 @@ export function Spec({
     name: string;
     note: ReactNode;
     children: ReactNode;
-    /** Drop the card frame - for demos that bring their own surface. */
     bare?: boolean;
     className?: string;
 }) {
@@ -72,7 +58,6 @@ export function Row({ children, className }: { children: ReactNode; className?: 
     return <div className={cn("flex flex-wrap items-center gap-3", className)}>{children}</div>;
 }
 
-/** A labelled variant cell - the label is the prop value being demonstrated. */
 export function Cell({
     label,
     children,
@@ -83,11 +68,6 @@ export function Cell({
     className?: string;
 }) {
     return (
-        // self-start, not the parent Row's items-center: a Cell hangs its label from the top, so
-        // a row of Cells whose bodies differ in height (the 24px icon-xs button beside the 44px
-        // lg one, a bare LiveDot beside a labelled one) would centre each Cell independently and
-        // scatter the labels down a 20px stagger. At the old 9.5px labels that read as noise; at
-        // the 14px floor it reads as a broken grid.
         <div className={cn("flex min-w-0 flex-col items-start gap-2 self-start", className)}>
             <span className="font-mono text-sm text-faint">{label}</span>
             {children}
@@ -95,7 +75,6 @@ export function Cell({
     );
 }
 
-/** A fixed-size bordered stage - shell frames, chat panels, boards. */
 export function Frame({
     children,
     className,
@@ -122,7 +101,6 @@ export function Note({ children }: { children: ReactNode }) {
     return <p className="text-sm text-muted-foreground">{children}</p>;
 }
 
-/** Exports with nothing to draw - hooks, helpers, constants and their live values. */
 export function Api({
     items,
 }: {

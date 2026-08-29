@@ -9,10 +9,6 @@
         background: var(--background);
         color: var(--foreground);
         font-family: var(--font-sans);
-        /* The body's size is a step of the scale, not a loose 16px: an archetype that moves
-           --type-base has to move unstyled prose with it, or the scale and the page disagree.
-           Identical to the old literal today. Note the scale is in rem, which resolves against
-           <html>, so this declaration cannot feed back into it. */
         font-size: var(--type-base);
         line-height: 1.55;
         letter-spacing: -0.005em;
@@ -32,14 +28,6 @@
         background: var(--accent);
         color: var(--accent-foreground);
     }
-    /* Soft editorial scrollbars - everywhere EXCEPT a macOS desktop window.
-       In WebKit, any author rule on ::-webkit-scrollbar turns the element into a
-       "custom scrollbar", and a custom scrollbar is never an overlay one: it is
-       always visible and always in the layout. On macOS that is wrong twice over -
-       the OS hides its bars until you scroll, and it colours them itself. The only
-       way back is to declare nothing at all, so these selectors leave that case out.
-       Windows and Linux draw in-layout bars natively, so the editorial one is the
-       better match there and they keep it. */
     html:not(.is-desktop) ::-webkit-scrollbar,
     html.is-desktop:not([data-os="macos"]) ::-webkit-scrollbar {
         width: 10px;
@@ -61,7 +49,6 @@
     }
 }
 
-/* elevation utilities matching the prototype's soft shadows */
 @utility shadow-e1 {
     box-shadow: var(--shadow-e1);
 }
@@ -69,9 +56,6 @@
     box-shadow: var(--shadow-e2);
 }
 
-/* Instant hover feedback - buttons, links, and menu/tab items snap their hover
-   color/background with no fade. Everything else (sidebar collapse slide, the new-company
-   spring icon, keyframe @animations) keeps its timing. Applies to all future ones too. */
 button,
 a,
 [role="menuitem"],
@@ -83,13 +67,24 @@ summary {
     transition-delay: 0s !important;
 }
 
-/* Interactive elements get the pointer cursor (Tailwind v4 preflight no longer sets it). */
-button:not(:disabled),
-a[href],
-[role="button"]:not([aria-disabled="true"]),
-[role="menuitem"],
-[role="tab"],
-label[for],
-summary {
-    cursor: pointer;
+.base-ui-disable-scrollbar {
+    scrollbar-width: none;
+}
+.base-ui-disable-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+@layer base {
+    button:not(:disabled),
+    a[href],
+    [role="button"]:not([aria-disabled="true"]),
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"],
+    [role="tab"],
+    label[for],
+    summary {
+        cursor: pointer;
+    }
 }

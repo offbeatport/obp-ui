@@ -1,5 +1,5 @@
 import { type Node, type NodeProps, type NodeTypes, Panel } from "@xyflow/react";
-import { Button, type Signal, SignalBars, cn, gradientPairFor } from "obp-ui";
+import { Button, cn, gradientPairFor } from "obp-ui";
 import {
     AvatarHeader,
     BRIDGE_STROKE,
@@ -44,13 +44,7 @@ import {
 import { useMemo, useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
 
-// The optional peer. Everything here comes from the "obp-ui/canvas" entry so an app
-// without a board never pulls @xyflow/react into its bundle. The two stylesheets it needs
-// (@xyflow/react/dist/base.css, then obp-ui/canvas.css) are imported by app.css - in
-// that order, because the paper theming has to land on top.
-
-// ── the logical graph both boards below are drawn from ────────────────────────
-// Content-free by contract: the kit never inspects `data`, so this payload is the gallery's.
+type Signal = { label: string; val: number };
 
 type CardData = {
     eyebrow: string;
@@ -137,8 +131,6 @@ const GRAPH: CanvasGraph<CardData> = {
     ],
 };
 
-// A flavor only ships a single default accent; an app layers its own kind → colour palette on
-// top. `perFlavor` re-skins the ones that carry their own (blueprint is deliberately cool).
 const SKIN = withAccentPalette(
     FLAVORS,
     {
@@ -196,7 +188,21 @@ function CardNode({ data }: NP) {
                 </div>
             )}
             {d.signals !== undefined && (
-                <SignalBars signals={d.signals} color={a} className="mt-2" />
+                <div className="mt-2 grid grid-cols-3 gap-1">
+                    {d.signals.map((s) => (
+                        <div key={s.label} className="flex min-w-0 flex-col gap-0.5">
+                            <div className="h-1 overflow-hidden rounded-full bg-[color:var(--border-soft)]">
+                                <div
+                                    className="h-full rounded-full"
+                                    style={{ width: `${(s.val / 10) * 100}%`, background: a }}
+                                />
+                            </div>
+                            <span className="truncate font-mono text-sm uppercase tracking-wide text-faint">
+                                {s.label}
+                            </span>
+                        </div>
+                    ))}
+                </div>
             )}
         </FlavorShell>
     );
@@ -266,7 +272,6 @@ function LeafNode({ data }: NP) {
     );
 }
 
-// Must stay a stable module-scope object - React Flow remounts every node otherwise.
 const NODE_TYPES: NodeTypes = {
     idea: CardNode,
     opportunity: CardNode,
@@ -297,10 +302,6 @@ function VariantBoard({ variant }: { variant: CanvasVariant }) {
     );
 }
 
-// ── the command surface ───────────────────────────────────────────────────────
-// The second vocabulary: a dark, glowing board of entity + opportunity cards under fixed HUD
-// panels. These cards render their own handles, so they only work inside a board.
-
 type EntityData = {
     name: string;
     meta: string;
@@ -324,7 +325,6 @@ type OppData = {
 
 type RegionData = { label: string; accent: string };
 
-/** The callback bag a node renderer reads - React Flow only hands it `data`. */
 type BoardActions = { open: (name: string) => void; promote: (title: string) => void };
 
 function EntityNode({ data }: NodeProps<Node<EntityData>>) {

@@ -8,21 +8,12 @@ import {
     indexGraph,
 } from "./graph";
 
-// ============================================================================
-// The 10 canvas layouts. Every layout arranges the SAME logical graph; they
-// differ only in positions + handle sides. A layout takes the graph as an
-// ARGUMENT (there is no module-scope content here) and pairs with a flavor to
-// make a variant. Movement is disabled at the <ReactFlow> level (LOCKED_CANVAS),
-// so these positions are final.
-// ============================================================================
-
 export type CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => CanvasFlowNode<D>[];
 
 export type EdgeOverride = Partial<Flavor["edge"]>;
 
 type Handles = { ht?: Position; hs?: Position };
 
-// One RF node from a logical node.
 function mk<D>(
     n: CanvasGraphNode<D>,
     x: number,
@@ -41,8 +32,6 @@ function mk<D>(
     };
 }
 
-// `mk` for a role that may be missing from the graph - yields 0 or 1 node so a
-// layout can spread it inline and stay a single expression.
 function at<D>(
     ix: CanvasGraphIndex<D>,
     kind: string,
@@ -55,7 +44,6 @@ function at<D>(
     return n ? [mk(n, x, y, flavor, handles)] : [];
 }
 
-// Chrome nodes (lane panels / column headers) that sit behind the cards.
 export function laneNode<D>(
     id: string,
     x: number,
@@ -100,7 +88,6 @@ export function colHeadNode<D>(
     };
 }
 
-/** Edges styled by the flavor (with an optional per-variant override). */
 export function flavorEdges(
     graph: CanvasGraph<unknown>,
     flavor: FlavorKey,
@@ -117,11 +104,9 @@ export function flavorEdges(
     }));
 }
 
-// Vertically stack the i-th of `count` items around a centre y.
 const stackY = (i: number, count: number, gap: number, center = 0) =>
     center + (i - (count - 1) / 2) * gap;
 
-// ------------------------------------------------------------------ 1. Columns
 export const columns: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
     const features = ix.many("feature");
@@ -138,7 +123,6 @@ export const columns: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKe
     ];
 };
 
-// ------------------------------------------------------------------ 2. Tree ↓
 export const treeDown: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
     const features = ix.many("feature");
@@ -162,10 +146,8 @@ export const treeDown: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorK
     ];
 };
 
-// ------------------------------------------------------------------ 3. Radial
 export const radial: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
-    // Handle side that faces the hub at (0,0).
     const facing = (x: number, y: number): Handles => {
         const ht =
             Math.abs(x) > Math.abs(y)
@@ -203,8 +185,6 @@ export const radial: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey
     return [...at(ix, "company", -123, -40, flavor), ...inner, ...outer];
 };
 
-// ------------------------------------------------------------------ 4. Swimlanes
-/** The three bands the swimlane layout draws behind the cards. */
 export const SWIMLANE_BANDS: { id: string; label: string; accent: string; w: number }[] = [
     { id: "lane-opp", label: "Opportunity", accent: "var(--warning)", w: 760 },
     { id: "lane-prod", label: "Product", accent: "var(--primary)", w: 2500 },
@@ -232,8 +212,6 @@ export const swimlanes: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: Flavor
     ];
 };
 
-// ------------------------------------------------------------------ 5. Kanban
-/** The kanban columns, each a list of KINDS expanded in graph order. */
 export const KANBAN_COLUMNS: { key: string; label: string; accent: string; kinds: string[] }[] = [
     { key: "idea", label: "Idea", accent: "var(--primary)", kinds: ["idea"] },
     { key: "opp", label: "Opportunity", accent: "var(--warning)", kinds: ["opportunity"] },
@@ -258,7 +236,6 @@ export const kanban: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey
         for (const kind of col.kinds) {
             for (const n of ix.many(kind)) {
                 nodes.push(mk(n, x, y, flavor));
-                // The opportunity card is the tall one - give it more room below.
                 y += kind === "opportunity" ? 210 : 150;
             }
         }
@@ -266,8 +243,6 @@ export const kanban: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey
     return nodes;
 };
 
-// ------------------------------------------------------------------ 6. Bento
-/** Reading order of the bento grid: one cell per node, kinds expanded in turn. */
 export const BENTO_ORDER: string[] = [
     "idea",
     "opportunity",
@@ -287,7 +262,6 @@ export const bento: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey)
     return order.map((n, i) => mk(n, (i % COLS) * CW, Math.floor(i / COLS) * RH, flavor));
 };
 
-// ------------------------------------------------------------------ 7. Blueprint
 export const blueprint: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
     const features = ix.many("feature");
@@ -304,7 +278,6 @@ export const blueprint: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: Flavor
     ];
 };
 
-// ------------------------------------------------------------------ 8. Mind map
 export const mindmap: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
     return [
@@ -318,8 +291,6 @@ export const mindmap: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKe
     ];
 };
 
-// ------------------------------------------------------------------ 9. Timeline
-/** The five numbered stages along the timeline spine, each a list of KINDS. */
 export const TIMELINE_STAGES: { key: string; label: string; accent: string; kinds: string[] }[] = [
     { key: "idea", label: "01 · Idea", accent: "var(--primary)", kinds: ["idea"] },
     { key: "val", label: "02 · Validate", accent: "var(--warning)", kinds: ["opportunity"] },
@@ -353,10 +324,8 @@ export const timeline: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorK
     return nodes;
 };
 
-// ------------------------------------------------------------------ 10. Constellation
 export const constellation: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey) => {
     const ix = indexGraph(graph);
-    // Deterministic clustered scatter (no RNG - index-driven trig offsets).
     const scatter = (
         list: CanvasGraphNode<D>[],
         cx: number,
@@ -365,7 +334,7 @@ export const constellation: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: Fl
         seed: number,
     ) =>
         list.map((n, i) => {
-            const a = seed + i * 2.3999; // ~golden angle
+            const a = seed + i * 2.3999;
             const r = spread * (0.45 + 0.55 * ((i % 3) / 2));
             return mk(n, cx + Math.cos(a) * r, cy + Math.sin(a) * r, flavor);
         });
@@ -380,9 +349,6 @@ export const constellation: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: Fl
     ];
 };
 
-// ---------------------------------------------------------------------------
-// Registry. Each entry pairs a layout with a flavor + optional edge override.
-// ---------------------------------------------------------------------------
 export type CanvasVariant = {
     id: number;
     name: string;
@@ -468,7 +434,6 @@ export const CANVAS_VARIANTS: CanvasVariant[] = [
     },
 ];
 
-/** Resolve a variant against a graph to concrete { nodes, edges }. */
 export function buildCanvasVariant<D>(
     v: CanvasVariant,
     graph: CanvasGraph<D>,

@@ -1,24 +1,14 @@
 "use client";
 
-// The rail-foot account button: an initial tile, the name over a subtitle line, and the
-// chevron that says "this opens something". Collapsed, only the tile survives.
-//
-// Presentational and ref-forwarding (React 19 passes `ref` as a plain prop), so it drops
-// straight into <DropdownMenuTrigger asChild> - which is how <AccountMenu> uses it.
-
 import { ChevronUp } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useRailCollapsed } from "./rail-context";
 
 export type AccountButtonProps = Omit<ComponentProps<"button">, "name" | "children"> & {
-    /** The avatar tile's letter (or any small node). */
     initial?: ReactNode;
-    /** Display name. */
     name?: ReactNode;
-    /** The dim second line ("$120 MRR · 84 users"). */
     sub?: ReactNode;
-    /** Overrides the collapse context. */
     collapsed?: boolean;
 };
 

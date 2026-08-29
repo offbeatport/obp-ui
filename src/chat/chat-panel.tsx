@@ -3,35 +3,18 @@
 import type { ReactNode, Ref } from "react";
 import { cn } from "../lib/cn";
 
-// The chat frame: a scrolling thread with a composer slot. Two looks, unified - both stay
-// reachable through `variant`:
-//
-//   "panel"   the docked co-pilot column (prototype `.cl-head` + `.cpg-chat`): a bordered aside
-//             with an identity header, a padded thread, and the composer in normal flow.
-//   "thread"  the full-page conversation: a centred measure with a FLOATING composer absolutely
-//             positioned over the thread. The gradient fades the scrolling content out behind it;
-//             pointer-events pass through the transparent zone.
-//
-// The scroll container is exposed through `scrollRef` so the caller keeps owning "pin to bottom"
-// (which needs to know when messages / stage actually changed).
-
 export type ChatPanelVariant = "panel" | "thread";
 
 export type ChatPanelProps = {
     variant?: ChatPanelVariant;
-    /** Identity header - "panel" only (the thread page has its own title in `children`). */
     header?: ReactNode;
-    /** The thread itself. */
     children: ReactNode;
-    /** Rendered instead of `children` when `isEmpty` - see <ChatEmptyState>. "panel" only. */
     empty?: ReactNode;
     isEmpty?: boolean;
     composer?: ReactNode;
     scrollRef?: Ref<HTMLDivElement>;
-    /** The centred column width in px - "thread" only. */
     maxWidth?: number;
     className?: string;
-    /** Extra classes on the thread's inner list wrapper. */
     bodyClassName?: string;
 };
 
@@ -51,7 +34,6 @@ export function ChatPanel({
         return (
             <div className={cn("relative flex h-full flex-col", className)}>
                 <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-                    {/* bottom padding clears the floating composer so the last message isn't hidden */}
                     <div
                         className={cn("mx-auto w-full", bodyClassName)}
                         style={{ maxWidth, padding: "22px 20px 148px" }}
@@ -90,12 +72,9 @@ export function ChatPanel({
     );
 }
 
-// Borderless, open identity header (prototype `.cl-head`): the chat IS the entity you're talking
-// to, so there is no chrome between its avatar and its thread.
 export type ChatPanelHeaderProps = {
     avatar?: ReactNode;
     title: ReactNode;
-    /** Sits inline after the title - a live-status pill, say. */
     badge?: ReactNode;
     subtitle?: ReactNode;
     className?: string;
@@ -128,7 +107,6 @@ export function ChatPanelHeader({
     );
 }
 
-// The zero-message state: the avatar again, centred, with an invitation to start talking.
 export type ChatEmptyStateProps = {
     avatar?: ReactNode;
     title: ReactNode;

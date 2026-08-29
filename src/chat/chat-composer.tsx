@@ -4,24 +4,6 @@ import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
-// The composer: an auto-growing textarea with a round send affordance. Two looks, unified - both
-// stay reachable through `variant`:
-//
-//   "panel"  the docked co-pilot composer: a tall bordered card that sits in the panel's flow.
-//   "dock"   the floating thread composer: a rounded, elevated shell with a focus ring, sized for
-//            the big Space Grotesk title input (echoes the `.spin-hero-q` hero: display font,
-//            light weight, tight tracking).
-//
-// Sending is a prop. `onSend` MUST throw (or reject) on failure - that is what tells the composer
-// to put the text back instead of eating the founder's message.
-//
-// The two surfaces also differ in three behaviours, kept as props that default per variant:
-//   optimisticClear  clear the box the moment we submit ("dock") vs only once the write lands
-//                    ("panel", so a transient RPC failure isn't data loss).
-//   refocus          put the caret back in the box after a send ("dock" - it's the page's only
-//                    input, so the founder keeps typing).
-//   spinner          swap the arrow for a spinner while in flight ("dock").
-
 export type ChatComposerVariant = "panel" | "dock";
 
 const PANEL_SHELL = "relative px-3.5 pb-3.5 pt-2";
@@ -42,15 +24,10 @@ export type ChatComposerProps = {
     onSend: (text: string) => Promise<void> | void;
     variant?: ChatComposerVariant;
     placeholder?: string;
-    /** Starting height in rows - both surfaces size through min-h, so this stays 1. */
     rows?: number;
-    /** Block sending (a busy parent, a read-only thread). */
     disabled?: boolean;
-    /** Clear on submit rather than on success. Defaults to true on "dock". */
     optimisticClear?: boolean;
-    /** Refocus the textarea after a send. Defaults to true on "dock". */
     refocus?: boolean;
-    /** Show a spinner in the send button while in flight. Defaults to true on "dock". */
     spinner?: boolean;
     className?: string;
     textareaClassName?: string;
@@ -84,10 +61,8 @@ export function ChatComposer({
         if (clearEarly) setText("");
         try {
             await onSend(t);
-            // clear only after the write succeeds - don't lose text on failure
             if (!clearEarly) setText("");
         } catch {
-            // keep the text so the founder can retry; a transient RPC failure isn't data loss
             if (clearEarly) setText(t);
         } finally {
             setSending(false);

@@ -2,25 +2,13 @@
 
 import { type RefObject, useEffect, useRef } from "react";
 
-// Auto-scroll for an append-only log box. The default is "follow the tail, but only if the
-// reader is already there": scrolling up to read something must not be yanked back the
-// moment the next line lands. `always` is the run tail's older behaviour (it jumps to the
-// bottom on every append) - kept reachable rather than silently changed.
-
-/** px from the bottom that still counts as "near" - about two log lines. */
 export const NEAR_BOTTOM_PX = 40;
 
 export type NearBottomOptions = {
-    /** How close to the bottom still counts as "near". Default `NEAR_BOTTOM_PX`. */
     threshold?: number;
-    /** Stick to the bottom even when the reader has scrolled up. */
     always?: boolean;
 };
 
-/**
- * Returns the ref to put on the scroll container. Pass whatever changes when a line is
- * appended (the lines array, a count) as `dep`.
- */
 export function useNearBottomScroll<T extends HTMLElement = HTMLDivElement>(
     dep: unknown,
     { threshold = NEAR_BOTTOM_PX, always = false }: NearBottomOptions = {},

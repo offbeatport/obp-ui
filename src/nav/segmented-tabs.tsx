@@ -3,10 +3,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
-// An iOS-style "segmented pill" tab bar: a card-coloured pill slides behind the active
-// tab. Built to float over a full-bleed canvas, but works anywhere a small, self-contained
-// tab control is wanted. Purely local state - it takes `active` and reports `onSelect`.
-
 export type SegTab = { key: string; label: string; badge?: string | number };
 
 export function SegmentedTabs({
@@ -22,8 +18,6 @@ export function SegmentedTabs({
     const [box, setBox] = useState({ left: 0, top: 0, width: 0, height: 0 });
     const activeIdx = tabs.findIndex((t) => t.key === active);
 
-    // Measure the active [data-seg] child so the pill can slide to it; re-measure
-    // on active change and on resize.
     useLayoutEffect(() => {
         const el = ref.current;
         if (!el) return;

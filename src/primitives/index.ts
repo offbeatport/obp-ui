@@ -1,5 +1,3 @@
-// shadcn/ui primitives, themed with obp-ui tokens. Add new ones with the shadcn CLI
-// (packages/ui/components.json points it here), then theme them with tokens only.
 export * from "./badge";
 export * from "./button";
 export * from "./card";

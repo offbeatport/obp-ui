@@ -9,12 +9,7 @@ import {
     useNav,
 } from "obp-ui";
 import { useState } from "react";
-import { Api, Note, Row, Spec } from "../kit";
-
-// The navigation seam. The gallery mounts <UIProvider> with NO Link, so every nav component
-// degrades to a plain <a href> - exactly the "static render / gallery" case the seam is
-// designed for. Active state comes from `pathname`, so the demos below nest a second provider
-// that claims a route.
+import { Api, Cell, Note, Row, Spec } from "../kit";
 
 const SETTINGS_TABS: TabNavItem[] = [
     { href: "/settings/agents", label: "Agents" },
@@ -31,7 +26,6 @@ const SEG_TABS: SegTab[] = [
     { key: "setup", label: "Setup" },
 ];
 
-/** Reads the seam back out - what a shell component sees when it asks. */
 function NavReadout({ href }: { href: string }) {
     const { pathname, paths } = useNav();
     const active = useIsActive(href, { prefix: true });
@@ -80,16 +74,39 @@ export function NavSection() {
                 name="Link"
                 note="renders whatever the host gave UIProvider - here, nothing, so a plain anchor."
             >
-                <Row>
-                    <Link href="#nav" className="text-sm text-primary underline underline-offset-2">
-                        a package Link
-                    </Link>
-                    <Link href="#nav" asChild>
-                        <span className="cursor-pointer rounded-md border border-border px-2.5 py-1 text-sm">
-                            asChild - props land on the child
-                        </span>
-                    </Link>
+                <Row className="gap-6">
+                    <Cell label="<Link href>">
+                        <Link
+                            href="#nav"
+                            className="text-sm text-primary underline underline-offset-2"
+                        >
+                            a package Link
+                        </Link>
+                    </Cell>
+                    <Cell label="asChild + an element child">
+                        <Link href="#nav" asChild>
+                            <span className="cursor-pointer rounded-md border border-border px-2.5 py-1 text-sm">
+                                identical with the prop or without it
+                            </span>
+                        </Link>
+                    </Cell>
+                    <Cell label='asChild + "a bare string"'>
+                        <div className="flex h-9 w-48 items-center justify-center rounded-md border border-border border-dashed">
+                            <Link href="#nav" asChild>
+                                a bare string
+                            </Link>
+                        </div>
+                    </Cell>
                 </Row>
+                <Note>
+                    <code>asChild</code> on <code>Link</code> is kept for API symmetry and does not
+                    compose: the host's own component owns the <code>href</code> and the client-side
+                    navigation, so nothing is merged onto the child and an element child renders the
+                    same markup with the prop or without it. Its one effect is subtraction - when
+                    the child is not a single element (a bare string, a number, a fragment, or two
+                    children) the entire link is dropped, which is why the dashed box above is
+                    empty.
+                </Note>
             </Spec>
 
             <Spec

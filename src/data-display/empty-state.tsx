@@ -4,18 +4,6 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 
-// "There is nothing here yet" - one component, three framings the app already draws. Every class
-// string is kept as-is, so each variant is pixel-identical to the surface it came from:
-//
-//   "rail"   the sidebar's no-companies CTA (app-shell CompaniesNav): tight dashed card, small
-//            copy, a full-width outline button underneath.
-//   "panel"  the Portfolio page's dashed panel: centred, max-w-md, roomy 40px padding.
-//   "plate"  a tab-sized placeholder (Source Code's "No source yet"): a bordered card that fills
-//            the tab and centres an icon + heading + mono line.
-//
-// The action is a slot: the button/link the caller passes owns its own classes AND its own top
-// margin (both originals put `mt-4` on the element itself, not on a wrapper).
-
 export type EmptyStateVariant = "rail" | "panel" | "plate";
 
 const FRAME: Record<EmptyStateVariant, string> = {
@@ -24,7 +12,6 @@ const FRAME: Record<EmptyStateVariant, string> = {
     plate: "grid h-[min(560px,64vh)] place-items-center rounded-xl border border-border bg-card",
 };
 
-// Only "plate" centres a fixed-width column inside a filling frame; the other two are the column.
 const INNER: Record<EmptyStateVariant, string> = {
     rail: "",
     panel: "",
@@ -39,8 +26,6 @@ const ICON: Record<EmptyStateVariant, string> = {
 
 const TITLE: Record<EmptyStateVariant, string> = {
     rail: "text-sm font-[650] text-foreground",
-    // The Portfolio panel ships without a heading today; this matches the plate's scale for
-    // callers that want one.
     panel: "font-display text-lg",
     plate: "mt-3 font-display text-lg",
 };
@@ -53,13 +38,9 @@ const BODY: Record<EmptyStateVariant, string> = {
 
 export type EmptyStateProps = {
     variant?: EmptyStateVariant;
-    /** Lucide glyph above the title. The rail variant has none in the app - pass one only if
-     *  the surface can afford the height. */
     icon?: LucideIcon;
     title?: ReactNode;
-    /** One or two lines of prose. */
     children?: ReactNode;
-    /** The CTA - a <Link>/<button> with its own classes and its own `mt-*`. */
     action?: ReactNode;
     className?: string;
     titleClassName?: string;
@@ -76,8 +57,6 @@ export function EmptyState({
     titleClassName,
     bodyClassName,
 }: EmptyStateProps) {
-    // The rail's heading is a plain <div> in the app (it is a label, not a document heading);
-    // the others are real headings. Kept per variant so the markup matches the original.
     const Title = variant === "rail" ? "div" : "h3";
     const body = (
         <>

@@ -17,10 +17,6 @@ import {
 } from "obp-ui/console";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 
-// The live agent console. Transport-free by design: <ConsoleDock> takes a `fetchDigest`
-// function and <LogView> takes `lines`, so the same UI runs over a server function, an SSE
-// tail, or a Tauri command. What a pane SAYS (avatar, chip wording, colour) stays in the app.
-
 const KINDS: LogKind[] = ["act", "ok", "warn", "info", "msg", "error"];
 
 const now = Date.now();
@@ -33,7 +29,6 @@ const SAMPLE: LogLineData[] = [
     { t: now - 4_000, msg: "slice 2 shipped · preview healthy", kind: "ok" },
 ];
 
-// The two panes the dock polls, and the log each one drips out.
 const PANES: { slug: string; name: string; chip: string; chipClass: string }[] = [
     { slug: "ledgerly", name: "Ledgerly", chip: "building", chipClass: "text-info bg-info-soft" },
     {
@@ -58,10 +53,6 @@ const SCRIPT: Record<string, { msg: string; kind: LogKind }[]> = {
     ],
 };
 
-/**
- * A fake transport: hands back the delta since each pane's cursor, a couple of lines at a
- * time, so the dock visibly fills in and then settles to the idle poll rate.
- */
 async function fetchDigest(cursors: Record<string, number>): Promise<ConsoleDigest> {
     let pending = false;
     const panes: ConsoleDockPane[] = PANES.map((p) => {
@@ -80,8 +71,6 @@ async function fetchDigest(cursors: Record<string, number>): Promise<ConsoleDige
     return { panes, anyActive: pending };
 }
 
-// Same key + class the pre-paint script resolves (see consoleTabPref), so the switch below
-// really does hide the dock's launcher tab - and survives a reload.
 const tabPref = createDomClassPref({
     storageKey: consoleTabPref().key,
     className: consoleTabPref().className,

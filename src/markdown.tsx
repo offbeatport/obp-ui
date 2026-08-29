@@ -1,16 +1,7 @@
 import type { ReactNode } from "react";
 
-// A small, dependency-free Markdown renderer for chat messages - handles the subset models actually
-// emit: headings, bold/italic, inline + fenced code, links, bullet/ordered lists, blockquotes, and
-// paragraphs (single newlines → line breaks). Builds React nodes, so there's no HTML injection.
-// Not a full CommonMark parser; good enough for agent replies. Colour and the PARAGRAPH size are
-// inherited from the parent bubble; only headings and code name a step of the kit's type scale.
-// They used to be em multiples (0.85 / 1.08 / 1.15), which put code at 11.9px inside the 14px
-// panel bubble - under the kit's text-sm floor, and unreachable by any token override.
-
 const CODE_INLINE = "rounded bg-black/[0.06] px-1 py-px font-mono text-sm dark:bg-white/10";
 
-// Inline spans: `code`, **bold**, __bold__, *italic*, _italic_, [text](url).
 function inline(text: string, kp: string): ReactNode[] {
     const out: ReactNode[] = [];
     const re =
@@ -65,12 +56,11 @@ function inline(text: string, kp: string): ReactNode[] {
     return out;
 }
 
-// Render several lines as one flow, single newlines becoming <br/>.
 function inlineLines(lines: string[], kp: string): ReactNode[] {
     const out: ReactNode[] = [];
     for (let k = 0; k < lines.length; k++) {
         if (k > 0) out.push(<br key={`${kp}br${k}`} />);
-        out.push(...inline(lines[k], `${kp}l${k}`));
+        out.push(...inline(lines[k] ?? "", `${kp}l${k}`));
     }
     return out;
 }
@@ -79,25 +69,25 @@ const BLOCK_START = /^```|^#{1,6}\s|^>\s?|^\s*[-*+]\s+|^\s*\d+[.)]\s+|^(?:---+|\
 
 export function Markdown({ content, className }: { content: string; className?: string }) {
     const lines = content.replace(/\r\n/g, "\n").split("\n");
+    const at = (n: number): string => lines[n] ?? "";
     const blocks: ReactNode[] = [];
     let i = 0;
     let b = 0;
     while (i < lines.length) {
-        const line = lines[i];
+        const line = at(i);
         const key = `b${b++}`;
         if (!line.trim()) {
             i++;
             continue;
         }
-        // fenced code block
         if (/^```/.test(line)) {
             const code: string[] = [];
             i++;
-            while (i < lines.length && !/^```\s*$/.test(lines[i])) {
-                code.push(lines[i]);
+            while (i < lines.length && !/^```\s*$/.test(at(i))) {
+                code.push(at(i));
                 i++;
             }
-            i++; // consume closing fence
+            i++;
             blocks.push(
                 <pre
                     key={key}
@@ -108,10 +98,9 @@ export function Markdown({ content, className }: { content: string; className?: 
             );
             continue;
         }
-        // heading
         const h = line.match(/^(#{1,6})\s+(.*)$/);
         if (h) {
-            const lvl = h[1].length;
+            const lvl = (h[1] ?? "").length;
             const cls =
                 lvl <= 1
                     ? "text-lg font-semibold"
@@ -120,23 +109,21 @@ export function Markdown({ content, className }: { content: string; className?: 
                       : "font-semibold";
             blocks.push(
                 <div key={key} className={cls}>
-                    {inline(h[2], key)}
+                    {inline(h[2] ?? "", key)}
                 </div>,
             );
             i++;
             continue;
         }
-        // horizontal rule
         if (/^(?:---+|\*\*\*+|___+)\s*$/.test(line)) {
             blocks.push(<hr key={key} className="border-border" />);
             i++;
             continue;
         }
-        // blockquote
         if (/^>\s?/.test(line)) {
             const q: string[] = [];
-            while (i < lines.length && /^>\s?/.test(lines[i])) {
-                q.push(lines[i].replace(/^>\s?/, ""));
+            while (i < lines.length && /^>\s?/.test(at(i))) {
+                q.push(at(i).replace(/^>\s?/, ""));
                 i++;
             }
             blocks.push(
@@ -149,12 +136,11 @@ export function Markdown({ content, className }: { content: string; className?: 
             );
             continue;
         }
-        // unordered list
         if (/^\s*[-*+]\s+/.test(line)) {
             const lis: ReactNode[] = [];
             let k = 0;
-            while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
-                const item = lines[i].replace(/^\s*[-*+]\s+/, "");
+            while (i < lines.length && /^\s*[-*+]\s+/.test(at(i))) {
+                const item = at(i).replace(/^\s*[-*+]\s+/, "");
                 lis.push(<li key={`${key}li${k}`}>{inline(item, `${key}li${k}`)}</li>);
                 k++;
                 i++;
@@ -166,12 +152,11 @@ export function Markdown({ content, className }: { content: string; className?: 
             );
             continue;
         }
-        // ordered list
         if (/^\s*\d+[.)]\s+/.test(line)) {
             const lis: ReactNode[] = [];
             let k = 0;
-            while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) {
-                const item = lines[i].replace(/^\s*\d+[.)]\s+/, "");
+            while (i < lines.length && /^\s*\d+[.)]\s+/.test(at(i))) {
+                const item = at(i).replace(/^\s*\d+[.)]\s+/, "");
                 lis.push(<li key={`${key}li${k}`}>{inline(item, `${key}li${k}`)}</li>);
                 k++;
                 i++;
@@ -183,10 +168,9 @@ export function Markdown({ content, className }: { content: string; className?: 
             );
             continue;
         }
-        // paragraph: consume consecutive plain lines
         const para: string[] = [];
-        while (i < lines.length && lines[i].trim() && !BLOCK_START.test(lines[i])) {
-            para.push(lines[i]);
+        while (i < lines.length && at(i).trim() && !BLOCK_START.test(at(i))) {
+            para.push(at(i));
             i++;
         }
         blocks.push(

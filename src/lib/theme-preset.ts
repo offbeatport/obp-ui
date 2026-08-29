@@ -1,43 +1,3 @@
-// THEME PRESETS: the whole design system re-skinned on four axes at once.
-//
-//   colour   13 tokens x light/dark      the ten palettes in ./palette.ts
-//   type     --font-sans/-display/-mono/-serif
-//   radius   --radius, --radius-card
-//   space    --spacing
-//
-// NAMING. "Theme" in this package already means "light" | "dark" (./theme.ts), and that is the
-// MODE. This file's concept is the PRESET: a named bundle of the four axes, which then renders
-// in either mode. Nothing here touches the light/dark controller.
-//
-// WHY A PRESET AND NOT FOUR DROPDOWNS. Most points in colour x type x radius x space look bad -
-// a serif display over 4px corners at compact density is not a style, it is a mistake. The six
-// below are curated bundles; the custom editor is where the four axes come apart, and it opens
-// seeded from whichever preset you were looking at so the starting point is always coherent.
-//
-// SPACE IS ONE TOKEN, and that is the whole reason this axis is cheap. Tailwind v4 compiles
-// EVERY spacing utility as a multiple of one variable - measured in the built gallery CSS:
-//   .h-9{height:calc(var(--spacing) * 9)}  .px-4{padding-inline:calc(var(--spacing) * 4)}
-//   .gap-2{gap:calc(var(--spacing) * 2)}   .p-5{padding:calc(var(--spacing) * 5)}
-// 254 such declarations in the current build, all against one `--spacing:.25rem`. So density
-// needs no new tokens and no edits to a single primitive: set it and the whole kit breathes.
-// Tailwind declares it
-// inside `@layer theme` on `:root,:host`; an inline style on <html> is not in any layer and
-// outranks it. Measured in headless Chrome on the live gallery, on a real <Button> (h-9):
-//   0.25rem -> 36.00px   0.22rem -> 31.67px   0.28rem -> 40.32px
-// and removing the inline property returns it to exactly 36.00px.
-//
-// APPLYING a preset writes inline custom properties on <html>, which outrank both :root and
-// .dark. The colour half is mode-specific, so the controller re-applies on every theme change.
-// Selecting Paper REMOVES every managed property rather than re-writing it, so the authored
-// theme is always byte-exact whatever tokens.css says today - and MANAGED therefore has to
-// list every property any axis can write, or switching back to Paper leaves radius, spacing or
-// a font family stuck on the preset you just left.
-//
-// FACES ARE NOT FREE. A pairing only names families; the app must import the stylesheet that
-// loads them (obp-ui/fonts.css for the authored four, obp-ui/fonts-alt.css for the rest). An
-// unloaded face falls through the token's fallback stack to system-ui and looks like the
-// preset silently failed. See src/styles/fonts-alt.css.
-
 import {
     DEFAULT_PALETTE_ID,
     THEME_PALETTES,
@@ -51,12 +11,9 @@ import { DEFAULT_NAMESPACE, onThemeChange } from "./theme";
 export const DEFAULT_PRESET_ID = "paper";
 export const CUSTOM_PRESET_ID = "custom";
 
-// ── type axis ────────────────────────────────────────────────────────────────
-
 export type TypePairing = {
     id: string;
     name: string;
-    /** One line on what the pairing is for. Shown in the editor. */
     note: string;
     sans: string;
     display: string;
@@ -64,10 +21,6 @@ export type TypePairing = {
     serif: string;
 };
 
-// Fallback stacks are three deep on purpose: the registered variable name, the plain family
-// name for a host that has the static face installed, then a generic. The variable packages
-// register "<Family> Variable" - naming plain "Geist" matches nothing and drops to system-ui
-// with no error, which is the single most common way a type axis appears not to work.
 const SYS = "system-ui, sans-serif";
 const INTER = `"Inter Variable", "Inter", ${SYS}`;
 const GEIST = `"Geist Variable", "Geist", ${SYS}`;
@@ -139,24 +92,13 @@ export const TYPE_PAIRINGS: TypePairing[] = [
 export const typePairingFor = (id: string): TypePairing | undefined =>
     TYPE_PAIRINGS.find((t) => t.id === id);
 
-// ── radius axis ──────────────────────────────────────────────────────────────
-
 export type RadiusStep = {
     id: string;
     name: string;
-    /** --radius: buttons, inputs, badges. */
     radius: string;
-    /** --radius-card: cards, surfaces, dialogs. */
     card: string;
 };
 
-// The card radius runs ~1.5x the control radius at every step, which is the ratio tokens.css
-// authored (12px / 18px). Holding it is what keeps a button inside a card from looking like it
-// belongs to a different kit.
-//
-// `sharp` bottoms out at 4px rather than 0 because tokens.css derives --radius-sm as
-// calc(var(--radius) - 4px); at 4px that lands on exactly 0, and anything lower goes negative,
-// which browsers clamp silently and inconsistently.
 export const RADIUS_STEPS: RadiusStep[] = [
     { id: "sharp", name: "Sharp", radius: "0.25rem", card: "0.375rem" },
     { id: "default", name: "Default", radius: "0.75rem", card: "1.125rem" },
@@ -168,21 +110,13 @@ export const DEFAULT_RADIUS_ID = "default";
 export const radiusStepFor = (id: string): RadiusStep | undefined =>
     RADIUS_STEPS.find((r) => r.id === id);
 
-// ── space axis ───────────────────────────────────────────────────────────────
-
 export type SpaceStep = {
     id: string;
     name: string;
-    /** What it does to a default <Button> (h-9), measured. */
     note: string;
     spacing: string;
 };
 
-// The three steps are deliberately narrow. --spacing multiplies EVERYTHING - control heights,
-// gaps, page padding, icon boxes (size-4), rail widths - so the usable range is much smaller
-// than it looks. Measured on a real h-9 button: 31.67px / 36.00px / 40.32px. A fourth step at
-// 0.19rem gives a 27px control, which is below the 28px the icon-xs button already draws and
-// starts failing pointer targets; 0.31rem pushes the rail past its own max-width.
 export const SPACE_STEPS: SpaceStep[] = [
     { id: "compact", name: "Compact", note: "31.7px controls", spacing: "0.22rem" },
     {
@@ -198,26 +132,15 @@ export const DEFAULT_SPACE_ID = "default";
 export const spaceStepFor = (id: string): SpaceStep | undefined =>
     SPACE_STEPS.find((s) => s.id === id);
 
-// ── the preset ───────────────────────────────────────────────────────────────
-
 export type ThemePreset = {
     id: string;
     name: string;
-    /** One line on what it is for. Shown in the picker. */
     note: string;
-    /** Colour axis, resolved to values - a custom preset has no palette to point at. */
     light: ThemePaletteColors;
     dark: ThemePaletteColors;
-    /**
-     * Which palette the colours came from, or CUSTOM_PRESET_ID once a picker has been dragged.
-     * Provenance for the UI only; `light`/`dark` above are the truth.
-     */
     palette: string;
-    /** TYPE_PAIRINGS id. */
     type: string;
-    /** RADIUS_STEPS id. */
     radius: string;
-    /** SPACE_STEPS id. */
     space: string;
 };
 
@@ -234,23 +157,7 @@ const bundle = (
     return { id, name, note, light: p.light, dark: p.dark, palette, type, radius, space };
 };
 
-// THE SIX, and why each is a bundle rather than a colour.
-//
-// Paper is the authored theme on all four axes; it applies by clearing.
-//
-// Console and Technical share a density (compact) and a radius (sharp) because that IS the
-// shape of a tool you sit in front of all day - the honest difference between them is voice,
-// not measurement: Console is a neutral grey under a vivid blue with a geometric display, a
-// thing you operate; Technical is instrumentation teal under Plex, a thing you read.
-//
-// Editorial and Soft share airy density and diverge on radius: Editorial's 16px/24px is a
-// printed page, Soft's 24px/32px is a consumer app. Pairing a serif display with round
-// corners is the one combination here that would be wrong, so Soft takes the high-contrast
-// Instrument display instead of Fraunces' soft one.
-//
-// Mono is the achromatic palette at authored density with the one-family pairing: the only
-// preset in which nothing - not colour, not type, not measurement - is making a claim.
-export const THEME_PRESETS: ThemePreset[] = [
+export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
     bundle(
         "paper",
         "Paper",
@@ -310,21 +217,11 @@ export const THEME_PRESETS: ThemePreset[] = [
 export const themePresetFor = (id: string): ThemePreset | undefined =>
     THEME_PRESETS.find((p) => p.id === id);
 
-/**
- * The four colours that identify a theme at a glance - what the picker draws as a chip.
- * Page, paper, the soft brand fill and the brand: with the surfaces deliberately near-neutral,
- * a chip built from page/paper/line/brand would be three identical stops in every palette.
- *
- * Takes a preset OR a bare palette: the editor's colour chips draw the ten palettes, and a
- * palette is structurally the colour half of a preset.
- */
 export const themePresetSwatch = (
     p: Pick<ThemePreset, "light" | "dark"> | ThemePalette,
     mode: "light" | "dark",
 ): string[] => [p[mode].background, p[mode].card, p[mode].accent, p[mode].primary];
 
-// The colour tokens a preset owns. Anything not listed here - the status hues below, the type
-// scale - is the same in every preset on purpose: it is the app's vocabulary, not its skin.
 const VARS: [keyof ThemePaletteColors, string][] = [
     ["background", "--background"],
     ["card", "--card"],
@@ -347,18 +244,6 @@ const VARS: [keyof ThemePaletteColors, string][] = [
     ["accentForeground", "--accent-foreground"],
 ];
 
-// The status hues are the SAME in every preset - they are the app's vocabulary, not its skin -
-// but they are not the same in every MODE, so they have to be restated here.
-//
-// The reason is that .dark is a class on <html>, and a preview that draws a preset's dark mode
-// inside a light page is not inside that class. Without these it would take the surfaces from
-// the preset and the status hues from whatever mode the page happens to be in - a dark card
-// with light-mode chips on it. Writing them makes themePresetStyle() a COMPLETE token set for
-// one mode, which is exactly what both a preview and <html> want.
-//
-// Copied from tokens.css. If a status hue changes there, change it here too - the value is the
-// same in both places on purpose, and the gallery draws both, so a drift is visible immediately.
-/** The label on a filled status chip in dark mode. Deep enough for 5.7:1 on the darkest of them. */
 const STATUS_INK = "#101216";
 
 const STATUS: Record<"light" | "dark", Record<string, string>> = {
@@ -376,10 +261,6 @@ const STATUS: Record<"light" | "dark", Record<string, string>> = {
         "--neutral-foreground": "#ffffff",
         "--destructive-foreground": "#ffffff",
     },
-    // The dark hues are LIGHT colours - mint, amber, sky, violet - so their labels go dark, the
-    // same inversion the brand makes. tokens.css leaves these as white, inherited from :root,
-    // which puts white on mint at about 2:1 on a filled success button. A preset is allowed to
-    // fix that; Paper, which applies by clearing, keeps the authored behaviour.
     dark: {
         "--success": "#34d399",
         "--warning": "#fbbf24",
@@ -396,16 +277,8 @@ const STATUS: Record<"light" | "dark", Record<string, string>> = {
     },
 };
 
-// Their tinted fills ARE re-mixed per preset, against the page - so a chip on Console's cold
-// paper is a cold chip, not the cream one tokens.css authored for Paper.
 const SOFT = ["success", "warning", "info", "approval", "neutral", "destructive"];
 
-/**
- * Every property any axis can write. applyThemePreset() clears this list before writing, so a
- * property missing from it is a property that survives the switch back to Paper - a stuck
- * radius or a stuck font is the failure mode, and it is invisible until someone tries the
- * default and gets the last preset's measurements.
- */
 const MANAGED = [
     ...VARS.map(([, v]) => v),
     ...Object.keys(STATUS.light),
@@ -421,14 +294,6 @@ const MANAGED = [
     "--spacing",
 ];
 
-/**
- * Every token value for one preset in one mode, as a style object - all four axes.
- *
- * Complete on purpose: apply it to any element and that subtree is that theme in that mode,
- * whatever the page around it is doing. The controller writes it to <html>; the gallery writes
- * it to a card to show six presets' dark modes on a light page. Custom properties inherit, so
- * --spacing and --radius on a div re-measure everything inside it and nothing outside.
- */
 export function themePresetStyle(
     preset: ThemePreset,
     mode: "light" | "dark",
@@ -473,15 +338,11 @@ export function themePresetStyle(
 export type ThemePresetController = {
     getThemePresetId(): string;
     setThemePresetId(id: string): void;
-    /** The user's own theme, or null if they have never opened the custom editor. */
     getCustomTheme(): ThemePreset | null;
     setCustomTheme(preset: ThemePreset): void;
-    /** The preset in force, custom included. */
     getThemePreset(): ThemePreset;
-    /** Re-write the vars for the theme currently on <html>. */
     applyThemePreset(): void;
     onThemePresetChange(fn: () => void): () => void;
-    /** Apply now and keep applying across theme changes. Call once, at boot. Returns a teardown. */
     initThemePreset(): () => void;
 };
 
@@ -489,10 +350,6 @@ const EVENT = "obp:themepresetchange";
 
 export function createThemePresets(opts: { namespace?: string } = {}): ThemePresetController {
     const ns = opts.namespace ?? DEFAULT_NAMESPACE;
-    // Deliberately NOT the old `${ns}-palette` keys. A stored palette has no type, radius or
-    // space, so reviving one under the new type would hand every consumer a preset with three
-    // undefined axes. A fresh key means an upgrading user lands back on Paper once, which is
-    // the correct default, instead of on a half-built theme.
     const idKey = `${ns}-theme-preset`;
     const customKey = `${ns}-theme-custom`;
 
@@ -502,9 +359,6 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
         try {
             const parsed = JSON.parse(raw) as Partial<ThemePreset>;
             if (!parsed?.light || !parsed?.dark) return null;
-            // Normalise the three id axes rather than trusting them: a hand-edited value, or one
-            // written by a build that named a pairing this one no longer ships, must degrade to
-            // the authored step instead of writing `undefined` into a custom property.
             return {
                 id: CUSTOM_PRESET_ID,
                 name: parsed.name ?? "Custom",
@@ -521,7 +375,7 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
                     : DEFAULT_SPACE_ID,
             };
         } catch {
-            return null; // a hand-edited or half-written value must not brick the app
+            return null;
         }
     }
 
@@ -545,7 +399,6 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
         const el = document.documentElement;
         for (const v of MANAGED) el.style.removeProperty(v);
         const id = getThemePresetId();
-        // Paper is the authored theme. Clearing IS applying it - and it cannot drift.
         if (id === DEFAULT_PRESET_ID) return;
         const mode = el.classList.contains("dark") ? "dark" : "light";
         const style = themePresetStyle(getThemePreset(), mode);
@@ -577,7 +430,6 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
     function initThemePreset(): () => void {
         applyThemePreset();
         if (typeof window === "undefined") return () => {};
-        // The colour half is mode-specific, so a light/dark flip has to re-resolve it.
         return onThemeChange(applyThemePreset);
     }
 
@@ -593,7 +445,6 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
     };
 }
 
-/** Default controller, on the same namespace as the default theme controller. */
 export const themePresets: ThemePresetController = createThemePresets();
 
 export const {

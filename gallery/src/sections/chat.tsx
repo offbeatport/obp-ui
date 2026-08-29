@@ -1,4 +1,4 @@
-import { Badge, Button, GradientMark, StatusPill, cn } from "obp-ui";
+import { Badge, Button, GradientMark, cn } from "obp-ui";
 import {
     ASSISTANT_BUBBLE,
     AssistantTurn,
@@ -16,10 +16,6 @@ import {
 } from "obp-ui/chat";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
-
-// The conversation surfaces. Two chat surfaces exist in the product - the docked co-pilot and
-// the full-page thread - and each family ships ONE component with a `variant` so both looks
-// stay reachable. Message content is caller data: role, text, timestamp, avatar node.
 
 type Msg = { id: string; role: ChatRole; text: string; ago: string };
 
@@ -91,13 +87,16 @@ export function ChatSection() {
                                 avatar={<GradientMark name="Ledgerly" size={38} />}
                                 title="Ledgerly"
                                 badge={
-                                    <StatusPill
-                                        variant="bare"
-                                        dotClassName="bg-success"
-                                        ring="var(--success-soft)"
-                                    >
+                                    <span className="inline-flex flex-none items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.05em] text-muted-foreground">
+                                        <span
+                                            aria-hidden="true"
+                                            className="size-1.5 rounded-full bg-success"
+                                            style={{
+                                                boxShadow: "0 0 0 3px var(--success-soft)",
+                                            }}
+                                        />
                                         live
-                                    </StatusPill>
+                                    </span>
                                 }
                                 subtitle="$1.2k MRR · slice 3 of 9 · building"
                             />
@@ -132,8 +131,6 @@ export function ChatSection() {
                 note="the full-page conversation: no avatars, 16px body, a floating composer over a fading gradient."
                 bare
             >
-                {/* Tall enough that the floating composer does not sit on top of the artifact
-                    turn - the thread's own bottom padding clears it once you scroll. */}
                 <Frame className="h-[680px]">
                     <ChatPanel
                         variant="thread"

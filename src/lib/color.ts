@@ -1,17 +1,9 @@
-// The small amount of colour maths the kit needs: hex ⇄ RGB ⇄ HSV for the picker, and
-// relative luminance so a swatch can pick its own readable label colour.
-//
-// Deliberately not a colour library. Everything here is sRGB and hex, because that is what
-// the tokens are written in and what a <input> round-trips cleanly. Anything more ambitious
-// (OKLCH ramps, gamut mapping) belongs in whatever generates a palette, not at runtime.
-
 export type Rgb = { r: number; g: number; b: number };
 export type Hsv = { h: number; s: number; v: number };
 
 const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
 const hex2 = (n: number) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
 
-/** "#abc" | "abc" | "#aabbcc" → {r,g,b}. Null when it isn't a hex colour. */
 export function hexToRgb(hex: string): Rgb | null {
     const h = hex.trim().replace(/^#/, "");
     const full = h.length === 3 ? [...h].map((c) => c + c).join("") : h;
@@ -66,22 +58,22 @@ export const hexToHsv = (hex: string): Hsv | null => {
 
 export const hsvToHex = (hsv: Hsv): string => rgbToHex(hsvToRgb(hsv));
 
-/** WCAG relative luminance, 0 (black) to 1 (white). */
+const linearize = (channel: number): number => {
+    const v = channel / 255;
+    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+};
+
 export function luminance(hex: string): number {
     const rgb = hexToRgb(hex);
     if (!rgb) return 0;
-    const [r, g, b] = [rgb.r, rgb.g, rgb.b]
-        .map((v) => v / 255)
-        .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return 0.2126 * linearize(rgb.r) + 0.7152 * linearize(rgb.g) + 0.0722 * linearize(rgb.b);
 }
 
-/** WCAG contrast ratio between two hex colours, 1 to 21. */
 export function contrastRatio(a: string, b: string): number {
-    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-    return (hi + 0.05) / (lo + 0.05);
+    const la = luminance(a);
+    const lb = luminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
-/** Black or white, whichever is more readable on `hex`. For labels drawn on a swatch. */
 export const readableOn = (hex: string): "#000000" | "#ffffff" =>
     contrastRatio(hex, "#ffffff") >= contrastRatio(hex, "#000000") ? "#ffffff" : "#000000";

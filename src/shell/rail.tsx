@@ -1,12 +1,5 @@
 "use client";
 
-// The rail chrome: the edge collapse toggle, a brand slot that links home, the scrolling
-// body (nav items, section labels, entity rows - whatever the host puts there) and a footer
-// slot pinned to the bottom.
-//
-// Nothing in here knows what a "company" is: content comes in as children, the brand mark is
-// a slot, the footer is a slot.
-
 import { ChevronLeft } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
@@ -15,21 +8,13 @@ import { useNav } from "../nav/ui-provider";
 import { useRail } from "./rail-context";
 
 export type RailProps = {
-    /** The wordmark shown when the rail is expanded. Omit to render no brand row at all. */
     brand?: ReactNode;
-    /** The mark shown when collapsed; falls back to `brand`. */
     brandCollapsed?: ReactNode;
-    /** Where the brand links. Defaults to the nav context's `paths.home()`. */
     brandHref?: string;
-    /** aria-label for the brand link (the wordmark itself is decorative markup). */
     brandLabel?: string;
-    /** Pinned bottom region - account button, credit row, anything. */
     footer?: ReactNode;
-    /** The scrolling rail body. */
     children?: ReactNode;
-    /** Overrides the collapse context (which is the default source). */
     collapsed?: boolean;
-    /** Overrides the context's toggle. */
     onToggle?: () => void;
     expandLabel?: string;
     collapseLabel?: string;
@@ -60,7 +45,6 @@ export function Rail({
 
     return (
         <aside className={cn("relative flex flex-col border-r bg-secondary", className)}>
-            {/* collapse toggle straddling the edge */}
             <button
                 type="button"
                 onClick={toggle}
@@ -72,7 +56,6 @@ export function Rail({
                 />
             </button>
 
-            {/* wordmark - links home */}
             {brand !== undefined && (
                 <Link
                     href={brandHref ?? paths.home()}
@@ -90,7 +73,6 @@ export function Rail({
                 {children}
             </div>
 
-            {/* foot: whatever the host pins there (credit row · account menu) */}
             {footer !== undefined && (
                 <div className={cn("px-3 py-2", footerClassName)}>{footer}</div>
             )}

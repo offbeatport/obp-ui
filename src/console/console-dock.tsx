@@ -1,7 +1,5 @@
 "use client";
 
-// Aliased so the DOM's PointerEvent / KeyboardEvent (the window listeners below use them)
-// stay reachable in this file.
 import type {
     KeyboardEvent as ReactKeyboardEvent,
     ReactNode,
@@ -11,53 +9,34 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { prefStorage } from "../lib/storage";
 import { DEFAULT_NAMESPACE } from "../lib/theme";
-import { LiveDot } from "../status/live-dot";
 import { ConsolePane, type ConsoleStatusChip } from "./console-pane";
 import type { LogLineData } from "./log-line";
 
-// AGENT CONSOLE DOCK - the bottom-docked "one agent per company, live" panel from
-// design/v2-prototypes/08-chat-spine-pro-v7.html. Opens with the bottom-right tab
-// or Ctrl+` ; closes with ✕ or Esc. It POLLS ONE digest function (adaptive:
-// 0.75s while any run is active, 4s idle) with a per-pane cursor, so steady-state
-// polls carry only new lines. Nothing is fetched until the console opens, and
-// polling pauses when the tab is hidden.
-//
-// The TRANSPORT is injected (`fetchDigest`) - the web app hands it a server function,
-// the desktop app hands it a Tauri command. Everything about HOW the console polls is
-// UI behaviour and stays here.
-//
-// Styling is Tailwind, co-located here (was a ~330-line .console* block in the app's
-// globals.css). It follows the global light/dark theme via the shared token utilities
-// (bg-card, border-border, text-success, …); the "live" sonar dot is <LiveDot>. Hiding
-// the launcher tab is driven by the pre-paint `html.console-tab-off` class (see
-// `consoleTabPref` in lib/prepaint) via an arbitrary variant, so there's no flash.
+function SonarDot() {
+    return (
+        <span aria-hidden="true" className="relative inline-flex size-2 flex-none">
+            <span className="absolute inset-0 animate-ping rounded-full bg-success opacity-75" />
+            <span className="relative size-2 rounded-full bg-success shadow-[0_0_6px_var(--success)]" />
+        </span>
+    );
+}
 
 const ACTIVE_MS = 750;
 const IDLE_MS = 4000;
 const MAX_LINES = 80;
-const MIN_H = 160; // px
-const STEP = 28; // px per arrow-key nudge
-// Same namespace the pre-paint script and the theme derive their keys from, so an app
-// that never passes `heightKey` still gets a key that matches its other preferences.
+const MIN_H = 160;
+const STEP = 28;
 const DEFAULT_HEIGHT_KEY = `${DEFAULT_NAMESPACE}-console-h`;
 
 const clampH = (h: number) => Math.max(MIN_H, Math.min(h, window.innerHeight - 40));
 
-/** One delta line as the digest carries it (`off` is the transport's cursor unit). */
 export type ConsoleDigestLine = LogLineData & { off?: number };
 
-/**
- * The minimum a pane must carry. Apps hand in their own richer pane type (branding, tone,
- * state, …) and read it back in the render props - `ConsoleDock` never looks at the extras.
- */
 export type ConsoleDockPane = {
     slug: string;
     name: string;
-    /** A run is genuinely live - drives both the working ticker and the poll interval. */
     active: boolean;
-    /** Latest offset the client should send back next poll. */
     cursor: number;
-    /** DELTA since the client's cursor (full window on first poll). */
     lines: readonly ConsoleDigestLine[];
 };
 
@@ -67,25 +46,16 @@ export type ConsoleDigest<P extends ConsoleDockPane = ConsoleDockPane> = {
 };
 
 export type ConsoleDockProps<P extends ConsoleDockPane = ConsoleDockPane> = {
-    /** The one read the console polls. Cursors are keyed by pane slug. */
     fetchDigest: (cursors: Record<string, number>) => Promise<ConsoleDigest<P>>;
-    /** The pane's leading avatar. */
     renderLogo?: (pane: P) => ReactNode;
-    /** The pane's state chip - label + token colour pair. */
     paneStatus?: (pane: P) => ConsoleStatusChip | undefined;
-    /** The pane's title. Defaults to `pane.name`. */
     paneTitle?: (pane: P) => ReactNode;
-    /** Storage key for the dragged height. Defaults to `<namespace>-console-h`. */
     heightKey?: string;
     title?: ReactNode;
     subtitle?: ReactNode;
-    /** Text on the launcher tab. */
     launcherLabel?: ReactNode;
-    /** The working ticker under a live pane's last line. */
     activeLabel?: ReactNode;
-    /** Lines kept per pane; the buffer is capped and drops the oldest. Default 80. */
     maxLines?: number;
-    /** Poll interval while any pane is active / while all are idle, in ms. */
     activeMs?: number;
     idleMs?: number;
 };
@@ -109,13 +79,9 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
     const [lines, setLines] = useState<Record<string, ConsoleDigestLine[]>>({});
     const cursorsRef = useRef<Record<string, number>>({});
     const anyActiveRef = useRef(false);
-    // Panel height: null = CSS default (70vh); a number overrides it (in px). Loaded
-    // from storage after mount so SSR/hydration match on the CSS default.
     const [heightPx, setHeightPx] = useState<number | null>(null);
     const heightRef = useRef<number | null>(null);
 
-    // The transport lives in a ref so a caller passing a fresh arrow on every render can
-    // never restart the poll loop (that would spin it: poll → render → restart → poll).
     const fetchRef = useRef(fetchDigest);
     useEffect(() => {
         fetchRef.current = fetchDigest;
@@ -130,7 +96,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
         if (heightRef.current) prefStorage().set(heightKey, String(Math.round(heightRef.current)));
     }, [heightKey]);
 
-    // Restore a saved height, and re-clamp if the window shrinks below it.
     useEffect(() => {
         const saved = Number(prefStorage().get(heightKey));
         if (Number.isFinite(saved) && saved > 0) setHeight(saved);
@@ -141,7 +106,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
         return () => window.removeEventListener("resize", onResize);
     }, [setHeight, heightKey]);
 
-    // Drag the top handle to resize; height = distance from pointer to viewport bottom.
     const onResizePointerDown = useCallback(
         (e: ReactPointerEvent) => {
             e.preventDefault();
@@ -174,8 +138,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
         [setHeight, persistHeight],
     );
 
-    // Global keybinds: Ctrl+` (or ~) toggles, Esc closes. Active even while closed
-    // so the shortcut opens the console.
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
             if (e.ctrlKey && !e.metaKey && !e.altKey && (e.key === "`" || e.key === "~")) {
@@ -189,8 +151,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    // Adaptive poll - only while open AND the tab is visible. cursorsRef persists
-    // across close/open so reopening resumes deltas instead of re-seeding.
     useEffect(() => {
         if (!open) return;
         let stopped = false;
@@ -218,7 +178,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                     });
                     anyActiveRef.current = resp.anyActive;
                 } catch {
-                    /* transient - retry next tick */
                 } finally {
                     inFlight = false;
                 }
@@ -228,8 +187,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
         };
 
         void tick();
-        // Only relaunch on re-focus if no tick is mid-fetch - otherwise a tab flip during an
-        // in-flight poll would spawn a second self-perpetuating chain and multiply the rate.
         const onVis = () => {
             if (document.visibilityState === "visible" && !stopped && !inFlight) {
                 if (timer) clearTimeout(timer);
@@ -252,17 +209,12 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                 title="Open agent console (Ctrl+`)"
                 className={cn(
                     "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-sm font-semibold tracking-[0.04em] text-muted-foreground shadow-[0_-3px_16px_rgba(0,0,0,0.16)] transition-[transform,color] duration-[140ms] hover:-translate-y-0.5 hover:text-foreground",
-                    // "skirt" pinned beneath the tab - lifts with the hover so no page
-                    // background shows below the raised button.
                     "after:absolute after:-left-px after:-right-px after:top-[calc(100%-1px)] after:h-2 after:border-x after:border-border after:bg-card after:content-['']",
-                    // hidden while open, and when the pre-paint tab-off pref is set on <html>.
-                    // The class is a literal on purpose: Tailwind can only build the variant
-                    // for a class name it can see in the source.
                     open && "hidden",
                     "[html.console-tab-off_&]:hidden",
                 )}
             >
-                <LiveDot />
+                <SonarDot />
                 <span>{launcherLabel}</span>
                 <span className="text-sm text-faint">⌃`</span>
             </button>
@@ -287,10 +239,8 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                     className="relative h-2 flex-none cursor-ns-resize touch-none outline-none after:absolute after:left-1/2 after:top-0.5 after:h-[3px] after:w-11 after:-translate-x-1/2 after:rounded-[3px] after:bg-border after:transition-colors after:content-[''] hover:after:bg-muted-foreground focus-visible:after:bg-muted-foreground"
                 />
                 <div className="flex flex-none items-center gap-3 border-b border-border bg-secondary px-[18px] py-[11px]">
-                    {/* text-base, not text-sm: the subtitle beside it is at the 14px floor now,
-                        and two same-size runs in one lockup read as one sentence. */}
                     <div className="flex items-center gap-[9px] font-mono text-base font-bold tracking-[0.02em] text-foreground">
-                        <LiveDot /> {title}{" "}
+                        <SonarDot /> {title}{" "}
                         <span className="font-mono text-sm font-normal tracking-[0.03em] text-muted-foreground">
                             {subtitle}
                         </span>
@@ -311,9 +261,6 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                     </div>
                 </div>
 
-                {/* minmax(340px): a pane header is logo + name + state chip on one line, and at
-                    the 14px floor "BUILDING" alone is 84px. At the old 300px the name started
-                    ellipsising after ~11 characters. */}
                 <div className="grid min-h-0 flex-1 grid-cols-[repeat(auto-fit,minmax(340px,1fr))] gap-px overflow-auto bg-border">
                     {panes.map((p) => (
                         <ConsolePane

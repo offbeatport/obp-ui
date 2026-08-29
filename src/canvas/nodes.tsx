@@ -3,21 +3,9 @@
 import { Handle, Position } from "@xyflow/react";
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { StatusDot } from "../status/status-dot";
 
-// The "Infinite Canvas · command surface" card vocabulary (v2 prototype 05): a dark,
-// glowing board of entity cards, opportunity cards and region labels. The board forces
-// `.dark`, so app tokens resolve to the neon-on-near-black palette (info=blue,
-// approval=violet, success=green, warning=amber).
-//
-// These are PRESENTATIONAL: they take colours and copy as props. The app's React Flow
-// renderers unwrap `data`, decide which colour/copy each state gets, and render one of
-// these - which also keeps every hook above the renderer's `data.kind` guard.
-
-// Hidden connection handles (edges are decorative; we don't want visible dots).
 export const HIDDEN_HANDLE = "!size-1 !min-h-0 !min-w-0 !border-0 !bg-transparent !opacity-0";
 
-/** The invisible left-target / right-source pair every wired card carries. */
 export function CanvasHandles() {
     return (
         <>
@@ -27,42 +15,39 @@ export function CanvasHandles() {
     );
 }
 
-// ---------------------------------------------------------------- current line
 export type CanvasCurrentLineProps = {
-    /** Any CSS colour - tints the dot and the text together. */
     color: string;
     text: ReactNode;
     pulse?: boolean;
     className?: string;
 };
 
-/** The one-line "what this entity is doing right now" strip at the foot of a card. */
 export function CanvasCurrentLine({ color, text, pulse, className }: CanvasCurrentLineProps) {
     return (
         <div
             className={cn("flex items-center gap-2 font-mono text-sm", className)}
             style={{ color }}
         >
-            <StatusDot size="md" color={color} pulse={pulse} className="flex-none" />
+            <span
+                aria-hidden="true"
+                className={cn("size-[7px] flex-none rounded-full", pulse && "animate-pulse")}
+                style={{ background: color }}
+            />
             {text}
         </div>
     );
 }
 
-// -------------------------------------------------------------------- ribbon
 const RIBBON =
     "absolute -top-2.5 right-3.5 rounded-full px-2 py-[3px] font-mono text-sm font-bold uppercase tracking-[0.12em]";
 
 export type CanvasRibbonProps = {
     children: ReactNode;
-    /** Capsule fill + the colour its glow is mixed from. */
     color?: string;
-    /** Ink on the capsule - a near-black that reads on the violet default. */
     textColor?: string;
     className?: string;
 };
 
-/** The attention tab that overhangs a card's top-right corner ("needs you"). */
 export function CanvasRibbon({
     children,
     color = "var(--approval)",
@@ -83,31 +68,18 @@ export function CanvasRibbon({
     );
 }
 
-// ---------------------------------------------------------------- entity card
 export type CanvasStat = { value: ReactNode; label: string };
 
 export type CanvasEntityCardProps = {
     name: ReactNode;
-    /** Right-aligned mono key (the slug / handle). */
     meta?: ReactNode;
-    /** Fill of the leading state dot. */
     statusColor: string;
-    /** Its glow, as a raw box-shadow ("0 0 10px var(--success)" or "none"). */
     statusGlow?: string;
-    /**
-     * Persistent aura colour + border tint (building / needs-you). When unset the card
-     * keeps the neutral border and only lights the ring up on hover.
-     */
     accent?: string;
-    /** Ring colour used for the hover-only glow when `accent` is unset. */
     hoverAccent?: string;
-    /** Overhanging corner tab - typically a <CanvasRibbon />. */
     ribbon?: ReactNode;
-    /** Inline chip after the name ("here"). */
     badge?: ReactNode;
-    /** The stat row under the hairline. */
     stats?: CanvasStat[];
-    /** Foot of the card - typically a <CanvasCurrentLine />. */
     footer?: ReactNode;
     className?: string;
     style?: CSSProperties;
@@ -128,9 +100,6 @@ export function CanvasEntityCard({
     style,
 }: CanvasEntityCardProps) {
     const ring = accent ?? hoverAccent;
-    // w-[280px], up from 260. The header is name + slug on one line and both sit on the 14px
-    // floor now: an 11-character name (100px at text-base bold) beside a 14-character domain
-    // (118px of mono) plus the dot and gaps wants 244px, which 260 - 32 of padding could not give.
     return (
         <div
             className={cn(
@@ -145,7 +114,6 @@ export function CanvasEntityCard({
                 ...style,
             }}
         >
-            {/* glow ring: persistent for building/needs-you, on hover otherwise */}
             <span
                 aria-hidden
                 className={cn(
@@ -159,10 +127,11 @@ export function CanvasEntityCard({
             {ribbon}
 
             <div className="mb-2.5 flex items-center gap-2">
-                <StatusDot size="xl" color={statusColor} glow={statusGlow} className="flex-none" />
-                {/* min-w-0 + truncate: the card is a fixed 260px and the meta key is 14px now,
-                    so a long entity name has to ellipsise rather than shove the slug off the
-                    card's right edge. */}
+                <span
+                    aria-hidden="true"
+                    className="size-[9px] flex-none rounded-full"
+                    style={{ background: statusColor, boxShadow: statusGlow }}
+                />
                 <span className="min-w-0 truncate text-base font-bold tracking-[-0.01em] text-foreground">
                     {name}
                 </span>
@@ -194,7 +163,6 @@ export function CanvasEntityCard({
     );
 }
 
-/** The inline "you are here" chip that sits after an entity card's name. */
 export function CanvasHereBadge({ children }: { children: ReactNode }) {
     return (
         <span className="flex-none rounded bg-[color:var(--info)]/15 px-1.5 py-px font-mono text-sm font-semibold uppercase tracking-[0.08em] text-[color:var(--info)]">
@@ -203,16 +171,12 @@ export function CanvasHereBadge({ children }: { children: ReactNode }) {
     );
 }
 
-// ----------------------------------------------------------- opportunity card
 export type CanvasOpportunityCardProps = {
     title: ReactNode;
     score: ReactNode;
-    /** Colour of the score chip's numerals - the app owns the threshold decision. */
     scoreColor: string;
     thesis: ReactNode;
-    /** Dim the card and drop the hover lift (a killed / archived candidate). */
     muted?: boolean;
-    /** Bottom slot - a <CanvasNodeAction /> or a <CanvasNodeNotice />. */
     footer?: ReactNode;
     className?: string;
 };
@@ -264,7 +228,6 @@ export function CanvasOpportunityCard({
     );
 }
 
-/** A dead-end state stamp at the foot of a card ("killed"). */
 export function CanvasNodeNotice({
     children,
     className,
@@ -281,11 +244,6 @@ export function CanvasNodeNotice({
     );
 }
 
-/**
- * The full-width CTA at the foot of a card ("↑ promote to company"). `nodrag nopan`
- * keeps the click from being swallowed by the pan/zoom surface, and the click is
- * stopped from bubbling so the board's onNodeClick doesn't also fire.
- */
 export function CanvasNodeAction({
     children,
     onClick,
@@ -308,15 +266,12 @@ export function CanvasNodeAction({
     );
 }
 
-// -------------------------------------------------------------- region label
 export type CanvasRegionLabelProps = {
-    /** The whole caption; its FIRST whitespace-delimited token is accented. */
     label: string;
     accentColor?: string;
     className?: string;
 };
 
-/** The big tracked-out caption that names a region of the board. */
 export function CanvasRegionLabel({
     label,
     accentColor = "var(--info)",

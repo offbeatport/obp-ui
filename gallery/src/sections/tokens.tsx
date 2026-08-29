@@ -1,9 +1,5 @@
-import { Badge, StatusDot } from "obp-ui";
+import { Badge } from "obp-ui";
 import { Note, Row, Spec } from "../kit";
-
-// The token layer everything else is built from. Branding a product = overriding these
-// VALUES in tokens.css; the components never change. Both themes are shown by the header's
-// <ThemeToggle> - every swatch below is a token reference, never a literal colour.
 
 type Swatch = { token: string; cls: string; note: string };
 
@@ -35,7 +31,6 @@ type StatusRow = {
     badge: "success" | "info" | "approval" | "neutral" | "warning" | "destructive";
 };
 
-// DESIGN.md's status language. Statuses are never ad-hoc colours: this table IS the vocabulary.
 const STATUS: StatusRow[] = [
     {
         token: "success",
@@ -94,8 +89,6 @@ const RADII = [
     { cls: "rounded-xl", token: "--radius-card (18px)" },
 ];
 
-// utility → the token that moves it. Both halves are shown so the override knob is discoverable:
-// rebranding the type scale means redefining --type-* in tokens.css, exactly like a colour.
 const TYPE_SCALE: [string, string][] = [
     ["text-sm", "--type-sm"],
     ["text-base", "--type-base"],
@@ -157,7 +150,7 @@ export function TokensSection() {
                             >
                                 -soft
                             </span>
-                            <StatusDot size="lg" colorClassName={s.dot} />
+                            <span className={`size-2 rounded-full ${s.dot}`} />
                             <Badge variant={s.badge}>{s.token}</Badge>
                             <span className="text-sm text-muted-foreground">{s.meaning}</span>
                         </div>
