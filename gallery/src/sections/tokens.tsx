@@ -133,10 +133,7 @@ export function TokensSection() {
                 <SwatchGrid items={BRAND} />
             </Spec>
 
-            <Spec
-                name="Status language"
-                note="six meanings, each with a solid, a -soft fill and a Badge variant. Don't improvise a seventh."
-            >
+            <Spec name="Status language" note="Six meanings. Don't add a seventh.">
                 <div className="space-y-3">
                     {STATUS.map((s) => (
                         <div
@@ -185,10 +182,7 @@ export function TokensSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="Type"
-                note="four self-hosted families; text-sm is the floor - text-xs and arbitrary sizes are banned."
-            >
+            <Spec name="Type" note="Four families. text-sm is the floor.">
                 <div className="space-y-4">
                     <p className="font-display text-3xl font-light tracking-tight">
                         font-display - Space Grotesk, use font-light for headings

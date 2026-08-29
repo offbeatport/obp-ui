@@ -76,7 +76,7 @@ export function ChatSection() {
         <>
             <Spec
                 name='ChatPanel variant="panel" · ChatPanelHeader · ChatBubble · ChatSystemLine · ChatComposer'
-                note="the docked co-pilot column: identity header, 14px bubbles, composer in normal flow. Type and press Enter."
+                note="Docked co-pilot column. Type and press Enter."
                 bare
             >
                 <Frame className="h-[520px] w-full max-w-lg">
@@ -128,7 +128,7 @@ export function ChatSection() {
 
             <Spec
                 name='ChatPanel variant="thread" · ChatBubble variant="thread" · AssistantTurn'
-                note="the full-page conversation: no avatars, 16px body, a floating composer over a fading gradient."
+                note="Full-page thread, floating composer."
                 bare
             >
                 <Frame className="h-[680px]">
@@ -180,7 +180,7 @@ export function ChatSection() {
 
             <Spec
                 name="ChatEmptyState · TypingIndicator"
-                note="the zero-message state, and the three dots on a staggered bounce (bare, or as a full turn)."
+                note="Empty state and the typing dots."
                 bare
             >
                 <div className="grid gap-6 lg:grid-cols-2">
@@ -204,7 +204,7 @@ export function ChatSection() {
 
             <Spec
                 name="useEntranceStagger"
-                note="messages present at mount arrive one after another; live ones animate immediately."
+                note="Mount staggers; live messages animate at once."
                 bare
             >
                 <Api

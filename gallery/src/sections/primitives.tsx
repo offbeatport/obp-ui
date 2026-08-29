@@ -171,10 +171,7 @@ export function PrimitivesSection() {
 
     return (
         <TooltipProvider>
-            <Spec
-                name="Button"
-                note="seven variants over eight sizes; icon sizes are square and take a single glyph."
-            >
+            <Spec name="Button" note="Seven variants, eight sizes.">
                 <Row>
                     {BUTTON_VARIANTS.map((v) => (
                         <Button key={v} variant={v}>
@@ -205,10 +202,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="Badge"
-                note="chips. The last six carry the status language; the first six are plain chrome."
-            >
+            <Spec name="Badge" note="Chips. The last six carry status.">
                 <Row>
                     {BADGE_VARIANTS.map((v) => (
                         <Badge key={v} variant={v}>
@@ -274,10 +268,7 @@ export function PrimitivesSection() {
                 </div>
             </Spec>
 
-            <Spec
-                name="Select"
-                note="three trigger heights that match Button; a grouped list with a label, a separator and a disabled row."
-            >
+            <Spec name="Select" note="Three heights matching Button.">
                 <Row className="gap-6">
                     <Cell label='size="sm"'>
                         <Select value={sort} onValueChange={setSort}>
@@ -416,10 +407,7 @@ export function PrimitivesSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="Checkbox"
-                note="two sizes over every state. The tick is drawn rather than swapped in, and motion-reduce stills it."
-            >
+            <Spec name="Checkbox" note="Two sizes, every state. The tick is drawn.">
                 <Row className="gap-8">
                     <Cell label='size="default"'>
                         <Row className="gap-4">
@@ -454,10 +442,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="CheckboxField"
-                note="checkbox + label + optional description as one hit target - the whole row toggles, and a column of them lines up."
-            >
+            <Spec name="CheckboxField" note="Checkbox, label, description as one hit target.">
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div className="grid gap-4">
                         <CheckboxField
@@ -628,10 +613,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="DropdownMenu"
-                note="label, items, checkbox + radio items, a submenu, a shortcut and a destructive row."
-            >
+            <Spec name="DropdownMenu" note="Items, submenu, shortcut, destructive row.">
                 <Row>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -682,10 +664,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="Popover"
-                note="the floating panel with no menu semantics - a form, a filter, a picker. DropdownMenu owns the arrow keys; this does not."
-            >
+            <Spec name="Popover" note="Floating panel, no menu semantics.">
                 <Row>
                     <Popover>
                         <PopoverTrigger asChild>
@@ -707,10 +686,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="ColorPicker"
-                note="saturation/brightness field, hue rail, hex entry, presets - and an eyedropper where the browser has one. Never the OS colour panel."
-            >
+            <Spec name="ColorPicker" note="Field, hue rail, hex, presets, eyedropper.">
                 <div className="flex flex-wrap items-start gap-8">
                     <div className="w-64">
                         <ColorPicker
@@ -754,20 +730,14 @@ export function PrimitivesSection() {
                 </div>
             </Spec>
 
-            <Spec
-                name="ColorField"
-                note="the form-control shape: a labelled swatch that opens the picker in a popover."
-            >
+            <Spec name="ColorField" note="Labelled swatch opening the picker.">
                 <div className="grid max-w-lg gap-2 sm:grid-cols-2">
                     <ColorField label="Brand" value={brandColor} onChange={setBrandColor} />
                     <ColorField label="Ink" value={inkColor} onChange={setInkColor} />
                 </div>
             </Spec>
 
-            <Spec
-                name="Tooltip"
-                note="wrap the page (or the surface) in TooltipProvider once; hover or focus a trigger."
-            >
+            <Spec name="Tooltip" note="Wrap once in TooltipProvider.">
                 <Row>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -786,10 +756,7 @@ export function PrimitivesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="Table"
-                note="Header · Body · Footer · Caption, with a right-aligned numeric column."
-            >
+            <Spec name="Table" note="Header · Body · Footer · Caption.">
                 <Table>
                     <TableCaption>Slices in the current build.</TableCaption>
                     <TableHeader>
@@ -849,7 +816,7 @@ export function PrimitivesSection() {
 
             <Spec
                 name="Parts you compose with"
-                note="exported, but drawn by their parent rather than written by hand - and the cva functions the variants live in."
+                note="Drawn by their parent, plus the cva functions."
                 bare
             >
                 <Api

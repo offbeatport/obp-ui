@@ -79,11 +79,7 @@ const tabPref = createDomClassPref({
 export function ConsoleSection() {
     return (
         <>
-            <Spec
-                name="ConsoleDock"
-                note="mounted once for the whole page: the launcher tab is bottom-right, Ctrl+` toggles it, Esc closes. Drag its top edge to resize."
-                bare
-            >
+            <Spec name="ConsoleDock" note="Ctrl+` toggles, Esc closes, drag to resize." bare>
                 <ConsoleDock
                     fetchDigest={fetchDigest}
                     renderLogo={(p) => <GradientMark name={p.name} size={20} />}
@@ -100,11 +96,7 @@ export function ConsoleSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="ConsolePane"
-                note="one agent's column: avatar, name, state chip, and a log that follows the tail while you are near the bottom."
-                bare
-            >
+            <Spec name="ConsolePane" note="One agent: identity, state, tailing log." bare>
                 <Frame className="h-64 max-w-lg">
                     <ConsolePane
                         title="Ledgerly"
@@ -146,20 +138,14 @@ export function ConsoleSection() {
                 </div>
             </Spec>
 
-            <Spec
-                name="ConsoleTabToggle"
-                note="the preference that hides the launcher tab. Flip it and the tab disappears - it is an <html> class, resolved before first paint."
-            >
+            <Spec name="ConsoleTabToggle" note="Hides the launcher tab; an <html> class.">
                 <Row className="gap-3">
                     <ConsoleTabToggle pref={tabPref} />
                     <Label>Show the agent console button</Label>
                 </Row>
             </Spec>
 
-            <Spec
-                name="STATUS_VARIANT"
-                note="run/action status → the Badge variant that carries it. One status language across queue and runs."
-            >
+            <Spec name="STATUS_VARIANT" note="Status → Badge variant.">
                 <Row>
                     {Object.entries(STATUS_VARIANT).map(([status, variant]) => (
                         <Cell key={status} label={status}>
@@ -169,11 +155,7 @@ export function ConsoleSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="Clocks & scrolling"
-                note="the three time formats the log surfaces share, and the tail-following hook."
-                bare
-            >
+            <Spec name="Clocks & scrolling" note="Time formats and the tail hook." bare>
                 <Api
                     items={[
                         {

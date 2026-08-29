@@ -597,7 +597,7 @@ export function CanvasSection() {
         <>
             <Spec
                 name="CanvasSurface · CanvasBoard · CanvasBackdrop · CanvasControls · FLAVORS · CANVAS_VARIANTS"
-                note="one graph, ten layout × flavor pairings. Interaction is locked: pan and zoom, but nothing moves."
+                note="Ten layout × flavor pairings. Pan and zoom only."
                 bare
             >
                 <Row className="mb-3">
@@ -624,7 +624,7 @@ export function CanvasSection() {
 
             <Spec
                 name="CanvasEntityCard · CanvasOpportunityCard · CanvasHud · CanvasActivityStrip · CanvasCommandBar"
-                note="the command surface: forced-dark cards under fixed HUD panels. Click a card, promote a spec, type a command."
+                note="Forced-dark cards under fixed HUD panels."
                 bare
             >
                 <CommandBoard />
@@ -634,11 +634,7 @@ export function CanvasSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="The rest of the entry"
-                note="layouts, chrome helpers and the constants the boards above are built from."
-                bare
-            >
+            <Spec name="The rest of the entry" note="Layouts, helpers, constants." bare>
                 <Api
                     items={[
                         {

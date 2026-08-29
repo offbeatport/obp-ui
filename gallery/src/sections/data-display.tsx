@@ -93,7 +93,7 @@ export function DataDisplaySection() {
         <>
             <Spec
                 name="GradientMark · gradientPairFor"
-                note="the avatar at the head of a row: one letter on a gradient derived from the name and the live --primary. Flip the theme (or a preset) and every mark follows."
+                note="One letter on a gradient from the name and --primary."
             >
                 <Row className="gap-6">
                     {ENTITIES.map((e) => (
@@ -198,7 +198,7 @@ export function DataDisplaySection() {
 
             <Spec
                 name="ExpandableRowList · ExpandableRow"
-                note="a framed list of rows; the chevron opens a panel, the row body picks. The parent keeps one open."
+                note="Chevron opens a panel; parent keeps one open."
                 bare
             >
                 <ExpandableRowList>
@@ -246,7 +246,7 @@ export function DataDisplaySection() {
 
             <Spec
                 name="Timeline · TimelineItem · TimelineDot · TaskCard · TaskStateChip"
-                note="the build log: one hairline spine, one state-coloured dot per task, the card body next to it."
+                note="Hairline spine, one dot per task."
             >
                 <Timeline>
                     {TASKS.map((t) => (

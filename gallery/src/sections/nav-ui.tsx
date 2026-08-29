@@ -75,7 +75,7 @@ export function NavUiSection() {
         <>
             <Spec
                 name="TAB_SELECTORS · withTabIcons"
-                note="the registry of the ten looks; withTabIcons binds an icon map onto every entry (looks 3, 5, 6 and 9 use it)."
+                note="The ten looks; withTabIcons adds icons."
                 bare
             >
                 <Note>
