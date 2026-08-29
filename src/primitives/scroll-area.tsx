@@ -6,9 +6,7 @@ import type * as React from "react";
 
 import {
     type StringClassName,
-    asChildRender,
     asChildVoid,
-    childrenOf,
     slotChild,
     slotContent,
 } from "../lib/base-ui-compat";
