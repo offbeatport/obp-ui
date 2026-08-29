@@ -113,8 +113,8 @@ export function CanvasActivityStrip({
     className,
 }: CanvasActivityStripProps) {
     const [open, setOpen] = useState(false);
-    if (!items.length) return null;
-    const latest = items[0];
+    const [latest] = items;
+    if (!latest) return null;
     const groups = new Map<string, CanvasActivityItem[]>();
     for (const a of items) {
         const list = groups.get(a.group);

@@ -56,7 +56,7 @@ const SCRIPT: Record<string, { msg: string; kind: LogKind }[]> = {
 async function fetchDigest(cursors: Record<string, number>): Promise<ConsoleDigest> {
     let pending = false;
     const panes: ConsoleDockPane[] = PANES.map((p) => {
-        const all = SCRIPT[p.slug];
+        const all = SCRIPT[p.slug] ?? [];
         const from = cursors[p.slug] ?? 0;
         const to = Math.min(all.length, from + 2);
         if (to < all.length) pending = true;

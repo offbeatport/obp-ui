@@ -4,12 +4,7 @@ import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import type * as React from "react";
 
-import {
-    type StringClassName,
-    asChildVoid,
-    slotChild,
-    slotContent,
-} from "../lib/base-ui-compat";
+import { type StringClassName, asChildVoid, slotChild, slotContent } from "../lib/base-ui-compat";
 import { cn } from "../lib/cn";
 
 type ScrollAreaType = "auto" | "always" | "scroll" | "hover";
