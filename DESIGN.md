@@ -170,22 +170,42 @@ is the law.
 
 ## Re-branding a product
 
-One colour. `--primary` is the only thing you set; `--accent`, `--accent-foreground` and `--ring`
-derive from it in `tokens.css` via relative `oklch()`, so overriding it re-brands the whole app.
+Paste this after the import. Twenty-one variables re-skin everything - buttons, links, focus
+rings, hover washes, borders, and the logo mark, which fills from `var(--primary)`.
 
 ```css
 @import "obp-ui/styles.css";
 
-:root  { --primary: #7c3aed; }
-.dark  { --primary: #c4b5fd; }
+:root {
+    --background: #ffffff;   --foreground: #111111;
+    --card: #ffffff;         --card-foreground: #111111;
+    --popover: #ffffff;      --popover-foreground: #111111;
+    --secondary: #f3f3f5;    --secondary-foreground: #111111;
+    --muted: #f3f3f5;        --muted-foreground: #5a5a63;
+    --faint: #7a7a85;
+    --primary: #7c3aed;      --primary-foreground: #ffffff;
+    --accent: #ede9fe;       --accent-foreground: #5b21b6;
+    --border: #e4e4e8;       --border-soft: #efeff2;
+    --input: #e4e4e8;        --ring: #7c3aed;
+}
+
+.dark { /* same keys, dark values */ }
 ```
 
-No JS, no flicker, works with JS disabled. The runtime path (`makePalette` + `setCustomTheme`)
-costs 5.5 kB gzip and flashes the default brand before it applies, because `prePaintScript`
-restores light/dark but not preset tokens - use it only for a live theme picker.
+Or set `--primary` alone: `--accent`, `--accent-foreground` and `--ring` derive from it in
+`tokens.css` via relative `oklch()`.
 
-Change the paper too, and it is eight more: `--background --card --secondary --foreground
---muted-foreground --faint --border --border-soft`. The six status hues are never yours to change.
+No JS, no rebuild, no flicker, works with JS disabled. `makePalette` + `setCustomTheme` is the
+runtime alternative; it costs 5.5 kB gzip and flashes the default brand first, because
+`prePaintScript` restores light/dark but not preset tokens. Use it only for a live theme picker.
+
+**The six status hues are not in that list on purpose.** success, warning, info, approval, neutral
+and destructive are meaning, not brand, and stay constant across every product.
+
+**The one thing to eyeball:** `--primary` is the link colour and the focus ring, not just a button
+fill, so a pale brand colour makes links unreadable. Take the brand's hue and adjust its lightness
+until it reads as text - that is what Paper does, terracotta `#c8643c` light and `#e0794c` dark.
+The logo file keeps the exact brand colour; it answers to no contrast floor.
 
 ## Two operational notes that used to live in the README
 
