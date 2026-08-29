@@ -153,10 +153,7 @@ export function UtilitiesSection() {
 
     return (
         <>
-            <Spec
-                name="ThemeToggle · theme controller"
-                note="light and dark are both real product modes. The toggle flips the resolved theme and pins it."
-            >
+            <Spec name="ThemeToggle · theme controller" note="Flips and pins the resolved theme.">
                 <Row className="gap-3">
                     <ThemeToggle />
                     {PREFS.map((p) => (
@@ -181,7 +178,7 @@ export function UtilitiesSection() {
 
             <Spec
                 name="ThemePicker · preset controller"
-                note="the four-axis theme - colour, type, radius, density - written as token values on <html> and nothing else. No component knows it exists."
+                note="Colour, type, radius, density — token values on <html>."
             >
                 <PresetReadout />
                 <Note>
@@ -193,20 +190,14 @@ export function UtilitiesSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="Markdown"
-                note="a dependency-free renderer for the subset models actually emit. Builds React nodes, so no HTML injection."
-            >
+            <Spec name="Markdown" note="Dependency-free; React nodes, no HTML injection.">
                 <Markdown
                     content={SAMPLE}
                     className="max-w-prose space-y-3 break-words text-base"
                 />
             </Spec>
 
-            <Spec
-                name="ConfirmDialog"
-                note="wrap any trigger to require a modal confirmation; it awaits onConfirm, then closes."
-            >
+            <Spec name="ConfirmDialog" note="Wraps a trigger; awaits onConfirm.">
                 <Row>
                     <ConfirmDialog
                         trigger={<Button variant="destructive">Kill company</Button>}
@@ -220,10 +211,7 @@ export function UtilitiesSection() {
                 </Row>
             </Spec>
 
-            <Spec
-                name="cn · ClientOnly"
-                note="the class merger, and the render-after-hydration guard for anything that measures the DOM."
-            >
+            <Spec name="cn · ClientOnly" note="Class merger and hydration guard.">
                 <Api
                     items={[
                         {
@@ -249,7 +237,7 @@ export function UtilitiesSection() {
 
             <Spec
                 name="prePaintScript · consoleTabPref · createDomClassPref"
-                note="the inline <head> script that resolves persisted <html> classes before first paint, so nothing flashes."
+                note="Resolves <html> classes before first paint."
             >
                 <pre className="overflow-x-auto rounded-lg border border-border bg-secondary p-3 font-mono text-sm">
                     <code>{prePaintScript()}</code>
@@ -278,10 +266,7 @@ export function UtilitiesSection() {
                 />
             </Spec>
 
-            <Spec
-                name="ProviderLogo"
-                note="model-provider marks. Colour brands draw in their own colour; monochrome ones inherit currentColor."
-            >
+            <Spec name="ProviderLogo" note="Provider marks; monochrome ones inherit currentColor.">
                 <Row className="gap-8">
                     {PROVIDERS.map((id) => (
                         <Cell key={id} label={id}>

@@ -83,7 +83,7 @@ export function ShellSection() {
         <>
             <Spec
                 name="AppShell · Rail · NavItem · SectionLabel · EntityRow · AccountButton · AccountMenu"
-                note="the whole frame in one box. The chevron on the rail's edge collapses it; ⋯ on a row opens its menu."
+                note="The frame in one box. Chevron collapses; ⋯ opens a menu."
                 bare
             >
                 <Frame className="h-[620px]">
@@ -181,11 +181,7 @@ export function ShellSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="EmptyStateCard"
-                note="the dashed CTA that stands in for a list inside the rail - all copy is a prop."
-                bare
-            >
+            <Spec name="EmptyStateCard" note="Dashed CTA for an empty rail list." bare>
                 <Frame className="w-[264px] bg-secondary py-2">
                     <EmptyStateCard
                         title="No companies yet"
@@ -199,7 +195,7 @@ export function ShellSection() {
 
             <Spec
                 name="TitleBar · WindowControls · WindowControlsProvider"
-                note="the desktop strip you drag to move the window. Inert on the web; the native calls arrive through the provider."
+                note="Drag strip. Inert on the web."
                 bare
             >
                 <WindowControlsProvider value={win}>
@@ -226,11 +222,7 @@ export function ShellSection() {
                 </div>
             </Spec>
 
-            <Spec
-                name="Seams & types"
-                note="the context plumbing the frame publishes, and the shapes its props take."
-                bare
-            >
+            <Spec name="Seams & types" note="The frame's context and prop shapes." bare>
                 <Api
                     items={[
                         {

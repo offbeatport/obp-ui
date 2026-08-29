@@ -59,7 +59,7 @@ export function NavSection() {
         <>
             <Spec
                 name="UIProvider · useNav · useIsActive"
-                note="the seam that lets shell components render links and know what is active without a router."
+                note="Links and active state without a router."
             >
                 <UIProvider pathname="/settings/agents">
                     <NavReadout href="/settings" />
@@ -70,10 +70,7 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="Link"
-                note="renders whatever the host gave UIProvider - here, nothing, so a plain anchor."
-            >
+            <Spec name="Link" note="Host link, or a plain anchor.">
                 <Row className="gap-6">
                     <Cell label="<Link href>">
                         <Link
@@ -109,10 +106,7 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="TabNav"
-                note="underlined sub-navigation; the active tab is whichever href the pathname is under."
-            >
+            <Spec name="TabNav" note="Underlined sub-nav, active by pathname.">
                 <UIProvider pathname="/settings/guardrails">
                     <TabNav tabs={SETTINGS_TABS} className="mt-0" />
                 </UIProvider>
@@ -122,10 +116,7 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec
-                name="SegmentedTabs"
-                note="an iOS-style pill that measures the active tab and slides behind it. Click one - it animates."
-            >
+            <Spec name="SegmentedTabs" note="Pill slides behind the active tab.">
                 <Row className="gap-5">
                     <SegmentedTabs tabs={SEG_TABS} active={tab} onSelect={setTab} />
                     <Note>
