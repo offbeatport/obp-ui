@@ -157,6 +157,23 @@ const bundle = (
     return { id, name, note, light: p.light, dark: p.dark, palette, type, radius, space };
 };
 
+export function makePreset(
+    palette: ThemePalette,
+    axes: { type?: string; radius?: string; space?: string } = {},
+): ThemePreset {
+    return {
+        id: palette.id,
+        name: palette.name,
+        note: palette.note,
+        light: palette.light,
+        dark: palette.dark,
+        palette: palette.id,
+        type: typePairingFor(axes.type ?? "") ? (axes.type as string) : "paper",
+        radius: radiusStepFor(axes.radius ?? "") ? (axes.radius as string) : DEFAULT_RADIUS_ID,
+        space: spaceStepFor(axes.space ?? "") ? (axes.space as string) : DEFAULT_SPACE_ID,
+    };
+}
+
 export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
     bundle(
         "paper",

@@ -17,6 +17,8 @@ export {
 } from "./lib/color";
 export {
     DEFAULT_PALETTE_ID,
+    makePalette,
+    type PaletteSpec,
     THEME_PALETTES,
     type ThemePalette,
     type ThemePaletteColors,
@@ -32,6 +34,7 @@ export {
     getCustomTheme,
     getThemePreset,
     getThemePresetId,
+    makePreset,
     initThemePreset,
     onThemePresetChange,
     RADIUS_STEPS,
