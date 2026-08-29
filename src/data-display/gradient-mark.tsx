@@ -49,6 +49,7 @@ export function GradientMark({
                 fontWeight: 700,
                 fontSize: Math.round(size * 0.42),
                 lineHeight: 1,
+                textBox: "trim-both cap alphabetic",
                 flex: "none",
                 ...style,
             }}
