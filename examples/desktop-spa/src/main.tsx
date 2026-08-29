@@ -12,11 +12,7 @@ import {
     EmptyState,
     GradientMark,
     Input,
-    LiveDot,
     SegmentedTabs,
-    StatTile,
-    StatusDot,
-    StatusPill,
     TabNav,
     Timeline,
     TimelineDot,
@@ -40,12 +36,6 @@ import {
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 
-// A Tauri frontend has no router by default. The nav seam degrades to plain <a href>, which is
-// exactly what this probe exercises: no UIProvider Link is supplied.
-//
-// Three import lines, not one, and that is the point: the root barrel is anonymous, while
-// "obp-ui/shell" and "obp-ui/chat" are the archetype - adopting this frame and this co-pilot is
-// a decision, so it is spelled out here. See the header of src/index.ts.
 const theme = createTheme({ namespace: "probe" });
 theme.initTheme();
 document.documentElement.classList.add("is-desktop");
@@ -55,6 +45,15 @@ const COMPANIES = [
     { id: "b", name: "Almanac", meta: "building", tone: "blue" as const },
     { id: "c", name: "Undertow", meta: "needs you", tone: "violet" as const },
 ];
+
+function Stat({ value, label }: { value: string; label: string }) {
+    return (
+        <div>
+            <div className="font-mono text-lg font-semibold text-foreground">{value}</div>
+            <div className="font-mono text-sm uppercase tracking-wide text-faint">{label}</div>
+        </div>
+    );
+}
 
 function Probe() {
     const [tab, setTab] = useState("overview");
@@ -128,9 +127,13 @@ function Probe() {
                             <Badge variant="success">shipped</Badge>
                             <Badge variant="info">building</Badge>
                             <Badge variant="approval">awaiting you</Badge>
-                            <StatusPill dotClassName="bg-success">live</StatusPill>
-                            <LiveDot label="live" />
-                            <StatusDot colorClassName="bg-success" size="lg" />
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 font-mono text-sm uppercase tracking-wide text-success">
+                                <span
+                                    aria-hidden="true"
+                                    className="size-1.5 rounded-full bg-current"
+                                />
+                                live
+                            </span>
                         </div>
 
                         <div className="mt-6">
@@ -152,9 +155,9 @@ function Probe() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex gap-8">
-                                        <StatTile value="$12.4k" label="MRR" />
-                                        <StatTile value="284" label="users" />
-                                        <StatTile value="7/10" label="cold-run" />
+                                        <Stat value="$12.4k" label="MRR" />
+                                        <Stat value="284" label="users" />
+                                        <Stat value="7/10" label="cold-run" />
                                     </div>
                                     <div className="mt-4 flex items-center gap-3">
                                         <GradientMark name="Tripwire" />

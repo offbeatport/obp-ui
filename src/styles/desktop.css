@@ -1,63 +1,16 @@
-/* ============================================================================
-   obp-ui/desktop.css - native-window affordances for a Tauri shell.
-
-   OPT-IN. The web app does not import this file, and nothing in here can reach
-   it: every rule is scoped to `.is-desktop` on <html> (or, for the OS-specific
-   bits, `.is-desktop[data-os="…"]`). Import it AFTER obp-ui/styles.css so
-   it wins the cascade against the base layer it deliberately overrides.
-
-       @import "obp-ui/styles.css";
-       @import "obp-ui/desktop.css";
-
-   The two hooks the host must set on <html>, before first paint:
-
-       <html class="is-desktop" data-os="macos">
-
-   `data-os` is one of macos | windows | linux. Set it from the OS plugin
-   (`platform()` in @tauri-apps/plugin-os) or from the tiny inline snippet in the
-   package README - it has to land before paint or the scrollbar rules flash.
-
-   The one exception to the "scoped" rule is the reduced-motion block at the
-   bottom: @keyframes are document-global and cannot be nested under a selector.
-   That is safe precisely because only a desktop app ever imports this file.
-
-   Tokens only - no literal colours in here.
-   ========================================================================== */
-
 html.is-desktop {
-    /* Chrome geometry the app can retune per window. */
     --titlebar-height: 38px;
-    /* Left padding reserved for native window controls. 0 everywhere except
-       macOS, where the traffic lights sit over the content area whenever the
-       window uses titleBarStyle "Transparent"/"Overlay". */
     --titlebar-inset: 0px;
-    /* Duration handed back by `.allow-transition` (see the escape hatch below). */
     --allow-transition: 120ms;
 }
 
-/* Standard traffic-light run (close/min/zoom + margins) at the default position. */
 html.is-desktop[data-os="macos"] {
     --titlebar-inset: 78px;
 }
 
-/* ============================================================================
-   1. Selection and dragging - chrome behaves like an app, content like a document
-
-   In a browser everything is selectable text; in a native window, dragging a
-   cursor across a sidebar and highlighting the nav labels reads as a bug. So we
-   turn selection OFF at the body and hand it BACK to the elements that hold
-   content the user legitimately wants to copy: chat messages, code, logs, prose,
-   table cells, and anything the app tags `data-selectable`.
-
-   Chrome (rails, titlebars, nav items, buttons, badges, labels) is spans/divs
-   and stays unselectable by omission. Escape hatches both ways:
-     data-selectable         force a subtree back on
-     data-selectable="false" force a subtree off (e.g. a decorative caption)
-   ========================================================================== */
 html.is-desktop body {
     -webkit-user-select: none;
     user-select: none;
-    /* A stray double-click on chrome should not paint a selection either. */
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -91,9 +44,6 @@ html.is-desktop [data-selectable="false"] * {
     user-select: none;
 }
 
-/* Native windows do not let you rip an icon out of the sidebar and drop it on
-   the desktop. Images and links inside chrome are not drag sources; an <img>
-   inside selectable content still is, so figures keep working. */
 html.is-desktop :is(img, svg, a) {
     -webkit-user-drag: none;
 }
@@ -102,28 +52,16 @@ html.is-desktop [data-selectable] :is(img, a) {
     -webkit-user-drag: auto;
 }
 
-/* ============================================================================
-   2. Overscroll - no rubber-band on the app shell
-
-   The shell is a fixed-height grid (h-screen + overflow-hidden), so the document
-   itself should never bounce, and a scroll that bottoms out inside a pane must
-   not chain up to the window. `none` on the document kills the bounce and the
-   swipe-back gesture; `contain` on inner scrollers stops chaining but keeps
-   their own bounce, which still reads as native.
-   ========================================================================== */
 html.is-desktop,
 html.is-desktop body {
     overscroll-behavior: none;
 }
 
-/* Panes: the app's own scroll regions plus the Tailwind utilities that create
-   them (the class names are what actually lands in the DOM, so matching on them
-   is stable) and Radix's ScrollArea viewport. */
 html.is-desktop
     :is(
         main,
         [data-scroll-region],
-        [data-radix-scroll-area-viewport],
+        [data-slot="scroll-area-viewport"],
         .overflow-auto,
         .overflow-y-auto,
         .overflow-y-scroll
@@ -131,59 +69,18 @@ html.is-desktop
     overscroll-behavior: contain;
 }
 
-/* ============================================================================
-   3. Scrollbars - give macOS its own back
-
-   Nothing to declare here, and that is the point.
-
-   In WebKit, any author rule on ::-webkit-scrollbar makes the element a "custom
-   scrollbar", and a custom scrollbar is never an overlay: it is always visible and
-   always in the layout. `scrollbar-width: thin` looks like the escape hatch - it
-   does make the UA drop the custom bar - but what you get back is a thin CLASSIC
-   scrollbar, still permanent and coloured by the UA rather than by the theme. On a
-   dark panel that reads as a pale stripe down the side of every pane.
-
-   The only way to get the real macOS bar - hidden until you scroll, coloured by the
-   OS against the content behind it - is for the page to say nothing at all. So
-   base.css scopes its editorial scrollbar to everything except
-   `html.is-desktop[data-os="macos"]`, and this file adds no rule of its own.
-
-   Windows and Linux webviews draw classic in-layout scrollbars natively, so the
-   editorial bar from base.css is the better match there and they keep it.
-   ========================================================================== */
-
-/* ============================================================================
-   4. Drag regions and the titlebar
-
-   Tauri hit-tests the `data-tauri-drag-region` attribute natively; there is no
-   CSS property involved (Electron's -webkit-app-region is NOT how this works, so
-   do not add it). What CSS owns is the feel: an arrow cursor instead of a text
-   caret, and no selection appearing while you drag the window.
-
-   The attribute only applies to the element it is written on - children are not
-   draggable unless they carry it too. That is deliberate on Tauri's side so
-   buttons and inputs inside a titlebar keep working; the rule below matches the
-   attribute wherever it appears, however many times.
-
-   The window capability must grant `core:window:allow-start-dragging` or the
-   attribute silently does nothing - see the README checklist.
-   ========================================================================== */
 html.is-desktop [data-tauri-drag-region] {
     cursor: default;
     -webkit-user-select: none;
     user-select: none;
 }
 
-/* Anything interactive sitting on a drag surface keeps its own cursor. */
 html.is-desktop
     [data-tauri-drag-region]
     :is(button, a[href], input, textarea, select, [role="button"], [contenteditable="true"]) {
     cursor: pointer;
 }
 
-/* The titlebar convention: a full-width strip of --titlebar-height, its leading
-   edge cleared by --titlebar-inset so nothing lands under the traffic lights.
-   Purely geometry - colour, border and content are the app's business. */
 html.is-desktop .titlebar {
     display: flex;
     align-items: center;
@@ -193,7 +90,6 @@ html.is-desktop .titlebar {
     gap: 0.5rem;
 }
 
-/* Window controls the app draws itself (Windows/Linux) go at the trailing edge. */
 html.is-desktop .titlebar-controls {
     margin-inline-start: auto;
     display: flex;
@@ -201,49 +97,11 @@ html.is-desktop .titlebar-controls {
     gap: 0.125rem;
 }
 
-/* ============================================================================
-   5. `.allow-transition` - the documented escape hatch
-
-   base.css pins `transition-duration: 0s !important` on button/a/[role=menuitem]/
-   [role=tab]/summary so hover feedback in the app is instant. In a window that
-   also flattens window-control and titlebar-button hovers, which is one of the
-   few places a fade genuinely helps (it makes a close button feel physical).
-
-   Rather than fighting that with inline styles, opt a single element back in:
-
-       <button class="titlebar-btn allow-transition transition-colors">
-
-   Pair it with a Tailwind `transition-*` utility - this rule restores the
-   duration only, never the property, because `transition-property` defaults to
-   `all` and setting a bare duration would animate every property on the element.
-   For the same reason it does NOT cascade to children. Retune per element with
-   `style="--allow-transition: 220ms"`.
-   ========================================================================== */
 html.is-desktop .allow-transition {
     transition-duration: var(--allow-transition) !important;
     transition-delay: 0s !important;
 }
 
-/* ============================================================================
-   6. Reduced motion - a first-class desktop expectation
-
-   "Reduce motion" is an OS switch on every desktop platform, and a packaged app
-   is held to it far more strictly than a web page. We neutralise the package's
-   animations by REDEFINING its keyframes as no-ops rather than blanket-killing
-   `animation`: a no-op keyframe holds the visible end state, so a message that
-   fades in with `both` fill-mode still ends up opaque instead of stuck at
-   opacity 0 - which is what a naive `animation: none` does to entrance effects.
-
-   @keyframes cannot be scoped to a selector; these definitions are global to any
-   document that imports desktop.css, and conditional on the media query, so the
-   originals apply again the moment the user turns reduced motion off.
-
-   Covers everything defined in keyframes.css and shell.css:
-     msg-in / msg-reveal   chat bubble entrance
-     spin-rot / cc-rot     spinners
-     co-halo / co-blink / co-pip   company-card liveness decoration
-     .newco-ic             the one spring transition the design system keeps
-   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
     @keyframes msg-in {
         from,
@@ -272,8 +130,6 @@ html.is-desktop .allow-transition {
             stroke-dashoffset: 0;
         }
     }
-    /* Purely decorative pulse around a live company avatar - keep it invisible
-       rather than freezing a stray static ring into the layout. */
     @keyframes co-halo {
         from,
         to {
@@ -281,32 +137,10 @@ html.is-desktop .allow-transition {
             opacity: 0;
         }
     }
-    @keyframes co-blink {
-        from,
-        to {
-            opacity: 0.85;
-        }
-    }
-    @keyframes co-pip {
-        from,
-        to {
-            box-shadow: none;
-        }
-    }
-
-    /* The keyframes are now no-ops, but an `infinite` animation still ticks the
-       compositor forever. Stop after one pass. Tailwind emits the arbitrary
-       animation name into the class attribute verbatim
-       (animate-[spin-rot_0.7s_linear_infinite], after:animate-[co-halo_…]), so
-       matching on the substring reaches every call site without the components
-       needing a marker class. */
     html.is-desktop [class*="animate-["] {
         animation-iteration-count: 1 !important;
     }
 
-    /* The new-company tile: shell.css sets its spring with !important, so this
-       needs both higher specificity and !important. The hover still recolours -
-       reduced motion removes the movement, not the feedback. */
     html.is-desktop .newco-ic {
         transition: none !important;
     }
@@ -314,7 +148,6 @@ html.is-desktop .allow-transition {
         transform: none;
     }
 
-    /* base.css asks for smooth scrolling; anchor jumps should be instant here. */
     html.is-desktop {
         scroll-behavior: auto;
     }

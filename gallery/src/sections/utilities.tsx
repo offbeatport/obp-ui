@@ -30,10 +30,6 @@ import {
 import { useEffect, useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
-// The pieces with no chrome of their own: the markdown renderer chat replies go through, the
-// confirm wrapper, the provider marks, and the theme / storage / pre-paint plumbing every host
-// wires up once.
-
 const PROVIDERS: ProviderId[] = [
     "anthropic",
     "openai",
@@ -70,7 +66,6 @@ const score = weigh({ pain: 8.4, reach: 6.1, moat: 4.7 });
 
 const PREFS: ThemePref[] = ["light", "dark", "system"];
 
-/** The theme controller, read live - two toggles on one page must never disagree. */
 function ThemeReadout() {
     const [, bump] = useState(0);
     useEffect(() => onThemeChange(() => bump((n) => n + 1)), []);
@@ -107,7 +102,6 @@ function ThemeReadout() {
     );
 }
 
-/** The preset controller, read live - it must agree with the header picker at all times. */
 function PresetReadout() {
     const [, bump] = useState(0);
     useEffect(() => onThemePresetChange(() => bump((n) => n + 1)), []);

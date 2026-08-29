@@ -1,7 +1,3 @@
-/* Chat message entrance - a message "materializes" in (fade + rise) instead of popping.
-   Applied per-bubble; React keeps the same DOM node across polling re-renders (keyed by
-   message id), so it plays ONCE on mount and never replays. `both` fill-mode holds the end
-   state. The assistant variant adds a soft blur-clear so replies feel like they form. */
 @keyframes msg-in {
     from {
         opacity: 0;
@@ -28,12 +24,6 @@
     }
 }
 
-/* ============================================================================
-   Animation keyframes for the inline-Tailwind ports (were in the deleted
-   command-center/*.css). Components reference these via arbitrary utilities,
-   e.g. animate-[spin-rot_0.7s_linear_infinite]. Keyframes are the one thing
-   that cannot be a utility, so they live here centrally.
-   ========================================================================== */
 @keyframes spin-rot {
     to {
         transform: rotate(360deg);
@@ -54,34 +44,6 @@
         opacity: 0;
     }
 }
-@keyframes co-blink {
-    0%,
-    100% {
-        opacity: 0.35;
-    }
-    50% {
-        opacity: 0.85;
-    }
-}
-/* The ring rides on currentColor, not white: the pill's fill is --primary, and in dark mode a
-   palette's --primary is a LIGHT colour, where a white ring is invisible. currentColor is
-   --primary-foreground, which every palette guarantees is readable on its own primary. */
-@keyframes co-pip {
-    0% {
-        box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 60%, transparent);
-    }
-    100% {
-        box-shadow: 0 0 0 6px transparent;
-    }
-}
-
-/* ============================================================================
-   Checkbox. The tick is *drawn* rather than swapped in: the path carries
-   pathLength="1", so normalising the dash to 1 makes a single keyframe work at
-   any size or geometry. `both` fill-mode holds the drawn end state. The box
-   squashes once as it fills, and the indeterminate dash wipes out from the
-   middle. Every one of these is switched off by motion-reduce at the call site.
-   ========================================================================== */
 @keyframes pk-check-draw {
     from {
         stroke-dasharray: 1;

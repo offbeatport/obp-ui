@@ -13,7 +13,7 @@ presets (and the ten palettes their colour axis draws from).
 ## 1. Shared law - binding on every product
 
 Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · `src/primitives/*` ·
-`src/nav/*` · `src/status/*` · `src/data-display/*`.
+`src/nav/*` · `src/data-display/*`.
 
 1. **Tokens only - never hardcode a colour, radius or shadow.** Use utilities backed by the token
    layer: `bg-background bg-card bg-primary text-muted-foreground border shadow-e1`. No `#hex`,
@@ -27,6 +27,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 2. **Compose, don't fork.** Need a variant? Add it to the component's `cva` (see how
    `src/primitives/badge.tsx` gained the status variants). Never restyle inline, never copy the
    file into the app. A product-local `components/ui/` directory is a fork with extra steps.
+   The composition prop is **`asChild`**, everywhere, on every wrapper. The headless layer
+   underneath is Base UI, which spells it `render`; that rename stops at the package boundary and
+   is absorbed by `src/lib/base-ui-compat.ts`. A new primitive that exposes `render` instead has
+   forked the API in the one place five products all touch.
 3. **Both themes work.** Dark is a real product mode (`.dark` on `<html>`; a nested `.light`
    interrupts it, which is what makes a scoped preview possible). A component that has only been
    looked at in one mode is not finished.

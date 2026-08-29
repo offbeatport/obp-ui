@@ -11,8 +11,6 @@ import {
     DialogTrigger,
 } from "./primitives";
 
-// Confirm-before-acting wrapper. Wrap any trigger (usually a Button) to require a
-// modal confirmation; awaits onConfirm, then closes.
 export function ConfirmDialog({
     trigger,
     title,

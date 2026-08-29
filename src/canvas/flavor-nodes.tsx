@@ -3,16 +3,8 @@
 import { Handle, type Node, type NodeProps, Position } from "@xyflow/react";
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { StatusDot } from "../status/status-dot";
 import { FLAVORS, type Flavor } from "./flavors";
 import type { CanvasFlowData } from "./graph";
-
-// ============================================================================
-// The flavor-driven card parts. ONE shell + a handful of inner lockups; the
-// `flavor` in each node's data restyles the frame/text so every layout × flavor
-// pairing reuses them. The app owns the per-kind renderers (they read app data);
-// these supply the chrome those renderers hang content on.
-// ============================================================================
 
 const HANDLE = "!size-1.5 !min-h-0 !min-w-0 !rounded-full !border-0 !bg-transparent";
 
@@ -21,14 +13,12 @@ export type FlavorShellProps = {
     accentColor: string;
     width: number;
     children: ReactNode;
-    /** The node's `data` - only its `ht`/`hs` handle sides are read. */
     data: Pick<CanvasFlowData, "ht" | "hs">;
     hasTarget?: boolean;
     hasSource?: boolean;
     className?: string;
 };
 
-/** Card shell: applies the flavor frame + width + both handles. */
 export function FlavorShell({
     f,
     accentColor,
@@ -53,28 +43,25 @@ export function FlavorShell({
     );
 }
 
-/** The small glowing state dot used by the leaf cards (features, channels). */
 export function FlavorDot({ color }: { color: string }) {
     return (
-        <StatusDot size="md" color={color} glow={`0 0 8px -1px ${color}`} className="flex-none" />
+        <span
+            aria-hidden="true"
+            className="size-[7px] flex-none rounded-full"
+            style={{ background: color, boxShadow: `0 0 8px -1px ${color}` }}
+        />
     );
 }
 
-// ------------------------------------------------------------- avatar header
 export type AvatarHeaderProps = {
-    /** One or two characters drawn inside the gradient tile. */
     mark: ReactNode;
-    /** The two stops of the tile's 145° gradient. */
     palette: [string, string];
     title: ReactNode;
-    /** Mono sub-line under the title (a domain, a handle). */
     sub?: ReactNode;
-    /** The flavor's `title` classes - the header inherits the card's type scale. */
     titleClassName?: string;
     className?: string;
 };
 
-/** Gradient mark + name/sub lockup at the top of an entity card. */
 export function AvatarHeader({
     mark,
     palette,
@@ -101,21 +88,15 @@ export function AvatarHeader({
     );
 }
 
-// ------------------------------------------------------------ browser preview
 export type BrowserPreviewProps = {
-    /** Address-bar text. */
     url: ReactNode;
     headline: ReactNode;
-    /** The call-to-action pill under the headline. */
     cta?: ReactNode;
-    /** CTA fill - the node's accent. */
     ctaColor?: string;
-    /** The flavor's `title` classes for the headline. */
     titleClassName?: string;
     className?: string;
 };
 
-/** Miniature browser chrome around a page preview (the landing card). */
 export function BrowserPreview({
     url,
     headline,
@@ -132,9 +113,9 @@ export function BrowserPreview({
             )}
         >
             <div className="flex items-center gap-1 bg-secondary px-2 py-1">
-                <StatusDot size="sm" colorClassName="bg-destructive/60" />
-                <StatusDot size="sm" colorClassName="bg-warning/60" />
-                <StatusDot size="sm" colorClassName="bg-success/60" />
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-destructive/60" />
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-warning/60" />
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-success/60" />
                 <span className="ml-1 truncate font-mono text-sm text-faint">{url}</span>
             </div>
             <div className="px-2.5 py-2">
@@ -154,10 +135,8 @@ export function BrowserPreview({
     );
 }
 
-// ---------------------------------------------------------------- chrome nodes
 type ChromeProps = NodeProps<Node<CanvasFlowData>>;
 
-/** Section panel behind a group of nodes (swimlanes / clustered layouts). */
 export function LaneNode({ data }: ChromeProps) {
     const f = FLAVORS[data.flavor];
     const a = data.accent ?? "var(--faint)";
@@ -183,7 +162,6 @@ export function LaneNode({ data }: ChromeProps) {
     );
 }
 
-/** Column header chip (kanban / timeline stages). */
 export function ColHeadNode({ data }: ChromeProps) {
     const a = data.accent ?? "var(--foreground)";
     return (
@@ -196,16 +174,12 @@ export function ColHeadNode({ data }: ChromeProps) {
                 border: `1px solid color-mix(in srgb, ${a} 30%, var(--border))`,
             }}
         >
-            <StatusDot size="lg" color={a} />
+            <span aria-hidden="true" className="size-2 rounded-full" style={{ background: a }} />
             {data.label}
         </div>
     );
 }
 
-/**
- * The chrome renderers every layout needs. Spread this into an app's `nodeTypes`
- * next to its own per-kind renderers - it MUST stay a stable module-scope object.
- */
 export const chromeNodeTypes = {
     lane: LaneNode,
     colhead: ColHeadNode,

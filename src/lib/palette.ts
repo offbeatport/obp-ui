@@ -1,85 +1,30 @@
-// THE COLOUR AXIS. Ten palettes, each a set of token VALUES - which is exactly what DESIGN.md
-// says branding a product means. No component knows this file exists.
-//
-// A palette is one of the four axes a ThemePreset bundles (colour · type · radius · space);
-// see ./theme-preset.ts for the other three, for how a preset is applied to <html>, and for
-// the controller. This file is only the colours, and it is deliberately free of any DOM,
-// storage or React: it is data.
-//
-// HOW THE NINE WERE BUILT, because it matters if you add a tenth:
-//
-// THE SURFACES ARE ACHROMATIC. Chroma 0.001-0.0035 - a temperature, not a colour. You cannot
-// see it without two palettes side by side, and that is the point: a tinted page is the first
-// thing that looks wrong on a blue-shifted, uncalibrated or cheap panel, because the viewer has
-// no reference for what it was supposed to be. Grey paper looks deliberate on every screen
-// there is. All of the identity is carried by the brand.
-//
-// THE BRAND IS AS SATURATED AS THE HUE ALLOWS. Chroma is not a number picked per palette; it is
-// 90% of the sRGB ceiling at the lightness in use, solved jointly with that lightness against a
-// 4.5:1 target ON THE PAGE - because --primary is a link and a focus ring at least as often as
-// it is a button fill, so it has to work as text. 90% is measured, not taste: it is where
-// Tailwind's 600 tier sits (blue-600 86% of ceiling, red-600 91%, violet-600 87%, teal-600 98%).
-// Sitting ON the ceiling is what makes a colour look like it is clipping.
-//
-// The ceiling is a property of the hue, so it also decides the hues. A "classic blue" at 250
-// tops out at chroma 0.157; the same blue to the eye at 259 reaches 0.24. Every hue here was
-// nudged onto the part of the wheel where sRGB has room. Teal, gold and green have hard low
-// ceilings whatever you do - that is the gamut, not a compromise, and it is why yellow-600 and
-// teal-600 are the least chromatic colours Tailwind ships too.
-//
-// THE ACCENT IS A SURFACE, not text, so its legibility is accentForeground's job and it gets
-// real colour rather than the near-white wash a soft fill usually settles for.
-//
-// DARK MODE INVERTS THE BRAND. --primary goes light and --primary-foreground goes dark, which
-// is what every dark interface that reads well does. A dark-mode button dark enough to carry
-// white text is too dark to read as body text, and the same token has to do both jobs; light
-// brand on dark ink settles it at ~9:1 both ways.
-//
-// EVERY STEP IS A STEP DARKER than the authored theme: ink 16:1 rather than 13:1, the faintest
-// text 5.2:1 rather than 4.6:1, and borders at 1.35:1 against the page rather than 1.1:1, which
-// is the difference between a visible line and no line at all on a dim laptop screen. Dark mode
-// lifts OFF pure black - an almost-black page haloes white text on OLED and bands on cheap
-// LCDs, and it leaves nothing to show a raised card against.
-//
-// Paper is exempt from all of it. It is the authored theme and stays exactly as tokens.css
-// wrote it, tinted paper and all.
-
 export type ThemePaletteColors = {
-    /** The page. */
     background: string;
-    /** Paper: cards, popovers, panels. */
     card: string;
-    /** Rails and subtle fills. */
     secondary: string;
-    /** Ink. */
     foreground: string;
     mutedForeground: string;
-    /** The faintest text that still passes AA on card. */
     faint: string;
     border: string;
     borderSoft: string;
     primary: string;
     primaryForeground: string;
-    /** The soft brand fill - a hover surface, not a text colour. */
     accent: string;
     accentForeground: string;
-    /** "r, g, b" for the light-mode elevation shadows. Dark mode always shadows with black. */
     shadowTint?: string;
 };
 
 export type ThemePalette = {
     id: string;
     name: string;
-    /** One line on what it is for. Shown in the picker. */
     note: string;
     light: ThemePaletteColors;
     dark: ThemePaletteColors;
 };
 
-/** The authored colours. A preset that names it applies by CLEARING - see theme-preset.ts. */
 export const DEFAULT_PALETTE_ID = "paper";
 
-export const THEME_PALETTES: ThemePalette[] = [
+export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
     {
         id: "paper",
         name: "Paper",

@@ -1,33 +1,6 @@
-/* ============================================================================
-   obp-ui - the one stylesheet an app imports.
-
-   It deliberately does NOT import "tailwindcss" itself: the consuming app owns
-   that, and importing it twice emits preflight twice. An app's entry stylesheet
-   imports "tailwindcss" with `source(none)`, then this file, then declares its
-   own `@source` for its own tree. See README.md for the exact snippet - it can't
-   live in this comment, because a `**` glob would close the comment early.
-
-   `source(none)` on the app side is what makes two different apps produce the
-   same CSS: without it each app also auto-scans its own project root and picks
-   up stray classes from docs/prototypes the other app will not have.
-
-   Optional entries, kept separate because they cost bytes not every app wants:
-     obp-ui/fonts.css    self-hosted Inter / Space Grotesk / JetBrains Mono / Spectral
-     obp-ui/canvas.css   React Flow theming (only if you ship the canvas)
-     obp-ui/desktop.css  native-window affordances for the Tauri shell
-   ========================================================================== */
-
-@import "tw-animate-css";
-
 @import "./tokens.css";
 @import "./base.css";
 @import "./shell.css";
 @import "./keyframes.css";
 
-/* Register this package's own components with the consumer's Tailwind compiler.
-   `@source` resolves relative to THIS file, and an explicit @source is exempt
-   from the automatic node_modules exclusion - so a consumer gets our utilities
-   even when we are installed rather than symlinked. Never write a negated
-   `@source not` in an app: negations are global and would silently switch this
-   line off. */
 @source "../";

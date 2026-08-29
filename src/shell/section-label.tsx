@@ -1,14 +1,10 @@
 "use client";
 
-// A group heading inside the rail. When the rail is collapsed the text would be unreadable,
-// so it degrades to a fixed 14px spacer - the groups stay visually separated at both widths.
-
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useRailCollapsed } from "./rail-context";
 
 export type SectionLabelProps = {
-    /** Overrides the collapse context. */
     collapsed?: boolean;
     children: ReactNode;
     className?: string;

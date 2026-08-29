@@ -8,8 +8,6 @@ import { Button } from "./primitives";
 export function ThemeToggle({ theme = defaultTheme }: { theme?: ThemeController } = {}) {
     const [dark, setDark] = useState(false);
 
-    // Read the real theme after mount (SSR renders the light default) and keep in
-    // sync with any other toggle on the page.
     useEffect(() => {
         const sync = () => setDark(theme.getTheme() === "dark");
         sync();

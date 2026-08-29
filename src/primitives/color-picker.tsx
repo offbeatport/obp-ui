@@ -15,27 +15,11 @@ import { type Hsv, hexToHsv, hsvToHex, readableOn } from "../lib/color";
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-// A real colour picker: saturation/brightness field, hue rail, hex entry, optional presets.
-//
-// Not <input type="color">. That control opens the OS colour panel, which on macOS is a
-// separate window with its own chrome - it cannot be themed, cannot be embedded in a popover,
-// and in a Tauri webview it looks like the app lost control of itself.
-//
-// Two details that separate a picker that feels right from one that does not:
-//   - HUE IS REMEMBERED. Hue is undefined for black, white and greys, so a picker that derives
-//     it from the hex alone snaps back to red the moment you drag saturation to zero. The hue
-//     lives in this component's state and is only re-read from the outside when the incoming
-//     colour actually has one.
-//   - POINTER CAPTURE, not window listeners. Dragging past the edge of the field keeps
-//     tracking, the drag ends even if the pointer is released off-window, and touch works.
-
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
 export type ColorPickerProps = {
-    /** Hex, "#rrggbb". Invalid values are ignored rather than clearing the picker. */
     value: string;
     onChange: (hex: string) => void;
-    /** Quick picks under the field. A palette's own colours make good presets. */
     swatches?: string[];
     className?: string;
 };
@@ -46,7 +30,6 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
     const hsvRef = useRef(hsv);
     hsvRef.current = hsv;
 
-    // Follow the outside, but never let a grey or black value wipe the hue the user is holding.
     useEffect(() => {
         const incoming = hexToHsv(value);
         if (!incoming) return;
@@ -98,7 +81,6 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
 
     return (
         <div className={cn("w-full space-y-3", className)}>
-            {/* Saturation × brightness. White→hue left to right, transparent→black top to bottom. */}
             <div
                 role="slider"
                 tabIndex={0}
@@ -139,7 +121,6 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
                 />
             </div>
 
-            {/* Hue. */}
             <div
                 role="slider"
                 tabIndex={0}
@@ -224,7 +205,6 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
     );
 }
 
-/** Chrome/Edge only. Absent elsewhere rather than shown broken. */
 function EyeDropperButton({ onPick }: { onPick: (hex: string) => void }) {
     const [supported, setSupported] = useState(false);
     useEffect(() => setSupported(typeof window !== "undefined" && "EyeDropper" in window), []);
@@ -245,9 +225,7 @@ function EyeDropperButton({ onPick }: { onPick: (hex: string) => void }) {
                     ).EyeDropper;
                     const { sRGBHex } = await new Ctor().open();
                     onPick(sRGBHex);
-                } catch {
-                    /* the user dismissed it */
-                }
+                } catch {}
             }}
         >
             <PipetteIcon className="size-4" />
@@ -262,7 +240,6 @@ export type ColorFieldProps = Omit<ComponentProps<"button">, "value" | "onChange
     swatches?: string[];
 };
 
-/** A labelled swatch that opens the picker in a popover. The form control shape of ColorPicker. */
 export function ColorField({
     label,
     value,

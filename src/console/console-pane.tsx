@@ -7,34 +7,23 @@ import { LogLine } from "./log-line";
 import { LogView } from "./log-view";
 import { useNearBottomScroll } from "./use-near-bottom";
 
-// CONSOLE PANE - one agent's column inside the dock: a header (avatar, name, state chip)
-// over a scrolling log that follows the tail while the reader is near the bottom.
-//
-// What a state chip SAYS and which token pair it wears is domain data, so it arrives as a
-// `status` descriptor from the app; the chip chrome (size, radius, mono caps) lives here.
-
 const HEADER = "flex flex-none items-center gap-2 border-b border-border px-3 py-[9px]";
 const TITLE =
     "overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-foreground";
 const CHIP =
     "ml-auto flex-none rounded-[5px] px-[7px] py-0.5 font-mono text-sm font-semibold uppercase tracking-[0.05em]";
 
-/** A pane's state chip: the word, plus the token colour pair the app picked for it. */
 export type ConsoleStatusChip = {
     label: ReactNode;
-    /** Colour pair, e.g. "text-info bg-info-soft". */
     className?: string;
 };
 
 export type ConsolePaneProps = {
     title: ReactNode;
-    /** The company avatar (or any leading mark) - the app owns what a logo looks like. */
     logo?: ReactNode;
     status?: ConsoleStatusChip;
     lines: readonly LogLineData[];
-    /** A run is genuinely live: appends the working ticker under the last line. */
     active?: boolean;
-    /** The ticker text. Default "● working…". */
     activeLabel?: ReactNode;
     className?: string;
 };
@@ -59,7 +48,6 @@ export function ConsolePane({
             <LogView
                 ref={scrollRef}
                 lines={lines}
-                // The ticker is a clock-less line, so it lines up under the messages.
                 footer={active ? <LogLine line={{ msg: activeLabel, kind: "act" }} /> : undefined}
             />
         </section>

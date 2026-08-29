@@ -16,9 +16,6 @@ import {
 import { useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 
-// Lists of things that happened, the list that is empty, and the mark at the head of a row.
-// Chrome only: every label, colour and piece of copy below is a prop.
-
 const ENTITIES: { name: string; branding?: GradientMarkBranding }[] = [
     { name: "Ledgerly" },
     { name: "Postmark Studio" },

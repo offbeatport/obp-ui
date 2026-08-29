@@ -18,13 +18,9 @@ import {
 import { type ReactNode, useState } from "react";
 import { Note, Spec } from "../kit";
 
-// nav-ui - the ten page-level tab looks that are still being chosen between. All ten are
-// controlled components over the same contract, so any one can drop into a real page.
-
 const TABS = ["Overview", "Build", "Grow", "Run", "Setup"];
 const BADGES: Record<string, string | number> = { Build: 3, Run: 1 };
 
-// Label → glyph is domain data: the app owns this map, the kit only takes it.
 const TAB_ICONS: Record<string, LucideIcon> = {
     Overview: LayoutGrid,
     Build: Hammer,
@@ -33,8 +29,6 @@ const TAB_ICONS: Record<string, LucideIcon> = {
     Setup: Settings2,
 };
 
-// The ten looks, also exported individually. Declared in registry order, so the keys line up
-// with TAB_SELECTORS and each card can show the real export name.
 const NAMED: Record<string, (p: TabSelectorProps) => ReactNode> = {
     UnderlineSlide,
     SegmentedPill,
@@ -62,13 +56,6 @@ function Selector({ def, name }: { def: TabSelectorDef; name: string }) {
                 </h3>
                 <p className="text-sm text-muted-foreground">{def.blurb}</p>
             </div>
-            {/* Several of these are wider than half a column; they scroll inside their own box
-                rather than pushing the page sideways.
-
-                py-7, not p-5: overflow-x-auto makes this a scroll container in BOTH axes, and
-                FloatingDock's hover label is an absolute -top-7 chip that grew to 24px tall at
-                the 14px floor. With 20px of padding its top landed 3px inside the border and
-                read as clipped; 28px puts it back inside the frame. */}
             <div
                 className={
                     def.dark

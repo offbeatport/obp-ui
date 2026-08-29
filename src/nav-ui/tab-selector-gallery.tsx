@@ -10,24 +10,12 @@ import {
     DropdownMenuTrigger,
 } from "../primitives";
 
-// ============================================================================
-// 10 fancier tab-select variants for a page-level tab bar. Each is a controlled
-// component over the same contract, so any one can drop into a real page.
-//
-// Tab labels, their badges and their icons are all supplied by the caller: the
-// gallery ships the ten looks, the app ships the tabs. Pass `icons` keyed by
-// label for the icon-bearing variants (3, 5, 6, 9) - anything unmapped falls
-// back to `fallbackIcon` (LayoutGrid).
-// ============================================================================
-
 export type TabSelectorProps = {
     tabs: string[];
     active: string;
     onSelect: (t: string) => void;
     badges?: Record<string, string | number>;
-    /** Label → glyph. The app owns this map; it is domain data. */
     icons?: Record<string, LucideIcon>;
-    /** Used for any label missing from `icons`. */
     fallbackIcon?: LucideIcon;
 };
 
@@ -35,8 +23,6 @@ function iconFor(p: TabSelectorProps, t: string): LucideIcon {
     return p.icons?.[t] ?? p.fallbackIcon ?? LayoutGrid;
 }
 
-// Measure the active [data-tab] child so an indicator can slide to it. Re-runs
-// on active change and on container resize.
 function useSlider(active: number) {
     const ref = useRef<HTMLDivElement>(null);
     const [box, setBox] = useState({ left: 0, top: 0, width: 0, height: 0 });
@@ -76,7 +62,6 @@ function Badge({ v, tone = "approval" }: { v?: string | number; tone?: string })
     );
 }
 
-// ------------------------------------------------------------- 1. Underline slide
 export function UnderlineSlide({ tabs, active, onSelect, badges }: TabSelectorProps) {
     const i = tabs.indexOf(active);
     const { ref, box } = useSlider(i);
@@ -107,10 +92,6 @@ export function UnderlineSlide({ tabs, active, onSelect, badges }: TabSelectorPr
     );
 }
 
-// ------------------------------------------------------------- 2. Segmented pill
-// Close cousin of ../nav/segmented-tabs, but NOT the same look (that one is a floating
-// control: bg-secondary/80 + shadow-e2 + backdrop-blur, and it takes {key,label,badge}
-// objects). Both are kept.
 export function SegmentedPill({ tabs, active, onSelect, badges }: TabSelectorProps) {
     const i = tabs.indexOf(active);
     const { ref, box } = useSlider(i);
@@ -144,7 +125,6 @@ export function SegmentedPill({ tabs, active, onSelect, badges }: TabSelectorPro
     );
 }
 
-// ------------------------------------------------------------- 3. Icon pills
 export function IconPills(p: TabSelectorProps) {
     const { tabs, active, onSelect, badges } = p;
     return (
@@ -174,9 +154,6 @@ export function IconPills(p: TabSelectorProps) {
     );
 }
 
-// ------------------------------------------------------------- 4. Command bar
-// flex-wrap + max-w-full: every tab carries a 14px label AND a 14px kbd hint, which puts a
-// five-tab bar past 720px. Unwrapped it ran out of its container and clipped the last shortcut.
 export function CommandBar({ tabs, active, onSelect, badges }: TabSelectorProps) {
     return (
         <div className="inline-flex max-w-full flex-wrap items-center gap-1 rounded-xl border border-border bg-card p-1.5 shadow-e1">
@@ -214,7 +191,6 @@ export function CommandBar({ tabs, active, onSelect, badges }: TabSelectorProps)
     );
 }
 
-// ------------------------------------------------------------- 5. Vertical rail
 export function VerticalRail(p: TabSelectorProps) {
     const { tabs, active, onSelect, badges } = p;
     const i = tabs.indexOf(active);
@@ -256,7 +232,6 @@ export function VerticalRail(p: TabSelectorProps) {
     );
 }
 
-// ------------------------------------------------------------- 6. Floating dock
 export function FloatingDock(p: TabSelectorProps) {
     const { tabs, active, onSelect, badges } = p;
     const [hover, setHover] = useState<string | null>(null);
@@ -288,8 +263,6 @@ export function FloatingDock(p: TabSelectorProps) {
                             <Icon className="size-4.5" strokeWidth={2} />
                         </span>
                         {badges?.[t] != null && (
-                            // size-5, not size-4: a 14px numeral in a 16px disc left no ring of
-                            // fill around it and read as a clipped square.
                             <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-approval font-mono text-sm font-bold text-approval-foreground">
                                 {badges[t]}
                             </span>
@@ -315,7 +288,6 @@ export function FloatingDock(p: TabSelectorProps) {
     );
 }
 
-// ------------------------------------------------------------- 7. Numbered ticker
 export function NumberedTicker({ tabs, active, onSelect, badges }: TabSelectorProps) {
     const i = tabs.indexOf(active);
     const { ref, box } = useSlider(i);
@@ -365,9 +337,6 @@ export function NumberedTicker({ tabs, active, onSelect, badges }: TabSelectorPr
     );
 }
 
-// ------------------------------------------------------------- 8. Glow tabs (dark)
-// The only variant with hard-coded colours: it is a deliberately dark-glass control that keeps
-// its look on a light page, so the hexes are not tokens and must not be "fixed".
 export function GlowTabs({ tabs, active, onSelect, badges }: TabSelectorProps) {
     const i = tabs.indexOf(active);
     const { ref, box } = useSlider(i);
@@ -411,7 +380,6 @@ export function GlowTabs({ tabs, active, onSelect, badges }: TabSelectorProps) {
     );
 }
 
-// ------------------------------------------------------------- 9. Morphing dropdown
 export function MorphDropdown(p: TabSelectorProps) {
     const { tabs, active, onSelect, badges } = p;
     const Icon = iconFor(p, active);
@@ -464,8 +432,6 @@ export function MorphDropdown(p: TabSelectorProps) {
     );
 }
 
-// ------------------------------------------------------------- 10. Status tabs
-// Position-based tone cycle: these are token names, not cslopslop states, so it stays here.
 const STATUS_TONE = ["success", "warning", "info", "primary", "approval", "faint"];
 export function StatusTabs({ tabs, active, onSelect, badges }: TabSelectorProps) {
     return (
@@ -507,7 +473,7 @@ export type TabSelectorDef = {
     name: string;
     blurb: string;
     Component: (p: TabSelectorProps) => ReactNode;
-    dark?: boolean; // render on a dark backdrop in the showcase
+    dark?: boolean;
 };
 
 export const TAB_SELECTORS: TabSelectorDef[] = [
@@ -574,7 +540,6 @@ export const TAB_SELECTORS: TabSelectorDef[] = [
     },
 ];
 
-/** Bind an icon map (domain data) onto every gallery entry, keeping ids/names/blurbs. */
 export function withTabIcons(
     icons: Record<string, LucideIcon>,
     defs: TabSelectorDef[] = TAB_SELECTORS,

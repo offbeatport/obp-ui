@@ -1,10 +1,5 @@
 "use client";
 
-// The dashed "nothing here yet" card that stands in for a list in the rail (the prototype's
-// .co-empty-cta): a title, a line of prose, and one full-width call to action.
-//
-// All copy is a prop - the package ships the frame, the app supplies the words.
-
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
@@ -12,13 +7,9 @@ import { Link } from "../nav/link";
 export type EmptyStateCardProps = {
     title: ReactNode;
     description?: ReactNode;
-    /** The call-to-action label. Omit for a card with no action. */
     actionLabel?: ReactNode;
-    /** Renders the action as a link. */
     actionHref?: string;
-    /** Renders the action as a button (ignored when `actionHref` is set). */
     onAction?: () => void;
-    /** Leading glyph inside the action, e.g. <Plus className="size-3.5" />. */
     actionIcon?: ReactNode;
     className?: string;
 };
