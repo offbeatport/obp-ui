@@ -696,6 +696,44 @@ natively, and Electron's `-webkit-app-region` is not involved.
 
 ---
 
+## Defining your own palette in a consuming app
+
+Two ways, depending on whether the brand is fixed or switchable.
+
+**Fixed brand — CSS only.** Redeclare the token values in your own stylesheet after the import.
+No JS, no runtime. Never fork `tokens.css`.
+
+```css
+@import "obp-ui/styles.css";
+:root { --primary: #7c3aed; --accent: #ede9fe; /* ... */ }
+```
+
+**Switchable, or you want the neutrals derived for you — `makePalette`.** You supply five hexes;
+the eight neutrals, both `primaryForeground`s, `shadowTint` and the dark `accent` wash are derived
+from the primary's hue against the kit's shared lightness ladder.
+
+```ts
+import { makePalette, makePreset, themePresets } from "obp-ui";
+
+const brand = makePalette({
+    id: "brand",
+    name: "Brand",
+    note: "my product",
+    light: { primary: "#7c3aed", accent: "#ede9fe", accentForeground: "#5b21b6" },
+    dark: { primary: "#c4b5fd", accentForeground: "#ddd6fe" },
+});
+
+themePresets.setCustomTheme(makePreset(brand, { type: "geist", radius: "sharp", space: "compact" }));
+themePresets.applyThemePreset();
+```
+
+`makePreset` fills the other three axes - type, radius, space - falling back to the Paper defaults
+for any you omit. `tint: 0` on the spec gives a pure achromatic set; `washAlpha` overrides the dark
+accent's 0.18.
+
+Check the two floors on anything you invent, both modes: `contrastRatio(faint, card) >= 4.55` and
+`contrastRatio(primary, background) >= 4.5`. Both are exported from the barrel.
+
 ## Adding a primitive
 
 `components.json` in this package points the shadcn CLI at `src/primitives`, so run it **here**,
