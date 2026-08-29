@@ -18,7 +18,7 @@ import {
 import { type ReactNode, useState } from "react";
 import { Note, Spec } from "../kit";
 
-const TABS = ["Overview", "Build", "Grow", "Run", "Setup"];
+const TABS: [string, ...string[]] = ["Overview", "Build", "Grow", "Run", "Setup"];
 const BADGES: Record<string, string | number> = { Build: 3, Run: 1 };
 
 const TAB_ICONS: Record<string, LucideIcon> = {
@@ -46,7 +46,7 @@ const EXPORT_NAMES = Object.keys(NAMED);
 const DEFS = withTabIcons(TAB_ICONS);
 
 function Selector({ def, name }: { def: TabSelectorDef; name: string }) {
-    const [active, setActive] = useState(TABS[1]);
+    const [active, setActive] = useState<string>(TABS[1] ?? TABS[0]);
     const body = <def.Component tabs={TABS} active={active} onSelect={setActive} badges={BADGES} />;
     return (
         <article className="space-y-3">
@@ -86,7 +86,7 @@ export function NavUiSection() {
 
             <div className="grid gap-10 xl:grid-cols-2">
                 {DEFS.map((def, i) => (
-                    <Selector key={def.id} def={def} name={EXPORT_NAMES[i]} />
+                    <Selector key={def.id} def={def} name={EXPORT_NAMES[i] ?? String(def.id)} />
                 ))}
             </div>
         </>

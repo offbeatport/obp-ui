@@ -185,7 +185,9 @@ export const radial: CanvasLayout = <D>(graph: CanvasGraph<D>, flavor: FlavorKey
     return [...at(ix, "company", -123, -40, flavor), ...inner, ...outer];
 };
 
-export const SWIMLANE_BANDS: { id: string; label: string; accent: string; w: number }[] = [
+type SwimlaneBand = { id: string; label: string; accent: string; w: number };
+
+export const SWIMLANE_BANDS: [SwimlaneBand, SwimlaneBand, SwimlaneBand] = [
     { id: "lane-opp", label: "Opportunity", accent: "var(--warning)", w: 760 },
     { id: "lane-prod", label: "Product", accent: "var(--primary)", w: 2500 },
     { id: "lane-growth", label: "Go-to-market", accent: "var(--approval)", w: 1580 },
@@ -358,7 +360,7 @@ export type CanvasVariant = {
     edgeOverride?: EdgeOverride;
 };
 
-export const CANVAS_VARIANTS: CanvasVariant[] = [
+export const CANVAS_VARIANTS: [CanvasVariant, ...CanvasVariant[]] = [
     {
         id: 1,
         name: "Pipeline Columns",

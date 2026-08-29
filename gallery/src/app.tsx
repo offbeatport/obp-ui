@@ -20,7 +20,7 @@ type SectionDef = {
     Body: () => ReactNode;
 };
 
-const SECTIONS: SectionDef[] = [
+const SECTIONS: [SectionDef, ...SectionDef[]] = [
     {
         id: "tokens",
         label: "Tokens",
@@ -129,7 +129,7 @@ export function App() {
             const root = document.getElementById(s.id);
             if (!root) continue;
             found[s.id] = [...root.querySelectorAll<HTMLElement>("[data-spec]")].map((el) => {
-                const first = (el.dataset.spec ?? "").split("·")[0].trim();
+                const first = ((el.dataset.spec ?? "").split("·")[0] ?? "").trim();
                 const id = `${s.id}--${slug(first)}`;
                 el.id = id;
                 return { id, label: first };
