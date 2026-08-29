@@ -22,7 +22,7 @@ export type ThemePalette = {
     dark: ThemePaletteColors;
 };
 
-import { hexToHsv, hsvToHex, rgbToHex } from "./color";
+import { hexToHsv, hsvToHex } from "./color";
 
 type Ladder = Record<keyof NeutralSlots, readonly [number, number]>;
 
