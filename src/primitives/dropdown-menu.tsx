@@ -12,7 +12,6 @@ import {
     asChildRender,
     asChildVoid,
     autoFocusFor,
-    childrenOf,
     collisionAvoidanceFor,
     slotChild,
     slotContent,
