@@ -389,7 +389,7 @@ function CustomThemeDialog({
                 <div className="max-h-[46vh] space-y-6 overflow-y-auto pr-1">
                     <Group
                         label="Preset"
-                        hint="all six in both modes - click one to start from it, all four axes"
+                        hint={`all ${THEME_PRESETS.length} in both modes - click one to start from it, all four axes`}
                     >
                         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                             {THEME_PRESETS.map((p) => (
@@ -414,7 +414,7 @@ function CustomThemeDialog({
 
                     <Group
                         label="Colour"
-                        hint="ten palettes, then twelve pickers - colours only; type, radius and space survive"
+                        hint={`${THEME_PALETTES.length} palettes, then ${FIELDS.length} pickers - colours only; type, radius and space survive`}
                     >
                         <div className="flex flex-wrap items-center gap-1.5">
                             {THEME_PALETTES.map((p) => (

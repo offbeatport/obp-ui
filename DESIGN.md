@@ -7,8 +7,8 @@ API), **PicSuper** (a consumer one-screen utility) and the microsaas portfolio -
 contrast, or how a variant gets added. Hence three tiers: know which one you are standing in
 before you type.
 
-**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all six theme
-presets (and the ten palettes their colour axis draws from).
+**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all eight theme
+presets (and the seventeen palettes their colour axis draws from).
 
 ## 1. Shared law - binding on every product
 
@@ -34,19 +34,29 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 3. **Both themes work.** Dark is a real product mode (`.dark` on `<html>`; a nested `.light`
    interrupts it, which is what makes a scoped preview possible). A component that has only been
    looked at in one mode is not finished.
-4. **Contrast floors**, measured across the ten palettes in `src/lib/palette.ts`, both modes.
-   A palette is declared with `makePalette({ light: { primary, accent, accentForeground },
-   dark: { primary, accentForeground } })` - five hexes. The eight neutrals, both
-   `primaryForeground`s, `shadowTint` and the dark `accent` wash are derived from the primary's
-   hue against a shared lightness ladder, so they cannot drift between palettes. `tint: 0` gives a
-   pure achromatic set (Graphite). Paper stays a hand-written literal: it is the authored theme and
-   its warm neutrals and 3.55:1 primary are deliberate exceptions the generator must not reproduce.
-   - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light). It is the lightest ink the kit
-     ships; it still has to pass AA.
-   - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes) -
+4. **Contrast floors**, measured across the seventeen palettes in `src/lib/palette.ts`, both modes.
+   There are two ways to declare one, and the floors are the same for both.
+   `makePalette({ light: { primary, accent, accentForeground }, dark: { primary,
+   accentForeground } })` takes five hexes: the eight neutrals, both `primaryForeground`s,
+   `shadowTint` and the dark `accent` wash are derived from the primary's hue against a shared
+   lightness ladder, so they cannot drift between palettes. `tint: 0` gives a pure achromatic set
+   (Graphite). Nine palettes are generated this way, and a new hue should be too.
+   `brandPalette({ light: {…eleven}, dark: {…ten} })` is the escape hatch for a palette whose
+   neutrals are the point - a page that must be `#000000` and not the ladder's `#0b0b0b`, or
+   GitHub's blue-grey greys. It derives only `primaryForeground`, `shadowTint` and the dark wash.
+   Reach for it when you are *quoting* a real product's surfaces, not when you want a new hue.
+   Paper stays a hand-written literal below both: it is the authored theme and its warm neutrals
+   and 3.55:1 primary are deliberate exceptions neither helper must reproduce.
+   - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light; 4.73 over the brand literals). It
+     is the lightest ink the kit ships; it still has to pass AA.
+   - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes, 4.64
+     over the seven brand ones) -
      because `--primary` is the prose-link colour (`markdown.tsx`) and the focus ring at least as
      often as it is a button fill, so it has to work as *text*. Paper, the authored theme, is the
-     one exception at 3.55:1; inherit its warmth, not that number.
+     one exception at 3.55:1; inherit its warmth, not that number. This is also the floor a quoted
+     brand hue usually fails: X's `#1d9bf0` is 2.84:1 on white and Supabase's `#3ecf8e` is worse,
+     so the brand palettes keep the real hue in dark mode - where the page is near-black and it
+     clears 7:1 - and darken it for light. A logo colour is not a link colour.
    - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 5.67 on
      the ink `palette.ts` writes; warning reaches 11.3:1), from the matching `-foreground` token
      and never `#fff` - dark inverts these hues, so white lands at 1.7-3.3:1 on them (warning the
@@ -88,13 +98,19 @@ redeclaring token **values** in its own `tokens.css` after the import - `:root {
 #0c736f; --radius: 0.5rem }` and the same again under `.dark` - never by editing a component.
 What is yours to set:
 
-- **Theme preset.** The six in `src/lib/theme-preset.ts` bundle all four axes below at once, and
+- **Theme preset.** The eight in `src/lib/theme-preset.ts` bundle all four axes below at once, and
   `<ThemePicker />` swaps them at runtime. "Theme" there means the **preset**; `Theme` in
   `src/lib/theme.ts` means `light | dark`, the **mode**. Presets are the cheapest way to vary the
-  look, and the default applies by *removing* every override so it cannot drift.
-- **Palette.** The ten in `src/lib/palette.ts` are the colour axis: achromatic surfaces, brand
-  at 90% of the sRGB ceiling solved against 4.5:1 on the page. Ship one, ship the picker, or write
-  your own values - a new one has to clear the floors in §1.
+  look, and the default applies by *removing* every override so it cannot drift. Paper is the
+  authored one; the other seven quote a product whose surfaces are widely known - Vercel, Linear,
+  GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather
+  than a fresh argument about hexes. They are readings of those interfaces in this kit's
+  vocabulary, corrected to §1's floors; they are not those products' design systems, and nothing
+  in the kit is branded.
+- **Palette.** The seventeen in `src/lib/palette.ts` are the colour axis: achromatic surfaces,
+  brand at 90% of the sRGB ceiling solved against 4.5:1 on the page for the nine generated ones,
+  and quoted surfaces for the seven brand literals. Ship one, ship the picker, or write your own
+  values - a new one has to clear the floors in §1.
 - **Fonts.** Nothing in the kit hardcodes a family: `base.css` reads `var(--font-sans)` and
   `var(--font-display)`, and that is the only place a family is named. Swap all four, or skip
   `fonts.css` and take the system stack. A preset's type axis is exactly this override - but it

@@ -16,8 +16,12 @@ export {
     rgbToHsv,
 } from "./lib/color";
 export {
+    type BrandColors,
+    brandPalette,
+    type BrandSpec,
     DEFAULT_PALETTE_ID,
     makePalette,
+    type NeutralSlots,
     type PaletteSpec,
     THEME_PALETTES,
     type ThemePalette,

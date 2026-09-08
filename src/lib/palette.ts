@@ -26,7 +26,7 @@ import { hexToHsv, hsvToHex } from "./color";
 
 type Ladder = Record<keyof NeutralSlots, readonly [number, number]>;
 
-type NeutralSlots = Pick<
+export type NeutralSlots = Pick<
     ThemePaletteColors,
     | "background"
     | "card"
@@ -76,6 +76,42 @@ function neutrals(hue: number, ladder: Ladder, tint: number): NeutralSlots {
         out[key] = hsvToHex({ h: hue, s: s * tint, v });
     }
     return out;
+}
+
+export type BrandColors = NeutralSlots & {
+    primary: string;
+    accent: string;
+    accentForeground: string;
+};
+
+export type BrandSpec = {
+    id: string;
+    name: string;
+    note: string;
+    light: BrandColors;
+    dark: Omit<BrandColors, "accent"> & { washAlpha?: number };
+};
+
+export function brandPalette(spec: BrandSpec): ThemePalette {
+    const { washAlpha = 0.18, ...dark } = spec.dark;
+    const darkPrimary = hexToHsv(dark.primary);
+    const fg = spec.light.foreground.replace("#", "");
+    const tone = [0, 1, 2].map((i) => Number.parseInt(fg.slice(i * 2, i * 2 + 2), 16) + 6);
+    return {
+        id: spec.id,
+        name: spec.name,
+        note: spec.note,
+        light: { ...spec.light, primaryForeground: "#ffffff", shadowTint: tone.join(", ") },
+        dark: {
+            ...dark,
+            primaryForeground: hsvToHex({
+                h: darkPrimary?.h ?? 0,
+                s: Math.min(darkPrimary?.s ?? 0, 0.0435),
+                v: 0.0941,
+            }),
+            accent: `rgba(${hexToRgbTriplet(dark.primary)}, ${washAlpha})`,
+        },
+    };
 }
 
 export function makePalette(spec: PaletteSpec): ThemePalette {
@@ -154,6 +190,218 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             accentForeground: "#f0a07e",
         },
     },
+    brandPalette({
+        id: "vercel",
+        name: "Vercel",
+        note: "Pure black on pure white, and the brand is the contrast itself. No hue anywhere, hairline borders, and a primary that is simply ink.",
+        light: {
+            background: "#fafafa",
+            card: "#ffffff",
+            secondary: "#f2f2f2",
+            borderSoft: "#ebebeb",
+            border: "#e0e0e0",
+            faint: "#6f6f6f",
+            mutedForeground: "#525252",
+            foreground: "#171717",
+            primary: "#000000",
+            accent: "#ededed",
+            accentForeground: "#171717",
+        },
+        dark: {
+            background: "#000000",
+            card: "#0a0a0a",
+            secondary: "#050505",
+            borderSoft: "#1a1a1a",
+            border: "#2e2e2e",
+            faint: "#8f8f8f",
+            mutedForeground: "#a1a1a1",
+            foreground: "#ededed",
+            primary: "#ffffff",
+            accentForeground: "#ededed",
+            washAlpha: 0.14,
+        },
+    }),
+    brandPalette({
+        id: "linear",
+        name: "Linear",
+        note: "Cold near-black under a soft indigo. The dark mode is the real one - #08090a page, #0f1011 panels - and the light mode is its inverse, not a different design.",
+        light: {
+            background: "#fcfcfd",
+            card: "#ffffff",
+            secondary: "#f4f5f8",
+            borderSoft: "#eceef3",
+            border: "#dfe1e8",
+            faint: "#6b7080",
+            mutedForeground: "#575d6b",
+            foreground: "#08090a",
+            primary: "#5058c4",
+            accent: "#e5e7fb",
+            accentForeground: "#414bab",
+        },
+        dark: {
+            background: "#08090a",
+            card: "#0f1011",
+            secondary: "#0b0c0d",
+            borderSoft: "#191a1c",
+            border: "#26282c",
+            faint: "#868b94",
+            mutedForeground: "#a4a9b3",
+            foreground: "#f7f8f8",
+            primary: "#7e87ff",
+            accentForeground: "#b8bdff",
+        },
+    }),
+    brandPalette({
+        id: "github",
+        name: "GitHub",
+        note: "Blue-grey institutional neutrals and a link blue that has to work as text before it works as a button. The densest of the set.",
+        light: {
+            background: "#f6f8fa",
+            card: "#ffffff",
+            secondary: "#eaeef2",
+            borderSoft: "#e4e9ee",
+            border: "#d1d9e0",
+            faint: "#6a737d",
+            mutedForeground: "#59636e",
+            foreground: "#1f2328",
+            primary: "#0969da",
+            accent: "#ddf4ff",
+            accentForeground: "#0550ae",
+        },
+        dark: {
+            background: "#0d1117",
+            card: "#151b23",
+            secondary: "#10141a",
+            borderSoft: "#21262d",
+            border: "#3d444d",
+            faint: "#868e99",
+            mutedForeground: "#9198a1",
+            foreground: "#f0f6fc",
+            primary: "#4493f8",
+            accentForeground: "#79c0ff",
+        },
+    }),
+    brandPalette({
+        id: "x",
+        name: "X",
+        note: "Black page, near-black cards, one sky blue doing every job. Light mode darkens that blue to 4.8:1 - the brand hue at 2.8:1 on white is a logo colour, not a link colour.",
+        light: {
+            background: "#f7f9f9",
+            card: "#ffffff",
+            secondary: "#eff3f4",
+            borderSoft: "#e9eef0",
+            border: "#cfd9de",
+            faint: "#66727d",
+            mutedForeground: "#536471",
+            foreground: "#0f1419",
+            primary: "#0b73b2",
+            accent: "#dcf0fb",
+            accentForeground: "#0b5c94",
+        },
+        dark: {
+            background: "#000000",
+            card: "#16181c",
+            secondary: "#0a0b0d",
+            borderSoft: "#202327",
+            border: "#2f3336",
+            faint: "#838b93",
+            mutedForeground: "#a2abb3",
+            foreground: "#e7e9ea",
+            primary: "#1d9bf0",
+            accentForeground: "#6cc0f7",
+        },
+    }),
+    brandPalette({
+        id: "hyperagent",
+        name: "Hyperagent",
+        note: "The agent-tool reading: a green-black terminal canvas and an acid lime signal. Light mode keeps the hue and drops it to moss so it can carry text.",
+        light: {
+            background: "#f6f7f3",
+            card: "#ffffff",
+            secondary: "#eceee6",
+            borderSoft: "#e4e7dd",
+            border: "#d5d9cb",
+            faint: "#6b7060",
+            mutedForeground: "#55594b",
+            foreground: "#14170f",
+            primary: "#4d7c0f",
+            accent: "#e2f0c8",
+            accentForeground: "#3b6109",
+        },
+        dark: {
+            background: "#060807",
+            card: "#0d100e",
+            secondary: "#090b0a",
+            borderSoft: "#171b18",
+            border: "#232823",
+            faint: "#838d80",
+            mutedForeground: "#a3ada0",
+            foreground: "#e8f0e6",
+            primary: "#a3e635",
+            accentForeground: "#bef264",
+            washAlpha: 0.16,
+        },
+    }),
+    brandPalette({
+        id: "supabase",
+        name: "Supabase",
+        note: "Achromatic greys with a single emerald. Dark is a soft #121212 rather than black, so the green is the only thing in the frame with a hue.",
+        light: {
+            background: "#fbfcfb",
+            card: "#ffffff",
+            secondary: "#f2f4f2",
+            borderSoft: "#e9ece9",
+            border: "#dcdfdc",
+            faint: "#6e756f",
+            mutedForeground: "#545a55",
+            foreground: "#171a18",
+            primary: "#0f7a52",
+            accent: "#cdf0e0",
+            accentForeground: "#0b5c3e",
+        },
+        dark: {
+            background: "#121212",
+            card: "#1c1c1c",
+            secondary: "#171717",
+            borderSoft: "#262626",
+            border: "#343434",
+            faint: "#8b8b8b",
+            mutedForeground: "#a8a8a8",
+            foreground: "#ededed",
+            primary: "#3ecf8e",
+            accentForeground: "#6ee7b7",
+        },
+    }),
+    brandPalette({
+        id: "stripe",
+        name: "Stripe",
+        note: "The marketing-site one: blue-tinted paper, navy ink and a violet primary. The only palette here whose light mode is the designed one.",
+        light: {
+            background: "#f6f9fc",
+            card: "#ffffff",
+            secondary: "#eaf0f6",
+            borderSoft: "#e3eaf2",
+            border: "#d6dfe9",
+            faint: "#5c7186",
+            mutedForeground: "#425466",
+            foreground: "#0a2540",
+            primary: "#5b52f0",
+            accent: "#e3e1ff",
+            accentForeground: "#4038c9",
+        },
+        dark: {
+            background: "#0b1020",
+            card: "#131a2f",
+            secondary: "#0e1426",
+            borderSoft: "#1c2440",
+            border: "#2a3352",
+            faint: "#8a94ad",
+            mutedForeground: "#a9b3c9",
+            foreground: "#eef1f8",
+            primary: "#9b8cff",
+            accentForeground: "#c3b9ff",
+        },
+    }),
     makePalette({
         id: "slate",
         name: "Slate",
