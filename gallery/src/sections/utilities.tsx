@@ -110,7 +110,7 @@ function PresetReadout() {
             items={[
                 {
                     name: "<ThemePicker />",
-                    note: "the control itself, drawn ONCE - in this page's header. A second live picker on the page would be a second thing claiming to be the current theme. Its editor is also where all six presets are compared in both modes at once.",
+                    note: "the control itself, drawn ONCE - in this page's header. A second live picker on the page would be a second thing claiming to be the current theme. Its editor is also where every preset is compared in both modes at once.",
                 },
                 {
                     name: "getThemePresetId()",
@@ -135,7 +135,7 @@ function PresetReadout() {
                 },
                 {
                     name: "THEME_PRESETS · THEME_PALETTES",
-                    note: "the six bundles, and the ten colour palettes they draw from.",
+                    note: "the preset bundles, and the colour palettes their colour axis draws from - the authored Paper, seven brand-literal palettes, and nine generated from a single hue.",
                     value: `${THEME_PRESETS.length} · ${THEME_PALETTES.length}`,
                 },
                 {
