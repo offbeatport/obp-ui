@@ -64,9 +64,14 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      mode's white-on-hue only runs 3.0-5.3:1, which is why the chip vocabulary is a soft fill plus
      status text (`bg-success-soft text-success`) and filled chips stay on the deeper hues.
 5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
-   are deliberately identical in every palette and every preset, and no product re-hues them. The *meanings* in the
+   are deliberately identical in every palette and every preset the kit ships. The *meanings* in the
    table are cslopslop's reading of them; a product with no approval queue maps its own meanings
    onto the same six tokens rather than inventing a seventh hue.
+   A product *can* re-hue them - `ThemePreset.status` carries a per-mode override, and the theme
+   builder edits them - but it is the last thing to reach for, not the first: two products that
+   disagree about what green means have broken the only vocabulary five apps share. If you do it,
+   you inherit the chip floor above (a filled label ≥ 5.65:1 in dark) and you own it in both modes.
+   The `-soft` fills follow automatically; they are `color-mix()` off the hue, not separate values.
 6. **Focus stays visible; motion has a stop.** Keep the `focus-visible:ring-ring/50` a primitive
    ships when you add a variant - never remove an outline without replacing it. Anything that
    loops or draws needs a `motion-reduce:` escape at the call site.
@@ -216,7 +221,9 @@ runtime alternative; it costs 5.5 kB gzip and flashes the default brand first, b
 `prePaintScript` restores light/dark but not preset tokens. Use it only for a live theme picker.
 
 **The six status hues are not in that list on purpose.** success, warning, info, approval, neutral
-and destructive are meaning, not brand, and stay constant across every product.
+and destructive are meaning, not brand, and stay constant across every product. If a product has
+a reason to move them anyway, they are twelve more variables in the same block - `--success` and
+`--success-foreground`, six pairs - and §1.5 is the condition for doing it.
 
 **The one thing to eyeball:** `--primary` is the link colour and the focus ring, not just a button
 fill, so a pale brand colour makes links unreadable. Take the brand's hue and adjust its lightness
