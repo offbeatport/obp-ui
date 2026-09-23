@@ -151,6 +151,21 @@ export const DEFAULT_SPACE_ID = "default";
 export const spaceStepFor = (id: string): SpaceStep | undefined =>
     SPACE_STEPS.find((s) => s.id === id);
 
+export const STATUS_KEYS = [
+    "success",
+    "warning",
+    "info",
+    "approval",
+    "neutral",
+    "destructive",
+] as const;
+
+export type StatusKey = (typeof STATUS_KEYS)[number];
+
+export type StatusColors = Partial<Record<StatusKey | `${StatusKey}Foreground`, string>>;
+
+export type ThemeStatus = { light?: StatusColors; dark?: StatusColors };
+
 export type ThemePreset = {
     id: string;
     name: string;
@@ -161,7 +176,11 @@ export type ThemePreset = {
     type: string;
     radius: string;
     space: string;
+    status?: ThemeStatus;
 };
+
+const statusVar = (key: string): string =>
+    key.endsWith("Foreground") ? `--${key.slice(0, -"Foreground".length)}-foreground` : `--${key}`;
 
 const bundle = (
     id: string,
@@ -354,6 +373,9 @@ export function themePresetStyle(
 ): Record<string, string> {
     const colors = preset[mode];
     const out: Record<string, string> = { ...STATUS[mode] };
+    for (const [key, value] of Object.entries(preset.status?.[mode] ?? {})) {
+        if (value) out[statusVar(key)] = value;
+    }
     for (const [key, cssVar] of VARS) {
         const value = colors[key];
         if (value) out[cssVar] = value;
@@ -427,6 +449,7 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
                 space: spaceStepFor(parsed.space ?? "")
                     ? (parsed.space as string)
                     : DEFAULT_SPACE_ID,
+                status: parsed.status,
             };
         } catch {
             return null;

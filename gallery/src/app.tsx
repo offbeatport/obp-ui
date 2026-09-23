@@ -11,6 +11,7 @@ import { PrimitivesSection } from "./sections/primitives";
 import { ShellSection } from "./sections/shell";
 import { TokensSection } from "./sections/tokens";
 import { UtilitiesSection } from "./sections/utilities";
+import { ThemeBuilderPage } from "./theme-builder";
 
 type SectionDef = {
     id: string;
@@ -117,7 +118,27 @@ function bandSpy(onTop: (id: string) => void) {
     };
 }
 
+const BUILDER_ROUTE = "#/theme";
+
+function useHash(): string {
+    const [hash, setHash] = useState(() =>
+        typeof window === "undefined" ? "" : window.location.hash,
+    );
+    useEffect(() => {
+        const sync = () => setHash(window.location.hash);
+        window.addEventListener("hashchange", sync);
+        return () => window.removeEventListener("hashchange", sync);
+    }, []);
+    return hash;
+}
+
 export function App() {
+    const hash = useHash();
+
+    return <UIProvider>{hash === BUILDER_ROUTE ? <ThemeBuilderPage /> : <Gallery />}</UIProvider>;
+}
+
+function Gallery() {
     const [active, setActive] = useState(SECTIONS[0].id);
     const [activeSpec, setActiveSpec] = useState<string | null>(null);
     const [subs, setSubs] = useState<Record<string, SubNavItem[]>>({});
@@ -169,7 +190,7 @@ export function App() {
     }, [currentSpec]);
 
     return (
-        <UIProvider>
+        <>
             <div className="min-h-screen bg-background text-foreground">
                 <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-secondary lg:flex">
                     <div className="px-5 pb-4 pt-6">
@@ -222,6 +243,12 @@ export function App() {
                                 every export, in both themes
                             </p>
                             <div className="ml-auto flex items-center gap-1">
+                                <a
+                                    href={BUILDER_ROUTE}
+                                    className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                >
+                                    Theme builder
+                                </a>
                                 <ThemePicker />
                                 <ThemeToggle />
                             </div>
@@ -245,6 +272,6 @@ export function App() {
                     </footer>
                 </div>
             </div>
-        </UIProvider>
+        </>
     );
 }
