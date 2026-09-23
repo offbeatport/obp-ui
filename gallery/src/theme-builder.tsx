@@ -542,6 +542,181 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
     );
 }
 
+type Source = { light: ThemePaletteColors; dark: ThemePaletteColors; palette: string };
+
+type Knobs = { hue: number; warmth: number; saturation: number; tint: number; contrast: number };
+
+const NEUTRAL_KNOBS: Knobs = { hue: 0, warmth: 0, saturation: 100, tint: 100, contrast: 0 };
+
+const isNeutral = (k: Knobs): boolean =>
+    k.hue === 0 && k.warmth === 0 && k.saturation === 100 && k.tint === 100 && k.contrast === 0;
+
+const KNOBS: {
+    key: keyof Knobs;
+    label: string;
+    hint: string;
+    min: number;
+    max: number;
+    unit: string;
+}[] = [
+    {
+        key: "hue",
+        label: "Hue",
+        min: -180,
+        max: 180,
+        unit: "°",
+        hint: "Rotates every colour together. Status hues stay put - they are meaning, not brand.",
+    },
+    {
+        key: "warmth",
+        label: "Warmth",
+        min: -60,
+        max: 60,
+        unit: "°",
+        hint: "Paper and ink only. Cool blue-grey through to warm cream, under an unmoved brand.",
+    },
+    {
+        key: "saturation",
+        label: "Saturation",
+        min: 0,
+        max: 200,
+        unit: "%",
+        hint: "Chroma everywhere. At 0 the whole theme goes achromatic.",
+    },
+    {
+        key: "tint",
+        label: "Tint",
+        min: 0,
+        max: 300,
+        unit: "%",
+        hint: "How much hue the surfaces carry. 0 is Graphite's pure grey under a coloured brand.",
+    },
+    {
+        key: "contrast",
+        label: "Contrast",
+        min: -30,
+        max: 30,
+        unit: "%",
+        hint: "Pushes ink and paper apart, or together. The brand is left where it was solved.",
+    },
+];
+
+const ROLES: Record<keyof ThemePaletteColors, "surface" | "ink" | "brand"> = {
+    background: "surface",
+    card: "surface",
+    secondary: "surface",
+    border: "surface",
+    borderSoft: "surface",
+    foreground: "ink",
+    mutedForeground: "ink",
+    faint: "ink",
+    primary: "brand",
+    primaryForeground: "brand",
+    accent: "brand",
+    accentForeground: "brand",
+    shadowTint: "ink",
+};
+
+const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
+
+function turn(color: string, role: "surface" | "ink" | "brand", mode: Mode, k: Knobs): string {
+    const rgba = color.match(/rgba?\(([^)]+)\)/)?.[1];
+    if (rgba) {
+        const parts = rgba.split(",").map((p) => Number.parseFloat(p));
+        const [r = 0, g = 0, b = 0, a = 1] = parts;
+        const turned = turn(rgbToHex({ r, g, b }), role, mode, k);
+        const back = hexToRgb(turned);
+        return back ? `rgba(${back.r}, ${back.g}, ${back.b}, ${a})` : color;
+    }
+    const hsv = hexToHsv(color);
+    if (!hsv) return color;
+
+    const neutral = role !== "brand";
+    const h = (hsv.h + k.hue + (neutral ? k.warmth : 0) + 720) % 360;
+    const s = clamp01(hsv.s * (k.saturation / 100) * (neutral ? k.tint / 100 : 1));
+    let v = hsv.v;
+    if (neutral && k.contrast !== 0) {
+        const push = k.contrast / 100;
+        const lift = (mode === "light") === (role === "surface");
+        v = clamp01(lift ? v + push * (1 - v) : v * (1 - push));
+    }
+    return hsvToHex({ h, s, v });
+}
+
+function solveOn(hex: string, over: string, floor: number, mode: Mode): string {
+    if (contrastRatio(hex, over) >= floor) return hex;
+    const hsv = hexToHsv(hex);
+    if (!hsv) return hex;
+    const dv = mode === "light" ? -0.02 : 0.02;
+    let { s, v } = hsv;
+    for (let i = 0; i < 120; i++) {
+        const candidate = hsvToHex({ h: hsv.h, s, v });
+        if (contrastRatio(candidate, over) >= floor) return candidate;
+        const nextV = clamp01(v + dv);
+        if (nextV !== v) {
+            v = nextV;
+            continue;
+        }
+        if (s <= 0) break;
+        s = Math.max(0, s - 0.03);
+    }
+    return hsvToHex({ h: hsv.h, s, v });
+}
+
+function turnAll(colors: ThemePaletteColors, mode: Mode, k: Knobs): ThemePaletteColors {
+    if (isNeutral(k)) return colors;
+    const out = { ...colors };
+    for (const key of Object.keys(ROLES) as (keyof ThemePaletteColors)[]) {
+        const value = out[key];
+        if (key === "shadowTint" || typeof value !== "string") continue;
+        out[key] = turn(value, ROLES[key], mode, k);
+    }
+    out.primary = solveOn(out.primary, out.background, 4.5, mode);
+    out.faint = solveOn(out.faint, out.card, 4.55, mode);
+    return out;
+}
+
+function Knob({
+    knob,
+    value,
+    onChange,
+}: {
+    knob: (typeof KNOBS)[number];
+    value: number;
+    onChange: (n: number) => void;
+}) {
+    const neutral = NEUTRAL_KNOBS[knob.key];
+    return (
+        <div>
+            <div className="flex items-baseline justify-between gap-2">
+                <span className="text-sm font-medium">{knob.label}</span>
+                <span
+                    className={cn(
+                        "font-mono text-sm tabular-nums",
+                        value === neutral ? "text-faint" : "text-primary",
+                    )}
+                >
+                    {value > neutral ? "+" : ""}
+                    {value - neutral}
+                    {knob.unit}
+                </span>
+            </div>
+            <input
+                type="range"
+                aria-label={knob.label}
+                min={knob.min}
+                max={knob.max}
+                value={value}
+                onChange={(e) => onChange(Number(e.target.value))}
+                onDoubleClick={() => onChange(neutral)}
+                className="mt-1 h-5 w-full cursor-pointer"
+                style={{ accentColor: "var(--primary)" }}
+            />
+            <p className="text-sm leading-snug text-faint">{knob.hint}</p>
+        </div>
+    );
+}
+
 export function ThemeBuilderPage() {
     const [draft, setDraft] = useState<ThemePreset>(
         () =>
@@ -556,6 +731,12 @@ export function ThemeBuilderPage() {
     const [touched, setTouched] = useState(false);
     const [brand, setBrand] = useState("#7c3aed");
     const [copied, setCopied] = useState<string | null>(null);
+    const [base, setBase] = useState<Source>(() => ({
+        light: draft.light,
+        dark: draft.dark,
+        palette: draft.palette,
+    }));
+    const [knobs, setKnobs] = useState<Knobs>(NEUTRAL_KNOBS);
 
     const edit = (next: ThemePreset | ((d: ThemePreset) => ThemePreset)) => {
         setTouched(true);
@@ -576,15 +757,29 @@ export function ThemeBuilderPage() {
         });
     };
 
-    const setPalette = (p: ThemePalette) =>
-        edit((d) => ({ ...d, palette: p.id, light: p.light, dark: p.dark }));
-
-    const setColor = (mode: Mode, key: keyof ThemePaletteColors, hex: string) =>
+    const applySource = (source: Source, k: Knobs, axes?: Partial<ThemePreset>) => {
+        setBase(source);
+        setKnobs(k);
         edit((d) => ({
             ...d,
-            palette: CUSTOM_PRESET_ID,
-            [mode]: { ...d[mode], [key]: hex },
+            ...axes,
+            palette: isNeutral(k) ? source.palette : CUSTOM_PRESET_ID,
+            light: turnAll(source.light, "light", k),
+            dark: turnAll(source.dark, "dark", k),
         }));
+    };
+
+    const setPalette = (p: ThemePalette) =>
+        applySource({ light: p.light, dark: p.dark, palette: p.id }, knobs);
+
+    const setColor = (mode: Mode, key: keyof ThemePaletteColors, hex: string) => {
+        const next = {
+            light: mode === "light" ? { ...draft.light, [key]: hex } : draft.light,
+            dark: mode === "dark" ? { ...draft.dark, [key]: hex } : draft.dark,
+            palette: CUSTOM_PRESET_ID,
+        };
+        applySource(next, NEUTRAL_KNOBS);
+    };
 
     const setStatus = (mode: Mode, key: keyof StatusColors, hex: string) =>
         edit((d) => ({
@@ -612,8 +807,14 @@ export function ThemeBuilderPage() {
 
     const fromBrand = () => {
         const solved = solvePalette(brand);
-        if (solved) setPalette(solved);
+        if (solved)
+            applySource(
+                { light: solved.light, dark: solved.dark, palette: CUSTOM_PRESET_ID },
+                knobs,
+            );
     };
+
+    const setKnob = (key: keyof Knobs, n: number) => applySource(base, { ...knobs, [key]: n });
 
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -678,7 +879,18 @@ export function ThemeBuilderPage() {
                             value={presetMatch?.id ?? ""}
                             onValueChange={(id) => {
                                 const p = themePresetFor(String(id));
-                                if (p) edit({ ...p, id: CUSTOM_PRESET_ID });
+                                if (!p) return;
+                                applySource(
+                                    { light: p.light, dark: p.dark, palette: p.palette },
+                                    knobs,
+                                    {
+                                        name: p.name,
+                                        note: p.note,
+                                        type: p.type,
+                                        radius: p.radius,
+                                        space: p.space,
+                                    },
+                                );
                             }}
                         >
                             <SelectTrigger className="h-auto w-full py-2">
@@ -748,6 +960,32 @@ export function ThemeBuilderPage() {
                                 ))}
                             </SelectContent>
                         </Select>
+                    </Rail>
+
+                    <Rail
+                        label="Tune"
+                        hint="Moves the whole palette at once, from whatever it is now. Nothing here can desynchronise light from dark."
+                    >
+                        <div className="space-y-3">
+                            {KNOBS.map((knob) => (
+                                <Knob
+                                    key={knob.key}
+                                    knob={knob}
+                                    value={knobs[knob.key]}
+                                    onChange={(n) => setKnob(knob.key, n)}
+                                />
+                            ))}
+                            {!isNeutral(knobs) && (
+                                <button
+                                    type="button"
+                                    onClick={() => applySource(base, NEUTRAL_KNOBS)}
+                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                >
+                                    Back to {themePaletteFor(base.palette)?.name ?? "the colours"}{" "}
+                                    untouched
+                                </button>
+                            )}
+                        </div>
                     </Rail>
 
                     <Rail label="Type" hint="The app must import the stylesheet that loads these.">
