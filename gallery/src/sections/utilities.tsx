@@ -127,7 +127,7 @@ function PresetReadout() {
                 },
                 {
                     name: "setThemePresetId / setCustomTheme / getCustomTheme",
-                    note: "select a preset, or persist the user's own four axes through the same storage seam. Applying the default REMOVES every managed property rather than restating it, so the authored theme cannot drift.",
+                    note: "select a preset, or persist the user's own four axes through the same storage seam. Applying the default REMOVES every managed property rather than restating it, so the default theme cannot drift.",
                 },
                 {
                     name: "themePresetStyle / themePresetSwatch",
@@ -135,7 +135,7 @@ function PresetReadout() {
                 },
                 {
                     name: "THEME_PRESETS · THEME_PALETTES",
-                    note: "the preset bundles, and the colour palettes their colour axis draws from - the authored Paper, seven brand-literal palettes, and nine generated from a single hue.",
+                    note: "the preset bundles, and the colour palettes their colour axis draws from - the default Slate and eight more generated from a single hue, the authored Paper, and seven brand-literal palettes.",
                     value: `${THEME_PRESETS.length} · ${THEME_PALETTES.length}`,
                 },
                 {

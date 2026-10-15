@@ -204,8 +204,10 @@ function Gallery() {
                                 <a
                                     href={`#${s.id}`}
                                     className={cn(
-                                        "block px-2 pb-1 pt-5 text-sm font-bold uppercase tracking-wide",
-                                        active === s.id ? "text-foreground" : "text-faint/70",
+                                        "block px-2 pb-1 pt-5 text-sm font-medium text-muted-foreground",
+                                        active === s.id
+                                            ? "text-foreground"
+                                            : "text-muted-foreground",
                                     )}
                                 >
                                     {s.label}
@@ -234,11 +236,9 @@ function Gallery() {
                 </aside>
 
                 <div className="lg:pl-64">
-                    <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
+                    <header className="sticky top-0 z-20 border-b border-border bg-background">
                         <div className="mx-auto flex max-w-6xl items-center gap-4 px-8 py-4">
-                            <h1 className="font-display text-xl font-light tracking-tight">
-                                obp-ui
-                            </h1>
+                            <h1 className="font-display text-lg font-semibold">obp-ui</h1>
                             <p className="hidden text-sm text-muted-foreground md:block">
                                 every export, in both themes
                             </p>

@@ -87,7 +87,7 @@ export function ChatSection() {
                                 avatar={<GradientMark name="Ledgerly" size={38} />}
                                 title="Ledgerly"
                                 badge={
-                                    <span className="inline-flex flex-none items-center gap-1.5 font-mono text-sm font-bold uppercase tracking-[0.05em] text-muted-foreground">
+                                    <span className="inline-flex flex-none items-center gap-1.5 font-mono text-sm text-muted-foreground">
                                         <span
                                             aria-hidden="true"
                                             className="size-1.5 rounded-full bg-success"
@@ -139,7 +139,7 @@ export function ChatSection() {
                             <ChatComposer
                                 variant="dock"
                                 placeholder="What should this company do next?"
-                                textareaClassName="font-display text-2xl font-light"
+                                textareaClassName="text-lg"
                                 onSend={(text) => setThreadMsgs((m) => reply(text, m))}
                             />
                         }

@@ -152,11 +152,9 @@ export function ShellSection() {
                     >
                         <div className="space-y-5 p-8">
                             <div className="flex items-center gap-3">
-                                <h4 className="font-display text-2xl font-light tracking-tight">
-                                    Portfolio
-                                </h4>
+                                <h4 className="font-display text-2xl font-semibold">Portfolio</h4>
                                 <Badge variant="info">4 companies</Badge>
-                                <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 font-mono text-sm uppercase tracking-wide text-success">
+                                <span className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-success/40 px-1.5 font-mono text-sm text-success">
                                     <span
                                         aria-hidden="true"
                                         className="size-1.5 rounded-full bg-current"

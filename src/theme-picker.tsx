@@ -230,7 +230,7 @@ function Group({ label, hint, children }: { label: string; hint: string; childre
     return (
         <section className="space-y-2">
             <div className="flex flex-wrap items-baseline gap-x-2">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.12em]">{label}</h3>
+                <h3 className="text-sm font-semibold">{label}</h3>
                 <p className="text-sm text-muted-foreground">{hint}</p>
             </div>
             {children}
@@ -284,7 +284,7 @@ function MiniPreview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
             className={cn("block rounded-lg border border-border bg-background p-2", mode)}
             style={themePresetStyle(preset, mode) as React.CSSProperties}
         >
-            <span className="block rounded-xl border border-border bg-card p-2 shadow-e1">
+            <span className="block rounded-xl border border-border bg-card p-2">
                 <span className="flex items-baseline justify-between gap-1">
                     <span className="font-display text-base text-foreground">Aa</span>
                     <span className="font-mono text-sm text-faint">{mode}</span>
@@ -549,8 +549,8 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
             className={cn("rounded-lg border border-border bg-background p-4", mode)}
             style={themePresetStyle(preset, mode) as React.CSSProperties}
         >
-            <div className="rounded-xl border border-border bg-card p-5 shadow-e1">
-                <p className="font-display text-xl text-foreground">Live preview</p>
+            <div className="rounded-xl border border-border bg-card p-4">
+                <p className="font-display text-lg font-semibold text-foreground">Live preview</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                     Muted ink on paper. <span className="text-faint">Faint ink.</span>
                 </p>
@@ -561,19 +561,19 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
                     mono · {spaceStepFor(preset.space)?.note ?? preset.space}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="flex h-9 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground">
+                    <span className="flex h-8 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground">
                         Primary
                     </span>
-                    <span className="flex h-9 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground">
+                    <span className="flex h-8 items-center rounded-md bg-accent px-3 text-sm font-medium text-accent-foreground">
                         Accent
                     </span>
-                    <span className="flex h-9 items-center rounded-lg border border-input px-4 text-sm">
+                    <span className="flex h-8 items-center rounded-md border border-input px-3 text-sm">
                         Outline
                     </span>
-                    <span className="flex h-9 items-center rounded-lg bg-success-soft px-4 text-sm text-success">
+                    <span className="flex h-8 items-center rounded-md bg-success-soft px-3 text-sm text-success">
                         Success
                     </span>
-                    <span className="flex h-9 items-center rounded-lg bg-destructive-soft px-4 text-sm text-destructive">
+                    <span className="flex h-8 items-center rounded-md bg-destructive-soft px-3 text-sm text-destructive">
                         Blocked
                     </span>
                 </div>

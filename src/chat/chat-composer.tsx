@@ -14,7 +14,7 @@ const PANEL_SEND =
 
 const DOCK_SHELL = "px-5 pb-10 pt-2";
 const DOCK_FIELD =
-    "relative rounded-2xl border bg-card shadow-e1 transition focus-within:ring-2 focus-within:ring-primary/40";
+    "relative rounded-lg border bg-card focus-within:border-ring focus-within:ring-1 focus-within:ring-ring";
 const DOCK_TEXTAREA =
     "block max-h-48 min-h-14 w-full resize-none rounded-xl bg-transparent px-5 py-4 pr-14 leading-snug tracking-tight outline-none placeholder:text-muted-foreground/45";
 const DOCK_SEND =

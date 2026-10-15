@@ -15,8 +15,7 @@ import type { LogLineData } from "./log-line";
 function SonarDot() {
     return (
         <span aria-hidden="true" className="relative inline-flex size-2 flex-none">
-            <span className="absolute inset-0 animate-ping rounded-full bg-success opacity-75" />
-            <span className="relative size-2 rounded-full bg-success shadow-[0_0_6px_var(--success)]" />
+            <span className="relative size-2 rounded-full bg-success" />
         </span>
     );
 }
@@ -208,7 +207,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                 onClick={() => setOpen(true)}
                 title="Open agent console (Ctrl+`)"
                 className={cn(
-                    "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-sm font-semibold tracking-[0.04em] text-muted-foreground shadow-[0_-3px_16px_rgba(0,0,0,0.16)] transition-[transform,color] duration-[140ms] hover:-translate-y-0.5 hover:text-foreground",
+                    "fixed right-[30px] bottom-0 z-[88] flex items-center gap-2 rounded-t-[10px] border border-b-0 border-border bg-card px-3.5 pt-[7px] pb-[9px] font-mono text-sm font-medium text-muted-foreground hover:text-foreground",
                     "after:absolute after:-left-px after:-right-px after:top-[calc(100%-1px)] after:h-2 after:border-x after:border-border after:bg-card after:content-['']",
                     open && "hidden",
                     "[html.console-tab-off_&]:hidden",
@@ -225,7 +224,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                 inert={!open}
                 style={heightPx ? { height: `${heightPx}px` } : undefined}
                 className={cn(
-                    "fixed inset-x-0 bottom-0 z-[92] flex h-[70vh] flex-col border-t border-border bg-card text-foreground shadow-[0_-18px_50px_rgba(0,0,0,0.28)] transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.1,1)]",
+                    "fixed inset-x-0 bottom-0 z-[92] flex h-[70vh] flex-col border-t border-border bg-card text-foreground transition-transform duration-150 ease-out motion-reduce:transition-none",
                     open ? "translate-y-0" : "translate-y-[101%]",
                 )}
             >

@@ -50,7 +50,7 @@ export function NavItem({
                 <Icon className="size-4" />
             </span>
             {!collapsed && <span className="flex-1 truncate">{label}</span>}
-            {!collapsed && locked && <Lock className="size-3.5 flex-none text-faint/60" />}
+            {!collapsed && locked && <Lock className="size-3.5 flex-none text-faint" />}
         </>
     );
     const cls = cn(

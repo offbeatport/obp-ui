@@ -17,7 +17,7 @@ export function TabNav({ tabs, className }: { tabs: TabNavItem[]; className?: st
                         key={t.href}
                         href={t.href}
                         className={cn(
-                            "-mb-px border-b-2 px-3.5 py-2 text-sm font-medium",
+                            "-mb-px border-b-2 px-3 py-1.5 text-sm font-medium",
                             active
                                 ? "border-primary text-foreground"
                                 : "border-transparent text-muted-foreground hover:text-foreground",

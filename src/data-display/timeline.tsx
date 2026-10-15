@@ -48,7 +48,7 @@ export function TimelineDot({ color, pulse, icon: Icon, children, className }: T
             <span
                 className={cn(
                     "grid size-[23px] place-items-center rounded-full",
-                    pulse && "animate-pulse",
+                    pulse && "animate-pulse motion-reduce:animate-none",
                     className,
                 )}
                 style={{

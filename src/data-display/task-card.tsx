@@ -31,7 +31,7 @@ export function TaskCard({
     return (
         <div
             className={cn(
-                "min-w-0 flex-1 rounded-xl border bg-card px-4 py-3 shadow-e1 transition-colors",
+                "min-w-0 flex-1 rounded-lg border bg-card px-3 py-2.5",
                 gated ? "border-transparent" : "border-border",
                 className,
             )}
@@ -42,24 +42,20 @@ export function TaskCard({
             }
         >
             <div className="flex items-center gap-2">
-                {n !== undefined && (
-                    <span className="font-mono text-sm font-bold text-faint">#{n}</span>
-                )}
+                {n !== undefined && <span className="font-mono text-sm text-faint">#{n}</span>}
                 <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
                     {title}
                 </span>
                 {chip !== undefined && <TaskStateChip color={accent}>{chip}</TaskStateChip>}
             </div>
-            {sub !== undefined && (
-                <p className="mt-1 text-sm leading-[1.45] text-muted-foreground">{sub}</p>
-            )}
+            {sub !== undefined && <p className="mt-1 text-sm text-muted-foreground">{sub}</p>}
             {meta !== undefined && (
-                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm text-faint">
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm text-faint">
                     {meta}
                 </div>
             )}
             {progress}
-            {actions !== undefined && <div className="mt-3 flex gap-2">{actions}</div>}
+            {actions !== undefined && <div className="mt-2.5 flex gap-2">{actions}</div>}
         </div>
     );
 }
@@ -74,13 +70,13 @@ export function TaskStateChip({ children, color, className }: TaskStateChipProps
     return (
         <span
             className={cn(
-                "flex-none rounded-full px-2 py-0.5 font-mono text-sm font-bold uppercase tracking-wide",
+                "flex-none rounded-md border border-current/40 px-1.5 text-sm leading-5 font-medium",
                 className,
             )}
             style={
                 color
                     ? {
-                          background: `color-mix(in srgb, ${color} 15%, transparent)`,
+                          borderColor: `color-mix(in srgb, ${color} 40%, transparent)`,
                           color,
                       }
                     : undefined

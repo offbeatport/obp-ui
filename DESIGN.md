@@ -7,8 +7,15 @@ API), **PicSuper** (a consumer one-screen utility) and the microsaas portfolio -
 contrast, or how a variant gets added. Hence three tiers: know which one you are standing in
 before you type.
 
-**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all eight theme
+**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all nine theme
 presets (and the seventeen palettes their colour axis draws from).
+
+**The default is Instrument**: a working tool, not a landing page - an IDE, a cloud console, a
+trading screen. Neutral grey surfaces, one classic blue, Public Sans over Intel One Mono, 13px
+controls, 4px corners, hairline borders where other kits put shadows. It exists to stop the five
+products reading as generated: the shadcn defaults (soft halos, `py-6` cards, pill badges, 12px+
+corners), Space Grotesk headings, uppercase mono eyebrows, glass blur and gradient tiles are the
+first things a reader recognises as "an AI made this", and §1.9 bans them.
 
 ## 1. Shared law - binding on every product
 
@@ -57,12 +64,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      brand hue usually fails: X's `#1d9bf0` is 2.84:1 on white and Supabase's `#3ecf8e` is worse,
      so the brand palettes keep the real hue in dark mode - where the page is near-black and it
      clears 7:1 - and darken it for light. A logo colour is not a link colour.
-   - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 5.67 on
-     the ink `palette.ts` writes; warning reaches 11.3:1), from the matching `-foreground` token
-     and never `#fff` - dark inverts these hues, so white lands at 1.7-3.3:1 on them (warning the
-     worst at 1.67:1) and 1.17:1 on Graphite dark's `--primary`. Light
-     mode's white-on-hue only runs 3.0-5.3:1, which is why the chip vocabulary is a soft fill plus
-     status text (`bg-success-soft text-success`) and filled chips stay on the deeper hues.
+   - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 6.78 on
+     the `#101216` ink; warning reaches 8.73:1), from the matching `-foreground` token and never
+     `#fff` - dark inverts these hues, so white lands at 2.2-2.8:1 on them (warning the worst at
+     2.15:1) and 1.17:1 on Graphite dark's `--primary`. Light mode's white-on-hue runs 6.0-7.7:1.
+   - Status **text** ≥ 4.5:1 on the card, the page and its own `-soft` fill, both modes (min 4.87,
+     warning on its soft fill in light). This is why the light hues are the deep 700-ish steps and
+     not the raw 600s: `#16a34a` green is 3.3:1 on white and fails as a label.
 5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
    are deliberately identical in every palette and every preset the kit ships. The *meanings* in the
    table are cslopslop's reading of them; a product with no approval queue maps its own meanings
@@ -72,16 +80,49 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    disagree about what green means have broken the only vocabulary five apps share. If you do it,
    you inherit the chip floor above (a filled label ≥ 5.65:1 in dark) and you own it in both modes.
    The `-soft` fills follow automatically; they are `color-mix()` off the hue, not separate values.
-6. **Focus stays visible; motion has a stop.** Keep the `focus-visible:ring-ring/50` a primitive
+6. **Focus stays visible; motion has a stop.** Two solid rings, no translucent halo: a field
+   (input, textarea, select trigger) takes `focus-visible:border-ring focus-visible:ring-1
+   focus-visible:ring-ring`, everything you press takes `focus-visible:ring-2 focus-visible:ring-ring
+   focus-visible:ring-offset-1 focus-visible:ring-offset-background`. Keep the one a primitive
    ships when you add a variant - never remove an outline without replacing it. Anything that
    loops or draws needs a `motion-reduce:` escape at the call site.
-7. **Type comes off the scale.** Six steps - `--type-sm` … `--type-3xl`, mapped onto `text-sm` …
-   `text-3xl` - and `--type-sm` (14px) is the **floor**. No `text-xs` (Tailwind still ships the
-   utility; nothing here may use it), no `text-[Npx]`. The literals the scale replaced ran to 15
-   different sizes between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's
-   length. A micro-caption is `font-mono` + uppercase + tracking + `text-faint`, not smaller type.
+7. **Type comes off the scale.** Seven steps - `--type-sm` … `--type-4xl`, mapped onto `text-sm` …
+   `text-4xl` - and `--type-sm` (13px) is the **floor**: every control, menu row, table cell and
+   label. Body is `text-base` (14px, 1.5). No `text-xs` (Tailwind still ships the utility; nothing
+   here may use it), no `text-[Npx]`. The literals the scale replaced ran to 15 different sizes
+   between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's length. A caption
+   is `text-sm text-muted-foreground` in sentence case - not uppercase, not tracked, not mono, not
+   smaller. Inputs are `text-lg md:text-sm` so iOS does not zoom on focus.
 8. **No app in the package.** No router imports, no server functions, no DB, no product domain
    data. Content is a prop. See "What is NOT in here" in `README.md`.
+9. **No decoration.** Every rule here is a token or a primitive default already; this is the list
+   to hold app code to.
+   - **Fonts by role.** Anything a person can click, edit, hover or read as data is `font-sans`
+     (Public Sans) or `font-mono` (Intel One Mono). Mono is for IDs, hashes, timestamps, code and
+     keys - not whole tables, not headings, not labels. Number columns get `tabular-nums`
+     (`<table>`, `<time>`, `<data>`, `<output>` and `TableCell` already have it). `font-serif`
+     is for long-form reading only.
+   - **Density.** Controls are 32px (`h-8`), menu rows 24-28px, cell padding 8-16px (`px-3
+     py-1.5` in `TableCell`, `p-4` in `Card`). No section padding above `py-12` inside an app, no
+     `gap-6`+ between related controls, no centred hero inside a tool.
+   - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
+     is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
+     lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
+   - **No gradients, blur or glass.** No `bg-gradient-*`, no `backdrop-blur`, no `filter: blur()`
+     in motion, no translucent `bg-*/80` over content. A gradient is legal only where it *is* the
+     data: the colour picker's hue and saturation fields.
+   - **Corners are small and square-ish.** 2px controls, 4px popovers, 6px cards (`--radius:
+     0.25rem`). `rounded-full` only for things that are round by convention: switch, radio, a
+     status dot, an avatar. No pill badges, no pill tabs.
+   - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
+     fills are for callouts and selected rows.
+   - **Icons are functional, never decorative.** Keep the conventional glyphs - close, chevron,
+     tick, search, external-link, drag handle. No icon beside every heading, nav item or stat, no
+     icon in a tinted circle, no emoji in UI. An icon-only button carries an `aria-label` and a
+     tooltip; anything that is not a universal symbol gets a text label instead.
+   - **Motion is feedback, not show.** Overlays fade in ≤150ms; no zoom-in, no bounce, no sliding
+     pill, no hover lift, no `transition-all`. Buttons and links change state instantly
+     (`base.css` zeroes their transitions).
 
 ### Status language (use the matching Badge variant / token - don't improvise)
 | meaning | token / `<Badge variant>` | colour |
@@ -94,7 +135,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 | blocked / killed / error | `destructive` | red |
 | autopilot / brand emphasis | `accent` / `default` | brand |
 
-Each has a `-soft` fill token for chips and callouts.
+Each has a `-soft` fill token for callouts and selected rows. Badges are outlined, not filled.
 
 ## 2. Shared vocabulary - vary it freely
 
@@ -103,11 +144,14 @@ redeclaring token **values** in its own `tokens.css` after the import - `:root {
 #0c736f; --radius: 0.5rem }` and the same again under `.dark` - never by editing a component.
 What is yours to set:
 
-- **Theme preset.** The eight in `src/lib/theme-preset.ts` bundle all four axes below at once, and
+- **Theme preset.** The nine in `src/lib/theme-preset.ts` bundle all four axes below at once, and
   `<ThemePicker />` swaps them at runtime. "Theme" there means the **preset**; `Theme` in
   `src/lib/theme.ts` means `light | dark`, the **mode**. Presets are the cheapest way to vary the
-  look, and the default applies by *removing* every override so it cannot drift. Paper is the
-  authored one; the other seven quote a product whose surfaces are widely known - Vercel, Linear,
+  look, and the default applies by *removing* every override so it cannot drift. Instrument is the
+  default and is exactly `tokens.css` (Slate palette, Instrument type, Sharp radius, Default
+  space). Paper is the original authored theme - cream, terracotta, Inter over Space Grotesk, 12px
+  corners - kept as an opt-in preset that needs `obp-ui/fonts-alt.css`. The other seven quote a
+  product whose surfaces are widely known - Vercel, Linear,
   GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather
   than a fresh argument about hexes. They are readings of those interfaces in this kit's
   vocabulary, corrected to §1's floors; they are not those products' design systems, and nothing
@@ -117,22 +161,28 @@ What is yours to set:
   and quoted surfaces for the seven brand literals. Ship one, ship the picker, or write your own
   values - a new one has to clear the floors in §1.
 - **Fonts.** Nothing in the kit hardcodes a family: `base.css` reads `var(--font-sans)` and
-  `var(--font-display)`, and that is the only place a family is named. Swap all four, or skip
-  `fonts.css` and take the system stack. A preset's type axis is exactly this override - but it
+  `var(--font-display)`, and that is the only place a family is named. `obp-ui/fonts.css` loads
+  the default three (Public Sans, Intel One Mono, Spectral), self-hosted from `@fontsource` - never
+  a Google Fonts `@import`, which a Tauri CSP blocks and which leaks every page view to a third
+  party. `obp-ui/fonts-alt.css` loads every other family a preset names (Inter, Space Grotesk,
+  JetBrains Mono, Geist, Geist Mono, IBM Plex Sans, Fraunces, Instrument Serif). `--font-display`
+  defaults to `var(--font-sans)`: headings are Public Sans at a heavier weight, not a second
+  face. Swap all four, or skip `fonts.css` and take the system stack. A preset's type axis is exactly this override - but it
   only names families, so the app still has to import the stylesheet that loads them
   (`obp-ui/fonts.css`, `obp-ui/fonts-alt.css`) or the token falls silently through to `system-ui`.
-- **Type sizes.** The six `--type-*` values and their `-leading` pairs. Redefine them and the
+- **Type sizes.** The seven `--type-*` values and their `-leading` pairs. Redefine them and the
   whole kit resizes: the 167 type classes in `src` name a *step* (`text-sm`, `text-lg`), never a
-  value. What you cannot vary is the number of steps or their nature - six static rem values, no
+  value. What you cannot vary is the number of steps or their nature - seven static rem values, no
   fluid step. See the archetype section.
-- **Radius and elevation.** `--radius`, `--radius-card`, `--shadow-e1/e2`. (35 literal
+- **Radius and elevation.** `--radius`, `--radius-card`, `--shadow-e1/e2`. A product may give
+  `--shadow-e1` a value back; the primitives still never reach for Tailwind's `shadow-sm`. (35 literal
   `rounded-[Npx]` survive, 21 of them in `canvas/` - verbatim prototype ports that do *not* follow
   `--radius`. Debt, not licence.)
 - **Density and measure.** `--measure` (the 42rem editorial column), `--spacing`, and which
   primitives you mount at all. `--spacing` is the whole density axis on its own: Tailwind v4
   compiles every spacing utility as `calc(var(--spacing) * N)`, so one value moves control
-  heights, gaps, padding and icon boxes together. Measured on a real `<Button>` (`h-9`):
-  `0.22rem` → 31.67px, `0.25rem` → 36.00px, `0.28rem` → 40.32px.
+  heights, gaps, padding and icon boxes together. Measured on a real `<Button>` (`h-8`):
+  `0.22rem` → 28.16px, `0.25rem` → 32.00px, `0.28rem` → 35.84px.
 
 BuyDiff shows the range: same primitives, same fonts, same radius, a teal brand at 5.33:1 on the
 page - and it does not read as cslopslop. WebInvoke shows the other half: it kept the terracotta
@@ -157,8 +207,8 @@ peer, and an app without a board must not pay for it.)
 
 ## Archetypes - the next axis, not the next fork
 
-The kit encodes exactly **one** archetype today: an operator console - dense rails, mono
-micro-captions, calm motion, one editorial column. Two more are wanted, a customer-facing
+The kit encodes exactly **one** archetype today: an operator console - dense rails, hairline
+borders, sentence-case captions, near-zero motion, one editorial column. Two more are wanted, a customer-facing
 marketing surface and a data-intensive one. The rule that stops that becoming three forks:
 
 - **One kit, one token layer.** An archetype is a **preset over scales** - type, density, radius,
@@ -227,7 +277,8 @@ a reason to move them anyway, they are twelve more variables in the same block -
 
 **The one thing to eyeball:** `--primary` is the link colour and the focus ring, not just a button
 fill, so a pale brand colour makes links unreadable. Take the brand's hue and adjust its lightness
-until it reads as text - that is what Paper does, terracotta `#c8643c` light and `#e0794c` dark.
+until it reads as text - that is what the default does, `#1c6be0` light (4.52:1 on the page) and
+`#8eb7f8` dark, and what Paper does with terracotta `#c8643c` / `#e0794c`.
 The logo file keeps the exact brand colour; it answers to no contrast floor.
 
 ## Two operational notes that used to live in the README

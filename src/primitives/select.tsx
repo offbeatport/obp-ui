@@ -120,23 +120,22 @@ function SelectValue({
 const selectTriggerVariants = cva(
     [
         "group/select-trigger flex items-center justify-between gap-2 rounded-md border border-input",
-        "bg-transparent text-sm whitespace-nowrap shadow-xs outline-none",
-        "transition-[color,background-color,border-color,box-shadow]",
-        "hover:bg-accent/40 dark:bg-input/30 dark:hover:bg-input/50",
-        "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        "data-popup-open:border-ring data-popup-open:ring-[3px] data-popup-open:ring-ring/50",
+        "bg-card text-sm whitespace-nowrap outline-none",
+        "hover:bg-secondary",
+        "focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
+        "data-popup-open:border-ring data-popup-open:ring-1 data-popup-open:ring-ring",
         "data-[placeholder]:text-muted-foreground",
         "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+        "aria-invalid:border-destructive aria-invalid:ring-destructive",
         "*:data-[slot=select-value]:flex *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:overflow-hidden *:data-[slot=select-value]:text-ellipsis *:data-[slot=select-value]:whitespace-nowrap",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
     ],
     {
         variants: {
             size: {
-                sm: "h-8 px-2.5",
-                default: "h-9 px-3",
-                lg: "h-10 px-4",
+                sm: "h-7 px-2",
+                default: "h-8 px-2.5",
+                lg: "h-9 px-3",
             },
         },
         defaultVariants: {
@@ -162,11 +161,7 @@ function SelectTrigger({
     const content = (
         <>
             {inner}
-            <SelectPrimitive.Icon
-                render={
-                    <ChevronDownIcon className="size-4 opacity-60 transition-transform duration-200 data-popup-open:rotate-180 motion-reduce:transition-none" />
-                }
-            >
+            <SelectPrimitive.Icon render={<ChevronDownIcon className="size-4 opacity-60" />}>
                 {null}
             </SelectPrimitive.Icon>
         </>
@@ -237,7 +232,7 @@ function SelectContent({
             <SelectScrollUpButton />
             <SelectPrimitive.List
                 className={cn(
-                    "max-h-(--available-height) min-h-0 overflow-x-hidden overflow-y-auto p-1.5",
+                    "max-h-(--available-height) min-h-0 overflow-x-hidden overflow-y-auto p-1",
                     position === "popper" && "scroll-my-1",
                 )}
             >
@@ -268,11 +263,10 @@ function SelectContent({
                 <SelectPrimitive.Popup
                     data-slot="select-content"
                     className={cn(
-                        "relative flex flex-col origin-(--transform-origin) overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-e2",
-                        "transition-[scale,opacity] duration-150",
-                        "data-starting-style:scale-95 data-starting-style:opacity-0",
-                        "data-ending-style:scale-95 data-ending-style:opacity-0",
-                        "data-[side=none]:data-starting-style:scale-100 data-[side=none]:data-starting-style:opacity-100 data-[side=none]:data-starting-style:transition-none data-[side=none]:data-ending-style:transition-none",
+                        "relative flex flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-e2",
+                        "transition-opacity duration-100",
+                        "data-starting-style:opacity-0 data-ending-style:opacity-0",
+                        "data-[side=none]:data-starting-style:opacity-100 data-[side=none]:data-starting-style:transition-none data-[side=none]:data-ending-style:transition-none",
                         position === "popper"
                             ? "min-w-[max(8rem,var(--anchor-width))]"
                             : "min-w-[8rem]",
@@ -359,7 +353,7 @@ function SelectItem({
                 {description ? (
                     <span
                         data-slot="select-item-description"
-                        className="mt-0.5 text-sm leading-snug text-muted-foreground group-data-highlighted/select-item:text-accent-foreground/80"
+                        className="text-sm text-muted-foreground group-data-highlighted/select-item:text-accent-foreground/80"
                     >
                         {description}
                     </span>
@@ -372,11 +366,11 @@ function SelectItem({
             data-slot="select-item"
             label={textValue ?? label}
             className={cn(
-                "group/select-item relative flex w-full cursor-default items-center gap-2 rounded-md py-1.5 pr-8 pl-2 text-sm outline-hidden select-none",
+                "group/select-item relative flex w-full cursor-default items-center gap-2 rounded-sm py-1 pr-8 pl-2 text-sm outline-hidden select-none",
                 "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
                 "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                 "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
-                description ? "items-start py-2" : null,
+                description ? "items-start py-1.5" : null,
                 className,
             )}
             render={render}

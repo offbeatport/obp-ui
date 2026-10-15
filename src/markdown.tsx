@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const CODE_INLINE = "rounded bg-black/[0.06] px-1 py-px font-mono text-sm dark:bg-white/10";
+const CODE_INLINE = "rounded-sm border border-border-soft bg-secondary px-1 font-mono text-sm";
 
 function inline(text: string, kp: string): ReactNode[] {
     const out: ReactNode[] = [];
@@ -91,7 +91,7 @@ export function Markdown({ content, className }: { content: string; className?: 
             blocks.push(
                 <pre
                     key={key}
-                    className="overflow-x-auto rounded-lg bg-black/[0.06] p-3 font-mono text-sm leading-relaxed dark:bg-white/10"
+                    className="overflow-x-auto rounded-md border border-border bg-secondary p-3 font-mono text-sm"
                 >
                     <code>{code.join("\n")}</code>
                 </pre>,

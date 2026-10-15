@@ -7,8 +7,8 @@ import { cn } from "../lib/cn";
 export type EmptyStateVariant = "rail" | "panel" | "plate";
 
 const FRAME: Record<EmptyStateVariant, string> = {
-    rail: "mx-1 mt-1.5 mb-0.5 rounded-md border-2 border-dashed bg-secondary px-3.5 py-4 text-center",
-    panel: "mx-auto mt-10 max-w-md rounded-2xl border border-dashed border-border bg-secondary/40 p-10 text-center",
+    rail: "mx-1 mt-1.5 mb-0.5 rounded-md border border-dashed px-3 py-3 text-center",
+    panel: "mx-auto mt-6 max-w-md rounded-lg border border-dashed border-border p-6 text-center",
     plate: "grid h-[min(560px,64vh)] place-items-center rounded-xl border border-border bg-card",
 };
 
@@ -19,21 +19,21 @@ const INNER: Record<EmptyStateVariant, string> = {
 };
 
 const ICON: Record<EmptyStateVariant, string> = {
-    rail: "mx-auto size-6 text-faint",
-    panel: "mx-auto size-8 text-faint",
-    plate: "mx-auto size-8 text-faint",
+    rail: "mx-auto mb-1 size-4 text-faint",
+    panel: "mx-auto mb-2 size-5 text-faint",
+    plate: "mx-auto mb-2 size-5 text-faint",
 };
 
 const TITLE: Record<EmptyStateVariant, string> = {
-    rail: "text-sm font-[650] text-foreground",
-    panel: "font-display text-lg",
-    plate: "mt-3 font-display text-lg",
+    rail: "text-sm font-semibold text-foreground",
+    panel: "text-base font-semibold",
+    plate: "text-base font-semibold",
 };
 
 const BODY: Record<EmptyStateVariant, string> = {
-    rail: "m-2 text-sm leading-[1.45] text-faint",
-    panel: "text-sm text-muted-foreground",
-    plate: "mt-1 font-mono text-sm text-muted-foreground",
+    rail: "mt-1 text-sm text-muted-foreground",
+    panel: "mt-1 text-sm text-muted-foreground",
+    plate: "mt-1 text-sm text-muted-foreground",
 };
 
 export type EmptyStateProps = {

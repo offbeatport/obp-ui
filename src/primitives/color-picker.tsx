@@ -89,7 +89,7 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
                 aria-valuenow={Math.round(hsv.v * 100)}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                className="relative h-40 w-full cursor-crosshair touch-none rounded-md border border-border outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40"
+                className="relative h-40 w-full cursor-crosshair touch-none rounded-md border border-border outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{
                     background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hueHex})`,
                 }}
@@ -128,7 +128,7 @@ export function ColorPicker({ value, onChange, swatches, className }: ColorPicke
                 aria-valuenow={Math.round(hsv.h)}
                 aria-valuemin={0}
                 aria-valuemax={360}
-                className="relative h-4 w-full cursor-ew-resize touch-none rounded-full border border-border outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40"
+                className="relative h-4 w-full cursor-ew-resize touch-none rounded-full border border-border outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{
                     background:
                         "linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)",
@@ -254,7 +254,7 @@ export function ColorField({
                 <button
                     type="button"
                     className={cn(
-                        "flex w-full items-center gap-2.5 rounded-md border border-border bg-card px-2.5 py-2 text-left text-sm hover:bg-accent/40 focus-visible:ring-[3px] focus-visible:ring-ring/40 focus-visible:outline-none",
+                        "flex w-full items-center gap-2.5 rounded-md border border-border bg-card px-2.5 py-2 text-left text-sm hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                         className,
                     )}
                     {...props}
