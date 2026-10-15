@@ -1,3 +1,4 @@
+import { XIcon } from "lucide-react";
 import {
     Badge,
     Button,
@@ -29,10 +30,12 @@ import {
     contrastRatio,
     getCustomTheme,
     getThemePreset,
+    getThemePresetId,
     hexToHsv,
     hexToRgb,
     hsvToHex,
     makePalette,
+    onThemePresetChange,
     radiusStepFor,
     rgbToHex,
     setCustomTheme,
@@ -355,7 +358,7 @@ function StatusRow({
     onHue: (hex: string) => void;
     onInk: (hex: string) => void;
 }) {
-    const soft = mix(hue, page, mode === "dark" ? 0.2 : 0.14);
+    const soft = mix(hue, page, mode === "dark" ? 0.2 : 0.08);
     const filled = contrastRatio(ink, hue);
     const onSoft = contrastRatio(hue, soft);
     const filledPass = mode === "dark" ? filled >= CHIP_FLOOR : true;
@@ -366,13 +369,13 @@ function StatusRow({
                 <span className="text-sm font-medium capitalize">{name}</span>
                 <span className="flex items-center gap-1.5">
                     <span
-                        className="rounded-full px-2 py-0.5 text-sm font-semibold"
-                        style={{ background: soft, color: hue }}
+                        className="rounded-md border px-1.5 text-sm leading-5 font-medium"
+                        style={{ background: soft, color: hue, borderColor: hue }}
                     >
                         soft
                     </span>
                     <span
-                        className="rounded-full px-2 py-0.5 text-sm font-semibold"
+                        className="rounded-md px-1.5 text-sm leading-5 font-medium"
                         style={{ background: hue, color: ink }}
                     >
                         filled
@@ -392,7 +395,7 @@ function StatusRow({
                     </span>
                 </span>
             </div>
-            <div className="grid gap-1.5 sm:grid-cols-2">
+            <div className="grid gap-1.5 @md:grid-cols-2">
                 <div className="flex items-center gap-1.5">
                     <ColorField label="Hue" value={hue} onChange={onHue} />
                     <HexInput value={hue} onChange={onHue} />
@@ -436,7 +439,7 @@ function HexInput({ value, onChange }: { value: string; onChange: (hex: string) 
 
 function Floors({ colors }: { colors: ThemePaletteColors }) {
     return (
-        <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
+        <dl className="grid gap-x-4 gap-y-1 @md:grid-cols-2">
             {CHECKS.map((c) => {
                 const r = ratioOf(colors, c.fg, c.bg);
                 const pass = r >= c.floor;
@@ -468,12 +471,17 @@ function Floors({ colors }: { colors: ThemePaletteColors }) {
 function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
     return (
         <div
-            className={cn("rounded-xl border border-border bg-background p-5", mode)}
+            className={cn(
+                "rounded-xl border border-border bg-background p-4 text-foreground",
+                mode,
+            )}
             style={themePresetStyle(preset, mode) as CSSProperties}
         >
-            <div className="rounded-xl border border-border bg-card p-5 shadow-e1">
+            <div className="rounded-xl border border-border bg-card p-4 shadow-e1">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-display text-2xl text-foreground">{preset.name}</p>
+                    <p className="font-display text-xl font-semibold text-foreground">
+                        {preset.name}
+                    </p>
                     <span className="text-sm text-muted-foreground">{mode}</span>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -511,7 +519,7 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
                     <Badge variant="outline">Outline</Badge>
                 </div>
 
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <div className="mt-4 grid gap-2 @md:grid-cols-2">
                     <div className="space-y-1.5">
                         <Label htmlFor={`field-${mode}`}>Field</Label>
                         <Input id={`field-${mode}`} defaultValue="value" />
@@ -525,7 +533,7 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
                 <Separator className="my-4" />
 
                 <div className="rounded-lg bg-secondary p-3">
-                    <p className="font-mono text-sm text-faint">RAIL · SECONDARY SURFACE</p>
+                    <p className="text-sm text-muted-foreground">Rail, on the secondary surface</p>
                     <p className="mt-1 text-sm text-foreground">
                         The sidebar fill, under the same ink.
                     </p>
@@ -714,16 +722,15 @@ function Knob({
     );
 }
 
-export function ThemeBuilderPage() {
-    const [draft, setDraft] = useState<ThemePreset>(
-        () =>
-            getCustomTheme() ?? {
-                ...getThemePreset(),
-                id: CUSTOM_PRESET_ID,
-                name: "Custom",
-                note: "Your theme.",
-            },
-    );
+const seedDraft = (): ThemePreset => ({
+    ...getThemePreset(),
+    id: CUSTOM_PRESET_ID,
+    name: "Custom",
+    note: "Your theme.",
+});
+
+export function ThemeBuilder({ onClose }: { onClose: () => void }) {
+    const [draft, setDraft] = useState<ThemePreset>(() => getCustomTheme() ?? seedDraft());
     const [live, setLive] = useState(true);
     const [touched, setTouched] = useState(false);
     const [brand, setBrand] = useState("#7c3aed");
@@ -743,6 +750,19 @@ export function ThemeBuilderPage() {
     useEffect(() => {
         if (touched && live) setCustomTheme(draft);
     }, [draft, live, touched]);
+
+    useEffect(
+        () =>
+            onThemePresetChange(() => {
+                if (getThemePresetId() === CUSTOM_PRESET_ID) return;
+                const next = seedDraft();
+                setDraft(next);
+                setBase({ light: next.light, dark: next.dark, palette: next.palette });
+                setKnobs(NEUTRAL_KNOBS);
+                setTouched(false);
+            }),
+        [],
+    );
 
     const css = buildCss(draft);
     const json = JSON.stringify({ ...draft, id: CUSTOM_PRESET_ID }, null, 4);
@@ -814,49 +834,49 @@ export function ThemeBuilderPage() {
     const setKnob = (key: keyof Knobs, n: number) => applySource(base, { ...knobs, [key]: n });
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            <header className="sticky top-0 z-20 border-b border-border bg-background">
-                <div className="flex flex-wrap items-center gap-3 px-6 py-3 lg:px-8">
-                    <a
-                        href="#tokens"
-                        className="font-mono text-sm text-muted-foreground hover:text-foreground"
-                    >
-                        ← gallery
-                    </a>
-                    <h1 className="font-display text-lg font-semibold">Theme builder</h1>
+        <div className="@container flex h-full flex-col bg-background text-foreground">
+            <header className="flex-none space-y-2 border-b border-border px-5 py-3">
+                <div className="flex items-center gap-2">
+                    <h2 className="font-display text-lg font-semibold">Theme builder</h2>
                     <Input
                         aria-label="Theme name"
                         value={draft.name}
                         onChange={(e) => edit((d) => ({ ...d, name: e.target.value }))}
-                        className="h-8 w-40"
+                        className="h-7 w-36"
                     />
-                    <div className="ml-auto flex flex-wrap items-center gap-2">
-                        <Label htmlFor="live" className="text-sm text-muted-foreground">
-                            Apply to this page
-                        </Label>
-                        <Switch id="live" checked={live} onCheckedChange={setLive} />
-                        <Button size="sm" variant="outline" onClick={() => copy("css", css)}>
-                            {copied === "css" ? "Copied" : "Copy CSS"}
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => copy("json", json)}>
-                            {copied === "json" ? "Copied" : "Copy JSON"}
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                                setThemePresetId(DEFAULT_PRESET_ID);
-                                setLive(false);
-                            }}
-                        >
-                            Reset page
-                        </Button>
-                    </div>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label="Close theme builder"
+                        className="ml-auto"
+                        onClick={onClose}
+                    >
+                        <XIcon />
+                    </Button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Switch id="live" checked={live} onCheckedChange={setLive} />
+                    <Label htmlFor="live" className="mr-auto text-sm text-muted-foreground">
+                        Apply to the app
+                    </Label>
+                    <Button size="sm" variant="outline" onClick={() => copy("css", css)}>
+                        {copied === "css" ? "Copied" : "Copy CSS"}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => copy("json", json)}>
+                        {copied === "json" ? "Copied" : "Copy JSON"}
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setThemePresetId(DEFAULT_PRESET_ID)}
+                    >
+                        Reset
+                    </Button>
                 </div>
             </header>
 
-            <div className="grid gap-8 px-6 py-8 lg:grid-cols-[20rem_minmax(0,1fr)] lg:px-8">
-                <aside className="space-y-7 lg:sticky lg:top-20 lg:self-start">
+            <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-5 py-6 @5xl:grid-cols-[20rem_minmax(0,1fr)]">
+                <aside className="space-y-7 @5xl:sticky @5xl:top-0 @5xl:self-start">
                     <Rail
                         label="One colour"
                         hint="Solved against the §1 floors, then the ladder does the rest."
@@ -1083,7 +1103,7 @@ export function ThemeBuilderPage() {
                 </aside>
 
                 <main className="min-w-0 space-y-8">
-                    <div className="grid gap-6 xl:grid-cols-2">
+                    <div className="grid gap-6 @5xl:grid-cols-2">
                         {MODES.map((mode) => (
                             <section key={mode} className="min-w-0 space-y-4">
                                 <Preview preset={draft} mode={mode} />
@@ -1100,7 +1120,7 @@ export function ThemeBuilderPage() {
                                     <h3 className="text-sm font-semibold">
                                         {mode} colours - every one, by hand
                                     </h3>
-                                    <div className="grid gap-2 sm:grid-cols-2">
+                                    <div className="grid gap-2 @xl:grid-cols-2">
                                         {FIELDS.map((f) => (
                                             <div key={f.key}>
                                                 <div className="flex items-center gap-1.5">
@@ -1147,7 +1167,7 @@ export function ThemeBuilderPage() {
                                         <p className="text-sm text-muted-foreground">
                                             {mode === "dark"
                                                 ? "A filled label must clear 5.65:1 (§1)."
-                                                : "Light chips are a soft fill plus status text, so that is the pair to watch."}
+                                                : "Status text has to clear 4.5:1 on its own soft fill (§1)."}
                                         </p>
                                     </div>
                                     <div className="grid gap-2">

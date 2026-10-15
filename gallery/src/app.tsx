@@ -1,4 +1,4 @@
-import { ThemePicker, ThemeToggle, UIProvider, cn } from "obp-ui";
+import { Button, ThemePicker, ThemeToggle, UIProvider, cn } from "obp-ui";
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Section } from "./kit";
 import { CanvasSection } from "./sections/canvas";
@@ -11,7 +11,7 @@ import { PrimitivesSection } from "./sections/primitives";
 import { ShellSection } from "./sections/shell";
 import { TokensSection } from "./sections/tokens";
 import { UtilitiesSection } from "./sections/utilities";
-import { ThemeBuilderPage } from "./theme-builder";
+import { ThemeBuilder } from "./theme-builder";
 
 type SectionDef = {
     id: string;
@@ -120,25 +120,34 @@ function bandSpy(onTop: (id: string) => void) {
 
 const BUILDER_ROUTE = "#/theme";
 
-function useHash(): string {
-    const [hash, setHash] = useState(() =>
-        typeof window === "undefined" ? "" : window.location.hash,
-    );
+const onBuilderRoute = () =>
+    typeof window !== "undefined" && window.location.hash === BUILDER_ROUTE;
+
+function useBuilderOpen(): [boolean, (open: boolean) => void] {
+    const [open, setOpen] = useState(onBuilderRoute);
     useEffect(() => {
-        const sync = () => setHash(window.location.hash);
+        const sync = () => {
+            if (!onBuilderRoute()) return;
+            setOpen(true);
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+        };
+        sync();
         window.addEventListener("hashchange", sync);
         return () => window.removeEventListener("hashchange", sync);
     }, []);
-    return hash;
+    return [open, setOpen];
 }
 
 export function App() {
-    const hash = useHash();
-
-    return <UIProvider>{hash === BUILDER_ROUTE ? <ThemeBuilderPage /> : <Gallery />}</UIProvider>;
+    return (
+        <UIProvider>
+            <Gallery />
+        </UIProvider>
+    );
 }
 
 function Gallery() {
+    const [builderOpen, setBuilderOpen] = useBuilderOpen();
     const [active, setActive] = useState(SECTIONS[0].id);
     const [activeSpec, setActiveSpec] = useState<string | null>(null);
     const [subs, setSubs] = useState<Record<string, SubNavItem[]>>({});
@@ -235,7 +244,7 @@ function Gallery() {
                     </div>
                 </aside>
 
-                <div className="lg:pl-64">
+                <div className={cn("lg:pl-64", builderOpen && "lg:pr-[28rem]")}>
                     <header className="sticky top-0 z-20 border-b border-border bg-background">
                         <div className="mx-auto flex max-w-6xl items-center gap-4 px-8 py-4">
                             <h1 className="font-display text-lg font-semibold">obp-ui</h1>
@@ -243,12 +252,15 @@ function Gallery() {
                                 every export, in both themes
                             </p>
                             <div className="ml-auto flex items-center gap-1">
-                                <a
-                                    href={BUILDER_ROUTE}
-                                    className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    aria-pressed={builderOpen}
+                                    className={cn(builderOpen && "bg-secondary")}
+                                    onClick={() => setBuilderOpen(!builderOpen)}
                                 >
                                     Theme builder
-                                </a>
+                                </Button>
                                 <ThemePicker />
                                 <ThemeToggle />
                             </div>
@@ -271,6 +283,15 @@ function Gallery() {
                         </p>
                     </footer>
                 </div>
+
+                {builderOpen && (
+                    <aside
+                        aria-label="Theme builder"
+                        className="fixed inset-0 z-[90] border-border lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[28rem] lg:border-l"
+                    >
+                        <ThemeBuilder onClose={() => setBuilderOpen(false)} />
+                    </aside>
+                )}
             </div>
         </>
     );
