@@ -39,6 +39,7 @@
         "./canvas.css": "./src/styles/canvas.css",
         "./fonts.css": "./src/styles/fonts.css",
         "./fonts-alt.css": "./src/styles/fonts-alt.css",
+        "./fonts-iosevka.css": "./src/styles/fonts-iosevka.css",
         "./desktop.css": "./src/styles/desktop.css",
         "./package.json": "./package.json"
     },

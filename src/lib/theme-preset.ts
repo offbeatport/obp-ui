@@ -24,6 +24,8 @@ export type TypePairing = {
 const SYS = "system-ui, sans-serif";
 const PUBLIC = `"Public Sans Variable", "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
 const INTEL_MONO = `"Intel One Mono Variable", "Intel One Mono", ui-monospace, Menlo, Consolas, monospace`;
+const IOSEVKA_AILE = `"Iosevka Aile", ${SYS}`;
+const IOSEVKA = `"Iosevka", ui-monospace, Menlo, Consolas, monospace`;
 const INTER = `"Inter Variable", "Inter", ${SYS}`;
 const GEIST = `"Geist Variable", "Geist", ${SYS}`;
 const PLEX = `"IBM Plex Sans Variable", "IBM Plex Sans", ${SYS}`;
@@ -44,6 +46,15 @@ export const TYPE_PAIRINGS: TypePairing[] = [
         sans: PUBLIC,
         display: PUBLIC,
         mono: INTEL_MONO,
+        serif: SPECTRAL,
+    },
+    {
+        id: "iosevka",
+        name: "Iosevka",
+        note: "Iosevka Aile for body and headings over Iosevka itself (v34.9.0): one narrow, engineered family in every role, so prose and data share letterforms and a wide table stays narrow. Needs obp-ui/fonts-alt.css or obp-ui/fonts-iosevka.css.",
+        sans: IOSEVKA_AILE,
+        display: IOSEVKA_AILE,
+        mono: IOSEVKA,
         serif: SPECTRAL,
     },
     {

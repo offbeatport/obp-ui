@@ -165,7 +165,14 @@ What is yours to set:
   the default three (Public Sans, Intel One Mono, Spectral), self-hosted from `@fontsource` - never
   a Google Fonts `@import`, which a Tauri CSP blocks and which leaks every page view to a third
   party. `obp-ui/fonts-alt.css` loads every other family a preset names (Inter, Space Grotesk,
-  JetBrains Mono, Geist, Geist Mono, IBM Plex Sans, Fraunces, Instrument Serif). `--font-display`
+  JetBrains Mono, Geist, Geist Mono, IBM Plex Sans, Fraunces, Instrument Serif, Iosevka).
+  Iosevka is the one family not on `@fontsource`, whose copy is stuck at v22: v34.9.0 is
+  vendored in `src/styles/fonts/iosevka/` (OFL, `LICENSE.md` beside it), Iosevka and Iosevka
+  Aile at 400/500/600/700 plus 400/700 italic, subset to latin, latin-ext and a symbols range
+  (arrows, box drawing, technical glyphs) with only the standard OpenType features kept, so
+  ligatures and `tnum` survive. `obp-ui/fonts-iosevka.css` loads it alone. To move it to a new
+  release, unzip `PkgWebFont-Unhinted-Iosevka` and `-IosevkaAile` into one folder and run
+  `python3 scripts/subset-iosevka.py <folder>/WOFF2-Unhinted` (needs `fonttools` and `brotli`). `--font-display`
   defaults to `var(--font-sans)`: headings are Public Sans at a heavier weight, not a second
   face. Swap all four, or skip `fonts.css` and take the system stack. A preset's type axis is exactly this override - but it
   only names families, so the app still has to import the stylesheet that loads them
