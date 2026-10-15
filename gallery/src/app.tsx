@@ -287,7 +287,7 @@ function Gallery() {
                 {builderOpen && (
                     <aside
                         aria-label="Theme builder"
-                        className="fixed inset-0 z-[90] border-border lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[28rem] lg:border-l"
+                        className="fixed inset-0 z-40 border-border lg:inset-y-0 lg:left-auto lg:right-0 lg:w-[28rem] lg:border-l"
                     >
                         <ThemeBuilder onClose={() => setBuilderOpen(false)} />
                     </aside>

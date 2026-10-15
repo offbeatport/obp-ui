@@ -875,7 +875,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                 </div>
             </header>
 
-            <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-5 py-6 @5xl:grid-cols-[20rem_minmax(0,1fr)]">
+            <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-5 pt-6 pb-16 @5xl:grid-cols-[20rem_minmax(0,1fr)]">
                 <aside className="space-y-7 @5xl:sticky @5xl:top-0 @5xl:self-start">
                     <Rail
                         label="One colour"
