@@ -9,6 +9,7 @@ export {
     GradientMark,
     type GradientMarkBranding,
     gradientPairFor,
+    markColorFor,
 } from "./gradient-mark";
 export { TaskCard, type TaskCardProps, TaskStateChip, type TaskStateChipProps } from "./task-card";
 export {

@@ -10,12 +10,7 @@ export type ExpandableRowListProps = {
 
 export function ExpandableRowList({ children, className }: ExpandableRowListProps) {
     return (
-        <div
-            className={cn(
-                "border border-border rounded-[12px] bg-card shadow-e1 overflow-hidden",
-                className,
-            )}
-        >
+        <div className={cn("overflow-hidden rounded-lg border border-border bg-card", className)}>
             {children}
         </div>
     );
@@ -55,7 +50,7 @@ export function ExpandableRow({
             className={cn(
                 "relative border-t border-border-soft first:border-t-0",
                 selected &&
-                    "bg-primary/[0.05] before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-primary before:content-['']",
+                    "bg-accent/50 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary before:content-['']",
                 className,
             )}
             data-row={dataRow}
@@ -63,7 +58,7 @@ export function ExpandableRow({
             <div className="flex items-stretch">
                 <button
                     className={cn(
-                        "flex-1 min-w-0 flex items-center gap-[13px] py-[14px] px-[16px] bg-transparent border-none cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-primary focus-visible:[outline-offset:-2px]",
+                        "flex min-w-0 flex-1 cursor-pointer items-center gap-3 border-none bg-transparent px-3 py-2 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
                         open ? "bg-secondary" : selected ? "bg-transparent" : "hover:bg-secondary",
                     )}
                     type="button"
@@ -75,8 +70,8 @@ export function ExpandableRow({
                 </button>
                 <button
                     className={cn(
-                        "shrink-0 w-[54px] self-stretch border-none bg-transparent grid place-items-center cursor-pointer hover:bg-secondary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
-                        open ? "rotate-180 text-primary" : "text-faint",
+                        "grid w-10 shrink-0 cursor-pointer place-items-center self-stretch border-none bg-transparent hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
+                        open ? "rotate-180 text-foreground" : "text-faint",
                     )}
                     type="button"
                     aria-label={toggleLabel}
@@ -84,11 +79,11 @@ export function ExpandableRow({
                     onClick={onToggle}
                 >
                     <svg
-                        className="w-[21px] h-[21px]"
+                        className="size-4"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="2.2"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         aria-hidden="true"
@@ -98,10 +93,10 @@ export function ExpandableRow({
                 </button>
             </div>
             {panel !== undefined && (
-                <div className={cn(open ? "block" : "hidden", "pt-[2px] px-[16px] pb-[16px]")}>
+                <div className={cn(open ? "block" : "hidden", "border-t border-border-soft")}>
                     <div
                         className={cn(
-                            "font-sans w-full bg-card text-foreground py-[15px] px-[17px] flex flex-col gap-[12px]",
+                            "flex w-full flex-col gap-3 bg-card p-3 font-sans text-foreground",
                             panelClassName,
                         )}
                     >

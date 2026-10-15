@@ -241,11 +241,12 @@ const BRAND_PALETTES = new Set([
 ]);
 
 const PALETTE_GROUPS: { label: string; has: (p: ThemePalette) => boolean }[] = [
-    { label: "Authored", has: (p) => p.id === DEFAULT_PALETTE_ID },
+    { label: "Default", has: (p) => p.id === DEFAULT_PALETTE_ID },
+    { label: "Authored", has: (p) => p.id === "paper" },
     { label: "Quoted from a product", has: (p) => BRAND_PALETTES.has(p.id) },
     {
         label: "Generated from one hue",
-        has: (p) => p.id !== DEFAULT_PALETTE_ID && !BRAND_PALETTES.has(p.id),
+        has: (p) => p.id !== DEFAULT_PALETTE_ID && p.id !== "paper" && !BRAND_PALETTES.has(p.id),
     },
 ];
 
@@ -312,9 +313,7 @@ function Option({
 function Rail({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
     return (
         <section className="space-y-2">
-            <h2 className="font-mono text-sm font-semibold uppercase tracking-[0.12em] text-foreground">
-                {label}
-            </h2>
+            <h2 className="text-sm font-semibold text-foreground">{label}</h2>
             {hint && <p className="text-sm text-muted-foreground">{hint}</p>}
             {children}
         </section>
@@ -475,9 +474,7 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
             <div className="rounded-xl border border-border bg-card p-5 shadow-e1">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p className="font-display text-2xl text-foreground">{preset.name}</p>
-                    <span className="font-mono text-sm uppercase tracking-wide text-faint">
-                        {mode}
-                    </span>
+                    <span className="text-sm text-muted-foreground">{mode}</span>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
                     Muted ink on paper, with <span className="text-primary underline">a link</span>{" "}
@@ -818,7 +815,7 @@ export function ThemeBuilderPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
+            <header className="sticky top-0 z-20 border-b border-border bg-background">
                 <div className="flex flex-wrap items-center gap-3 px-6 py-3 lg:px-8">
                     <a
                         href="#tokens"
@@ -826,9 +823,7 @@ export function ThemeBuilderPage() {
                     >
                         ← gallery
                     </a>
-                    <h1 className="font-display text-xl font-light tracking-tight">
-                        Theme builder
-                    </h1>
+                    <h1 className="font-display text-lg font-semibold">Theme builder</h1>
                     <Input
                         aria-label="Theme name"
                         value={draft.name}
@@ -1094,9 +1089,7 @@ export function ThemeBuilderPage() {
                                 <Preview preset={draft} mode={mode} />
 
                                 <div className="rounded-xl border border-border bg-card p-4">
-                                    <h3 className="font-mono text-sm font-semibold uppercase tracking-[0.12em]">
-                                        {mode} contrast
-                                    </h3>
+                                    <h3 className="text-sm font-semibold">{mode} contrast</h3>
                                     <p className="mt-1 mb-2 text-sm text-muted-foreground">
                                         §1 marks a binding floor. The rest are advisory.
                                     </p>
@@ -1104,7 +1097,7 @@ export function ThemeBuilderPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <h3 className="font-mono text-sm font-semibold uppercase tracking-[0.12em]">
+                                    <h3 className="text-sm font-semibold">
                                         {mode} colours - every one, by hand
                                     </h3>
                                     <div className="grid gap-2 sm:grid-cols-2">
@@ -1148,7 +1141,7 @@ export function ThemeBuilderPage() {
 
                                 <div className="space-y-2">
                                     <div className="flex flex-wrap items-baseline gap-x-2">
-                                        <h3 className="font-mono text-sm font-semibold uppercase tracking-[0.12em]">
+                                        <h3 className="text-sm font-semibold">
                                             {mode} status hues
                                         </h3>
                                         <p className="text-sm text-muted-foreground">
@@ -1193,9 +1186,7 @@ export function ThemeBuilderPage() {
 
                     <section className="space-y-2">
                         <div className="flex flex-wrap items-baseline gap-x-3">
-                            <h3 className="font-mono text-sm font-semibold uppercase tracking-[0.12em]">
-                                Paste this after the import
-                            </h3>
+                            <h3 className="text-sm font-semibold">Paste this after the import</h3>
                             <p className="text-sm text-muted-foreground">
                                 No JS, no rebuild, no flicker. The status hues stay the kit's on
                                 purpose.

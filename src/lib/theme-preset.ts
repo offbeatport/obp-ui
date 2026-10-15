@@ -8,7 +8,7 @@ import {
 import { prefStorage } from "./storage";
 import { DEFAULT_NAMESPACE, onThemeChange } from "./theme";
 
-export const DEFAULT_PRESET_ID = "paper";
+export const DEFAULT_PRESET_ID = "instrument";
 export const CUSTOM_PRESET_ID = "custom";
 
 export type TypePairing = {
@@ -22,6 +22,8 @@ export type TypePairing = {
 };
 
 const SYS = "system-ui, sans-serif";
+const PUBLIC = `"Public Sans Variable", "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+const INTEL_MONO = `"Intel One Mono Variable", "Intel One Mono", ui-monospace, Menlo, Consolas, monospace`;
 const INTER = `"Inter Variable", "Inter", ${SYS}`;
 const GEIST = `"Geist Variable", "Geist", ${SYS}`;
 const PLEX = `"IBM Plex Sans Variable", "IBM Plex Sans", ${SYS}`;
@@ -32,11 +34,22 @@ const SPECTRAL = `"Spectral", Georgia, serif`;
 const FRAUNCES = `"Fraunces Variable", "Fraunces", Georgia, serif`;
 const INSTRUMENT = `"Instrument Serif", Georgia, serif`;
 
+export const DEFAULT_TYPE_ID = "instrument";
+
 export const TYPE_PAIRINGS: TypePairing[] = [
+    {
+        id: "instrument",
+        name: "Instrument",
+        note: "The default. Public Sans for everything a person reads or clicks, headings included; Intel One Mono for IDs, hashes, timestamps and code. Neither font is in fashion, which is the point.",
+        sans: PUBLIC,
+        display: PUBLIC,
+        mono: INTEL_MONO,
+        serif: SPECTRAL,
+    },
     {
         id: "paper",
         name: "Paper",
-        note: "The authored pairing: Inter body, Space Grotesk headings, JetBrains meta, Spectral pull-quotes.",
+        note: "The original pairing: Inter body, Space Grotesk headings, JetBrains meta, Spectral pull-quotes. Needs obp-ui/fonts-alt.css.",
         sans: INTER,
         display: GROTESK,
         mono: JETBRAINS,
@@ -120,12 +133,12 @@ export type RadiusStep = {
 export const RADIUS_STEPS: RadiusStep[] = [
     { id: "sharp", name: "Sharp", radius: "0.25rem", card: "0.375rem" },
     { id: "tight", name: "Tight", radius: "0.5rem", card: "0.75rem" },
-    { id: "default", name: "Default", radius: "0.75rem", card: "1.125rem" },
+    { id: "medium", name: "Medium", radius: "0.75rem", card: "1.125rem" },
     { id: "soft", name: "Soft", radius: "1rem", card: "1.5rem" },
     { id: "round", name: "Round", radius: "1.5rem", card: "2rem" },
 ];
 
-export const DEFAULT_RADIUS_ID = "default";
+export const DEFAULT_RADIUS_ID = "sharp";
 export const radiusStepFor = (id: string): RadiusStep | undefined =>
     RADIUS_STEPS.find((r) => r.id === id);
 
@@ -137,14 +150,14 @@ export type SpaceStep = {
 };
 
 export const SPACE_STEPS: SpaceStep[] = [
-    { id: "compact", name: "Compact", note: "31.7px controls", spacing: "0.22rem" },
+    { id: "compact", name: "Compact", note: "28.2px controls", spacing: "0.22rem" },
     {
         id: "default",
         name: "Default",
-        note: "36px controls - the authored density",
+        note: "32px controls - the authored density",
         spacing: "0.25rem",
     },
-    { id: "airy", name: "Airy", note: "40.3px controls", spacing: "0.28rem" },
+    { id: "airy", name: "Airy", note: "35.8px controls", spacing: "0.28rem" },
 ];
 
 export const DEFAULT_SPACE_ID = "default";
@@ -206,7 +219,7 @@ export function makePreset(
         light: palette.light,
         dark: palette.dark,
         palette: palette.id,
-        type: typePairingFor(axes.type ?? "") ? (axes.type as string) : "paper",
+        type: typePairingFor(axes.type ?? "") ? (axes.type as string) : DEFAULT_TYPE_ID,
         radius: radiusStepFor(axes.radius ?? "") ? (axes.radius as string) : DEFAULT_RADIUS_ID,
         space: spaceStepFor(axes.space ?? "") ? (axes.space as string) : DEFAULT_SPACE_ID,
     };
@@ -214,12 +227,21 @@ export function makePreset(
 
 export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
     bundle(
+        "instrument",
+        "Instrument",
+        "The default on every axis: neutral grey surfaces, one classic blue, Public Sans over Intel One Mono, 4px/6px corners, hairline borders instead of shadows. Selecting it removes every override rather than restating one.",
+        DEFAULT_PALETTE_ID,
+        DEFAULT_TYPE_ID,
+        DEFAULT_RADIUS_ID,
+        DEFAULT_SPACE_ID,
+    ),
+    bundle(
         "paper",
         "Paper",
-        "The authored theme on every axis: cream, ink and terracotta, Inter over Space Grotesk, 12px corners. Selecting it removes every override rather than restating one.",
-        DEFAULT_PALETTE_ID,
+        "The original authored theme: cream, ink and terracotta, Inter over Space Grotesk, 12px/18px corners. Needs obp-ui/fonts-alt.css.",
         "paper",
-        "default",
+        "paper",
+        "medium",
         "default",
     ),
     bundle(
@@ -321,12 +343,12 @@ const STATUS_INK = "#101216";
 
 const STATUS: Record<"light" | "dark", Record<string, string>> = {
     light: {
-        "--success": "#4f8a52",
-        "--warning": "#c08a2e",
-        "--info": "#4a72b0",
-        "--approval": "#7a5ea8",
-        "--neutral": "#8a8579",
-        "--destructive": "#b6483f",
+        "--success": "#157035",
+        "--warning": "#a14a07",
+        "--info": "#1d4ed8",
+        "--approval": "#6d28d9",
+        "--neutral": "#52525b",
+        "--destructive": "#b91c1c",
         "--success-foreground": "#ffffff",
         "--warning-foreground": "#ffffff",
         "--info-foreground": "#ffffff",
@@ -335,12 +357,12 @@ const STATUS: Record<"light" | "dark", Record<string, string>> = {
         "--destructive-foreground": "#ffffff",
     },
     dark: {
-        "--success": "#34d399",
-        "--warning": "#fbbf24",
+        "--success": "#22c55e",
+        "--warning": "#f59e0b",
         "--info": "#60a5fa",
         "--approval": "#a78bfa",
-        "--neutral": "#8a93a8",
-        "--destructive": "#dd6b62",
+        "--neutral": "#a1a1aa",
+        "--destructive": "#f87171",
         "--success-foreground": STATUS_INK,
         "--warning-foreground": STATUS_INK,
         "--info-foreground": STATUS_INK,
@@ -382,15 +404,14 @@ export function themePresetStyle(
     }
     for (const s of SOFT) {
         out[`--${s}-soft`] =
-            `color-mix(in srgb, var(--${s}) ${mode === "dark" ? 20 : 14}%, var(--background))`;
+            `color-mix(in srgb, var(--${s}) ${mode === "dark" ? 20 : 8}%, var(--background))`;
     }
+    out["--shadow-e1"] = "none";
     if (mode === "dark") {
-        out["--shadow-e1"] = "0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 28px rgba(0, 0, 0, 0.55)";
-        out["--shadow-e2"] = "0 2px 6px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.65)";
+        out["--shadow-e2"] = "0 4px 12px rgba(0, 0, 0, 0.5)";
     } else if (colors.shadowTint) {
         const t = colors.shadowTint;
-        out["--shadow-e1"] = `0 1px 2px rgba(${t}, 0.04), 0 8px 28px rgba(${t}, 0.07)`;
-        out["--shadow-e2"] = `0 2px 6px rgba(${t}, 0.06), 0 22px 60px rgba(${t}, 0.13)`;
+        out["--shadow-e2"] = `0 1px 2px rgba(${t}, 0.06), 0 4px 12px rgba(${t}, 0.08)`;
     }
 
     const type = typePairingFor(preset.type);
@@ -442,7 +463,7 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
                 light: parsed.light,
                 dark: parsed.dark,
                 palette: parsed.palette ?? CUSTOM_PRESET_ID,
-                type: typePairingFor(parsed.type ?? "") ? (parsed.type as string) : "paper",
+                type: typePairingFor(parsed.type ?? "") ? (parsed.type as string) : DEFAULT_TYPE_ID,
                 radius: radiusStepFor(parsed.radius ?? "")
                     ? (parsed.radius as string)
                     : DEFAULT_RADIUS_ID,

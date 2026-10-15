@@ -153,13 +153,28 @@ function hexToRgbTriplet(hex: string): string {
     return [0, 1, 2].map((i) => Number.parseInt(h.slice(i * 2, i * 2 + 2), 16)).join(", ");
 }
 
-export const DEFAULT_PALETTE_ID = "paper";
+export const DEFAULT_PALETTE_ID = "slate";
 
 export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
+    makePalette({
+        id: "slate",
+        name: "Slate",
+        note: "The default: neutral grey paper under a vivid classic blue, so the interface disappears behind the work. Selecting it removes every override rather than restating one.",
+        tint: 1,
+        light: {
+            primary: "#1c6be0",
+            accent: "#cfe1fd",
+            accentForeground: "#174ea1",
+        },
+        dark: {
+            primary: "#8eb7f8",
+            accentForeground: "#b8d1f8",
+        },
+    }),
     {
         id: "paper",
         name: "Paper",
-        note: "The authored theme: cream, ink and terracotta. Selecting it removes every override rather than restating one.",
+        note: "The original authored theme: cream, ink and terracotta.",
         light: {
             background: "#f7f3ec",
             card: "#fffdf8",
@@ -400,21 +415,6 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             foreground: "#eef1f8",
             primary: "#9b8cff",
             accentForeground: "#c3b9ff",
-        },
-    }),
-    makePalette({
-        id: "slate",
-        name: "Slate",
-        note: "Neutral grey paper under a vivid classic blue. The safest of the ten - reach for it when the interface should disappear behind the work.",
-        tint: 1,
-        light: {
-            primary: "#1c6be0",
-            accent: "#d1e0fd",
-            accentForeground: "#174ea1",
-        },
-        dark: {
-            primary: "#8eb7f8",
-            accentForeground: "#b8d1f8",
         },
     }),
     makePalette({

@@ -5,10 +5,18 @@ export type GradientMarkBranding = {
     palette?: [string, string];
 };
 
-export function gradientPairFor(seed: string): [string, string] {
+function seedHue(seed: string): number {
     let h = 0;
     for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-    const hue = (h % 12) * 30;
+    return (h % 12) * 30;
+}
+
+export function markColorFor(seed: string): string {
+    return `oklch(from var(--primary) l c calc(h + ${seedHue(seed)}))`;
+}
+
+export function gradientPairFor(seed: string): [string, string] {
+    const hue = seedHue(seed);
     return [
         `oklch(from var(--primary) calc(l + 0.07) c calc(h + ${hue}))`,
         `oklch(from var(--primary) calc(l - 0.07) c calc(h + ${hue + 22}))`,
@@ -31,7 +39,7 @@ export function GradientMark({
     style?: CSSProperties;
 }) {
     const mark = branding?.mark ?? (name.trim()[0] ?? "?").toUpperCase();
-    const palette = branding?.palette ?? gradientPairFor(name);
+    const fill = branding?.palette?.[0] ?? markColorFor(name);
     return (
         <span
             className={className}
@@ -41,12 +49,11 @@ export function GradientMark({
                 placeItems: "center",
                 width: size,
                 height: size,
-                borderRadius: radius ?? Math.round(size * 0.26),
-                backgroundColor: "var(--primary)",
-                backgroundImage: `linear-gradient(145deg, ${palette[0]}, ${palette[1]})`,
+                borderRadius: radius ?? "var(--radius)",
+                backgroundColor: fill,
                 color: "var(--primary-foreground)",
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
+                fontFamily: "var(--font-sans)",
+                fontWeight: 600,
                 fontSize: Math.round(size * 0.42),
                 lineHeight: 1,
                 textBox: "trim-both cap alphabetic",

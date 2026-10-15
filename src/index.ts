@@ -34,6 +34,7 @@ export {
     CUSTOM_PRESET_ID,
     DEFAULT_PRESET_ID,
     DEFAULT_RADIUS_ID,
+    DEFAULT_TYPE_ID,
     DEFAULT_SPACE_ID,
     getCustomTheme,
     getThemePreset,

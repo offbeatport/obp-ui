@@ -1,6 +1,5 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
 export type SegTab = { key: string; label: string; badge?: string | number };
@@ -14,58 +13,26 @@ export function SegmentedTabs({
     active: string;
     onSelect: (key: string) => void;
 }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [box, setBox] = useState({ left: 0, top: 0, width: 0, height: 0 });
-    const activeIdx = tabs.findIndex((t) => t.key === active);
-
-    useLayoutEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const measure = () => {
-            const node = el.querySelectorAll<HTMLElement>("[data-seg]")[activeIdx];
-            if (node)
-                setBox({
-                    left: node.offsetLeft,
-                    top: node.offsetTop,
-                    width: node.offsetWidth,
-                    height: node.offsetHeight,
-                });
-        };
-        measure();
-        const ro = new ResizeObserver(measure);
-        ro.observe(el);
-        return () => ro.disconnect();
-    }, [activeIdx]);
-
     return (
-        <div
-            ref={ref}
-            className="relative inline-flex flex-nowrap items-center gap-1 rounded-full border border-border bg-secondary/80 p-1 shadow-e2 backdrop-blur"
-        >
-            {box.width > 0 && (
-                <span
-                    className="absolute rounded-full bg-card shadow-e1 transition-all duration-300 ease-out"
-                    style={{ left: box.left, top: box.top, width: box.width, height: box.height }}
-                />
-            )}
+        <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-md border border-border bg-secondary p-0.5">
             {tabs.map((t) => {
                 const on = t.key === active;
                 return (
                     <button
                         key={t.key}
-                        data-seg
                         type="button"
+                        aria-pressed={on}
                         onClick={() => onSelect(t.key)}
                         className={cn(
-                            "relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm transition-colors",
+                            "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-sm border px-2.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             on
-                                ? "font-semibold text-foreground"
-                                : "font-medium text-faint hover:text-foreground",
+                                ? "border-input bg-card text-foreground"
+                                : "border-transparent text-muted-foreground hover:text-foreground",
                         )}
                     >
                         {t.label}
                         {t.badge != null && (
-                            <span className="rounded-full bg-approval-soft px-1.5 py-px font-mono text-sm font-bold text-approval">
+                            <span className="font-mono text-sm text-approval tabular-nums">
                                 {t.badge}
                             </span>
                         )}

@@ -15,28 +15,24 @@ import { cn } from "../lib/cn";
 const checkboxVariants = cva(
     [
         "peer group/checkbox relative inline-flex shrink-0 items-center justify-center",
-        "rounded-[calc(var(--radius)/3)] border border-input bg-card shadow-xs outline-none",
-        "transition-[color,background-color,border-color,box-shadow]",
+        "rounded-[calc(var(--radius)/2)] border border-input bg-card outline-none",
         "dark:data-unchecked:not-aria-invalid:border-foreground/20",
         "data-unchecked:not-data-disabled:hover:border-primary/60",
         "data-unchecked:not-data-disabled:hover:bg-accent/50",
         "data-unchecked:not-data-disabled:group-hover/checkbox-field:border-primary/60",
         "data-unchecked:not-data-disabled:group-hover/checkbox-field:bg-accent/50",
         "data-checked:not-data-disabled:hover:bg-primary/90",
-        "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         "data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground",
         "data-indeterminate:border-primary data-indeterminate:bg-primary data-indeterminate:text-primary-foreground",
-        "data-checked:animate-[pk-check-pop_220ms_ease-out]",
-        "data-indeterminate:animate-[pk-check-pop_220ms_ease-out]",
-        "motion-reduce:animate-none!",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+        "aria-invalid:border-destructive aria-invalid:ring-destructive",
     ],
     {
         variants: {
             size: {
-                default: "size-5",
-                sm: "size-4",
+                default: "size-4",
+                sm: "size-3.5",
             },
         },
         defaultVariants: {
@@ -115,30 +111,18 @@ function Checkbox({
                     viewBox="0 0 16 16"
                     fill="none"
                     aria-hidden="true"
-                    className={cn(
-                        "hidden size-full",
-                        "group-data-checked/checkbox:block",
-                        "group-data-checked/checkbox:animate-[pk-check-draw_200ms_ease-out_both]",
-                        "motion-reduce:animate-none!",
-                    )}
+                    className="hidden size-full group-data-checked/checkbox:block"
                 >
                     <path
                         d="M3.6 8.3 6.6 11.4 12.4 4.9"
                         stroke="currentColor"
                         strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        pathLength={1}
+                        strokeLinecap="square"
                     />
                 </svg>
                 <span
                     aria-hidden="true"
-                    className={cn(
-                        "hidden h-0.5 w-1/2 rounded-full bg-current",
-                        "group-data-indeterminate/checkbox:block",
-                        "group-data-indeterminate/checkbox:animate-[pk-dash-in_160ms_ease-out_both]",
-                        "motion-reduce:animate-none!",
-                    )}
+                    className="hidden h-0.5 w-1/2 bg-current group-data-indeterminate/checkbox:block"
                 />
             </CheckboxPrimitive.Indicator>
         </CheckboxPrimitive.Root>
@@ -173,7 +157,7 @@ function CheckboxField({
             data-slot="checkbox-field"
             data-disabled={disabled || undefined}
             className={cn(
-                "group/checkbox-field flex w-fit items-start gap-2.5 text-sm select-none",
+                "group/checkbox-field flex w-fit items-start gap-2 text-sm select-none",
                 disabled ? "cursor-not-allowed" : "cursor-pointer",
                 className,
             )}
@@ -183,16 +167,13 @@ function CheckboxField({
                 size={size}
                 disabled={disabled}
                 aria-describedby={descriptionId}
-                className={cn(size === "sm" && "mt-0.5", checkboxClassName)}
+                className={cn("mt-px", size === "sm" && "mt-0.5", checkboxClassName)}
                 {...props}
             />
             <span className="min-w-0 group-data-[disabled]/checkbox-field:opacity-50">
-                <span className="block leading-5 font-medium">{label}</span>
+                <span className="block font-medium">{label}</span>
                 {description ? (
-                    <span
-                        id={descriptionId}
-                        className="mt-0.5 block text-sm leading-snug text-muted-foreground"
-                    >
+                    <span id={descriptionId} className="block text-sm text-muted-foreground">
                         {description}
                     </span>
                 ) : null}

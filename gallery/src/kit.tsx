@@ -15,7 +15,7 @@ export function Section({
     return (
         <section id={id} className="scroll-mt-24">
             <header className="border-b border-border-soft pb-4">
-                <h2 className="font-display text-3xl font-light tracking-tight">{title}</h2>
+                <h2 className="font-display text-2xl font-semibold">{title}</h2>
                 <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">{blurb}</p>
             </header>
             <div className="mt-8 space-y-12">{children}</div>

@@ -197,7 +197,7 @@ function CardNode({ data }: NP) {
                                     style={{ width: `${(s.val / 10) * 100}%`, background: a }}
                                 />
                             </div>
-                            <span className="truncate font-mono text-sm uppercase tracking-wide text-faint">
+                            <span className="truncate text-sm text-muted-foreground">
                                 {s.label}
                             </span>
                         </div>

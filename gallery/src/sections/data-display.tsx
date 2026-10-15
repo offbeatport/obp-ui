@@ -11,7 +11,7 @@ import {
     Timeline,
     TimelineDot,
     TimelineItem,
-    gradientPairFor,
+    markColorFor,
 } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
@@ -92,8 +92,8 @@ export function DataDisplaySection() {
     return (
         <>
             <Spec
-                name="GradientMark · gradientPairFor"
-                note="One letter on a gradient from the name and --primary."
+                name="GradientMark · markColorFor"
+                note="One letter on a flat tile, its hue stepped from the name around --primary. No gradient: the name is kept for compatibility."
             >
                 <Row className="gap-6">
                     {ENTITIES.map((e) => (
@@ -127,20 +127,20 @@ export function DataDisplaySection() {
                 <Api
                     items={[
                         {
-                            name: 'gradientPairFor("Ledgerly")',
-                            note: "one of twelve 30deg hue steps around --primary; the stops straddle its lightness by ±0.07.",
-                            value: gradientPairFor("Ledgerly")[0],
+                            name: 'markColorFor("Ledgerly")',
+                            note: "one of twelve 30deg hue steps around --primary, at the primary's own lightness so the label keeps --primary-foreground's contrast.",
+                            value: markColorFor("Ledgerly"),
                         },
                         {
-                            name: 'gradientPairFor("Harbourline")',
+                            name: 'markColorFor("Harbourline")',
                             note: "a different seed, a different step - stable per seed, in any process.",
-                            value: gradientPairFor("Harbourline")[0],
+                            value: markColorFor("Harbourline"),
                         },
                     ]}
                 />
                 <Note>
                     No branding row yet? It falls back to the first letter and{" "}
-                    <code>gradientPairFor(name)</code>, so a draft still gets a stable mark. In an
+                    <code>markColorFor(name)</code>, so a draft still gets a stable mark. In an
                     achromatic palette (Graphite) there is no hue to rotate and every mark draws the
                     same tile - that palette's whole point, and the letter still separates them.
                 </Note>

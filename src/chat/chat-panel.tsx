@@ -43,7 +43,7 @@ export function ChatPanel({
                 </div>
 
                 {composer !== undefined && (
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-border bg-background pt-3">
                         <div className="pointer-events-auto mx-auto w-full" style={{ maxWidth }}>
                             {composer}
                         </div>

@@ -15,7 +15,7 @@ const SURFACES: Swatch[] = [
 ];
 
 const BRAND: Swatch[] = [
-    { token: "--primary", cls: "bg-primary", note: "terracotta brand" },
+    { token: "--primary", cls: "bg-primary", note: "signal blue brand" },
     { token: "--primary-foreground", cls: "bg-primary-foreground", note: "ink on brand" },
     { token: "--accent", cls: "bg-accent", note: "soft hover surface" },
     { token: "--accent-foreground", cls: "bg-accent-foreground", note: "ink on accent" },
@@ -128,7 +128,7 @@ export function TokensSection() {
 
             <Spec
                 name="Brand"
-                note="one terracotta accent, plus the soft hover surface it pairs with."
+                note="one blue accent, plus the soft selection surface it pairs with."
             >
                 <SwatchGrid items={BRAND} />
             </Spec>
@@ -142,9 +142,7 @@ export function TokensSection() {
                         >
                             <span className="w-32 font-mono text-sm font-semibold">{s.token}</span>
                             <span className={`h-8 w-16 rounded-lg ${s.solid}`} />
-                            <span
-                                className={`rounded-full px-2.5 py-0.5 font-mono text-sm ${s.soft}`}
-                            >
+                            <span className={`rounded-md px-1.5 font-mono text-sm ${s.soft}`}>
                                 -soft
                             </span>
                             <span className={`size-2 rounded-full ${s.dot}`} />
@@ -161,7 +159,7 @@ export function TokensSection() {
 
             <Spec
                 name="Radius & elevation"
-                note="two radii and two shadows; nothing else is legal."
+                note="two radii and two elevations. e1 is none by default: in-flow surfaces separate with a 1px border. e2 is a hairline lift for floating layers only."
             >
                 <Row className="gap-6">
                     {RADII.map((r) => (
@@ -182,25 +180,30 @@ export function TokensSection() {
                 </Row>
             </Spec>
 
-            <Spec name="Type" note="Four families. text-sm is the floor.">
+            <Spec
+                name="Type"
+                note="Two families do the work, one is optional. text-sm (13px) is the floor."
+            >
                 <div className="space-y-4">
-                    <p className="font-display text-3xl font-light tracking-tight">
-                        font-display - Space Grotesk, use font-light for headings
+                    <p className="font-display text-2xl font-semibold">
+                        font-display - Public Sans, the same family as the body
                     </p>
-                    <p className="text-base">font-sans - Inter, body copy and UI</p>
+                    <p className="text-base">
+                        font-sans - Public Sans, body copy and every control
+                    </p>
                     <p className="font-serif text-lg italic text-muted-foreground">
                         font-serif - Spectral italic, the editorial voice
                     </p>
                     <p className="font-mono text-base">
-                        font-mono - JetBrains Mono, ids and numbers
+                        font-mono - Intel One Mono, ids, hashes, timestamps, code
                     </p>
                 </div>
                 <div className="mt-6 space-y-1 border-t border-border-soft pt-4">
                     {TYPE_SCALE.map(([cls, token]) => (
                         <p key={cls} className={cls}>
                             <span className="font-mono text-faint">{cls}</span>{" "}
-                            <span className="font-mono text-faint/70">{token}</span> - the quick
-                            brown fox
+                            <span className="font-mono text-faint">{token}</span> - the quick brown
+                            fox
                         </p>
                     ))}
                 </div>

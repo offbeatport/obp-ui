@@ -24,9 +24,9 @@ const THREAD_ROW = "flex gap-[12px] items-start my-10";
 const THREAD_COLUMN = "flex-1 min-w-0 flex flex-col gap-[11px]";
 const THREAD_BODY = "max-w-[78%] text-base leading-[1.55]";
 const THREAD_USER_BODY =
-    "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] shadow-e1 bg-foreground text-background animate-[msg-in_0.32s_cubic-bezier(0.22,0.7,0.24,1)_both]";
+    "px-[16px] py-[12px] rounded-[16px] rounded-tr-[5px] bg-foreground text-background animate-[msg-in_0.2s_ease-out_both] motion-reduce:animate-none";
 const THREAD_ASSISTANT_BODY =
-    "py-[2px] animate-[msg-reveal_0.45s_cubic-bezier(0.22,0.7,0.24,1)_both]";
+    "py-[2px] animate-[msg-reveal_0.25s_ease-out_both] motion-reduce:animate-none";
 
 export type ChatBubbleProps = {
     role: ChatRole;
