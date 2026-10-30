@@ -123,7 +123,6 @@ const selectTriggerVariants = cva(
         "bg-input-background text-sm whitespace-nowrap outline-none",
         "hover:bg-secondary",
         "focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
-        "data-popup-open:border-ring data-popup-open:ring-1 data-popup-open:ring-ring",
         "data-[placeholder]:text-muted-foreground",
         "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent",
         "aria-invalid:border-destructive aria-invalid:ring-destructive",
