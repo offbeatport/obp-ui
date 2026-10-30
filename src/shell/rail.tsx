@@ -17,6 +17,7 @@ export type RailProps = {
     collapsed?: boolean;
     onToggle?: () => void;
     toggleIcon?: "chevron" | "panel";
+    togglePlacement?: "edge" | "header";
     expandLabel?: string;
     collapseLabel?: string;
     className?: string;
@@ -34,6 +35,7 @@ export function Rail({
     collapsed: collapsedProp,
     onToggle,
     toggleIcon = "chevron",
+    togglePlacement = "edge",
     expandLabel = "Expand sidebar",
     collapseLabel = "Collapse sidebar",
     className,
@@ -45,38 +47,66 @@ export function Rail({
     const collapsed = collapsedProp ?? rail.collapsed;
     const toggle = onToggle ?? rail.toggle;
 
+    const glyph = (size: string) =>
+        toggleIcon === "panel" ? (
+            collapsed ? (
+                <PanelLeftOpen className={size} />
+            ) : (
+                <PanelLeftClose className={size} />
+            )
+        ) : (
+            <ChevronLeft className={cn(size, "transition-transform", collapsed && "rotate-180")} />
+        );
+    const label = collapsed ? expandLabel : collapseLabel;
+    const brandLink =
+        brand === undefined ? null : (
+            <Link
+                href={brandHref ?? paths.home()}
+                aria-label={brandLabel}
+                className={cn(
+                    "flex items-center",
+                    togglePlacement === "edge" && "px-4 pb-3.5 pt-5",
+                    togglePlacement === "header" && !collapsed && "min-w-0 flex-1",
+                    collapsed && "justify-center px-0",
+                )}
+            >
+                {collapsed ? (brandCollapsed ?? brand) : brand}
+            </Link>
+        );
+
     return (
         <aside className={cn("relative flex flex-col border-r bg-secondary", className)}>
-            <button
-                type="button"
-                onClick={toggle}
-                aria-label={collapsed ? expandLabel : collapseLabel}
-                className="absolute -right-3 top-5 z-10 grid size-6 place-items-center rounded-full border bg-card text-foreground shadow-e2 transition-transform hover:bg-primary hover:text-primary-foreground"
-            >
-                {toggleIcon === "panel" ? (
-                    collapsed ? (
-                        <PanelLeftOpen className="size-3.5" />
-                    ) : (
-                        <PanelLeftClose className="size-3.5" />
-                    )
-                ) : (
-                    <ChevronLeft
-                        className={cn("size-3.5 transition-transform", collapsed && "rotate-180")}
-                    />
-                )}
-            </button>
+            {togglePlacement === "edge" && (
+                <button
+                    type="button"
+                    onClick={toggle}
+                    aria-label={label}
+                    className="absolute -right-3 top-5 z-10 grid size-6 place-items-center rounded-full border bg-card text-foreground shadow-e2 transition-transform hover:bg-primary hover:text-primary-foreground"
+                >
+                    {glyph("size-3.5")}
+                </button>
+            )}
 
-            {brand !== undefined && (
-                <Link
-                    href={brandHref ?? paths.home()}
-                    aria-label={brandLabel}
+            {togglePlacement === "edge" ? (
+                brandLink
+            ) : (
+                <div
                     className={cn(
-                        "flex items-center px-4 pb-3.5 pt-5",
-                        collapsed && "justify-center px-0",
+                        "flex items-center gap-2 px-4 pb-3.5 pt-5",
+                        collapsed && "flex-col justify-center px-0",
                     )}
                 >
-                    {collapsed ? (brandCollapsed ?? brand) : brand}
-                </Link>
+                    {brandLink}
+                    <button
+                        type="button"
+                        onClick={toggle}
+                        aria-label={label}
+                        title={label}
+                        className="grid size-7 flex-none place-items-center rounded-md text-muted-foreground outline-none hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                        {glyph("size-4")}
+                    </button>
+                </div>
             )}
 
             <div className={cn("min-h-0 flex-1 overflow-y-auto px-2 pb-4 pt-2", bodyClassName)}>
