@@ -255,6 +255,25 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
         "medium",
         "default",
     ),
+    {
+        ...bundle(
+            "cobalt",
+            "Cobalt",
+            "Cool neutrals under a clear blue, a black page and solid navy accent after dark, Inter over Space Grotesk, 12px/18px corners. Needs obp-ui/fonts-alt.css.",
+            "cobalt",
+            "paper",
+            "medium",
+            "default",
+        ),
+        status: {
+            dark: {
+                success: "#009b39",
+                successForeground: "#ffffff",
+                destructive: "#bc0000",
+                destructiveForeground: "#ffffff",
+            },
+        },
+    },
     bundle(
         "vercel",
         "Vercel",

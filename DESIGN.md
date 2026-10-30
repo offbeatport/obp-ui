@@ -7,8 +7,8 @@ API), **PicSuper** (a consumer one-screen utility) and the microsaas portfolio -
 contrast, or how a variant gets added. Hence three tiers: know which one you are standing in
 before you type.
 
-**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all nine theme
-presets (and the seventeen palettes their colour axis draws from).
+**See it live:** `pnpm ui` → http://localhost:5180 - every export, both themes, all ten theme
+presets (and the eighteen palettes their colour axis draws from).
 
 **The default is Instrument**: a working tool, not a landing page - an IDE, a cloud console, a
 trading screen. Neutral grey surfaces, one classic blue, Public Sans over Intel One Mono, 13px
@@ -41,7 +41,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 3. **Both themes work.** Dark is a real product mode (`.dark` on `<html>`; a nested `.light`
    interrupts it, which is what makes a scoped preview possible). A component that has only been
    looked at in one mode is not finished.
-4. **Contrast floors**, measured across the seventeen palettes in `src/lib/palette.ts`, both modes.
+4. **Contrast floors**, measured across the eighteen palettes in `src/lib/palette.ts`, both modes.
    There are two ways to declare one, and the floors are the same for both.
    `makePalette({ light: { primary, accent, accentForeground }, dark: { primary,
    accentForeground } })` takes five hexes: the eight neutrals, both `primaryForeground`s,
@@ -53,14 +53,16 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    GitHub's blue-grey greys. It derives only `primaryForeground`, `shadowTint` and the dark wash.
    Reach for it when you are *quoting* a real product's surfaces, not when you want a new hue.
    Paper stays a hand-written literal below both: it is the authored theme and its warm neutrals
-   and 3.55:1 primary are deliberate exceptions neither helper must reproduce.
+   and 3.55:1 primary are deliberate exceptions neither helper must reproduce. Cobalt is the
+   second literal: its dark `--accent` is a solid `#172b57`, which neither helper's wash can express.
    - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light; 4.73 over the brand literals). It
      is the lightest ink the kit ships; it still has to pass AA.
    - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes, 4.64
      over the seven brand ones) -
      because `--primary` is the prose-link colour (`markdown.tsx`) and the focus ring at least as
-     often as it is a button fill, so it has to work as *text*. Paper, the authored theme, is the
-     one exception at 3.55:1; inherit its warmth, not that number. This is also the floor a quoted
+     often as it is a button fill, so it has to work as *text*. Paper, the authored theme, is an
+     exception at 3.55:1; inherit its warmth, not that number. Cobalt dark is the other, at 4.49:1
+     on the page and 4.36:1 on the card. This is also the floor a quoted
      brand hue usually fails: X's `#1d9bf0` is 2.84:1 on white and Supabase's `#3ecf8e` is worse,
      so the brand palettes keep the real hue in dark mode - where the page is near-black and it
      clears 7:1 - and darken it for light. A logo colour is not a link colour.
@@ -72,7 +74,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      warning on its soft fill in light). This is why the light hues are the deep 700-ish steps and
      not the raw 600s: `#16a34a` green is 3.3:1 on white and fails as a label.
 5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
-   are deliberately identical in every palette and every preset the kit ships. The *meanings* in the
+   are deliberately identical in every palette and every preset the kit ships except Cobalt. The *meanings* in the
    table are cslopslop's reading of them; a product with no approval queue maps its own meanings
    onto the same six tokens rather than inventing a seventh hue.
    A product *can* re-hue them - `ThemePreset.status` carries a per-mode override, and the theme
@@ -80,6 +82,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    disagree about what green means have broken the only vocabulary five apps share. If you do it,
    you inherit the chip floor above (a filled label ≥ 5.65:1 in dark) and you own it in both modes.
    The `-soft` fills follow automatically; they are `color-mix()` off the hue, not separate values.
+   Cobalt re-hues success and destructive in dark and misses both floors: white on `--success` is
+   3.65:1, and `--destructive` as text is 2.89-3.12:1.
 6. **Focus stays visible; motion has a stop.** Two solid rings, no translucent halo: a field
    (input, textarea, select trigger) takes `focus-visible:border-ring focus-visible:ring-1
    focus-visible:ring-ring`, everything you press takes `focus-visible:ring-2 focus-visible:ring-ring
@@ -144,19 +148,21 @@ redeclaring token **values** in its own `tokens.css` after the import - `:root {
 #0c736f; --radius: 0.5rem }` and the same again under `.dark` - never by editing a component.
 What is yours to set:
 
-- **Theme preset.** The nine in `src/lib/theme-preset.ts` bundle all four axes below at once, and
+- **Theme preset.** The ten in `src/lib/theme-preset.ts` bundle all four axes below at once, and
   `<ThemePicker />` swaps them at runtime. "Theme" there means the **preset**; `Theme` in
   `src/lib/theme.ts` means `light | dark`, the **mode**. Presets are the cheapest way to vary the
   look, and the default applies by *removing* every override so it cannot drift. Instrument is the
   default and is exactly `tokens.css` (Slate palette, Instrument type, Sharp radius, Default
   space). Paper is the original authored theme - cream, terracotta, Inter over Space Grotesk, 12px
-  corners - kept as an opt-in preset that needs `obp-ui/fonts-alt.css`. The other seven quote a
+  corners - kept as an opt-in preset that needs `obp-ui/fonts-alt.css`. Cobalt is Paper's type and
+  corners over cool neutrals and a clear blue, with a black page and solid navy accent in dark;
+  it needs the same stylesheet. The other seven quote a
   product whose surfaces are widely known - Vercel, Linear,
   GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather
   than a fresh argument about hexes. They are readings of those interfaces in this kit's
   vocabulary, corrected to §1's floors; they are not those products' design systems, and nothing
   in the kit is branded.
-- **Palette.** The seventeen in `src/lib/palette.ts` are the colour axis: achromatic surfaces,
+- **Palette.** The eighteen in `src/lib/palette.ts` are the colour axis: achromatic surfaces,
   brand at 90% of the sRGB ceiling solved against 4.5:1 on the page for the nine generated ones,
   and quoted surfaces for the seven brand literals. Ship one, ship the picker, or write your own
   values - a new one has to clear the floors in §1.

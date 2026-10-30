@@ -17,6 +17,7 @@ export type NavItemProps = {
     locked?: boolean;
     collapsed?: boolean;
     tint?: boolean;
+    iconStyle?: "tile" | "plain";
     onClick?: () => void;
     title?: string;
     className?: string;
@@ -30,6 +31,7 @@ export function NavItem({
     locked,
     collapsed: collapsedProp,
     tint,
+    iconStyle = "tile",
     onClick,
     title,
     className,
@@ -43,7 +45,8 @@ export function NavItem({
         <>
             <span
                 className={cn(
-                    "grid size-8 flex-none place-items-center rounded-md bg-accent text-primary",
+                    "grid size-8 flex-none place-items-center",
+                    iconStyle === "tile" && "rounded-md bg-accent text-primary",
                     tint && "newco-ic",
                 )}
             >
@@ -56,7 +59,7 @@ export function NavItem({
     const cls = cn(
         "group flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-left text-sm font-semibold transition",
         isActive && "bg-card text-foreground",
-        !locked && "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
+        !locked && "text-muted-foreground  hover:text-foreground",
         locked && "cursor-default text-muted-foreground opacity-40",
         tint && "nav-newco mb-1.5",
         collapsed && "justify-center px-0",

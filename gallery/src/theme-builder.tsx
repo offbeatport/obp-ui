@@ -243,13 +243,18 @@ const BRAND_PALETTES = new Set([
     "stripe",
 ]);
 
+const AUTHORED_PALETTES = new Set(["paper", "cobalt"]);
+
 const PALETTE_GROUPS: { label: string; has: (p: ThemePalette) => boolean }[] = [
     { label: "Default", has: (p) => p.id === DEFAULT_PALETTE_ID },
-    { label: "Authored", has: (p) => p.id === "paper" },
+    { label: "Authored", has: (p) => AUTHORED_PALETTES.has(p.id) },
     { label: "Quoted from a product", has: (p) => BRAND_PALETTES.has(p.id) },
     {
         label: "Generated from one hue",
-        has: (p) => p.id !== DEFAULT_PALETTE_ID && p.id !== "paper" && !BRAND_PALETTES.has(p.id),
+        has: (p) =>
+            p.id !== DEFAULT_PALETTE_ID &&
+            !AUTHORED_PALETTES.has(p.id) &&
+            !BRAND_PALETTES.has(p.id),
     },
 ];
 
