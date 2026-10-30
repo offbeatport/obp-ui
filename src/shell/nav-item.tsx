@@ -45,8 +45,8 @@ export function NavItem({
         <>
             <span
                 className={cn(
-                    "grid size-8 flex-none place-items-center",
-                    iconStyle === "tile" && "rounded-md bg-accent text-primary",
+                    "grid flex-none place-items-center",
+                    iconStyle === "tile" ? "size-8 rounded-md bg-accent text-primary" : "size-5",
                     tint && "newco-ic",
                 )}
             >
@@ -58,6 +58,7 @@ export function NavItem({
     );
     const cls = cn(
         "group flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-left text-sm font-semibold transition",
+        iconStyle === "plain" && "py-1.5",
         isActive && "bg-card text-foreground",
         !locked && "text-muted-foreground  hover:text-foreground",
         locked && "cursor-default text-muted-foreground opacity-40",

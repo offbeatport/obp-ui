@@ -126,7 +126,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      tooltip; anything that is not a universal symbol gets a text label instead.
    - **Motion is feedback, not show.** Overlays fade in ≤150ms; no zoom-in, no bounce, no sliding
      pill, no hover lift, no `transition-all`. Buttons and links change state instantly
-     (`base.css` zeroes their transitions).
+     (`base.css` zeroes their transitions). The checkbox is the one control that
+     animates: its fill grows in over 100ms and its tick draws over 120ms, on inner elements so the button itself
+     stays instant, both with a `motion-reduce` escape.
 
 ### Status language (use the matching Badge variant / token - don't improvise)
 | meaning | token / `<Badge variant>` | colour |

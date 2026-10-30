@@ -21,18 +21,16 @@ const checkboxVariants = cva(
         "data-unchecked:not-data-disabled:hover:bg-accent/50",
         "data-unchecked:not-data-disabled:group-hover/checkbox-field:border-primary/60",
         "data-unchecked:not-data-disabled:group-hover/checkbox-field:bg-accent/50",
-        "data-checked:not-data-disabled:hover:bg-primary/90",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-        "data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground",
-        "data-indeterminate:border-primary data-indeterminate:bg-primary data-indeterminate:text-primary-foreground",
+        "data-checked:border-primary data-indeterminate:border-primary",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",
         "aria-invalid:border-destructive aria-invalid:ring-destructive",
     ],
     {
         variants: {
             size: {
-                default: "size-4",
-                sm: "size-3.5",
+                default: "size-5",
+                sm: "size-4",
             },
         },
         defaultVariants: {
@@ -103,21 +101,37 @@ function Checkbox({
             className={cn(checkboxVariants({ size, className }))}
             {...props}
         >
+            <span
+                aria-hidden="true"
+                className={cn(
+                    "absolute -inset-px scale-75 rounded-[inherit] bg-primary opacity-0",
+                    "transition-[opacity,transform] duration-100 ease-out motion-reduce:transition-none",
+                    "group-data-checked/checkbox:scale-100 group-data-checked/checkbox:opacity-100",
+                    "group-data-indeterminate/checkbox:scale-100 group-data-indeterminate/checkbox:opacity-100",
+                )}
+            />
             <CheckboxPrimitive.Indicator
+                keepMounted
                 data-slot="checkbox-indicator"
-                className="absolute inset-0 flex items-center justify-center text-current"
+                className="absolute inset-0 flex items-center justify-center text-primary-foreground"
             >
                 <svg
                     viewBox="0 0 16 16"
                     fill="none"
                     aria-hidden="true"
-                    className="hidden size-full group-data-checked/checkbox:block"
+                    className="size-full group-data-indeterminate/checkbox:hidden"
                 >
                     <path
                         d="M3.6 8.3 6.6 11.4 12.4 4.9"
                         stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="square"
+                        pathLength={1}
+                        className={cn(
+                            "[stroke-dasharray:1] [stroke-dashoffset:1]",
+                            "transition-[stroke-dashoffset] duration-120 ease-out motion-reduce:transition-none",
+                            "group-data-checked/checkbox:[stroke-dashoffset:0] group-data-checked/checkbox:delay-30",
+                        )}
                     />
                 </svg>
                 <span
@@ -167,7 +181,7 @@ function CheckboxField({
                 size={size}
                 disabled={disabled}
                 aria-describedby={descriptionId}
-                className={cn("mt-px", size === "sm" && "mt-0.5", checkboxClassName)}
+                className={cn(size === "sm" && "mt-0.5", checkboxClassName)}
                 {...props}
             />
             <span className="min-w-0 group-data-[disabled]/checkbox-field:opacity-50">

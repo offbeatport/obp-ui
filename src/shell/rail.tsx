@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
@@ -16,6 +16,7 @@ export type RailProps = {
     children?: ReactNode;
     collapsed?: boolean;
     onToggle?: () => void;
+    toggleIcon?: "chevron" | "panel";
     expandLabel?: string;
     collapseLabel?: string;
     className?: string;
@@ -32,6 +33,7 @@ export function Rail({
     children,
     collapsed: collapsedProp,
     onToggle,
+    toggleIcon = "chevron",
     expandLabel = "Expand sidebar",
     collapseLabel = "Collapse sidebar",
     className,
@@ -51,9 +53,17 @@ export function Rail({
                 aria-label={collapsed ? expandLabel : collapseLabel}
                 className="absolute -right-3 top-5 z-10 grid size-6 place-items-center rounded-full border bg-card text-foreground shadow-e2 transition-transform hover:bg-primary hover:text-primary-foreground"
             >
-                <ChevronLeft
-                    className={cn("size-3.5 transition-transform", collapsed && "rotate-180")}
-                />
+                {toggleIcon === "panel" ? (
+                    collapsed ? (
+                        <PanelLeftOpen className="size-3.5" />
+                    ) : (
+                        <PanelLeftClose className="size-3.5" />
+                    )
+                ) : (
+                    <ChevronLeft
+                        className={cn("size-3.5 transition-transform", collapsed && "rotate-180")}
+                    />
+                )}
             </button>
 
             {brand !== undefined && (
