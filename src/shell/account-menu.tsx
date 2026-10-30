@@ -66,14 +66,14 @@ function ThemeRow({
                     if (isThemePref(value)) setThemePref(value);
                 }}
                 aria-label="Theme"
-                className="flex gap-0.5"
+                className="flex"
             >
                 {THEME_PREFS.map((option) => (
                     <MenuPrimitive.RadioItem
                         key={option.value}
                         value={option.value}
                         closeOnClick={false}
-                        className="flex h-6 cursor-default items-center rounded-sm px-2 text-sm text-muted-foreground outline-hidden select-none data-highlighted:not-data-checked:bg-secondary data-highlighted:text-foreground data-checked:bg-accent data-checked:text-accent-foreground"
+                        className="flex h-6 cursor-default items-center rounded-sm px-1.5 text-sm text-muted-foreground outline-hidden select-none data-highlighted:not-data-checked:bg-secondary data-highlighted:text-foreground data-checked:bg-accent data-checked:text-accent-foreground"
                     >
                         {option.label}
                     </MenuPrimitive.RadioItem>
