@@ -122,7 +122,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
    - **No gradients, blur or glass.** No `bg-gradient-*`, no `backdrop-blur`, no `filter: blur()`
      in motion, no translucent `bg-*/80` over content. A gradient is legal only where it *is* the
-     data: the colour picker's hue and saturation fields.
+     data: the colour picker's hue and saturation fields. One opt-in exception: `--button-edge`
+     (default `transparent`, off in every preset) lights the top edge of filled and outline buttons
+     with a 1px gradient that fades down the sides.
    - **Corners are small and square-ish.** 2px controls, 4px popovers, 6px cards (`--radius:
      0.25rem`). `rounded-full` only for things that are round by convention: switch, radio, a
      status dot, an avatar. No pill badges, no pill tabs.

@@ -68,6 +68,19 @@
 @utility shadow-e2 {
     box-shadow: var(--shadow-e2);
 }
+@utility button-edge {
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        background: linear-gradient(to bottom, var(--button-edge), transparent);
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+}
 
 button,
 a,
