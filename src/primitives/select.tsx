@@ -330,7 +330,7 @@ function SelectItem({
                 )}
             >
                 <SelectPrimitive.ItemIndicator>
-                    <CheckIcon className="size-4 text-primary" />
+                    <CheckIcon className="size-4 text-accent-foreground" strokeWidth={3} />
                 </SelectPrimitive.ItemIndicator>
             </span>
             {icon ? (
