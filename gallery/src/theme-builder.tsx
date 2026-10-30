@@ -10,6 +10,7 @@ import {
     RADIUS_STEPS,
     SPACE_STEPS,
     STATUS_KEYS,
+    SegmentedTabs,
     Select,
     SelectContent,
     SelectGroup,
@@ -290,37 +291,6 @@ function Strip({ preset }: { preset: Pick<ThemePreset, "light" | "dark"> | Theme
                 </span>
             ))}
         </span>
-    );
-}
-
-function Option({
-    selected,
-    onSelect,
-    title,
-    children,
-    className,
-}: {
-    selected: boolean;
-    onSelect: () => void;
-    title?: string;
-    children: ReactNode;
-    className?: string;
-}) {
-    return (
-        <button
-            type="button"
-            title={title}
-            onClick={onSelect}
-            className={cn(
-                "rounded-md border px-3 py-2 text-left text-sm transition-colors",
-                selected
-                    ? "border-primary bg-accent text-accent-foreground"
-                    : "border-border hover:bg-secondary",
-                className,
-            )}
-        >
-            {children}
-        </button>
     );
 }
 
@@ -672,7 +642,10 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
     const [live, setLive] = useState(true);
     const [touched, setTouched] = useState(false);
     const [brand, setBrand] = useState("#7c3aed");
-    const [copied, setCopied] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
+    const [mode, setMode] = useState<Mode>(() =>
+        document.documentElement.classList.contains("dark") ? "dark" : "light",
+    );
     const [base, setBase] = useState<Source>(() => ({
         light: draft.light,
         dark: draft.dark,
@@ -703,12 +676,11 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
     );
 
     const css = buildCss(draft);
-    const json = JSON.stringify({ ...draft, id: CUSTOM_PRESET_ID }, null, 4);
 
-    const copy = (what: string, text: string) => {
-        void navigator.clipboard.writeText(text).then(() => {
-            setCopied(what);
-            setTimeout(() => setCopied((c) => (c === what ? null : c)), 1600);
+    const copy = () => {
+        void navigator.clipboard.writeText(css).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1600);
         });
     };
 
@@ -773,35 +745,21 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
 
     return (
         <div className="@container flex h-full flex-col bg-background text-foreground">
-            <header className="flex-none space-y-2 border-b border-border px-5 py-3">
-                <div className="flex items-center gap-2">
-                    <h2 className="font-display text-lg font-semibold">Theme builder</h2>
-                    <Input
-                        aria-label="Theme name"
-                        value={draft.name}
-                        onChange={(e) => edit((d) => ({ ...d, name: e.target.value }))}
-                        className="h-7 w-36"
-                    />
-                    <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label="Close theme builder"
-                        className="ml-auto"
-                        onClick={onClose}
-                    >
-                        <XIcon />
-                    </Button>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
+            <header className="flex flex-none flex-wrap items-center gap-2 border-b border-border px-5 py-3">
+                <h2 className="font-display text-lg font-semibold">Theme builder</h2>
+                <Input
+                    aria-label="Theme name"
+                    value={draft.name}
+                    onChange={(e) => edit((d) => ({ ...d, name: e.target.value }))}
+                    className="h-7 w-40"
+                />
+                <div className="ml-auto flex items-center gap-2">
                     <Switch id="live" checked={live} onCheckedChange={setLive} />
-                    <Label htmlFor="live" className="mr-auto text-sm text-muted-foreground">
-                        Apply to the app
+                    <Label htmlFor="live" className="mr-2 text-sm text-muted-foreground">
+                        Apply live
                     </Label>
-                    <Button size="sm" variant="outline" onClick={() => copy("css", css)}>
-                        {copied === "css" ? "Copied" : "Copy CSS"}
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => copy("json", json)}>
-                        {copied === "json" ? "Copied" : "Copy JSON"}
+                    <Button size="sm" variant="outline" onClick={copy}>
+                        {copied ? "Copied" : "Copy CSS"}
                     </Button>
                     <Button
                         size="sm"
@@ -810,24 +768,20 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                     >
                         Reset
                     </Button>
+                    <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label="Close theme builder"
+                        onClick={onClose}
+                    >
+                        <XIcon />
+                    </Button>
                 </div>
             </header>
 
-            <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-5 pt-6 pb-16 @5xl:grid-cols-[20rem_minmax(0,1fr)]">
-                <aside className="space-y-7 @5xl:sticky @5xl:top-0 @5xl:self-start">
-                    <Rail
-                        label="One colour"
-                        hint="Solved against the §1 floors, then the ladder does the rest."
-                    >
-                        <div className="flex items-center gap-2">
-                            <ColorField label="Brand" value={brand} onChange={setBrand} />
-                            <Button size="sm" onClick={fromBrand}>
-                                Solve
-                            </Button>
-                        </div>
-                    </Rail>
-
-                    <Rail label="Preset" hint="All four axes at once.">
+            <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-5 pt-6 pb-16 @4xl:grid-cols-[18rem_minmax(0,1fr)]">
+                <aside className="space-y-6 @4xl:sticky @4xl:top-0 @4xl:self-start">
+                    <Rail label="Start from" hint="Colours, type, corners and density together.">
                         <Select
                             value={presetMatch?.id ?? ""}
                             onValueChange={(id) => {
@@ -874,74 +828,85 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                         </Select>
                     </Rail>
 
-                    <Rail label="Palette" hint="Colours only - type, radius and space survive.">
-                        <Select
-                            value={draft.palette}
-                            onValueChange={(id) => {
-                                const p = themePaletteFor(String(id));
-                                if (p) setPalette(p);
-                            }}
-                        >
-                            <SelectTrigger className="h-auto w-full py-2">
-                                <span className="flex min-w-0 items-center gap-2">
-                                    {activePalette ? (
-                                        <Strip preset={activePalette} />
-                                    ) : (
-                                        <Strip preset={draft} />
-                                    )}
-                                    <span className="truncate font-medium">
-                                        {activePalette?.name ?? "Your colours"}
+                    <Rail label="Colours" hint="A palette, or one brand colour solved into one.">
+                        <div className="space-y-2">
+                            <Select
+                                value={draft.palette}
+                                onValueChange={(id) => {
+                                    const p = themePaletteFor(String(id));
+                                    if (p) setPalette(p);
+                                }}
+                            >
+                                <SelectTrigger className="h-auto w-full py-2">
+                                    <span className="flex min-w-0 items-center gap-2">
+                                        {activePalette ? (
+                                            <Strip preset={activePalette} />
+                                        ) : (
+                                            <Strip preset={draft} />
+                                        )}
+                                        <span className="truncate font-medium">
+                                            {activePalette?.name ?? "Your colours"}
+                                        </span>
                                     </span>
-                                </span>
-                            </SelectTrigger>
-                            <SelectContent className="max-w-[22rem]">
-                                {PALETTE_GROUPS.map((group) => (
-                                    <SelectGroup key={group.label}>
-                                        <SelectLabel>{group.label}</SelectLabel>
-                                        {THEME_PALETTES.filter(group.has).map((p) => (
-                                            <SelectItem
-                                                key={p.id}
-                                                value={p.id}
-                                                textValue={p.name}
-                                                description={p.note}
-                                            >
-                                                <Strip preset={p} />
-                                                <span className="font-medium">{p.name}</span>
-                                            </SelectItem>
+                                </SelectTrigger>
+                                <SelectContent className="max-w-[22rem]">
+                                    {PALETTE_GROUPS.map((group) => (
+                                        <SelectGroup key={group.label}>
+                                            <SelectLabel>{group.label}</SelectLabel>
+                                            {THEME_PALETTES.filter(group.has).map((p) => (
+                                                <SelectItem
+                                                    key={p.id}
+                                                    value={p.id}
+                                                    textValue={p.name}
+                                                    description={p.note}
+                                                >
+                                                    <Strip preset={p} />
+                                                    <span className="font-medium">{p.name}</span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <div className="flex items-center gap-2">
+                                <ColorField label="Brand" value={brand} onChange={setBrand} />
+                                <Button size="sm" variant="outline" onClick={fromBrand}>
+                                    Use brand colour
+                                </Button>
+                            </div>
+                            <details className="group">
+                                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+                                    Adjust
+                                </summary>
+                                <div className="pt-3">
+                                    <div className="space-y-3">
+                                        {KNOBS.map((knob) => (
+                                            <Knob
+                                                key={knob.key}
+                                                knob={knob}
+                                                value={knobs[knob.key]}
+                                                onChange={(n) => setKnob(knob.key, n)}
+                                            />
                                         ))}
-                                    </SelectGroup>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </Rail>
-
-                    <Rail
-                        label="Tune"
-                        hint="Moves the whole palette at once, from whatever it is now. Nothing here can desynchronise light from dark."
-                    >
-                        <div className="space-y-3">
-                            {KNOBS.map((knob) => (
-                                <Knob
-                                    key={knob.key}
-                                    knob={knob}
-                                    value={knobs[knob.key]}
-                                    onChange={(n) => setKnob(knob.key, n)}
-                                />
-                            ))}
-                            {!isNeutral(knobs) && (
-                                <button
-                                    type="button"
-                                    onClick={() => applySource(base, NEUTRAL_KNOBS)}
-                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
-                                >
-                                    Back to {themePaletteFor(base.palette)?.name ?? "the colours"}{" "}
-                                    untouched
-                                </button>
-                            )}
+                                        {!isNeutral(knobs) && (
+                                            <button
+                                                type="button"
+                                                onClick={() => applySource(base, NEUTRAL_KNOBS)}
+                                                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                            >
+                                                Back to{" "}
+                                                {themePaletteFor(base.palette)?.name ??
+                                                    "the colours"}{" "}
+                                                untouched
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </details>
                         </div>
                     </Rail>
 
-                    <Rail label="Type" hint="The app must import the stylesheet that loads these.">
+                    <Rail label="Type">
                         <Select
                             value={draft.type}
                             onValueChange={(id) => edit((d) => ({ ...d, type: String(id) }))}
@@ -997,161 +962,107 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                         </Select>
                     </Rail>
 
-                    <Rail label="Radius">
-                        <div className="flex flex-wrap gap-1.5">
-                            {RADIUS_STEPS.map((r) => (
-                                <Option
-                                    key={r.id}
-                                    selected={draft.radius === r.id}
-                                    onSelect={() => edit((d) => ({ ...d, radius: r.id }))}
-                                    title={`${r.radius} / ${r.card}`}
-                                    className="flex items-center gap-2"
-                                >
-                                    <span
-                                        aria-hidden
-                                        className="block size-6 flex-none border-2 border-current"
-                                        style={{ borderRadius: r.radius }}
-                                    />
-                                    {r.name}
-                                </Option>
-                            ))}
-                        </div>
+                    <Rail label="Corners">
+                        <SegmentedTabs
+                            tabs={RADIUS_STEPS.map((r) => ({ key: r.id, label: r.name }))}
+                            active={draft.radius}
+                            onSelect={(id) => edit((d) => ({ ...d, radius: id }))}
+                        />
                     </Rail>
 
-                    <Rail label="Space" hint="One token, --spacing, multiplying every utility.">
-                        <div className="flex flex-wrap items-end gap-1.5">
-                            {SPACE_STEPS.map((s) => (
-                                <Option
-                                    key={s.id}
-                                    selected={draft.space === s.id}
-                                    onSelect={() => edit((d) => ({ ...d, space: s.id }))}
-                                    title={s.note}
-                                    className="flex items-center gap-2"
-                                >
-                                    <span
-                                        aria-hidden
-                                        className="block w-4 flex-none rounded-sm bg-current"
-                                        style={{ height: `calc(${s.spacing} * 8)` }}
-                                    />
-                                    {s.name}
-                                </Option>
-                            ))}
-                        </div>
+                    <Rail label="Density">
+                        <SegmentedTabs
+                            tabs={SPACE_STEPS.map((step) => ({ key: step.id, label: step.name }))}
+                            active={draft.space}
+                            onSelect={(id) => edit((d) => ({ ...d, space: id }))}
+                        />
                     </Rail>
                 </aside>
 
-                <main className="min-w-0 space-y-8">
-                    <div className="grid gap-6 @5xl:grid-cols-2">
-                        {MODES.map((mode) => (
-                            <section key={mode} className="min-w-0 space-y-4">
-                                <div className="rounded-xl border border-border bg-card p-4">
-                                    <h3 className="text-sm font-semibold">{mode} contrast</h3>
-                                    <p className="mt-1 mb-2 text-sm text-muted-foreground">
-                                        §1 marks a binding floor. The rest are advisory.
-                                    </p>
-                                    <Floors colors={draft[mode]} />
-                                </div>
+                <main className="min-w-0 space-y-6">
+                    <SegmentedTabs
+                        tabs={MODES.map((m) => ({
+                            key: m,
+                            label: m === "light" ? "Light" : "Dark",
+                        }))}
+                        active={mode}
+                        onSelect={(key) => setMode(key === "dark" ? "dark" : "light")}
+                    />
 
-                                <div className="space-y-2">
-                                    <h3 className="text-sm font-semibold">
-                                        {mode} colours - every one, by hand
-                                    </h3>
-                                    <div className="grid gap-2 @xl:grid-cols-2">
-                                        {FIELDS.map((f) => (
-                                            <div key={f.key}>
-                                                <div className="flex items-center gap-1.5">
-                                                    <ColorField
-                                                        label={f.label}
-                                                        value={String(
-                                                            fieldValue(draft[mode], f.key),
-                                                        )}
-                                                        onChange={(hex) =>
-                                                            setColor(mode, f.key, hex)
-                                                        }
-                                                        swatches={[
-                                                            ...new Set(
-                                                                Object.values(draft[mode]).filter(
-                                                                    (v) =>
-                                                                        typeof v === "string" &&
-                                                                        v.startsWith("#"),
-                                                                ),
-                                                            ),
-                                                        ]}
-                                                    />
-                                                    <HexInput
-                                                        value={String(
-                                                            fieldValue(draft[mode], f.key),
-                                                        )}
-                                                        onChange={(hex) =>
-                                                            setColor(mode, f.key, hex)
-                                                        }
-                                                    />
-                                                </div>
-                                                <p className="mt-1 px-1 text-sm text-faint">
-                                                    {f.hint}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="flex flex-wrap items-baseline gap-x-2">
-                                        <h3 className="text-sm font-semibold">
-                                            {mode} status hues
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            {mode === "dark"
-                                                ? "A filled label must clear 5.65:1 (§1)."
-                                                : "Status text has to clear 4.5:1 on its own soft fill (§1)."}
-                                        </p>
-                                    </div>
-                                    <div className="grid gap-2">
-                                        {STATUS_KEYS.map((key) => (
-                                            <StatusRow
-                                                key={key}
-                                                name={key}
-                                                mode={mode}
-                                                page={draft[mode].background}
-                                                hue={resolved[mode][STATUS_VAR(key)] ?? "#000000"}
-                                                ink={
-                                                    resolved[mode][
-                                                        STATUS_VAR(`${key}Foreground`)
-                                                    ] ?? "#ffffff"
-                                                }
-                                                onHue={(hex) => setStatus(mode, key, hex)}
-                                                onInk={(hex) =>
-                                                    setStatus(mode, `${key}Foreground`, hex)
-                                                }
-                                            />
-                                        ))}
-                                    </div>
-                                    {draft.status?.[mode] && (
-                                        <button
-                                            type="button"
-                                            onClick={() => clearStatus(mode)}
-                                            className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
-                                        >
-                                            Put the {mode} status hues back to the kit's
-                                        </button>
-                                    )}
-                                </div>
-                            </section>
+                    <section className="grid gap-x-6 gap-y-2 @xl:grid-cols-2">
+                        {FIELDS.map((f) => (
+                            <div key={f.key} title={f.hint}>
+                                <ColorField
+                                    label={f.label}
+                                    value={fieldValue(draft[mode], f.key)}
+                                    onChange={(hex) => setColor(mode, f.key, hex)}
+                                    swatches={[
+                                        ...new Set(
+                                            Object.values(draft[mode]).filter(
+                                                (v): v is string =>
+                                                    typeof v === "string" && v.startsWith("#"),
+                                            ),
+                                        ),
+                                    ]}
+                                />
+                            </div>
                         ))}
-                    </div>
+                    </section>
 
-                    <section className="space-y-2">
-                        <div className="flex flex-wrap items-baseline gap-x-3">
-                            <h3 className="text-sm font-semibold">Paste this after the import</h3>
-                            <p className="text-sm text-muted-foreground">
-                                No JS, no rebuild, no flicker. The status hues stay the kit's on
-                                purpose.
-                            </p>
+                    <section className="rounded-xl border border-border bg-card p-4">
+                        <h3 className="mb-2 text-sm font-semibold">Contrast</h3>
+                        <Floors colors={draft[mode]} />
+                    </section>
+
+                    <details className="rounded-xl border border-border bg-card p-4">
+                        <summary className="cursor-pointer text-sm font-semibold">
+                            Status colours
+                        </summary>
+                        <div className="space-y-2 pt-3">
+                            <div className="grid gap-2">
+                                {STATUS_KEYS.map((key) => (
+                                    <StatusRow
+                                        key={key}
+                                        name={key}
+                                        mode={mode}
+                                        page={draft[mode].background}
+                                        hue={resolved[mode][STATUS_VAR(key)] ?? "#000000"}
+                                        ink={
+                                            resolved[mode][STATUS_VAR(`${key}Foreground`)] ??
+                                            "#ffffff"
+                                        }
+                                        onHue={(hex) => setStatus(mode, key, hex)}
+                                        onInk={(hex) => setStatus(mode, `${key}Foreground`, hex)}
+                                    />
+                                ))}
+                            </div>
+                            {draft.status?.[mode] && (
+                                <button
+                                    type="button"
+                                    onClick={() => clearStatus(mode)}
+                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                >
+                                    Put the {mode} status hues back to the kit's
+                                </button>
+                            )}
+                            {draft.status?.[mode] && (
+                                <button
+                                    type="button"
+                                    onClick={() => clearStatus(mode)}
+                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                >
+                                    Back to the kit's status colours
+                                </button>
+                            )}
                         </div>
-                        <pre className="max-h-[32rem] overflow-auto rounded-xl border border-border bg-card p-4 font-mono text-sm leading-relaxed text-muted-foreground">
+                    </details>
+
+                    <details className="rounded-xl border border-border bg-card p-4">
+                        <summary className="cursor-pointer text-sm font-semibold">CSS</summary>
+                        <pre className="mt-3 max-h-[32rem] overflow-auto font-mono text-sm leading-relaxed text-muted-foreground">
                             {css}
                         </pre>
-                    </section>
+                    </details>
                 </main>
             </div>
         </div>
