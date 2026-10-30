@@ -55,7 +55,7 @@ function ThemeRow({
     return (
         <div
             className={cn(
-                "flex items-center gap-2 px-2 py-px text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+                "flex items-center gap-2 px-2 py-0 text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 className,
             )}
         >
@@ -67,7 +67,7 @@ function ThemeRow({
                     if (isThemePref(value)) setThemePref(value);
                 }}
                 aria-label="Theme"
-                className="flex"
+                className="flex gap-0.5 rounded-md bg-secondary p-0.5"
             >
                 {THEME_PREFS.map((option) => (
                     <MenuPrimitive.RadioItem
@@ -76,7 +76,7 @@ function ThemeRow({
                         closeOnClick={false}
                         aria-label={option.label}
                         title={option.label}
-                        className="grid size-6 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:not-data-checked:bg-secondary data-highlighted:text-foreground data-checked:bg-accent data-checked:text-accent-foreground"
+                        className="grid size-5.5 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:text-foreground data-checked:bg-card data-checked:text-foreground"
                     >
                         <option.Icon className="size-4 text-current" />
                     </MenuPrimitive.RadioItem>
@@ -122,7 +122,7 @@ export function AccountMenu({
                                 <ThemeRow
                                     icon={item.icon}
                                     label={item.label}
-                                    className={cn(cls, comfortable && "py-1.25")}
+                                    className={cn(cls, comfortable && "py-1")}
                                 />
                             ) : item.href ? (
                                 <DropdownMenuItem asChild disabled={item.disabled} className={cls}>
