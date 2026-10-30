@@ -27,6 +27,7 @@
     --border: #d3d4d5;
     --border-soft: #e4e4e5;
     --input: #88898b;
+    --input-background: var(--card);
     --ring: var(--primary);
 
     --success: #157035;
@@ -99,6 +100,7 @@
     --border: #363739;
     --border-soft: #262728;
     --input: #717378;
+    --input-background: var(--card);
     --ring: var(--primary);
 
     --success: #22c55e;
@@ -151,6 +153,7 @@
     --color-border: var(--border);
     --color-border-soft: var(--border-soft);
     --color-input: var(--input);
+    --color-input-background: var(--input-background);
     --color-ring: var(--ring);
     --color-faint: var(--faint);
 

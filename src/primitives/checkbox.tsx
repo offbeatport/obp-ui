@@ -15,7 +15,7 @@ import { cn } from "../lib/cn";
 const checkboxVariants = cva(
     [
         "peer group/checkbox relative inline-flex shrink-0 items-center justify-center",
-        "rounded-[calc(var(--radius)/2)] border border-input bg-card outline-none",
+        "rounded-[calc(var(--radius)/2)] border border-input bg-input-background outline-none",
         "dark:data-unchecked:not-aria-invalid:border-foreground/20",
         "data-unchecked:not-data-disabled:hover:border-primary/60",
         "data-unchecked:not-data-disabled:hover:bg-accent/50",

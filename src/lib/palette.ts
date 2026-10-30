@@ -8,6 +8,7 @@ export type ThemePaletteColors = {
     border: string;
     borderSoft: string;
     input: string;
+    inputBackground?: string;
     primary: string;
     primaryForeground: string;
     accent: string;
@@ -241,6 +242,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             border: "#272c38",
             borderSoft: "#060606",
             input: "#5c6374",
+            inputBackground: "#0b0b0b",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
             accent: "#172b57",

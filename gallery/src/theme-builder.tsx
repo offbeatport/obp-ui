@@ -61,6 +61,11 @@ const FIELDS: { key: keyof ThemePaletteColors; label: string; hint: string }[] =
     { key: "border", label: "Line", hint: "Panel edges and dividers" },
     { key: "borderSoft", label: "Line soft", hint: "Dividers inside a card" },
     { key: "input", label: "Control line", hint: "Inputs, selects, checkboxes, tabs" },
+    {
+        key: "inputBackground",
+        label: "Control fill",
+        hint: "Behind inputs and selects; unset uses Paper",
+    },
     { key: "primary", label: "Brand", hint: "Buttons, links, focus ring" },
     { key: "primaryForeground", label: "Brand ink", hint: "Text on a brand button" },
     { key: "accent", label: "Brand soft", hint: "Hover surfaces" },
@@ -540,6 +545,7 @@ const ROLES: Record<keyof ThemePaletteColors, "surface" | "ink" | "brand"> = {
     border: "surface",
     borderSoft: "surface",
     input: "surface",
+    inputBackground: "surface",
     foreground: "ink",
     mutedForeground: "ink",
     faint: "ink",
@@ -594,6 +600,10 @@ function solveOn(hex: string, over: string, floor: number, mode: Mode): string {
         s = Math.max(0, s - 0.03);
     }
     return hsvToHex({ h: hsv.h, s, v });
+}
+
+function fieldValue(colors: ThemePaletteColors, key: keyof ThemePaletteColors): string {
+    return colors[key] ?? (key === "inputBackground" ? colors.card : "#000000");
 }
 
 function turnAll(colors: ThemePaletteColors, mode: Mode, k: Knobs): ThemePaletteColors {
@@ -1053,7 +1063,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                                     <ColorField
                                                         label={f.label}
                                                         value={String(
-                                                            draft[mode][f.key] ?? "#000000",
+                                                            fieldValue(draft[mode], f.key),
                                                         )}
                                                         onChange={(hex) =>
                                                             setColor(mode, f.key, hex)
@@ -1070,7 +1080,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                                     />
                                                     <HexInput
                                                         value={String(
-                                                            draft[mode][f.key] ?? "#000000",
+                                                            fieldValue(draft[mode], f.key),
                                                         )}
                                                         onChange={(hex) =>
                                                             setColor(mode, f.key, hex)

@@ -120,7 +120,7 @@ function SelectValue({
 const selectTriggerVariants = cva(
     [
         "group/select-trigger flex items-center justify-between gap-2 rounded-md border border-input",
-        "bg-card text-sm whitespace-nowrap outline-none",
+        "bg-input-background text-sm whitespace-nowrap outline-none",
         "hover:bg-secondary",
         "focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
         "data-popup-open:border-ring data-popup-open:ring-1 data-popup-open:ring-ring",

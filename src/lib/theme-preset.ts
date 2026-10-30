@@ -365,6 +365,7 @@ const VARS: [keyof ThemePaletteColors, string][] = [
     ["faint", "--faint"],
     ["border", "--border"],
     ["input", "--input"],
+    ["inputBackground", "--input-background"],
     ["borderSoft", "--border-soft"],
     ["primary", "--primary"],
     ["primary", "--ring"],
