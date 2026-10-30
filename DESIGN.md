@@ -54,7 +54,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    Reach for it when you are *quoting* a real product's surfaces, not when you want a new hue.
    Terracotta stays a hand-written literal below both: it is the authored theme and its warm neutrals
    and 3.55:1 primary are deliberate exceptions neither helper must reproduce. Cobalt is the
-   second literal: its dark `--accent` is a solid `#191e28`, which neither helper's wash can express.
+   second literal: its dark `--accent` is a solid `#222b3d`, which neither helper's wash can express.
    - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Terracotta light; 4.73 over the brand literals). It
      is the lightest ink the kit ships; it still has to pass AA.
    - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes, 4.64
