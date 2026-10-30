@@ -121,8 +121,8 @@ export const TYPE_PAIRINGS: TypePairing[] = [
         serif: FRAUNCES,
     },
     {
-        id: "instrument",
-        name: "Instrument",
+        id: "instrument-serif",
+        name: "Instrument Serif",
         note: "High-contrast serif headings over Inter. Instrument Serif ships 400 only, so a light heading renders at 400 by design.",
         sans: INTER,
         display: INSTRUMENT,
