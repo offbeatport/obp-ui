@@ -248,7 +248,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             tabsActive: "#171a21",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
-            accent: "#2d3548",
+            accent: "#191e28",
             accentForeground: "#ffffff",
         },
     },
