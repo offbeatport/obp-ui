@@ -26,7 +26,7 @@
 
     --border: #d3d4d5;
     --border-soft: #e4e4e5;
-    --input: #d3d4d5;
+    --input: #88898b;
     --ring: var(--primary);
 
     --success: #157035;
@@ -98,7 +98,7 @@
 
     --border: #363739;
     --border-soft: #262728;
-    --input: #363739;
+    --input: #717378;
     --ring: var(--primary);
 
     --success: #22c55e;

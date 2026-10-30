@@ -66,6 +66,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      brand hue usually fails: X's `#1d9bf0` is 2.84:1 on white and Supabase's `#3ecf8e` is worse,
      so the brand palettes keep the real hue in dark mode - where the page is near-black and it
      clears 7:1 - and darken it for light. A logo colour is not a link colour.
+   - `--input` on `--card` and on `--background` **≥ 3:1** (min 3.05 across every palette). It is
+     the edge of everything you operate - input, select, textarea, checkbox, radio, outline button,
+     tab - and WCAG 1.4.11 asks 3:1 of it. Every palette sets it: `makePalette` derives it from the
+     lightness ladder, `brandPalette` takes it as a literal. `--border` and `--border-soft` draw
+     structure (panel edges, dividers) and stay quiet; they have no floor.
    - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 6.78 on
      the `#101216` ink; warning reaches 8.73:1), from the matching `-foreground` token and never
      `#fff` - dark inverts these hues, so white lands at 2.2-2.8:1 on them (warning the worst at
@@ -272,7 +277,7 @@ rings, hover washes, borders, and the logo mark, which fills from `var(--primary
     --primary: #7c3aed;      --primary-foreground: #ffffff;
     --accent: #ede9fe;       --accent-foreground: #5b21b6;
     --border: #e4e4e8;       --border-soft: #efeff2;
-    --input: #e4e4e8;        --ring: #7c3aed;
+    --input: #8a8a93;        --ring: #7c3aed;
 }
 
 .dark { /* same keys, dark values */ }

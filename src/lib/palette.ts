@@ -7,6 +7,7 @@ export type ThemePaletteColors = {
     faint: string;
     border: string;
     borderSoft: string;
+    input: string;
     primary: string;
     primaryForeground: string;
     accent: string;
@@ -36,6 +37,7 @@ export type NeutralSlots = Pick<
     | "faint"
     | "border"
     | "borderSoft"
+    | "input"
 >;
 
 const LIGHT_LADDER: Ladder = {
@@ -44,6 +46,7 @@ const LIGHT_LADDER: Ladder = {
     secondary: [0.9294, 0.0042],
     borderSoft: [0.898, 0.0044],
     border: [0.8353, 0.0093],
+    input: [0.545, 0.02],
     faint: [0.4275, 0.0183],
     mutedForeground: [0.3294, 0.0119],
     foreground: [0.1294, 0.0303],
@@ -53,6 +56,7 @@ const DARK_LADDER: Ladder = {
     foreground: [0.9176, 0.0085],
     mutedForeground: [0.6588, 0.012],
     faint: [0.549, 0.0213],
+    input: [0.47, 0.06],
     border: [0.2235, 0.0517],
     borderSoft: [0.1569, 0.05],
     card: [0.1294, 0.0588],
@@ -184,6 +188,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             faint: "#7b7368",
             border: "#e6ddce",
             borderSoft: "#efe8da",
+            input: "#908a81",
             primary: "#c8643c",
             primaryForeground: "#ffffff",
             accent: "#f4e0d6",
@@ -199,6 +204,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             faint: "#7c8499",
             border: "#1c2233",
             borderSoft: "#111726",
+            input: "#5f6473",
             primary: "#e0794c",
             primaryForeground: "#ffffff",
             accent: "rgba(224, 121, 78, 0.18)",
@@ -218,6 +224,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             faint: "#6b6c6d",
             border: "#d3d4d5",
             borderSoft: "#e4e5e5",
+            input: "#8a8c8d",
             primary: "#026ecd",
             primaryForeground: "#ffffff",
             accent: "#b8d7f2",
@@ -233,6 +240,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             faint: "#7f8182",
             border: "#272c38",
             borderSoft: "#060606",
+            input: "#5c6374",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
             accent: "#172b57",
@@ -248,6 +256,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#f2f2f2",
             borderSoft: "#ebebeb",
+            input: "#909090",
             border: "#e0e0e0",
             faint: "#6f6f6f",
             mutedForeground: "#525252",
@@ -261,6 +270,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#0a0a0a",
             secondary: "#050505",
             borderSoft: "#1a1a1a",
+            input: "#5e5e5e",
             border: "#2e2e2e",
             faint: "#8f8f8f",
             mutedForeground: "#a1a1a1",
@@ -279,6 +289,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#f4f5f8",
             borderSoft: "#eceef3",
+            input: "#8f9196",
             border: "#dfe1e8",
             faint: "#6b7080",
             mutedForeground: "#575d6b",
@@ -292,6 +303,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#0f1011",
             secondary: "#0b0c0d",
             borderSoft: "#191a1c",
+            input: "#616265",
             border: "#26282c",
             faint: "#868b94",
             mutedForeground: "#a4a9b3",
@@ -309,6 +321,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#eaeef2",
             borderSoft: "#e4e9ee",
+            input: "#888e95",
             border: "#d1d9e0",
             faint: "#6a737d",
             mutedForeground: "#59636e",
@@ -322,6 +335,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#151b23",
             secondary: "#10141a",
             borderSoft: "#21262d",
+            input: "#616870",
             border: "#3d444d",
             faint: "#868e99",
             mutedForeground: "#9198a1",
@@ -339,6 +353,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#eff3f4",
             borderSoft: "#e9eef0",
+            input: "#889095",
             border: "#cfd9de",
             faint: "#66727d",
             mutedForeground: "#536471",
@@ -352,6 +367,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#16181c",
             secondary: "#0a0b0d",
             borderSoft: "#202327",
+            input: "#636668",
             border: "#2f3336",
             faint: "#838b93",
             mutedForeground: "#a2abb3",
@@ -369,6 +385,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#eceee6",
             borderSoft: "#e4e7dd",
+            input: "#8c8f84",
             border: "#d5d9cb",
             faint: "#6b7060",
             mutedForeground: "#55594b",
@@ -382,6 +399,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#0d100e",
             secondary: "#090b0a",
             borderSoft: "#171b18",
+            input: "#5c625c",
             border: "#232823",
             faint: "#838d80",
             mutedForeground: "#a3ada0",
@@ -400,6 +418,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#f2f4f2",
             borderSoft: "#e9ece9",
+            input: "#8f9290",
             border: "#dcdfdc",
             faint: "#6e756f",
             mutedForeground: "#545a55",
@@ -413,6 +432,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#1c1c1c",
             secondary: "#171717",
             borderSoft: "#262626",
+            input: "#686868",
             border: "#343434",
             faint: "#8b8b8b",
             mutedForeground: "#a8a8a8",
@@ -430,6 +450,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#ffffff",
             secondary: "#eaf0f6",
             borderSoft: "#e3eaf2",
+            input: "#8091a2",
             border: "#d6dfe9",
             faint: "#5c7186",
             mutedForeground: "#425466",
@@ -443,6 +464,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             card: "#131a2f",
             secondary: "#0e1426",
             borderSoft: "#1c2440",
+            input: "#616880",
             border: "#2a3352",
             faint: "#8a94ad",
             mutedForeground: "#a9b3c9",

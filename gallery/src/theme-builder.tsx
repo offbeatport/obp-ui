@@ -60,8 +60,9 @@ const FIELDS: { key: keyof ThemePaletteColors; label: string; hint: string }[] =
     { key: "foreground", label: "Ink", hint: "Body text" },
     { key: "mutedForeground", label: "Muted ink", hint: "Secondary text" },
     { key: "faint", label: "Faint ink", hint: "The quietest readable text" },
-    { key: "border", label: "Line", hint: "Borders and inputs" },
+    { key: "border", label: "Line", hint: "Panel edges and dividers" },
     { key: "borderSoft", label: "Line soft", hint: "Dividers inside a card" },
+    { key: "input", label: "Control line", hint: "Inputs, selects, checkboxes, tabs" },
     { key: "primary", label: "Brand", hint: "Buttons, links, focus ring" },
     { key: "primaryForeground", label: "Brand ink", hint: "Text on a brand button" },
     { key: "accent", label: "Brand soft", hint: "Hover surfaces" },
@@ -111,6 +112,8 @@ const CHECKS: {
 }[] = [
     { label: "faint ink on paper", floor: 4.55, binding: true, fg: "faint", bg: "card" },
     { label: "brand on page", floor: 4.5, binding: true, fg: "primary", bg: "background" },
+    { label: "control line on paper", floor: 3, binding: true, fg: "input", bg: "card" },
+    { label: "control line on page", floor: 3, binding: true, fg: "input", bg: "background" },
     { label: "ink on paper", floor: 4.5, binding: false, fg: "foreground", bg: "card" },
     { label: "muted ink on paper", floor: 4.5, binding: false, fg: "mutedForeground", bg: "card" },
     {
@@ -617,6 +620,7 @@ const ROLES: Record<keyof ThemePaletteColors, "surface" | "ink" | "brand"> = {
     secondary: "surface",
     border: "surface",
     borderSoft: "surface",
+    input: "surface",
     foreground: "ink",
     mutedForeground: "ink",
     faint: "ink",

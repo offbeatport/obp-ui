@@ -360,7 +360,7 @@ const VARS: [keyof ThemePaletteColors, string][] = [
     ["mutedForeground", "--muted-foreground"],
     ["faint", "--faint"],
     ["border", "--border"],
-    ["border", "--input"],
+    ["input", "--input"],
     ["borderSoft", "--border-soft"],
     ["primary", "--primary"],
     ["primary", "--ring"],
@@ -475,6 +475,10 @@ export type ThemePresetController = {
 
 const EVENT = "obp:themepresetchange";
 
+function withInputLine(colors: ThemePaletteColors): ThemePaletteColors {
+    return { ...colors, input: colors.input || colors.border };
+}
+
 export function createThemePresets(opts: { namespace?: string } = {}): ThemePresetController {
     const ns = opts.namespace ?? DEFAULT_NAMESPACE;
     const idKey = `${ns}-theme-preset`;
@@ -490,8 +494,8 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
                 id: CUSTOM_PRESET_ID,
                 name: parsed.name ?? "Custom",
                 note: parsed.note ?? "Your theme.",
-                light: parsed.light,
-                dark: parsed.dark,
+                light: withInputLine(parsed.light),
+                dark: withInputLine(parsed.dark),
                 palette: parsed.palette ?? CUSTOM_PRESET_ID,
                 type: typePairingFor(parsed.type ?? "") ? (parsed.type as string) : DEFAULT_TYPE_ID,
                 radius: radiusStepFor(parsed.radius ?? "")
