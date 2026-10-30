@@ -6,6 +6,7 @@ import {
     Plus,
     Settings2,
     ShieldCheck,
+    SunMoon,
     Trash2,
 } from "lucide-react";
 import { Badge, Button, GradientMark, type Tone } from "obp-ui";
@@ -40,6 +41,7 @@ const COMPANIES: { name: string; meta: string; tone: Tone; badge?: string }[] = 
 const ACCOUNT_ITEMS: AccountMenuItem[] = [
     { icon: <Settings2 />, label: "Settings", href: "/settings" },
     { icon: <ShieldCheck />, label: "Guardrails", href: "/guardrails" },
+    { kind: "theme", icon: <SunMoon />, label: "Theme" },
     { icon: <LogOut />, label: "Sign out", separatorBefore: true, destructive: true },
 ];
 
