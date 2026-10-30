@@ -124,7 +124,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
    - **No gradients, blur or glass.** No `bg-gradient-*`, no `backdrop-blur`, no `filter: blur()`
      in motion, no translucent `bg-*/80` over content. A gradient is legal only where it *is* the
-     data: the colour picker's hue and saturation fields. One exception: filled and outline buttons
+     data: the colour picker's hue and saturation fields. One exception: filled and secondary buttons
      carry a 1px top-lit edge (white, 35% light / 20% dark) that fades down the sides.
    - **Corners are small and square-ish.** 2px controls, 4px popovers, 6px cards (`--radius:
      0.25rem`). `rounded-full` only for things that are round by convention: switch, radio, a
