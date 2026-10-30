@@ -172,7 +172,7 @@ What is yours to set:
   default and is exactly `tokens.css` (Slate palette, Instrument type, Sharp radius, Default
   space). Terracotta is the original authored theme (called Paper until 2026-10-30) - cream,
   terracotta, the Grotesk type pairing (Inter over Space Grotesk), 12px corners - kept as an opt-in
-  preset that needs `obp-ui/fonts-alt.css`. Cobalt is Terracotta's type and corners over cool neutrals and a clear blue, with a black page and solid navy accent in dark;
+  preset that needs `obp-ui/fonts-alt.css`. Cobalt is Terracotta's type with Tight 8px/12px corners over cool neutrals and a clear blue, with a black page in dark;
   it needs the same stylesheet. The other seven quote a
   product whose surfaces are widely known - Vercel, Linear,
   GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather

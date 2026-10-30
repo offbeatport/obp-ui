@@ -261,10 +261,10 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
         ...bundle(
             "cobalt",
             "Cobalt",
-            "Cool neutrals under a clear blue, a black page and solid navy accent after dark, Inter over Space Grotesk, 12px/18px corners. Needs obp-ui/fonts-alt.css.",
+            "Cool neutrals under a clear blue, a black page after dark, Inter over Space Grotesk, 8px/12px corners. Needs obp-ui/fonts-alt.css.",
             "cobalt",
             "grotesk",
-            "medium",
+            "tight",
             "default",
         ),
         status: {
