@@ -94,6 +94,9 @@ const COLOR_ORDER = [
     "--border",
     "--border-soft",
     "--input",
+    "--input-background",
+    "--tabs-background",
+    "--tabs-active",
     "--ring",
 ];
 
