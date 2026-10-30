@@ -26,8 +26,7 @@ export function AccountButton({
         <button
             type="button"
             className={cn(
-                "mt-2 flex w-full items-center gap-2.5 rounded-md p-1 px-3 pb-2 text-left hover:bg-secondary hover:text-foreground",
-                collapsed && "justify-center",
+                "mt-2 flex w-full items-center gap-2.5 rounded-md p-1 px-1.5 pb-2 text-left hover:bg-secondary hover:text-foreground",
                 className,
             )}
             {...props}

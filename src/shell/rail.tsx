@@ -90,13 +90,8 @@ export function Rail({
             {togglePlacement === "edge" ? (
                 brandLink
             ) : (
-                <div
-                    className={cn(
-                        "flex items-center gap-2 px-4 pb-3.5 pt-5",
-                        collapsed && "flex-col justify-center px-0",
-                    )}
-                >
-                    {brandLink}
+                <div className="flex items-center gap-2 px-4 pb-3.5 pt-5">
+                    {!collapsed && brandLink}
                     <button
                         type="button"
                         onClick={toggle}
@@ -113,9 +108,7 @@ export function Rail({
                 {children}
             </div>
 
-            {footer !== undefined && (
-                <div className={cn("px-3 py-2", footerClassName)}>{footer}</div>
-            )}
+            {footer !== undefined && <div className={cn("p-2", footerClassName)}>{footer}</div>}
         </aside>
     );
 }

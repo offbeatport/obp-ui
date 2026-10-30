@@ -19,12 +19,13 @@ export function SectionLabel({
 }: SectionLabelProps) {
     const railCollapsed = useRailCollapsed();
     const collapsed = collapsedProp ?? railCollapsed;
-    if (collapsed) return <div className="h-3.5" />;
     return (
         <div
+            aria-hidden={collapsed || undefined}
             className={cn(
-                "px-2 pt-4 pb-1.5 text-sm font-medium text-muted-foreground",
+                "truncate px-2 pt-4 pb-1.5 text-sm font-medium text-muted-foreground",
                 tone === "subtle" && "text-muted-foreground/60",
+                collapsed && "invisible",
                 className,
             )}
         >
