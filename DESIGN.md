@@ -52,15 +52,15 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    neutrals are the point - a page that must be `#000000` and not the ladder's `#0b0b0b`, or
    GitHub's blue-grey greys. It derives only `primaryForeground`, `shadowTint` and the dark wash.
    Reach for it when you are *quoting* a real product's surfaces, not when you want a new hue.
-   Paper stays a hand-written literal below both: it is the authored theme and its warm neutrals
+   Terracotta stays a hand-written literal below both: it is the authored theme and its warm neutrals
    and 3.55:1 primary are deliberate exceptions neither helper must reproduce. Cobalt is the
    second literal: its dark `--accent` is a solid `#172b57`, which neither helper's wash can express.
-   - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Paper light; 4.73 over the brand literals). It
+   - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Terracotta light; 4.73 over the brand literals). It
      is the lightest ink the kit ships; it still has to pass AA.
    - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes, 4.64
      over the seven brand ones) -
      because `--primary` is the prose-link colour (`markdown.tsx`) and the focus ring at least as
-     often as it is a button fill, so it has to work as *text*. Paper, the authored theme, is an
+     often as it is a button fill, so it has to work as *text*. Terracotta, the authored theme, is an
      exception at 3.55:1; inherit its warmth, not that number. Cobalt dark is the other, at 4.49:1
      on the page and 4.36:1 on the card. This is also the floor a quoted
      brand hue usually fails: X's `#1d9bf0` is 2.84:1 on white and Supabase's `#3ecf8e` is worse,
@@ -160,9 +160,9 @@ What is yours to set:
   `src/lib/theme.ts` means `light | dark`, the **mode**. Presets are the cheapest way to vary the
   look, and the default applies by *removing* every override so it cannot drift. Instrument is the
   default and is exactly `tokens.css` (Slate palette, Instrument type, Sharp radius, Default
-  space). Paper is the original authored theme - cream, terracotta, Inter over Space Grotesk, 12px
-  corners - kept as an opt-in preset that needs `obp-ui/fonts-alt.css`. Cobalt is Paper's type and
-  corners over cool neutrals and a clear blue, with a black page and solid navy accent in dark;
+  space). Terracotta is the original authored theme (called Paper until 2026-10-30) - cream,
+  terracotta, the Grotesk type pairing (Inter over Space Grotesk), 12px corners - kept as an opt-in
+  preset that needs `obp-ui/fonts-alt.css`. Cobalt is Terracotta's type and corners over cool neutrals and a clear blue, with a black page and solid navy accent in dark;
   it needs the same stylesheet. The other seven quote a
   product whose surfaces are widely known - Vercel, Linear,
   GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather
@@ -298,7 +298,7 @@ a reason to move them anyway, they are twelve more variables in the same block -
 **The one thing to eyeball:** `--primary` is the link colour and the focus ring, not just a button
 fill, so a pale brand colour makes links unreadable. Take the brand's hue and adjust its lightness
 until it reads as text - that is what the default does, `#1c6be0` light (4.52:1 on the page) and
-`#8eb7f8` dark, and what Paper does with terracotta `#c8643c` / `#e0794c`.
+`#8eb7f8` dark, and what Terracotta does with `#c8643c` / `#e0794c`.
 The logo file keeps the exact brand colour; it answers to no contrast floor.
 
 ## Two operational notes that used to live in the README

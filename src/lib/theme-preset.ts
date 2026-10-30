@@ -58,8 +58,8 @@ export const TYPE_PAIRINGS: TypePairing[] = [
         serif: SPECTRAL,
     },
     {
-        id: "paper",
-        name: "Paper",
+        id: "grotesk",
+        name: "Grotesk",
         note: "The original pairing: Inter body, Space Grotesk headings, JetBrains meta, Spectral pull-quotes. Needs obp-ui/fonts-alt.css.",
         sans: INTER,
         display: GROTESK,
@@ -131,8 +131,10 @@ export const TYPE_PAIRINGS: TypePairing[] = [
     },
 ];
 
+const RENAMED_TYPES: Record<string, string> = { paper: "grotesk" };
+
 export const typePairingFor = (id: string): TypePairing | undefined =>
-    TYPE_PAIRINGS.find((t) => t.id === id);
+    TYPE_PAIRINGS.find((t) => t.id === (RENAMED_TYPES[id] ?? id));
 
 export type RadiusStep = {
     id: string;
@@ -247,11 +249,11 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
         DEFAULT_SPACE_ID,
     ),
     bundle(
-        "paper",
-        "Paper",
+        "terracotta",
+        "Terracotta",
         "The original authored theme: cream, ink and terracotta, Inter over Space Grotesk, 12px/18px corners. Needs obp-ui/fonts-alt.css.",
-        "paper",
-        "paper",
+        "terracotta",
+        "grotesk",
         "medium",
         "default",
     ),
@@ -261,7 +263,7 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
             "Cobalt",
             "Cool neutrals under a clear blue, a black page and solid navy accent after dark, Inter over Space Grotesk, 12px/18px corners. Needs obp-ui/fonts-alt.css.",
             "cobalt",
-            "paper",
+            "grotesk",
             "medium",
             "default",
         ),
@@ -297,7 +299,7 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
         "GitHub",
         "Blue-grey institutional neutrals under a link blue, the authored Inter/Space Grotesk pairing, 4px/6px corners and compact rows for tables you scan.",
         "github",
-        "paper",
+        "grotesk",
         "sharp",
         "compact",
     ),
@@ -339,8 +341,10 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
     ),
 ];
 
+const RENAMED_PRESETS: Record<string, string> = { paper: "terracotta" };
+
 export const themePresetFor = (id: string): ThemePreset | undefined =>
-    THEME_PRESETS.find((p) => p.id === id);
+    THEME_PRESETS.find((p) => p.id === (RENAMED_PRESETS[id] ?? id));
 
 export const themePresetSwatch = (
     p: Pick<ThemePreset, "light" | "dark"> | ThemePalette,
@@ -514,7 +518,7 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
     function getThemePresetId(): string {
         const id = prefStorage().get(idKey);
         if (id === CUSTOM_PRESET_ID) return getCustomTheme() ? id : DEFAULT_PRESET_ID;
-        return id && themePresetFor(id) ? id : DEFAULT_PRESET_ID;
+        return (id && themePresetFor(id)?.id) || DEFAULT_PRESET_ID;
     }
 
     function getThemePreset(): ThemePreset {

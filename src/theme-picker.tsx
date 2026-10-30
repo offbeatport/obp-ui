@@ -532,7 +532,7 @@ function CustomThemeDialog({
                 <DialogFooter>
                     <Button variant="ghost" size="sm" onClick={() => resetTo(THEME_PRESETS[0])}>
                         <RotateCcwIcon />
-                        Reset to Paper
+                        Reset to Instrument
                     </Button>
                     <Button size="sm" onClick={() => onOpenChange(false)}>
                         Done

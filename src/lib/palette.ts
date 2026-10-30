@@ -176,8 +176,8 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
         },
     }),
     {
-        id: "paper",
-        name: "Paper",
+        id: "terracotta",
+        name: "Terracotta",
         note: "The original authored theme: cream, ink and terracotta.",
         light: {
             background: "#f7f3ec",
@@ -596,5 +596,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
     }),
 ];
 
+const RENAMED_PALETTES: Record<string, string> = { paper: "terracotta" };
+
 export const themePaletteFor = (id: string): ThemePalette | undefined =>
-    THEME_PALETTES.find((p) => p.id === id);
+    THEME_PALETTES.find((p) => p.id === (RENAMED_PALETTES[id] ?? id));

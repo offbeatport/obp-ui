@@ -135,7 +135,7 @@ function PresetReadout() {
                 },
                 {
                     name: "THEME_PRESETS · THEME_PALETTES",
-                    note: "the preset bundles, and the colour palettes their colour axis draws from - the default Slate and eight more generated from a single hue, the authored Paper, and seven brand-literal palettes.",
+                    note: "the preset bundles, and the colour palettes their colour axis draws from - the default Slate and eight more generated from a single hue, the authored Terracotta and Cobalt, and seven brand-literal palettes.",
                     value: `${THEME_PRESETS.length} · ${THEME_PALETTES.length}`,
                 },
                 {

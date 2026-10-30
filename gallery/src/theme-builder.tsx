@@ -1,6 +1,5 @@
 import { XIcon } from "lucide-react";
 import {
-    Badge,
     Button,
     CUSTOM_PRESET_ID,
     ColorField,
@@ -17,7 +16,6 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-    Separator,
     type StatusColors,
     Switch,
     THEME_PALETTES,
@@ -47,7 +45,7 @@ import {
     themePresetSwatch,
     typePairingFor,
 } from "obp-ui";
-import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 type Mode = "light" | "dark";
 
@@ -246,7 +244,7 @@ const BRAND_PALETTES = new Set([
     "stripe",
 ]);
 
-const AUTHORED_PALETTES = new Set(["paper", "cobalt"]);
+const AUTHORED_PALETTES = new Set(["terracotta", "cobalt"]);
 
 const PALETTE_GROUPS: { label: string; has: (p: ThemePalette) => boolean }[] = [
     { label: "Default", has: (p) => p.id === DEFAULT_PALETTE_ID },
@@ -473,85 +471,6 @@ function Floors({ colors }: { colors: ThemePaletteColors }) {
                 );
             })}
         </dl>
-    );
-}
-
-function Preview({ preset, mode }: { preset: ThemePreset; mode: Mode }) {
-    return (
-        <div
-            className={cn(
-                "rounded-xl border border-border bg-background p-4 text-foreground",
-                mode,
-            )}
-            style={themePresetStyle(preset, mode) as CSSProperties}
-        >
-            <div className="rounded-xl border border-border bg-card p-4 shadow-e1">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-display text-xl font-semibold text-foreground">
-                        {preset.name}
-                    </p>
-                    <span className="text-sm text-muted-foreground">{mode}</span>
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">
-                    Muted ink on paper, with <span className="text-primary underline">a link</span>{" "}
-                    in the brand colour.{" "}
-                    <span className="text-faint">Faint ink closes the line.</span>
-                </p>
-                <p className="mt-1 font-serif text-base italic text-muted-foreground">
-                    A serif line, for the pull-quote role.
-                </p>
-
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <Button size="sm">Primary</Button>
-                    <Button size="sm" variant="secondary">
-                        Secondary
-                    </Button>
-                    <Button size="sm" variant="outline">
-                        Outline
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                        Ghost
-                    </Button>
-                    <Button size="sm" variant="destructive">
-                        Delete
-                    </Button>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <Badge variant="accent">Brand soft</Badge>
-                    <Badge variant="success">Passed</Badge>
-                    <Badge variant="warning">Held</Badge>
-                    <Badge variant="info">Running</Badge>
-                    <Badge variant="approval">Review</Badge>
-                    <Badge variant="neutral">Idle</Badge>
-                    <Badge variant="outline">Outline</Badge>
-                </div>
-
-                <div className="mt-4 grid gap-2 @md:grid-cols-2">
-                    <div className="space-y-1.5">
-                        <Label htmlFor={`field-${mode}`}>Field</Label>
-                        <Input id={`field-${mode}`} defaultValue="value" />
-                    </div>
-                    <div className="flex items-end gap-2 pb-1">
-                        <Switch id={`switch-${mode}`} defaultChecked />
-                        <Label htmlFor={`switch-${mode}`}>Enabled</Label>
-                    </div>
-                </div>
-
-                <Separator className="my-4" />
-
-                <div className="rounded-lg bg-secondary p-3">
-                    <p className="text-sm text-muted-foreground">Rail, on the secondary surface</p>
-                    <p className="mt-1 text-sm text-foreground">
-                        The sidebar fill, under the same ink.
-                    </p>
-                </div>
-            </div>
-
-            <div className="mt-3 rounded-xl border border-border bg-card p-4 shadow-e2">
-                <p className="text-sm text-muted-foreground">Elevation two, on the page colour.</p>
-            </div>
-        </div>
     );
 }
 
@@ -1115,8 +1034,6 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                     <div className="grid gap-6 @5xl:grid-cols-2">
                         {MODES.map((mode) => (
                             <section key={mode} className="min-w-0 space-y-4">
-                                <Preview preset={draft} mode={mode} />
-
                                 <div className="rounded-xl border border-border bg-card p-4">
                                     <h3 className="text-sm font-semibold">{mode} contrast</h3>
                                     <p className="mt-1 mb-2 text-sm text-muted-foreground">
