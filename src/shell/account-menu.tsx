@@ -55,7 +55,7 @@ function ThemeRow({
     return (
         <div
             className={cn(
-                "flex items-center gap-2 px-2 py-0.5 text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+                "flex items-center gap-2 px-2 py-px text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 className,
             )}
         >
@@ -122,7 +122,7 @@ export function AccountMenu({
                                 <ThemeRow
                                     icon={item.icon}
                                     label={item.label}
-                                    className={cn(cls, comfortable && "py-1.5")}
+                                    className={cn(cls, comfortable && "py-1.25")}
                                 />
                             ) : item.href ? (
                                 <DropdownMenuItem asChild disabled={item.disabled} className={cls}>
