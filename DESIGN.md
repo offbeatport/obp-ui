@@ -54,7 +54,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    Reach for it when you are *quoting* a real product's surfaces, not when you want a new hue.
    Terracotta stays a hand-written literal below both: it is the authored theme and its warm neutrals
    and 3.55:1 primary are deliberate exceptions neither helper must reproduce. Cobalt is the
-   second literal: its dark `--accent` is a solid `#172b57`, which neither helper's wash can express.
+   second literal: its dark `--accent` is a solid `#263351`, which neither helper's wash can express.
    - `--faint` on `--card` **≥ 4.55:1** (min 4.60, Terracotta light; 4.73 over the brand literals). It
      is the lightest ink the kit ships; it still has to pass AA.
    - `--primary` on `--background` **≥ 4.5:1** (min 4.50 over the nine generated palettes, 4.64
@@ -72,10 +72,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      lightness ladder, `brandPalette` takes it as a literal. `--border` and `--border-soft` draw
      structure (panel edges, dividers) and stay quiet; they have no floor.
      `--input-background` is the fill behind those controls. It defaults to `--card`, and a palette
-     may set `inputBackground` to raise it, as Cobalt does in dark mode; `--input` must still clear
+     may set `inputBackground` to raise it; `--input` must still clear
      3:1 against the surface around the control.
      `--tabs-background` and `--tabs-active` fill a tab list and its selected tab (defaults `--secondary`
-     and `--card`); a theme whose hover fill is lighter than its paper swaps them.
+     and `--card`); a theme whose hover fill is lighter than its paper swaps them through `tabsBackground`
+     and `tabsActive`, as Cobalt does in dark mode.
    - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 6.78 on
      the `#101216` ink; warning reaches 8.73:1), from the matching `-foreground` token and never
      `#fff` - dark inverts these hues, so white lands at 2.2-2.8:1 on them (warning the worst at

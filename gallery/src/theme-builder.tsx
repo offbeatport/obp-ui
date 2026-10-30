@@ -67,6 +67,8 @@ const FIELDS: { key: keyof ThemePaletteColors; label: string; hint: string }[] =
         label: "Control fill",
         hint: "Behind inputs and selects; unset uses Paper",
     },
+    { key: "tabsBackground", label: "Tab well", hint: "Behind a tab list; unset uses Hover" },
+    { key: "tabsActive", label: "Selected tab", hint: "The chosen tab; unset uses Paper" },
     { key: "primary", label: "Brand", hint: "Buttons, links, focus ring" },
     { key: "primaryForeground", label: "Brand ink", hint: "Text on a brand button" },
     { key: "accent", label: "Brand soft", hint: "The selected nav item and option" },
@@ -516,6 +518,8 @@ const ROLES: Record<keyof ThemePaletteColors, "surface" | "ink" | "brand"> = {
     borderSoft: "surface",
     input: "surface",
     inputBackground: "surface",
+    tabsBackground: "surface",
+    tabsActive: "surface",
     foreground: "ink",
     mutedForeground: "ink",
     faint: "ink",
@@ -573,7 +577,12 @@ function solveOn(hex: string, over: string, floor: number, mode: Mode): string {
 }
 
 function fieldValue(colors: ThemePaletteColors, key: keyof ThemePaletteColors): string {
-    return colors[key] ?? (key === "inputBackground" ? colors.card : "#000000");
+    const fallback: Partial<Record<keyof ThemePaletteColors, string>> = {
+        inputBackground: colors.card,
+        tabsBackground: colors.secondary,
+        tabsActive: colors.card,
+    };
+    return colors[key] ?? fallback[key] ?? "#000000";
 }
 
 function turnAll(colors: ThemePaletteColors, mode: Mode, k: Knobs): ThemePaletteColors {

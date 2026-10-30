@@ -366,6 +366,8 @@ const VARS: [keyof ThemePaletteColors, string][] = [
     ["border", "--border"],
     ["input", "--input"],
     ["inputBackground", "--input-background"],
+    ["tabsBackground", "--tabs-background"],
+    ["tabsActive", "--tabs-active"],
     ["borderSoft", "--border-soft"],
     ["primary", "--primary"],
     ["primary", "--ring"],

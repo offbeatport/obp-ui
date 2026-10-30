@@ -9,6 +9,8 @@ export type ThemePaletteColors = {
     borderSoft: string;
     input: string;
     inputBackground?: string;
+    tabsBackground?: string;
+    tabsActive?: string;
     primary: string;
     primaryForeground: string;
     accent: string;
@@ -235,17 +237,18 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
         dark: {
             background: "#010101",
             card: "#060606",
-            secondary: "#171a21",
+            secondary: "#2b2d33",
             foreground: "#e8e9ea",
             mutedForeground: "#a6a7a8",
             faint: "#7f8182",
-            border: "#272c38",
+            border: "#0f1115",
             borderSoft: "#060606",
-            input: "#5c6374",
-            inputBackground: "#0b0b0b",
+            input: "#25282e",
+            tabsBackground: "#010101",
+            tabsActive: "#2b2d33",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
-            accent: "#172b57",
+            accent: "#263351",
             accentForeground: "#ffffff",
         },
     },
