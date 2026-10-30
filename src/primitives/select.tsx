@@ -204,8 +204,8 @@ type SelectContentProps = StringClassName<ComponentProps<typeof SelectPrimitive.
 function SelectContent({
     className,
     children,
-    position = "item-aligned",
-    align = "center",
+    position = "popper",
+    align = "start",
     side,
     sideOffset,
     alignOffset,
