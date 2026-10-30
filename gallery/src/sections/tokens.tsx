@@ -6,7 +6,7 @@ type Swatch = { token: string; cls: string; note: string };
 const SURFACES: Swatch[] = [
     { token: "--background", cls: "bg-background", note: "the page" },
     { token: "--card / --popover", cls: "bg-card", note: "raised paper surfaces" },
-    { token: "--secondary / --muted", cls: "bg-secondary", note: "rails, subtle fills" },
+    { token: "--secondary / --muted", cls: "bg-secondary", note: "hover, subtle fills" },
     { token: "--border", cls: "bg-border", note: "hairlines" },
     { token: "--border-soft", cls: "bg-border-soft", note: "quieter hairlines" },
     { token: "--faint", cls: "bg-faint", note: "lightest ink" },

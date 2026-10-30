@@ -75,7 +75,7 @@ export function Rail({
         );
 
     return (
-        <aside className={cn("relative flex flex-col border-r bg-secondary", className)}>
+        <aside className={cn("relative flex flex-col border-r bg-background", className)}>
             {togglePlacement === "edge" && (
                 <button
                     type="button"
@@ -102,7 +102,7 @@ export function Rail({
                         onClick={toggle}
                         aria-label={label}
                         title={label}
-                        className="grid size-7 flex-none place-items-center rounded-md text-muted-foreground outline-none hover:bg-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                        className="grid size-7 flex-none place-items-center rounded-md text-muted-foreground outline-none hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                     >
                         {glyph("size-4")}
                     </button>

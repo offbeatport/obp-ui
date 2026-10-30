@@ -128,6 +128,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      status dot, an avatar. No pill badges, no pill tabs.
    - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
      fills are for callouts and selected rows.
+   - **One hover, one selected.** Hover and keyboard highlight fill with `--secondary` everywhere:
+     controls, options, menu items, nav items. `--accent` marks what is selected: the current nav
+     item, the chosen option. Rails sit on the page colour behind a 1px border.
    - **Icons are functional, never decorative.** Keep the conventional glyphs - close, chevron,
      tick, search, external-link, drag handle. No icon beside every heading, nav item or stat, no
      icon in a tinted circle, no emoji in UI. An icon-only button carries an `aria-label` and a

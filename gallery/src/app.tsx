@@ -201,7 +201,7 @@ function Gallery() {
     return (
         <>
             <div className="min-h-screen bg-background text-foreground">
-                <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-secondary lg:flex">
+                <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-background lg:flex">
                     <div className="px-5 pb-4 pt-6">
                         <span className="font-display text-lg font-semibold tracking-tight">
                             obp<span className="text-primary">-ui</span>
@@ -229,8 +229,8 @@ function Gallery() {
                                         className={cn(
                                             "block truncate rounded-sm px-2 py-1.5 text-sm font-semibold",
                                             currentSpec === sub.id
-                                                ? "bg-card text-foreground"
-                                                : "text-muted-foreground hover:bg-primary/[0.1] hover:text-foreground",
+                                                ? "bg-accent text-accent-foreground"
+                                                : "text-muted-foreground hover:bg-secondary hover:text-foreground",
                                         )}
                                     >
                                         {sub.label}
@@ -256,7 +256,9 @@ function Gallery() {
                                     variant="ghost"
                                     size="sm"
                                     aria-pressed={builderOpen}
-                                    className={cn(builderOpen && "bg-secondary")}
+                                    className={cn(
+                                        builderOpen && "bg-accent text-accent-foreground",
+                                    )}
                                     onClick={() => setBuilderOpen(!builderOpen)}
                                 >
                                     Theme builder

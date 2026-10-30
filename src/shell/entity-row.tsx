@@ -87,8 +87,8 @@ export function EntityRow({
                 href={href}
                 title={title ?? name}
                 className={cn(
-                    "grid place-items-center rounded-md p-1 hover:bg-primary/[0.1]",
-                    selected && "bg-card",
+                    "grid place-items-center rounded-md p-1 hover:bg-secondary",
+                    selected && "bg-accent",
                     className,
                 )}
             >
@@ -98,13 +98,13 @@ export function EntityRow({
     }
 
     return (
-        <div className={cn("group relative rounded-md hover:bg-primary/[0.1]", className)}>
+        <div className={cn("group relative rounded-md hover:bg-secondary", className)}>
             <Link
                 href={href}
                 className={cn(
                     "relative flex items-center gap-3 rounded-md py-2 pl-2.5 pr-8",
                     selected &&
-                        "bg-card before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
+                        "bg-accent before:absolute before:-left-3 before:top-2 before:bottom-2 before:w-[3px] before:rounded-r-xs before:bg-primary before:content-['']",
                 )}
             >
                 {avatarNode}

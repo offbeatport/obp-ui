@@ -59,8 +59,8 @@ export function NavItem({
     const cls = cn(
         "group flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-left text-sm font-semibold transition",
         iconStyle === "plain" && "py-1.5",
-        isActive && "bg-card text-foreground",
-        !locked && "text-muted-foreground  hover:text-foreground",
+        isActive && "bg-accent text-accent-foreground",
+        !locked && !isActive && "text-muted-foreground hover:bg-secondary hover:text-foreground",
         locked && "cursor-default text-muted-foreground opacity-40",
         tint && "nav-newco mb-1.5",
         collapsed && "justify-center px-0",

@@ -338,7 +338,7 @@ function SelectItem({
                 <span
                     data-slot="select-item-icon"
                     className={cn(
-                        "flex size-4 flex-none items-center justify-center text-muted-foreground group-data-highlighted/select-item:text-accent-foreground",
+                        "flex size-4 flex-none items-center justify-center text-muted-foreground group-data-selected/select-item:text-accent-foreground",
                         description ? "mt-0.5" : null,
                     )}
                 >
@@ -353,7 +353,7 @@ function SelectItem({
                 {description ? (
                     <span
                         data-slot="select-item-description"
-                        className="text-sm text-muted-foreground group-data-highlighted/select-item:text-accent-foreground/80"
+                        className="text-sm text-muted-foreground group-data-selected/select-item:text-accent-foreground/80"
                     >
                         {description}
                     </span>
@@ -367,7 +367,7 @@ function SelectItem({
             label={textValue ?? label}
             className={cn(
                 "group/select-item relative flex w-full cursor-default items-center gap-2 rounded-sm py-1 pr-8 pl-2 text-sm outline-hidden select-none",
-                "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
+                "data-highlighted:not-data-selected:bg-secondary data-selected:bg-accent data-selected:text-accent-foreground",
                 "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                 "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 description ? "items-start py-1.5" : null,

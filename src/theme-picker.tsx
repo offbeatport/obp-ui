@@ -41,7 +41,7 @@ import {
 const FIELDS: { key: keyof ThemePreset["light"]; label: string; hint: string }[] = [
     { key: "background", label: "Page", hint: "The window behind everything" },
     { key: "card", label: "Paper", hint: "Cards, popovers, panels" },
-    { key: "secondary", label: "Rail", hint: "Sidebars and subtle fills" },
+    { key: "secondary", label: "Hover", hint: "Hover on controls, options and nav items" },
     { key: "foreground", label: "Ink", hint: "Body text" },
     { key: "mutedForeground", label: "Muted ink", hint: "Secondary text" },
     { key: "faint", label: "Faint ink", hint: "The quietest readable text" },
@@ -49,7 +49,7 @@ const FIELDS: { key: keyof ThemePreset["light"]; label: string; hint: string }[]
     { key: "borderSoft", label: "Line soft", hint: "Dividers inside a card" },
     { key: "primary", label: "Brand", hint: "Buttons, links, focus ring" },
     { key: "primaryForeground", label: "Brand ink", hint: "Text on a brand button" },
-    { key: "accent", label: "Brand soft", hint: "Hover surfaces" },
+    { key: "accent", label: "Brand soft", hint: "The selected nav item and option" },
     { key: "accentForeground", label: "Brand ink soft", hint: "Text on a brand-soft surface" },
 ];
 

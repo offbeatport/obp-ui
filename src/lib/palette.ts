@@ -235,7 +235,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
         dark: {
             background: "#010101",
             card: "#060606",
-            secondary: "#010101",
+            secondary: "#171a21",
             foreground: "#e8e9ea",
             mutedForeground: "#a6a7a8",
             faint: "#7f8182",
