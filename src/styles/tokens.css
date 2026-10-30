@@ -62,6 +62,7 @@
         monospace;
     --font-serif: "Spectral", Georgia, serif;
 
+    --type-xs: 0.75rem;
     --type-sm: 0.8125rem;
     --type-base: 0.875rem;
     --type-lg: 1rem;
@@ -70,6 +71,7 @@
     --type-3xl: 1.5rem;
     --type-4xl: 1.875rem;
 
+    --type-xs-leading: 1rem;
     --type-sm-leading: 1.125rem;
     --type-base-leading: 1.3125rem;
     --type-lg-leading: 1.5rem;
@@ -183,6 +185,8 @@
     --font-mono: var(--font-mono);
     --font-serif: var(--font-serif);
 
+    --text-xs: var(--type-xs);
+    --text-xs--line-height: var(--type-xs-leading);
     --text-sm: var(--type-sm);
     --text-sm--line-height: var(--type-sm-leading);
     --text-base: var(--type-base);

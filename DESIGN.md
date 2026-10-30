@@ -100,10 +100,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    focus-visible:ring-offset-1 focus-visible:ring-offset-background`. Keep the one a primitive
    ships when you add a variant - never remove an outline without replacing it. Anything that
    loops or draws needs a `motion-reduce:` escape at the call site.
-7. **Type comes off the scale.** Seven steps - `--type-sm` … `--type-4xl`, mapped onto `text-sm` …
+7. **Type comes off the scale.** Eight steps - `--type-xs` … `--type-4xl`, mapped onto `text-xs` …
    `text-4xl` - and `--type-sm` (13px) is the **floor**: every control, menu row, table cell and
-   label. Body is `text-base` (14px, 1.5). No `text-xs` (Tailwind still ships the utility; nothing
-   here may use it), no `text-[Npx]`. The literals the scale replaced ran to 15 different sizes
+   label. The one step below it, `text-xs` (12px), belongs to the `xs` button alone. Body is
+   `text-base` (14px, 1.5). No `text-[Npx]`. The literals the scale replaced ran to 15 different sizes
    between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's length. A caption
    is `text-sm text-muted-foreground` in sentence case - not uppercase, not tracked, not mono, not
    smaller. Inputs are `text-lg md:text-sm` so iOS does not zoom on focus.
