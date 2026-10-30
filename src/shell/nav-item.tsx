@@ -57,7 +57,7 @@ export function NavItem({
         </>
     );
     const cls = cn(
-        "group flex w-full items-center gap-2.5 overflow-hidden rounded-sm py-2 text-left text-sm font-semibold transition",
+        "group mb-0.5 flex w-full items-center gap-2.5 overflow-hidden rounded-sm py-2 text-left text-sm font-semibold transition",
         iconStyle === "plain" ? "px-3 py-1.5" : "px-1.5",
         isActive && "bg-accent text-accent-foreground",
         !locked && !isActive && "text-muted-foreground hover:bg-secondary hover:text-foreground",
