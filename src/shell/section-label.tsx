@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { useRailCollapsed } from "./rail-context";
+import { railFade, useRailCollapsed } from "./rail-context";
 
 export type SectionLabelProps = {
     collapsed?: boolean;
@@ -25,7 +25,7 @@ export function SectionLabel({
             className={cn(
                 "truncate px-2 pt-4 pb-1.5 text-sm font-medium text-muted-foreground",
                 tone === "subtle" && "text-muted-foreground/60",
-                collapsed && "invisible",
+                railFade(collapsed),
                 className,
             )}
         >

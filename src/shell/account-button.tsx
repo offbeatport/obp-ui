@@ -3,7 +3,7 @@
 import { ChevronUp } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
-import { useRailCollapsed } from "./rail-context";
+import { railFade, useRailCollapsed } from "./rail-context";
 
 export type AccountButtonProps = Omit<ComponentProps<"button">, "name" | "children"> & {
     initial?: ReactNode;
@@ -26,7 +26,7 @@ export function AccountButton({
         <button
             type="button"
             className={cn(
-                "mt-2 flex h-12 w-full items-center gap-2.5 rounded-md p-1 px-1.5 pb-2 text-left hover:bg-secondary hover:text-foreground",
+                "mt-2 flex h-12 w-full items-center gap-2.5 overflow-hidden rounded-md px-1.5 text-left hover:bg-secondary hover:text-foreground",
                 className,
             )}
             {...props}
@@ -34,15 +34,11 @@ export function AccountButton({
             <span className="grid size-8 flex-none place-items-center rounded-[9px] bg-primary text-sm font-bold text-primary-foreground">
                 {initial}
             </span>
-            {!collapsed && (
-                <>
-                    <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold">{name}</span>
-                        <span className="block truncate text-sm text-faint">{sub}</span>
-                    </span>
-                    <ChevronUp className="size-4 flex-none text-faint" />
-                </>
-            )}
+            <span className={cn("min-w-0 flex-1", railFade(collapsed))}>
+                <span className="block truncate text-sm font-semibold">{name}</span>
+                <span className="block truncate text-sm text-faint">{sub}</span>
+            </span>
+            <ChevronUp className={cn("size-4 flex-none text-faint", railFade(collapsed))} />
         </button>
     );
 }

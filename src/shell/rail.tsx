@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
 import { useNav } from "../nav/ui-provider";
-import { useRail } from "./rail-context";
+import { railFade, useRail } from "./rail-context";
 
 export type RailProps = {
     brand?: ReactNode;
@@ -66,11 +66,25 @@ export function Rail({
                 className={cn(
                     "flex items-center",
                     togglePlacement === "edge" && "px-4 pb-3.5 pt-5",
-                    togglePlacement === "header" && !collapsed && "min-w-0 flex-1",
                     collapsed && "justify-center px-0",
                 )}
             >
                 {collapsed ? (brandCollapsed ?? brand) : brand}
+            </Link>
+        );
+    const headerBrand =
+        brand === undefined ? null : (
+            <Link
+                href={brandHref ?? paths.home()}
+                aria-label={brandLabel}
+                aria-hidden={collapsed || undefined}
+                tabIndex={collapsed ? -1 : undefined}
+                className={cn(
+                    "flex min-w-0 flex-1 items-center overflow-hidden whitespace-nowrap",
+                    collapsed && "pointer-events-none",
+                )}
+            >
+                <span className={railFade(collapsed)}>{brand}</span>
             </Link>
         );
 
@@ -90,8 +104,8 @@ export function Rail({
             {togglePlacement === "edge" ? (
                 brandLink
             ) : (
-                <div className="flex items-center gap-2 px-4 pb-3.5 pt-5">
-                    {!collapsed && brandLink}
+                <div className="flex items-center px-4 pb-3.5 pt-5">
+                    {headerBrand}
                     <button
                         type="button"
                         onClick={toggle}

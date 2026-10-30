@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
+import { type LucideIcon, Monitor, Moon, Sun } from "lucide-react";
 import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ThemePref, getThemePref, onThemeChange, setThemePref } from "../lib/theme";
@@ -34,10 +35,10 @@ export type AccountMenuProps = {
     className?: string;
 };
 
-const THEME_PREFS: { value: ThemePref; label: string }[] = [
-    { value: "light", label: "Light" },
-    { value: "dark", label: "Dark" },
-    { value: "system", label: "System" },
+const THEME_PREFS: { value: ThemePref; label: string; Icon: LucideIcon }[] = [
+    { value: "light", label: "Light", Icon: Sun },
+    { value: "dark", label: "Dark", Icon: Moon },
+    { value: "system", label: "System", Icon: Monitor },
 ];
 
 function isThemePref(value: unknown): value is ThemePref {
@@ -54,7 +55,7 @@ function ThemeRow({
     return (
         <div
             className={cn(
-                "flex items-center gap-2 px-2 py-1 text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+                "flex items-center gap-2 px-2 py-0.5 text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 className,
             )}
         >
@@ -73,9 +74,11 @@ function ThemeRow({
                         key={option.value}
                         value={option.value}
                         closeOnClick={false}
-                        className="flex h-6 cursor-default items-center rounded-sm px-1.5 text-sm text-muted-foreground outline-hidden select-none data-highlighted:not-data-checked:bg-secondary data-highlighted:text-foreground data-checked:bg-accent data-checked:text-accent-foreground"
+                        aria-label={option.label}
+                        title={option.label}
+                        className="grid size-6 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:not-data-checked:bg-secondary data-highlighted:text-foreground data-checked:bg-accent data-checked:text-accent-foreground"
                     >
-                        {option.label}
+                        <option.Icon className="size-4 text-current" />
                     </MenuPrimitive.RadioItem>
                 ))}
             </MenuPrimitive.RadioGroup>

@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, createContext, useContext } from "react";
+import { cn } from "../lib/cn";
 
 export type RailState = {
     collapsed: boolean;
@@ -26,4 +27,11 @@ export function useRail(): RailState {
 
 export function useRailCollapsed(): boolean {
     return useContext(RailContext).collapsed;
+}
+
+export function railFade(collapsed: boolean): string {
+    return cn(
+        "transition-opacity duration-150 motion-reduce:transition-none",
+        collapsed ? "opacity-0" : "delay-150",
+    );
 }

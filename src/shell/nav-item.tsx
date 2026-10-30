@@ -5,7 +5,7 @@ import type { ComponentType, ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
 import { useIsActive } from "../nav/ui-provider";
-import { useRailCollapsed } from "./rail-context";
+import { railFade, useRailCollapsed } from "./rail-context";
 
 export type IconComponent = ComponentType<{ className?: string }>;
 
@@ -52,12 +52,12 @@ export function NavItem({
             >
                 <Icon className="size-4" />
             </span>
-            {!collapsed && <span className="flex-1 truncate">{label}</span>}
+            <span className={cn("min-w-0 flex-1 truncate", railFade(collapsed))}>{label}</span>
             {!collapsed && locked && <Lock className="size-3.5 flex-none text-faint" />}
         </>
     );
     const cls = cn(
-        "group flex w-full items-center gap-2.5 rounded-sm py-2 text-left text-sm font-semibold transition",
+        "group flex w-full items-center gap-2.5 overflow-hidden rounded-sm py-2 text-left text-sm font-semibold transition",
         iconStyle === "plain" ? "px-3 py-1.5" : "px-1.5",
         isActive && "bg-accent text-accent-foreground",
         !locked && !isActive && "text-muted-foreground hover:bg-secondary hover:text-foreground",
