@@ -28,7 +28,6 @@
     --border-soft: #e4e4e5;
     --input: #88898b;
     --input-background: var(--card);
-    --button-edge: transparent;
     --tabs-background: var(--secondary);
     --tabs-active: var(--card);
     --ring: var(--primary);
