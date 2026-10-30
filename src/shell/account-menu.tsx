@@ -67,7 +67,7 @@ function ThemeRow({
                     if (isThemePref(value)) setThemePref(value);
                 }}
                 aria-label="Theme"
-                className="flex gap-0.5 rounded-md bg-secondary p-0.5"
+                className="flex gap-0.5 rounded-md border border-border bg-tabs-background p-0.5"
             >
                 {THEME_PREFS.map((option) => (
                     <MenuPrimitive.RadioItem
@@ -76,7 +76,7 @@ function ThemeRow({
                         closeOnClick={false}
                         aria-label={option.label}
                         title={option.label}
-                        className="grid size-5.5 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:text-foreground data-checked:bg-card data-checked:text-foreground"
+                        className="grid size-5 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:text-foreground data-checked:bg-tabs-active data-checked:text-accent-foreground"
                     >
                         <option.Icon className="size-4 text-current" />
                     </MenuPrimitive.RadioItem>
