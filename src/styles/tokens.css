@@ -28,8 +28,8 @@
     --border-soft: #e4e4e5;
     --input: #88898b;
     --input-background: var(--card);
-    --tabs-background: var(--secondary);
-    --tabs-active: var(--card);
+    --tabs-background: var(--background);
+    --tabs-active: var(--accent);
     --ring: var(--primary);
 
     --success: #157035;
