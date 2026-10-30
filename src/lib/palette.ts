@@ -244,6 +244,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             border: "#131416",
             borderSoft: "#060606",
             input: "#1e222c",
+            inputBackground: "#0f0f14",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
             accent: "#111216",
