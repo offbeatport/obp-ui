@@ -74,6 +74,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `--input-background` is the fill behind those controls. It defaults to `--card`, and a palette
      may set `inputBackground` to raise it, as Cobalt does in dark mode; `--input` must still clear
      3:1 against the surface around the control.
+     `--tabs-background` and `--tabs-active` fill a tab list and its selected tab (defaults `--secondary`
+     and `--card`); a theme whose hover fill is lighter than its paper swaps them.
    - A filled status chip's label **≥ 5.65:1** in dark mode (destructive is the tightest, 6.78 on
      the `#101216` ink; warning reaches 8.73:1), from the matching `-foreground` token and never
      `#fff` - dark inverts these hues, so white lands at 2.2-2.8:1 on them (warning the worst at

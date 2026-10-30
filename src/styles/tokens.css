@@ -29,6 +29,8 @@
     --input: #88898b;
     --input-background: var(--card);
     --button-edge: transparent;
+    --tabs-background: var(--secondary);
+    --tabs-active: var(--card);
     --ring: var(--primary);
 
     --success: #157035;
@@ -155,6 +157,8 @@
     --color-border-soft: var(--border-soft);
     --color-input: var(--input);
     --color-input-background: var(--input-background);
+    --color-tabs-background: var(--tabs-background);
+    --color-tabs-active: var(--tabs-active);
     --color-ring: var(--ring);
     --color-faint: var(--faint);
 

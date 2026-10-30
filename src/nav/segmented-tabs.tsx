@@ -14,7 +14,7 @@ export function SegmentedTabs({
     onSelect: (key: string) => void;
 }) {
     return (
-        <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-md border border-border bg-secondary p-0.5">
+        <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-md border border-border bg-tabs-background p-0.5">
             {tabs.map((t) => {
                 const on = t.key === active;
                 return (
@@ -26,7 +26,7 @@ export function SegmentedTabs({
                         className={cn(
                             "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-sm border px-2.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             on
-                                ? "border-input bg-card text-foreground"
+                                ? "border-input bg-tabs-active text-foreground"
                                 : "border-transparent text-muted-foreground hover:text-foreground",
                         )}
                     >
