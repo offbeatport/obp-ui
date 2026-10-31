@@ -103,7 +103,11 @@ export function AccountMenu({
             <DropdownMenuContent
                 align={align}
                 side={side}
-                className={cn(comfortable ? "w-64 p-1.5" : "w-60", className)}
+                className={cn(
+                    "w-[max(15rem,var(--anchor-width))]",
+                    comfortable && "p-1.5",
+                    className,
+                )}
             >
                 {rows.map(({ item, key }) => {
                     const cls = cn(
