@@ -31,6 +31,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "../primitives/dropdown-menu";
+import { Skeleton } from "../primitives/skeleton";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
 
 const INTERACTIVE =
@@ -59,6 +60,8 @@ export type DataGridProps<T> = {
     storageKey?: string;
     columnPicker?: boolean;
     hiddenColumns?: string[];
+    loading?: boolean;
+    loadingRows?: number;
     className?: string;
 };
 
@@ -380,6 +383,8 @@ export function DataGrid<T>({
     storageKey,
     columnPicker = false,
     hiddenColumns = [],
+    loading = false,
+    loadingRows = 8,
     className,
 }: DataGridProps<T>) {
     const [sorting, setSorting] = useState<SortingState>(initialSort);
@@ -496,7 +501,22 @@ export function DataGrid<T>({
         target: virtualizer,
     };
     let content: ReactNode;
-    if (sorted.length === 0) {
+    if (loading) {
+        content = Array.from({ length: loadingRows }, (_, row) => (
+            <TableRow key={`loading-${row}`} className="hover:bg-transparent">
+                {leaves.map((column, index) => (
+                    <TableCell key={column.id} className="py-3">
+                        <Skeleton
+                            className="h-4"
+                            style={{
+                                width: `${index === 0 ? 70 : 40 + ((row * 7 + index * 13) % 40)}%`,
+                            }}
+                        />
+                    </TableCell>
+                ))}
+            </TableRow>
+        ));
+    } else if (sorted.length === 0) {
         content = (
             <TableRow>
                 <TableCell colSpan={leaves.length} className="py-8 whitespace-normal">
@@ -524,6 +544,7 @@ export function DataGrid<T>({
         >
             <table
                 ref={tableRef}
+                aria-busy={loading || undefined}
                 data-slot="table"
                 className={cn("w-full caption-bottom text-sm", !fixed && minWidth)}
                 style={

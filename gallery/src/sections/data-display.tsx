@@ -159,6 +159,10 @@ export function DataDisplaySection() {
                             note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false. hiddenColumns sets the defaults; choices persist under storageKey.",
                         },
                         {
+                            name: "loading, loadingRows",
+                            note: "keeps the real header and draws placeholder rows while data loads, so the page does not jump when it arrives.",
+                        },
+                        {
                             name: "maxHeight",
                             note: "scrolls inside the grid. Without it the header sticks to the page's scroller while the grid fits its width.",
                         },
