@@ -1,6 +1,9 @@
+import type { ColumnDef } from "@tanstack/react-table";
 import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import {
+    Badge,
     Button,
+    DataGrid,
     EmptyState,
     ExpandableRow,
     ExpandableRowList,
@@ -85,12 +88,84 @@ const TASKS = [
     },
 ];
 
+type Request = { id: string; route: string; region: string; status: number; latency: number };
+
+const ROUTES = ["/v1/chat/completions", "/v1/models", "/api/keys", "/api/jobs", "/v1/embeddings"];
+const REGIONS = ["eu-west", "us-east", "ap-south"];
+
+const REQUESTS: Request[] = Array.from({ length: 5000 }, (_, index) => ({
+    id: `req_${(index * 7919).toString(36).padStart(6, "0")}`,
+    route: ROUTES[index % ROUTES.length] ?? "/",
+    region: REGIONS[index % REGIONS.length] ?? "eu-west",
+    status: index % 37 === 0 ? 503 : 200,
+    latency: 40 + ((index * 53) % 900),
+}));
+
+const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
+    {
+        header: "Request",
+        accessorKey: "id",
+        cell: (info) => <span className="font-mono">{String(info.getValue())}</span>,
+    },
+    { header: "Route", accessorKey: "route" },
+    { header: "Region", accessorKey: "region" },
+    {
+        header: "Status",
+        accessorKey: "status",
+        cell: (info) =>
+            info.getValue() === 200 ? (
+                <Badge variant="success">200</Badge>
+            ) : (
+                <Badge variant="destructive">{String(info.getValue())}</Badge>
+            ),
+    },
+    {
+        header: "Latency",
+        accessorKey: "latency",
+        cell: (info) => `${String(info.getValue())} ms`,
+    },
+];
+
 export function DataDisplaySection() {
     const [open, setOpen] = useState<string | null>("invoices");
     const [picked, setPicked] = useState<string | null>("invoices");
 
     return (
         <>
+            <Spec
+                name="DataGrid"
+                note="TanStack Table with sorting, resizable columns, a sticky header and virtual rows. 5,000 rows here; only the visible ones are in the DOM."
+            >
+                <DataGrid
+                    columns={REQUEST_COLUMNS}
+                    rows={REQUESTS}
+                    getRowId={(row) => row.id}
+                    onOpen={() => undefined}
+                    rowLabel={(row) => `${row.id} ${row.route}`}
+                    maxHeight="360px"
+                    storageKey="gallery.data-grid"
+                />
+                <Api
+                    items={[
+                        {
+                            name: "sortable, resizable",
+                            note: "both on by default. Drag or arrow-key a header edge; double-click resets the column. Widths persist under storageKey.",
+                        },
+                        {
+                            name: "maxHeight",
+                            note: "scrolls inside the grid. Without it the header sticks to the page's scroller while the grid fits its width.",
+                        },
+                        {
+                            name: "virtualize",
+                            note: "on from 150 rows; rows are measured, so multi-line cells work.",
+                        },
+                        {
+                            name: "onOpen, rowLabel",
+                            note: "rows become focusable: arrows, Home and End move, Enter opens.",
+                        },
+                    ]}
+                />
+            </Spec>
             <Spec
                 name="GradientMark · markColorFor"
                 note="One letter on a flat tile, its hue stepped from the name around --primary. No gradient: the name is kept for compatibility."

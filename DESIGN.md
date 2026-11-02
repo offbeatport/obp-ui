@@ -120,6 +120,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-16px (`px-3
      py-1.5` in `TableCell`, `p-4` in `Card`). No section padding above `py-12` inside an app, no
      `gap-6`+ between related controls, no centred hero inside a tool.
+   - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
+     header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
+     something, `storageKey` to keep a person's column widths, `maxHeight` when it shares the page
+     with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
