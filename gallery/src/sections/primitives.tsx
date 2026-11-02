@@ -409,21 +409,21 @@ export function PrimitivesSection() {
 
             <Spec name="Checkbox" note="Two sizes, every state. The tick is drawn.">
                 <Row className="gap-8">
-                    <Cell label='size="default"'>
+                    <Cell label='size="sm" (default, 16px)'>
                         <Row className="gap-4">
                             <Checkbox aria-label="Unchecked" />
                             <Checkbox defaultChecked aria-label="Checked" />
                             <Checkbox checked="indeterminate" aria-label="Indeterminate" />
                         </Row>
                     </Cell>
-                    <Cell label='size="sm"'>
+                    <Cell label='size="lg" (20px)'>
                         <Row className="gap-4">
-                            <Checkbox size="sm" aria-label="Unchecked, small" />
-                            <Checkbox size="sm" defaultChecked aria-label="Checked, small" />
+                            <Checkbox size="lg" aria-label="Unchecked, large" />
+                            <Checkbox size="lg" defaultChecked aria-label="Checked, large" />
                             <Checkbox
-                                size="sm"
+                                size="lg"
                                 checked="indeterminate"
-                                aria-label="Indeterminate, small"
+                                aria-label="Indeterminate, large"
                             />
                         </Row>
                     </Cell>

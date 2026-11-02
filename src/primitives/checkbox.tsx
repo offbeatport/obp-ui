@@ -29,12 +29,12 @@ const checkboxVariants = cva(
     {
         variants: {
             size: {
-                default: "size-5",
                 sm: "size-4",
+                lg: "size-5",
             },
         },
         defaultVariants: {
-            size: "default",
+            size: "sm",
         },
     },
 );
@@ -60,7 +60,7 @@ type CheckboxProps = StringClassName<
 
 function Checkbox({
     className,
-    size = "default",
+    size = "sm",
     checked,
     defaultChecked,
     indeterminate,
@@ -156,7 +156,7 @@ function CheckboxField({
     description,
     className,
     checkboxClassName,
-    size = "default",
+    size = "sm",
     disabled,
     asChild: _asChild,
     ...props
