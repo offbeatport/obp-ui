@@ -46,7 +46,7 @@ function RadioGroupItem({ className, asChild = false, children, ...props }: Radi
         <RadioPrimitive.Root
             data-slot="radio-group-item"
             className={cn(
-                "inline-flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-input bg-card text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:border-primary data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive",
+                "inline-flex aspect-square size-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground bg-input-background text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-unchecked:not-data-disabled:hover:border-primary data-checked:border-primary data-checked:bg-primary data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive",
                 className,
             )}
             {...props}
@@ -56,7 +56,7 @@ function RadioGroupItem({ className, asChild = false, children, ...props }: Radi
                 data-slot="radio-group-indicator"
                 className="relative flex items-center justify-center"
             >
-                <span className="size-2 rounded-full bg-primary" />
+                <span className="size-1.5 rounded-full bg-primary-foreground" />
             </RadioPrimitive.Indicator>
         </RadioPrimitive.Root>
     );
