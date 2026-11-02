@@ -38,6 +38,15 @@ const PROVIDERS: ProviderId[] = [
     "xai",
     "openrouter",
     "zai",
+    "qwen",
+    "meta",
+    "mistral",
+    "microsoft",
+    "ibm",
+    "nvidia",
+    "deepseek",
+    "ai2",
+    "huggingface",
 ];
 
 const SAMPLE = `## What I found
