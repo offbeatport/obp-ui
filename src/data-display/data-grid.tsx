@@ -13,6 +13,7 @@ import { type Virtualizer, useVirtualizer, useWindowVirtualizer } from "@tanstac
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
     type KeyboardEvent,
+    type MouseEvent,
     type PointerEvent,
     type ReactNode,
     type RefObject,
@@ -24,7 +25,8 @@ import {
 import { cn } from "../lib/cn";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
 
-const INTERACTIVE = "a, button, input, select, textarea, [role='menuitem']";
+const INTERACTIVE =
+    "a, button, input, select, textarea, label, summary, [role='menuitem'], [role='checkbox'], [role='switch'], [role='tab'], [data-grid-ignore]";
 const MIN_COLUMN = 48;
 const RESIZE_STEP = 16;
 const VIRTUAL_FROM = 150;
@@ -356,6 +358,18 @@ export function DataGrid<T>({
             focus();
         }
     };
+    const onClick = (event: MouseEvent<HTMLTableRowElement>, row: T) => {
+        const target = event.target as HTMLElement;
+        if (
+            event.button !== 0 ||
+            !event.currentTarget.contains(target) ||
+            target.closest(INTERACTIVE) ||
+            window.getSelection()?.toString()
+        ) {
+            return;
+        }
+        onOpen?.(row);
+    };
     const onKey = (event: KeyboardEvent<HTMLTableRowElement>, index: number, row: T) => {
         if (
             event.target !== event.currentTarget &&
@@ -386,7 +400,8 @@ export function DataGrid<T>({
             tabIndex={onOpen ? 0 : undefined}
             aria-label={rowLabel?.(row.original)}
             onKeyDown={onOpen ? (event) => onKey(event, index, row.original) : undefined}
-            className={cn(onOpen && "outline-none focus-visible:bg-secondary")}
+            onClick={onOpen ? (event) => onClick(event, row.original) : undefined}
+            className={cn(onOpen && "cursor-pointer outline-none focus-visible:bg-secondary")}
         >
             {row.getVisibleCells().map((cell) => (
                 <TableCell

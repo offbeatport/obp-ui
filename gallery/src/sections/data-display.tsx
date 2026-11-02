@@ -161,7 +161,7 @@ export function DataDisplaySection() {
                         },
                         {
                             name: "onOpen, rowLabel",
-                            note: "rows become focusable: arrows, Home and End move, Enter opens.",
+                            note: "a click anywhere on the row opens it, except on buttons, links, menus and fields, or while text is selected. Rows are focusable: arrows, Home and End move, Enter opens. Keep a real link in the row for new-tab clicks; mark any other control data-grid-ignore.",
                         },
                     ]}
                 />

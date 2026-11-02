@@ -122,7 +122,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `gap-6`+ between related controls, no centred hero inside a tool.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
      header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
-     something, `storageKey` to keep a person's column widths, `maxHeight` when it shares the page
+     something (a click anywhere on the row then opens it; keep the name a real link for new tabs), `storageKey` to keep a person's column widths, `maxHeight` when it shares the page
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
