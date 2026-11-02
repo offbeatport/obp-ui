@@ -65,7 +65,6 @@ export type DataGridProps<T> = {
     storageKey?: string;
     columnPicker?: boolean;
     hiddenColumns?: string[];
-    dropOrder?: string[];
     loading?: boolean;
     loadingRows?: number;
     className?: string;
@@ -143,7 +142,7 @@ function writeDensity(key: string | undefined, density: Density): void {
     }
 }
 
-type PickerColumn = { id: string; label: string; shown: boolean; dropped: boolean };
+type PickerColumn = { id: string; label: string; shown: boolean };
 
 function ColumnPicker({
     columns,
@@ -173,14 +172,11 @@ function ColumnPicker({
                 {columns.map((column) => (
                     <DropdownMenuCheckboxItem
                         key={column.id}
-                        checked={column.shown && !column.dropped}
+                        checked={column.shown}
                         closeOnClick={false}
                         onCheckedChange={(value) => onToggle(column.id, value === true)}
                     >
-                        <span className="flex-1">{column.label}</span>
-                        {column.shown && column.dropped && (
-                            <span className="text-sm text-muted-foreground">Hidden to fit</span>
-                        )}
+                        {column.label}
                     </DropdownMenuCheckboxItem>
                 ))}
                 <DropdownMenuSeparator />
@@ -211,59 +207,6 @@ export function DataGridDetail({ className, ...props }: ComponentProps<"span">) 
             {...props}
         />
     );
-}
-
-type Dropped = { id: string; width: number };
-
-function useFitColumns<T>(
-    enabled: boolean,
-    table: Table<T>,
-    container: RefObject<HTMLDivElement | null>,
-    inner: RefObject<HTMLTableElement | null>,
-    cells: RefObject<Map<string, HTMLTableCellElement>>,
-    order: string[] | undefined,
-    dropped: Dropped[],
-    setDropped: (update: (current: Dropped[]) => Dropped[]) => void,
-) {
-    useLayoutEffect(() => {
-        const box = container.current;
-        const grid = inner.current;
-        if (!enabled || !box || !grid) {
-            return;
-        }
-        const needed = () => {
-            const previous = grid.style.width;
-            grid.style.width = "min-content";
-            const width = grid.getBoundingClientRect().width;
-            grid.style.width = previous;
-            return width;
-        };
-        const evaluate = () => {
-            const slack = box.clientWidth - needed();
-            const visible = table.getVisibleLeafColumns().filter((column) => column.getCanHide());
-            if (slack < -1) {
-                const ids = visible.map((column) => column.id);
-                const next = order ? order.find((id) => ids.includes(id)) : ids.at(-1);
-                if (next) {
-                    const width = cells.current.get(next)?.getBoundingClientRect().width ?? 120;
-                    setDropped((current) =>
-                        current.some((item) => item.id === next)
-                            ? current
-                            : [...current, { id: next, width }],
-                    );
-                }
-                return;
-            }
-            const last = dropped.at(-1);
-            if (last && slack >= last.width + 8) {
-                setDropped((current) => current.slice(0, -1));
-            }
-        };
-        evaluate();
-        const observer = new ResizeObserver(evaluate);
-        observer.observe(box);
-        return () => observer.disconnect();
-    });
 }
 
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
@@ -504,7 +447,6 @@ export function DataGrid<T>({
     storageKey,
     columnPicker = false,
     hiddenColumns = [],
-    dropOrder,
     loading = false,
     loadingRows = 8,
     className,
@@ -516,16 +458,11 @@ export function DataGrid<T>({
     useEffect(() => writeVisibility(storageKey, visibility), [storageKey, visibility]);
     const [density, setDensity] = useState<Density>(() => readDensity(storageKey));
     useEffect(() => writeDensity(storageKey, density), [storageKey, density]);
-    const [dropped, setDropped] = useState<Dropped[]>([]);
-    const effective: VisibilityState = {
-        ...visibility,
-        ...Object.fromEntries(dropped.map((item) => [item.id, false])),
-    };
     const table = useReactTable({
         data: rows,
         columns,
         getRowId,
-        state: { sorting, columnVisibility: effective },
+        state: { sorting, columnVisibility: visibility },
         enableSorting: sortable,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -535,16 +472,6 @@ export function DataGrid<T>({
     const tableRef = useRef<HTMLTableElement>(null);
     const body = useRef<HTMLTableSectionElement>(null);
     const cells = useRef(new Map<string, HTMLTableCellElement>());
-    useFitColumns(
-        columnPicker && !loading,
-        table,
-        container,
-        tableRef,
-        cells,
-        dropOrder,
-        dropped,
-        setDropped,
-    );
     const pickerColumns: PickerColumn[] = table
         .getAllLeafColumns()
         .filter((column) => column.getCanHide())
@@ -552,14 +479,9 @@ export function DataGrid<T>({
             id: column.id,
             label: headerLabel(column),
             shown: visibility[column.id] !== false,
-            dropped: dropped.some((item) => item.id === column.id),
         }));
-    const toggleColumn = (id: string, shown: boolean) => {
+    const toggleColumn = (id: string, shown: boolean) =>
         setVisibility((current) => ({ ...current, [id]: shown }));
-        if (shown) {
-            setDropped((current) => current.filter((item) => item.id !== id));
-        }
-    };
     const virtualizer = useRef<AnyVirtualizer | null>(null);
     const sizing = useColumnWidths(table, cells, storageKey);
     const overflowing = useOverflowing(container, tableRef);
@@ -703,7 +625,7 @@ export function DataGrid<T>({
                 ref={tableRef}
                 aria-busy={loading || undefined}
                 data-slot="table"
-                className={cn("w-full caption-bottom text-sm", !fixed && !columnPicker && minWidth)}
+                className={cn("w-full caption-bottom text-sm", !fixed && minWidth)}
                 style={
                     fixed
                         ? { tableLayout: "fixed", minWidth: `${fixedTotal + MIN_COLUMN * 2}px` }

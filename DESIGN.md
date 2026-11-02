@@ -123,8 +123,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
      header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
      something (a click anywhere on the row then opens it; keep the name a real link for new tabs), `storageKey` to keep a person's column widths and choices, `columnPicker` (with `hiddenColumns` for the
-     defaults and `dropOrder` for what goes first when space runs out; the grid fits its width instead of
-     scrolling sideways) when a list has more columns than most people need, `DataGridDetail` for a second
+     defaults; show few enough by default that the grid fits, and let it scroll when people add more) when a
+     list has more columns than most people need, `DataGridDetail` for a second
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).

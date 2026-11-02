@@ -155,8 +155,8 @@ export function DataDisplaySection() {
                             note: "both on by default. Drag or arrow-key a header edge; double-click resets the column. Widths persist under storageKey.",
                         },
                         {
-                            name: "columnPicker, hiddenColumns, dropOrder",
-                            note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false, and switches density between comfortable and compact. When the columns do not fit, the grid drops them in dropOrder (default: right to left) instead of scrolling, and the menu marks them Hidden to fit. hiddenColumns sets the defaults; choices persist under storageKey.",
+                            name: "columnPicker, hiddenColumns",
+                            note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false, and switches density between comfortable and compact. hiddenColumns sets the defaults; choices persist under storageKey. Default to few enough columns that the grid fits; when people add more, it scrolls sideways.",
                         },
                         {
                             name: "DataGridDetail",
