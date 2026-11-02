@@ -120,6 +120,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-16px (`px-3
      py-1.5` in `TableCell`, `p-4` in `Card`). No section padding above `py-12` inside an app, no
      `gap-6`+ between related controls, no centred hero inside a tool.
+   - **Forms are `Field`s in a `FieldGroup`.** A label sits 6px over its control; fields stack 20px apart, and side
+     by side they share a grid with `gap-5`. Do not hand-roll label spacing.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
      header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
      something (a click anywhere on the row then opens it; keep the name a real link for new tabs), `storageKey` to keep a person's column widths and choices, `columnPicker` (with `hiddenColumns` for the

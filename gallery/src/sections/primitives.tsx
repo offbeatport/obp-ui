@@ -48,6 +48,8 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
+    Field,
+    FieldGroup,
     Input,
     Label,
     Popover,
@@ -249,36 +251,32 @@ export function PrimitivesSection() {
             </Spec>
 
             <Spec
-                name="Input · Textarea · Label"
-                note="the form floor: one field, one label, one box."
+                name="Field · FieldGroup · Input · Textarea"
+                note="Field is a label over its control, with an optional hint or error, 6px apart. FieldGroup stacks fields 20px apart; side-by-side fields share a grid with the same gap."
             >
-                <div className="grid max-w-md gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="g-name">Company name</Label>
+                <FieldGroup className="max-w-md">
+                    <Field id="g-name" label="Company name">
                         <Input id="g-name" placeholder="Ledgerly" defaultValue="Ledgerly" />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="g-thesis">Thesis</Label>
+                    </Field>
+                    <Field id="g-thesis" label="Thesis" hint="One or two sentences.">
                         <Textarea
                             id="g-thesis"
                             rows={3}
                             defaultValue="Freelancers lose 3 weeks a year chasing invoices."
                         />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="g-disabled">Disabled</Label>
+                    </Field>
+                    <Field id="g-disabled" label="Disabled">
                         <Input id="g-disabled" disabled placeholder="not editable" />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="g-search">SearchInput</Label>
+                    </Field>
+                    <Field id="g-search" label="SearchInput">
                         <SearchInput
                             id="g-search"
                             placeholder="Search invoices"
                             value={query}
                             onValueChange={setQuery}
                         />
-                    </div>
-                </div>
+                    </Field>
+                </FieldGroup>
             </Spec>
 
             <Spec
