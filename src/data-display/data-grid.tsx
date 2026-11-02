@@ -40,6 +40,7 @@ const MIN_COLUMN = 48;
 const RESIZE_STEP = 16;
 const VIRTUAL_FROM = 150;
 const ESTIMATED_ROW = 44;
+const PLACEHOLDER_ROWS = Array.from({ length: 40 }, (_, position) => `placeholder-${position}`);
 
 type Widths = Record<string, number>;
 type AnyVirtualizer = Virtualizer<HTMLElement, Element> | Virtualizer<Window, Element>;
@@ -502,8 +503,8 @@ export function DataGrid<T>({
     };
     let content: ReactNode;
     if (loading) {
-        content = Array.from({ length: loadingRows }, (_, row) => (
-            <TableRow key={`loading-${row}`} className="hover:bg-transparent">
+        content = PLACEHOLDER_ROWS.slice(0, loadingRows).map((key, row) => (
+            <TableRow key={key} className="hover:bg-transparent">
                 {leaves.map((column, index) => (
                     <TableCell key={column.id} className="py-3">
                         <Skeleton
