@@ -198,7 +198,7 @@ function DropdownMenuContent({
                 <MenuPrimitive.Popup
                     data-slot="dropdown-menu-content"
                     className={cn(
-                        "max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-e2 outline-hidden",
+                        "max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1.5 text-popover-foreground shadow-e2 outline-hidden",
                         POPUP_TRANSITION,
                         className,
                     )}
@@ -254,7 +254,7 @@ function DropdownMenuItem({
             data-variant={variant}
             label={textValue}
             className={cn(
-                "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1 text-sm outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:data-highlighted:bg-destructive/10 data-[variant=destructive]:data-highlighted:text-destructive dark:data-[variant=destructive]:data-highlighted:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:text-destructive!",
+                "relative flex cursor-default items-center gap-2.5 rounded-sm px-2.5 py-1.5 text-base outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:data-highlighted:bg-destructive/10 data-[variant=destructive]:data-highlighted:text-destructive dark:data-[variant=destructive]:data-highlighted:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:text-destructive!",
                 className,
             )}
             onClick={itemClickHandler(onClick, onSelect, true)}
@@ -282,7 +282,7 @@ function DropdownMenuCheckboxItem({
     const { child, inner } = slotChild(asChild, children, render);
     const content = (
         <>
-            <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+            <span className="pointer-events-none absolute left-2.5 flex size-3.5 items-center justify-center">
                 <MenuPrimitive.CheckboxItemIndicator>
                     <CheckIcon className="size-4" />
                 </MenuPrimitive.CheckboxItemIndicator>
@@ -294,7 +294,7 @@ function DropdownMenuCheckboxItem({
         <MenuPrimitive.CheckboxItem
             data-slot="dropdown-menu-checkbox-item"
             className={cn(
-                "relative flex cursor-default items-center gap-2 rounded-sm py-1 pr-2 pl-8 text-sm outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                "relative flex cursor-default items-center gap-2.5 rounded-sm py-1.5 pr-2.5 pl-8 text-base outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className,
             )}
             checked={checked}
@@ -344,7 +344,7 @@ function DropdownMenuRadioItem({
     const { child, inner } = slotChild(asChild, children, render);
     const content = (
         <>
-            <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+            <span className="pointer-events-none absolute left-2.5 flex size-3.5 items-center justify-center">
                 <MenuPrimitive.RadioItemIndicator>
                     <CircleIcon className="size-2 fill-current" />
                 </MenuPrimitive.RadioItemIndicator>
@@ -356,7 +356,7 @@ function DropdownMenuRadioItem({
         <MenuPrimitive.RadioItem
             data-slot="dropdown-menu-radio-item"
             className={cn(
-                "relative flex cursor-default items-center gap-2 rounded-sm py-1 pr-2 pl-8 text-sm outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                "relative flex cursor-default items-center gap-2.5 rounded-sm py-1.5 pr-2.5 pl-8 text-base outline-hidden select-none data-highlighted:bg-secondary data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className,
             )}
             closeOnClick={closeOnClick}
@@ -370,7 +370,7 @@ function DropdownMenuRadioItem({
 }
 
 const DROPDOWN_MENU_LABEL_CLASS =
-    "px-2 py-1 text-sm font-medium text-muted-foreground data-[inset]:pl-8";
+    "px-2.5 py-1.5 text-sm font-medium text-muted-foreground data-[inset]:pl-8";
 
 type DropdownMenuLabelProps = ComposableProps<typeof MenuPrimitive.GroupLabel> & {
     inset?: boolean;
@@ -441,7 +441,7 @@ function DropdownMenuSeparator({
     return (
         <MenuPrimitive.Separator
             data-slot="dropdown-menu-separator"
-            className={cn("-mx-1 my-1 h-px bg-border", className)}
+            className={cn("-mx-1.5 my-1.5 h-px bg-border", className)}
             {...props}
             {...asChildProps(asChild, children)}
         />
@@ -499,7 +499,7 @@ function DropdownMenuSubTrigger({
             data-inset={inset || undefined}
             label={textValue}
             className={cn(
-                "flex cursor-default items-center gap-2 rounded-sm px-2 py-1 text-sm outline-hidden select-none data-highlighted:bg-secondary data-[inset]:pl-8 data-popup-open:bg-secondary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+                "flex cursor-default items-center gap-2.5 rounded-sm px-2.5 py-1.5 text-base outline-hidden select-none data-highlighted:bg-secondary data-[inset]:pl-8 data-popup-open:bg-secondary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 className,
             )}
             render={render}
@@ -558,7 +558,7 @@ function DropdownMenuSubContent({
                 <MenuPrimitive.Popup
                     data-slot="dropdown-menu-sub-content"
                     className={cn(
-                        "min-w-[8rem] origin-(--transform-origin) overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-e2 outline-hidden",
+                        "min-w-[8rem] origin-(--transform-origin) overflow-hidden rounded-md border bg-popover p-1.5 text-popover-foreground shadow-e2 outline-hidden",
                         POPUP_TRANSITION,
                         className,
                     )}

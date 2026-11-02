@@ -117,7 +117,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      keys - not whole tables, not headings, not labels. Number columns get `tabular-nums`
      (`<table>`, `<time>`, `<data>`, `<output>` and `TableCell` already have it). `font-serif`
      is for long-form reading only.
-   - **Density.** Controls are 32px (`h-8`), menu rows 24-28px, cell padding 8-16px (`px-3
+   - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-16px (`px-3
      py-1.5` in `TableCell`, `p-4` in `Card`). No section padding above `py-12` inside an app, no
      `gap-6`+ between related controls, no centred hero inside a tool.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
