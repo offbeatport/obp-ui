@@ -21,6 +21,7 @@ import {
     CardTitle,
     Checkbox,
     CheckboxField,
+    CheckboxSelect,
     type CheckedState,
     ColorField,
     ColorPicker,
@@ -155,6 +156,7 @@ const PROFILES = [
 export function PrimitivesSection() {
     const [brandColor, setBrandColor] = useState("#c8643c");
     const [query, setQuery] = useState("overdue");
+    const [statuses, setStatuses] = useState<string[]>(["failed"]);
     const [inkColor, setInkColor] = useState("#2c2926");
     const [plan, setPlan] = useState("scale");
     const [autopilot, setAutopilot] = useState(true);
@@ -277,6 +279,25 @@ export function PrimitivesSection() {
                         />
                     </div>
                 </div>
+            </Spec>
+
+            <Spec
+                name="CheckboxSelect"
+                note="A filter that takes several values: the trigger matches Select, the menu is checkboxes with counts. None ticked means all."
+            >
+                <CheckboxSelect
+                    label="Status"
+                    allLabel="All statuses"
+                    noun="statuses"
+                    value={statuses}
+                    onValueChange={setStatuses}
+                    options={[
+                        { value: "failed", label: "Failed", count: 3 },
+                        { value: "running", label: "Running", count: 12 },
+                        { value: "queued", label: "Queued", count: 4 },
+                        { value: "done", label: "Done", count: 230 },
+                    ]}
+                />
             </Spec>
 
             <Spec name="Select" note="Three heights matching Button.">
