@@ -4,13 +4,14 @@ import {
     type Row,
     type SortingState,
     type Table,
+    type VisibilityState,
     flexRender,
     getCoreRowModel,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 import { type Virtualizer, useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Columns3 } from "lucide-react";
 import {
     type KeyboardEvent,
     type MouseEvent,
@@ -23,6 +24,13 @@ import {
     useState,
 } from "react";
 import { cn } from "../lib/cn";
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "../primitives/dropdown-menu";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
 
 const INTERACTIVE =
@@ -49,6 +57,8 @@ export type DataGridProps<T> = {
     maxHeight?: string;
     minWidth?: string;
     storageKey?: string;
+    columnPicker?: boolean;
+    hiddenColumns?: string[];
     className?: string;
 };
 
@@ -72,6 +82,64 @@ function writeWidths(key: string | undefined, widths: Widths): void {
     } catch {
         return;
     }
+}
+
+function readVisibility(key: string | undefined, hidden: string[]): VisibilityState {
+    const defaults = Object.fromEntries(hidden.map((id) => [id, false]));
+    if (!key) {
+        return defaults;
+    }
+    try {
+        const stored = JSON.parse(window.localStorage.getItem(`${key}.visible`) ?? "{}");
+        return { ...defaults, ...(stored as VisibilityState) };
+    } catch {
+        return defaults;
+    }
+}
+
+function writeVisibility(key: string | undefined, visibility: VisibilityState): void {
+    if (!key) {
+        return;
+    }
+    try {
+        window.localStorage.setItem(`${key}.visible`, JSON.stringify(visibility));
+    } catch {
+        return;
+    }
+}
+
+function ColumnPicker<T>({ table }: { table: Table<T> }) {
+    const columns = table.getAllLeafColumns().filter((column) => column.getCanHide());
+    if (columns.length === 0) {
+        return null;
+    }
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button
+                    type="button"
+                    aria-label="Choose columns"
+                    title="Choose columns"
+                    className="absolute top-1/2 right-1.5 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
+                    <Columns3 className="size-4" />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Columns</DropdownMenuLabel>
+                {columns.map((column) => (
+                    <DropdownMenuCheckboxItem
+                        key={column.id}
+                        checked={column.getIsVisible()}
+                        closeOnClick={false}
+                        onCheckedChange={(value) => column.toggleVisibility(value === true)}
+                    >
+                        {headerLabel(column)}
+                    </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
@@ -310,16 +378,23 @@ export function DataGrid<T>({
     maxHeight,
     minWidth,
     storageKey,
+    columnPicker = false,
+    hiddenColumns = [],
     className,
 }: DataGridProps<T>) {
     const [sorting, setSorting] = useState<SortingState>(initialSort);
+    const [visibility, setVisibility] = useState<VisibilityState>(() =>
+        readVisibility(storageKey, hiddenColumns),
+    );
+    useEffect(() => writeVisibility(storageKey, visibility), [storageKey, visibility]);
     const table = useReactTable({
         data: rows,
         columns,
         getRowId,
-        state: { sorting },
+        state: { sorting, columnVisibility: visibility },
         enableSorting: sortable,
         onSortingChange: setSorting,
+        onColumnVisibilityChange: setVisibility,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
     });
@@ -492,7 +567,10 @@ export function DataGrid<T>({
                                             }
                                         }}
                                         aria-sort={ariaSort(column as Column<unknown, unknown>)}
-                                        className="sticky top-0 z-[1] overflow-visible"
+                                        className={cn(
+                                            "sticky top-0 z-[1] overflow-visible",
+                                            columnPicker && last && "pr-9",
+                                        )}
                                     >
                                         {column.getCanSort() ? (
                                             <button
@@ -521,6 +599,7 @@ export function DataGrid<T>({
                                                     onReset={() => sizing.reset(column)}
                                                 />
                                             )}
+                                        {columnPicker && last && <ColumnPicker table={table} />}
                                     </TableHead>
                                 );
                             })}

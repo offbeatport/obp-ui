@@ -105,6 +105,7 @@ const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
     {
         header: "Request",
         accessorKey: "id",
+        enableHiding: false,
         cell: (info) => <span className="font-mono">{String(info.getValue())}</span>,
     },
     { header: "Route", accessorKey: "route" },
@@ -144,12 +145,18 @@ export function DataDisplaySection() {
                     rowLabel={(row) => `${row.id} ${row.route}`}
                     maxHeight="360px"
                     storageKey="gallery.data-grid"
+                    columnPicker
+                    hiddenColumns={["region"]}
                 />
                 <Api
                     items={[
                         {
                             name: "sortable, resizable",
                             note: "both on by default. Drag or arrow-key a header edge; double-click resets the column. Widths persist under storageKey.",
+                        },
+                        {
+                            name: "columnPicker, hiddenColumns",
+                            note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false. hiddenColumns sets the defaults; choices persist under storageKey.",
                         },
                         {
                             name: "maxHeight",
