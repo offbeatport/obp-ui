@@ -56,6 +56,7 @@ import {
     RadioGroupItem,
     ScrollArea,
     ScrollBar,
+    SearchInput,
     Select,
     SelectContent,
     SelectGroup,
@@ -153,6 +154,7 @@ const PROFILES = [
 
 export function PrimitivesSection() {
     const [brandColor, setBrandColor] = useState("#c8643c");
+    const [query, setQuery] = useState("overdue");
     const [inkColor, setInkColor] = useState("#2c2926");
     const [plan, setPlan] = useState("scale");
     const [autopilot, setAutopilot] = useState(true);
@@ -264,6 +266,15 @@ export function PrimitivesSection() {
                     <div className="grid gap-2">
                         <Label htmlFor="g-disabled">Disabled</Label>
                         <Input id="g-disabled" disabled placeholder="not editable" />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="g-search">SearchInput</Label>
+                        <SearchInput
+                            id="g-search"
+                            placeholder="Search invoices"
+                            value={query}
+                            onValueChange={setQuery}
+                        />
                     </div>
                 </div>
             </Spec>
