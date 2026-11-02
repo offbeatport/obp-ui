@@ -13,6 +13,7 @@ import {
 import { type Virtualizer, useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown, ChevronUp, Columns3 } from "lucide-react";
 import {
+    type ComponentProps,
     type KeyboardEvent,
     type MouseEvent,
     type PointerEvent,
@@ -29,6 +30,9 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../primitives/dropdown-menu";
 import { Skeleton } from "../primitives/skeleton";
@@ -61,6 +65,7 @@ export type DataGridProps<T> = {
     storageKey?: string;
     columnPicker?: boolean;
     hiddenColumns?: string[];
+    dropOrder?: string[];
     loading?: boolean;
     loadingRows?: number;
     className?: string;
@@ -112,11 +117,45 @@ function writeVisibility(key: string | undefined, visibility: VisibilityState): 
     }
 }
 
-function ColumnPicker<T>({ table }: { table: Table<T> }) {
-    const columns = table.getAllLeafColumns().filter((column) => column.getCanHide());
-    if (columns.length === 0) {
-        return null;
+export type Density = "comfortable" | "compact";
+
+function readDensity(key: string | undefined): Density {
+    if (!key) {
+        return "comfortable";
     }
+    try {
+        return window.localStorage.getItem(`${key}.density`) === "compact"
+            ? "compact"
+            : "comfortable";
+    } catch {
+        return "comfortable";
+    }
+}
+
+function writeDensity(key: string | undefined, density: Density): void {
+    if (!key) {
+        return;
+    }
+    try {
+        window.localStorage.setItem(`${key}.density`, density);
+    } catch {
+        return;
+    }
+}
+
+type PickerColumn = { id: string; label: string; shown: boolean; dropped: boolean };
+
+function ColumnPicker({
+    columns,
+    onToggle,
+    density,
+    onDensity,
+}: {
+    columns: PickerColumn[];
+    onToggle: (id: string, shown: boolean) => void;
+    density: Density;
+    onDensity: (density: Density) => void;
+}) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -129,21 +168,102 @@ function ColumnPicker<T>({ table }: { table: Table<T> }) {
                     <Columns3 className="size-4" />
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-60">
                 <DropdownMenuLabel>Columns</DropdownMenuLabel>
                 {columns.map((column) => (
                     <DropdownMenuCheckboxItem
                         key={column.id}
-                        checked={column.getIsVisible()}
+                        checked={column.shown && !column.dropped}
                         closeOnClick={false}
-                        onCheckedChange={(value) => column.toggleVisibility(value === true)}
+                        onCheckedChange={(value) => onToggle(column.id, value === true)}
                     >
-                        {headerLabel(column)}
+                        <span className="flex-1">{column.label}</span>
+                        {column.shown && column.dropped && (
+                            <span className="text-sm text-muted-foreground">Hidden to fit</span>
+                        )}
                     </DropdownMenuCheckboxItem>
                 ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Density</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                    value={density}
+                    onValueChange={(value) =>
+                        onDensity(value === "compact" ? "compact" : "comfortable")
+                    }
+                >
+                    <DropdownMenuRadioItem value="comfortable" closeOnClick={false}>
+                        Comfortable
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="compact" closeOnClick={false}>
+                        Compact
+                    </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
             </DropdownMenuContent>
         </DropdownMenu>
     );
+}
+
+export function DataGridDetail({ className, ...props }: ComponentProps<"span">) {
+    return (
+        <span
+            data-slot="data-grid-detail"
+            className={cn("group-data-[density=compact]/grid:hidden", className)}
+            {...props}
+        />
+    );
+}
+
+type Dropped = { id: string; width: number };
+
+function useFitColumns<T>(
+    enabled: boolean,
+    table: Table<T>,
+    container: RefObject<HTMLDivElement | null>,
+    inner: RefObject<HTMLTableElement | null>,
+    cells: RefObject<Map<string, HTMLTableCellElement>>,
+    order: string[] | undefined,
+    dropped: Dropped[],
+    setDropped: (update: (current: Dropped[]) => Dropped[]) => void,
+) {
+    useLayoutEffect(() => {
+        const box = container.current;
+        const grid = inner.current;
+        if (!enabled || !box || !grid) {
+            return;
+        }
+        const needed = () => {
+            const previous = grid.style.width;
+            grid.style.width = "min-content";
+            const width = grid.getBoundingClientRect().width;
+            grid.style.width = previous;
+            return width;
+        };
+        const evaluate = () => {
+            const slack = box.clientWidth - needed();
+            const visible = table.getVisibleLeafColumns().filter((column) => column.getCanHide());
+            if (slack < -1) {
+                const ids = visible.map((column) => column.id);
+                const next = order ? order.find((id) => ids.includes(id)) : ids.at(-1);
+                if (next) {
+                    const width = cells.current.get(next)?.getBoundingClientRect().width ?? 120;
+                    setDropped((current) =>
+                        current.some((item) => item.id === next)
+                            ? current
+                            : [...current, { id: next, width }],
+                    );
+                }
+                return;
+            }
+            const last = dropped.at(-1);
+            if (last && slack >= last.width + 8) {
+                setDropped((current) => current.slice(0, -1));
+            }
+        };
+        evaluate();
+        const observer = new ResizeObserver(evaluate);
+        observer.observe(box);
+        return () => observer.disconnect();
+    });
 }
 
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
@@ -384,6 +504,7 @@ export function DataGrid<T>({
     storageKey,
     columnPicker = false,
     hiddenColumns = [],
+    dropOrder,
     loading = false,
     loadingRows = 8,
     className,
@@ -393,14 +514,20 @@ export function DataGrid<T>({
         readVisibility(storageKey, hiddenColumns),
     );
     useEffect(() => writeVisibility(storageKey, visibility), [storageKey, visibility]);
+    const [density, setDensity] = useState<Density>(() => readDensity(storageKey));
+    useEffect(() => writeDensity(storageKey, density), [storageKey, density]);
+    const [dropped, setDropped] = useState<Dropped[]>([]);
+    const effective: VisibilityState = {
+        ...visibility,
+        ...Object.fromEntries(dropped.map((item) => [item.id, false])),
+    };
     const table = useReactTable({
         data: rows,
         columns,
         getRowId,
-        state: { sorting, columnVisibility: visibility },
+        state: { sorting, columnVisibility: effective },
         enableSorting: sortable,
         onSortingChange: setSorting,
-        onColumnVisibilityChange: setVisibility,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
     });
@@ -408,6 +535,31 @@ export function DataGrid<T>({
     const tableRef = useRef<HTMLTableElement>(null);
     const body = useRef<HTMLTableSectionElement>(null);
     const cells = useRef(new Map<string, HTMLTableCellElement>());
+    useFitColumns(
+        columnPicker && !loading,
+        table,
+        container,
+        tableRef,
+        cells,
+        dropOrder,
+        dropped,
+        setDropped,
+    );
+    const pickerColumns: PickerColumn[] = table
+        .getAllLeafColumns()
+        .filter((column) => column.getCanHide())
+        .map((column) => ({
+            id: column.id,
+            label: headerLabel(column),
+            shown: visibility[column.id] !== false,
+            dropped: dropped.some((item) => item.id === column.id),
+        }));
+    const toggleColumn = (id: string, shown: boolean) => {
+        setVisibility((current) => ({ ...current, [id]: shown }));
+        if (shown) {
+            setDropped((current) => current.filter((item) => item.id !== id));
+        }
+    };
     const virtualizer = useRef<AnyVirtualizer | null>(null);
     const sizing = useColumnWidths(table, cells, storageKey);
     const overflowing = useOverflowing(container, tableRef);
@@ -487,7 +639,10 @@ export function DataGrid<T>({
             {row.getVisibleCells().map((cell) => (
                 <TableCell
                     key={cell.id}
-                    className={cn("py-2", fixed && "overflow-hidden text-ellipsis")}
+                    className={cn(
+                        density === "compact" ? "py-1" : "py-2",
+                        fixed && "overflow-hidden text-ellipsis",
+                    )}
                 >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
@@ -536,8 +691,9 @@ export function DataGrid<T>({
         <div
             ref={container}
             data-slot="data-grid"
+            data-density={density}
             className={cn(
-                "relative w-full rounded-md border",
+                "group/grid relative w-full rounded-md border",
                 maxHeight ? "overflow-auto" : overflowing ? "overflow-x-auto" : "overflow-clip",
                 className,
             )}
@@ -547,7 +703,7 @@ export function DataGrid<T>({
                 ref={tableRef}
                 aria-busy={loading || undefined}
                 data-slot="table"
-                className={cn("w-full caption-bottom text-sm", !fixed && minWidth)}
+                className={cn("w-full caption-bottom text-sm", !fixed && !columnPicker && minWidth)}
                 style={
                     fixed
                         ? { tableLayout: "fixed", minWidth: `${fixedTotal + MIN_COLUMN * 2}px` }
@@ -621,7 +777,14 @@ export function DataGrid<T>({
                                                     onReset={() => sizing.reset(column)}
                                                 />
                                             )}
-                                        {columnPicker && last && <ColumnPicker table={table} />}
+                                        {columnPicker && last && (
+                                            <ColumnPicker
+                                                columns={pickerColumns}
+                                                onToggle={toggleColumn}
+                                                density={density}
+                                                onDensity={setDensity}
+                                            />
+                                        )}
                                     </TableHead>
                                 );
                             })}

@@ -4,7 +4,7 @@ export {
     type ExpandableRowListProps,
     type ExpandableRowProps,
 } from "./expandable-row";
-export { DataGrid, type DataGridProps } from "./data-grid";
+export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./empty-state";
 export {
     GradientMark,
