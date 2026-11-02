@@ -11,7 +11,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { type Virtualizer, useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, ChevronUp, Columns3 } from "lucide-react";
+import { ChevronDown, ChevronUp, Columns3, RotateCcw } from "lucide-react";
 import {
     type ComponentProps,
     type KeyboardEvent,
@@ -29,6 +29,7 @@ import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
@@ -149,11 +150,13 @@ function ColumnPicker({
     onToggle,
     density,
     onDensity,
+    onReset,
 }: {
     columns: PickerColumn[];
     onToggle: (id: string, shown: boolean) => void;
     density: Density;
     onDensity: (density: Density) => void;
+    onReset: () => void;
 }) {
     return (
         <DropdownMenu>
@@ -194,6 +197,11 @@ function ColumnPicker({
                         Compact
                     </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={onReset}>
+                    <RotateCcw />
+                    Reset to default
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
@@ -310,7 +318,8 @@ function useColumnWidths<T>(
             const { [column.id]: _, ...rest } = current;
             return rest;
         });
-    return { widths, resizable, start, step, reset };
+    const resetAll = () => setWidths({});
+    return { widths, resizable, start, step, reset, resetAll };
 }
 
 function useOverflowing(
@@ -705,6 +714,15 @@ export function DataGrid<T>({
                                                 onToggle={toggleColumn}
                                                 density={density}
                                                 onDensity={setDensity}
+                                                onReset={() => {
+                                                    setVisibility(
+                                                        Object.fromEntries(
+                                                            hiddenColumns.map((id) => [id, false]),
+                                                        ),
+                                                    );
+                                                    setDensity("comfortable");
+                                                    sizing.resetAll();
+                                                }}
                                             />
                                         )}
                                     </TableHead>
