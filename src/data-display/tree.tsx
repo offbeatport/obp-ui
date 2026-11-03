@@ -255,6 +255,15 @@ function isMenuKey(event: KeyboardEvent): boolean {
     return event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
 }
 
+function focusMovedOn(): boolean {
+    const active = document.activeElement;
+    return (
+        active instanceof HTMLElement &&
+        active !== document.body &&
+        active.closest('[data-slot="dropdown-menu-content"]') === null
+    );
+}
+
 function keepInSlot(event: SyntheticEvent) {
     event.stopPropagation();
 }
@@ -314,7 +323,12 @@ export function TreeRowMenu({
             <DropdownMenuContent
                 align="end"
                 className="min-w-44"
-                finalFocus={() => (fromRow.current ? (state?.row.current ?? true) : true)}
+                finalFocus={() => {
+                    if (focusMovedOn()) {
+                        return false;
+                    }
+                    return fromRow.current ? (state?.row.current ?? true) : true;
+                }}
             >
                 {children}
             </DropdownMenuContent>
