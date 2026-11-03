@@ -101,6 +101,68 @@ const REQUESTS: Request[] = Array.from({ length: 5000 }, (_, index) => ({
     latency: 40 + ((index * 53) % 900),
 }));
 
+type Release = {
+    id: string;
+    name: string;
+    owner: string;
+    region: string;
+    version: string;
+    size: string;
+    updated: string;
+};
+
+const RELEASES: Release[] = [
+    {
+        id: "ledgerly-api",
+        name: "Ledgerly API",
+        owner: "Payments",
+        region: "eu-west",
+        version: "4.12.0",
+        size: "182 MB",
+        updated: "2026-10-30",
+    },
+    {
+        id: "quietbill-web",
+        name: "Quietbill web",
+        owner: "Growth",
+        region: "us-east",
+        version: "2.3.1",
+        size: "64 MB",
+        updated: "2026-10-28",
+    },
+    {
+        id: "harbourline-worker",
+        name: "Harbourline worker",
+        owner: "Platform",
+        region: "ap-south",
+        version: "1.0.9",
+        size: "411 MB",
+        updated: "2026-10-21",
+    },
+    {
+        id: "nudge-mailer",
+        name: "Nudge mailer",
+        owner: "Lifecycle",
+        region: "eu-west",
+        version: "0.8.4",
+        size: "39 MB",
+        updated: "2026-10-12",
+    },
+];
+
+const RELEASE_COLUMNS: ColumnDef<Release, unknown>[] = [
+    { header: "Service", accessorKey: "name", enableHiding: false },
+    { header: "Owner", accessorKey: "owner" },
+    { header: "Region", accessorKey: "region" },
+    {
+        header: "Version",
+        accessorKey: "version",
+        cell: (info) => <span className="font-mono">{String(info.getValue())}</span>,
+    },
+    { header: "Image size", accessorKey: "size" },
+    { header: "Updated", accessorKey: "updated" },
+];
+
 const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
     {
         header: "Request",
@@ -131,6 +193,8 @@ export function DataDisplaySection() {
     const [open, setOpen] = useState<string | null>("invoices");
     const [picked, setPicked] = useState<string | null>("invoices");
     const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
+    const [selectedReleases, setSelectedReleases] = useState<string[]>([]);
+    const [deployed, setDeployed] = useState<string | null>(null);
 
     return (
         <>
@@ -185,6 +249,44 @@ export function DataDisplaySection() {
                         {
                             name: "onOpen, rowLabel",
                             note: "a click anywhere on the row opens it, except on buttons, links, menus and fields, or while text is selected. Rows are focusable: arrows, Home and End move, Enter opens. Keep a real link in the row for new-tab clicks; mark any other control data-grid-ignore.",
+                        },
+                    ]}
+                />
+            </Spec>
+            <Spec
+                name="DataGrid · rowActions"
+                note="Buttons for one row, pinned to the visible right edge so sideways scrolling never hides them. Hover a row or tab into it to see them; touch screens always show them."
+            >
+                <DataGrid
+                    columns={RELEASE_COLUMNS}
+                    rows={RELEASES}
+                    getRowId={(row) => row.id}
+                    onOpen={() => undefined}
+                    rowLabel={(row) => row.name}
+                    minWidth="min-w-[960px]"
+                    columnPicker
+                    selectedIds={selectedReleases}
+                    onSelectedIdsChange={setSelectedReleases}
+                    rowActions={(row) => (
+                        <Button size="xs" onClick={() => setDeployed(row.name)}>
+                            <Rocket />
+                            Deploy
+                        </Button>
+                    )}
+                    className="[--data-grid-surface:var(--card)]"
+                />
+                <p className="text-sm text-muted-foreground">
+                    {deployed ? `Deploy pressed for ${deployed}` : "No action pressed yet"}
+                </p>
+                <Api
+                    items={[
+                        {
+                            name: "rowActions",
+                            note: "(row) => ReactNode. Rendered in a cell pinned to the right edge, over the last columns, on the row's own fill. It fades in within 150ms on hover and focus-within, with no fade under reduced motion. Keep it to one or two xs buttons; a menu of more goes in a cell.",
+                        },
+                        {
+                            name: "--data-grid-surface",
+                            note: "the colour the actions paint over, so text under them never shows through. Defaults to --background; set it to var(--card) when the grid sits on a card, as here.",
                         },
                     ]}
                 />

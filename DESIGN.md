@@ -128,7 +128,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
      something (a click anywhere on the row then opens it; keep the name a real link for new tabs), `storageKey` to keep a person's column widths and choices, `columnPicker` (with `hiddenColumns` for the
      defaults; show few enough by default that the grid fits, and let it scroll when people add more) when a
-     list has more columns than most people need, `DataGridDetail` for a second
+     list has more columns than most people need, `rowActions` for one or two buttons per row (pinned to the
+     visible right edge, shown on hover, keyboard focus and always on touch; set `--data-grid-surface` to
+     `var(--card)` when the grid sits on a card), `DataGridDetail` for a second
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).

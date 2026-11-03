@@ -72,6 +72,7 @@ export type DataGridProps<T> = {
     loadingRows?: number;
     selectedIds?: string[];
     onSelectedIdsChange?: (ids: string[]) => void;
+    rowActions?: (row: T) => ReactNode;
     className?: string;
 };
 
@@ -222,6 +223,29 @@ export function DataGridDetail({ className, ...props }: ComponentProps<"span">) 
 }
 
 const SELECT = "__select";
+
+const ROW_ACTIONS = cn(
+    "absolute inset-y-0 right-0 flex items-center bg-(--data-grid-surface,var(--background)) px-2",
+    "opacity-0 transition-opacity duration-150 motion-reduce:transition-none",
+    "group-hover/row:opacity-100 group-focus-within/row:opacity-100 [@media(hover:none)]:opacity-100",
+);
+
+const ROW_TINT = cn(
+    "pointer-events-none absolute inset-0",
+    "group-hover/row:bg-muted/60 group-has-aria-expanded/row:bg-muted/60",
+    "group-focus-visible/row:bg-secondary group-data-[state=selected]/row:bg-accent",
+);
+
+function RowActions({ children }: { children: ReactNode }) {
+    return (
+        <TableCell data-slot="data-grid-row-actions" className="sticky right-0 w-0 p-0">
+            <div className={ROW_ACTIONS}>
+                <span aria-hidden="true" className={ROW_TINT} />
+                <div className="relative flex items-center gap-1">{children}</div>
+            </div>
+        </TableCell>
+    );
+}
 
 function selectionColumn<T>(
     selected: string[],
@@ -530,6 +554,7 @@ export function DataGrid<T>({
     loadingRows = 8,
     selectedIds,
     onSelectedIdsChange,
+    rowActions,
     className,
 }: DataGridProps<T>) {
     const [sorting, setSorting] = useState<SortingState>(initialSort);
@@ -590,6 +615,8 @@ export function DataGrid<T>({
     }, [visibility, overflowing]);
     const sorted = table.getRowModel().rows;
     const leaves = table.getVisibleLeafColumns();
+    const edge = columnPicker || rowActions !== undefined;
+    const span = leaves.length + (edge ? 1 : 0);
     const virtual = (virtualize ?? sorted.length >= VIRTUAL_FROM) && sorted.length > 0;
     const [scroller, setScroller] = useState<Scroller | null>(null);
     useLayoutEffect(() => {
@@ -660,7 +687,10 @@ export function DataGrid<T>({
             onKeyDown={onOpen ? (event) => onKey(event, index, row.original) : undefined}
             onClick={onOpen ? (event) => onClick(event, row.original) : undefined}
             data-state={selectedIds?.includes(row.id) ? "selected" : undefined}
-            className={cn(onOpen && "cursor-pointer outline-none focus-visible:bg-secondary")}
+            className={cn(
+                "group/row",
+                onOpen && "cursor-pointer outline-none focus-visible:bg-secondary",
+            )}
         >
             {row.getVisibleCells().map((cell) => (
                 <TableCell
@@ -673,13 +703,14 @@ export function DataGrid<T>({
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
             ))}
+            {rowActions && <RowActions>{rowActions(row.original)}</RowActions>}
         </TableRow>
     );
     const rowsProps: RowsProps<T> = {
         rows: sorted,
         body,
         renderRow,
-        span: leaves.length,
+        span,
         target: virtualizer,
     };
     let content: ReactNode;
@@ -701,7 +732,7 @@ export function DataGrid<T>({
     } else if (sorted.length === 0) {
         content = (
             <TableRow>
-                <TableCell colSpan={leaves.length} className="py-8 whitespace-normal">
+                <TableCell colSpan={span} className="py-8 whitespace-normal">
                     {empty}
                 </TableCell>
             </TableRow>
@@ -803,6 +834,11 @@ export function DataGrid<T>({
                                     </TableHead>
                                 );
                             })}
+                            {rowActions && !columnPicker && (
+                                <TableHead className="sticky top-0 right-0 z-[2] w-0 p-0">
+                                    <span className="sr-only">Actions</span>
+                                </TableHead>
+                            )}
                             {columnPicker && (
                                 <TableHead className="sticky top-0 right-0 z-[2] w-0 p-0">
                                     <div className="absolute inset-y-0 right-0 flex w-9 items-center justify-center bg-secondary">
