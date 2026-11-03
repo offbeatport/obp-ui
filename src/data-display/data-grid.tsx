@@ -585,6 +585,72 @@ type MoreProps = {
     root: () => Element | null;
 };
 
+type Anchor = { id: string; top: number };
+
+function firstVisibleRow(body: HTMLTableSectionElement, top: number) {
+    for (const row of body.querySelectorAll<HTMLTableRowElement>("tr[data-row-id]")) {
+        if (row.getBoundingClientRect().bottom > top) {
+            return row;
+        }
+    }
+    return undefined;
+}
+
+function useRowAnchor<T>(
+    enabled: boolean,
+    rows: Row<T>[],
+    body: RefObject<HTMLTableSectionElement | null>,
+    root: () => Element | null,
+) {
+    const anchor = useRef<Anchor | null>(null);
+    const record = useCallback(() => {
+        const node = body.current;
+        const top = root()?.getBoundingClientRect().top ?? 0;
+        const row = node ? firstVisibleRow(node, top) : undefined;
+        anchor.current =
+            row && row.dataset.index !== "0"
+                ? { id: row.dataset.rowId ?? "", top: row.getBoundingClientRect().top }
+                : null;
+    }, [body, root]);
+    useEffect(() => {
+        if (!enabled) {
+            return;
+        }
+        const target = root() ?? window;
+        let frame = 0;
+        const onScroll = () => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(record);
+        };
+        target.addEventListener("scroll", onScroll, { passive: true });
+        return () => {
+            cancelAnimationFrame(frame);
+            target.removeEventListener("scroll", onScroll);
+        };
+    }, [enabled, root, record]);
+    useLayoutEffect(() => {
+        if (!enabled || rows.length === 0) {
+            return;
+        }
+        const previous = anchor.current;
+        const row = previous
+            ? body.current?.querySelector<HTMLTableRowElement>(
+                  `tr[data-row-id="${CSS.escape(previous.id)}"]`,
+              )
+            : undefined;
+        const delta = row && previous ? row.getBoundingClientRect().top - previous.top : 0;
+        if (Math.abs(delta) >= 1) {
+            const scroller = root();
+            if (scroller) {
+                scroller.scrollTop += delta;
+            } else {
+                window.scrollBy(0, delta);
+            }
+        }
+        record();
+    }, [enabled, rows, body, root, record]);
+}
+
 function LoadMore({ shown, total, hasMore, loadingMore, onLoadMore, root }: MoreProps) {
     const sentinel = useRef<HTMLDivElement>(null);
     const load = useRef(onLoadMore);
@@ -742,6 +808,7 @@ export function DataGrid<T>({
         () => (maxHeight ? container.current : scrollParent(container.current)),
         [maxHeight],
     );
+    useRowAnchor(infinite && !loading, sorted, body, scrollRoot);
     const fixed = Object.keys(sizing.widths).length > 0;
     const fixedTotal = sizing.resizable.reduce(
         (sum, column) => sum + (presetWidth(column) ?? sizing.widths[column.id] ?? 120),
@@ -816,6 +883,7 @@ export function DataGrid<T>({
             key={row.id}
             ref={measure}
             data-index={index}
+            data-row-id={row.id}
             tabIndex={clickable ? 0 : undefined}
             aria-label={rowLabel?.(row.original)}
             onKeyDown={clickable ? (event) => onKey(event, index, row) : undefined}

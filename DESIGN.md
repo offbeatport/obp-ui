@@ -158,7 +158,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. A list that can outgrow one response pages on the server: pass `onLoadMore`, `hasMore`,
      `loadingMore` and `total`, and the grid fetches the next page as the end nears, with placeholder rows while it
-     loads and a sticky footer holding "Showing N of M" and a Load more button for keyboard and screen readers. Keep
+     loads and a sticky footer holding "Showing N of M" and a Load more button for keyboard and screen readers; rows
+     that arrive above the view (live updates) leave what the reader is looking at in place. Keep
      filters and search on the server too; headers sort only through `sorting` and `onSortingChange`, since sorting
      the loaded rows alone would mislead. Plain `Table` is for short static tables (a spec sheet, a diff).
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,

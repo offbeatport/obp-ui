@@ -324,7 +324,7 @@ export function DataDisplaySection() {
                     items={[
                         {
                             name: "onLoadMore, hasMore, loadingMore",
-                            note: "infinite mode. onLoadMore runs when the end of the rows comes within 600px of the scroller's edge and again from the Load more button, for keyboard and screen reader users; it does not run while loadingMore is true or once hasMore is false. Works with virtual rows and with maxHeight.",
+                            note: "infinite mode. onLoadMore runs when the end of the rows comes within 600px of the scroller's edge and again from the Load more button, for keyboard and screen reader users; it does not run while loadingMore is true or once hasMore is false. Works with virtual rows and with maxHeight. Rows that arrive above the view, such as new jobs from a live poll, keep the rows on screen where they are; at the top of the list they show at once.",
                         },
                         {
                             name: "total",
