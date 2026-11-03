@@ -103,8 +103,8 @@ const INSTRUCTIONS = {
 const AMOUNT = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
 
 const TONES: Record<Tone, string> = {
-    better: "text-success",
-    worse: "text-destructive",
+    better: "text-[color-mix(in_oklab,var(--success)_70%,var(--foreground))]",
+    worse: "text-[color-mix(in_oklab,var(--destructive)_70%,var(--foreground))]",
     neutral: "text-foreground",
     same: "text-muted-foreground",
 };
