@@ -130,6 +130,7 @@ const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
 export function DataDisplaySection() {
     const [open, setOpen] = useState<string | null>("invoices");
     const [picked, setPicked] = useState<string | null>("invoices");
+    const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
 
     return (
         <>
@@ -147,7 +148,10 @@ export function DataDisplaySection() {
                     storageKey="gallery.data-grid"
                     columnPicker
                     hiddenColumns={["region"]}
+                    selectedIds={selectedRequests}
+                    onSelectedIdsChange={setSelectedRequests}
                 />
+                <p className="text-sm text-muted-foreground tabular-nums">{`${selectedRequests.length} selected`}</p>
                 <Api
                     items={[
                         {
@@ -157,6 +161,10 @@ export function DataDisplaySection() {
                         {
                             name: "columnPicker, hiddenColumns",
                             note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false, and switches density between comfortable and compact. hiddenColumns sets the defaults; choices persist under storageKey. Default to few enough columns that the grid fits; when people add more, it scrolls sideways.",
+                        },
+                        {
+                            name: "selectedIds, onSelectedIdsChange",
+                            note: "adds a checkbox column and a select-all header over the rows shown. Selected rows take the selected fill; ids come from getRowId.",
                         },
                         {
                             name: "DataGridDetail",

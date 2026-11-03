@@ -25,6 +25,7 @@ import {
     useState,
 } from "react";
 import { cn } from "../lib/cn";
+import { Checkbox } from "../primitives/checkbox";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -68,6 +69,8 @@ export type DataGridProps<T> = {
     hiddenColumns?: string[];
     loading?: boolean;
     loadingRows?: number;
+    selectedIds?: string[];
+    onSelectedIdsChange?: (ids: string[]) => void;
     className?: string;
 };
 
@@ -215,6 +218,53 @@ export function DataGridDetail({ className, ...props }: ComponentProps<"span">) 
             {...props}
         />
     );
+}
+
+const SELECT = "__select";
+
+function selectionColumn<T>(
+    selected: string[],
+    onChange: (ids: string[]) => void,
+    rowLabel: ((row: T) => string) | undefined,
+): ColumnDef<T, unknown> {
+    return {
+        id: SELECT,
+        enableSorting: false,
+        enableHiding: false,
+        enableResizing: false,
+        size: 40,
+        header: ({ table }) => {
+            const ids = table.getRowModel().rows.map((row) => row.id);
+            const count = ids.filter((id) => selected.includes(id)).length;
+            const state = count === 0 ? false : count === ids.length ? true : "indeterminate";
+            return (
+                <Checkbox
+                    aria-label="Select all rows"
+                    checked={state}
+                    onCheckedChange={(value) =>
+                        onChange(
+                            value === true
+                                ? [...new Set([...selected, ...ids])]
+                                : selected.filter((id) => !ids.includes(id)),
+                        )
+                    }
+                />
+            );
+        },
+        cell: ({ row }) => (
+            <Checkbox
+                aria-label={`Select ${rowLabel?.(row.original) ?? row.id}`}
+                checked={selected.includes(row.id)}
+                onCheckedChange={(value) =>
+                    onChange(
+                        value === true
+                            ? [...selected, row.id]
+                            : selected.filter((id) => id !== row.id),
+                    )
+                }
+            />
+        ),
+    };
 }
 
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
@@ -458,6 +508,8 @@ export function DataGrid<T>({
     hiddenColumns = [],
     loading = false,
     loadingRows = 8,
+    selectedIds,
+    onSelectedIdsChange,
     className,
 }: DataGridProps<T>) {
     const [sorting, setSorting] = useState<SortingState>(initialSort);
@@ -467,9 +519,13 @@ export function DataGrid<T>({
     useEffect(() => writeVisibility(storageKey, visibility), [storageKey, visibility]);
     const [density, setDensity] = useState<Density>(() => readDensity(storageKey));
     useEffect(() => writeDensity(storageKey, density), [storageKey, density]);
+    const selectable = selectedIds !== undefined && onSelectedIdsChange !== undefined;
+    const allColumns = selectable
+        ? [selectionColumn<T>(selectedIds, onSelectedIdsChange, rowLabel), ...columns]
+        : columns;
     const table = useReactTable({
         data: rows,
-        columns,
+        columns: allColumns,
         getRowId,
         state: { sorting, columnVisibility: visibility },
         enableSorting: sortable,
@@ -565,6 +621,7 @@ export function DataGrid<T>({
             aria-label={rowLabel?.(row.original)}
             onKeyDown={onOpen ? (event) => onKey(event, index, row.original) : undefined}
             onClick={onOpen ? (event) => onClick(event, row.original) : undefined}
+            data-state={selectedIds?.includes(row.id) ? "selected" : undefined}
             className={cn(onOpen && "cursor-pointer outline-none focus-visible:bg-secondary")}
         >
             {row.getVisibleCells().map((cell) => (
