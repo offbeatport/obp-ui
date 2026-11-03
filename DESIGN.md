@@ -136,6 +136,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
+   - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
+     grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned
+     while columns scroll sideways, and a `--primary` dot marks the rows that differ (no tinted rows). The
+     differences switch and its count live in `corner`. Mark an objectively best value in its cell with a
+     `Badge`; never rank the columns.
    - **Hierarchies are a `Tree`.** Sources, folders, files, schemas: anything a person opens level by level.
      It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
      selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with

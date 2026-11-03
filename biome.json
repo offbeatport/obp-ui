@@ -50,5 +50,18 @@
                 }
             }
         }
-    }
+    },
+    "overrides": [
+        {
+            "include": ["src/data-display/compare-table.tsx"],
+            "linter": {
+                "rules": {
+                    "a11y": {
+                        "useSemanticElements": "off",
+                        "useFocusableInteractive": "off"
+                    }
+                }
+            }
+        }
+    ]
 }

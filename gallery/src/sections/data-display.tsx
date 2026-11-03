@@ -18,6 +18,7 @@ import {
 } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
+import { CompareDemo } from "./compare-demo";
 import { TreeDemo } from "./tree-demo";
 
 const ENTITIES: { name: string; branding?: GradientMarkBranding }[] = [
@@ -292,6 +293,7 @@ export function DataDisplaySection() {
                     ]}
                 />
             </Spec>
+            <CompareDemo />
             <TreeDemo />
             <Spec
                 name="GradientMark · markColorFor"

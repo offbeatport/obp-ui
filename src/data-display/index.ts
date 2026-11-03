@@ -4,6 +4,14 @@ export {
     type ExpandableRowListProps,
     type ExpandableRowProps,
 } from "./expandable-row";
+export {
+    CompareMarker,
+    type CompareColumn,
+    type CompareRow,
+    type CompareSection,
+    CompareTable,
+    type CompareTableProps,
+} from "./compare-table";
 export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./empty-state";
 export {
