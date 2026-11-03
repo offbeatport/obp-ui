@@ -226,8 +226,7 @@ const SELECT = "__select";
 
 const ROW_ACTIONS = cn(
     "absolute inset-y-0 right-0 flex items-center bg-(--data-grid-surface,var(--background)) px-2",
-    "opacity-0 transition-opacity duration-150 motion-reduce:transition-none",
-    "group-hover/row:opacity-100 group-focus-within/row:opacity-100 [@media(hover:none)]:opacity-100",
+    "opacity-0 group-hover/row:opacity-100 group-focus-within/row:opacity-100 [@media(hover:none)]:opacity-100",
 );
 
 const ROW_TINT = cn(
@@ -643,7 +642,16 @@ export function DataGrid<T>({
             focus();
         }
     };
-    const onClick = (event: MouseEvent<HTMLTableRowElement>, row: T) => {
+    const selecting = selectable && selectedIds.length > 0;
+    const clickable = Boolean(onOpen) || selecting;
+    const toggle = (id: string) =>
+        onSelectedIdsChange?.(
+            selectedIds?.includes(id)
+                ? selectedIds.filter((item) => item !== id)
+                : [...(selectedIds ?? []), id],
+        );
+    const activate = (row: Row<T>) => (selecting ? toggle(row.id) : onOpen?.(row.original));
+    const onClick = (event: MouseEvent<HTMLTableRowElement>, row: Row<T>) => {
         const target = event.target as HTMLElement;
         if (
             event.button !== 0 ||
@@ -653,9 +661,9 @@ export function DataGrid<T>({
         ) {
             return;
         }
-        onOpen?.(row);
+        activate(row);
     };
-    const onKey = (event: KeyboardEvent<HTMLTableRowElement>, index: number, row: T) => {
+    const onKey = (event: KeyboardEvent<HTMLTableRowElement>, index: number, row: Row<T>) => {
         if (
             event.target !== event.currentTarget &&
             (event.target as HTMLElement).closest(INTERACTIVE)
@@ -672,9 +680,12 @@ export function DataGrid<T>({
         if (move !== undefined) {
             event.preventDefault();
             focusRow(move);
-        } else if (event.key === "Enter" && onOpen) {
+        } else if (event.key === "Enter" && clickable) {
             event.preventDefault();
-            onOpen(row);
+            activate(row);
+        } else if (event.key === " " && selectable) {
+            event.preventDefault();
+            toggle(row.id);
         }
     };
     const renderRow = (row: Row<T>, index: number, measure?: (node: Element | null) => void) => (
@@ -682,14 +693,14 @@ export function DataGrid<T>({
             key={row.id}
             ref={measure}
             data-index={index}
-            tabIndex={onOpen ? 0 : undefined}
+            tabIndex={clickable ? 0 : undefined}
             aria-label={rowLabel?.(row.original)}
-            onKeyDown={onOpen ? (event) => onKey(event, index, row.original) : undefined}
-            onClick={onOpen ? (event) => onClick(event, row.original) : undefined}
+            onKeyDown={clickable ? (event) => onKey(event, index, row) : undefined}
+            onClick={clickable ? (event) => onClick(event, row) : undefined}
             data-state={selectedIds?.includes(row.id) ? "selected" : undefined}
             className={cn(
                 "group/row",
-                onOpen && "cursor-pointer outline-none focus-visible:bg-secondary",
+                clickable && "cursor-pointer outline-none focus-visible:bg-secondary",
             )}
         >
             {row.getVisibleCells().map((cell) => (
