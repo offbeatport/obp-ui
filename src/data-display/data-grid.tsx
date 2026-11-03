@@ -653,6 +653,12 @@ export function DataGrid<T>({
     const activate = (row: Row<T>) => (selecting ? toggle(row.id) : onOpen?.(row.original));
     const onClick = (event: MouseEvent<HTMLTableRowElement>, row: Row<T>) => {
         const target = event.target as HTMLElement;
+        if (event.button === 0 && selectable && target.closest("[data-grid-select]")) {
+            if (!target.closest(INTERACTIVE)) {
+                toggle(row.id);
+            }
+            return;
+        }
         if (
             event.button !== 0 ||
             !event.currentTarget.contains(target) ||
@@ -696,7 +702,7 @@ export function DataGrid<T>({
             tabIndex={clickable ? 0 : undefined}
             aria-label={rowLabel?.(row.original)}
             onKeyDown={clickable ? (event) => onKey(event, index, row) : undefined}
-            onClick={clickable ? (event) => onClick(event, row) : undefined}
+            onClick={clickable || selectable ? (event) => onClick(event, row) : undefined}
             data-state={selectedIds?.includes(row.id) ? "selected" : undefined}
             className={cn(
                 "group/row",
@@ -706,6 +712,7 @@ export function DataGrid<T>({
             {row.getVisibleCells().map((cell) => (
                 <TableCell
                     key={cell.id}
+                    data-grid-select={cell.column.id === SELECT || undefined}
                     className={cn(
                         density === "compact" ? "py-1" : "py-2",
                         fixed && "overflow-hidden text-ellipsis",
