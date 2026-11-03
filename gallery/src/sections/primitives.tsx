@@ -623,7 +623,7 @@ export function PrimitivesSection() {
                         <DialogTrigger asChild>
                             <Button variant="outline">Open dialog</Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-md">
+                        <DialogContent className="sm:max-w-md">
                             <DialogHeader>
                                 <DialogTitle>Raise the budget cap?</DialogTitle>
                                 <DialogDescription>
