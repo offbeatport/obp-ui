@@ -93,6 +93,7 @@ import {
 } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
+import { NumberFieldDemo } from "./number-field-demo";
 import { SearchListDemo } from "./search-list-demo";
 import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
 
@@ -281,6 +282,8 @@ export function PrimitivesSection() {
                     </Field>
                 </FieldGroup>
             </Spec>
+
+            <NumberFieldDemo />
 
             <SearchListDemo />
 

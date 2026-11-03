@@ -10,6 +10,7 @@ export * from "./field";
 export * from "./info-tip";
 export * from "./input";
 export * from "./label";
+export * from "./number-field";
 export * from "./popover";
 export * from "./radio-group";
 export * from "./scroll-area";

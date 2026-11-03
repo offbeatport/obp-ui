@@ -125,6 +125,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `max-w-*` drops the phone gutter.
    - **Forms are `Field`s in a `FieldGroup`.** A label sits 6px over its control; fields stack 20px apart, and side
      by side they share a grid with `gap-5`. Do not hand-roll label spacing.
+   - **Numbers are entered with a `NumberField`, never a bare `type="number"`** or a numeric text input. It is minus,
+     input and plus in one 32px control: arrows step, Shift and Page Up/Down take `largeStep`, Home and End jump to
+     `min` and `max`, a held button repeats, the wheel does nothing, typing clamps to the range. Pass `format` (Intl
+     options; `maximumFractionDigits: 0` for whole numbers) rather than parsing text, and a muted `unit` rather than
+     a unit in the label. Its hidden input carries `min`, `max` and `step`, so a form that accepts typed values
+     between steps takes `noValidate`. The minus and plus are named "Decrease" and "Increase" and skipped by Tab,
+     so they carry no tooltip.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
