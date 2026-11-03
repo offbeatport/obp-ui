@@ -180,6 +180,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      no matches offers the tabs that have some. Groups label sections inside a tab, a toolbar holds its filters, and
      a tab can be a form instead of a list. In the field, arrows move, Enter picks, Escape clears then closes; Tab
      reaches the tabs, arrows switch them and Arrow down returns to the field. Put it in a dialog of fixed height.
+   - **Shortcuts are visible `Kbd`s.** A key a screen answers to shows where it acts: a `Kbd` inside the button
+     it presses (it takes the button's ink), or a `KbdHint` line, keys then what they do, under the toolbar.
+     Single-letter keys stay off while focus is in a text field.
    - **Hierarchies are a `Tree`.** Sources, folders, files, schemas: anything a person opens level by level.
      It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
      selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with

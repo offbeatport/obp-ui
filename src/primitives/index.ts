@@ -9,6 +9,7 @@ export * from "./dropdown-menu";
 export * from "./field";
 export * from "./info-tip";
 export * from "./input";
+export * from "./kbd";
 export * from "./label";
 export * from "./number-field";
 export * from "./popover";

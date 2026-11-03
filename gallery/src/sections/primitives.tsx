@@ -52,6 +52,8 @@ import {
     FieldGroup,
     InfoTip,
     Input,
+    Kbd,
+    KbdHint,
     Label,
     Popover,
     PopoverContent,
@@ -803,6 +805,28 @@ export function PrimitivesSection() {
                     <ColorField label="Brand" value={brandColor} onChange={setBrandColor} />
                     <ColorField label="Ink" value={inkColor} onChange={setInkColor} />
                 </div>
+            </Spec>
+
+            <Spec
+                name="Kbd"
+                note="A key or shortcut, in mono on the muted fill. Inside a Button it takes the button's ink. KbdHint pairs keys with what they do, for a hint line under a toolbar."
+            >
+                <Row>
+                    <Button>
+                        Accept <Kbd>A</Kbd>
+                    </Button>
+                    <Button variant="outline">
+                        Fix and accept <Kbd>F</Kbd>
+                    </Button>
+                    <Button variant="ghost">
+                        Reject <Kbd>R</Kbd>
+                    </Button>
+                </Row>
+                <Row>
+                    <KbdHint keys={["J"]}>Next</KbdHint>
+                    <KbdHint keys={["K"]}>Previous</KbdHint>
+                    <KbdHint keys={["Ctrl", "Enter"]}>Save</KbdHint>
+                </Row>
             </Spec>
 
             <Spec
