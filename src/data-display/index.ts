@@ -13,6 +13,7 @@ export {
     markColorFor,
 } from "./gradient-mark";
 export { TaskCard, type TaskCardProps, TaskStateChip, type TaskStateChipProps } from "./task-card";
+export { ancestorsOf, filterTree, Tree, type TreeNode, type TreeProps } from "./tree";
 export {
     Timeline,
     TimelineDot,

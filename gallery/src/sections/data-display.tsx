@@ -18,6 +18,7 @@ import {
 } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
+import { TreeDemo } from "./tree-demo";
 
 const ENTITIES: { name: string; branding?: GradientMarkBranding }[] = [
     { name: "Ledgerly" },
@@ -291,6 +292,7 @@ export function DataDisplaySection() {
                     ]}
                 />
             </Spec>
+            <TreeDemo />
             <Spec
                 name="GradientMark · markColorFor"
                 note="One letter on a flat tile, its hue stepped from the name around --primary. No gradient: the name is kept for compatibility."

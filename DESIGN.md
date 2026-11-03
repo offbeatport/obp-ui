@@ -136,6 +136,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
+   - **Hierarchies are a `Tree`.** Sources, folders, files, schemas: anything a person opens level by level.
+     It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
+     selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with
+     `filterTree` so matches keep their ancestors; open `ancestorsOf` a node before selecting it from a link.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
