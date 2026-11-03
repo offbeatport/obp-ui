@@ -86,6 +86,9 @@ type Attribute = {
     id: string;
     label: string;
     value: (plan: Plan) => string;
+    amount?: (plan: Plan) => number;
+    formatDelta?: (amount: number) => string;
+    better?: "lower" | "higher";
     best?: (plan: Plan) => number;
     bestLabel?: string;
 };
@@ -96,7 +99,12 @@ const SECTIONS: { id: string; title: string; attributes: Attribute[] }[] = [
         title: "Compute",
         attributes: [
             { id: "family", label: "Family", value: (plan) => plan.family },
-            { id: "vcpus", label: "vCPUs", value: (plan) => String(plan.vcpus) },
+            {
+                id: "vcpus",
+                label: "vCPUs",
+                value: (plan) => String(plan.vcpus),
+                amount: (plan) => plan.vcpus,
+            },
             { id: "gpu", label: "GPU", value: (plan) => plan.gpu },
         ],
     },
@@ -104,8 +112,20 @@ const SECTIONS: { id: string; title: string; attributes: Attribute[] }[] = [
         id: "storage",
         title: "Memory and storage",
         attributes: [
-            { id: "memory", label: "Memory", value: (plan) => `${plan.memory} GB` },
-            { id: "disk", label: "Disk", value: (plan) => `${plan.disk} GB NVMe` },
+            {
+                id: "memory",
+                label: "Memory",
+                value: (plan) => `${plan.memory} GB`,
+                amount: (plan) => plan.memory,
+                formatDelta: (amount) => `${amount} GB`,
+            },
+            {
+                id: "disk",
+                label: "Disk",
+                value: (plan) => `${plan.disk} GB NVMe`,
+                amount: (plan) => plan.disk,
+                formatDelta: (amount) => `${amount} GB`,
+            },
             { id: "backups", label: "Backups", value: () => "Daily, kept 7 days" },
         ],
     },
@@ -117,6 +137,9 @@ const SECTIONS: { id: string; title: string; attributes: Attribute[] }[] = [
                 id: "price",
                 label: "Monthly price",
                 value: (plan) => `$${plan.price}`,
+                amount: (plan) => plan.price,
+                formatDelta: (amount) => `$${amount}`,
+                better: "lower",
                 best: (plan) => plan.price,
                 bestLabel: "Lowest",
             },
@@ -145,21 +168,49 @@ function cell(attribute: Attribute, plan: Plan, plans: Plan[]): ReactNode {
 export function CompareDemo() {
     const [ids, setIds] = useState(PLANS.map((plan) => plan.id));
     const [only, setOnly] = useState(false);
+    const [baseline, setBaseline] = useState<string | undefined>("s4");
     const plans = ids.flatMap((id) => PLANS.filter((plan) => plan.id === id));
     const columns: CompareColumn[] = plans.map((plan) => ({
         id: plan.id,
         label: plan.name,
         header: (
             <div className="flex items-start gap-2">
-                <div className="flex min-w-0 flex-1 flex-col">
+                <div className="flex min-w-0 flex-1 flex-col items-start">
                     <span className="truncate font-semibold text-foreground">{plan.name}</span>
                     <span className="truncate text-muted-foreground">{plan.family}</span>
+                    {plan.id === baseline ? (
+                        <span className="mt-1.5 flex items-center gap-2">
+                            <Badge variant="accent">Baseline</Badge>
+                            <Button
+                                variant="link"
+                                className="h-auto p-0"
+                                aria-label={`Clear ${plan.name} as the baseline`}
+                                onClick={() => setBaseline(undefined)}
+                            >
+                                Clear
+                            </Button>
+                        </span>
+                    ) : (
+                        <Button
+                            variant="link"
+                            className="mt-1.5 h-auto p-0"
+                            aria-label={`Set ${plan.name} as the baseline`}
+                            onClick={() => setBaseline(plan.id)}
+                        >
+                            Set as baseline
+                        </Button>
+                    )}
                 </div>
                 <Button
                     variant="ghost"
                     size="icon-xs"
                     aria-label={`Remove ${plan.name}`}
-                    onClick={() => setIds(ids.filter((id) => id !== plan.id))}
+                    onClick={() => {
+                        setIds(ids.filter((id) => id !== plan.id));
+                        if (plan.id === baseline) {
+                            setBaseline(undefined);
+                        }
+                    }}
                 >
                     <X />
                 </Button>
@@ -174,6 +225,9 @@ export function CompareDemo() {
             label: attribute.label,
             differs: new Set(plans.map(attribute.value)).size > 1,
             cells: plans.map((plan) => cell(attribute, plan, plans)),
+            values: plans.map((plan) => attribute.amount?.(plan) ?? attribute.value(plan)),
+            formatDelta: attribute.formatDelta,
+            better: attribute.better,
         })),
     }));
     const rows = all.flatMap((section) => section.rows);
@@ -193,6 +247,7 @@ export function CompareDemo() {
                 stickyTop="61px"
                 className="[--compare-surface:var(--card)]"
                 onReorder={setIds}
+                baseline={baseline}
                 corner={
                     <div className="flex flex-col gap-1">
                         <Label className="flex items-center gap-2 font-normal">
@@ -244,6 +299,10 @@ export function CompareDemo() {
                     {
                         name: "differs, differsLabel, CompareMarker",
                         note: "a differing row gets a 2px --primary edge on its label, a light --primary tint across the row and foreground text; matching rows stay muted. Screen readers hear differsLabel after the label. Use CompareMarker beside a count as the legend. Mark an objectively best value in a cell with a Badge; never rank the columns.",
+                    },
+                    {
+                        name: "baseline, row.values, formatDelta, better",
+                        note: 'baseline is a column id. Give a row values, one comparable value per column: numbers show a signed difference under each other column (+4, \u2212$24) and strings show Same or Different; a row where every column matches the baseline shows nothing. formatDelta formats the size of a difference; better (lower or higher) colours a difference --success or --destructive, so set it only where better is objective. Screen readers hear "$24 less than baseline". Label the baseline column in its own header and offer the control that sets it.',
                     },
                     {
                         name: "onReorder, column.label",

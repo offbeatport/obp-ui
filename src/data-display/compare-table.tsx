@@ -50,6 +50,9 @@ export type CompareRow = {
     label: ReactNode;
     cells: ReactNode[];
     differs?: boolean;
+    values?: (number | string | null | undefined)[];
+    formatDelta?: (amount: number) => string;
+    better?: "lower" | "higher";
 };
 
 export type CompareSection = {
@@ -67,6 +70,7 @@ export type CompareTableProps = {
     columnWidth?: string;
     stickyTop?: string;
     differsLabel?: string;
+    baseline?: string;
     onReorder?: (ids: string[]) => void;
     className?: string;
 };
@@ -74,6 +78,10 @@ export type CompareTableProps = {
 type Side = "head" | "body";
 
 type Drag = { active: string; over: string | null };
+
+type Tone = "better" | "worse" | "neutral" | "same";
+
+type Comparison = { text: string; spoken: string; tone: Tone };
 
 const SURFACE = "bg-(--compare-surface,var(--background))";
 const DIFFERS_TINT =
@@ -90,6 +98,23 @@ const HEADER_CELL = cn(CELL, "relative py-3 text-left text-sm font-normal");
 const INSTRUCTIONS = {
     draggable:
         "To reorder, press Space to pick up the column, the left and right arrow keys to move it and Space to drop it. Press Escape to cancel.",
+};
+
+const AMOUNT = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+
+const TONES: Record<Tone, string> = {
+    better: "text-success",
+    worse: "text-destructive",
+    neutral: "text-foreground",
+    same: "text-muted-foreground",
+};
+
+const SAME: Comparison = { text: "Same", spoken: "Same as baseline", tone: "same" };
+
+const DIFFERENT: Comparison = {
+    text: "Different",
+    spoken: "Different from baseline",
+    tone: "neutral",
 };
 
 const alongRow: Modifier = ({ transform }) => ({ ...transform, y: 0 });
@@ -146,6 +171,58 @@ function announcements(columns: CompareColumn[], moved: { current: boolean }): A
     };
 }
 
+function compareTo(
+    value: number | string | null | undefined,
+    base: number | string,
+    row: CompareRow,
+): Comparison | undefined {
+    if (value === null || value === undefined) {
+        return undefined;
+    }
+    if (typeof value !== "number" || typeof base !== "number") {
+        return String(value) === String(base) ? SAME : DIFFERENT;
+    }
+    const delta = value - base;
+    if (delta === 0) {
+        return SAME;
+    }
+    const amount = (row.formatDelta ?? AMOUNT.format)(Math.abs(delta));
+    const tone: Tone = !row.better
+        ? "neutral"
+        : delta < 0 === (row.better === "lower")
+          ? "better"
+          : "worse";
+    return {
+        text: `${delta > 0 ? "+" : "\u2212"}${amount}`,
+        spoken: `${amount} ${delta > 0 ? "more" : "less"} than baseline`,
+        tone,
+    };
+}
+
+function againstBaseline(row: CompareRow, at: number): (Comparison | undefined)[] | undefined {
+    const base = row.values?.[at];
+    if (at < 0 || !row.values || base === null || base === undefined) {
+        return undefined;
+    }
+    const results = row.values.map((value, index) =>
+        index === at ? undefined : compareTo(value, base, row),
+    );
+    return results.some((result) => result && result.tone !== "same") ? results : undefined;
+}
+
+function Delta({ comparison }: { comparison: Comparison }) {
+    return (
+        <span
+            data-slot="compare-table-delta"
+            data-tone={comparison.tone}
+            className={cn("mt-1 block text-sm tabular-nums", TONES[comparison.tone])}
+        >
+            <span aria-hidden="true">{comparison.text}</span>
+            <span className="sr-only">{comparison.spoken}</span>
+        </span>
+    );
+}
+
 function dropSlot(ids: string[], drag: Drag | null): number | undefined {
     if (!drag?.over || drag.over === drag.active) {
         return undefined;
@@ -180,7 +257,15 @@ function DropLine({ slot, count }: { slot: number | undefined; count: number }) 
     );
 }
 
-function SortableHeader({ column, dragging }: { column: CompareColumn; dragging: boolean }) {
+function SortableHeader({
+    column,
+    baseline,
+    dragging,
+}: {
+    column: CompareColumn;
+    baseline: boolean;
+    dragging: boolean;
+}) {
     const { attributes, listeners, setNodeRef, setActivatorNodeRef } = useSortable({
         id: column.id,
     });
@@ -190,6 +275,7 @@ function SortableHeader({ column, dragging }: { column: CompareColumn; dragging:
             ref={setNodeRef}
             role="columnheader"
             data-column={column.id}
+            data-baseline={baseline || undefined}
             className={cn(
                 HEADER_CELL,
                 "cursor-grab touch-manipulation select-none [-webkit-touch-callout:none]",
@@ -328,6 +414,7 @@ function CompareTable({
     columnWidth = "13rem",
     stickyTop = "0px",
     differsLabel = "differs",
+    baseline,
     onReorder,
     className,
 }: CompareTableProps) {
@@ -342,6 +429,7 @@ function CompareTable({
     } as CSSProperties;
     const shown = sections.filter((section) => section.rows.length > 0);
     const reorderable = Boolean(onReorder) && count > 1;
+    const anchor = baseline === undefined ? -1 : ids.indexOf(baseline);
     const table = (drag: Drag | null) => {
         const slot = dropSlot(ids, drag);
         return (
@@ -379,6 +467,7 @@ function CompareTable({
                                 <SortableHeader
                                     key={column.id}
                                     column={column}
+                                    baseline={column.id === baseline}
                                     dragging={drag?.active === column.id}
                                 />
                             ) : (
@@ -386,6 +475,7 @@ function CompareTable({
                                     key={column.id}
                                     role="columnheader"
                                     data-column={column.id}
+                                    data-baseline={column.id === baseline || undefined}
                                     className={HEADER_CELL}
                                 >
                                     {column.header}
@@ -419,54 +509,60 @@ function CompareTable({
                                     </div>
                                 </div>
                             )}
-                            {section.rows.map((row, position) => (
-                                <div
-                                    key={row.id}
-                                    role="row"
-                                    data-differs={row.differs || undefined}
-                                    className={cn(
-                                        ROW,
-                                        (index < shown.length - 1 ||
-                                            position < section.rows.length - 1) &&
-                                            "border-b",
-                                    )}
-                                >
+                            {section.rows.map((row, position) => {
+                                const deltas = againstBaseline(row, anchor);
+                                return (
                                     <div
-                                        role="rowheader"
+                                        key={row.id}
+                                        role="row"
+                                        data-differs={row.differs || undefined}
                                         className={cn(
-                                            PINNED,
-                                            "px-3 py-2 text-sm",
-                                            row.differs
-                                                ? cn(
-                                                      "bg-(--compare-differs) font-medium text-foreground",
-                                                      DIFFERS_EDGE,
-                                                  )
-                                                : cn(SURFACE, "text-muted-foreground"),
+                                            ROW,
+                                            (index < shown.length - 1 ||
+                                                position < section.rows.length - 1) &&
+                                                "border-b",
                                         )}
                                     >
-                                        {row.label}
-                                        {row.differs && (
-                                            <span className="sr-only">{` (${differsLabel})`}</span>
-                                        )}
-                                    </div>
-                                    {columns.map((column, cell) => (
                                         <div
-                                            key={column.id}
-                                            role="cell"
+                                            role="rowheader"
                                             className={cn(
-                                                CELL,
-                                                "py-2 text-sm tabular-nums",
+                                                PINNED,
+                                                "px-3 py-2 text-sm",
                                                 row.differs
-                                                    ? "bg-(--compare-differs) text-foreground"
-                                                    : "text-muted-foreground",
-                                                drag?.active === column.id && "opacity-50",
+                                                    ? cn(
+                                                          "bg-(--compare-differs) font-medium text-foreground",
+                                                          DIFFERS_EDGE,
+                                                      )
+                                                    : cn(SURFACE, "text-muted-foreground"),
                                             )}
                                         >
-                                            {row.cells[cell]}
+                                            {row.label}
+                                            {row.differs && (
+                                                <span className="sr-only">{` (${differsLabel})`}</span>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
-                            ))}
+                                        {columns.map((column, cell) => (
+                                            <div
+                                                key={column.id}
+                                                role="cell"
+                                                className={cn(
+                                                    CELL,
+                                                    "py-2 text-sm tabular-nums",
+                                                    row.differs
+                                                        ? "bg-(--compare-differs) text-foreground"
+                                                        : "text-muted-foreground",
+                                                    drag?.active === column.id && "opacity-50",
+                                                )}
+                                            >
+                                                {row.cells[cell]}
+                                                {deltas?.[cell] && (
+                                                    <Delta comparison={deltas[cell]} />
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
                         </Fragment>
                     ))}
                     <DropLine slot={slot} count={count} />

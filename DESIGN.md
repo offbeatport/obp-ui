@@ -143,7 +143,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      light `--primary` tint across its cells while matching rows stay muted. The differences switch and its
      count (with `CompareMarker` as the legend) live in `corner`. Mark an objectively best value in its cell
      with a `Badge`; never rank the columns. Pass `onReorder` to let people drag the columns into their own
-     order (mouse, touch after a short press, keyboard from the header grip) and keep any move buttons.
+     order (mouse, touch after a short press, keyboard from the header grip) and keep any move buttons. Pass
+     `baseline` (a column id) with per-row `values` to show each other column's signed difference (or Same,
+     Different); colour a difference with `better` only where better is objective, and label the baseline column
+     in its own header.
    - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
      inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
      items out of `items` rather than disabling them.
