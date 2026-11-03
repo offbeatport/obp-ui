@@ -320,6 +320,10 @@ function headerLabel<T>(column: Column<T, unknown>): string {
     return typeof header === "string" ? header : column.id;
 }
 
+function presetWidth<T>(column: Column<T, unknown>): number | undefined {
+    return column.columnDef.enableResizing === false ? column.columnDef.size : undefined;
+}
+
 function useColumnWidths<T>(
     table: Table<T>,
     cells: RefObject<Map<string, HTMLTableCellElement>>,
@@ -597,7 +601,7 @@ export function DataGrid<T>({
     }, [virtual, scroller, maxHeight]);
     const fixed = Object.keys(sizing.widths).length > 0;
     const fixedTotal = sizing.resizable.reduce(
-        (sum, column) => sum + (sizing.widths[column.id] ?? 120),
+        (sum, column) => sum + (presetWidth(column) ?? sizing.widths[column.id] ?? 120),
         0,
     );
 
@@ -732,20 +736,17 @@ export function DataGrid<T>({
                         : undefined
                 }
             >
-                {fixed && (
-                    <colgroup>
-                        {leaves.map((column) => (
+                <colgroup>
+                    {leaves.map((column) => {
+                        const width = presetWidth(column) ?? sizing.widths[column.id];
+                        return (
                             <col
                                 key={column.id}
-                                style={
-                                    sizing.widths[column.id] !== undefined
-                                        ? { width: sizing.widths[column.id] }
-                                        : undefined
-                                }
+                                style={width !== undefined ? { width } : undefined}
                             />
-                        ))}
-                    </colgroup>
-                )}
+                        );
+                    })}
+                </colgroup>
                 <thead data-slot="table-header" className="[&_tr]:border-b">
                     {table.getHeaderGroups().map((group) => (
                         <TableRow key={group.id} className="hover:bg-transparent">
