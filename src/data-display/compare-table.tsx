@@ -196,20 +196,19 @@ function SortableHeader({ column, dragging }: { column: CompareColumn; dragging:
             )}
             {...listeners}
         >
+            <div className={cn("h-full", dragging && "opacity-50")}>{column.header}</div>
             <Tooltip open={tip && !dragging} onOpenChange={setTip}>
                 <TooltipTrigger
                     ref={setActivatorNodeRef}
                     {...attributes}
                     aria-label={`Reorder ${column.label ?? column.id}`}
                     data-slot="compare-table-grip"
-                    data-column={column.id}
                     className="absolute top-0 left-1/2 flex h-3 w-8 -translate-x-1/2 cursor-grab items-center justify-center rounded-md text-faint outline-none hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 >
                     <GripHorizontal aria-hidden="true" className="size-4" />
                 </TooltipTrigger>
                 <TooltipContent>Drag to reorder</TooltipContent>
             </Tooltip>
-            <div className={cn("h-full", dragging && "opacity-50")}>{column.header}</div>
         </div>
     );
 }
@@ -269,7 +268,7 @@ function Reorderable({
         }
         refocus.current = null;
         const grip = head.current?.querySelector<HTMLElement>(
-            `[data-slot="compare-table-grip"][data-column="${CSS.escape(pending.id)}"]`,
+            `[data-column="${CSS.escape(pending.id)}"] [data-slot="compare-table-grip"]`,
         );
         if (grip && document.activeElement !== grip) {
             grip.focus();
