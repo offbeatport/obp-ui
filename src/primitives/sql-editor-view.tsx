@@ -225,6 +225,7 @@ function SqlEditorView(props: SqlEditorProps) {
                     search({ top: true }),
                     autocompletion({
                         icons: false,
+                        filterStrict: true,
                         addToOptions: [{ render: completionKind, position: 90 }],
                     }),
                     keymap.of([

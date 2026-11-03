@@ -138,7 +138,13 @@ const dot = {
 };
 
 const sqlTheme = EditorView.theme({
-    "&": { color: "inherit", backgroundColor: "transparent", borderRadius: "inherit" },
+    "&": {
+        flexGrow: "1",
+        minHeight: "0",
+        color: "inherit",
+        backgroundColor: "transparent",
+        borderRadius: "inherit",
+    },
     "&.cm-focused": { outline: "none" },
     ".cm-scroller": {
         fontFamily: "inherit",
@@ -170,11 +176,11 @@ const sqlTheme = EditorView.theme({
     ".cm-gutter-lint": { width: "1rem" },
     ".cm-gutter-lint .cm-gutterElement": {
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "center",
         padding: "0",
     },
-    ".cm-lint-marker": { ...dot, content: "none" },
+    ".cm-lint-marker": { ...dot, content: "none", marginTop: "calc((1lh - 0.5rem) / 2)" },
     ".cm-lint-marker-error": { backgroundColor: "var(--destructive)" },
     ".cm-lint-marker-warning": { backgroundColor: "var(--warning)" },
     ".cm-lint-marker-info": { backgroundColor: "var(--info)" },

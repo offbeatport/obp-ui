@@ -6,7 +6,7 @@ const SQL_EDITOR_LINES = { min: 3, max: 16 };
 
 function sqlEditorFrame(className?: string) {
     return cn(
-        "w-full min-w-0 rounded-md border border-input bg-input-background font-mono text-lg text-foreground md:text-sm",
+        "flex w-full min-w-0 flex-col rounded-md border border-input bg-input-background font-mono text-lg text-foreground md:text-sm",
         "focus-within:border-ring focus-within:ring-1 focus-within:ring-ring",
         "data-invalid:border-destructive data-invalid:ring-destructive",
         className,
