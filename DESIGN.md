@@ -132,6 +132,14 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      a unit in the label. Its hidden input carries `min`, `max` and `step`, so a form that accepts typed values
      between steps takes `noValidate`. The minus and plus are named "Decrease" and "Increase" and skipped by Tab,
      so they carry no tooltip.
+   - **Settings are `SettingsRow`s in a `SettingsGroup`.** Label and description on the left, the control on the
+     right, centred on the label's first line so it stays put when the description wraps; rows divide with a 1px
+     line. A switch or checkbox row is `toggle`: the whole row is its label, so a click anywhere toggles it, hover
+     and keyboard focus tint the row with `--secondary`, and the control keeps the only tab stop. Any other control
+     (number field, select, input, button) is the only thing on its row that reacts; a click on its label only
+     focuses it. A locked row is `disabled`, with no tint and no pointer, and says why in a `Tooltip`. While a change
+     saves, make the control `readOnly`, not `disabled`, so keyboard focus stays on it. Long text controls (paths,
+     endpoints, lists) are `wide`: 20rem on the right, full width under the label when the row is narrower than 36rem.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the

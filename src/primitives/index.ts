@@ -18,6 +18,7 @@ export * from "./search-input";
 export * from "./search-list";
 export * from "./select";
 export * from "./separator";
+export * from "./settings-row";
 export * from "./skeleton";
 export * from "./switch";
 export * from "./tabbed-search-list";
