@@ -147,6 +147,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
      inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
      items out of `items` rather than disabling them.
+   - **Picking one item that can come from a few places is a `TabbedSearchList`.** One search field over tabs
+     (suggested, all, yours, add new): it filters every tab at once, each tab shows its match count, and a tab with
+     no matches offers the tabs that have some. Groups label sections inside a tab, a toolbar holds its filters, and
+     a tab can be a form instead of a list. In the field, arrows move, Enter picks, Escape clears then closes; Tab
+     reaches the tabs, arrows switch them and Arrow down returns to the field. Put it in a dialog of fixed height.
    - **Hierarchies are a `Tree`.** Sources, folders, files, schemas: anything a person opens level by level.
      It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
      selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with

@@ -94,6 +94,7 @@ import {
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 import { SearchListDemo } from "./search-list-demo";
+import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
 
 const BUTTON_VARIANTS = [
     "default",
@@ -282,6 +283,8 @@ export function PrimitivesSection() {
             </Spec>
 
             <SearchListDemo />
+
+            <TabbedSearchListDemo />
 
             <Spec
                 name="CheckboxSelect"
