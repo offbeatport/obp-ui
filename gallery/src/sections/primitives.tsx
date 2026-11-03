@@ -93,6 +93,7 @@ import {
 } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
+import { SearchListDemo } from "./search-list-demo";
 
 const BUTTON_VARIANTS = [
     "default",
@@ -279,6 +280,8 @@ export function PrimitivesSection() {
                     </Field>
                 </FieldGroup>
             </Spec>
+
+            <SearchListDemo />
 
             <Spec
                 name="CheckboxSelect"

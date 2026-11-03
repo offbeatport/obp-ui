@@ -141,6 +141,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      while columns scroll sideways, and a `--primary` dot marks the rows that differ (no tinted rows). The
      differences switch and its count live in `corner`. Mark an objectively best value in its cell with a
      `Badge`; never rank the columns.
+   - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
+     inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
+     items out of `items` rather than disabling them.
    - **Hierarchies are a `Tree`.** Sources, folders, files, schemas: anything a person opens level by level.
      It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
      selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with
