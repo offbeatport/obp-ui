@@ -186,6 +186,7 @@ const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
     },
     {
         header: "Latency",
+        meta: { info: "Time to the first byte, measured at the gateway." },
         accessorKey: "latency",
         cell: (info) => `${String(info.getValue())} ms`,
     },
@@ -247,6 +248,10 @@ export function DataDisplaySection() {
                         {
                             name: "virtualize",
                             note: "on from 150 rows; rows are measured, so multi-line cells work.",
+                        },
+                        {
+                            name: "meta.info",
+                            note: "an InfoTip beside a column's header for a one-line explanation, so cells can stay short (put a qualifier like 'estimated' here, not in every row).",
                         },
                         {
                             name: "onOpen, rowLabel",

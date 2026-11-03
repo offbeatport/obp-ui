@@ -37,8 +37,15 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../primitives/dropdown-menu";
+import { InfoTip } from "../primitives/info-tip";
 import { Skeleton } from "../primitives/skeleton";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
+
+declare module "@tanstack/react-table" {
+    interface ColumnMeta<TData, TValue> {
+        info?: ReactNode;
+    }
+}
 
 const INTERACTIVE =
     "a, button, input, select, textarea, label, summary, [role='menuitem'], [role='checkbox'], [role='switch'], [role='tab'], [data-grid-ignore]";
@@ -838,6 +845,15 @@ export function DataGrid<T>({
                                             </button>
                                         ) : (
                                             title
+                                        )}
+                                        {column.columnDef.meta?.info && (
+                                            <InfoTip
+                                                label={`About ${headerLabel(column)}`}
+                                                side="bottom"
+                                                className="ml-1 align-middle"
+                                            >
+                                                {column.columnDef.meta.info}
+                                            </InfoTip>
                                         )}
                                         {resizable &&
                                             !last &&
