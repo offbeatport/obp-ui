@@ -524,6 +524,7 @@ function ElementRows<T>({ element, ...props }: RowsProps<T> & { element: HTMLEle
     const virtualizer = useVirtualizer({
         count: props.rows.length,
         getScrollElement: () => element,
+        initialOffset: () => element.scrollTop,
         getItemKey: (index) => props.rows[index]?.id ?? index,
         estimateSize: () => ESTIMATED_ROW,
         overscan: 8,
@@ -541,6 +542,7 @@ function WindowRows<T>(props: RowsProps<T>) {
     const margin = useMargin(scroller, props.body);
     const virtualizer = useWindowVirtualizer({
         count: props.rows.length,
+        initialOffset: () => window.scrollY,
         getItemKey: (index) => props.rows[index]?.id ?? index,
         estimateSize: () => ESTIMATED_ROW,
         overscan: 8,
@@ -798,12 +800,12 @@ export function DataGrid<T>({
     const virtual = (virtualize ?? sorted.length >= VIRTUAL_FROM) && sorted.length > 0;
     const [scroller, setScroller] = useState<Scroller | null>(null);
     useLayoutEffect(() => {
-        if (!virtual || scroller) {
+        if (scroller || !(virtual || infinite)) {
             return;
         }
         const element = maxHeight ? container.current : scrollParent(container.current);
         setScroller(element ? { kind: "element", element } : { kind: "window" });
-    }, [virtual, scroller, maxHeight]);
+    }, [virtual, infinite, scroller, maxHeight]);
     const scrollRoot = useCallback(
         () => (maxHeight ? container.current : scrollParent(container.current)),
         [maxHeight],
