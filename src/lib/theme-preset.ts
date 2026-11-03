@@ -188,7 +188,12 @@ export const STATUS_KEYS = [
 
 export type StatusKey = (typeof STATUS_KEYS)[number];
 
-export type StatusColors = Partial<Record<StatusKey | `${StatusKey}Foreground`, string>>;
+export type StatusColors = Partial<
+    Record<
+        StatusKey | `${StatusKey}Foreground` | "destructiveFill" | "destructiveFillForeground",
+        string
+    >
+>;
 
 export type ThemeStatus = { light?: StatusColors; dark?: StatusColors };
 
@@ -206,7 +211,7 @@ export type ThemePreset = {
 };
 
 const statusVar = (key: string): string =>
-    key.endsWith("Foreground") ? `--${key.slice(0, -"Foreground".length)}-foreground` : `--${key}`;
+    `--${key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`;
 
 const bundle = (
     id: string,
@@ -271,8 +276,10 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
             dark: {
                 success: "#009b39",
                 successForeground: "#ffffff",
-                destructive: "#bc0000",
-                destructiveForeground: "#ffffff",
+                destructive: "#f87171",
+                destructiveForeground: "#101216",
+                destructiveFill: "#bc0000",
+                destructiveFillForeground: "#ffffff",
             },
         },
     },
@@ -415,6 +422,8 @@ const MANAGED = [
     ...VARS.map(([, v]) => v),
     ...Object.keys(STATUS.light),
     ...SOFT.map((s) => `--${s}-soft`),
+    "--destructive-fill",
+    "--destructive-fill-foreground",
     "--shadow-e1",
     "--shadow-e2",
     "--font-sans",

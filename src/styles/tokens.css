@@ -44,6 +44,8 @@
     --neutral-foreground: #ffffff;
     --destructive: #b91c1c;
     --destructive-foreground: #ffffff;
+    --destructive-fill: var(--destructive);
+    --destructive-fill-foreground: var(--destructive-foreground);
 
     --success-soft: color-mix(in srgb, var(--success) 8%, var(--background));
     --warning-soft: color-mix(in srgb, var(--warning) 8%, var(--background));
@@ -120,6 +122,8 @@
     --approval-foreground: #101216;
     --neutral-foreground: #101216;
     --destructive-foreground: #101216;
+    --destructive-fill: var(--destructive);
+    --destructive-fill-foreground: var(--destructive-foreground);
 
     --success-soft: color-mix(in srgb, var(--success) 20%, var(--background));
     --warning-soft: color-mix(in srgb, var(--warning) 20%, var(--background));
@@ -154,6 +158,8 @@
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive-fill: var(--destructive-fill);
+    --color-destructive-fill-foreground: var(--destructive-fill-foreground);
     --color-border: var(--border);
     --color-border-soft: var(--border-soft);
     --color-input: var(--input);
