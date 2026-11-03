@@ -84,6 +84,7 @@ import {
     TabsList,
     TabsTrigger,
     Textarea,
+    ToastProvider,
     Tooltip,
     TooltipContent,
     TooltipProvider,
@@ -91,6 +92,7 @@ import {
     contrastRatio,
     readableOn,
 } from "obp-ui";
+import { useToast } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 import { NumberFieldDemo } from "./number-field-demo";
@@ -98,6 +100,26 @@ import { SearchListDemo } from "./search-list-demo";
 import { SettingsRowDemo } from "./settings-row-demo";
 import { SqlEditorDemo } from "./sql-editor-demo";
 import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
+
+function ToastDemo() {
+    const toast = useToast();
+    return (
+        <Row>
+            <Button
+                variant="outline"
+                onClick={() =>
+                    toast({
+                        title: "Model added",
+                        description: "Qwen3 1.7B is downloading.",
+                        tone: "success",
+                    })
+                }
+            >
+                Show a toast
+            </Button>
+        </Row>
+    );
+}
 
 const BUTTON_VARIANTS = [
     "default",
@@ -796,6 +818,15 @@ export function PrimitivesSection() {
                         </InfoTip>
                     </span>
                 </Row>
+            </Spec>
+
+            <Spec
+                name="Toast"
+                note="Wrap the app once in ToastProvider; call useToast() to show one. Bottom right, closes after 5 s or on Dismiss."
+            >
+                <ToastProvider>
+                    <ToastDemo />
+                </ToastProvider>
             </Spec>
 
             <Spec name="Tooltip" note="Wrap once in TooltipProvider.">
