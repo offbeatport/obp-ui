@@ -1,7 +1,7 @@
 "use client";
 
 import { Autocomplete } from "@base-ui/react/autocomplete";
-import { Check, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
 
 import { cn } from "../lib/cn";
@@ -262,15 +262,9 @@ function TabbedSearchList<T>({
                                                 >
                                                     {renderItem(entry)}
                                                     {current && (
-                                                        <>
-                                                            <Check
-                                                                aria-hidden="true"
-                                                                className="size-4 shrink-0 text-primary"
-                                                            />
-                                                            <span className="sr-only">
-                                                                Current choice
-                                                            </span>
-                                                        </>
+                                                        <span className="sr-only">
+                                                            Current choice
+                                                        </span>
                                                     )}
                                                 </Autocomplete.Item>
                                             );

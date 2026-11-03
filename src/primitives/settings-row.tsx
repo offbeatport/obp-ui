@@ -10,15 +10,15 @@ import {
 import { cn } from "../lib/cn";
 
 const BODY_LAYOUT = {
-    toggle: "flex-row items-start",
-    normal: "flex-col items-stretch @md/settings-row:flex-row @md/settings-row:items-start",
-    wide: "flex-col items-stretch @xl/settings-row:flex-row @xl/settings-row:items-start",
+    toggle: "flex-row items-center",
+    normal: "flex-col items-stretch @md/settings-row:flex-row @md/settings-row:items-center",
+    wide: "flex-col items-stretch @xl/settings-row:flex-row @xl/settings-row:items-center",
 };
 
 const CONTROL_LAYOUT = {
-    toggle: "h-(--type-sm-leading) flex-row-reverse",
-    normal: "@md/settings-row:h-(--type-sm-leading) @md/settings-row:flex-row-reverse",
-    wide: "w-full @xl/settings-row:h-(--type-sm-leading) @xl/settings-row:w-80 @xl/settings-row:flex-row-reverse",
+    toggle: "flex-row-reverse",
+    normal: "@md/settings-row:flex-row-reverse",
+    wide: "w-full @xl/settings-row:w-80 @xl/settings-row:flex-row-reverse",
 };
 
 type SettingsRowProps = {

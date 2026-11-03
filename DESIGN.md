@@ -133,7 +133,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      between steps takes `noValidate`. The minus and plus are named "Decrease" and "Increase" and skipped by Tab,
      so they carry no tooltip.
    - **Settings are `SettingsRow`s in a `SettingsGroup`.** Label and description on the left, the control on the
-     right, centred on the label's first line so it stays put when the description wraps; rows divide with a 1px
+     right, centred vertically in the row; rows divide with a 1px
      line. A switch or checkbox row is `toggle`: the whole row is its label, so a click anywhere toggles it, hover
      and keyboard focus tint the row with `--secondary`, and the control keeps the only tab stop. Any other control
      (number field, select, input, button) is the only thing on its row that reacts; a click on its label only

@@ -25,7 +25,7 @@ export function SettingsRowDemo() {
     return (
         <Spec
             name="SettingsRow · SettingsGroup"
-            note="Label and description on the left, the control on the right, centred on the label's first line. A switch row toggles from anywhere on it; other rows only through their control."
+            note="Label and description on the left, the control on the right, centred vertically in the row. A switch row toggles from anywhere on it; other rows only through their control."
         >
             <div className="max-w-3xl rounded-xl border bg-card p-5">
                 <SettingsGroup>
