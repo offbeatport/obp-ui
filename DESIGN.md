@@ -142,6 +142,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      under the pointer. A locked row is `disabled`, with no tint and no pointer, and says why in a `Tooltip`. While a
      change saves, make the control `readOnly`, not `disabled`, so keyboard focus stays on it. Long text controls
      (paths, endpoints, lists) are `wide`: 20rem on the right, full width under the label below 36rem.
+   - **SQL is entered with `SqlEditor`, never a textarea.** Pass `schema` (`{ table: columns[] }`) for table
+     and column completion, `onRun` for Cmd/Ctrl+Enter, and the server's error as `diagnostics` (line, column,
+     message) when it carries a position; otherwise show it under the editor. It loads CodeMirror on first use.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the

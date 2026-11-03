@@ -96,6 +96,7 @@ import { Api, Cell, Note, Row, Spec } from "../kit";
 import { NumberFieldDemo } from "./number-field-demo";
 import { SearchListDemo } from "./search-list-demo";
 import { SettingsRowDemo } from "./settings-row-demo";
+import { SqlEditorDemo } from "./sql-editor-demo";
 import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
 
 const BUTTON_VARIANTS = [
@@ -283,6 +284,8 @@ export function PrimitivesSection() {
                     </Field>
                 </FieldGroup>
             </Spec>
+
+            <SqlEditorDemo />
 
             <NumberFieldDemo />
 

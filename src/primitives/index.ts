@@ -20,6 +20,7 @@ export * from "./select";
 export * from "./separator";
 export * from "./settings-row";
 export * from "./skeleton";
+export * from "./sql-editor";
 export * from "./switch";
 export * from "./tabbed-search-list";
 export * from "./table";
