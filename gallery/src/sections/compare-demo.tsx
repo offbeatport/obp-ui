@@ -145,9 +145,10 @@ function cell(attribute: Attribute, plan: Plan, plans: Plan[]): ReactNode {
 export function CompareDemo() {
     const [ids, setIds] = useState(PLANS.map((plan) => plan.id));
     const [only, setOnly] = useState(false);
-    const plans = PLANS.filter((plan) => ids.includes(plan.id));
+    const plans = ids.flatMap((id) => PLANS.filter((plan) => plan.id === id));
     const columns: CompareColumn[] = plans.map((plan) => ({
         id: plan.id,
+        label: plan.name,
         header: (
             <div className="flex items-start gap-2">
                 <div className="flex min-w-0 flex-1 flex-col">
@@ -183,7 +184,7 @@ export function CompareDemo() {
     return (
         <Spec
             name="CompareTable · CompareMarker"
-            note="Things side by side, one column each. The header sticks to the page's scroller, the attribute column stays pinned while the columns scroll sideways, and a dot marks the rows that differ."
+            note="Things side by side, one column each. The header sticks to the page's scroller, the attribute column stays pinned while the columns scroll sideways, rows that differ carry a primary edge and a light tint, and a column header drags to a new place."
         >
             <CompareTable
                 label="Compare plans"
@@ -191,6 +192,7 @@ export function CompareDemo() {
                 sections={sections}
                 stickyTop="61px"
                 className="[--compare-surface:var(--card)]"
+                onReorder={setIds}
                 corner={
                     <div className="flex flex-col gap-1">
                         <Label className="flex items-center gap-2 font-normal">
@@ -214,7 +216,7 @@ export function CompareDemo() {
                         Restore every plan
                     </Button>
                 ) : (
-                    "Narrow the window or remove a plan to see the columns reflow."
+                    "Drag a plan's header to reorder, or narrow the window and drag towards an edge to scroll."
                 )}
             </Note>
             <Api
@@ -241,7 +243,11 @@ export function CompareDemo() {
                     },
                     {
                         name: "differs, differsLabel, CompareMarker",
-                        note: "a differing row gets a --primary dot and a foreground label, and screen readers hear differsLabel after the label. Use CompareMarker beside a count as the legend. Mark an objectively best value in a cell with a Badge; never rank the columns.",
+                        note: "a differing row gets a 2px --primary edge on its label, a light --primary tint across the row and foreground text; matching rows stay muted. Screen readers hear differsLabel after the label. Use CompareMarker beside a count as the legend. Mark an objectively best value in a cell with a Badge; never rank the columns.",
+                    },
+                    {
+                        name: "onReorder, column.label",
+                        note: "opt-in drag to reorder: a header drags with the mouse, or with touch after a short press so the page still scrolls; a 2px --primary line shows where it lands, and dragging near an edge scrolls the columns. The grip at the top of each header takes the keyboard: Space lifts, arrows move, Space drops, Escape cancels, and a live region announces each move by column.label. Called with the new id order.",
                     },
                 ]}
             />

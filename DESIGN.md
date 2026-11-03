@@ -139,9 +139,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
      grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned
-     while columns scroll sideways, and a `--primary` dot marks the rows that differ (no tinted rows). The
-     differences switch and its count live in `corner`. Mark an objectively best value in its cell with a
-     `Badge`; never rank the columns.
+     while columns scroll sideways, and a row that differs carries a 2px `--primary` edge on its label and a
+     light `--primary` tint across its cells while matching rows stay muted. The differences switch and its
+     count (with `CompareMarker` as the legend) live in `corner`. Mark an objectively best value in its cell
+     with a `Badge`; never rank the columns. Pass `onReorder` to let people drag the columns into their own
+     order (mouse, touch after a short press, keyboard from the header grip) and keep any move buttons.
    - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
      inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
      items out of `items` rather than disabling them.
