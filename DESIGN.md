@@ -137,9 +137,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      line. A switch or checkbox row is `toggle`: the whole row is its label, so a click anywhere toggles it, hover
      and keyboard focus tint the row with `--secondary`, and the control keeps the only tab stop. Any other control
      (number field, select, input, button) is the only thing on its row that reacts; a click on its label only
-     focuses it. A locked row is `disabled`, with no tint and no pointer, and says why in a `Tooltip`. While a change
-     saves, make the control `readOnly`, not `disabled`, so keyboard focus stays on it. Long text controls (paths,
-     endpoints, lists) are `wide`: 20rem on the right, full width under the label when the row is narrower than 36rem.
+     focuses it, and the row stacks with the control under the label when it is narrower than 28rem. Put the control
+     first in `control`: extras (a Save button, a locked badge) follow it and grow away from it, so it never moves
+     under the pointer. A locked row is `disabled`, with no tint and no pointer, and says why in a `Tooltip`. While a
+     change saves, make the control `readOnly`, not `disabled`, so keyboard focus stays on it. Long text controls
+     (paths, endpoints, lists) are `wide`: 20rem on the right, full width under the label below 36rem.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the

@@ -9,6 +9,18 @@ import {
 
 import { cn } from "../lib/cn";
 
+const BODY_LAYOUT = {
+    toggle: "flex-row items-start",
+    normal: "flex-col items-stretch @md/settings-row:flex-row @md/settings-row:items-start",
+    wide: "flex-col items-stretch @xl/settings-row:flex-row @xl/settings-row:items-start",
+};
+
+const CONTROL_LAYOUT = {
+    toggle: "h-(--type-sm-leading) flex-row-reverse",
+    normal: "@md/settings-row:h-(--type-sm-leading) @md/settings-row:flex-row-reverse",
+    wide: "w-full @xl/settings-row:h-(--type-sm-leading) @xl/settings-row:w-80 @xl/settings-row:flex-row-reverse",
+};
+
 type SettingsRowProps = {
     id?: string;
     label: ReactNode;
@@ -55,6 +67,7 @@ function SettingsRow({
     const descriptionId = id && description ? `${id}-description` : undefined;
     const pressable = toggle && !disabled;
     const LabelTag = id ? "label" : "span";
+    const layout = toggle ? "toggle" : wide ? "wide" : "normal";
     return (
         <div data-slot="settings-row" className={cn("@container/settings-row py-0.5", className)}>
             <div
@@ -62,9 +75,8 @@ function SettingsRow({
                 data-toggle={toggle || undefined}
                 data-disabled={disabled || undefined}
                 className={cn(
-                    "relative -mx-2.5 flex items-start justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-2.5",
-                    wide &&
-                        "flex-col items-stretch @xl/settings-row:flex-row @xl/settings-row:items-start",
+                    "relative -mx-2.5 flex justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-2.5",
+                    BODY_LAYOUT[layout],
                     pressable && "hover:bg-secondary has-[:focus-visible]:bg-secondary",
                 )}
             >
@@ -90,9 +102,8 @@ function SettingsRow({
                 <div
                     data-slot="settings-row-control"
                     className={cn(
-                        "relative z-10 flex h-(--type-sm-leading) shrink-0 items-center justify-end gap-2",
-                        wide &&
-                            "h-auto w-full @xl/settings-row:h-(--type-sm-leading) @xl/settings-row:w-80",
+                        "relative z-10 flex shrink-0 items-center justify-start gap-2",
+                        CONTROL_LAYOUT[layout],
                     )}
                 >
                     {describedControl(control, descriptionId)}

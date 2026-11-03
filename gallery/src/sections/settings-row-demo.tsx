@@ -46,6 +46,7 @@ export function SettingsRowDemo() {
                         description="Locked rows keep their reason in a tooltip and do not highlight."
                         control={
                             <>
+                                <Switch id="sr-locked" checked disabled />
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <button type="button" className="rounded-sm">
@@ -54,7 +55,6 @@ export function SettingsRowDemo() {
                                     </TooltipTrigger>
                                     <TooltipContent>Change it in the server config.</TooltipContent>
                                 </Tooltip>
-                                <Switch id="sr-locked" checked disabled />
                             </>
                         }
                     />
@@ -124,7 +124,7 @@ export function SettingsRowDemo() {
                         },
                         {
                             name: "control",
-                            note: "Switch, checkbox, NumberField, Select, Input or Button. Its box is one label line tall, so a taller control overflows evenly.",
+                            note: "Switch, checkbox, NumberField, Select, Input or Button, first; extras such as a Save button or a locked badge follow it and grow away from it, so the control never moves. Its box is one label line tall, so a taller control overflows evenly. Below 28rem the row stacks.",
                         },
                         {
                             name: "toggle",
