@@ -231,7 +231,7 @@ export function TabbedSearchListDemo() {
                     },
                     {
                         name: "itemKey, itemText, renderItem, onPick",
-                        note: "as in SearchList. itemKey must be unique within a tab; itemText is what the search matches (every word, case and accent insensitive).",
+                        note: "as in SearchList. itemKey must be unique within a group (the same item may sit in two groups); itemText is what the search matches (every word, case and accent insensitive).",
                     },
                     {
                         name: "currentKey",
