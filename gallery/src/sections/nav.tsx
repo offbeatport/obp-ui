@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 
 const SETTINGS_TABS: TabNavItem[] = [
+    { href: "/settings", label: "Overview" },
     { href: "/settings/agents", label: "Agents" },
     { href: "/settings/guardrails", label: "Guardrails" },
     { href: "/settings/appearance", label: "Appearance" },
@@ -106,13 +107,17 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec name="TabNav" note="Underlined sub-nav, active by pathname.">
+            <Spec name="TabNav" note="Underlined link tabs, active by pathname.">
                 <UIProvider pathname="/settings/guardrails">
-                    <TabNav tabs={SETTINGS_TABS} className="mt-0" />
+                    <TabNav tabs={SETTINGS_TABS} label="Settings pages" className="mb-3" />
                 </UIProvider>
                 <Note>
-                    Mounted here inside a nested provider claiming <code>/settings/guardrails</code>
-                    .
+                    Mounted inside a nested provider claiming <code>/settings/guardrails</code>.
+                    Overview's <code>/settings</code> matches too, as its parent; the longest
+                    matching <code>href</code> wins, so a section's index tab sits beside its
+                    children. Each tab is a real link (middle-click, back button, deep links), the
+                    active one carries <code>aria-current="page"</code>, and Tab shows the focus
+                    ring.
                 </Note>
             </Spec>
 

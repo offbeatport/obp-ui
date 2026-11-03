@@ -113,6 +113,7 @@ function Probe() {
                         </p>
 
                         <TabNav
+                            className="mt-5"
                             tabs={[
                                 { href: "/", label: "Overview" },
                                 { href: "/tasks", label: "Tasks" },

@@ -124,6 +124,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      normal weight and `text-base` copy. Size it with `sm:max-w-*`; a bare `max-w-*` drops the phone gutter.
    - **Forms are `Field`s in a `FieldGroup`.** A label sits 6px over its control; fields stack 20px apart, and side
      by side they share a grid with `gap-5`. Do not hand-roll label spacing.
+   - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
+     under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
      header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
      something (a click anywhere on the row then opens it; keep the name a real link for new tabs), `storageKey` to keep a person's column widths and choices, `columnPicker` (with `hiddenColumns` for the
