@@ -3,11 +3,17 @@ import {
     ClientOnly,
     ConfirmDialog,
     DEFAULT_NAMESPACE,
+    FILE_TYPES,
+    FileName,
+    type FileType,
+    FileTypeIcon,
     Markdown,
     type ProviderId,
     ProviderLogo,
     RADIUS_STEPS,
+    SOFTWARE_IDS,
     SPACE_STEPS,
+    SoftwareLogo,
     THEME_PALETTES,
     THEME_PRESETS,
     TYPE_PAIRINGS,
@@ -287,6 +293,44 @@ export function UtilitiesSection() {
                     Someone else's marks, drawn to their own rules - the one place the kit is
                     allowed a literal colour, because a provider's blue is not ours to tokenise.
                 </Note>
+            </Spec>
+
+            <Spec
+                name="SoftwareLogo · softwareIdFor"
+                note="Runtimes, databases, operating systems and chips, from Simple Icons. A brand colour where it reads in both modes, currentColor where it does not."
+            >
+                <Row className="gap-8">
+                    {SOFTWARE_IDS.map((id) => (
+                        <Cell key={id} label={id}>
+                            <SoftwareLogo id={id} className="size-7" />
+                        </Cell>
+                    ))}
+                </Row>
+                <Note>
+                    softwareIdFor("macOS 15.1") is apple, softwareIdFor("arm64") is arm; an unknown
+                    name returns undefined, and the app draws a monogram tile instead.
+                </Note>
+            </Spec>
+
+            <Spec
+                name="FileTypeIcon · FileName · fileTypeOf"
+                note="One icon and one --file-* token per data format, at 3:1 or more on every palette's page, card, hover and selected fill in both modes."
+            >
+                <Row className="gap-8">
+                    {(Object.keys(FILE_TYPES) as FileType[]).map((type) => (
+                        <Cell key={type} label={FILE_TYPES[type].label}>
+                            <FileTypeIcon type={type} className="size-5" />
+                        </Cell>
+                    ))}
+                </Row>
+                <ul className="flex flex-col gap-1 text-sm">
+                    {["tickets.csv", "intents.jsonl", "contracts.parquet", "README"].map((name) => (
+                        <li key={name} className="flex items-center gap-2">
+                            <FileTypeIcon name={name} className="size-4" />
+                            <FileName name={name} />
+                        </li>
+                    ))}
+                </ul>
             </Spec>
         </>
     );

@@ -13,24 +13,35 @@ import {
 
 export function ConfirmDialog({
     trigger,
+    open: openProp,
+    onOpenChange,
     title,
     description,
     confirmLabel,
     destructive,
     onConfirm,
 }: {
-    trigger: ReactNode;
+    trigger?: ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
     title: string;
     description: string;
     confirmLabel: string;
     destructive?: boolean;
     onConfirm: () => Promise<unknown> | unknown;
 }) {
-    const [open, setOpen] = useState(false);
+    const [innerOpen, setInnerOpen] = useState(false);
     const [busy, setBusy] = useState(false);
+    const open = openProp ?? innerOpen;
+    const setOpen = (next: boolean) => {
+        if (openProp === undefined) {
+            setInnerOpen(next);
+        }
+        onOpenChange?.(next);
+    };
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>{trigger}</DialogTrigger>
+            {trigger !== undefined && <DialogTrigger asChild>{trigger}</DialogTrigger>}
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

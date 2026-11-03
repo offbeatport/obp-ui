@@ -1,5 +1,25 @@
-import { Database, FileText, Folder, Layers, Table2 } from "lucide-react";
-import { SearchInput, Tree, type TreeNode, filterTree } from "obp-ui";
+import {
+    Database,
+    ExternalLink,
+    FileText,
+    Folder,
+    FolderPlus,
+    Layers,
+    Pencil,
+    Table2,
+    Trash2,
+} from "lucide-react";
+import {
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    FileName,
+    FileTypeIcon,
+    SearchInput,
+    Tree,
+    type TreeNode,
+    TreeRowMenu,
+    filterTree,
+} from "obp-ui";
 import { useMemo, useState } from "react";
 import { Api, Note, Spec } from "../kit";
 
@@ -147,11 +167,132 @@ function matchesText(node: TreeNode, text: string): boolean {
     return String(node.label).toLowerCase().includes(text);
 }
 
+const ACTION_FILES = [
+    "tickets.csv",
+    "queues.tsv",
+    "intents.jsonl",
+    "policies.json",
+    "contracts.parquet",
+];
+
+function fileNode(name: string): TreeNode {
+    return {
+        id: name,
+        label: <FileName name={name} />,
+        textValue: name,
+        icon: <FileTypeIcon name={name} />,
+        draggable: true,
+    };
+}
+
+function ActionsTreeDemo() {
+    const [files, setFiles] = useState(ACTION_FILES);
+    const [selected, setSelected] = useState<string | null>("tickets.csv");
+    const [expanded, setExpanded] = useState<string[]>(["uploads"]);
+    const [last, setLast] = useState("nothing yet");
+    const nodes: TreeNode[] = [
+        {
+            id: "uploads",
+            label: "Uploads",
+            icon: <Folder />,
+            meta: files.length,
+            droppable: true,
+            children: files.map(fileNode),
+        },
+        { id: "empty", label: "Folders", icon: <Folder />, meta: 0, droppable: true },
+    ];
+    const nameOf = (node: TreeNode) => node.textValue ?? String(node.label);
+    const actions = (node: TreeNode) => {
+        const name = nameOf(node);
+        const done = (verb: string) => () => setLast(`${verb} ${name}`);
+        if (!files.includes(node.id)) {
+            return (
+                <TreeRowMenu label={`Actions for ${name}`}>
+                    <DropdownMenuItem onSelect={done("add a file to")}>
+                        <FolderPlus />
+                        Add file
+                    </DropdownMenuItem>
+                </TreeRowMenu>
+            );
+        }
+        return (
+            <TreeRowMenu label={`Actions for ${name}`}>
+                <DropdownMenuItem onSelect={() => setSelected(node.id)}>
+                    <ExternalLink />
+                    Open
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={done("rename")}>
+                    <Pencil />
+                    Rename
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={() => {
+                        setFiles((current) => current.filter((file) => file !== node.id));
+                        setLast(`deleted ${name}`);
+                    }}
+                >
+                    <Trash2 />
+                    Delete
+                </DropdownMenuItem>
+            </TreeRowMenu>
+        );
+    };
+    return (
+        <Spec
+            name="Tree row actions · rowActions · TreeRowMenu"
+            note="A … menu on every row: it shows on hover, on keyboard focus and while open, and always on touch screens. Selection, drag and drop and the arrow keys behave as before."
+        >
+            <div className="max-w-sm rounded-lg border">
+                <Tree
+                    aria-label="Uploads"
+                    nodes={nodes}
+                    selectedId={selected}
+                    onSelect={setSelected}
+                    expandedIds={expanded}
+                    onExpandedChange={setExpanded}
+                    onMove={(id, target) => setLast(`moved ${id} into ${target}`)}
+                    rowActions={actions}
+                />
+            </div>
+            <Note>
+                last action: <span className="font-mono">{last}</span>
+            </Note>
+            <Api
+                items={[
+                    {
+                        name: "rowActions(node)",
+                        note: "returns the row's actions, usually a TreeRowMenu; return null for a row without any. The slot sits after meta, 24px wide, and a click, key or drag inside it never reaches the row.",
+                    },
+                    {
+                        name: "TreeRowMenu label",
+                        note: "the trigger's accessible name, e.g. Actions for tickets.csv. Children are DropdownMenuItems, each with an icon; destructive ones last, after a separator.",
+                    },
+                    {
+                        name: "keyboard",
+                        note: "Tab from the focused row reaches its … button (only that row's button is in the tab order); Shift+F10 or the context menu key opens the menu from the row and closing it returns focus there.",
+                    },
+                    {
+                        name: "pointer",
+                        note: "a right click on a row opens the same menu. The row's accessible name stays its label and meta, without the button's.",
+                    },
+                    {
+                        name: "FileTypeIcon, FileName",
+                        note: "a coloured icon per data format, and the name with its extension at 50% opacity. Pass textValue so type-ahead still matches.",
+                    },
+                ]}
+            />
+        </Spec>
+    );
+}
+
 export function TreeDemo() {
     return (
         <>
             <FilterTreeDemo />
             <MovableTreeDemo />
+            <ActionsTreeDemo />
         </>
     );
 }

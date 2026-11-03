@@ -28,8 +28,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    `tokens.css` - this package's, or a product's override block after the import. (19 hex literals
    survive in components - 14 in `canvas/flavors.ts`, 3 in `nav-ui/`, and two prop defaults in
    `canvas/nodes.tsx` and `theme-picker.tsx`. Verbatim prototype ports, same as the radius debt in
-   §2: debt, not licence. `provider-logos.tsx` is the one real exception - a third party's mark has
-   to draw in its own colour. The two hexes in `data-display/gradient-mark.tsx` are contrast
+   §2: debt, not licence. `provider-logos.tsx` and `software-logos.tsx` are the real exceptions - a
+   third party's mark has to draw in its own colour. The two hexes in `data-display/gradient-mark.tsx` are contrast
    measurements written down in a comment; nothing paints them.)
 2. **Compose, don't fork.** Need a variant? Add it to the component's `cva` (see how
    `src/primitives/badge.tsx` gained the status variants). Never restyle inline, never copy the
@@ -190,6 +190,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `filterTree` so matches keep their ancestors; open `ancestorsOf` a node before selecting it from a link.
      Nodes marked `draggable` and `droppable` move by drag and drop when `onMove` is set (mouse after 4px, touch
      after a press); drag is pointer-only, so every movable row also needs a "Move to…" dialog with a folder picker.
+     Row commands go in `rowActions`, which returns a `TreeRowMenu`: a … button after the count that shows on hover,
+     on keyboard focus and while its menu is open, and always on touch. Its label is "Actions for <name>", every item
+     carries an icon, destructive ones come last after a separator. Tab from the focused row reaches its button,
+     Shift+F10, the context menu key and a right click open the menu from the row, and nothing pressed inside the
+     slot selects, drags or moves the row. Files show a `FileTypeIcon` (one `--file-*` token per format, at 3:1 or
+     more on every palette's page, card, hover and selected fills) and a `FileName` with the extension at 50%
+     opacity; pass the plain name as `textValue`.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.

@@ -17,12 +17,16 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Ellipsis } from "lucide-react";
 import {
     type KeyboardEvent,
     type MouseEvent,
     type ReactNode,
+    type RefObject,
+    type SyntheticEvent,
+    createContext,
     useCallback,
+    useContext,
     useEffect,
     useId,
     useMemo,
@@ -31,6 +35,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
+import { Button } from "../primitives/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "../primitives/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../primitives/tooltip";
 
 export type TreeNode = {
     id: string;
@@ -53,6 +64,7 @@ export type TreeProps = {
     empty?: ReactNode;
     onMove?: (id: string, targetId: string) => void;
     canDrop?: (node: TreeNode, target: TreeNode) => boolean;
+    rowActions?: (node: TreeNode) => ReactNode;
     className?: string;
     "aria-label"?: string;
     "aria-labelledby"?: string;
@@ -71,6 +83,20 @@ type VisibleRow = {
 type Placement = { node: TreeNode; parentId: string | null };
 
 type Drag = { active: string; over: string | null; target: string | null };
+
+type RowActionsState = {
+    tabbable: boolean;
+    row: RefObject<HTMLDivElement | null>;
+    opener: RefObject<(() => void) | null>;
+};
+
+const RowActionsContext = createContext<RowActionsState | null>(null);
+
+const ROW_ACTIONS = cn(
+    "flex shrink-0 items-center opacity-0",
+    "group-hover/tree-row:opacity-100 group-focus-visible/tree-row:opacity-100 focus-within:opacity-100",
+    "has-aria-expanded:opacity-100 [@media(hover:none)]:opacity-100",
+);
 
 const TYPEAHEAD_MS = 600;
 const SPRING_OPEN_MS = 700;
@@ -225,6 +251,77 @@ export function ancestorsOf(nodes: TreeNode[], id: string): string[] {
     return [];
 }
 
+function isMenuKey(event: KeyboardEvent): boolean {
+    return event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
+}
+
+function keepInSlot(event: SyntheticEvent) {
+    event.stopPropagation();
+}
+
+export function TreeRowMenu({
+    label,
+    children,
+    className,
+}: {
+    label: string;
+    children: ReactNode;
+    className?: string;
+}) {
+    const state = useContext(RowActionsContext);
+    const [open, setOpen] = useState(false);
+    const fromRow = useRef(false);
+    useEffect(() => {
+        if (!state) {
+            return;
+        }
+        state.opener.current = () => {
+            fromRow.current = true;
+            setOpen(true);
+        };
+        return () => {
+            state.opener.current = null;
+        };
+    }, [state]);
+    const onOpenChange = (next: boolean) => {
+        if (next) {
+            fromRow.current = false;
+        }
+        setOpen(next);
+    };
+    return (
+        <DropdownMenu open={open} onOpenChange={onOpenChange}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            data-slot="tree-row-menu-trigger"
+                            aria-label={label}
+                            tabIndex={state?.tabbable === false ? -1 : 0}
+                            className={cn(
+                                "text-muted-foreground hover:bg-border-soft hover:text-foreground aria-expanded:bg-border-soft aria-expanded:text-foreground",
+                                className,
+                            )}
+                        >
+                            <Ellipsis className="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>More actions</TooltipContent>
+            </Tooltip>
+            <DropdownMenuContent
+                align="end"
+                className="min-w-44"
+                finalFocus={() => (fromRow.current ? (state?.row.current ?? true) : true)}
+            >
+                {children}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
 type TreeRowProps = {
     row: VisibleRow;
     selected: boolean;
@@ -232,6 +329,9 @@ type TreeRowProps = {
     movable: boolean;
     lifted: boolean;
     target: boolean;
+    actions: ReactNode;
+    labelId: string;
+    metaId: string;
     register: (id: string, element: HTMLDivElement | null) => void;
     onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
     onClick: (event: MouseEvent<HTMLDivElement>) => void;
@@ -245,6 +345,9 @@ function TreeRow({
     movable,
     lifted,
     target,
+    actions,
+    labelId,
+    metaId,
     register,
     onKeyDown,
     onClick,
@@ -256,20 +359,34 @@ function TreeRow({
     const drop = useDroppable({ id, disabled: !movable });
     const setDragNode = drag.setNodeRef;
     const setDropNode = drop.setNodeRef;
+    const element = useRef<HTMLDivElement | null>(null);
+    const opener = useRef<(() => void) | null>(null);
+    const hasMeta = row.node.meta !== undefined;
+    const hasActions = actions !== null && actions !== undefined && actions !== false;
+    const slot = useMemo(() => ({ tabbable, row: element, opener }), [tabbable]);
     const ref = useCallback(
-        (element: HTMLDivElement | null) => {
-            register(id, element);
-            setDragNode(element);
-            setDropNode(element);
+        (node: HTMLDivElement | null) => {
+            element.current = node;
+            register(id, node);
+            setDragNode(node);
+            setDropNode(node);
         },
         [id, register, setDragNode, setDropNode],
     );
+    const openMenu = () => {
+        if (!opener.current) {
+            return false;
+        }
+        opener.current();
+        return true;
+    };
     return (
         <div
             ref={ref}
             role="treeitem"
             data-slot="tree-item"
             data-drop-target={target ? "" : undefined}
+            aria-labelledby={hasMeta ? `${labelId} ${metaId}` : labelId}
             aria-level={row.level}
             aria-posinset={row.position}
             aria-setsize={row.siblings}
@@ -277,11 +394,24 @@ function TreeRow({
             aria-selected={selected}
             tabIndex={tabbable ? 0 : -1}
             {...drag.listeners}
-            onKeyDown={onKeyDown}
+            onKeyDown={(event) => {
+                if (isMenuKey(event) && openMenu()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                }
+                onKeyDown(event);
+            }}
+            onContextMenu={(event) => {
+                if (openMenu()) {
+                    event.preventDefault();
+                }
+            }}
             onClick={onClick}
             onFocus={onFocus}
             className={cn(
-                "flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md pr-2 text-sm select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                "group/tree-row flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md text-sm select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                hasActions ? "pr-1" : "pr-2",
                 selected
                     ? "bg-accent text-accent-foreground"
                     : "text-foreground hover:bg-secondary",
@@ -319,11 +449,29 @@ function TreeRow({
                     {row.node.icon}
                 </span>
             )}
-            <span className="min-w-0 flex-1 truncate">{row.node.label}</span>
-            {row.node.meta !== undefined && (
-                <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+            <span id={labelId} className="min-w-0 flex-1 truncate">
+                {row.node.label}
+            </span>
+            {hasMeta && (
+                <span id={metaId} className="shrink-0 text-sm text-muted-foreground tabular-nums">
                     {row.node.meta}
                 </span>
+            )}
+            {hasActions && (
+                <RowActionsContext.Provider value={slot}>
+                    <span
+                        data-slot="tree-row-actions"
+                        className={ROW_ACTIONS}
+                        onClick={keepInSlot}
+                        onDoubleClick={keepInSlot}
+                        onKeyDown={keepInSlot}
+                        onMouseDown={keepInSlot}
+                        onTouchStart={keepInSlot}
+                        onContextMenu={keepInSlot}
+                    >
+                        {actions}
+                    </span>
+                </RowActionsContext.Provider>
             )}
         </div>
     );
@@ -387,6 +535,7 @@ export function Tree({
     empty,
     onMove,
     canDrop,
+    rowActions,
     className,
     ...labelling
 }: TreeProps) {
@@ -619,6 +768,9 @@ export function Tree({
                     movable={movable}
                     lifted={drag?.active === row.node.id}
                     target={drag?.target === row.node.id}
+                    actions={rowActions?.(row.node)}
+                    labelId={`${contextId}-label-${position}`}
+                    metaId={`${contextId}-meta-${position}`}
                     register={register}
                     onKeyDown={(event) => onKeyDown(event, position)}
                     onClick={(event) => onClick(event, row)}

@@ -22,3 +22,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The logos are trademarks of their owners and identify their products only.
+
+## Simple Icons
+
+The marks drawn in `src/software-logos.tsx` are the paths from [`simple-icons`](https://github.com/simple-icons/simple-icons)
+16.18.1, released under CC0 1.0 Universal. The Git logo is by Jason Long and licensed under
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+
+The logos are trademarks of their owners and identify their products only.

@@ -58,6 +58,16 @@
     --neutral-soft: color-mix(in srgb, var(--neutral) 8%, var(--background));
     --destructive-soft: color-mix(in srgb, var(--destructive) 8%, var(--background));
 
+    --file-csv: #15803d;
+    --file-tsv: #0f766e;
+    --file-json: #b45309;
+    --file-jsonl: #c2410c;
+    --file-parquet: #4f46e5;
+    --file-avro: #7e22ce;
+    --file-iceberg: #0369a1;
+    --file-sql: #be185d;
+    --file-text: #475569;
+
     --shadow-e1: none;
     --shadow-e2: 0 1px 2px rgba(38, 38, 39, 0.06), 0 4px 12px rgba(38, 38, 39, 0.08);
 
@@ -136,6 +146,16 @@
     --neutral-soft: color-mix(in srgb, var(--neutral) 20%, var(--background));
     --destructive-soft: color-mix(in srgb, var(--destructive) 20%, var(--background));
 
+    --file-csv: #4ade80;
+    --file-tsv: #2dd4bf;
+    --file-json: #fbbf24;
+    --file-jsonl: #fb923c;
+    --file-parquet: #818cf8;
+    --file-avro: #c084fc;
+    --file-iceberg: #38bdf8;
+    --file-sql: #f472b6;
+    --file-text: #94a3b8;
+
     --shadow-e1: none;
     --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -194,6 +214,16 @@
     --color-neutral-foreground: var(--neutral-foreground);
     --color-neutral-soft: var(--neutral-soft);
     --color-destructive-soft: var(--destructive-soft);
+
+    --color-file-csv: var(--file-csv);
+    --color-file-tsv: var(--file-tsv);
+    --color-file-json: var(--file-json);
+    --color-file-jsonl: var(--file-jsonl);
+    --color-file-parquet: var(--file-parquet);
+    --color-file-avro: var(--file-avro);
+    --color-file-iceberg: var(--file-iceberg);
+    --color-file-sql: var(--file-sql);
+    --color-file-text: var(--file-text);
 
     --font-sans: var(--font-sans);
     --font-display: var(--font-display);

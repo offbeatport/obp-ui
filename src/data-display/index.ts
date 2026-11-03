@@ -21,7 +21,22 @@ export {
     markColorFor,
 } from "./gradient-mark";
 export { TaskCard, type TaskCardProps, TaskStateChip, type TaskStateChipProps } from "./task-card";
-export { ancestorsOf, filterTree, Tree, type TreeNode, type TreeProps } from "./tree";
+export {
+    ancestorsOf,
+    filterTree,
+    Tree,
+    type TreeNode,
+    type TreeProps,
+    TreeRowMenu,
+} from "./tree";
+export {
+    FILE_TYPES,
+    FileName,
+    type FileType,
+    FileTypeIcon,
+    fileExtension,
+    fileTypeOf,
+} from "./file-type";
 export {
     Timeline,
     TimelineDot,
