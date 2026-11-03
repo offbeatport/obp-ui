@@ -75,7 +75,7 @@ function SettingsRow({
                 data-toggle={toggle || undefined}
                 data-disabled={disabled || undefined}
                 className={cn(
-                    "relative -mx-2.5 flex justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-2.5",
+                    "relative -mx-2.5 flex justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-3",
                     BODY_LAYOUT[layout],
                     pressable && "hover:bg-secondary has-[:focus-visible]:bg-secondary",
                 )}

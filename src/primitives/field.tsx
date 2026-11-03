@@ -14,7 +14,7 @@ type FieldProps = {
 
 function Field({ id, label, hint, error, className, children }: FieldProps) {
     return (
-        <div data-slot="field" className={cn("flex flex-col gap-1.5", className)}>
+        <div data-slot="field" className={cn("flex flex-col gap-label", className)}>
             <Label htmlFor={id}>{label}</Label>
             {children}
             {hint && <p className="text-sm text-muted-foreground">{hint}</p>}
@@ -25,7 +25,11 @@ function Field({ id, label, hint, error, className, children }: FieldProps) {
 
 function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
     return (
-        <div data-slot="field-group" className={cn("flex flex-col gap-5", className)} {...props} />
+        <div
+            data-slot="field-group"
+            className={cn("flex flex-col gap-field", className)}
+            {...props}
+        />
     );
 }
 

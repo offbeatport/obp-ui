@@ -117,14 +117,15 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      keys - not whole tables, not headings, not labels. Number columns get `tabular-nums`
      (`<table>`, `<time>`, `<data>`, `<output>` and `TableCell` already have it). `font-serif`
      is for long-form reading only.
-   - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-20px (`px-3
-     py-1.5` in `TableCell`, `p-5` in `Card`; a table or list inside a card sits edge to edge, unpadded). No
+   - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-24px (`px-3
+     py-1.5` in `TableCell`, `p-panel` (24px, `--panel-padding`) in `Card`; a table or list inside a card sits edge to edge, unpadded). No
      section padding above `py-12` inside an app, no `gap-6`+ between related controls, no centred hero inside a
      tool. A dialog is the one roomier surface: `p-7`, 24px between header, body and footer, 12px between title and
      description, a `text-2xl` title at normal weight and `text-base` copy. Size it with `sm:max-w-*`; a bare
      `max-w-*` drops the phone gutter.
-   - **Forms are `Field`s in a `FieldGroup`.** A label sits 6px over its control; fields stack 20px apart, and side
-     by side they share a grid with `gap-5`. Do not hand-roll label spacing.
+   - **Forms are `Field`s in a `FieldGroup`.** A label sits 8px over its control (`gap-label`); fields stack 24px apart
+     (`gap-field`, `--field-gap`), and side by side they share a grid with `gap-field`. Panels and forms take these
+     tokens, never literal `p-5` / `gap-5`, so one change re-spaces every app. Do not hand-roll label spacing.
    - **Numbers are entered with a `NumberField`, never a bare `type="number"`** or a numeric text input. It is minus,
      input and plus in one 32px control: arrows step, Shift and Page Up/Down take `largeStep`, Home and End jump to
      `min` and `max`, a held button repeats, the wheel does nothing, typing clamps to the range. Pass `format` (Intl
