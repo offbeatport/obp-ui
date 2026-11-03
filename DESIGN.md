@@ -153,7 +153,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `var(--card)` when the grid sits on a card), `DataGridDetail` for a second
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
      the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
-     with other content. Plain `Table` is for short static tables (a spec sheet, a diff).
+     with other content. A list that can outgrow one response pages on the server: pass `onLoadMore`, `hasMore`,
+     `loadingMore` and `total`, and the grid fetches the next page as the end nears, with placeholder rows while it
+     loads and a sticky footer holding "Showing N of M" and a Load more button for keyboard and screen readers. Keep
+     filters and search on the server too; headers sort only through `sorting` and `onSortingChange`, since sorting
+     the loaded rows alone would mislead. Plain `Table` is for short static tables (a spec sheet, a diff).
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
      grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned
      while columns scroll sideways, and a row that differs carries a 2px `--primary` edge on its label and a

@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import {
     Badge,
@@ -16,7 +16,7 @@ import {
     TimelineItem,
     markColorFor,
 } from "obp-ui";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 import { CompareDemo } from "./compare-demo";
 import { TreeDemo } from "./tree-demo";
@@ -192,6 +192,61 @@ const REQUEST_COLUMNS: ColumnDef<Request, unknown>[] = [
     },
 ];
 
+const PAGE = 50;
+
+const SERVER_COLUMNS: ColumnDef<Request, unknown>[] = REQUEST_COLUMNS.map((column) => ({
+    ...column,
+    enableSorting: "accessorKey" in column && column.accessorKey === "latency",
+}));
+
+function serverPage(sorting: SortingState, offset: number): Request[] {
+    const order = sorting[0];
+    const ordered = order
+        ? [...REQUESTS].sort((a, b) => (order.desc ? b.latency - a.latency : a.latency - b.latency))
+        : REQUESTS;
+    return ordered.slice(offset, offset + PAGE);
+}
+
+function InfiniteGrid() {
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [rows, setRows] = useState<Request[]>(() => serverPage([], 0));
+    const [loadingMore, setLoadingMore] = useState(false);
+    const generation = useRef(0);
+    const loadMore = () => {
+        const asked = generation.current;
+        setLoadingMore(true);
+        window.setTimeout(() => {
+            if (asked !== generation.current) {
+                return;
+            }
+            setRows((current) => [...current, ...serverPage(sorting, current.length)]);
+            setLoadingMore(false);
+        }, 600);
+    };
+    const sort = (next: SortingState) => {
+        generation.current += 1;
+        setSorting(next);
+        setRows(serverPage(next, 0));
+        setLoadingMore(false);
+    };
+    return (
+        <DataGrid
+            columns={SERVER_COLUMNS}
+            rows={rows}
+            getRowId={(row) => row.id}
+            onOpen={() => undefined}
+            rowLabel={(row) => `${row.id} ${row.route}`}
+            maxHeight="360px"
+            sorting={sorting}
+            onSortingChange={sort}
+            hasMore={rows.length < REQUESTS.length}
+            loadingMore={loadingMore}
+            onLoadMore={loadMore}
+            total={REQUESTS.length}
+        />
+    );
+}
+
 export function DataDisplaySection() {
     const [open, setOpen] = useState<string | null>("invoices");
     const [picked, setPicked] = useState<string | null>("invoices");
@@ -256,6 +311,28 @@ export function DataDisplaySection() {
                         {
                             name: "onOpen, rowLabel",
                             note: "a click anywhere on the row opens it, except on buttons, links, menus and fields, or while text is selected. Rows are focusable: arrows, Home and End move, Enter opens. Keep a real link in the row for new-tab clicks; mark any other control data-grid-ignore.",
+                        },
+                    ]}
+                />
+            </Spec>
+            <Spec
+                name="DataGrid · onLoadMore"
+                note="Server paging. The grid asks for the next page of 50 as the end of the list nears, draws placeholder rows while it loads, and keeps a Load more button and the count under the rows. Latency sorts on the fake server; the other columns do not sort."
+            >
+                <InfiniteGrid />
+                <Api
+                    items={[
+                        {
+                            name: "onLoadMore, hasMore, loadingMore",
+                            note: "infinite mode. onLoadMore runs when the end of the rows comes within 600px of the scroller's edge and again from the Load more button, for keyboard and screen reader users; it does not run while loadingMore is true or once hasMore is false. Works with virtual rows and with maxHeight.",
+                        },
+                        {
+                            name: "total",
+                            note: "the number of rows the server has, shown as Showing N of M under the grid. Without it the footer reads Showing N.",
+                        },
+                        {
+                            name: "sorting, onSortingChange",
+                            note: "controlled sorting: the grid shows the header state and leaves the row order to you, so the server can sort. In infinite mode without these, headers do not sort, since sorting the loaded rows alone would mislead.",
                         },
                     ]}
                 />

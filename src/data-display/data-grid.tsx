@@ -19,12 +19,14 @@ import {
     type PointerEvent,
     type ReactNode,
     type RefObject,
+    useCallback,
     useEffect,
     useLayoutEffect,
     useRef,
     useState,
 } from "react";
 import { cn } from "../lib/cn";
+import { Button } from "../primitives/button";
 import { Checkbox } from "../primitives/checkbox";
 import {
     DropdownMenu,
@@ -55,6 +57,9 @@ const VIRTUAL_FROM = 150;
 const ESTIMATED_ROW = 44;
 const PICKER_WIDTH = 36;
 const PLACEHOLDER_ROWS = Array.from({ length: 40 }, (_, position) => `placeholder-${position}`);
+const LOAD_AHEAD = 600;
+const LOADING_MORE_ROWS = 3;
+const COUNT = new Intl.NumberFormat();
 
 type Widths = Record<string, number>;
 type AnyVirtualizer = Virtualizer<HTMLElement, Element> | Virtualizer<Window, Element>;
@@ -80,6 +85,12 @@ export type DataGridProps<T> = {
     selectedIds?: string[];
     onSelectedIdsChange?: (ids: string[]) => void;
     rowActions?: (row: T) => ReactNode;
+    sorting?: SortingState;
+    onSortingChange?: (sorting: SortingState) => void;
+    hasMore?: boolean;
+    loadingMore?: boolean;
+    onLoadMore?: () => void;
+    total?: number;
     className?: string;
 };
 
@@ -513,6 +524,7 @@ function ElementRows<T>({ element, ...props }: RowsProps<T> & { element: HTMLEle
     const virtualizer = useVirtualizer({
         count: props.rows.length,
         getScrollElement: () => element,
+        getItemKey: (index) => props.rows[index]?.id ?? index,
         estimateSize: () => ESTIMATED_ROW,
         overscan: 8,
         scrollMargin: margin,
@@ -529,6 +541,7 @@ function WindowRows<T>(props: RowsProps<T>) {
     const margin = useMargin(scroller, props.body);
     const virtualizer = useWindowVirtualizer({
         count: props.rows.length,
+        getItemKey: (index) => props.rows[index]?.id ?? index,
         estimateSize: () => ESTIMATED_ROW,
         overscan: 8,
         scrollMargin: margin,
@@ -538,6 +551,82 @@ function WindowRows<T>(props: RowsProps<T>) {
         target.current = virtualizer;
     }, [target, virtualizer]);
     return <Spacers virtualizer={virtualizer} margin={margin} props={props} />;
+}
+
+function placeholderRows(columns: { id: string }[], count: number, prefix = "") {
+    return PLACEHOLDER_ROWS.slice(0, count).map((key, row) => (
+        <TableRow key={`${prefix}${key}`} className="hover:bg-transparent">
+            {columns.map((column, index) => (
+                <TableCell key={column.id} className="py-3">
+                    <Skeleton
+                        className="h-4"
+                        style={{
+                            width: `${index === 0 ? 70 : 40 + ((row * 7 + index * 13) % 40)}%`,
+                        }}
+                    />
+                </TableCell>
+            ))}
+        </TableRow>
+    ));
+}
+
+function showing(shown: number, total: number | undefined): string {
+    return total === undefined
+        ? `Showing ${COUNT.format(shown)}`
+        : `Showing ${COUNT.format(shown)} of ${COUNT.format(Math.max(shown, total))}`;
+}
+
+type MoreProps = {
+    shown: number;
+    total: number | undefined;
+    hasMore: boolean;
+    loadingMore: boolean;
+    onLoadMore: () => void;
+    root: () => Element | null;
+};
+
+function LoadMore({ shown, total, hasMore, loadingMore, onLoadMore, root }: MoreProps) {
+    const sentinel = useRef<HTMLDivElement>(null);
+    const load = useRef(onLoadMore);
+    useEffect(() => {
+        load.current = onLoadMore;
+    });
+    useEffect(() => {
+        const node = sentinel.current;
+        if (!node || !hasMore || loadingMore || shown === 0) {
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    load.current();
+                }
+            },
+            { root: root(), rootMargin: `0px 0px ${LOAD_AHEAD}px 0px` },
+        );
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, [hasMore, loadingMore, shown, root]);
+    return (
+        <>
+            <div ref={sentinel} aria-hidden="true" className="h-px" />
+            <div
+                data-slot="data-grid-footer"
+                className="sticky bottom-0 left-0 z-[1] flex min-h-12 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t bg-(--data-grid-surface,var(--background)) px-3 py-2 text-sm text-muted-foreground"
+            >
+                <output className="tabular-nums">{showing(shown, total)}</output>
+                {hasMore && (
+                    <Button
+                        variant="outline"
+                        aria-disabled={loadingMore || undefined}
+                        onClick={() => !loadingMore && onLoadMore()}
+                    >
+                        {loadingMore ? "Loading…" : "Load more"}
+                    </Button>
+                )}
+            </div>
+        </>
+    );
 }
 
 export function DataGrid<T>({
@@ -561,9 +650,18 @@ export function DataGrid<T>({
     selectedIds,
     onSelectedIdsChange,
     rowActions,
+    sorting: serverSorting,
+    onSortingChange,
+    hasMore = false,
+    loadingMore = false,
+    onLoadMore,
+    total,
     className,
 }: DataGridProps<T>) {
-    const [sorting, setSorting] = useState<SortingState>(initialSort);
+    const [ownSorting, setOwnSorting] = useState<SortingState>(initialSort);
+    const manualSorting = onSortingChange !== undefined;
+    const sorting = manualSorting ? (serverSorting ?? []) : ownSorting;
+    const infinite = onLoadMore !== undefined;
     const [visibility, setVisibility] = useState<VisibilityState>(() =>
         readVisibility(storageKey, hiddenColumns),
     );
@@ -579,8 +677,16 @@ export function DataGrid<T>({
         columns: allColumns,
         getRowId,
         state: { sorting, columnVisibility: visibility },
-        enableSorting: sortable,
-        onSortingChange: setSorting,
+        enableSorting: sortable && (manualSorting || !infinite),
+        manualSorting,
+        onSortingChange: (change) => {
+            const next = typeof change === "function" ? change(sorting) : change;
+            if (onSortingChange) {
+                onSortingChange(next);
+            } else {
+                setOwnSorting(next);
+            }
+        },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
     });
@@ -632,6 +738,10 @@ export function DataGrid<T>({
         const element = maxHeight ? container.current : scrollParent(container.current);
         setScroller(element ? { kind: "element", element } : { kind: "window" });
     }, [virtual, scroller, maxHeight]);
+    const scrollRoot = useCallback(
+        () => (maxHeight ? container.current : scrollParent(container.current)),
+        [maxHeight],
+    );
     const fixed = Object.keys(sizing.widths).length > 0;
     const fixedTotal = sizing.resizable.reduce(
         (sum, column) => sum + (presetWidth(column) ?? sizing.widths[column.id] ?? 120),
@@ -740,20 +850,7 @@ export function DataGrid<T>({
     };
     let content: ReactNode;
     if (loading) {
-        content = PLACEHOLDER_ROWS.slice(0, loadingRows).map((key, row) => (
-            <TableRow key={key} className="hover:bg-transparent">
-                {leaves.map((column, index) => (
-                    <TableCell key={column.id} className="py-3">
-                        <Skeleton
-                            className="h-4"
-                            style={{
-                                width: `${index === 0 ? 70 : 40 + ((row * 7 + index * 13) % 40)}%`,
-                            }}
-                        />
-                    </TableCell>
-                ))}
-            </TableRow>
-        ));
+        content = placeholderRows(leaves, loadingRows);
     } else if (sorted.length === 0) {
         content = (
             <TableRow>
@@ -899,8 +996,22 @@ export function DataGrid<T>({
                 </thead>
                 <tbody ref={body} data-slot="table-body" className="[&_tr:last-child]:border-0">
                     {content}
+                    {infinite &&
+                        loadingMore &&
+                        !loading &&
+                        placeholderRows(leaves, LOADING_MORE_ROWS, "more-")}
                 </tbody>
             </table>
+            {onLoadMore && !loading && sorted.length > 0 && (
+                <LoadMore
+                    shown={sorted.length}
+                    total={total}
+                    hasMore={hasMore}
+                    loadingMore={loadingMore}
+                    onLoadMore={onLoadMore}
+                    root={scrollRoot}
+                />
+            )}
         </div>
     );
 }
