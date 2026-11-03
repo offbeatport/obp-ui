@@ -50,6 +50,7 @@ import {
     DropdownMenuTrigger,
     Field,
     FieldGroup,
+    InfoTip,
     Input,
     Label,
     Popover,
@@ -765,6 +766,21 @@ export function PrimitivesSection() {
                     <ColorField label="Brand" value={brandColor} onChange={setBrandColor} />
                     <ColorField label="Ink" value={inkColor} onChange={setInkColor} />
                 </div>
+            </Spec>
+
+            <Spec
+                name="InfoTip"
+                note="An info icon whose note opens on hover and on click or tap; Escape or a click outside closes it."
+            >
+                <Row>
+                    <span className="flex items-center gap-1 text-sm">
+                        Fits this machine
+                        <InfoTip label="About hardware fit">
+                            Shows models that fit, or fit with limited headroom, on this machine: 12
+                            GB GPU-usable unified memory.
+                        </InfoTip>
+                    </span>
+                </Row>
             </Spec>
 
             <Spec name="Tooltip" note="Wrap once in TooltipProvider.">
