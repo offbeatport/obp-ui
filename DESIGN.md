@@ -184,6 +184,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      It is the WAI-ARIA tree (arrows move and open, Enter selects, typing jumps by name) with 32px rows, the
      selected row on `--accent`, a functional icon per node and a muted count on the right. Filter it with
      `filterTree` so matches keep their ancestors; open `ancestorsOf` a node before selecting it from a link.
+     Nodes marked `draggable` and `droppable` move by drag and drop when `onMove` is set (mouse after 4px, touch
+     after a press); drag is pointer-only, so every movable row also needs a "Move to…" dialog with a folder picker.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
      lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.

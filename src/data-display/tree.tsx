@@ -1,5 +1,22 @@
 "use client";
 
+import {
+    type Announcements,
+    DndContext,
+    type DragEndEvent,
+    type DragOverEvent,
+    DragOverlay,
+    type DragStartEvent,
+    type Modifier,
+    MouseSensor,
+    TouchSensor,
+    type UniqueIdentifier,
+    pointerWithin,
+    useDraggable,
+    useDroppable,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
 import { ChevronRight } from "lucide-react";
 import {
     type KeyboardEvent,
@@ -7,10 +24,12 @@ import {
     type ReactNode,
     useCallback,
     useEffect,
+    useId,
     useMemo,
     useRef,
     useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
 
 export type TreeNode = {
@@ -20,6 +39,8 @@ export type TreeNode = {
     icon?: ReactNode;
     meta?: ReactNode;
     children?: TreeNode[];
+    draggable?: boolean;
+    droppable?: boolean;
 };
 
 export type TreeProps = {
@@ -30,6 +51,8 @@ export type TreeProps = {
     defaultExpandedIds?: string[];
     onExpandedChange?: (ids: string[]) => void;
     empty?: ReactNode;
+    onMove?: (id: string, targetId: string) => void;
+    canDrop?: (node: TreeNode, target: TreeNode) => boolean;
     className?: string;
     "aria-label"?: string;
     "aria-labelledby"?: string;
@@ -45,7 +68,16 @@ type VisibleRow = {
     expanded: boolean;
 };
 
+type Placement = { node: TreeNode; parentId: string | null };
+
+type Drag = { active: string; over: string | null; target: string | null };
+
 const TYPEAHEAD_MS = 600;
+const SPRING_OPEN_MS = 700;
+const PREVIEW_OFFSET = 12;
+const INSTRUCTIONS = {
+    draggable: "Drag with a mouse, or press and hold on a touch screen, then drop onto a folder.",
+};
 
 function hasChildren(node: TreeNode): boolean {
     return (node.children?.length ?? 0) > 0;
@@ -107,6 +139,79 @@ export function filterTree(
     return { nodes: walk(nodes), expandedIds };
 }
 
+function indexTree(
+    nodes: TreeNode[],
+    parentId: string | null = null,
+    out = new Map<string, Placement>(),
+): Map<string, Placement> {
+    for (const node of nodes) {
+        out.set(node.id, { node, parentId });
+        indexTree(node.children ?? [], node.id, out);
+    }
+    return out;
+}
+
+function isWithin(index: Map<string, Placement>, id: string, ancestorId: string): boolean {
+    for (let at: string | null = id; at !== null; at = index.get(at)?.parentId ?? null) {
+        if (at === ancestorId) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function droppableAt(index: Map<string, Placement>, id: string): Placement | undefined {
+    let at = index.get(id);
+    while (at && !at.node.droppable) {
+        at = at.parentId === null ? undefined : index.get(at.parentId);
+    }
+    return at;
+}
+
+function dropTarget(
+    index: Map<string, Placement>,
+    activeId: string,
+    overId: string | null,
+    canDrop: TreeProps["canDrop"],
+): string | null {
+    const active = index.get(activeId);
+    const target = overId === null ? undefined : droppableAt(index, overId);
+    if (!active || !target) {
+        return null;
+    }
+    const id = target.node.id;
+    if (active.parentId === id || isWithin(index, id, activeId)) {
+        return null;
+    }
+    return canDrop && !canDrop(active.node, target.node) ? null : id;
+}
+
+function announcements(
+    index: Map<string, Placement>,
+    targetOf: (active: UniqueIdentifier, over: UniqueIdentifier | undefined) => string | null,
+): Announcements {
+    const name = (id: UniqueIdentifier) => {
+        const node = index.get(String(id))?.node;
+        return node ? textOf(node) : String(id);
+    };
+    return {
+        onDragStart: ({ active }) => `Picked up ${name(active.id)}.`,
+        onDragOver: ({ active, over }) => {
+            const target = targetOf(active.id, over?.id);
+            return target
+                ? `${name(active.id)} is over ${name(target)}.`
+                : `${name(active.id)} cannot be dropped here.`;
+        },
+        onDragEnd: ({ active, over }) => {
+            const target = targetOf(active.id, over?.id);
+            return target
+                ? `${name(active.id)} moved into ${name(target)}.`
+                : `${name(active.id)} was not moved.`;
+        },
+        onDragCancel: ({ active }) => `Move cancelled. ${name(active.id)} was not moved.`,
+    };
+}
+
 export function ancestorsOf(nodes: TreeNode[], id: string): string[] {
     for (const node of nodes) {
         if (node.id === id) {
@@ -120,6 +225,158 @@ export function ancestorsOf(nodes: TreeNode[], id: string): string[] {
     return [];
 }
 
+type TreeRowProps = {
+    row: VisibleRow;
+    selected: boolean;
+    tabbable: boolean;
+    movable: boolean;
+    lifted: boolean;
+    target: boolean;
+    register: (id: string, element: HTMLDivElement | null) => void;
+    onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
+    onClick: (event: MouseEvent<HTMLDivElement>) => void;
+    onFocus: () => void;
+};
+
+function TreeRow({
+    row,
+    selected,
+    tabbable,
+    movable,
+    lifted,
+    target,
+    register,
+    onKeyDown,
+    onClick,
+    onFocus,
+}: TreeRowProps) {
+    const id = row.node.id;
+    const draggable = Boolean(movable && row.node.draggable);
+    const drag = useDraggable({ id, disabled: !draggable });
+    const drop = useDroppable({ id, disabled: !movable });
+    const setDragNode = drag.setNodeRef;
+    const setDropNode = drop.setNodeRef;
+    const ref = useCallback(
+        (element: HTMLDivElement | null) => {
+            register(id, element);
+            setDragNode(element);
+            setDropNode(element);
+        },
+        [id, register, setDragNode, setDropNode],
+    );
+    return (
+        <div
+            ref={ref}
+            role="treeitem"
+            data-slot="tree-item"
+            data-drop-target={target ? "" : undefined}
+            aria-level={row.level}
+            aria-posinset={row.position}
+            aria-setsize={row.siblings}
+            aria-expanded={row.expandable ? row.expanded : undefined}
+            aria-selected={selected}
+            tabIndex={tabbable ? 0 : -1}
+            {...drag.listeners}
+            onKeyDown={onKeyDown}
+            onClick={onClick}
+            onFocus={onFocus}
+            className={cn(
+                "flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md pr-2 text-sm select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                selected
+                    ? "bg-accent text-accent-foreground"
+                    : "text-foreground hover:bg-secondary",
+                draggable && "touch-manipulation [-webkit-touch-callout:none]",
+                lifted && "opacity-50",
+                target && "outline-1 -outline-offset-1 outline-primary",
+                target && !selected && "bg-secondary",
+            )}
+            style={{
+                paddingInlineStart: `calc(var(--spacing) * ${row.level * 4 - 3})`,
+            }}
+        >
+            <span
+                data-tree-toggle={row.expandable ? "" : undefined}
+                aria-hidden="true"
+                className="grid size-4 shrink-0 place-items-center text-muted-foreground"
+            >
+                {row.expandable && (
+                    <ChevronRight
+                        className={cn(
+                            "size-4 transition-transform duration-100 motion-reduce:transition-none",
+                            row.expanded && "rotate-90",
+                        )}
+                    />
+                )}
+            </span>
+            {row.node.icon && (
+                <span
+                    aria-hidden="true"
+                    className={cn(
+                        "grid shrink-0 place-items-center [&>svg]:size-4",
+                        selected ? "text-accent-foreground" : "text-muted-foreground",
+                    )}
+                >
+                    {row.node.icon}
+                </span>
+            )}
+            <span className="min-w-0 flex-1 truncate">{row.node.label}</span>
+            {row.node.meta !== undefined && (
+                <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+                    {row.node.meta}
+                </span>
+            )}
+        </div>
+    );
+}
+
+function pointOf(event: Event | null): { x: number; y: number } | null {
+    if (typeof TouchEvent !== "undefined" && event instanceof TouchEvent) {
+        const touch = event.touches[0] ?? event.changedTouches[0];
+        return touch ? { x: touch.clientX, y: touch.clientY } : null;
+    }
+    return event instanceof globalThis.MouseEvent ? { x: event.clientX, y: event.clientY } : null;
+}
+
+const besidePointer: Modifier = ({ activatorEvent, draggingNodeRect, transform }) => {
+    const point = pointOf(activatorEvent);
+    if (!point || !draggingNodeRect) {
+        return transform;
+    }
+    return {
+        ...transform,
+        x: transform.x + point.x - draggingNodeRect.left + PREVIEW_OFFSET,
+        y: transform.y + point.y - draggingNodeRect.top + PREVIEW_OFFSET,
+    };
+};
+
+function DragPreview({ node }: { node: TreeNode | undefined }) {
+    return createPortal(
+        <DragOverlay
+            dropAnimation={null}
+            modifiers={[besidePointer]}
+            className="motion-reduce:transition-none!"
+        >
+            {node && (
+                <div
+                    data-slot="tree-drag-preview"
+                    className="flex h-8 w-max max-w-72 cursor-grabbing items-center gap-1.5 rounded-md border bg-popover px-2 text-sm text-popover-foreground shadow-e2"
+                >
+                    {node.icon && (
+                        <span
+                            aria-hidden="true"
+                            className="grid shrink-0 place-items-center text-muted-foreground [&>svg]:size-4"
+                        >
+                            {node.icon}
+                        </span>
+                    )}
+                    <span className="min-w-0 truncate">{node.label}</span>
+                </div>
+            )}
+        </DragOverlay>,
+        document.body,
+    );
+}
+
 export function Tree({
     nodes,
     selectedId = null,
@@ -128,16 +385,27 @@ export function Tree({
     defaultExpandedIds,
     onExpandedChange,
     empty,
+    onMove,
+    canDrop,
     className,
     ...labelling
 }: TreeProps) {
+    const contextId = useId();
     const [innerExpanded, setInnerExpanded] = useState<string[]>(defaultExpandedIds ?? []);
     const expandedList = expandedIds ?? innerExpanded;
     const expanded = useMemo(() => new Set(expandedList), [expandedList]);
     const rows = useMemo(() => visibleRows(nodes, expanded), [nodes, expanded]);
+    const index = useMemo(() => indexTree(nodes), [nodes]);
     const [focusedId, setFocusedId] = useState<string | null>(selectedId);
+    const [drag, setDrag] = useState<Drag | null>(null);
     const elements = useRef(new Map<string, HTMLDivElement>());
     const typed = useRef({ text: "", at: 0 });
+    const dropped = useRef(false);
+    const movable = onMove !== undefined;
+    const sensors = useSensors(
+        useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 6 } }),
+    );
 
     const setExpanded = useCallback(
         (next: string[]) => {
@@ -149,12 +417,37 @@ export function Tree({
         [expandedIds, onExpandedChange],
     );
 
+    const register = useCallback((id: string, element: HTMLDivElement | null) => {
+        if (element) {
+            elements.current.set(id, element);
+        } else {
+            elements.current.delete(id);
+        }
+    }, []);
+
     useEffect(() => {
         if (selectedId) {
             setFocusedId(selectedId);
             elements.current.get(selectedId)?.scrollIntoView({ block: "nearest" });
         }
     }, [selectedId]);
+
+    const springId = drag?.over ?? null;
+    const springActive = drag?.active ?? null;
+    useEffect(() => {
+        if (springId === null || springActive === null || expanded.has(springId)) {
+            return;
+        }
+        const node = index.get(springId)?.node;
+        if (!node || !hasChildren(node) || isWithin(index, springId, springActive)) {
+            return;
+        }
+        const timer = window.setTimeout(
+            () => setExpanded([...expandedList, springId]),
+            SPRING_OPEN_MS,
+        );
+        return () => window.clearTimeout(timer);
+    }, [springId, springActive, expanded, expandedList, index, setExpanded]);
 
     const tabStop =
         rows.find((row) => row.node.id === focusedId)?.node.id ??
@@ -253,6 +546,9 @@ export function Tree({
     };
 
     const onClick = (event: MouseEvent<HTMLDivElement>, row: VisibleRow) => {
+        if (dropped.current) {
+            return;
+        }
         setFocusedId(row.node.id);
         const onChevron = (event.target as HTMLElement).closest("[data-tree-toggle]");
         if (onChevron || row.node.id === selectedId) {
@@ -265,84 +561,93 @@ export function Tree({
         }
     };
 
+    const targetOf = (active: UniqueIdentifier, over: UniqueIdentifier | null | undefined) =>
+        dropTarget(
+            index,
+            String(active),
+            over === null || over === undefined ? null : String(over),
+            canDrop,
+        );
+
+    const settle = () => {
+        setDrag(null);
+        dropped.current = true;
+        window.setTimeout(() => {
+            dropped.current = false;
+        }, 0);
+    };
+
+    const onDragStart = ({ active }: DragStartEvent) =>
+        setDrag({ active: String(active.id), over: null, target: null });
+
+    const onDragOver = ({ active, over }: DragOverEvent) =>
+        setDrag({
+            active: String(active.id),
+            over: over ? String(over.id) : null,
+            target: targetOf(active.id, over?.id),
+        });
+
+    const onDragEnd = ({ active, over }: DragEndEvent) => {
+        const target = targetOf(active.id, over?.id);
+        settle();
+        if (!target) {
+            return;
+        }
+        if (!expanded.has(target)) {
+            setExpanded([...expandedList, target]);
+        }
+        onMove?.(String(active.id), target);
+    };
+
     if (rows.length === 0) {
         return empty ? <div className={className}>{empty}</div> : null;
     }
 
-    return (
+    const tree = (
         <div
             role="tree"
             data-slot="tree"
             className={cn("flex flex-col gap-px p-1", className)}
             {...labelling}
         >
-            {rows.map((row, index) => {
-                const selected = row.node.id === selectedId;
-                return (
-                    <div
-                        key={row.node.id}
-                        ref={(element) => {
-                            if (element) {
-                                elements.current.set(row.node.id, element);
-                            } else {
-                                elements.current.delete(row.node.id);
-                            }
-                        }}
-                        role="treeitem"
-                        data-slot="tree-item"
-                        aria-level={row.level}
-                        aria-posinset={row.position}
-                        aria-setsize={row.siblings}
-                        aria-expanded={row.expandable ? row.expanded : undefined}
-                        aria-selected={selected}
-                        tabIndex={row.node.id === tabStop ? 0 : -1}
-                        onKeyDown={(event) => onKeyDown(event, index)}
-                        onClick={(event) => onClick(event, row)}
-                        onFocus={() => setFocusedId(row.node.id)}
-                        className={cn(
-                            "flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md pr-2 text-sm select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-                            selected
-                                ? "bg-accent text-accent-foreground"
-                                : "text-foreground hover:bg-secondary",
-                        )}
-                        style={{
-                            paddingInlineStart: `calc(var(--spacing) * ${row.level * 4 - 3})`,
-                        }}
-                    >
-                        <span
-                            data-tree-toggle={row.expandable ? "" : undefined}
-                            aria-hidden="true"
-                            className="grid size-4 shrink-0 place-items-center text-muted-foreground"
-                        >
-                            {row.expandable && (
-                                <ChevronRight
-                                    className={cn(
-                                        "size-4 transition-transform duration-100 motion-reduce:transition-none",
-                                        row.expanded && "rotate-90",
-                                    )}
-                                />
-                            )}
-                        </span>
-                        {row.node.icon && (
-                            <span
-                                aria-hidden="true"
-                                className={cn(
-                                    "grid shrink-0 place-items-center [&>svg]:size-4",
-                                    selected ? "text-accent-foreground" : "text-muted-foreground",
-                                )}
-                            >
-                                {row.node.icon}
-                            </span>
-                        )}
-                        <span className="min-w-0 flex-1 truncate">{row.node.label}</span>
-                        {row.node.meta !== undefined && (
-                            <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
-                                {row.node.meta}
-                            </span>
-                        )}
-                    </div>
-                );
-            })}
+            {rows.map((row, position) => (
+                <TreeRow
+                    key={row.node.id}
+                    row={row}
+                    selected={row.node.id === selectedId}
+                    tabbable={row.node.id === tabStop}
+                    movable={movable}
+                    lifted={drag?.active === row.node.id}
+                    target={drag?.target === row.node.id}
+                    register={register}
+                    onKeyDown={(event) => onKeyDown(event, position)}
+                    onClick={(event) => onClick(event, row)}
+                    onFocus={() => setFocusedId(row.node.id)}
+                />
+            ))}
         </div>
+    );
+
+    if (!movable) {
+        return tree;
+    }
+
+    return (
+        <DndContext
+            id={contextId}
+            sensors={sensors}
+            collisionDetection={pointerWithin}
+            accessibility={{
+                announcements: announcements(index, targetOf),
+                screenReaderInstructions: INSTRUCTIONS,
+            }}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDragEnd={onDragEnd}
+            onDragCancel={settle}
+        >
+            {tree}
+            {drag && <DragPreview node={index.get(drag.active)?.node} />}
+        </DndContext>
     );
 }
