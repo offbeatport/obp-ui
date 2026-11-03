@@ -184,7 +184,7 @@ export function CompareDemo() {
                             <Button
                                 variant="link"
                                 className="h-auto p-0"
-                                aria-label={`Clear ${plan.name} as the baseline`}
+                                aria-label={`Clear baseline, ${plan.name}`}
                                 onClick={() => setBaseline(undefined)}
                             >
                                 Clear
@@ -194,7 +194,7 @@ export function CompareDemo() {
                         <Button
                             variant="link"
                             className="mt-1.5 h-auto p-0"
-                            aria-label={`Set ${plan.name} as the baseline`}
+                            aria-label={`Set as baseline, ${plan.name}`}
                             onClick={() => setBaseline(plan.id)}
                         >
                             Set as baseline
