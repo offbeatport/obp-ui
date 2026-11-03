@@ -46,6 +46,7 @@ const MIN_COLUMN = 48;
 const RESIZE_STEP = 16;
 const VIRTUAL_FROM = 150;
 const ESTIMATED_ROW = 44;
+const PICKER_WIDTH = 36;
 const PLACEHOLDER_ROWS = Array.from({ length: 40 }, (_, position) => `placeholder-${position}`);
 
 type Widths = Record<string, number>;
@@ -168,7 +169,7 @@ function ColumnPicker({
                     type="button"
                     aria-label="Choose columns"
                     title="Choose columns"
-                    className="absolute top-1/2 right-1.5 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                    className="flex size-6 items-center justify-center rounded-sm text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                     <Columns3 className="size-4" />
                 </button>
@@ -309,7 +310,7 @@ function Resizer({
                     onStep(event.key === "ArrowLeft" ? -RESIZE_STEP : RESIZE_STEP);
                 }
             }}
-            className="absolute top-0 -right-1 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none after:absolute after:inset-y-1.5 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-border hover:after:bg-primary focus-visible:after:bg-primary"
+            className="absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none after:absolute after:inset-y-1 after:right-0 after:w-px after:bg-input hover:after:w-0.5 hover:after:bg-primary focus-visible:after:w-0.5 focus-visible:after:bg-primary"
         />
     );
 }
@@ -372,6 +373,21 @@ function useColumnWidths<T>(
     return { widths, resizable, start, step, reset, resetAll };
 }
 
+function overflows(box: HTMLElement, inner: HTMLElement): boolean {
+    return inner.scrollWidth > box.clientWidth + 1;
+}
+
+function scrollToCell(box: HTMLElement, cell: HTMLElement) {
+    const start = box.getBoundingClientRect().left + box.clientLeft;
+    const end = start + box.clientWidth - PICKER_WIDTH;
+    const { left, right } = cell.getBoundingClientRect();
+    if (left < start) {
+        box.scrollLeft -= start - left;
+    } else if (right > end) {
+        box.scrollLeft += Math.min(right - end, left - start);
+    }
+}
+
 function useOverflowing(
     container: RefObject<HTMLDivElement | null>,
     table: RefObject<HTMLTableElement | null>,
@@ -383,7 +399,7 @@ function useOverflowing(
         if (!box || !inner) {
             return;
         }
-        const check = () => setOverflowing(inner.scrollWidth > box.clientWidth + 1);
+        const check = () => setOverflowing(overflows(box, inner));
         check();
         const observer = new ResizeObserver(check);
         observer.observe(box);
@@ -545,11 +561,29 @@ export function DataGrid<T>({
             label: headerLabel(column),
             shown: visibility[column.id] !== false,
         }));
-    const toggleColumn = (id: string, shown: boolean) =>
+    const reveal = useRef<string | null>(null);
+    const toggleColumn = (id: string, shown: boolean) => {
+        reveal.current = shown ? id : null;
         setVisibility((current) => ({ ...current, [id]: shown }));
+    };
     const virtualizer = useRef<AnyVirtualizer | null>(null);
     const sizing = useColumnWidths(table, cells, storageKey);
     const overflowing = useOverflowing(container, tableRef);
+    useLayoutEffect(() => {
+        const box = container.current;
+        const inner = tableRef.current;
+        const id = reveal.current;
+        const cell = id && visibility[id] !== false ? cells.current.get(id) : undefined;
+        if (!box || !inner || !cell) {
+            return;
+        }
+        if (!overflows(box, inner)) {
+            reveal.current = null;
+        } else if (overflowing) {
+            reveal.current = null;
+            scrollToCell(box, cell);
+        }
+    }, [visibility, overflowing]);
     const sorted = table.getRowModel().rows;
     const leaves = table.getVisibleLeafColumns();
     const virtual = (virtualize ?? sorted.length >= VIRTUAL_FROM) && sorted.length > 0;
@@ -765,26 +799,30 @@ export function DataGrid<T>({
                                                     onReset={() => sizing.reset(column)}
                                                 />
                                             )}
-                                        {columnPicker && last && (
-                                            <ColumnPicker
-                                                columns={pickerColumns}
-                                                onToggle={toggleColumn}
-                                                density={density}
-                                                onDensity={setDensity}
-                                                onReset={() => {
-                                                    setVisibility(
-                                                        Object.fromEntries(
-                                                            hiddenColumns.map((id) => [id, false]),
-                                                        ),
-                                                    );
-                                                    setDensity("comfortable");
-                                                    sizing.resetAll();
-                                                }}
-                                            />
-                                        )}
                                     </TableHead>
                                 );
                             })}
+                            {columnPicker && (
+                                <TableHead className="sticky top-0 right-0 z-[2] w-0 p-0">
+                                    <div className="absolute inset-y-0 right-0 flex w-9 items-center justify-center bg-secondary">
+                                        <ColumnPicker
+                                            columns={pickerColumns}
+                                            onToggle={toggleColumn}
+                                            density={density}
+                                            onDensity={setDensity}
+                                            onReset={() => {
+                                                setVisibility(
+                                                    Object.fromEntries(
+                                                        hiddenColumns.map((id) => [id, false]),
+                                                    ),
+                                                );
+                                                setDensity("comfortable");
+                                                sizing.resetAll();
+                                            }}
+                                        />
+                                    </div>
+                                </TableHead>
+                            )}
                         </TableRow>
                     ))}
                 </thead>

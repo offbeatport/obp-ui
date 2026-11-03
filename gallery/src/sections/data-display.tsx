@@ -160,7 +160,7 @@ export function DataDisplaySection() {
                         },
                         {
                             name: "columnPicker, hiddenColumns",
-                            note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false, and switches density between comfortable and compact. hiddenColumns sets the defaults; choices persist under storageKey. Default to few enough columns that the grid fits; when people add more, it scrolls sideways.",
+                            note: "a columns button at the end of the header row shows or hides any column whose enableHiding is not false, and switches density between comfortable and compact. hiddenColumns sets the defaults; choices persist under storageKey. Default to few enough columns that the grid fits; when people add more, it scrolls sideways, the button stays at the visible right edge and a column you add scrolls into view.",
                         },
                         {
                             name: "selectedIds, onSelectedIdsChange",
