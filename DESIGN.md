@@ -120,8 +120,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-20px (`px-3
      py-1.5` in `TableCell`, `p-5` in `Card`; a table or list inside a card sits edge to edge, unpadded). No
      section padding above `py-12` inside an app, no `gap-6`+ between related controls, no centred hero inside a
-     tool. A dialog is the one roomier surface: `p-6`, 20px between header, body and footer, a `text-2xl` title at
-     normal weight and `text-base` copy. Size it with `sm:max-w-*`; a bare `max-w-*` drops the phone gutter.
+     tool. A dialog is the one roomier surface: `p-7`, 24px between header, body and footer, 12px between title and
+     description, a `text-2xl` title at normal weight and `text-base` copy. Size it with `sm:max-w-*`; a bare
+     `max-w-*` drops the phone gutter.
    - **Forms are `Field`s in a `FieldGroup`.** A label sits 6px over its control; fields stack 20px apart, and side
      by side they share a grid with `gap-5`. Do not hand-roll label spacing.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
