@@ -251,7 +251,7 @@ What is yours to set:
   default and is exactly `tokens.css` (Slate palette, Instrument type, Sharp radius, Default
   space). Terracotta is the original authored theme (called Paper until 2026-10-30) - cream,
   terracotta, the Grotesk type pairing (Inter over Space Grotesk), 12px corners - kept as an opt-in
-  preset that needs `obp-ui/fonts-alt.css`. Cobalt is Terracotta's type with Tight 8px/12px corners over cool neutrals and a clear blue, with a black page in dark;
+  preset that needs `obp-ui/fonts-alt.css`. Cobalt is the Mona type pairing (Mona Sans over JetBrains Mono) with Tight 8px/12px corners over cool neutrals and a clear blue, with a black page in dark;
   it needs the same stylesheet. The other seven quote a
   product whose surfaces are widely known - Vercel, Linear,
   GitHub, X, Hyperagent, Supabase, Stripe - so that "make it look like X" is a preset id rather
@@ -267,7 +267,7 @@ What is yours to set:
   the default three (Public Sans, Intel One Mono, Spectral), self-hosted from `@fontsource` - never
   a Google Fonts `@import`, which a Tauri CSP blocks and which leaks every page view to a third
   party. `obp-ui/fonts-alt.css` loads every other family a preset names (Inter, Space Grotesk,
-  JetBrains Mono, Geist, Geist Mono, IBM Plex Sans, Fraunces, Instrument Serif, Iosevka).
+  JetBrains Mono, Geist, Geist Mono, IBM Plex Sans, Mona Sans, Fraunces, Instrument Serif, Iosevka).
   Iosevka is the one family not on `@fontsource`, whose copy is stuck at v22: v34.9.0 is
   vendored in `src/styles/fonts/iosevka/` (OFL, `LICENSE.md` beside it), Iosevka and Iosevka
   Aile at 400/500/600/700 plus 400/700 italic, subset to latin, latin-ext and a symbols range

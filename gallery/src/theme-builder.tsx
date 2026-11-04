@@ -25,6 +25,7 @@ import {
     type ThemePalette,
     type ThemePaletteColors,
     type ThemePreset,
+    type TypePairing,
     cn,
     contrastRatio,
     getCustomTheme,
@@ -46,7 +47,7 @@ import {
     themePresetSwatch,
     typePairingFor,
 } from "obp-ui";
-import { type ReactNode, useEffect, useState } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 
 type Mode = "light" | "dark";
 
@@ -270,10 +271,47 @@ const PALETTE_GROUPS: { label: string; has: (p: ThemePalette) => boolean }[] = [
     },
 ];
 
+const FONT_ROLES = [
+    { key: "display", label: "Title font" },
+    { key: "sans", label: "Body font" },
+    { key: "mono", label: "Mono font" },
+] as const;
+
+const familyName = (stack: string): string =>
+    (stack.split(",")[0] ?? stack)
+        .replace(/"/g, "")
+        .trim()
+        .replace(/ Variable$/, "");
+
+const fontLine = (pairing: TypePairing): string =>
+    [...new Set(FONT_ROLES.map((role) => familyName(pairing[role.key])))].join(" / ");
+
+const typeLine = (id: string): string => {
+    const pairing = typePairingFor(id);
+    return pairing ? fontLine(pairing) : id;
+};
+
+function FontRoles({ pairing }: { pairing: TypePairing }) {
+    return (
+        <span className="grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 text-left text-sm">
+            {FONT_ROLES.map((role) => (
+                <Fragment key={role.key}>
+                    <span className="text-muted-foreground group-data-selected/select-item:text-accent-foreground/80">
+                        {role.label}
+                    </span>
+                    <span className="truncate" style={{ fontFamily: pairing[role.key] }}>
+                        {familyName(pairing[role.key])}
+                    </span>
+                </Fragment>
+            ))}
+        </span>
+    );
+}
+
 const axisLine = (p: ThemePreset): string =>
     [
         p.palette === CUSTOM_PRESET_ID ? "your colours" : p.palette,
-        typePairingFor(p.type)?.name ?? p.type,
+        typeLine(p.type),
         radiusStepFor(p.radius)?.name ?? p.radius,
         spaceStepFor(p.space)?.name ?? p.space,
     ].join(" · ");
@@ -924,50 +962,16 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                             onValueChange={(id) => edit((d) => ({ ...d, type: String(id) }))}
                         >
                             <SelectTrigger className="h-auto w-full py-2">
-                                <span className="flex min-w-0 flex-col items-start">
-                                    <span
-                                        className="truncate text-base leading-tight"
-                                        style={{ fontFamily: activeType?.display }}
-                                    >
-                                        {activeType?.name ?? draft.type}
-                                    </span>
-                                    <span
-                                        className="truncate text-sm text-muted-foreground"
-                                        style={{ fontFamily: activeType?.sans }}
-                                    >
-                                        Body text sample
-                                    </span>
-                                </span>
+                                {activeType ? (
+                                    <FontRoles pairing={activeType} />
+                                ) : (
+                                    <span className="truncate">{draft.type}</span>
+                                )}
                             </SelectTrigger>
                             <SelectContent className="max-w-[22rem]">
                                 {TYPE_PAIRINGS.map((t) => (
-                                    <SelectItem
-                                        key={t.id}
-                                        value={t.id}
-                                        textValue={t.name}
-                                        description={
-                                            <>
-                                                <span
-                                                    className="block truncate"
-                                                    style={{ fontFamily: t.sans }}
-                                                >
-                                                    Body text sample
-                                                </span>
-                                                <span
-                                                    className="block truncate"
-                                                    style={{ fontFamily: t.mono }}
-                                                >
-                                                    mono 0O1lI
-                                                </span>
-                                            </>
-                                        }
-                                    >
-                                        <span
-                                            className="text-base leading-tight"
-                                            style={{ fontFamily: t.display }}
-                                        >
-                                            {t.name}
-                                        </span>
+                                    <SelectItem key={t.id} value={t.id} textValue={fontLine(t)}>
+                                        <FontRoles pairing={t} />
                                     </SelectItem>
                                 ))}
                             </SelectContent>

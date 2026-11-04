@@ -29,6 +29,7 @@ const IOSEVKA = `"Iosevka", ui-monospace, Menlo, Consolas, monospace`;
 const INTER = `"Inter Variable", "Inter", ${SYS}`;
 const GEIST = `"Geist Variable", "Geist", ${SYS}`;
 const PLEX = `"IBM Plex Sans Variable", "IBM Plex Sans", ${SYS}`;
+const MONA = `"Mona Sans Variable", "Mona Sans", ${SYS}`;
 const GROTESK = `"Space Grotesk Variable", "Space Grotesk", "Inter Variable", sans-serif`;
 const JETBRAINS = `"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace`;
 const GEIST_MONO = `"Geist Mono Variable", "Geist Mono", ui-monospace, monospace`;
@@ -108,6 +109,15 @@ export const TYPE_PAIRINGS: TypePairing[] = [
         note: "IBM Plex Sans throughout with JetBrains Mono. A neutral grotesk built for long tables and code beside prose.",
         sans: PLEX,
         display: PLEX,
+        mono: JETBRAINS,
+        serif: SPECTRAL,
+    },
+    {
+        id: "mona",
+        name: "Mona",
+        note: "Mona Sans in both roles with JetBrains Mono. A variable grotesque that holds its shape from 200 to 900, so headings get weight without a second family. Needs obp-ui/fonts-alt.css.",
+        sans: MONA,
+        display: MONA,
         mono: JETBRAINS,
         serif: SPECTRAL,
     },
@@ -266,9 +276,9 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
         ...bundle(
             "cobalt",
             "Cobalt",
-            "Cool neutrals under a clear blue, a black page after dark, Inter over Space Grotesk, 8px/12px corners. Needs obp-ui/fonts-alt.css.",
+            "Cool neutrals under a clear blue, a black page after dark, Mona Sans over JetBrains Mono, 8px/12px corners. Needs obp-ui/fonts-alt.css.",
             "cobalt",
-            "grotesk",
+            "mona",
             "tight",
             "default",
         ),
