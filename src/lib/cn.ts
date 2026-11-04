@@ -3,6 +3,9 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 const twMerge = extendTailwindMerge({
     extend: {
+        theme: {
+            spacing: ["panel", "panel-gap", "field", "label"],
+        },
         classGroups: {
             shadow: [{ shadow: ["e1", "e2"] }],
         },
