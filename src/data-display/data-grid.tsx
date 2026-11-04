@@ -970,9 +970,12 @@ export function DataGrid<T>({
         );
     } else if (sorted.length === 0) {
         content = (
-            <TableRow>
-                <TableCell colSpan={span} className="py-8 whitespace-normal">
-                    {empty}
+            <TableRow className="hover:bg-transparent">
+                <TableCell
+                    colSpan={span}
+                    className="h-72 text-center align-middle whitespace-normal text-muted-foreground"
+                >
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-3">{empty}</div>
                 </TableCell>
             </TableRow>
         );
