@@ -123,7 +123,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      tool. A dialog is the one roomier surface: `p-7`, 24px between header, body and footer, 12px between title and
      description, a `text-2xl` title at normal weight and `text-base` copy. Size it with `sm:max-w-*`; a bare
      `max-w-*` drops the phone gutter.
-   - **Forms are `Field`s in a `FieldGroup`.** A label sits 8px over its control (`gap-label`); fields stack 24px apart
+   - **Forms are `Field`s in a `FieldGroup`.** A label sits 8px over its control (`gap-label`); fields stack 32px apart
      (`gap-field`, `--field-gap`), and side by side they share a grid with `gap-field`. Panels and forms take these
      tokens, never literal `p-5` / `gap-5`, so one change re-spaces every app. Do not hand-roll label spacing.
    - **Numbers are entered with a `NumberField`, never a bare `type="number"`** or a numeric text input. It is minus,
