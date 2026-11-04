@@ -294,7 +294,7 @@ export function DataDisplaySection() {
                         },
                         {
                             name: "loading, loadingRows, loadingLines",
-                            note: "keeps the real header and draws placeholder rows while data loads, so the page does not jump when it arrives. Set loadingLines to the lines in the first column (a name over a DataGridDetail is 3) so placeholder rows are as tall as real ones; selection columns get a checkbox placeholder. loadingRows="fill" draws enough rows to fill the window, for a grid that is the page.",
+                            note: "keeps the real header and draws placeholder rows while data loads, so the page does not jump when it arrives. Set loadingLines to the lines in the first column (a name over a DataGridDetail is 3) so placeholder rows are as tall as real ones; selection columns get a checkbox placeholder. loadingRows='fill' draws enough rows to fill the window, for a grid that is the page.",
                         },
                         {
                             name: "maxHeight",
