@@ -65,6 +65,7 @@
     --file-parquet: #4f46e5;
     --file-avro: #7e22ce;
     --file-iceberg: #0369a1;
+    --file-delta: #4d7c0f;
     --file-sql: #be185d;
     --file-text: #475569;
 
@@ -153,6 +154,7 @@
     --file-parquet: #818cf8;
     --file-avro: #c084fc;
     --file-iceberg: #38bdf8;
+    --file-delta: #a3e635;
     --file-sql: #f472b6;
     --file-text: #94a3b8;
 
@@ -222,6 +224,7 @@
     --color-file-parquet: var(--file-parquet);
     --color-file-avro: var(--file-avro);
     --color-file-iceberg: var(--file-iceberg);
+    --color-file-delta: var(--file-delta);
     --color-file-sql: var(--file-sql);
     --color-file-text: var(--file-text);
 

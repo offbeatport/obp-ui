@@ -9,6 +9,7 @@ import {
     FileText,
     type LucideIcon,
     Snowflake,
+    Triangle,
 } from "lucide-react";
 import { cn } from "../lib/cn";
 
@@ -20,6 +21,7 @@ export type FileType =
     | "parquet"
     | "avro"
     | "iceberg"
+    | "delta"
     | "sql"
     | "text"
     | "file";
@@ -34,6 +36,7 @@ export const FILE_TYPES: Record<FileType, FileTypeInfo> = {
     parquet: { label: "Parquet", icon: FileBox, tone: "text-file-parquet" },
     avro: { label: "Avro", icon: FileDigit, tone: "text-file-avro" },
     iceberg: { label: "Iceberg", icon: Snowflake, tone: "text-file-iceberg" },
+    delta: { label: "Delta Lake", icon: Triangle, tone: "text-file-delta" },
     sql: { label: "SQL", icon: FileCode, tone: "text-file-sql" },
     text: { label: "Text", icon: FileText, tone: "text-file-text" },
     file: { label: "File", icon: File, tone: "text-muted-foreground" },
@@ -50,6 +53,7 @@ const EXTENSIONS: Record<string, FileType> = {
     pq: "parquet",
     avro: "avro",
     iceberg: "iceberg",
+    delta: "delta",
     sql: "sql",
     txt: "text",
     md: "text",
