@@ -175,6 +175,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `baseline` (a column id) with per-row `values` to show each other column's signed difference (or Same,
      Different); colour a difference with `better` only where better is objective, and label the baseline column
      in its own header.
+   - **The outcome of something a person just did is a toast.** `useToast()` under one `ToastProvider`: a title
+     that says what happened, a description only when it adds a fact, and a `tone` that sets the icon - a tick,
+     a triangle, a crossed circle or an "i", so the tone reads by shape and not by colour alone.
+     Bottom right, newest nearest the corner, three at most; a swipe right or down dismisses one. Success,
+     warning and neutral close after 5 s; `destructive` stays until dismissed and interrupts a screen reader,
+     because an error read halfway is worse than none. One `action` at most (Undo, Open), and it closes the
+     toast. Never toast what the page already shows, and never put a decision in a toast - that is a `Dialog`.
    - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
      inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
      items out of `items` rather than disabling them.

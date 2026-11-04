@@ -117,7 +117,45 @@ function ToastDemo() {
                     })
                 }
             >
-                Show a toast
+                Success
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() =>
+                    toast({
+                        title: "Disk is 90% full",
+                        description: "Training pauses at 95%.",
+                        tone: "warning",
+                    })
+                }
+            >
+                Warning
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() =>
+                    toast({
+                        title: "The model was not added",
+                        description: "The download stopped at 41%: connection reset by peer.",
+                        tone: "destructive",
+                    })
+                }
+            >
+                Error
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() =>
+                    toast({
+                        title: "Deleted support-triage",
+                        action: {
+                            label: "Undo",
+                            onClick: () => toast({ title: "Restored support-triage" }),
+                        },
+                    })
+                }
+            >
+                With undo
             </Button>
         </Row>
     );
@@ -846,7 +884,7 @@ export function PrimitivesSection() {
 
             <Spec
                 name="Toast"
-                note="Wrap the app once in ToastProvider; call useToast() to show one. Bottom right, closes after 5 s or on Dismiss."
+                note="Wrap the app once in ToastProvider; call useToast() to show one. Bottom right, newest nearest the corner, three at most. Closes after 5 s, on Dismiss or on a swipe right or down; an error stays until dismissed. action adds one button that closes the toast."
             >
                 <ToastProvider>
                     <ToastDemo />
