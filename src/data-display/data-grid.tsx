@@ -82,6 +82,7 @@ export type DataGridProps<T> = {
     hiddenColumns?: string[];
     loading?: boolean;
     loadingRows?: number;
+    loadingLines?: number;
     selectedIds?: string[];
     onSelectedIdsChange?: (ids: string[]) => void;
     rowActions?: (row: T) => ReactNode;
@@ -555,17 +556,48 @@ function WindowRows<T>(props: RowsProps<T>) {
     return <Spacers virtualizer={virtualizer} margin={margin} props={props} />;
 }
 
-function placeholderRows(columns: { id: string }[], count: number, prefix = "") {
+const PLACEHOLDER_LINES = ["first", "second", "third", "fourth"];
+
+function placeholderCell(
+    column: { id: string },
+    index: number,
+    row: number,
+    lead: boolean,
+    lines: number,
+) {
+    if (column.id === SELECT) {
+        return <Skeleton className="size-4 rounded-sm" />;
+    }
+    if (!lead || lines < 2) {
+        return (
+            <Skeleton
+                className="h-4"
+                style={{ width: `${lead ? 70 : 40 + ((row * 7 + index * 13) % 40)}%` }}
+            />
+        );
+    }
+    return (
+        <div className="flex flex-col gap-1.5">
+            {PLACEHOLDER_LINES.slice(0, lines).map((line, position) => (
+                <Skeleton
+                    key={line}
+                    className={position === 0 ? "h-4" : "h-3"}
+                    style={{
+                        width: `${position === 0 ? 45 : 85 - ((row * 11 + position * 17) % 30)}%`,
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
+function placeholderRows(columns: { id: string }[], count: number, prefix = "", lines = 1) {
+    const lead = columns.findIndex((column) => column.id !== SELECT);
     return PLACEHOLDER_ROWS.slice(0, count).map((key, row) => (
         <TableRow key={`${prefix}${key}`} className="hover:bg-transparent">
             {columns.map((column, index) => (
-                <TableCell key={column.id} className="py-3">
-                    <Skeleton
-                        className="h-4"
-                        style={{
-                            width: `${index === 0 ? 70 : 40 + ((row * 7 + index * 13) % 40)}%`,
-                        }}
-                    />
+                <TableCell key={column.id} className="py-3 align-top">
+                    {placeholderCell(column, index, row, index === lead, lines)}
                 </TableCell>
             ))}
         </TableRow>
@@ -715,6 +747,7 @@ export function DataGrid<T>({
     hiddenColumns = [],
     loading = false,
     loadingRows = 8,
+    loadingLines = 1,
     selectedIds,
     onSelectedIdsChange,
     rowActions,
@@ -920,7 +953,7 @@ export function DataGrid<T>({
     };
     let content: ReactNode;
     if (loading) {
-        content = placeholderRows(leaves, loadingRows);
+        content = placeholderRows(leaves, loadingRows, "", loadingLines);
     } else if (sorted.length === 0) {
         content = (
             <TableRow>
@@ -1069,7 +1102,7 @@ export function DataGrid<T>({
                     {infinite &&
                         loadingMore &&
                         !loading &&
-                        placeholderRows(leaves, LOADING_MORE_ROWS, "more-")}
+                        placeholderRows(leaves, LOADING_MORE_ROWS, "more-", loadingLines)}
                 </tbody>
             </table>
             {onLoadMore && !loading && sorted.length > 0 && (

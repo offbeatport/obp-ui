@@ -156,7 +156,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      visible right edge, shown at once with no fade on hover, keyboard focus and always on touch; set `--data-grid-surface` to
      `var(--card)` when the grid sits on a card), `DataGridDetail` for a second
      line that compact density hides, `loading` while its data is on the way (placeholder rows under
-     the real header, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
+     the real header, as tall as real rows through `loadingLines`, not a spinner or a "Loading…" line), `maxHeight` when it shares the page
      with other content. A list that can outgrow one response pages on the server: pass `onLoadMore`, `hasMore`,
      `loadingMore` and `total`, and the grid fetches the next page as the end nears, with placeholder rows while it
      loads and a sticky footer holding "Showing N of M" and a Load more button for keyboard and screen readers; rows
