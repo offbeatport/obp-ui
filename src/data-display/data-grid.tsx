@@ -81,7 +81,7 @@ export type DataGridProps<T> = {
     columnPicker?: boolean;
     hiddenColumns?: string[];
     loading?: boolean;
-    loadingRows?: number;
+    loadingRows?: number | "fill";
     loadingLines?: number;
     selectedIds?: string[];
     onSelectedIdsChange?: (ids: string[]) => void;
@@ -591,6 +591,15 @@ function placeholderCell(
     );
 }
 
+function placeholderCount(rows: number | "fill", lines: number): number {
+    if (rows !== "fill") {
+        return rows;
+    }
+    const height = typeof window === "undefined" ? 1000 : window.innerHeight;
+    const rowHeight = 25 + 16 + Math.max(0, lines - 1) * 18;
+    return Math.min(PLACEHOLDER_ROWS.length, Math.ceil(height / rowHeight));
+}
+
 function placeholderRows(columns: { id: string }[], count: number, prefix = "", lines = 1) {
     const lead = columns.findIndex((column) => column.id !== SELECT);
     return PLACEHOLDER_ROWS.slice(0, count).map((key, row) => (
@@ -953,7 +962,12 @@ export function DataGrid<T>({
     };
     let content: ReactNode;
     if (loading) {
-        content = placeholderRows(leaves, loadingRows, "", loadingLines);
+        content = placeholderRows(
+            leaves,
+            placeholderCount(loadingRows, loadingLines),
+            "",
+            loadingLines,
+        );
     } else if (sorted.length === 0) {
         content = (
             <TableRow>
