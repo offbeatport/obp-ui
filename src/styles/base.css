@@ -1,9 +1,11 @@
 @layer base {
     * {
         border-color: var(--border);
+        text-decoration-thickness: 1px;
     }
     html {
         scroll-behavior: smooth;
+        text-underline-offset: 0.25em;
     }
     body {
         background: var(--background);
