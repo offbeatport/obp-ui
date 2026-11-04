@@ -199,7 +199,7 @@ function TabbedSearchList<T>({
                         {active && !active.panel && groups.length === 0 && (
                             <div
                                 data-slot="tabbed-search-list-empty"
-                                className="flex flex-col items-start gap-2 rounded-md border px-3 py-4 text-sm text-muted-foreground"
+                                className="flex min-h-48 flex-1 flex-col items-center justify-center gap-3 rounded-md border px-3 py-8 text-center text-base text-muted-foreground"
                             >
                                 <span>
                                     {searching
@@ -207,7 +207,7 @@ function TabbedSearchList<T>({
                                         : (active.empty ?? "Nothing here yet.")}
                                 </span>
                                 {searching && elsewhere.length > 0 && (
-                                    <span className="flex flex-wrap items-center gap-2">
+                                    <span className="flex flex-wrap items-center justify-center gap-2">
                                         {elsewhere.map((other) => {
                                             const count = counts.get(other.value);
                                             return (
