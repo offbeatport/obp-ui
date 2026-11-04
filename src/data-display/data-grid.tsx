@@ -577,7 +577,7 @@ function placeholderCell(
         );
     }
     return (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex min-w-72 flex-col gap-1.5">
             {PLACEHOLDER_LINES.slice(0, lines).map((line, position) => (
                 <Skeleton
                     key={line}
