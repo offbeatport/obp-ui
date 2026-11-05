@@ -141,7 +141,7 @@ export function SettingsRowDemo() {
                         },
                         {
                             name: "anchor",
-                            note: "An id on the row for links such as /settings/storage#bucket, separate from the control's id. Set data-flash on that element and the row tints with --accent, fading in 150ms (none under reduced motion); remove it to fade out.",
+                            note: "An id on the row for links such as /settings/storage#bucket, separate from the control's id. Set data-flash on that element and the row tints with --highlight, fading in 150ms (none under reduced motion); remove it to fade out.",
                         },
                         {
                             name: "error · children",

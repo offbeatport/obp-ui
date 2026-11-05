@@ -97,7 +97,7 @@ export function SearchMenuDemo() {
                     },
                     {
                         name: "renderItem, HighlightText",
-                        note: "the row's content. HighlightText marks every term of the query in a string, case and accent insensitive, on --accent.",
+                        note: "the row's content. HighlightText marks every term of the query in a string, case and accent insensitive, on --highlight.",
                     },
                     {
                         name: "shortcut, inputRef",

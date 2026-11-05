@@ -22,7 +22,7 @@ const CONTROL_LAYOUT = {
 };
 
 const FLASH =
-    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-md before:bg-accent before:opacity-0 before:transition-opacity before:duration-150 group-data-flash/settings-row:before:opacity-100 motion-reduce:before:transition-none";
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-md before:bg-highlight before:opacity-0 before:transition-opacity before:duration-150 group-data-flash/settings-row:before:opacity-100 motion-reduce:before:transition-none";
 
 type SettingsRowProps = {
     id?: string;

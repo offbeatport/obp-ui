@@ -25,7 +25,7 @@ function HighlightText({ text, query, className, markClassName }: HighlightTextP
             <mark
                 key={start}
                 data-slot="highlight"
-                className={cn("rounded-sm bg-accent text-accent-foreground", markClassName)}
+                className={cn("rounded-sm bg-highlight text-foreground", markClassName)}
             >
                 {text.slice(start, end)}
             </mark>,

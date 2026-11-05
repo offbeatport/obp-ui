@@ -146,8 +146,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      change saves, make the control `readOnly`, not `disabled`, so keyboard focus stays on it. Long text controls
      (paths, endpoints, lists) are `wide`: 20rem on the right, full width under the label below 36rem.
      A row a link or a search can land on takes an `anchor` (its own id, never the control's); the landing page
-     scrolls to it and sets `data-flash` on it for about a second and a half, which tints the row with `--accent`
-     through a 150ms fade (no fade under reduced motion).
+     scrolls to it and sets `data-flash` on it for about a second and a half, which tints the row with `--highlight`
+     through a 150ms fade (no fade under reduced motion). `--highlight` is the primary mixed into the page (16% light,
+     30% dark), so it reads in every preset, Cobalt's solid dark `--accent` included; `HighlightText` marks search
+     matches with it too.
    - **SQL is entered with `SqlEditor`, never a textarea.** Pass `schema` (`{ table: columns[] }`) for table
      and column completion, `onRun` for Cmd/Ctrl+Enter, and the server's error as `diagnostics` (line, column,
      message) when it carries a position; otherwise show it under the editor. It loads CodeMirror on first use.
@@ -196,7 +198,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      returns to the field. Put it in a dialog of fixed height.
    - **Finding one thing across a whole product is a `SearchMenu`.** A search field (settings, pages, records) whose
      matches drop down under it in groups. The app filters and ranks (name matches first, then section, then
-     description and synonyms) and marks the matched terms with `HighlightText`; the first match is highlighted,
+     description and synonyms) and marks the matched terms with `HighlightText` (on `--highlight`); the first match is highlighted,
      arrows move, Enter or a click opens it, Escape clears. Say when nothing matched and suggest a broader word. Bind
      `/` (off in text fields) and Cmd/Ctrl+K to focus it, and show `/` as the field's `shortcut`.
    - **Several filters on one list fold into a `FilterMenu`.** One outline button with the active count; its panel

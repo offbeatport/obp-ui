@@ -57,6 +57,7 @@
     --approval-soft: color-mix(in srgb, var(--approval) 8%, var(--background));
     --neutral-soft: color-mix(in srgb, var(--neutral) 8%, var(--background));
     --destructive-soft: color-mix(in srgb, var(--destructive) 8%, var(--background));
+    --highlight: color-mix(in srgb, var(--primary) 16%, var(--background));
 
     --file-csv: #15803d;
     --file-tsv: #0f766e;
@@ -146,6 +147,7 @@
     --approval-soft: color-mix(in srgb, var(--approval) 20%, var(--background));
     --neutral-soft: color-mix(in srgb, var(--neutral) 20%, var(--background));
     --destructive-soft: color-mix(in srgb, var(--destructive) 20%, var(--background));
+    --highlight: color-mix(in srgb, var(--primary) 30%, var(--background));
 
     --file-csv: #4ade80;
     --file-tsv: #2dd4bf;
@@ -216,6 +218,7 @@
     --color-neutral-foreground: var(--neutral-foreground);
     --color-neutral-soft: var(--neutral-soft);
     --color-destructive-soft: var(--destructive-soft);
+    --color-highlight: var(--highlight);
 
     --color-file-csv: var(--file-csv);
     --color-file-tsv: var(--file-tsv);
