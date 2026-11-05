@@ -170,8 +170,12 @@ function TabbedSearchList<T>({
                     onValueChange={(next) => onTabChange(String(next))}
                     className="min-h-0 flex-1 gap-3"
                 >
-                    <div className="flex min-h-9 flex-wrap items-end justify-between gap-x-3 gap-y-2 border-b">
-                        <TabsList variant="line" className="-mb-px h-9 px-0" onKeyDown={toSearch}>
+                    <div className="flex min-h-10 flex-wrap items-end justify-between gap-x-3 gap-y-2 border-b">
+                        <TabsList
+                            variant="line"
+                            className="-mb-px gap-2 px-0 group-data-[orientation=horizontal]/tabs:h-10"
+                            onKeyDown={toSearch}
+                        >
                             {tabs.map((item) => {
                                 const count = counts.get(item.value);
                                 return (
@@ -180,10 +184,11 @@ function TabbedSearchList<T>({
                                         value={item.value}
                                         id={`${id}-tab-${item.value}`}
                                         aria-controls={`${id}-panel`}
+                                        className="flex-none px-3 text-base"
                                     >
                                         {item.label}
-                                        {searching && count !== null && count !== undefined && (
-                                            <span className="text-muted-foreground tabular-nums">
+                                        {count !== null && count !== undefined && (
+                                            <span className="font-normal text-muted-foreground tabular-nums">
                                                 {count}
                                             </span>
                                         )}
