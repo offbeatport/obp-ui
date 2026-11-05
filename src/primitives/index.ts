@@ -7,6 +7,7 @@ export * from "./color-picker";
 export * from "./dialog";
 export * from "./dropdown-menu";
 export * from "./field";
+export * from "./filter-menu";
 export * from "./info-tip";
 export * from "./input";
 export * from "./kbd";

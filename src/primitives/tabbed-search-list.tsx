@@ -20,6 +20,7 @@ type TabbedSearchListTab<T> = {
     label: string;
     groups?: readonly TabbedSearchListGroup<T>[];
     toolbar?: ReactNode;
+    actions?: ReactNode;
     empty?: ReactNode;
     panel?: (query: string) => ReactNode;
     matches?: (query: string) => boolean;
@@ -169,26 +170,31 @@ function TabbedSearchList<T>({
                     onValueChange={(next) => onTabChange(String(next))}
                     className="min-h-0 flex-1 gap-3"
                 >
-                    <TabsList className="w-full" onKeyDown={toSearch}>
-                        {tabs.map((item) => {
-                            const count = counts.get(item.value);
-                            return (
-                                <TabsTrigger
-                                    key={item.value}
-                                    value={item.value}
-                                    id={`${id}-tab-${item.value}`}
-                                    aria-controls={`${id}-panel`}
-                                >
-                                    {item.label}
-                                    {searching && count !== null && count !== undefined && (
-                                        <span className="text-muted-foreground tabular-nums">
-                                            {count}
-                                        </span>
-                                    )}
-                                </TabsTrigger>
-                            );
-                        })}
-                    </TabsList>
+                    <div className="flex min-h-9 flex-wrap items-end justify-between gap-x-3 gap-y-2 border-b">
+                        <TabsList variant="line" className="-mb-px h-9 px-0" onKeyDown={toSearch}>
+                            {tabs.map((item) => {
+                                const count = counts.get(item.value);
+                                return (
+                                    <TabsTrigger
+                                        key={item.value}
+                                        value={item.value}
+                                        id={`${id}-tab-${item.value}`}
+                                        aria-controls={`${id}-panel`}
+                                    >
+                                        {item.label}
+                                        {searching && count !== null && count !== undefined && (
+                                            <span className="text-muted-foreground tabular-nums">
+                                                {count}
+                                            </span>
+                                        )}
+                                    </TabsTrigger>
+                                );
+                            })}
+                        </TabsList>
+                        {active?.actions && (
+                            <div className="flex items-center gap-2 pb-1.5">{active.actions}</div>
+                        )}
+                    </div>
                     <div
                         role="tabpanel"
                         id={`${id}-panel`}

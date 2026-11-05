@@ -9,12 +9,8 @@ import {
     DialogTitle,
     DialogTrigger,
     Field,
+    FilterMenu,
     Input,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
     TabbedSearchList,
     type TabbedSearchListTab,
 } from "obp-ui";
@@ -105,11 +101,17 @@ function PullPanel({ seed, onPull }: { seed: string; onPull: (name: string) => v
 export function TabbedSearchListDemo() {
     const [open, setOpen] = useState(false);
     const [tab, setTab] = useState("suggested");
-    const [arch, setArch] = useState("any");
+    const [arches, setArches] = useState<string[]>([]);
+    const [mine, setMine] = useState(false);
     const [picked, setPicked] = useState<string>("node-22");
     const [pulled, setPulled] = useState<string | null>(null);
     const byId = (id: string) => IMAGES.filter((image) => image.id === id);
     const suggested = IMAGES.filter((image) => image.owner === "library");
+    const allImages = IMAGES.filter(
+        (image) =>
+            (arches.length === 0 || arches.includes(image.arch)) &&
+            (!mine || image.owner === "you"),
+    );
     const tabs: TabbedSearchListTab<Image>[] = [
         {
             value: "suggested",
@@ -131,24 +133,39 @@ export function TabbedSearchListDemo() {
         {
             value: "all",
             label: "All images",
-            toolbar: (
-                <Select value={arch} onValueChange={(next) => setArch(String(next ?? "any"))}>
-                    <SelectTrigger aria-label="Architecture" className="w-40">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="any">Any architecture</SelectItem>
-                        <SelectItem value="arm64">arm64</SelectItem>
-                        <SelectItem value="amd64">amd64</SelectItem>
-                    </SelectContent>
-                </Select>
+            actions: (
+                <FilterMenu
+                    sections={[
+                        {
+                            kind: "options",
+                            key: "arch",
+                            title: "Architecture",
+                            options: ["arm64", "amd64"].map((value) => ({
+                                value,
+                                label: value,
+                                count: IMAGES.filter((image) => image.arch === value).length,
+                            })),
+                            value: arches,
+                            onValueChange: setArches,
+                        },
+                        {
+                            kind: "toggle",
+                            key: "mine",
+                            title: "Owner",
+                            label: "Only yours",
+                            info: "Images pushed by your team, not the public library.",
+                            checked: mine,
+                            onCheckedChange: setMine,
+                        },
+                    ]}
+                    summary={`${allImages.length} of ${IMAGES.length} images`}
+                    onClear={() => {
+                        setArches([]);
+                        setMine(false);
+                    }}
+                />
             ),
-            groups: [
-                {
-                    key: "all",
-                    items: IMAGES.filter((image) => arch === "any" || image.arch === arch),
-                },
-            ],
+            groups: [{ key: "all", items: allImages }],
         },
         {
             value: "yours",
@@ -175,7 +192,7 @@ export function TabbedSearchListDemo() {
     return (
         <Spec
             name="TabbedSearchList"
-            note="One search field over tabs of lists, for picking one item that can come from a few places. The search filters every tab at once and each tab shows its matches; an empty tab points to the tabs that have some. A tab can hold labelled groups, a toolbar of filters, or a form instead of a list. Tab from the field reaches the tabs, arrows switch them and Arrow down returns to the field; in the field, arrows move the highlight, Enter picks and Escape clears, then closes the dialog."
+            note="One search field over tabs of lists, for picking one item that can come from a few places. The search filters every tab at once and each tab shows its matches; an empty tab points to the tabs that have some. A tab can hold labelled groups, actions at the right of the tab row (a FilterMenu for its filters), or a form instead of a list. Tab from the field reaches the tabs, arrows switch them and Arrow down returns to the field; in the field, arrows move the highlight, Enter picks and Escape clears, then closes the dialog."
         >
             <div className="flex flex-col items-start gap-3">
                 <Dialog open={open} onOpenChange={setOpen}>

@@ -187,9 +187,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      items out of `items` rather than disabling them.
    - **Picking one item that can come from a few places is a `TabbedSearchList`.** One search field over tabs
      (suggested, all, yours, add new): it filters every tab at once, each tab shows its match count, and a tab with
-     no matches offers the tabs that have some. Groups label sections inside a tab, a toolbar holds its filters, and
-     a tab can be a form instead of a list. In the field, arrows move, Enter picks, Escape clears then closes; Tab
-     reaches the tabs, arrows switch them and Arrow down returns to the field. Put it in a dialog of fixed height.
+     no matches offers the tabs that have some. Groups label sections inside a tab, `actions` sit at the right end of
+     the tab row (a `FilterMenu` when a tab has filters), and a tab can be a form instead of a list. In the field,
+     arrows move, Enter picks, Escape clears then closes; Tab reaches the tabs, arrows switch them and Arrow down
+     returns to the field. Put it in a dialog of fixed height.
+   - **Several filters on one list fold into a `FilterMenu`.** One outline button with the active count; its panel
+     has a titled section per filter (checkboxes with counts, or a switch), the number of matches and Clear. Use
+     separate `CheckboxSelect`s only when there are one or two filters and room for them.
    - **Shortcuts are visible `Kbd`s.** A key a screen answers to shows where it acts: a `Kbd` inside the button
      it presses (it takes the button's ink), or a `KbdHint` line, keys then what they do, under the toolbar.
      Single-letter keys stay off while focus is in a text field.
