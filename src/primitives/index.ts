@@ -5,6 +5,7 @@ export * from "./checkbox";
 export * from "./checkbox-select";
 export * from "./color-picker";
 export * from "./dialog";
+export * from "./drop-zone";
 export * from "./dropdown-menu";
 export * from "./field";
 export * from "./highlight-text";

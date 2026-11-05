@@ -33,6 +33,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DropZone,
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
@@ -894,6 +895,10 @@ export function PrimitivesSection() {
                 </ToastProvider>
             </Spec>
 
+            <Spec name="DropZone" note="Drop files, or choose them with the button.">
+                <DropZoneDemo />
+            </Spec>
+
             <Spec name="Tooltip" note="Wrap once in TooltipProvider.">
                 <Row>
                     <Tooltip>
@@ -998,5 +1003,21 @@ export function PrimitivesSection() {
                 />
             </Spec>
         </TooltipProvider>
+    );
+}
+
+function DropZoneDemo() {
+    const [names, setNames] = useState<string[]>([]);
+    return (
+        <DropZone
+            multiple
+            accept=".csv,.parquet"
+            description="CSV or Parquet. Nothing leaves this page."
+            onFiles={(files) => setNames(files.map((file) => file.name))}
+        >
+            {names.length > 0 && (
+                <p className="text-sm text-muted-foreground">{`Picked ${names.join(", ")}`}</p>
+            )}
+        </DropZone>
     );
 }

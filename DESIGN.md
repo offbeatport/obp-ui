@@ -135,6 +135,12 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      a unit in the label. Its hidden input carries `min`, `max` and `step`, so a form that accepts typed values
      between steps takes `noValidate`. The minus and plus are named "Decrease" and "Increase" and skipped by Tab,
      so they carry no tooltip.
+   - **Files are added with a `DropZone`, never a bare `type="file"`.** A dashed 1px `--input` edge on the card with a
+     title, an optional description and a "Choose a file" outline button; while files are dragged over it the edge goes
+     solid `--ring` and the fill `--secondary`, and the title says what a drop does. No icon, no shadow, no animation.
+     The button is the keyboard and click path (the hidden input is skipped by Tab), so a zone is never the only way in.
+     `onFiles` gets the files; `multiple` is off by default and then only the first file of a drop arrives. Checks on
+     the files (type, size, a name already taken) belong to the app, after the drop, in the same flow as the button.
    - **Settings are `SettingsRow`s in a `SettingsGroup`.** Label and description on the left, the control on the
      right, centred vertically in the row; rows divide with a 1px
      line. A switch or checkbox row is `toggle`: the whole row is its label, so a click anywhere toggles it, hover
