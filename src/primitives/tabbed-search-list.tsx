@@ -245,7 +245,7 @@ function TabbedSearchList<T>({
                         <Autocomplete.List
                             data-slot="tabbed-search-list-items"
                             className={cn(
-                                "flex max-h-[min(26rem,55vh)] min-h-0 flex-col overflow-y-auto rounded-md border outline-none empty:hidden",
+                                "relative flex max-h-[min(26rem,55vh)] min-h-0 flex-col overflow-y-auto rounded-md border outline-none empty:hidden",
                                 listClassName,
                             )}
                         >

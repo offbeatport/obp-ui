@@ -87,7 +87,7 @@ function SearchList<T>({
                 <Autocomplete.List
                     data-slot="search-list-items"
                     className={cn(
-                        "flex max-h-[min(26rem,55vh)] flex-col divide-y overflow-y-auto rounded-md border outline-none empty:hidden",
+                        "relative flex max-h-[min(26rem,55vh)] flex-col divide-y overflow-y-auto rounded-md border outline-none empty:hidden",
                         listClassName,
                     )}
                 >
