@@ -102,6 +102,7 @@ export * from "./data-display";
 
 export { ConfirmDialog } from "./confirm-dialog";
 export { Markdown } from "./markdown";
+export * from "./icons";
 export * from "./provider-logos";
 export * from "./software-logos";
 export { ThemePicker, type ThemePickerProps } from "./theme-picker";
