@@ -99,6 +99,7 @@ import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
 import { NumberFieldDemo } from "./number-field-demo";
 import { SearchListDemo } from "./search-list-demo";
+import { SearchMenuDemo } from "./search-menu-demo";
 import { SettingsRowDemo } from "./settings-row-demo";
 import { SqlEditorDemo } from "./sql-editor-demo";
 import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
@@ -354,6 +355,8 @@ export function PrimitivesSection() {
             <SettingsRowDemo />
 
             <SearchListDemo />
+
+            <SearchMenuDemo />
 
             <TabbedSearchListDemo />
 

@@ -21,8 +21,12 @@ const CONTROL_LAYOUT = {
     wide: "w-full @xl/settings-row:w-80 @xl/settings-row:flex-row-reverse",
 };
 
+const FLASH =
+    "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-md before:bg-accent before:opacity-0 before:transition-opacity before:duration-150 group-data-flash/settings-row:before:opacity-100 motion-reduce:before:transition-none";
+
 type SettingsRowProps = {
     id?: string;
+    anchor?: string;
     label: ReactNode;
     description?: ReactNode;
     error?: ReactNode;
@@ -54,6 +58,7 @@ function focusInstead(event: MouseEvent<HTMLElement>) {
 
 function SettingsRow({
     id,
+    anchor,
     label,
     description,
     error,
@@ -69,13 +74,21 @@ function SettingsRow({
     const LabelTag = id ? "label" : "span";
     const layout = toggle ? "toggle" : wide ? "wide" : "normal";
     return (
-        <div data-slot="settings-row" className={cn("@container/settings-row py-0.5", className)}>
+        <div
+            id={anchor}
+            data-slot="settings-row"
+            className={cn(
+                "group/settings-row @container/settings-row scroll-my-24 py-0.5",
+                className,
+            )}
+        >
             <div
                 data-slot="settings-row-body"
                 data-toggle={toggle || undefined}
                 data-disabled={disabled || undefined}
                 className={cn(
-                    "relative -mx-2.5 flex justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-3",
+                    "relative isolate -mx-2.5 flex justify-between gap-x-6 gap-y-2 rounded-md px-2.5 py-3",
+                    FLASH,
                     BODY_LAYOUT[layout],
                     pressable && "hover:bg-secondary has-[:focus-visible]:bg-secondary",
                 )}

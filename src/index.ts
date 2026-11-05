@@ -65,6 +65,7 @@ export {
     type TypePairing,
     typePairingFor,
 } from "./lib/theme-preset";
+export { foldText, type MatchRange, matchRanges, searchTerms } from "./lib/search-text";
 export { configureStorage, type PrefStorage, prefStorage } from "./lib/storage";
 export { TONE, TONE_VAR, type Tone, type ToneClasses } from "./lib/tone";
 export {

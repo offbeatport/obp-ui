@@ -60,6 +60,7 @@ export function SettingsRowDemo() {
                     />
                     <SettingsRow
                         id="sr-retention"
+                        anchor="retention"
                         label="Log retention"
                         description="Request logs older than this are deleted."
                         control={
@@ -137,6 +138,10 @@ export function SettingsRowDemo() {
                         {
                             name: "wide",
                             note: "A 20rem control on the right, full width under the label in a narrow row.",
+                        },
+                        {
+                            name: "anchor",
+                            note: "An id on the row for links such as /settings/storage#bucket, separate from the control's id. Set data-flash on that element and the row tints with --accent, fading in 150ms (none under reduced motion); remove it to fade out.",
                         },
                         {
                             name: "error · children",
