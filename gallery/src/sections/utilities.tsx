@@ -145,6 +145,10 @@ function PresetReadout() {
                     note: "select a preset, or persist the user's own four axes through the same storage seam. Applying the default REMOVES every managed property rather than restating it, so the default theme cannot drift.",
                 },
                 {
+                    name: "applyPresetStyle(preset, mode, el?)",
+                    note: "pin one preset without the stored preference: clears every managed property, then sets the preset's tokens for that mode, so nothing from the other mode lingers. Call it again on onThemeChange; null clears.",
+                },
+                {
                     name: "themePresetStyle / themePresetSwatch",
                     note: "a preset's tokens as an inline style object, and the four colours that identify it - what draws a theme that is not the active one.",
                 },

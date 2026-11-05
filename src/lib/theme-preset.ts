@@ -488,6 +488,16 @@ export function themePresetStyle(
     return out;
 }
 
+export function applyPresetStyle(
+    preset: ThemePreset | null,
+    mode: "light" | "dark",
+    el: HTMLElement = document.documentElement,
+): void {
+    for (const v of MANAGED) el.style.removeProperty(v);
+    if (!preset) return;
+    for (const [k, v] of Object.entries(themePresetStyle(preset, mode))) el.style.setProperty(k, v);
+}
+
 export type ThemePresetController = {
     getThemePresetId(): string;
     setThemePresetId(id: string): void;
@@ -555,12 +565,9 @@ export function createThemePresets(opts: { namespace?: string } = {}): ThemePres
     function applyThemePreset(): void {
         if (typeof document === "undefined") return;
         const el = document.documentElement;
-        for (const v of MANAGED) el.style.removeProperty(v);
-        const id = getThemePresetId();
-        if (id === DEFAULT_PRESET_ID) return;
         const mode = el.classList.contains("dark") ? "dark" : "light";
-        const style = themePresetStyle(getThemePreset(), mode);
-        for (const [k, v] of Object.entries(style)) el.style.setProperty(k, v);
+        const preset = getThemePresetId() === DEFAULT_PRESET_ID ? null : getThemePreset();
+        applyPresetStyle(preset, mode, el);
     }
 
     function announce(): void {

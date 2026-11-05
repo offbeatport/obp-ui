@@ -29,6 +29,7 @@ export {
     themePaletteFor,
 } from "./lib/palette";
 export {
+    applyPresetStyle,
     applyThemePreset,
     createThemePresets,
     CUSTOM_PRESET_ID,
