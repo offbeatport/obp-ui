@@ -574,7 +574,7 @@ export function PrimitivesSection() {
                         <CheckboxField
                             label="I accept the guardrails"
                             description="Required before the first real-money run."
-                            aria-invalid
+                            error="Accept the guardrails to continue."
                         />
                     </div>
 

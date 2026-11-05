@@ -17,14 +17,15 @@ const checkboxVariants = cva(
         "peer group/checkbox relative inline-flex shrink-0 items-center justify-center",
         "rounded-[calc(var(--radius)/2)] border border-input bg-input-background outline-none",
         "dark:data-unchecked:not-aria-invalid:border-foreground/20",
-        "data-unchecked:not-data-disabled:hover:border-primary/60",
-        "data-unchecked:not-data-disabled:hover:bg-accent/50",
-        "data-unchecked:not-data-disabled:group-hover/checkbox-field:border-primary/60",
-        "data-unchecked:not-data-disabled:group-hover/checkbox-field:bg-accent/50",
+        "data-unchecked:not-data-disabled:not-aria-invalid:hover:border-primary/60",
+        "data-unchecked:not-data-disabled:not-aria-invalid:hover:bg-accent/50",
+        "data-unchecked:not-data-disabled:not-aria-invalid:group-hover/checkbox-field:border-primary/60",
+        "data-unchecked:not-data-disabled:not-aria-invalid:group-hover/checkbox-field:bg-accent/50",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         "data-checked:border-primary data-indeterminate:border-primary",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        "aria-invalid:border-destructive aria-invalid:ring-destructive",
+        "aria-invalid:data-unchecked:border-destructive aria-invalid:data-unchecked:bg-destructive-soft",
+        "aria-invalid:focus-visible:ring-destructive",
     ],
     {
         variants: {
@@ -147,6 +148,7 @@ type CheckboxFieldProps = Omit<CheckboxProps, "children" | "asChild"> & {
     asChild?: boolean;
     label: ReactNode;
     description?: ReactNode;
+    error?: ReactNode;
     checkboxClassName?: string;
 };
 
@@ -154,6 +156,7 @@ function CheckboxField({
     id,
     label,
     description,
+    error,
     className,
     checkboxClassName,
     size = "sm",
@@ -164,6 +167,8 @@ function CheckboxField({
     const generatedId = useId();
     const fieldId = id ?? generatedId;
     const descriptionId = description ? `${fieldId}-description` : undefined;
+    const errorId = error ? `${fieldId}-error` : undefined;
+    const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || undefined;
 
     return (
         <label
@@ -180,7 +185,8 @@ function CheckboxField({
                 id={fieldId}
                 size={size}
                 disabled={disabled}
-                aria-describedby={descriptionId}
+                aria-describedby={describedBy}
+                aria-invalid={error ? true : undefined}
                 className={cn(size === "sm" && "mt-0.5", checkboxClassName)}
                 {...props}
             />
@@ -189,6 +195,11 @@ function CheckboxField({
                 {description ? (
                     <span id={descriptionId} className="block text-sm text-muted-foreground">
                         {description}
+                    </span>
+                ) : null}
+                {error ? (
+                    <span id={errorId} className="mt-1 block text-sm text-destructive">
+                        {error}
                     </span>
                 ) : null}
             </span>
