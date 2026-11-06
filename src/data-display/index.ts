@@ -15,6 +15,13 @@ export {
 export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./empty-state";
 export {
+    type LogEntry,
+    type LogLevel,
+    LogViewer,
+    type LogViewerProps,
+    logText,
+} from "./log-viewer";
+export {
     GradientMark,
     type GradientMarkBranding,
     gradientPairFor,

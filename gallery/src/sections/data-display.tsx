@@ -19,6 +19,7 @@ import {
 import { useRef, useState } from "react";
 import { Api, Cell, Frame, Note, Row, Spec } from "../kit";
 import { CompareDemo } from "./compare-demo";
+import { LogViewerDemo } from "./log-viewer-demo";
 import { TreeDemo } from "./tree-demo";
 
 const ENTITIES: { name: string; branding?: GradientMarkBranding }[] = [
@@ -311,6 +312,40 @@ export function DataDisplaySection() {
                         {
                             name: "onOpen, rowLabel",
                             note: "a click anywhere on the row opens it, except on buttons, links, menus and fields, or while text is selected. Rows are focusable: arrows, Home and End move, Enter opens. Keep a real link in the row for new-tab clicks; mark any other control data-grid-ignore.",
+                        },
+                    ]}
+                />
+            </Spec>
+            <Spec
+                name="LogViewer"
+                note="A process's output as lines: level, time and message, with structured events that open to their fields and tracebacks that open to their lines. Library output is muted and hidden until switched on; errors always show. Virtual rows, so a long log stays fast."
+            >
+                <LogViewerDemo />
+                <Api
+                    items={[
+                        {
+                            name: "entries",
+                            note: "LogEntry[]: id, level (debug, info, warning, error), message, and optional time (epoch ms), source, fields (shown as key and value when the line opens) and detail (multi-line text such as a traceback). The app parses its own output; the viewer never guesses.",
+                        },
+                        {
+                            name: "defaultLevel",
+                            note: "the lowest level shown at first, info by default. The level menu counts the lines at each choice.",
+                        },
+                        {
+                            name: "quietSource, quietLabel",
+                            note: "entries from this source (library output, say) are muted and hidden until the switch is on; their errors stay visible.",
+                        },
+                        {
+                            name: "live",
+                            note: "while true the view follows new lines and shows a Follow switch; scrolling up turns it off and scrolling back to the end turns it on.",
+                        },
+                        {
+                            name: "fileName, actions",
+                            note: "Copy takes the lines shown, as text; Download saves every line under fileName. actions adds buttons before them.",
+                        },
+                        {
+                            name: "maxHeight, empty, label",
+                            note: "the scroller's height cap (28rem by default), what an empty log says, and the log region's accessible name.",
                         },
                     ]}
                 />

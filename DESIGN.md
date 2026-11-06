@@ -191,6 +191,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      same `--syntax-*` colours. Each parser loads on first use from the app's own bundle and never from a network.
      Markdown fences render as a `CodeBlock` too (`codeLanguage` maps `sh`, `py`, `js`, `ts`, `yml`). An
      identifier inside a sentence stays a `font-mono` span.
+   - **Process output is a `LogViewer`, never a bare list of lines.** Each line is time, level and message in
+     `text-sm` mono on the card; warnings and errors take `--warning` and `--destructive` ink, debug and the
+     `quietSource` (library output) stay muted, and the quiet source hides behind a switch while its errors still show.
+     A structured event or a traceback is one summary line that opens, by its chevron or a click, to its fields or
+     its lines. Above it: a search that marks matches with `--highlight`, a level menu with counts, Follow while
+     `live` (scrolling up stops it), the count shown, then Copy (the lines shown) and Download (every line). Rows are
+     virtual, so a long run stays fast. The app turns its output into entries; the viewer never parses text.
    - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:
      full width on a phone and 24rem from `sm`, `p-panel` inside with its own scroll, a 1px border on its inner edge
      only and no rounding, the Dialog's overlay and close button. It fades in like every overlay and never slides. Use it
