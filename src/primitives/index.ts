@@ -3,6 +3,7 @@ export * from "./button";
 export * from "./card";
 export * from "./checkbox";
 export * from "./checkbox-select";
+export * from "./code-block";
 export * from "./collapsible";
 export * from "./color-picker";
 export * from "./dialog";

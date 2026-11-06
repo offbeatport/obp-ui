@@ -82,6 +82,17 @@ const STATUS: StatusRow[] = [
     },
 ];
 
+const SYNTAX: { token: string; cls: string; sample: string }[] = [
+    { token: "--syntax-keyword", cls: "text-syntax-keyword", sample: "import const def SELECT" },
+    { token: "--syntax-string", cls: "text-syntax-string", sample: '"support-triage"' },
+    { token: "--syntax-number", cls: "text-syntax-number", sample: "0.2 512 true null" },
+    { token: "--syntax-comment", cls: "text-syntax-comment", sample: "# from Deployments" },
+    { token: "--syntax-property", cls: "text-syntax-property", sample: "base_url -H api_key:" },
+    { token: "--syntax-function", cls: "text-syntax-function", sample: "create() curl count()" },
+    { token: "--syntax-operator", cls: "text-syntax-operator", sample: "= . * + ||" },
+    { token: "--syntax-punctuation", cls: "text-syntax-punctuation", sample: "( ) [ ] { } , :" },
+];
+
 const RADII = [
     { cls: "rounded-sm", token: "--radius - 4px" },
     { cls: "rounded-md", token: "--radius - 2px" },
@@ -155,6 +166,20 @@ export function TokensSection() {
                     Brand emphasis (autopilot, "this is ours") uses the <code>accent</code> /{" "}
                     <code>default</code> Badge variants instead - see Primitives.
                 </Note>
+            </Spec>
+
+            <Spec
+                name="Syntax"
+                note="Eight inks for code, shared by CodeBlock, SqlEditor and JsonEditor. Each clears 5:1 on the page, the card and --muted in every palette, both modes; operator and punctuation follow --muted-foreground."
+            >
+                <div className="grid gap-x-6 gap-y-2 rounded-md border border-border bg-muted p-3 font-mono text-sm sm:grid-cols-[14rem_1fr]">
+                    {SYNTAX.map((s) => (
+                        <div key={s.token} className="contents">
+                            <span className="text-muted-foreground">{s.token}</span>
+                            <span className={s.cls}>{s.sample}</span>
+                        </div>
+                    ))}
+                </div>
             </Spec>
 
             <Spec

@@ -84,6 +84,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - Status **text** ≥ 4.5:1 on the card, the page and its own `-soft` fill, both modes (min 4.87,
      warning on its soft fill in light). This is why the light hues are the deep 700-ish steps and
      not the raw 600s: `#16a34a` green is 3.3:1 on white and fails as a label.
+   - The `--syntax-*` inks **≥ 5:1** on the page, the card and `--muted`, every palette, both modes (min 5.02,
+     the light comment on Terracotta's `--muted`). Keyword, string, number, comment, property and function are
+     literals per mode, like the status hues; operator and punctuation are `--muted-foreground`. A product may
+     re-ink them after the import and owns this floor if it does.
 5. **Respect the status language** below. Statuses are vocabulary, not decoration - the six hues
    are deliberately identical in every palette and every preset the kit ships except Cobalt. The *meanings* in the
    table are cslopslop's reading of them; a product with no approval queue maps its own meanings
@@ -173,6 +177,20 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      bracket matching, auto-closed brackets and quotes, indentation and the parse error marked where it falls; an empty
      editor is not an error. Parse the text yourself before sending it, and pass the server's complaint as
      `diagnostics` when it carries a position.
+   - **Code is always a `CodeBlock`, never a bare `<pre>`.** Anything a person reads or copies as code - a command,
+     a request, a config file, a response - is `code` plus its `language`: `bash` for curl, `.env` and CLI lines,
+     `python`, `javascript`, `typescript`, `json`, `yaml`, `sql`, and `text` when it is none of them. The frame is
+     `--muted` with a 1px `--border`, `text-sm` mono and no shadow; long lines scroll sideways unless `wrap`. A
+     `title` (a file name or a caption) takes a row over the code with an outline Copy button on its right; without
+     one the button is an icon in the corner with a tooltip, named by `copyLabel`. Copy reads Copied for a second
+     and a half. Where the browser has no clipboard API (plain HTTP on an internal address) it copies the selection,
+     and if that fails it selects the code and says which keys to press. One snippet in several languages or
+     clients is a `CodeTabs`: line tabs over one block, each tab's Copy named after the tab, a tab's own `title`
+     over the shared one. Highlighting is the editors' own: the Lezer parsers (CodeMirror's legacy shell mode for
+     `bash`) through `codeHighlighter`, so a block and a `SqlEditor` or `JsonEditor` ink the same tokens with the
+     same `--syntax-*` colours. Each parser loads on first use from the app's own bundle and never from a network.
+     Markdown fences render as a `CodeBlock` too (`codeLanguage` maps `sh`, `py`, `js`, `ts`, `yml`). An
+     identifier inside a sentence stays a `font-mono` span.
    - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:
      full width on a phone and 24rem from `sm`, `p-panel` inside with its own scroll, a 1px border on its inner edge
      only and no rounding, the Dialog's overlay and close button. It fades in like every overlay and never slides. Use it

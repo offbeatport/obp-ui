@@ -70,6 +70,15 @@
     --file-sql: #be185d;
     --file-text: #475569;
 
+    --syntax-keyword: #b42359;
+    --syntax-string: #116329;
+    --syntax-number: #9a4b00;
+    --syntax-comment: #5f646c;
+    --syntax-property: #0b57b8;
+    --syntax-function: #7034c4;
+    --syntax-operator: var(--muted-foreground);
+    --syntax-punctuation: var(--muted-foreground);
+
     --shadow-e1: none;
     --shadow-e2: 0 1px 2px rgba(38, 38, 39, 0.06), 0 4px 12px rgba(38, 38, 39, 0.08);
 
@@ -160,6 +169,15 @@
     --file-sql: #f472b6;
     --file-text: #94a3b8;
 
+    --syntax-keyword: #ff7ab2;
+    --syntax-string: #7ee2a8;
+    --syntax-number: #f5b86b;
+    --syntax-comment: #8b949e;
+    --syntax-property: #79c0ff;
+    --syntax-function: #c9a6ff;
+    --syntax-operator: var(--muted-foreground);
+    --syntax-punctuation: var(--muted-foreground);
+
     --shadow-e1: none;
     --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
@@ -230,6 +248,15 @@
     --color-file-delta: var(--file-delta);
     --color-file-sql: var(--file-sql);
     --color-file-text: var(--file-text);
+
+    --color-syntax-keyword: var(--syntax-keyword);
+    --color-syntax-string: var(--syntax-string);
+    --color-syntax-number: var(--syntax-number);
+    --color-syntax-comment: var(--syntax-comment);
+    --color-syntax-property: var(--syntax-property);
+    --color-syntax-function: var(--syntax-function);
+    --color-syntax-operator: var(--syntax-operator);
+    --color-syntax-punctuation: var(--syntax-punctuation);
 
     --font-sans: var(--font-sans);
     --font-display: var(--font-display);

@@ -30,7 +30,8 @@ import {
     EDITOR_LINES,
     editorFrame,
 } from "./code-editor-frame";
-import { codeHighlight, editorTheme, sizeTheme } from "./code-editor-theme";
+import { editorTheme, sizeTheme } from "./code-editor-theme";
+import { codeHighlighter } from "./code-highlight";
 
 type CodeEditorViewProps = CodeEditorProps & {
     slot: string;
@@ -265,7 +266,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
                         indentWithTab,
                     ]),
                     EditorView.lineWrapping,
-                    syntaxHighlighting(codeHighlight),
+                    syntaxHighlighting(codeHighlighter),
                     editorTheme,
                     externalLint,
                     languagePart.of(latest.current.language),

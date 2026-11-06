@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { CodeBlock, codeLanguage } from "./primitives/code-block";
+
 const CODE_INLINE = "rounded-sm border border-border-soft bg-secondary px-1 font-mono text-sm";
 
 function inline(text: string, kp: string): ReactNode[] {
@@ -80,7 +82,8 @@ export function Markdown({ content, className }: { content: string; className?: 
             i++;
             continue;
         }
-        if (/^```/.test(line)) {
+        const fence = line.match(/^```\s*([\w+-]*)/);
+        if (fence) {
             const code: string[] = [];
             i++;
             while (i < lines.length && !/^```\s*$/.test(at(i))) {
@@ -89,12 +92,7 @@ export function Markdown({ content, className }: { content: string; className?: 
             }
             i++;
             blocks.push(
-                <pre
-                    key={key}
-                    className="overflow-x-auto rounded-md border border-border bg-secondary p-3 font-mono text-sm"
-                >
-                    <code>{code.join("\n")}</code>
-                </pre>,
+                <CodeBlock key={key} code={code.join("\n")} language={codeLanguage(fence[1])} />,
             );
             continue;
         }

@@ -98,6 +98,7 @@ import {
 import { useToast } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
+import { CodeBlockDemo } from "./code-block-demo";
 import { JsonEditorDemo } from "./json-editor-demo";
 import { NumberFieldDemo } from "./number-field-demo";
 import { OptionalNumberFieldDemo, SliderDemo } from "./optional-number-field-demo";
@@ -355,6 +356,8 @@ export function PrimitivesSection() {
             <SqlEditorDemo />
 
             <JsonEditorDemo />
+
+            <CodeBlockDemo />
 
             <NumberFieldDemo />
 

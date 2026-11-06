@@ -1,23 +1,6 @@
-import { HighlightStyle } from "@codemirror/language";
 import { EditorView } from "@codemirror/view";
-import { tags } from "@lezer/highlight";
 
 import { CONTENT_PADDING, linesHeight } from "./code-editor-frame";
-
-const codeHighlight = HighlightStyle.define([
-    { tag: tags.keyword, color: "var(--primary)" },
-    { tag: tags.typeName, color: "var(--approval)" },
-    { tag: tags.string, color: "var(--success)" },
-    { tag: [tags.number, tags.bool, tags.null], color: "var(--warning)" },
-    { tag: [tags.lineComment, tags.blockComment], color: "var(--faint)" },
-    {
-        tag: [tags.operator, tags.punctuation, tags.paren, tags.brace, tags.squareBracket],
-        color: "var(--muted-foreground)",
-    },
-    { tag: tags.special(tags.name), color: "var(--info)" },
-    { tag: tags.propertyName, color: "var(--primary)" },
-    { tag: tags.invalid, color: "var(--destructive)" },
-]);
 
 const RADIUS_CONTROL = "calc(var(--radius) - 2px)";
 
@@ -242,4 +225,4 @@ function sizeTheme(minLines: number, maxLines: number) {
     });
 }
 
-export { codeHighlight, editorTheme, sizeTheme };
+export { editorTheme, sizeTheme };
