@@ -135,6 +135,16 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      a unit in the label. Its hidden input carries `min`, `max` and `step`, so a form that accepts typed values
      between steps takes `noValidate`. The minus and plus are named "Decrease" and "Increase" and skipped by Tab,
      so they carry no tooltip.
+   - **An optional setting is an `OptionalNumberField`.** A number a request may leave out (temperature, top P, max
+     tokens) is `null` until a person sets it, and `null` means "not sent, the engine's default applies"; never stand in
+     a 0 or a guessed default for it, and never add a checkbox to switch it on. The row is the label (with an `InfoTip`
+     when there is `help`), then a compact `NumberField` whose placeholder reads Unset, then, while it holds a value, an
+     X named "Unset <label>" with the tooltip Unset. Under it sits a `Slider` when `min` and `max` are both finite, drawn
+     muted (no filled range, a `--secondary` thumb) at `fallback` while unset. Typing, a step or moving the slider sets
+     it, and the first step from Unset lands on `fallback`; clearing the input or the X unsets it. It fits a 280px panel.
+     A bare `Slider` is one thumb on a 4px `--secondary` track with a 1px `--border` edge, the range in `--primary`, a
+     14px round thumb on `--card` with an `--input` edge; arrows step, Shift and Page Up/Down take ten steps, Home and
+     End jump.
    - **Files are added with a `DropZone`, never a bare `type="file"`.** A dashed 1px `--input` edge on the card with a
      title, an optional description and a "Choose a file" outline button; while files are dragged over it the edge goes
      solid `--ring` and the fill `--secondary`, and the title says what a drop does. No icon, no shadow, no animation.
@@ -159,6 +169,17 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **SQL is entered with `SqlEditor`, never a textarea.** Pass `schema` (`{ table: columns[] }`) for table
      and column completion, `onRun` for Cmd/Ctrl+Enter, and the server's error as `diagnostics` (line, column,
      message) when it carries a position; otherwise show it under the editor. It loads CodeMirror on first use.
+   - **JSON is entered with `JsonEditor`, never a textarea.** The `SqlEditor` frame and props, with JSON highlighting,
+     bracket matching, auto-closed brackets and quotes, indentation and the parse error marked where it falls; an empty
+     editor is not an error. Parse the text yourself before sending it, and pass the server's complaint as
+     `diagnostics` when it carries a position.
+   - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:
+     full width on a phone and 24rem from `sm`, `p-panel` inside with its own scroll, a 1px border on its inner edge
+     only and no rounding, the Dialog's overlay and close button. It fades in like every overlay and never slides. Use it
+     where a settings column stops fitting beside the content, not as a second kind of dialog.
+   - **Sections that open in place are a `Collapsible`.** A plain `text-sm` trigger with a chevron before the text that
+     turns a quarter as it opens, then the content; no height animation, and the content fades. A model's reasoning, an
+     Advanced group in a settings panel. It is not navigation: sibling pages are a `TabNav`.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
@@ -235,7 +256,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      carry a 1px top-lit edge (white, 35% light / 20% dark) that fades down the sides.
    - **Corners are small and square-ish.** 2px controls, 4px popovers, 6px cards (`--radius:
      0.25rem`). `rounded-full` only for things that are round by convention: switch, radio, a
-     status dot, an avatar. No pill badges, no pill tabs.
+     slider thumb, a status dot, an avatar. No pill badges, no pill tabs.
    - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
      fills are for callouts and selected rows.
    - **One hover, one selected.** Hover and keyboard highlight fill with `--secondary` everywhere:
@@ -249,7 +270,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      pill, no hover lift, no `transition-all`. Buttons and links change state instantly
      (`base.css` zeroes their transitions). The checkbox is the one control that
      animates: its fill grows in over 100ms and its tick draws over 120ms, on inner elements so the button itself
-     stays instant, both with a `motion-reduce` escape.
+     stays instant, both with a `motion-reduce` escape. The one other moving part is the `Collapsible` chevron, which
+     turns over 100ms, none under reduced motion.
 
 ### Status language (use the matching Badge variant / token - don't improvise)
 | meaning | token / `<Badge variant>` | colour |

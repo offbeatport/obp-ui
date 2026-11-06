@@ -98,10 +98,13 @@ import {
 import { useToast } from "obp-ui";
 import { useState } from "react";
 import { Api, Cell, Note, Row, Spec } from "../kit";
+import { JsonEditorDemo } from "./json-editor-demo";
 import { NumberFieldDemo } from "./number-field-demo";
+import { OptionalNumberFieldDemo, SliderDemo } from "./optional-number-field-demo";
 import { SearchListDemo } from "./search-list-demo";
 import { SearchMenuDemo } from "./search-menu-demo";
 import { SettingsRowDemo } from "./settings-row-demo";
+import { CollapsibleDemo, SheetDemo } from "./sheet-demo";
 import { SqlEditorDemo } from "./sql-editor-demo";
 import { TabbedSearchListDemo } from "./tabbed-search-list-demo";
 
@@ -351,7 +354,13 @@ export function PrimitivesSection() {
 
             <SqlEditorDemo />
 
+            <JsonEditorDemo />
+
             <NumberFieldDemo />
+
+            <SliderDemo />
+
+            <OptionalNumberFieldDemo />
 
             <SettingsRowDemo />
 
@@ -724,6 +733,10 @@ export function PrimitivesSection() {
                     <Note>open: {String(dialogOpen)}</Note>
                 </Row>
             </Spec>
+
+            <SheetDemo />
+
+            <CollapsibleDemo />
 
             <Spec name="DropdownMenu" note="Items, submenu, shortcut, destructive row.">
                 <Row>
