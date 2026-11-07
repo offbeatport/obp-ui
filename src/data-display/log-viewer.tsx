@@ -402,7 +402,7 @@ function LogViewer({
                     </SelectContent>
                 </Select>
                 {hasQuiet && (
-                    <span className="flex h-8 items-center gap-2 text-sm">
+                    <span className="flex h-8 items-center gap-2 text-base">
                         <Switch
                             id={`${id}-quiet`}
                             size="sm"
@@ -413,7 +413,7 @@ function LogViewer({
                     </span>
                 )}
                 {live && (
-                    <span className="flex h-8 items-center gap-2 text-sm">
+                    <span className="flex h-8 items-center gap-2 text-base">
                         <Switch
                             id={`${id}-follow`}
                             size="sm"
