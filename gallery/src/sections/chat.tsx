@@ -87,7 +87,7 @@ export function ChatSection() {
                                 avatar={<GradientMark name="Ledgerly" size={38} />}
                                 title="Ledgerly"
                                 badge={
-                                    <span className="inline-flex flex-none items-center gap-1.5 font-mono text-sm text-muted-foreground">
+                                    <span className="inline-flex flex-none items-center gap-1.5 font-mono text-base text-muted-foreground">
                                         <span
                                             aria-hidden="true"
                                             className="size-1.5 rounded-full bg-success"
@@ -161,7 +161,7 @@ export function ChatSection() {
                             <div className="rounded-xl border border-border bg-card p-4 shadow-e1">
                                 <Row>
                                     <Badge variant="approval">spec drafted</Badge>
-                                    <span className="font-mono text-sm text-faint">
+                                    <span className="font-mono text-base text-faint">
                                         invoice-chasing · 8.4
                                     </span>
                                 </Row>
@@ -192,11 +192,11 @@ export function ChatSection() {
                         />
                     </Frame>
                     <div className="rounded-xl border border-border bg-card p-5 shadow-e1">
-                        <p className="font-mono text-sm text-faint">bare</p>
+                        <p className="font-mono text-base text-faint">bare</p>
                         <TypingIndicator />
-                        <p className="mt-4 font-mono text-sm text-faint">turn</p>
+                        <p className="mt-4 font-mono text-base text-faint">turn</p>
                         <TypingIndicator turn />
-                        <p className="mt-4 font-mono text-sm text-faint">ChatSystemLine</p>
+                        <p className="mt-4 font-mono text-base text-faint">ChatSystemLine</p>
                         <ChatSystemLine text="budget cap raised to $40" ago="1m" />
                     </div>
                 </div>

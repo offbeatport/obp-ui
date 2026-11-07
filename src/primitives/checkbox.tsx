@@ -176,7 +176,7 @@ function CheckboxField({
             data-slot="checkbox-field"
             data-disabled={disabled || undefined}
             className={cn(
-                "group/checkbox-field flex w-fit items-start gap-2 text-sm select-none",
+                "group/checkbox-field flex w-fit items-start gap-2 text-base select-none",
                 disabled ? "cursor-not-allowed" : "cursor-pointer",
                 className,
             )}

@@ -274,7 +274,7 @@ export function DataDisplaySection() {
                     selectedIds={selectedRequests}
                     onSelectedIdsChange={setSelectedRequests}
                 />
-                <p className="text-sm text-muted-foreground tabular-nums">{`${selectedRequests.length} selected`}</p>
+                <p className="text-base text-muted-foreground tabular-nums">{`${selectedRequests.length} selected`}</p>
                 <Api
                     items={[
                         {
@@ -394,7 +394,7 @@ export function DataDisplaySection() {
                     )}
                     className="[--data-grid-surface:var(--card)]"
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                     {deployed ? `Deploy pressed for ${deployed}` : "No action pressed yet"}
                 </p>
                 <Api
@@ -473,7 +473,7 @@ export function DataDisplaySection() {
             >
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
-                        <p className="mb-2 font-mono text-sm text-faint">
+                        <p className="mb-2 font-mono text-base text-faint">
                             variant="rail" (in a 264px rail)
                         </p>
                         <Frame className="w-[264px] bg-secondary py-2">
@@ -491,7 +491,7 @@ export function DataDisplaySection() {
                         </Frame>
                     </div>
                     <div>
-                        <p className="mb-2 font-mono text-sm text-faint">variant="panel"</p>
+                        <p className="mb-2 font-mono text-base text-faint">variant="panel"</p>
                         <EmptyState
                             variant="panel"
                             icon={Inbox}
@@ -508,7 +508,7 @@ export function DataDisplaySection() {
                     </div>
                 </div>
                 <div className="mt-6">
-                    <p className="mb-2 font-mono text-sm text-faint">
+                    <p className="mb-2 font-mono text-base text-faint">
                         variant="plate" (fills a tab)
                     </p>
                     <EmptyState variant="plate" icon={FileCode2} title="No source yet">
@@ -535,7 +535,7 @@ export function DataDisplaySection() {
                             toggleLabel="Show the score breakdown"
                             panel={
                                 <>
-                                    <p className="text-sm leading-relaxed text-muted-foreground">
+                                    <p className="text-base leading-relaxed text-muted-foreground">
                                         {o.thesis}
                                     </p>
                                     <Row>
@@ -547,14 +547,14 @@ export function DataDisplaySection() {
                                 </>
                             }
                         >
-                            <span className="font-mono text-sm font-bold text-primary">
+                            <span className="font-mono text-base font-bold text-primary">
                                 {o.score}
                             </span>
-                            <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+                            <span className="min-w-0 flex-1 truncate text-base font-semibold">
                                 {o.title}
                             </span>
                             {picked === o.id && (
-                                <span className="font-mono text-sm text-faint">picked</span>
+                                <span className="font-mono text-base text-faint">picked</span>
                             )}
                         </ExpandableRow>
                     ))}
@@ -607,7 +607,7 @@ export function DataDisplaySection() {
                 </Timeline>
                 <Row className="mt-6">
                     <TimelineDot color="var(--primary)" icon={Rocket} />
-                    <span className="font-mono text-sm text-faint">
+                    <span className="font-mono text-base text-faint">
                         a dot on its own · spine={"{false}"} drops the hairline for a one-item list
                     </span>
                 </Row>

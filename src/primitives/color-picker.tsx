@@ -254,7 +254,7 @@ export function ColorField({
                 <button
                     type="button"
                     className={cn(
-                        "flex w-full items-center gap-2.5 rounded-md border border-border bg-card px-2.5 py-2 text-left text-sm hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+                        "flex w-full items-center gap-2.5 rounded-md border border-border bg-card px-2.5 py-2 text-left text-base hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                         className,
                     )}
                     {...props}

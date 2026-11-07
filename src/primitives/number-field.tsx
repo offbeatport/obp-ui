@@ -113,7 +113,7 @@ function NumberFieldInput({ className, onKeyDown, ...props }: InputProps) {
             data-slot="number-field-input"
             onKeyDown={stepByPage}
             className={cn(
-                "h-full w-full min-w-0 flex-1 bg-transparent px-1 text-center font-sans text-lg tabular-nums outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-sm",
+                "h-full w-full min-w-0 flex-1 bg-transparent px-1 text-center font-sans text-lg tabular-nums outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-base",
                 className,
             )}
             {...props}

@@ -8,7 +8,7 @@ import { asChildRender, asChildVoid } from "../lib/base-ui-compat";
 import { cn } from "../lib/cn";
 
 const buttonVariants = cva(
-    "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-base font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     {
         variants: {
             variant: {
@@ -29,7 +29,7 @@ const buttonVariants = cva(
                 xs: "h-6 gap-1 px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
                 sm: "h-7 gap-1 px-2.5 has-[>svg]:px-2",
                 lg: "h-9 px-4 has-[>svg]:px-3",
-                xl: "h-11 px-5 text-base has-[>svg]:px-4 [&_svg:not([class*='size-'])]:size-5",
+                xl: "h-11 px-5 text-lg has-[>svg]:px-4 [&_svg:not([class*='size-'])]:size-5",
                 icon: "size-8",
                 "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
                 "icon-sm": "size-7",

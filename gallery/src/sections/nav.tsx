@@ -76,14 +76,14 @@ export function NavSection() {
                     <Cell label="<Link href>">
                         <Link
                             href="#nav"
-                            className="text-sm text-primary underline underline-offset-2"
+                            className="text-base text-primary underline underline-offset-2"
                         >
                             a package Link
                         </Link>
                     </Cell>
                     <Cell label="asChild + an element child">
                         <Link href="#nav" asChild>
-                            <span className="cursor-pointer rounded-md border border-border px-2.5 py-1 text-sm">
+                            <span className="cursor-pointer rounded-md border border-border px-2.5 py-1 text-base">
                                 identical with the prop or without it
                             </span>
                         </Link>

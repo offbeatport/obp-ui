@@ -97,7 +97,7 @@ function SearchList<T>({
                             value={item}
                             index={index}
                             onClick={() => onPick(item)}
-                            className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm outline-none select-none data-highlighted:bg-secondary"
+                            className="flex cursor-pointer items-center gap-3 px-3 py-2 text-base outline-none select-none data-highlighted:bg-secondary"
                         >
                             {renderItem(item)}
                         </Autocomplete.Item>

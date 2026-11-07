@@ -424,7 +424,7 @@ function TreeRow({
             onClick={onClick}
             onFocus={onFocus}
             className={cn(
-                "group/tree-row flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md text-sm select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                "group/tree-row flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md text-base select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
                 hasActions ? "pr-1" : "pr-2",
                 selected
                     ? "bg-accent text-accent-foreground"
@@ -521,7 +521,7 @@ function DragPreview({ node }: { node: TreeNode | undefined }) {
             {node && (
                 <div
                     data-slot="tree-drag-preview"
-                    className="flex h-8 w-max max-w-72 cursor-grabbing items-center gap-1.5 rounded-md border bg-popover px-2 text-sm text-popover-foreground shadow-e2"
+                    className="flex h-8 w-max max-w-72 cursor-grabbing items-center gap-1.5 rounded-md border bg-popover px-2 text-base text-popover-foreground shadow-e2"
                 >
                     {node.icon && (
                         <span

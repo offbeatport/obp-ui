@@ -31,7 +31,7 @@ export function CollapsibleDemo() {
                         <CollapsibleTrigger className="font-normal text-muted-foreground hover:text-foreground">
                             Reasoning, 3 s
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-2 border-l pl-3 text-sm text-muted-foreground">
+                        <CollapsibleContent className="mt-2 border-l pl-3 text-base text-muted-foreground">
                             {REASONING}
                         </CollapsibleContent>
                     </Collapsible>
@@ -41,13 +41,13 @@ export function CollapsibleDemo() {
                 <div className="flex flex-col divide-y rounded-lg border">
                     <Collapsible defaultOpen className="p-4">
                         <CollapsibleTrigger>Sampling</CollapsibleTrigger>
-                        <CollapsibleContent className="pt-2 text-sm text-muted-foreground">
+                        <CollapsibleContent className="pt-2 text-base text-muted-foreground">
                             Temperature, Top P and Top K.
                         </CollapsibleContent>
                     </Collapsible>
                     <Collapsible className="p-4">
                         <CollapsibleTrigger>Penalties</CollapsibleTrigger>
-                        <CollapsibleContent className="pt-2 text-sm text-muted-foreground">
+                        <CollapsibleContent className="pt-2 text-base text-muted-foreground">
                             Frequency, presence and repetition.
                         </CollapsibleContent>
                     </Collapsible>
@@ -108,7 +108,7 @@ export function SheetDemo() {
                             />
                             <Collapsible>
                                 <CollapsibleTrigger>Advanced</CollapsibleTrigger>
-                                <CollapsibleContent className="pt-2 text-sm text-muted-foreground">
+                                <CollapsibleContent className="pt-2 text-base text-muted-foreground">
                                     Penalties, seed and stop sequences.
                                 </CollapsibleContent>
                             </Collapsible>

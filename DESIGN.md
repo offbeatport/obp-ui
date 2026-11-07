@@ -11,7 +11,7 @@ before you type.
 presets (and the eighteen palettes their colour axis draws from).
 
 **The default is Instrument**: a working tool, not a landing page - an IDE, a cloud console, a
-trading screen. Neutral grey surfaces, one classic blue, Public Sans over Intel One Mono, 13px
+trading screen. Neutral grey surfaces, one classic blue, Public Sans over Intel One Mono, 14px
 controls, 4px corners, hairline borders where other kits put shadows. It exists to stop the five
 products reading as generated: the shadcn defaults (soft halos, `py-6` cards, pill badges, 12px+
 corners), Space Grotesk headings, uppercase mono eyebrows, glass blur and gradient tiles are the
@@ -106,12 +106,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    ships when you add a variant - never remove an outline without replacing it. Anything that
    loops or draws needs a `motion-reduce:` escape at the call site.
 7. **Type comes off the scale.** Eight steps - `--type-xs` … `--type-4xl`, mapped onto `text-xs` …
-   `text-4xl` - and `--type-sm` (13px) is the **floor**: every control, menu row, table cell and
-   label. The one step below it, `text-xs` (12px), belongs to the `xs` button alone. Body is
-   `text-base` (14px, 1.5). No `text-[Npx]`. The literals the scale replaced ran to 15 different sizes
-   between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's length. A caption
+   `text-4xl`. `text-base` (14px) is the **default**: body, every control, menu row, list row,
+   table cell, tab, nav item, label and title. `--type-sm` (13px) is for secondary text only -
+   hints, captions, muted meta, badges, kbd, counters, tooltips, mono timestamps - and is the
+   floor. The one step below it, `text-xs` (12px), belongs to the `xs` button alone. No
+   `text-[Npx]`. The literals the scale replaced ran to 15 different sizes between 8px and 16px, and a 9.5px uppercase mono label is unreadable at arm's length. A caption
    is `text-sm text-muted-foreground` in sentence case - not uppercase, not tracked, not mono, not
-   smaller. Inputs are `text-lg md:text-sm` so iOS does not zoom on focus.
+   smaller. Inputs are `text-lg md:text-base` so iOS does not zoom on focus.
 8. **No app in the package.** No router imports, no server functions, no DB, no product domain
    data. Content is a prop. See "What is NOT in here" in `README.md`.
 9. **No decoration.** Every rule here is a token or a primitive default already; this is the list
@@ -180,7 +181,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Code is always a `CodeBlock`, never a bare `<pre>`.** Anything a person reads or copies as code - a command,
      a request, a config file, a response - is `code` plus its `language`: `bash` for curl, `.env` and CLI lines,
      `python`, `javascript`, `typescript`, `json`, `yaml`, `sql`, and `text` when it is none of them. The frame is
-     `--muted` with a 1px `--border`, `text-sm` mono and no shadow; long lines scroll sideways unless `wrap`. A
+     `--muted` with a 1px `--border`, `text-base` mono and no shadow; long lines scroll sideways unless `wrap`. A
      `title` (a file name or a caption) takes a row over the code with an outline Copy button on its right; without
      one the button is an icon in the corner with a tooltip, named by `copyLabel`. Copy reads Copied for a second
      and a half. Where the browser has no clipboard API (plain HTTP on an internal address) it copies the selection,
@@ -202,7 +203,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      full width on a phone and 24rem from `sm`, `p-panel` inside with its own scroll, a 1px border on its inner edge
      only and no rounding, the Dialog's overlay and close button. It fades in like every overlay and never slides. Use it
      where a settings column stops fitting beside the content, not as a second kind of dialog.
-   - **Sections that open in place are a `Collapsible`.** A plain `text-sm` trigger with a chevron before the text that
+   - **Sections that open in place are a `Collapsible`.** A plain `text-base` trigger with a chevron before the text that
      turns a quarter as it opens, then the content; no height animation, and the content fades. A model's reasoning, an
      Advanced group in a settings panel. It is not navigation: sibling pages are a `TabNav`.
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs

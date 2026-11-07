@@ -269,7 +269,7 @@ function TabbedSearchList<T>({
                                                     value={entry}
                                                     onClick={() => onPick(entry)}
                                                     data-current={current ? "" : undefined}
-                                                    className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm outline-none select-none data-current:not-data-highlighted:bg-accent data-highlighted:bg-secondary"
+                                                    className="flex cursor-pointer items-center gap-3 px-3 py-2 text-base outline-none select-none data-current:not-data-highlighted:bg-accent data-highlighted:bg-secondary"
                                                 >
                                                     {renderItem(entry)}
                                                     {current && (

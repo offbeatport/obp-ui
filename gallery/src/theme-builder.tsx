@@ -293,7 +293,7 @@ const typeLine = (id: string): string => {
 
 function FontRoles({ pairing }: { pairing: TypePairing }) {
     return (
-        <span className="grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 text-left text-sm">
+        <span className="grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 text-left text-base">
             {FONT_ROLES.map((role) => (
                 <Fragment key={role.key}>
                     <span className="text-muted-foreground group-data-selected/select-item:text-accent-foreground/80">
@@ -340,8 +340,8 @@ function Strip({ preset }: { preset: Pick<ThemePreset, "light" | "dark"> | Theme
 function Rail({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
     return (
         <section className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">{label}</h2>
-            {hint && <p className="text-sm text-muted-foreground">{hint}</p>}
+            <h2 className="text-base font-semibold text-foreground">{label}</h2>
+            {hint && <p className="text-base text-muted-foreground">{hint}</p>}
             {children}
         </section>
     );
@@ -390,7 +390,7 @@ function StatusRow({
     return (
         <div className="space-y-1.5 rounded-lg border border-border-soft p-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-medium capitalize">{name}</span>
+                <span className="text-base font-medium capitalize">{name}</span>
                 <span className="flex items-center gap-1.5">
                     <span
                         className="rounded-md border px-1.5 text-sm leading-5 font-medium"
@@ -407,7 +407,7 @@ function StatusRow({
                     <span
                         title={`filled label ${filled.toFixed(2)}:1 · status text on soft ${onSoft.toFixed(2)}:1`}
                         className={cn(
-                            "font-mono text-sm tabular-nums",
+                            "font-mono text-base tabular-nums",
                             filledPass && onSoft >= 4.5
                                 ? "text-success"
                                 : filledPass
@@ -469,13 +469,13 @@ function Floors({ colors }: { colors: ThemePaletteColors }) {
                 const pass = r >= c.floor;
                 return (
                     <div key={c.label} className="flex items-baseline justify-between gap-2">
-                        <dt className="truncate text-sm text-muted-foreground">
+                        <dt className="truncate text-base text-muted-foreground">
                             {c.label}
                             {c.binding && <span className="ml-1 text-faint">§1</span>}
                         </dt>
                         <dd
                             className={cn(
-                                "font-mono text-sm font-semibold tabular-nums",
+                                "font-mono text-base font-semibold tabular-nums",
                                 pass
                                     ? "text-success"
                                     : c.binding
@@ -652,10 +652,10 @@ function Knob({
     return (
         <div>
             <div className="flex items-baseline justify-between gap-2">
-                <span className="text-sm font-medium">{knob.label}</span>
+                <span className="text-base font-medium">{knob.label}</span>
                 <span
                     className={cn(
-                        "font-mono text-sm tabular-nums",
+                        "font-mono text-base tabular-nums",
                         value === neutral ? "text-faint" : "text-primary",
                     )}
                 >
@@ -675,7 +675,7 @@ function Knob({
                 className="mt-1 h-5 w-full cursor-pointer"
                 style={{ accentColor: "var(--primary)" }}
             />
-            <p className="text-sm leading-snug text-faint">{knob.hint}</p>
+            <p className="text-base leading-snug text-faint">{knob.hint}</p>
         </div>
     );
 }
@@ -805,7 +805,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                 />
                 <div className="ml-auto flex items-center gap-2">
                     <Switch id="live" checked={live} onCheckedChange={setLive} />
-                    <Label htmlFor="live" className="mr-2 text-sm text-muted-foreground">
+                    <Label htmlFor="live" className="mr-2 text-base text-muted-foreground">
                         Apply live
                     </Label>
                     <Button size="sm" variant="outline" onClick={copy}>
@@ -925,7 +925,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                 </Button>
                             </div>
                             <details className="group">
-                                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+                                <summary className="cursor-pointer text-base text-muted-foreground hover:text-foreground">
                                     Adjust
                                 </summary>
                                 <div className="pt-3">
@@ -942,7 +942,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                             <button
                                                 type="button"
                                                 onClick={() => applySource(base, NEUTRAL_KNOBS)}
-                                                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                                className="text-base text-muted-foreground underline underline-offset-4 hover:text-foreground"
                                             >
                                                 Back to{" "}
                                                 {themePaletteFor(base.palette)?.name ??
@@ -1026,12 +1026,12 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                     </section>
 
                     <section className="rounded-xl border border-border bg-card p-4">
-                        <h3 className="mb-2 text-sm font-semibold">Contrast</h3>
+                        <h3 className="mb-2 text-base font-semibold">Contrast</h3>
                         <Floors colors={draft[mode]} />
                     </section>
 
                     <details className="rounded-xl border border-border bg-card p-4">
-                        <summary className="cursor-pointer text-sm font-semibold">
+                        <summary className="cursor-pointer text-base font-semibold">
                             Status colours
                         </summary>
                         <div className="space-y-2 pt-3">
@@ -1056,7 +1056,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                 <button
                                     type="button"
                                     onClick={() => clearStatus(mode)}
-                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                    className="text-base text-muted-foreground underline underline-offset-4 hover:text-foreground"
                                 >
                                     Put the {mode} status hues back to the kit's
                                 </button>
@@ -1065,7 +1065,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                                 <button
                                     type="button"
                                     onClick={() => clearStatus(mode)}
-                                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                                    className="text-base text-muted-foreground underline underline-offset-4 hover:text-foreground"
                                 >
                                     Back to the kit's status colours
                                 </button>
@@ -1074,8 +1074,8 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                     </details>
 
                     <details className="rounded-xl border border-border bg-card p-4">
-                        <summary className="cursor-pointer text-sm font-semibold">CSS</summary>
-                        <pre className="mt-3 max-h-[32rem] overflow-auto font-mono text-sm leading-relaxed text-muted-foreground">
+                        <summary className="cursor-pointer text-base font-semibold">CSS</summary>
+                        <pre className="mt-3 max-h-[32rem] overflow-auto font-mono text-base leading-relaxed text-muted-foreground">
                             {css}
                         </pre>
                     </details>

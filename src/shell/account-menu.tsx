@@ -55,7 +55,7 @@ function ThemeRow({
     return (
         <div
             className={cn(
-                "flex items-center gap-2 px-2 py-0 text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+                "flex items-center gap-2 px-2 py-0 text-base [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
                 className,
             )}
         >

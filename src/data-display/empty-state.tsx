@@ -25,7 +25,7 @@ const ICON: Record<EmptyStateVariant, string> = {
 };
 
 const TITLE: Record<EmptyStateVariant, string> = {
-    rail: "text-sm font-semibold text-foreground",
+    rail: "text-base font-semibold text-foreground",
     panel: "text-base font-semibold",
     plate: "text-base font-semibold",
 };

@@ -151,7 +151,7 @@ export function ThemePicker({
                     <button
                         type="button"
                         onClick={startCustom}
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-base font-medium hover:bg-accent hover:text-accent-foreground"
                     >
                         <SlidersHorizontalIcon className="size-4" />
                         {custom ? "Compare presets, edit yours…" : "Compare presets, make one…"}
@@ -213,7 +213,7 @@ function PresetRow({
         >
             <Chip preset={p} mode={mode} />
             <span className="min-w-0 flex-1">
-                <span className="block text-sm font-medium">{p.name}</span>
+                <span className="block text-base font-medium">{p.name}</span>
                 <span className="mt-0.5 block text-sm leading-snug text-muted-foreground">
                     {p.note}
                 </span>
@@ -230,7 +230,7 @@ function Group({ label, hint, children }: { label: string; hint: string; childre
     return (
         <section className="space-y-2">
             <div className="flex flex-wrap items-baseline gap-x-2">
-                <h3 className="text-sm font-semibold">{label}</h3>
+                <h3 className="text-base font-semibold">{label}</h3>
                 <p className="text-sm text-muted-foreground">{hint}</p>
             </div>
             {children}
@@ -371,7 +371,7 @@ function CustomThemeDialog({
                                     theme.setThemePref(m);
                                 }}
                                 className={cn(
-                                    "rounded px-3 py-1 text-sm font-medium capitalize",
+                                    "rounded px-3 py-1 text-base font-medium capitalize",
                                     mode === m
                                         ? "bg-primary text-primary-foreground"
                                         : "text-muted-foreground hover:text-foreground",
@@ -399,7 +399,7 @@ function CustomThemeDialog({
                                     onSelect={() => resetTo(p)}
                                     title={p.note}
                                 >
-                                    <span className="block text-sm font-medium">{p.name}</span>
+                                    <span className="block text-base font-medium">{p.name}</span>
                                     <span className="mt-0.5 block font-mono text-sm capitalize leading-snug text-faint">
                                         {axisLine(p)}
                                     </span>
@@ -499,7 +499,7 @@ function CustomThemeDialog({
                                         className="block size-9 flex-none border-2 border-current"
                                         style={{ borderRadius: r.radius }}
                                     />
-                                    <span className="text-sm font-medium">{r.name}</span>
+                                    <span className="text-base font-medium">{r.name}</span>
                                 </Option>
                             ))}
                         </div>
@@ -520,7 +520,7 @@ function CustomThemeDialog({
                                         className="block w-6 flex-none rounded-sm bg-current"
                                         style={{ height: `calc(${s.spacing} * 9)` }}
                                     />
-                                    <span className="text-sm font-medium">{s.name}</span>
+                                    <span className="text-base font-medium">{s.name}</span>
                                 </Option>
                             ))}
                         </div>
@@ -561,19 +561,19 @@ function Preview({ preset, mode }: { preset: ThemePreset; mode: Theme }) {
                     mono · {spaceStepFor(preset.space)?.note ?? preset.space}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="flex h-8 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground">
+                    <span className="flex h-8 items-center rounded-md bg-primary px-3 text-base font-medium text-primary-foreground">
                         Primary
                     </span>
-                    <span className="flex h-8 items-center rounded-md bg-accent px-3 text-sm font-medium text-accent-foreground">
+                    <span className="flex h-8 items-center rounded-md bg-accent px-3 text-base font-medium text-accent-foreground">
                         Accent
                     </span>
-                    <span className="flex h-8 items-center rounded-md border border-input px-3 text-sm">
+                    <span className="flex h-8 items-center rounded-md border border-input px-3 text-base">
                         Outline
                     </span>
-                    <span className="flex h-8 items-center rounded-md bg-success-soft px-3 text-sm text-success">
+                    <span className="flex h-8 items-center rounded-md bg-success-soft px-3 text-base text-success">
                         Success
                     </span>
-                    <span className="flex h-8 items-center rounded-md bg-destructive-soft px-3 text-sm text-destructive">
+                    <span className="flex h-8 items-center rounded-md bg-destructive-soft px-3 text-base text-destructive">
                         Blocked
                     </span>
                 </div>

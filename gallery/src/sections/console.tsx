@@ -114,7 +114,7 @@ export function ConsoleSection() {
             >
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
-                        <p className="mb-2 font-mono text-sm text-faint">variant="console"</p>
+                        <p className="mb-2 font-mono text-base text-faint">variant="console"</p>
                         <div className="rounded-lg border border-border bg-card p-3 font-mono">
                             {KINDS.map((kind) => (
                                 <LogLine
@@ -126,7 +126,7 @@ export function ConsoleSection() {
                         </div>
                     </div>
                     <div>
-                        <p className="mb-2 font-mono text-sm text-faint">variant="run"</p>
+                        <p className="mb-2 font-mono text-base text-faint">variant="run"</p>
                         <LogView
                             variant="run"
                             lines={SAMPLE}

@@ -1002,7 +1002,7 @@ export function DataGrid<T>({
                 ref={tableRef}
                 aria-busy={loading || undefined}
                 data-slot="table"
-                className={cn("w-full caption-bottom text-sm", !fixed && minWidth)}
+                className={cn("w-full caption-bottom text-base", !fixed && minWidth)}
                 style={
                     fixed
                         ? { tableLayout: "fixed", minWidth: `${fixedTotal + MIN_COLUMN * 2}px` }

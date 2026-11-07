@@ -245,7 +245,7 @@ export function UtilitiesSection() {
                         },
                     ]}
                 />
-                <div className="mt-3 font-mono text-sm">
+                <div className="mt-3 font-mono text-base">
                     <ClientOnly
                         fallback={<span className="text-faint">server / pre-hydration</span>}
                     >
@@ -258,7 +258,7 @@ export function UtilitiesSection() {
                 name="prePaintScript · consoleTabPref · createDomClassPref"
                 note="Resolves <html> classes before first paint."
             >
-                <pre className="overflow-x-auto rounded-lg border border-border bg-secondary p-3 font-mono text-sm">
+                <pre className="overflow-x-auto rounded-lg border border-border bg-secondary p-3 font-mono text-base">
                     <code>{prePaintScript()}</code>
                 </pre>
                 <Api
@@ -327,7 +327,7 @@ export function UtilitiesSection() {
                         </Cell>
                     ))}
                 </Row>
-                <ul className="flex flex-col gap-1 text-sm">
+                <ul className="flex flex-col gap-1 text-base">
                     {["tickets.csv", "intents.jsonl", "contracts.parquet", "README"].map((name) => (
                         <li key={name} className="flex items-center gap-2">
                             <FileTypeIcon name={name} className="size-4" />

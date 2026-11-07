@@ -261,7 +261,7 @@ function CodeBlock({
             <pre
                 ref={pre}
                 className={cn(
-                    "min-h-0 overflow-auto p-3 font-mono text-sm",
+                    "min-h-0 overflow-auto p-3 font-mono text-base",
                     wrap ? "whitespace-pre-wrap break-words" : "whitespace-pre",
                     copy && !header && "pr-12",
                 )}

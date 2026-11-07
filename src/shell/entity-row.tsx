@@ -109,7 +109,7 @@ export function EntityRow({
             >
                 {avatarNode}
                 <span className="min-w-0 flex-1">
-                    <span className="flex items-center gap-1.5 text-sm font-semibold">
+                    <span className="flex items-center gap-1.5 text-base font-semibold">
                         <span className="truncate">{name}</span>
                         {badge !== undefined && badge !== null && badge !== false && (
                             <span

@@ -35,7 +35,7 @@ export function TitleBar({
             {title !== undefined && (
                 <div
                     className={cn(
-                        "min-w-0 truncate text-sm font-semibold text-muted-foreground",
+                        "min-w-0 truncate text-base font-semibold text-muted-foreground",
                         titleClassName,
                     )}
                 >

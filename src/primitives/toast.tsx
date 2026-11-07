@@ -44,7 +44,7 @@ function ToastList() {
             toast={toast}
             data-slot="toast"
             className={cn(
-                "flex w-full items-start gap-2.5 rounded-lg border border-border bg-popover p-3 text-sm text-popover-foreground shadow-e2 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                "flex w-full items-start gap-2.5 rounded-lg border border-border bg-popover p-3 text-base text-popover-foreground shadow-e2 outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 "[transform:translate(var(--toast-swipe-movement-x),var(--toast-swipe-movement-y))] data-swiping:select-none data-limited:hidden",
                 "transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none",
             )}

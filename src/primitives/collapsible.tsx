@@ -64,7 +64,7 @@ function CollapsibleTrigger({
             data-slot="collapsible-trigger"
             className={cn(
                 !child &&
-                    "inline-flex max-w-full items-center gap-1 rounded-md text-left text-sm font-medium text-foreground outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-disabled:opacity-50 [&:hover>[data-slot=collapsible-chevron]]:text-foreground",
+                    "inline-flex max-w-full items-center gap-1 rounded-md text-left text-base font-medium text-foreground outline-none select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-disabled:opacity-50 [&:hover>[data-slot=collapsible-chevron]]:text-foreground",
                 className,
             )}
             nativeButton={nativeButton ?? inferNativeButton(child ?? render)}

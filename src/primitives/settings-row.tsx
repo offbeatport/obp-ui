@@ -98,7 +98,7 @@ function SettingsRow({
                         htmlFor={id}
                         onClick={toggle ? undefined : focusInstead}
                         className={cn(
-                            "text-sm font-medium select-none",
+                            "text-base font-medium select-none",
                             toggle && "after:absolute after:inset-0 after:rounded-md",
                             pressable ? "cursor-pointer" : "cursor-default",
                         )}

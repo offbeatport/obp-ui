@@ -123,7 +123,7 @@ export function ChatEmptyState({ avatar, title, description, className }: ChatEm
             )}
         >
             {avatar}
-            <p className="mt-3 text-sm font-medium">{title}</p>
+            <p className="mt-3 text-base font-medium">{title}</p>
             {description !== undefined && <p className="mt-1 text-sm text-faint">{description}</p>}
         </div>
     );

@@ -93,7 +93,7 @@ const DIFFERS_EDGE =
     "before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary";
 const SCROLLER =
     "overflow-x-auto overscroll-x-contain [scroll-padding-inline-start:var(--compare-label)]";
-const HEADER_CELL = cn(CELL, "relative py-3 text-left text-sm font-normal");
+const HEADER_CELL = cn(CELL, "relative py-3 text-left text-base font-normal");
 
 const INSTRUCTIONS = {
     draggable:
@@ -310,7 +310,7 @@ function DragPreview({ column }: { column: CompareColumn | undefined }) {
             {column && (
                 <div
                     data-slot="compare-table-preview"
-                    className="h-full cursor-grabbing rounded-lg border bg-popover px-3 py-3 text-sm text-popover-foreground shadow-e2"
+                    className="h-full cursor-grabbing rounded-lg border bg-popover px-3 py-3 text-base text-popover-foreground shadow-e2"
                 >
                     <div inert className="h-full">
                         {column.header}
@@ -459,7 +459,7 @@ function CompareTable({
                     style={{ top: stickyTop }}
                 >
                     <div role="row" className={ROW}>
-                        <div role="columnheader" className={cn(PINNED, SURFACE, "p-3 text-sm")}>
+                        <div role="columnheader" className={cn(PINNED, SURFACE, "p-3 text-base")}>
                             {corner}
                         </div>
                         {columns.map((column) =>
@@ -503,7 +503,7 @@ function CompareTable({
                                     <div
                                         role="rowheader"
                                         aria-colspan={count + 1}
-                                        className="sticky left-0 w-fit px-3 py-1.5 text-sm font-semibold text-foreground"
+                                        className="sticky left-0 w-fit px-3 py-1.5 text-base font-semibold text-foreground"
                                     >
                                         {section.title}
                                     </div>
@@ -527,7 +527,7 @@ function CompareTable({
                                             role="rowheader"
                                             className={cn(
                                                 PINNED,
-                                                "px-3 py-2 text-sm",
+                                                "px-3 py-2 text-base",
                                                 row.differs
                                                     ? cn(
                                                           "bg-(--compare-differs) font-medium text-foreground",
@@ -547,7 +547,7 @@ function CompareTable({
                                                 role="cell"
                                                 className={cn(
                                                     CELL,
-                                                    "py-2 text-sm tabular-nums",
+                                                    "py-2 text-base tabular-nums",
                                                     row.differs
                                                         ? "bg-(--compare-differs) text-foreground"
                                                         : "text-muted-foreground",

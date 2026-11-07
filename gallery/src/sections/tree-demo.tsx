@@ -323,7 +323,7 @@ function FilterTreeDemo() {
                         onSelect={setSelected}
                         expandedIds={filtered ? [...expanded, ...filtered.expandedIds] : expanded}
                         onExpandedChange={setExpanded}
-                        empty={<p className="p-3 text-sm text-muted-foreground">No matches.</p>}
+                        empty={<p className="p-3 text-base text-muted-foreground">No matches.</p>}
                     />
                 </div>
             </div>

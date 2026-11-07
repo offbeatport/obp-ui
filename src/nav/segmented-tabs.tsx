@@ -24,7 +24,7 @@ export function SegmentedTabs({
                         aria-pressed={on}
                         onClick={() => onSelect(t.key)}
                         className={cn(
-                            "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-sm border px-2.5 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-sm border px-2.5 text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             on
                                 ? "border-transparent bg-tabs-active text-accent-foreground"
                                 : "border-transparent text-muted-foreground hover:text-foreground",

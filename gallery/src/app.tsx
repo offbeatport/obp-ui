@@ -213,7 +213,7 @@ function Gallery() {
                                 <a
                                     href={`#${s.id}`}
                                     className={cn(
-                                        "block px-2 pb-1 pt-5 text-sm font-medium text-muted-foreground",
+                                        "block px-2 pb-1 pt-5 text-base font-medium text-muted-foreground",
                                         active === s.id
                                             ? "text-foreground"
                                             : "text-muted-foreground",
@@ -227,7 +227,7 @@ function Gallery() {
                                         href={`#${sub.id}`}
                                         data-nav={sub.id}
                                         className={cn(
-                                            "block truncate rounded-sm px-2 py-1.5 text-sm font-semibold",
+                                            "block truncate rounded-sm px-2 py-1.5 text-base font-semibold",
                                             currentSpec === sub.id
                                                 ? "bg-accent text-accent-foreground"
                                                 : "text-muted-foreground hover:bg-secondary hover:text-foreground",
@@ -239,7 +239,7 @@ function Gallery() {
                             </div>
                         ))}
                     </nav>
-                    <div className="border-t border-border px-5 py-4 font-mono text-sm text-faint">
+                    <div className="border-t border-border px-5 py-4 font-mono text-base text-faint">
                         pnpm dev
                     </div>
                 </aside>
@@ -248,7 +248,7 @@ function Gallery() {
                     <header className="sticky top-0 z-20 border-b border-border bg-background">
                         <div className="mx-auto flex max-w-6xl items-center gap-4 px-8 py-4">
                             <h1 className="font-display text-lg font-semibold">obp-ui</h1>
-                            <p className="hidden text-sm text-muted-foreground md:block">
+                            <p className="hidden text-base text-muted-foreground md:block">
                                 every export, in both themes
                             </p>
                             <div className="ml-auto flex items-center gap-1">
@@ -278,7 +278,7 @@ function Gallery() {
                     </main>
 
                     <footer className="mx-auto max-w-6xl px-8 pb-16 pt-4">
-                        <p className="border-t border-border-soft pt-6 text-sm text-muted-foreground">
+                        <p className="border-t border-border-soft pt-6 text-base text-muted-foreground">
                             The law is <span className="font-mono">DESIGN.md</span>. Every export is
                             on this page except <span className="font-mono">ThemePicker</span> (in
                             the header) and the <span className="font-mono">*Props</span> types.

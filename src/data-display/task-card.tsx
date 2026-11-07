@@ -43,7 +43,7 @@ export function TaskCard({
         >
             <div className="flex items-center gap-2">
                 {n !== undefined && <span className="font-mono text-sm text-faint">#{n}</span>}
-                <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
+                <span className="min-w-0 flex-1 truncate text-base font-semibold text-foreground">
                     {title}
                 </span>
                 {chip !== undefined && <TaskStateChip color={accent}>{chip}</TaskStateChip>}

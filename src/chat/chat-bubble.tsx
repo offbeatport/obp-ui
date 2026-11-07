@@ -13,7 +13,7 @@ export const ASSISTANT_BUBBLE = "max-w-[78%] text-base leading-[1.55] py-[2px]";
 const PANEL_ROW = "flex max-w-full items-start gap-[11px]";
 const PANEL_USER_AVATAR =
     "mt-px grid size-7 shrink-0 place-items-center overflow-hidden rounded-[9px] bg-secondary font-display text-sm font-bold text-muted-foreground";
-const PANEL_BODY = "text-sm leading-normal";
+const PANEL_BODY = "text-base leading-normal";
 const PANEL_USER_BODY =
     "max-w-[300px] rounded-[14px_5px_14px_14px] bg-primary px-3.5 py-2.5 text-primary-foreground";
 const PANEL_ASSISTANT_BODY =

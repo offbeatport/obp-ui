@@ -51,10 +51,10 @@ function Selector({ def, name }: { def: TabSelectorDef; name: string }) {
     return (
         <article className="space-y-3">
             <div className="flex flex-wrap items-baseline gap-x-3">
-                <h3 className="font-mono text-sm font-semibold">
+                <h3 className="font-mono text-base font-semibold">
                     {String(def.id).padStart(2, "0")} · {name}
                 </h3>
-                <p className="text-sm text-muted-foreground">{def.blurb}</p>
+                <p className="text-base text-muted-foreground">{def.blurb}</p>
             </div>
             <div
                 className={
@@ -65,7 +65,7 @@ function Selector({ def, name }: { def: TabSelectorDef; name: string }) {
             >
                 {body}
             </div>
-            <p className="font-mono text-sm text-faint">active: {active}</p>
+            <p className="font-mono text-base text-faint">active: {active}</p>
         </article>
     );
 }

@@ -15,7 +15,7 @@ export type EmptyStateCardProps = {
 };
 
 const ACTION =
-    "mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-sm font-semibold text-muted-foreground hover:border-primary hover:bg-accent hover:text-accent-foreground";
+    "mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-border bg-transparent px-3 py-2 text-base font-semibold text-muted-foreground hover:border-primary hover:bg-accent hover:text-accent-foreground";
 
 export function EmptyStateCard({
     title,
@@ -33,7 +33,7 @@ export function EmptyStateCard({
                 className,
             )}
         >
-            <div className="text-sm font-[650] text-foreground">{title}</div>
+            <div className="text-base font-[650] text-foreground">{title}</div>
             {description !== undefined && (
                 <p className="m-2 text-sm leading-[1.45] text-faint">{description}</p>
             )}

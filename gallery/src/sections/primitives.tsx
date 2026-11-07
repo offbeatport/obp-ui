@@ -310,7 +310,7 @@ export function PrimitivesSection() {
                         </CardAction>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-base text-muted-foreground">
                             Slice 4 of 9 is in flight. The agent is waiting on a Stripe key before
                             it can wire checkout.
                         </p>
@@ -679,13 +679,13 @@ export function PrimitivesSection() {
                             <TabsTrigger value="grow">Grow</TabsTrigger>
                             <TabsTrigger value="run">Run</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="build" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="build" className="pt-3 text-base text-muted-foreground">
                             variant="default" - the filled pill list.
                         </TabsContent>
-                        <TabsContent value="grow" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="grow" className="pt-3 text-base text-muted-foreground">
                             Growth loops, channels, spend.
                         </TabsContent>
-                        <TabsContent value="run" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="run" className="pt-3 text-base text-muted-foreground">
                             Support, incidents, cost.
                         </TabsContent>
                     </Tabs>
@@ -695,13 +695,13 @@ export function PrimitivesSection() {
                             <TabsTrigger value="code">Source</TabsTrigger>
                             <TabsTrigger value="log">Build log</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="spec" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="spec" className="pt-3 text-base text-muted-foreground">
                             variant="line" - underlined, no fill.
                         </TabsContent>
-                        <TabsContent value="code" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="code" className="pt-3 text-base text-muted-foreground">
                             The repo the agent writes into.
                         </TabsContent>
-                        <TabsContent value="log" className="pt-3 text-sm text-muted-foreground">
+                        <TabsContent value="log" className="pt-3 text-base text-muted-foreground">
                             Every run, every cost.
                         </TabsContent>
                     </Tabs>
@@ -799,8 +799,8 @@ export function PrimitivesSection() {
                             <Button variant="outline">Open a popover</Button>
                         </PopoverTrigger>
                         <PopoverContent align="start">
-                            <p className="text-sm font-semibold">Anything goes in here</p>
-                            <p className="mt-1 text-sm text-muted-foreground">
+                            <p className="text-base font-semibold">Anything goes in here</p>
+                            <p className="mt-1 text-base text-muted-foreground">
                                 Same border, surface, elevation and entrance as SelectContent, so
                                 the two read as one object when opened side by side.
                             </p>
@@ -892,7 +892,7 @@ export function PrimitivesSection() {
                 note="An info icon whose note opens on hover and on click or tap; Escape or a click outside closes it."
             >
                 <Row>
-                    <span className="flex items-center gap-1 text-sm">
+                    <span className="flex items-center gap-1 text-base">
                         Fits this machine
                         <InfoTip label="About hardware fit">
                             Shows models that fit, or fit with limited headroom, on this machine: 12
@@ -968,10 +968,10 @@ export function PrimitivesSection() {
             >
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div>
-                        <p className="text-sm text-muted-foreground">above</p>
+                        <p className="text-base text-muted-foreground">above</p>
                         <Separator className="my-3" />
-                        <p className="text-sm text-muted-foreground">below</p>
-                        <div className="mt-4 flex h-8 items-center gap-3 text-sm">
+                        <p className="text-base text-muted-foreground">below</p>
+                        <div className="mt-4 flex h-8 items-center gap-3 text-base">
                             <span>spec</span>
                             <Separator orientation="vertical" />
                             <span>build</span>
@@ -982,7 +982,7 @@ export function PrimitivesSection() {
                     <ScrollArea className="h-40 rounded-lg border border-border p-3">
                         <div className="space-y-1.5">
                             {Array.from({ length: 14 }, (_, i) => (
-                                <p key={`line-${i + 1}`} className="font-mono text-sm">
+                                <p key={`line-${i + 1}`} className="font-mono text-base">
                                     {String(i + 1).padStart(2, "0")} · the log keeps going
                                 </p>
                             ))}
@@ -1032,7 +1032,7 @@ function DropZoneDemo() {
             onFiles={(files) => setNames(files.map((file) => file.name))}
         >
             {names.length > 0 && (
-                <p className="text-sm text-muted-foreground">{`Picked ${names.join(", ")}`}</p>
+                <p className="text-base text-muted-foreground">{`Picked ${names.join(", ")}`}</p>
             )}
         </DropZone>
     );

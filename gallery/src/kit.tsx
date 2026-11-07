@@ -16,7 +16,7 @@ export function Section({
         <section id={id} className="scroll-mt-24">
             <header className="border-b border-border-soft pb-4">
                 <h2 className="font-display text-2xl font-semibold">{title}</h2>
-                <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">{blurb}</p>
+                <p className="mt-1.5 max-w-2xl text-base text-muted-foreground">{blurb}</p>
             </header>
             <div className="mt-8 space-y-12">{children}</div>
         </section>
@@ -39,8 +39,8 @@ export function Spec({
     return (
         <article data-spec={name} className="scroll-mt-24 space-y-3">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                <h3 className="font-mono text-sm font-semibold text-foreground">{name}</h3>
-                <p className="text-sm text-muted-foreground">{note}</p>
+                <h3 className="font-mono text-base font-semibold text-foreground">{name}</h3>
+                <p className="text-base text-muted-foreground">{note}</p>
             </div>
             <div
                 className={cn(
@@ -69,7 +69,7 @@ export function Cell({
 }) {
     return (
         <div className={cn("flex min-w-0 flex-col items-start gap-2 self-start", className)}>
-            <span className="font-mono text-sm text-faint">{label}</span>
+            <span className="font-mono text-base text-faint">{label}</span>
             {children}
         </div>
     );
@@ -98,7 +98,7 @@ export function Frame({
 }
 
 export function Note({ children }: { children: ReactNode }) {
-    return <p className="text-sm text-muted-foreground">{children}</p>;
+    return <p className="text-base text-muted-foreground">{children}</p>;
 }
 
 export function Api({
@@ -110,11 +110,11 @@ export function Api({
         <dl className="divide-y divide-border-soft">
             {items.map((it) => (
                 <div key={it.name} className="grid gap-1 py-2.5 sm:grid-cols-[16rem_1fr]">
-                    <dt className="font-mono text-sm font-semibold text-foreground">{it.name}</dt>
-                    <dd className="text-sm text-muted-foreground">
+                    <dt className="font-mono text-base font-semibold text-foreground">{it.name}</dt>
+                    <dd className="text-base text-muted-foreground">
                         {it.note}
                         {it.value !== undefined && (
-                            <span className="ml-2 font-mono text-sm text-faint">{it.value}</span>
+                            <span className="ml-2 font-mono text-base text-faint">{it.value}</span>
                         )}
                     </dd>
                 </div>

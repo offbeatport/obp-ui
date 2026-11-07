@@ -53,7 +53,7 @@ function RailReadout() {
             <Button size="sm" variant="outline" onClick={rail.toggle}>
                 {collapsed ? "Expand" : "Collapse"} the rail
             </Button>
-            <span className="font-mono text-sm text-faint">
+            <span className="font-mono text-base text-faint">
                 useRailCollapsed() → {String(collapsed)}
             </span>
         </Row>
@@ -63,7 +63,7 @@ function RailReadout() {
 function WindowReadout() {
     const win = useWindowControls();
     return (
-        <p className="mt-2 font-mono text-sm text-faint">
+        <p className="mt-2 font-mono text-base text-faint">
             useWindowControls() → {win ? `${win.platform} · maximized ${win.isMaximized}` : "null"}
         </p>
     );
@@ -164,14 +164,16 @@ export function ShellSection() {
                                     all healthy
                                 </span>
                             </div>
-                            <p className="max-w-prose text-sm text-muted-foreground">
+                            <p className="max-w-prose text-base text-muted-foreground">
                                 The workspace column is a slot - AppShell owns nothing but the grid,
                                 the collapse state and where the rail sits. It also takes a{" "}
                                 <code>console</code> slot for a globally-mounted overlay, kept out
                                 of the grid so its root div can't take a cell.
                             </p>
                             <RailReadout />
-                            <p className="font-mono text-sm text-faint">selected row: {selected}</p>
+                            <p className="font-mono text-base text-faint">
+                                selected row: {selected}
+                            </p>
                         </div>
                     </AppShell>
                 </Frame>
@@ -206,7 +208,7 @@ export function ShellSection() {
                             actions={<WindowControls />}
                         />
                         <div className="p-6">
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-base text-muted-foreground">
                                 Window content. <code>platform: "windows"</code> here - on macOS the
                                 OS paints the traffic lights and{" "}
                                 <code>&lt;WindowControls /&gt;</code> renders nothing unless you

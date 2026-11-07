@@ -115,8 +115,10 @@ function SwatchGrid({ items }: { items: Swatch[] }) {
             {items.map((s) => (
                 <div key={s.token} className="min-w-0">
                     <div className={`h-14 rounded-lg border border-border ${s.cls}`} />
-                    <div className="mt-2 truncate font-mono text-sm text-foreground">{s.token}</div>
-                    <div className="truncate text-sm text-muted-foreground">{s.note}</div>
+                    <div className="mt-2 truncate font-mono text-base text-foreground">
+                        {s.token}
+                    </div>
+                    <div className="truncate text-base text-muted-foreground">{s.note}</div>
                 </div>
             ))}
         </div>
@@ -151,14 +153,16 @@ export function TokensSection() {
                             key={s.token}
                             className="flex flex-wrap items-center gap-3 border-b border-border-soft pb-3 last:border-b-0 last:pb-0"
                         >
-                            <span className="w-32 font-mono text-sm font-semibold">{s.token}</span>
+                            <span className="w-32 font-mono text-base font-semibold">
+                                {s.token}
+                            </span>
                             <span className={`h-8 w-16 rounded-lg ${s.solid}`} />
-                            <span className={`rounded-md px-1.5 font-mono text-sm ${s.soft}`}>
+                            <span className={`rounded-md px-1.5 font-mono text-base ${s.soft}`}>
                                 -soft
                             </span>
                             <span className={`size-2 rounded-full ${s.dot}`} />
                             <Badge variant={s.badge}>{s.token}</Badge>
-                            <span className="text-sm text-muted-foreground">{s.meaning}</span>
+                            <span className="text-base text-muted-foreground">{s.meaning}</span>
                         </div>
                     ))}
                 </div>
@@ -172,7 +176,7 @@ export function TokensSection() {
                 name="Syntax"
                 note="Eight inks for code, shared by CodeBlock, SqlEditor and JsonEditor. Each clears 5:1 on the page, the card and --muted in every palette, both modes; operator and punctuation follow --muted-foreground."
             >
-                <div className="grid gap-x-6 gap-y-2 rounded-md border border-border bg-muted p-3 font-mono text-sm sm:grid-cols-[14rem_1fr]">
+                <div className="grid gap-x-6 gap-y-2 rounded-md border border-border bg-muted p-3 font-mono text-base sm:grid-cols-[14rem_1fr]">
                     {SYNTAX.map((s) => (
                         <div key={s.token} className="contents">
                             <span className="text-muted-foreground">{s.token}</span>
@@ -190,24 +194,24 @@ export function TokensSection() {
                     {RADII.map((r) => (
                         <div key={r.cls} className="flex flex-col items-start gap-2">
                             <div className={`size-16 border border-border bg-secondary ${r.cls}`} />
-                            <span className="font-mono text-sm text-faint">{r.cls}</span>
-                            <span className="font-mono text-sm text-faint">{r.token}</span>
+                            <span className="font-mono text-base text-faint">{r.cls}</span>
+                            <span className="font-mono text-base text-faint">{r.token}</span>
                         </div>
                     ))}
                 </Row>
                 <Row className="mt-6 gap-6">
                     <div className="rounded-xl border border-border bg-card px-6 py-5 shadow-e1">
-                        <span className="font-mono text-sm">shadow-e1</span>
+                        <span className="font-mono text-base">shadow-e1</span>
                     </div>
                     <div className="rounded-xl border border-border bg-card px-6 py-5 shadow-e2">
-                        <span className="font-mono text-sm">shadow-e2</span>
+                        <span className="font-mono text-base">shadow-e2</span>
                     </div>
                 </Row>
             </Spec>
 
             <Spec
                 name="Type"
-                note="Two families do the work, one is optional. text-sm (13px) is the floor."
+                note="Two families do the work, one is optional. text-base (14px) is the default; text-sm (13px) is the floor, for secondary text."
             >
                 <div className="space-y-4">
                     <p className="font-display text-2xl font-semibold">

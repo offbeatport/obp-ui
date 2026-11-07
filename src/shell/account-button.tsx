@@ -35,7 +35,7 @@ export function AccountButton({
                 {initial}
             </span>
             <span className={cn("min-w-0 flex-1", railFade(collapsed))}>
-                <span className="block truncate text-sm font-semibold">{name}</span>
+                <span className="block truncate text-base font-semibold">{name}</span>
                 <span className="block truncate text-sm text-faint">{sub}</span>
             </span>
             <ChevronUp className={cn("size-4 flex-none text-faint", railFade(collapsed))} />

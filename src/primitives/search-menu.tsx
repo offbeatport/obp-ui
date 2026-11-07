@@ -153,7 +153,7 @@ function SearchMenu<T>({
                                                 key={itemKey(item)}
                                                 value={item}
                                                 onClick={() => pick(item)}
-                                                className="flex cursor-pointer flex-col gap-0.5 px-3 py-1.5 text-sm outline-none select-none data-highlighted:bg-secondary"
+                                                className="flex cursor-pointer flex-col gap-0.5 px-3 py-1.5 text-base outline-none select-none data-highlighted:bg-secondary"
                                             >
                                                 {renderItem(item)}
                                             </Autocomplete.Item>

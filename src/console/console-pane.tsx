@@ -9,7 +9,7 @@ import { useNearBottomScroll } from "./use-near-bottom";
 
 const HEADER = "flex flex-none items-center gap-2 border-b border-border px-3 py-[9px]";
 const TITLE =
-    "overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-foreground";
+    "overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-foreground";
 const CHIP = "ml-auto flex-none rounded-md px-1.5 font-mono text-sm leading-5 font-medium";
 
 export type ConsoleStatusChip = {
