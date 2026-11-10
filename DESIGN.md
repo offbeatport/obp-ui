@@ -288,10 +288,6 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **One hover, one selected.** Hover and keyboard highlight fill with `--secondary` everywhere:
      controls, options, menu items, nav items. `--accent` marks what is selected: the current nav
      item, the chosen option. Rails sit on the page colour behind a 1px border.
-   - **Icons are functional, never decorative.** Keep the conventional glyphs - close, chevron,
-     tick, search, external-link, drag handle. No icon beside every heading, nav item or stat, no
-     icon in a tinted circle, no emoji in UI. An icon-only button carries an `aria-label` and a
-     tooltip; anything that is not a universal symbol gets a text label instead.
    - **Motion is feedback, not show.** Overlays fade in ≤150ms; no zoom-in, no bounce, no sliding
      pill, no hover lift, no `transition-all`. Buttons and links change state instantly
      (`base.css` zeroes their transitions). The checkbox is the one control that
