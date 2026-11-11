@@ -107,9 +107,18 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec name="TabNav" note="Underlined link tabs, active by pathname.">
+            <Spec
+                name="TabNav"
+                note="Underlined link tabs, active by pathname; 36px, size sm 32px."
+            >
                 <UIProvider pathname="/settings/guardrails">
                     <TabNav tabs={SETTINGS_TABS} label="Settings pages" className="mb-3" />
+                    <TabNav
+                        tabs={SETTINGS_TABS}
+                        label="Settings pages, small"
+                        size="sm"
+                        className="mb-3"
+                    />
                 </UIProvider>
                 <Note>
                     Mounted inside a nested provider claiming <code>/settings/guardrails</code>.
@@ -121,9 +130,13 @@ export function NavSection() {
                 </Note>
             </Spec>
 
-            <Spec name="SegmentedTabs" note="Pill slides behind the active tab.">
+            <Spec
+                name="SegmentedTabs"
+                note="Square, 36px; the active tab takes the selection fill. size sm is 34px."
+            >
                 <Row className="gap-5">
                     <SegmentedTabs tabs={SEG_TABS} active={tab} onSelect={setTab} />
+                    <SegmentedTabs tabs={SEG_TABS} active={tab} onSelect={setTab} size="sm" />
                     <Note>
                         active: <span className="font-mono">{tab}</span>
                     </Note>

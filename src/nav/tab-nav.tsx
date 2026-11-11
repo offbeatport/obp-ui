@@ -15,10 +15,12 @@ export function TabNav({
     tabs,
     label,
     className,
+    size = "default",
 }: {
     tabs: TabNavItem[];
     label?: string;
     className?: string;
+    size?: "default" | "sm";
 }) {
     const { pathname } = useNav();
     const current = activeHref(tabs, pathname);
@@ -32,7 +34,8 @@ export function TabNav({
                         href={t.href}
                         aria-current={active ? "page" : undefined}
                         className={cn(
-                            "-mb-px inline-flex h-8 items-center whitespace-nowrap rounded-sm border-b-2 px-3 text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                            "-mb-px inline-flex items-center whitespace-nowrap rounded-none border-b-2 text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                            size === "sm" ? "h-8 px-3" : "h-9 px-3.5",
                             active
                                 ? "border-primary text-foreground"
                                 : "border-transparent text-muted-foreground hover:text-foreground",

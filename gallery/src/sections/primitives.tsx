@@ -670,7 +670,7 @@ export function PrimitivesSection() {
 
             <Spec
                 name="Tabs"
-                note="two list variants - the filled default and the underlined line."
+                note="two list variants - the filled default and the underlined line - square, 36px, with a 32px size sm."
             >
                 <div className="grid gap-8 lg:grid-cols-2">
                     <Tabs defaultValue="build">
@@ -680,7 +680,7 @@ export function PrimitivesSection() {
                             <TabsTrigger value="run">Run</TabsTrigger>
                         </TabsList>
                         <TabsContent value="build" className="pt-3 text-base text-muted-foreground">
-                            variant="default" - the filled pill list.
+                            variant="default" - the filled list.
                         </TabsContent>
                         <TabsContent value="grow" className="pt-3 text-base text-muted-foreground">
                             Growth loops, channels, spend.
@@ -703,6 +703,26 @@ export function PrimitivesSection() {
                         </TabsContent>
                         <TabsContent value="log" className="pt-3 text-base text-muted-foreground">
                             Every run, every cost.
+                        </TabsContent>
+                    </Tabs>
+                    <Tabs defaultValue="build">
+                        <TabsList size="sm">
+                            <TabsTrigger value="build">Build</TabsTrigger>
+                            <TabsTrigger value="grow">Grow</TabsTrigger>
+                            <TabsTrigger value="run">Run</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="build" className="pt-3 text-base text-muted-foreground">
+                            size="sm" - 32px, for dense toolbars.
+                        </TabsContent>
+                    </Tabs>
+                    <Tabs defaultValue="spec">
+                        <TabsList variant="line" size="sm">
+                            <TabsTrigger value="spec">Spec</TabsTrigger>
+                            <TabsTrigger value="code">Source</TabsTrigger>
+                            <TabsTrigger value="log">Build log</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="spec" className="pt-3 text-base text-muted-foreground">
+                            variant="line" size="sm".
                         </TabsContent>
                     </Tabs>
                 </div>

@@ -8,13 +8,15 @@ export function SegmentedTabs({
     tabs,
     active,
     onSelect,
+    size = "default",
 }: {
     tabs: SegTab[];
     active: string;
     onSelect: (key: string) => void;
+    size?: "default" | "sm";
 }) {
     return (
-        <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-md border border-border bg-tabs-background p-0.5">
+        <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-none border border-border bg-tabs-background p-0.5">
             {tabs.map((t) => {
                 const on = t.key === active;
                 return (
@@ -24,7 +26,8 @@ export function SegmentedTabs({
                         aria-pressed={on}
                         onClick={() => onSelect(t.key)}
                         className={cn(
-                            "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-sm border px-2.5 text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            "inline-flex items-center gap-1.5 whitespace-nowrap rounded-none border text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            size === "sm" ? "h-7 px-2.5" : "h-7.5 px-3",
                             on
                                 ? "border-transparent bg-tabs-active text-accent-foreground"
                                 : "border-transparent text-muted-foreground hover:text-foreground",

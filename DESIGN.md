@@ -122,7 +122,7 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      keys - not whole tables, not headings, not labels. Number columns get `tabular-nums`
      (`<table>`, `<time>`, `<data>`, `<output>` and `TableCell` already have it). `font-serif`
      is for long-form reading only.
-   - **Density.** Controls are 32px (`h-8`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-24px (`px-3
+   - **Density.** Controls are 32px (`h-8`), tab rows 36px (`h-9`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-24px (`px-3
      py-1.5` in `TableCell`, `p-panel` (24px, `--panel-padding`) in `Card`; a table or list inside a card sits edge to edge, unpadded). No
      section padding above `py-12` inside an app, no `gap-6`+ between related controls, no centred hero inside a
      tool. A dialog is the one roomier surface: `p-7`, 24px between header, body and footer, 12px between title and
@@ -299,6 +299,12 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Corners are small and square-ish.** 2px controls, 4px popovers, 6px cards (`--radius:
      0.25rem`). `rounded-full` only for things that are round by convention: switch, radio, a
      slider thumb, a status dot, an avatar. No pill badges, no pill tabs.
+   - **Tabs are square.** `Tabs`, `TabNav`, `SegmentedTabs`, `CodeTabs` and `TabbedSearchList` take
+     `rounded-none` on the list, every tab, its fill, its indicator and its focus ring, whatever the
+     preset's `--radius`. A tab row is 36px (`h-9`, 12-14px side padding, `text-base`) - one step over a 32px
+     control so a page's sections read above its toolbar; `size="sm"` drops `Tabs`, `TabNav` and
+     `SegmentedTabs` back to 32px (`TabNav`, `TabsList`) or 34px (`SegmentedTabs`) for a dense toolbar or
+     a chart header. `TabbedSearchList` keeps its 40px row.
    - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
      fills are for callouts and selected rows.
    - **One hover, one selected.** Hover and keyboard highlight fill with `--secondary` everywhere:
