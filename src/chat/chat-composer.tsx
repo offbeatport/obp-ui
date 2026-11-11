@@ -1,10 +1,14 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { type FormEvent, type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { cn } from "../lib/cn";
+import { Button } from "../primitives/button";
+import { KbdHint } from "../primitives/kbd";
+import { Textarea } from "../primitives/textarea";
 
-export type ChatComposerVariant = "panel" | "dock";
+export type ChatComposerVariant = "panel" | "dock" | "form";
+export type ChatComposerSendOn = "enter" | "mod-enter";
 
 const PANEL_SHELL = "relative px-3.5 pb-3.5 pt-2";
 const PANEL_TEXTAREA =
@@ -24,8 +28,13 @@ export type ChatComposerProps = {
     onSend: (text: string) => Promise<void> | void;
     variant?: ChatComposerVariant;
     placeholder?: string;
+    label?: string;
     rows?: number;
     disabled?: boolean;
+    busy?: boolean;
+    onStop?: () => void;
+    sendOn?: ChatComposerSendOn;
+    hint?: ReactNode;
     optimisticClear?: boolean;
     refocus?: boolean;
     spinner?: boolean;
@@ -33,12 +42,29 @@ export type ChatComposerProps = {
     textareaClassName?: string;
 };
 
+function modKey(): string {
+    return typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent)
+        ? "⌘"
+        : "Ctrl";
+}
+
+function sends(event: KeyboardEvent<HTMLTextAreaElement>, sendOn: ChatComposerSendOn): boolean {
+    if (event.key !== "Enter" || event.nativeEvent.isComposing) return false;
+    if (sendOn === "mod-enter") return event.metaKey || event.ctrlKey;
+    return !event.shiftKey;
+}
+
 export function ChatComposer({
     onSend,
     variant = "panel",
     placeholder,
-    rows = 1,
+    label = "Message",
+    rows,
     disabled,
+    busy = false,
+    onStop,
+    sendOn,
+    hint,
     optimisticClear,
     refocus,
     spinner,
@@ -50,13 +76,16 @@ export function ChatComposer({
     const ref = useRef<HTMLTextAreaElement>(null);
 
     const dock = variant === "dock";
-    const clearEarly = optimisticClear ?? dock;
+    const form = variant === "form";
+    const clearEarly = optimisticClear ?? (dock || form);
     const focusAfter = refocus ?? dock;
     const showSpinner = spinner ?? dock;
+    const keys = sendOn ?? (form ? "mod-enter" : "enter");
+    const blocked = sending || busy || disabled;
 
     const submit = async () => {
         const t = text.trim();
-        if (!t || sending || disabled) return;
+        if (!t || blocked) return;
         setSending(true);
         if (clearEarly) setText("");
         try {
@@ -70,27 +99,71 @@ export function ChatComposer({
         }
     };
 
+    const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (sends(event, keys)) {
+            event.preventDefault();
+            void submit();
+        }
+    };
+
+    if (form) {
+        const onSubmit = (event: FormEvent) => {
+            event.preventDefault();
+            void submit();
+        };
+        const shownHint =
+            hint ??
+            (keys === "mod-enter" ? (
+                <KbdHint keys={[modKey(), "Enter"]}>sends</KbdHint>
+            ) : (
+                <KbdHint keys={["Shift", "Enter"]}>adds a line</KbdHint>
+            ));
+        return (
+            <form onSubmit={onSubmit} className={cn("flex flex-col gap-2 p-4", className)}>
+                <Textarea
+                    ref={ref}
+                    value={text}
+                    rows={rows ?? 3}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    aria-label={label}
+                    onChange={(event) => setText(event.target.value)}
+                    onKeyDown={onKeyDown}
+                    className={cn("max-h-64 resize-none", textareaClassName)}
+                />
+                <div className="flex items-center justify-between gap-2">
+                    <span className="min-w-0">{shownHint}</span>
+                    {busy && onStop ? (
+                        <Button type="button" variant="outline" onClick={onStop}>
+                            Stop
+                        </Button>
+                    ) : (
+                        <Button type="submit" disabled={blocked || !text.trim()}>
+                            Send
+                        </Button>
+                    )}
+                </div>
+            </form>
+        );
+    }
+
     const field = (
         <>
             <textarea
                 ref={ref}
-                rows={rows}
+                rows={rows ?? 1}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        void submit();
-                    }
-                }}
+                onKeyDown={onKeyDown}
                 placeholder={placeholder}
+                aria-label={label}
                 className={cn(dock ? DOCK_TEXTAREA : PANEL_TEXTAREA, textareaClassName)}
             />
             <button
                 type="button"
                 aria-label="Send"
                 onClick={() => void submit()}
-                disabled={disabled || sending || !text.trim()}
+                disabled={blocked || !text.trim()}
                 className={dock ? DOCK_SEND : PANEL_SEND}
             >
                 {sending && showSpinner ? <Loader2 className="size-4 animate-spin" /> : "↑"}

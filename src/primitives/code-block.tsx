@@ -1,12 +1,10 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
-import { type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "../lib/cn";
-import { Button } from "./button";
+import { CopyButton } from "./copy-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 type CodeLanguage =
     | "bash"
@@ -47,8 +45,6 @@ type CodeTabsProps = {
     blockClassName?: string;
 };
 
-type CopyState = "idle" | "copied" | "manual";
-
 const ALIASES: Record<string, CodeLanguage> = {
     bash: "bash",
     sh: "bash",
@@ -71,8 +67,6 @@ const ALIASES: Record<string, CodeLanguage> = {
     yml: "yaml",
     sql: "sql",
 };
-
-const RESET_AFTER: Record<Exclude<CopyState, "idle">, number> = { copied: 1500, manual: 4000 };
 
 const highlighters = new Map<CodeLanguage, (code: string) => CodeToken[]>();
 
@@ -113,100 +107,6 @@ function useHighlight(code: string, language: CodeLanguage) {
     return useMemo(() => highlight?.(code), [highlight, code]);
 }
 
-function copyShortcut() {
-    return /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘C" : "Ctrl+C";
-}
-
-function copyBySelection(node: HTMLElement | null) {
-    const selection = window.getSelection();
-    if (!node || !selection) return false;
-    selection.selectAllChildren(node);
-    const copied = document.execCommand("copy");
-    if (copied) selection.removeAllRanges();
-    return copied;
-}
-
-function useCopy(code: string, target: RefObject<HTMLElement | null>) {
-    const [state, setState] = useState<CopyState>("idle");
-    useEffect(() => {
-        if (state === "idle") return;
-        const timer = window.setTimeout(() => setState("idle"), RESET_AFTER[state]);
-        return () => window.clearTimeout(timer);
-    }, [state]);
-    const fallback = () => setState(copyBySelection(target.current) ? "copied" : "manual");
-    const copy = () => {
-        if (!navigator.clipboard) {
-            fallback();
-            return;
-        }
-        navigator.clipboard.writeText(code).then(() => setState("copied"), fallback);
-    };
-    return { state, copy };
-}
-
-function copyText(state: CopyState) {
-    if (state === "copied") return "Copied";
-    if (state === "manual") return `Press ${copyShortcut()}`;
-    return "Copy";
-}
-
-function CopyAction({
-    state,
-    label,
-    inline,
-    onCopy,
-}: {
-    state: CopyState;
-    label: string;
-    inline: boolean;
-    onCopy: () => void;
-}) {
-    const icon = state === "copied" ? <Check /> : <Copy />;
-    const text = copyText(state);
-    const named = state === "idle" ? label : text;
-    const status = (
-        <span aria-live="polite" className="sr-only">
-            {state === "idle" ? "" : text}
-        </span>
-    );
-    if (inline) {
-        return (
-            <>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    aria-label={named}
-                    onClick={onCopy}
-                >
-                    {icon}
-                    {text}
-                </Button>
-                {status}
-            </>
-        );
-    }
-    return (
-        <>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="icon-sm"
-                        aria-label={named}
-                        onClick={onCopy}
-                    >
-                        {icon}
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>{named}</TooltipContent>
-            </Tooltip>
-            {status}
-        </>
-    );
-}
-
 function CodeText({ code, tokens }: { code: string; tokens: CodeToken[] | undefined }) {
     if (!tokens) return code;
     let at = 0;
@@ -234,7 +134,6 @@ function CodeBlock({
 }: CodeBlockProps) {
     const pre = useRef<HTMLPreElement>(null);
     const tokens = useHighlight(code, language);
-    const copier = useCopy(code, pre);
     const header = title != null;
     return (
         <figure
@@ -248,14 +147,7 @@ function CodeBlock({
             {header && (
                 <figcaption className="flex min-h-9 items-center justify-between gap-3 border-b border-border py-1 pr-1 pl-3">
                     <span className="min-w-0 truncate text-sm text-muted-foreground">{title}</span>
-                    {copy && (
-                        <CopyAction
-                            state={copier.state}
-                            label={copyLabel}
-                            inline
-                            onCopy={copier.copy}
-                        />
-                    )}
+                    {copy && <CopyButton text={code} label={copyLabel} target={pre} withText />}
                 </figcaption>
             )}
             <pre
@@ -272,12 +164,7 @@ function CodeBlock({
             </pre>
             {copy && !header && (
                 <div className="absolute top-1.5 right-1.5">
-                    <CopyAction
-                        state={copier.state}
-                        label={copyLabel}
-                        inline={false}
-                        onCopy={copier.copy}
-                    />
+                    <CopyButton text={code} label={copyLabel} target={pre} />
                 </div>
             )}
         </figure>

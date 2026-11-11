@@ -199,6 +199,22 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      its lines. Above it: a search that marks matches with `--highlight`, a level menu with counts, Follow while
      `live` (scrolling up stops it), the count shown, then Copy (the lines shown) and Download (every line). Rows are
      virtual, so a long run stays fast. The app turns its output into entries; the viewer never parses text.
+   - **A conversation with a model is the Instrument set from `obp-ui/chat`.** A `Card` with no padding holds a
+     `ChatPanel variant="inset"`: the transcript scrolls with `p-panel`, 20px between turns, and a
+     `ChatComposer variant="form"` sits under a 1px rule. The transcript is `role="log"` and `aria-busy` while an
+     answer streams, so a screen reader reads it once it is whole. A turn is a `ChatBubble variant="plain"`, an
+     `article` named You or Answer: the person's words sit right in a `--secondary` box with a 1px border and 4px
+     corners, keeping their line breaks; the answer runs the full width with no bubble and no avatar, stacked 8px
+     apart in this order: `ChatReasoning` (a `Collapsible`, open while it streams, then "Reasoning · N words"; a
+     person's toggle wins), the answer (`Markdown`, or a `CodeBlock` when it is JSON), `ChatToolCall`s (the name,
+     the call id in mono, the arguments as a JSON `CodeBlock`, then the result titled Result, or the app's result
+     form as children while it is pending), a `ChatNotice` (`warning` with a label for a refusal, `destructive`
+     for an error), `ChatPending` while nothing has arrived, then `ChatMeta` (model, latency, tokens, finish
+     reason on one muted tabular line) and `ChatActions` (a ghost `CopyButton` first, then the app's own). The
+     composer is a `Textarea` over a `KbdHint` and one button: Send, or Stop while `busy`. Ctrl or ⌘ Enter sends
+     and Enter adds a line (`sendOn="enter"` swaps them); the text clears at once. No avatars, no coloured
+     bubbles, no typing dots. `CopyButton` is the `CodeBlock`'s copy on its own: the clipboard API, then the
+     selection of `target` (or a scratch field), then "Press ⌘C".
    - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:
      full width on a phone and 24rem from `sm`, `p-panel` inside with its own scroll, a 1px border on its inner edge
      only and no rounding, the Dialog's overlay and close button. It fades in like every overlay and never slides. Use it
@@ -384,6 +400,11 @@ A marketing surface or a data-dense app should expect to build its own frame; bo
 already did. BuyDiff and WebInvoke each carry the whole `shell/` directory in their forks and
 mount zero files of it. (`canvas` is separate for a second reason: `@xyflow/react` is an optional
 peer, and an app without a board must not pay for it.)
+
+`obp-ui/chat` is split. The `panel` and `thread` variants (avatars, primary bubbles, typing dots, the
+docked co-pilot and the floating composer) are cslopslop's. The `inset` panel, the `plain` bubble, the
+`form` composer and the answer parts (`ChatReasoning`, `ChatToolCall`, `ChatNotice`, `ChatPending`,
+`ChatMeta`, `ChatActions`) follow §1 and are the shared way to show a conversation with a model (§1.9).
 
 ## Archetypes - the next axis, not the next fork
 

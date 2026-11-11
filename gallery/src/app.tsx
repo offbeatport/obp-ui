@@ -61,7 +61,7 @@ const SECTIONS: [SectionDef, ...SectionDef[]] = [
         id: "chat",
         label: "Chat",
         title: "Chat",
-        blurb: "The docked co-pilot panel and the full-page thread.",
+        blurb: "A model transcript in a card, the docked co-pilot panel and the full-page thread.",
         Body: ChatSection,
     },
     {

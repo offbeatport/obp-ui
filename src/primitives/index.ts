@@ -5,6 +5,7 @@ export * from "./checkbox";
 export * from "./checkbox-select";
 export * from "./code-block";
 export * from "./collapsible";
+export * from "./copy-button";
 export * from "./color-picker";
 export * from "./dialog";
 export * from "./drop-zone";

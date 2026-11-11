@@ -6,7 +6,7 @@ import { cn } from "../lib/cn";
 import { Markdown } from "../markdown";
 
 export type ChatRole = "user" | "assistant" | "system";
-export type ChatBubbleVariant = "panel" | "thread";
+export type ChatBubbleVariant = "panel" | "thread" | "plain";
 
 export const ASSISTANT_BUBBLE = "max-w-[78%] text-base leading-[1.55] py-[2px]";
 
@@ -19,6 +19,11 @@ const PANEL_USER_BODY =
 const PANEL_ASSISTANT_BODY =
     "max-w-[440px] rounded-[5px_14px_14px_14px] pt-0.5 pb-[3px] text-foreground";
 const PANEL_TIME = "mt-[7px] block font-mono text-sm";
+
+const PLAIN_USER_ROW = "flex flex-col items-end gap-1";
+const PLAIN_USER_BODY =
+    "max-w-[min(42rem,85%)] rounded-lg border bg-secondary px-3 py-2 text-base break-words whitespace-pre-wrap";
+const PLAIN_ASSISTANT_BODY = "flex max-w-full min-w-0 flex-col gap-2 text-base";
 
 const THREAD_ROW = "flex gap-[12px] items-start my-10";
 const THREAD_COLUMN = "flex-1 min-w-0 flex flex-col gap-[11px]";
@@ -37,6 +42,8 @@ export type ChatBubbleProps = {
     avatar?: ReactNode;
     userAvatar?: ReactNode;
     delayMs?: number;
+    label?: string;
+    busy?: boolean;
     className?: string;
 };
 
@@ -49,6 +56,8 @@ export function ChatBubble({
     avatar,
     userAvatar,
     delayMs = 0,
+    label,
+    busy,
     className,
 }: ChatBubbleProps) {
     if (role === "system") {
@@ -56,6 +65,23 @@ export function ChatBubble({
     }
 
     const me = role === "user";
+
+    if (variant === "plain") {
+        const content = children ?? (me ? text : <Markdown content={text ?? ""} />);
+        return (
+            <article
+                aria-label={label ?? (me ? "You" : "Answer")}
+                aria-busy={busy || undefined}
+                className={cn(me ? PLAIN_USER_ROW : PLAIN_ASSISTANT_BODY, className)}
+            >
+                {me ? <div className={PLAIN_USER_BODY}>{content}</div> : content}
+                {timestamp !== undefined && (
+                    <span className="text-sm text-muted-foreground tabular-nums">{timestamp}</span>
+                )}
+            </article>
+        );
+    }
+
     const body =
         children ??
         (me ? variant === "panel" ? <p>{text}</p> : text : <Markdown content={text ?? ""} />);

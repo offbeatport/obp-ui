@@ -3,7 +3,7 @@
 import type { ReactNode, Ref } from "react";
 import { cn } from "../lib/cn";
 
-export type ChatPanelVariant = "panel" | "thread";
+export type ChatPanelVariant = "panel" | "thread" | "inset";
 
 export type ChatPanelProps = {
     variant?: ChatPanelVariant;
@@ -14,6 +14,8 @@ export type ChatPanelProps = {
     composer?: ReactNode;
     scrollRef?: Ref<HTMLDivElement>;
     maxWidth?: number;
+    busy?: boolean;
+    label?: string;
     className?: string;
     bodyClassName?: string;
 };
@@ -27,9 +29,37 @@ export function ChatPanel({
     composer,
     scrollRef,
     maxWidth = 840,
+    busy,
+    label = "Conversation",
     className,
     bodyClassName,
 }: ChatPanelProps) {
+    if (variant === "inset") {
+        return (
+            <div className={cn("flex min-h-0 flex-1 flex-col", className)}>
+                {header}
+                <div
+                    ref={scrollRef}
+                    className="flex min-h-0 flex-1 flex-col overflow-y-auto p-panel"
+                >
+                    {isEmpty && empty !== undefined ? (
+                        empty
+                    ) : (
+                        <div
+                            role="log"
+                            aria-label={label}
+                            aria-busy={busy || undefined}
+                            className={cn("flex flex-col gap-5", bodyClassName)}
+                        >
+                            {children}
+                        </div>
+                    )}
+                </div>
+                {composer !== undefined && <div className="border-t">{composer}</div>}
+            </div>
+        );
+    }
+
     if (variant === "thread") {
         return (
             <div className={cn("relative flex h-full flex-col", className)}>
@@ -118,13 +148,15 @@ export function ChatEmptyState({ avatar, title, description, className }: ChatEm
     return (
         <div
             className={cn(
-                "flex h-full flex-col items-center justify-center px-6 text-center",
+                "flex h-full flex-1 flex-col items-center justify-center px-6 text-center",
                 className,
             )}
         >
             {avatar}
-            <p className="mt-3 text-base font-medium">{title}</p>
-            {description !== undefined && <p className="mt-1 text-sm text-faint">{description}</p>}
+            <p className={cn("text-base font-medium", avatar !== undefined && "mt-3")}>{title}</p>
+            {description !== undefined && (
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
+            )}
         </div>
     );
 }

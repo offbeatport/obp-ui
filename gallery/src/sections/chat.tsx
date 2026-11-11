@@ -16,6 +16,7 @@ import {
 } from "obp-ui/chat";
 import { useState } from "react";
 import { Api, Frame, Note, Row, Spec } from "../kit";
+import { TranscriptSpecs } from "./chat-transcript";
 
 type Msg = { id: string; role: ChatRole; text: string; ago: string };
 
@@ -74,6 +75,7 @@ export function ChatSection() {
 
     return (
         <>
+            <TranscriptSpecs />
             <Spec
                 name='ChatPanel variant="panel" · ChatPanelHeader · ChatBubble · ChatSystemLine · ChatComposer'
                 note="Docked co-pilot column. Type and press Enter."
