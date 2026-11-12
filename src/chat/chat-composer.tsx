@@ -123,7 +123,7 @@ export function ChatComposer({
             />
             {stoppable ? (
                 <button type="button" aria-label="Stop" onClick={onStop} className={buttonClass}>
-                    <span aria-hidden="true" className="size-3 rounded-md bg-current" />
+                    <span aria-hidden="true" className="size-3 bg-current" />
                 </button>
             ) : (
                 <button
