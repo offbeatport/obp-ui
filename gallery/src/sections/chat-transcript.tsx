@@ -92,7 +92,8 @@ function LiveTranscript() {
                 }
                 composer={
                     <ChatComposer
-                        variant="form"
+                        variant="dock"
+                        sendOn="mod-enter"
                         placeholder="Type a message"
                         busy={busy}
                         onStop={stop}
@@ -199,15 +200,16 @@ export function TranscriptSpecs() {
     return (
         <>
             <Spec
-                name='ChatPanel variant="inset" · ChatBubble variant="plain" · ChatComposer variant="form"'
-                note="A model transcript inside a card. Ctrl or ⌘ Enter sends; Stop while it streams."
+                name='ChatPanel variant="inset" · ChatBubble variant="plain" · ChatComposer variant="dock" sendOn="mod-enter"'
+                note="A model transcript inside a card. Enter adds a line, Ctrl or ⌘ Enter sends; the ↑ turns to Stop while it streams."
                 bare
             >
                 <LiveTranscript />
                 <Note>
-                    The panel fills its card: the log scrolls, the composer sits under a 1px rule.
-                    The log is <code>role="log"</code> and <code>aria-busy</code> while an answer
-                    streams, so a screen reader reads the answer once it is whole.
+                    The panel fills its card: the log scrolls, the composer sits under a 1px rule
+                    and grows with what is typed up to 12rem. The log is <code>role="log"</code> and{" "}
+                    <code>aria-busy</code> while an answer streams, so a screen reader reads the
+                    answer once it is whole.
                 </Note>
             </Spec>
             <Spec
