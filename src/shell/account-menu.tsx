@@ -76,7 +76,7 @@ function ThemeRow({
                         closeOnClick={false}
                         aria-label={option.label}
                         title={option.label}
-                        className="grid size-5 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:text-foreground data-checked:bg-tabs-active data-checked:text-accent-foreground"
+                        className="grid size-7 cursor-default place-items-center rounded-sm text-muted-foreground outline-hidden select-none data-highlighted:text-foreground data-checked:bg-tabs-active data-checked:text-accent-foreground"
                     >
                         <option.Icon className="size-4 text-current" />
                     </MenuPrimitive.RadioItem>
