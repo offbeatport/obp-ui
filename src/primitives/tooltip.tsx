@@ -181,7 +181,7 @@ function TooltipContent({
                 <TooltipPrimitive.Popup
                     data-slot="tooltip-content"
                     className={cn(
-                        "relative w-fit rounded-md bg-foreground px-2 py-1 text-sm text-balance text-background",
+                        "relative w-fit rounded-md border border-tooltip-border bg-tooltip px-2 py-1 text-sm text-balance text-tooltip-foreground",
                         "transition-opacity duration-100 data-ending-style:opacity-0 data-instant:transition-none data-starting-style:opacity-0",
                         "data-[side=bottom]:data-starting-style:-translate-y-2 data-[side=left]:data-starting-style:translate-x-2 data-[side=right]:data-starting-style:-translate-x-2 data-[side=top]:data-starting-style:translate-y-2",
                         className,
@@ -192,7 +192,7 @@ function TooltipContent({
                     {render ? undefined : (
                         <>
                             {children}
-                            <TooltipPrimitive.Arrow className="z-50 size-2.5 rotate-45 rounded-[2px] bg-foreground data-[side=bottom]:top-[-3px] data-[side=left]:right-[-3px] data-[side=right]:left-[-3px] data-[side=top]:bottom-[-3px]" />
+                            <TooltipPrimitive.Arrow className="z-50 size-2.5 rotate-45 rounded-[2px] border-tooltip-border bg-tooltip data-[side=bottom]:top-[-4px] data-[side=bottom]:border-t data-[side=bottom]:border-l data-[side=left]:right-[-4px] data-[side=left]:border-t data-[side=left]:border-r data-[side=right]:left-[-4px] data-[side=right]:border-b data-[side=right]:border-l data-[side=top]:bottom-[-4px] data-[side=top]:border-r data-[side=top]:border-b" />
                         </>
                     )}
                 </TooltipPrimitive.Popup>

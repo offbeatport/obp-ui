@@ -15,6 +15,9 @@
     --card-foreground: #202021;
     --popover: #fefeff;
     --popover-foreground: #202021;
+    --tooltip: var(--foreground);
+    --tooltip-foreground: var(--background);
+    --tooltip-border: var(--tooltip);
     --secondary: #ececed;
     --secondary-foreground: #202021;
     --muted: #ececed;
@@ -115,6 +118,9 @@
     --card-foreground: #e8e9ea;
     --popover: #1f2021;
     --popover-foreground: #e8e9ea;
+    --tooltip: color-mix(in srgb, var(--foreground) 8%, var(--popover));
+    --tooltip-foreground: var(--popover-foreground);
+    --tooltip-border: color-mix(in srgb, var(--foreground) 16%, var(--popover));
     --secondary: #131314;
     --secondary-foreground: #e8e9ea;
     --muted: #131314;
@@ -199,6 +205,9 @@
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
+    --color-tooltip: var(--tooltip);
+    --color-tooltip-foreground: var(--tooltip-foreground);
+    --color-tooltip-border: var(--tooltip-border);
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
     --color-secondary: var(--secondary);

@@ -292,7 +292,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      opacity; pass the plain name as `textValue`.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`
      is `none`. Only floating layers (menu, popover, select, dialog) carry `shadow-e2`, a hairline
-     lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`.
+     lift. No `shadow-sm/md/lg`, no coloured glow, no `drop-shadow`. `Tooltip` and `InfoTip` take
+     `--tooltip`, `--tooltip-foreground` and a 1px `--tooltip-border`: ink on paper in light, a raised
+     dark surface with page-ink text in dark, never a light chip on a dark page.
    - **No gradients, blur or glass.** No `bg-gradient-*`, no `backdrop-blur`, no `filter: blur()`
      in motion, no translucent `bg-*/80` over content. A gradient is legal only where it *is* the
      data: the colour picker's hue and saturation fields. One exception: filled and secondary buttons
