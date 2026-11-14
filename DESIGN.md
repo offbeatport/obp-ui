@@ -181,7 +181,14 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Code is always a `CodeBlock`, never a bare `<pre>`.** Anything a person reads or copies as code - a command,
      a request, a config file, a response - is `code` plus its `language`: `bash` for curl, `.env` and CLI lines,
      `python`, `javascript`, `typescript`, `json`, `yaml`, `sql`, and `text` when it is none of them. The frame is
-     `--muted` with a 1px `--border`, `text-base` mono and no shadow; long lines scroll sideways unless `wrap`. A
+     `--code-background` with a 1px `--code-border`, `--code-foreground` ink and a `--code-muted` title, `text-base`
+     mono and no shadow; long lines scroll sideways unless `wrap`. The four tokens default to `--muted`, `--border`,
+     `--foreground` and `--muted-foreground`. A preset with `codeSurface: "dark"` (Cobalt) sets `data-code-surface` on
+     the root through `applyPresetStyle`, and every block then draws as a terminal in both modes: the whole dark token
+     set applies inside the frame, so the title's controls, the Copy button, the `dark:` logo inks and the
+     `--syntax-*` inks read as they do in dark mode (code text 15:1, the faintest syntax ink 6:1). In light mode the
+     frame is `#101115` with no visible edge; in dark mode it is `#000000` with a `#2a2c31` edge, so it still parts
+     from the card it sits on. A
      `title` (a file name or a caption) takes a row over the code with an outline Copy button on its right; without
      one the button is an icon in the corner with a tooltip, named by `copyLabel`. Copy reads Copied for a second
      and a half. Where the browser has no clipboard API (plain HTTP on an internal address) it copies the selection,

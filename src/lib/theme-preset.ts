@@ -218,6 +218,7 @@ export type ThemePreset = {
     radius: string;
     space: string;
     status?: ThemeStatus;
+    codeSurface?: "dark";
 };
 
 const statusVar = (key: string): string =>
@@ -282,6 +283,7 @@ export const THEME_PRESETS: [ThemePreset, ...ThemePreset[]] = [
             "tight",
             "default",
         ),
+        codeSurface: "dark",
         status: {
             dark: {
                 success: "#009b39",
@@ -494,6 +496,8 @@ export function applyPresetStyle(
     el: HTMLElement = document.documentElement,
 ): void {
     for (const v of MANAGED) el.style.removeProperty(v);
+    if (preset?.codeSurface) el.setAttribute("data-code-surface", preset.codeSurface);
+    else el.removeAttribute("data-code-surface");
     if (!preset) return;
     for (const [k, v] of Object.entries(themePresetStyle(preset, mode))) el.style.setProperty(k, v);
 }

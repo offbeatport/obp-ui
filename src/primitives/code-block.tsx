@@ -140,13 +140,13 @@ function CodeBlock({
             data-slot="code-block"
             data-language={language}
             className={cn(
-                "relative flex min-w-0 flex-col rounded-md border border-border bg-muted text-foreground",
+                "relative flex min-w-0 flex-col rounded-md border border-code-border bg-code-background text-code-foreground",
                 className,
             )}
         >
             {header && (
                 <figcaption className="flex min-h-9 items-center justify-between gap-3 border-b border-border py-1 pr-1 pl-3">
-                    <span className="min-w-0 truncate text-sm text-muted-foreground">{title}</span>
+                    <span className="min-w-0 truncate text-sm text-code-muted">{title}</span>
                     {copy && <CopyButton text={code} label={copyLabel} target={pre} withText />}
                 </figcaption>
             )}

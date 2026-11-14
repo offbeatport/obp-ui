@@ -1,4 +1,4 @@
-@custom-variant dark (&:is(.dark *):not(:is(.light *)));
+@custom-variant dark (&:is(.dark *, [data-code-surface="dark"] [data-slot="code-block"] *):not(:is(.light *)));
 
 :root {
     --radius: 0.25rem;
@@ -73,6 +73,11 @@
     --file-sql: #be185d;
     --file-text: #475569;
 
+    --code-background: var(--muted);
+    --code-foreground: var(--foreground);
+    --code-border: var(--border);
+    --code-muted: var(--muted-foreground);
+
     --syntax-keyword: #b42359;
     --syntax-string: #116329;
     --syntax-number: #9a4b00;
@@ -111,7 +116,8 @@
     --type-4xl-leading: 2.25rem;
 }
 
-.dark {
+.dark,
+[data-code-surface="dark"] [data-slot="code-block"] {
     --background: #0a0a0b;
     --foreground: #e8e9ea;
     --card: #1f2021;
@@ -175,6 +181,11 @@
     --file-sql: #f472b6;
     --file-text: #94a3b8;
 
+    --code-background: var(--muted);
+    --code-foreground: var(--foreground);
+    --code-border: var(--border);
+    --code-muted: var(--muted-foreground);
+
     --syntax-keyword: #ff7ab2;
     --syntax-string: #7ee2a8;
     --syntax-number: #f5b86b;
@@ -186,6 +197,17 @@
 
     --shadow-e1: none;
     --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[data-code-surface="dark"] [data-slot="code-block"] {
+    --code-background: #101115;
+    --code-border: #101115;
+    color-scheme: dark;
+}
+
+.dark[data-code-surface="dark"] [data-slot="code-block"] {
+    --code-background: #000000;
+    --code-border: #2a2c31;
 }
 
 @theme inline {
@@ -257,6 +279,11 @@
     --color-file-delta: var(--file-delta);
     --color-file-sql: var(--file-sql);
     --color-file-text: var(--file-text);
+
+    --color-code-background: var(--code-background);
+    --color-code-foreground: var(--code-foreground);
+    --color-code-border: var(--code-border);
+    --color-code-muted: var(--code-muted);
 
     --color-syntax-keyword: var(--syntax-keyword);
     --color-syntax-string: var(--syntax-string);
