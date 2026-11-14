@@ -5,6 +5,8 @@ import {
     ChatComposer,
     ChatEmptyState,
     ChatMeta,
+    type ChatModel,
+    ChatModelPicker,
     ChatNotice,
     ChatPanel,
     ChatPending,
@@ -23,6 +25,73 @@ const ANSWER =
 
 const REASONING =
     "The question is about retries. A fixed delay hammers a struggling service, so the answer should double the delay and cap the number of tries.";
+
+const MODELS: ChatModel[] = [
+    {
+        id: "claude-opus-5-5",
+        name: "Claude Opus 5.5",
+        provider: "anthropic",
+        group: "Anthropic",
+        detail: "1M context · $5 / $25",
+    },
+    {
+        id: "claude-sonnet-5-5",
+        name: "Claude Sonnet 5.5",
+        provider: "anthropic",
+        group: "Anthropic",
+        detail: "1M context · $3 / $15",
+    },
+    {
+        id: "claude-haiku-5-5",
+        name: "Claude Haiku 5.5",
+        provider: "anthropic",
+        group: "Anthropic",
+        detail: "200K context · $1 / $5",
+    },
+    {
+        id: "gpt-5",
+        name: "GPT-5",
+        provider: "openai",
+        group: "OpenAI",
+        detail: "400K context · $1.25 / $10",
+    },
+    {
+        id: "gpt-5-mini",
+        name: "GPT-5 mini",
+        provider: "openai",
+        group: "OpenAI",
+        detail: "400K context · $0.25 / $2",
+    },
+    {
+        id: "gemini-2.5-pro",
+        name: "Gemini 2.5 Pro",
+        provider: "google",
+        group: "Google",
+        detail: "1M context · $1.25 / $10",
+    },
+    {
+        id: "deepseek-v3",
+        name: "DeepSeek V3",
+        provider: "deepseek",
+        group: "Open weights",
+        detail: "128K context",
+    },
+    {
+        id: "qwen3-235b",
+        name: "Qwen3 235B",
+        provider: "qwen",
+        group: "Open weights",
+        detail: "128K context",
+    },
+    {
+        id: "llama-4-maverick",
+        name: "Llama 4 Maverick",
+        provider: "meta",
+        group: "Open weights",
+        detail: "Unavailable in this region",
+        disabled: true,
+    },
+];
 
 function useFakeStream(onDone: () => void) {
     const timer = useRef<number | null>(null);
@@ -52,6 +121,7 @@ function useFakeStream(onDone: () => void) {
 function LiveTranscript() {
     const [turns, setTurns] = useState<Turn[]>([]);
     const [busy, setBusy] = useState(false);
+    const [model, setModel] = useState("claude-sonnet-5-5");
     const patchLast = (change: Partial<Extract<Turn, { role: "assistant" }>>) =>
         setTurns((all) =>
             all.map((turn, index) =>
@@ -98,6 +168,14 @@ function LiveTranscript() {
                         busy={busy}
                         onStop={stop}
                         onSend={send}
+                        tools={
+                            <ChatModelPicker
+                                models={MODELS}
+                                value={model}
+                                onValueChange={setModel}
+                                disabled={busy}
+                            />
+                        }
                     />
                 }
             >
@@ -200,7 +278,7 @@ export function TranscriptSpecs() {
     return (
         <>
             <Spec
-                name='ChatPanel variant="inset" · ChatBubble variant="plain" · ChatComposer variant="dock" sendOn="mod-enter"'
+                name='ChatPanel variant="inset" · ChatBubble variant="plain" · ChatComposer variant="dock" sendOn="mod-enter" · ChatModelPicker'
                 note="A model transcript inside a card. Enter adds a line, Ctrl or ⌘ Enter sends; the ↑ turns to Stop while it streams."
                 bare
             >
@@ -211,6 +289,18 @@ export function TranscriptSpecs() {
                     <code>aria-busy</code> while an answer streams, so a screen reader reads the
                     answer once it is whole.
                 </Note>
+                <Api
+                    items={[
+                        {
+                            name: "ChatComposer tools",
+                            note: "a row under the dock field, left of Send: the model picker, then the app's own controls.",
+                        },
+                        {
+                            name: "ChatModelPicker",
+                            note: "provider logo and name as a ghost trigger; opens upward to a list grouped by group, with a search past six models. detail is one muted line (context, price).",
+                        },
+                    ]}
+                />
             </Spec>
             <Spec
                 name="ChatReasoning · ChatToolCall · ChatNotice · ChatMeta · ChatActions"

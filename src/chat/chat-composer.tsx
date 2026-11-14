@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { type KeyboardEvent, useLayoutEffect, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
 export type ChatComposerVariant = "panel" | "dock";
@@ -19,7 +19,10 @@ const DOCK_FIELD =
 const DOCK_TEXTAREA =
     "block max-h-48 min-h-14 w-full resize-none rounded-xl bg-transparent px-5 py-4 pr-14 leading-snug tracking-tight outline-none placeholder:text-muted-foreground/45 disabled:cursor-not-allowed disabled:opacity-60";
 const DOCK_BUTTON =
-    "absolute right-3 bottom-2 grid size-9 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40";
+    "grid size-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40";
+const DOCK_BUTTON_CORNER = "absolute right-3 bottom-2";
+const DOCK_TEXTAREA_ABOVE_TOOLS = "pb-1";
+const DOCK_TOOLS = "flex items-center gap-1 pr-3 pb-2 pl-3";
 
 const SEND_SHORTCUTS: Record<ChatComposerSendOn, string> = {
     enter: "Enter",
@@ -41,6 +44,7 @@ export type ChatComposerProps = {
     spinner?: boolean;
     className?: string;
     textareaClassName?: string;
+    tools?: ReactNode;
 };
 
 function sends(event: KeyboardEvent<HTMLTextAreaElement>, sendOn: ChatComposerSendOn): boolean {
@@ -70,6 +74,7 @@ export function ChatComposer({
     spinner,
     className,
     textareaClassName,
+    tools,
 }: ChatComposerProps) {
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
@@ -81,7 +86,8 @@ export function ChatComposer({
     const showSpinner = spinner ?? dock;
     const blocked = sending || busy || disabled;
     const stoppable = busy && onStop !== undefined;
-    const buttonClass = dock ? DOCK_BUTTON : PANEL_BUTTON;
+    const toolbar = dock && tools !== undefined && tools !== null;
+    const buttonClass = dock ? cn(DOCK_BUTTON, !toolbar && DOCK_BUTTON_CORNER) : PANEL_BUTTON;
 
     useLayoutEffect(() => fitToContent(ref.current));
 
@@ -108,44 +114,68 @@ export function ChatComposer({
         }
     };
 
-    const field = (
-        <>
-            <textarea
-                ref={ref}
-                rows={rows ?? 1}
-                value={text}
-                disabled={disabled}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder={placeholder}
-                aria-label={label}
-                className={cn(dock ? DOCK_TEXTAREA : PANEL_TEXTAREA, textareaClassName)}
-            />
-            {stoppable ? (
-                <button type="button" aria-label="Stop" onClick={onStop} className={buttonClass}>
-                    <span aria-hidden="true" className="size-3 bg-current" />
-                </button>
-            ) : (
-                <button
-                    type="button"
-                    aria-label="Send"
-                    aria-keyshortcuts={SEND_SHORTCUTS[sendOn]}
-                    onClick={() => void submit()}
-                    disabled={blocked || !text.trim()}
-                    className={buttonClass}
-                >
-                    {sending && showSpinner ? <Loader2 className="size-4 animate-spin" /> : "↑"}
-                </button>
+    const textarea = (
+        <textarea
+            ref={ref}
+            rows={rows ?? 1}
+            value={text}
+            disabled={disabled}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            aria-label={label}
+            className={cn(
+                dock ? DOCK_TEXTAREA : PANEL_TEXTAREA,
+                toolbar && DOCK_TEXTAREA_ABOVE_TOOLS,
+                textareaClassName,
             )}
-        </>
+        />
     );
 
-    if (dock) {
+    const action = stoppable ? (
+        <button type="button" aria-label="Stop" onClick={onStop} className={buttonClass}>
+            <span aria-hidden="true" className="size-3 bg-current" />
+        </button>
+    ) : (
+        <button
+            type="button"
+            aria-label="Send"
+            aria-keyshortcuts={SEND_SHORTCUTS[sendOn]}
+            onClick={() => void submit()}
+            disabled={blocked || !text.trim()}
+            className={buttonClass}
+        >
+            {sending && showSpinner ? <Loader2 className="size-4 animate-spin" /> : "↑"}
+        </button>
+    );
+
+    if (toolbar) {
         return (
             <div className={cn(DOCK_SHELL, className)}>
-                <div className={DOCK_FIELD}>{field}</div>
+                <div className={DOCK_FIELD}>
+                    {textarea}
+                    <div className={DOCK_TOOLS}>
+                        <div className="flex min-w-0 flex-1 items-center gap-1">{tools}</div>
+                        {action}
+                    </div>
+                </div>
             </div>
         );
     }
-    return <div className={cn(PANEL_SHELL, className)}>{field}</div>;
+    if (dock) {
+        return (
+            <div className={cn(DOCK_SHELL, className)}>
+                <div className={DOCK_FIELD}>
+                    {textarea}
+                    {action}
+                </div>
+            </div>
+        );
+    }
+    return (
+        <div className={cn(PANEL_SHELL, className)}>
+            {textarea}
+            {action}
+        </div>
+    );
 }

@@ -15,6 +15,11 @@ export {
     type ChatComposerVariant,
 } from "./chat-composer";
 export {
+    type ChatModel,
+    ChatModelPicker,
+    type ChatModelPickerProps,
+} from "./chat-model-picker";
+export {
     ChatActions,
     type ChatActionsProps,
     ChatMeta,

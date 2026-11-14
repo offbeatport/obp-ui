@@ -213,7 +213,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      reason on one muted tabular line) and `ChatActions` (a ghost `CopyButton` first, then the app's own). The
      composer is one rounded field that grows with its text up to 12rem, with a round ↑ Send inside its corner that
      becomes a ■ Stop in the same spot while `busy` and `onStop` is given. With `sendOn="mod-enter"` Ctrl or ⌘ Enter
-     sends and Enter adds a line (the default `enter` swaps them); the text clears at once. No avatars, no coloured
+     sends and Enter adds a line (the default `enter` swaps them); the text clears at once. Controls that shape the next
+     message go in the composer's `tools` row, under the text and left of Send: a `ChatModelPicker` first (a ghost
+     trigger with the provider logo and model name that opens a list grouped by `group`, each model with one muted
+     `detail` line such as context and price, a search past six models, a check on the current one), then the app's
+     own. No avatars, no coloured
      bubbles, no typing dots. `CopyButton` is the `CodeBlock`'s copy on its own: the clipboard API, then the
      selection of `target` (or a scratch field), then "Press ⌘C".
    - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:
