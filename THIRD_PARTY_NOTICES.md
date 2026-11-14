@@ -4,7 +4,7 @@
 
 The `qwen`, `meta`, `mistral`, `microsoft`, `ibm`, `nvidia`, `deepseek`, `ai2` and `huggingface` marks in
 `src/provider-logos.tsx` are the monochrome paths from [`@lobehub/icons-static-svg`](https://github.com/lobehub/lobe-icons)
-1.95.1.
+1.95.1. The `llamaindex` and `openwebui` marks in `src/software-logos.tsx` are from the same package, 1.102.0.
 
 MIT License, Copyright (c) 2023 LobeHub
 
@@ -30,3 +30,19 @@ The marks drawn in `src/software-logos.tsx` are the paths from [`simple-icons`](
 [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 The logos are trademarks of their owners and identify their products only.
+
+## LiteLLM
+
+The `litellm` mark in `src/software-logos.tsx` is the monogram from [`BerriAI/litellm`](https://github.com/BerriAI/litellm)
+(`ui/litellm-dashboard/public/assets/logos/litellm_monogram.svg`), scaled to a 24px box. MIT License, Copyright (c) 2023
+Berri AI.
+
+The logo is a trademark of its owner and identifies its product only.
+
+## Continue
+
+The `continue` mark in `src/software-logos.tsx` is the plugin icon from [`continuedev/continue`](https://github.com/continuedev/continue)
+(`extensions/intellij/src/main/resources/META-INF/pluginIcon.svg`) without its backing disc, scaled to a 24px box. Apache
+License 2.0, Copyright (c) 2023 Continue Dev, Inc.
+
+The logo is a trademark of its owner and identifies its product only.
