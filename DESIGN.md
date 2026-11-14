@@ -223,8 +223,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      sends and Enter adds a line (the default `enter` swaps them); the text clears at once. Controls that shape the next
      message go in the composer's `tools` row, under the text and left of Send: a `ChatModelPicker` first (a ghost
      trigger with the provider logo and model name that opens a list grouped by `group`, each model with one muted
-     `detail` line such as context and price, a search past six models, a check on the current one), then the app's
-     own. No avatars, no coloured
+     `detail` line such as context and price, a search past six models, a check on the current one, and an optional
+     muted `hint` line under the list), then the app's own. A model's `icon` (any 16px mark, such as an app's own
+     avatar) replaces its provider logo. Keys typed on the trigger never pick a model: they open the list and go into
+     its search, which takes focus as soon as it mounts. No avatars, no coloured
      bubbles, no typing dots. `CopyButton` is the `CodeBlock`'s copy on its own: the clipboard API, then the
      selection of `target` (or a scratch field), then "Press ⌘C".
    - **A panel with no room beside the page is a `Sheet`.** A full-height drawer on the Dialog, on the right by default:

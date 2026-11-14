@@ -2,7 +2,7 @@
 
 import { Combobox } from "@base-ui/react/combobox";
 import { CheckIcon, ChevronDownIcon, Search } from "lucide-react";
-import { type ReactNode, useMemo } from "react";
+import { type KeyboardEvent, type ReactNode, useMemo, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ProviderId, ProviderLogo } from "../provider-logos";
 
@@ -10,6 +10,7 @@ export type ChatModel = {
     id: string;
     name: string;
     provider?: ProviderId;
+    icon?: ReactNode;
     group?: string;
     detail?: ReactNode;
     keywords?: string;
@@ -26,6 +27,7 @@ export type ChatModelPickerProps = {
     placeholder?: string;
     searchPlaceholder?: string;
     empty?: ReactNode;
+    hint?: ReactNode;
     disabled?: boolean;
     align?: "start" | "center" | "end";
     side?: "top" | "bottom";
@@ -53,12 +55,31 @@ function groupModels(models: readonly ChatModel[]): ChatModelGroup[] {
     return [...groups.values()];
 }
 
-function ModelMark({ provider }: { provider?: ProviderId }) {
-    return provider ? (
-        <ProviderLogo id={provider} className="size-4 shrink-0" />
+function ModelMark({ model }: { model: ChatModel }) {
+    if (model.icon) {
+        return (
+            <span
+                aria-hidden="true"
+                className="flex size-4 shrink-0 items-center justify-center [&>*]:size-4 [&>*]:shrink-0"
+            >
+                {model.icon}
+            </span>
+        );
+    }
+    return model.provider ? (
+        <ProviderLogo id={model.provider} className="size-4 shrink-0" />
     ) : (
         <span aria-hidden="true" className="size-4 shrink-0" />
     );
+}
+
+function typedKey(event: KeyboardEvent): string | null {
+    if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return null;
+    return event.key === " " ? null : event.key;
+}
+
+function focusOnMount(input: HTMLInputElement | null): void {
+    input?.focus({ preventScroll: true });
 }
 
 function modelText(model: ChatModel): string {
@@ -75,6 +96,7 @@ export function ChatModelPicker({
     placeholder = "Choose a model",
     searchPlaceholder = "Search models",
     empty = "No model matches.",
+    hint,
     disabled,
     align = "start",
     side = "top",
@@ -84,6 +106,18 @@ export function ChatModelPicker({
     const groups = useMemo(() => groupModels(models), [models]);
     const selected = models.find((model) => model.id === value) ?? null;
     const searchable = models.length > 6;
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const typeIntoSearch = (event: KeyboardEvent<HTMLButtonElement>): boolean => {
+        const key = typedKey(event);
+        if (key === null) return false;
+        event.preventDefault();
+        if (searchable) {
+            setQuery((current) => (open ? current + key : key));
+            setOpen(true);
+        }
+        return true;
+    };
 
     return (
         <Combobox.Root<ChatModel>
@@ -95,6 +129,13 @@ export function ChatModelPicker({
             itemToStringLabel={(model) => model.name}
             itemToStringValue={modelText}
             isItemEqualToValue={(item, current) => item.id === current.id}
+            open={open}
+            onOpenChange={(next) => {
+                setOpen(next);
+                if (!next) setQuery("");
+            }}
+            inputValue={query}
+            onInputValueChange={setQuery}
             autoHighlight
             disabled={disabled}
         >
@@ -102,10 +143,13 @@ export function ChatModelPicker({
                 data-slot="chat-model-picker"
                 aria-label={selected ? `${label}: ${selected.name}` : label}
                 className={cn(TRIGGER, className)}
+                onKeyDown={(event) => {
+                    if (typeIntoSearch(event)) event.preventBaseUIHandler();
+                }}
             >
                 {selected ? (
                     <>
-                        <ModelMark provider={selected.provider} />
+                        <ModelMark model={selected} />
                         <span className="truncate text-foreground">{selected.name}</span>
                     </>
                 ) : (
@@ -136,6 +180,7 @@ export function ChatModelPicker({
                                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                             />
                             <Combobox.Input
+                                ref={focusOnMount}
                                 aria-label={searchPlaceholder}
                                 placeholder={searchPlaceholder}
                                 className="h-9 w-full bg-transparent pr-3 pl-9 text-base outline-none placeholder:text-muted-foreground"
@@ -164,7 +209,7 @@ export function ChatModelPicker({
                                                 disabled={model.disabled}
                                                 className={ITEM}
                                             >
-                                                <ModelMark provider={model.provider} />
+                                                <ModelMark model={model} />
                                                 <span className="flex min-w-0 flex-col">
                                                     <span className="truncate">{model.name}</span>
                                                     {model.detail && (
@@ -182,6 +227,11 @@ export function ChatModelPicker({
                                 </Combobox.Group>
                             )}
                         </Combobox.List>
+                        {hint && (
+                            <p className="border-t border-border-soft px-3 py-2 text-sm text-muted-foreground">
+                                {hint}
+                            </p>
+                        )}
                     </Combobox.Popup>
                 </Combobox.Positioner>
             </Combobox.Portal>
