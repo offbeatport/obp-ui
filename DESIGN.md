@@ -322,7 +322,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `SegmentedTabs` back to 32px (`TabNav`, `TabsList`) or 34px (`SegmentedTabs`) for a dense toolbar or
      a chart header. `TabbedSearchList` keeps its 40px row.
    - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
-     fills are for callouts and selected rows.
+     fills are for callouts and selected rows. The dot is always `StatusDot`, never a hand-rolled
+     `rounded-full` span, so one change restyles every product.
    - **One hover, one selected.** Hover and keyboard highlight fill with `--secondary` everywhere:
      controls, options, menu items, nav items. `--accent` marks what is selected: the current nav
      item, the chosen option. Rails sit on the page colour behind a 1px border.
@@ -345,6 +346,25 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
 | autopilot / brand emphasis | `accent` / `default` | brand |
 
 Each has a `-soft` fill token for callouts and selected rows. Badges are outlined, not filled.
+
+**`StatusDot`** is the dot in "a dot plus text": a 12px SVG (`size="sm"` is 10px) drawn in one tone, `success`,
+`warning`, `destructive`, `info`, `neutral` or `muted` (`--faint`). Five states, one shape:
+
+| state | prop | look |
+|---|---|---|
+| done / settled | none | solid core (r 3.2) inside a soft track ring (r 4.5, 2.5px, the tone at 22%) |
+| in progress, no number | `active` | the done dot plus a ping: a ring that grows 1→2.6x and fades .55→0 every 2s |
+| in progress, known share | `progress` (0-100) | no core: an arc in the tone from 12 o'clock, round caps, over the track |
+| queued | `waiting` | a dashed ring (2 / 2.1) in the full tone, no core |
+| off / not deployed | `tone="muted"` | a hollow 1.5px ring in `--faint`, no core, no track |
+
+The ping runs only under `prefers-reduced-motion: no-preference`; reduced motion shows the still dot. The arc
+never animates. No glow, no shadow, no gradient: the track is a `color-mix()` of the tone, not a blur. The dot
+is decorative (`aria-hidden`) because the words beside it say the status; pass `label` only when it stands
+alone, and with `progress` its spoken label gains the percent. Keep the words in `text-foreground`; the hue
+carries the status. Never pair it with a `Badge` for the same status. The core, arc and dashed ring clear WCAG 1.4.11's 3:1
+against the page and the card in every tone, both modes (Cobalt: min 5.18, `--faint` on the dark card; the arc
+over its own track min 3.94), so the shape reads without the colour.
 
 ## 2. Shared vocabulary - vary it freely
 

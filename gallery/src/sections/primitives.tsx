@@ -73,6 +73,8 @@ import {
     SelectTrigger,
     SelectValue,
     Separator,
+    StatusDot,
+    type StatusDotTone,
     Switch,
     Table,
     TableBody,
@@ -203,6 +205,15 @@ const BADGE_VARIANTS = [
     "accent",
 ] as const;
 
+const STATUS_DOT_TONES: StatusDotTone[] = [
+    "success",
+    "warning",
+    "destructive",
+    "info",
+    "neutral",
+    "muted",
+];
+
 const ROWS = [
     { slice: "landing-page", state: "shipped", cost: "$0.71" },
     { slice: "checkout", state: "building", cost: "$1.40" },
@@ -297,6 +308,44 @@ export function PrimitivesSection() {
                     <Badge variant="link" asChild>
                         <a href="#primitives">asChild anchor</a>
                     </Badge>
+                </Row>
+            </Spec>
+
+            <Spec
+                name="StatusDot"
+                note="Status is a dot plus text: done, active (ping), progress (arc), waiting (dashed), muted (hollow)."
+            >
+                <Row>
+                    {STATUS_DOT_TONES.map((tone) => (
+                        <span key={tone} className="inline-flex items-center gap-1.5 text-base">
+                            <StatusDot tone={tone} />
+                            {tone}
+                        </span>
+                    ))}
+                </Row>
+                <Row className="mt-4">
+                    {STATUS_DOT_TONES.map((tone) => (
+                        <span key={tone} className="inline-flex items-center gap-1.5 text-base">
+                            <StatusDot tone={tone} active />
+                            {`${tone}, active`}
+                        </span>
+                    ))}
+                </Row>
+                <Row className="mt-4">
+                    {[0, 12, 37, 64, 100].map((value) => (
+                        <span key={value} className="inline-flex items-center gap-1.5 text-base">
+                            <StatusDot tone="info" progress={value} />
+                            <span className="tabular-nums">{`Training ${value}%`}</span>
+                        </span>
+                    ))}
+                    <span className="inline-flex items-center gap-1.5 text-base">
+                        <StatusDot tone="neutral" waiting />
+                        Queued
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-base">
+                        <StatusDot tone="success" size="sm" />
+                        sm
+                    </span>
                 </Row>
             </Spec>
 

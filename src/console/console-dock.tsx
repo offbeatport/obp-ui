@@ -9,16 +9,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 import { prefStorage } from "../lib/storage";
 import { DEFAULT_NAMESPACE } from "../lib/theme";
+import { StatusDot } from "../primitives/status-dot";
 import { ConsolePane, type ConsoleStatusChip } from "./console-pane";
 import type { LogLineData } from "./log-line";
-
-function SonarDot() {
-    return (
-        <span aria-hidden="true" className="relative inline-flex size-2 flex-none">
-            <span className="relative size-2 rounded-full bg-success" />
-        </span>
-    );
-}
 
 const ACTIVE_MS = 750;
 const IDLE_MS = 4000;
@@ -213,7 +206,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                     "[html.console-tab-off_&]:hidden",
                 )}
             >
-                <SonarDot />
+                <StatusDot tone="success" />
                 <span>{launcherLabel}</span>
                 <span className="text-sm text-faint">⌃`</span>
             </button>
@@ -239,7 +232,7 @@ export function ConsoleDock<P extends ConsoleDockPane = ConsoleDockPane>({
                 />
                 <div className="flex flex-none items-center gap-3 border-b border-border bg-secondary px-[18px] py-[11px]">
                     <div className="flex items-center gap-[9px] font-mono text-base font-bold tracking-[0.02em] text-foreground">
-                        <SonarDot /> {title}{" "}
+                        <StatusDot tone="success" /> {title}{" "}
                         <span className="font-mono text-sm font-normal tracking-[0.03em] text-muted-foreground">
                             {subtitle}
                         </span>

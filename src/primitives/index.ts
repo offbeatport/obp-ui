@@ -33,6 +33,7 @@ export * from "./sheet";
 export * from "./skeleton";
 export * from "./slider";
 export * from "./sql-editor";
+export * from "./status-dot";
 export * from "./switch";
 export * from "./tabbed-search-list";
 export * from "./table";
