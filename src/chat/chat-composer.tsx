@@ -101,7 +101,7 @@ export function ChatComposer({
     useLayoutEffect(() => fitToContent(ref.current));
 
     useEffect(() => {
-        if (autoFocus) ref.current?.focus();
+        if (autoFocus) ref.current?.focus({ preventScroll: true });
     }, [autoFocus]);
 
     const submit = async () => {
