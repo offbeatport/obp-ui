@@ -1,7 +1,14 @@
 "use client";
 
 import { IconLoader2 } from "@tabler/icons-react";
-import { type KeyboardEvent, type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import {
+    type KeyboardEvent,
+    type ReactNode,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from "react";
 import { cn } from "../lib/cn";
 
 export type ChatComposerVariant = "panel" | "dock";
@@ -41,6 +48,7 @@ export type ChatComposerProps = {
     sendOn?: ChatComposerSendOn;
     optimisticClear?: boolean;
     refocus?: boolean;
+    autoFocus?: boolean;
     spinner?: boolean;
     className?: string;
     textareaClassName?: string;
@@ -71,6 +79,7 @@ export function ChatComposer({
     sendOn = "enter",
     optimisticClear,
     refocus,
+    autoFocus = false,
     spinner,
     className,
     textareaClassName,
@@ -90,6 +99,10 @@ export function ChatComposer({
     const buttonClass = dock ? cn(DOCK_BUTTON, !toolbar && DOCK_BUTTON_CORNER) : PANEL_BUTTON;
 
     useLayoutEffect(() => fitToContent(ref.current));
+
+    useEffect(() => {
+        if (autoFocus) ref.current?.focus();
+    }, [autoFocus]);
 
     const submit = async () => {
         const t = text.trim();
