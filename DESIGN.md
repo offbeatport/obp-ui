@@ -207,7 +207,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      tokens. Objects and arrays fold level by level from a chevron in the indent; a folded level reads `{…}` with its
      key or item count. The page owns which rows are open and puts a `RecordListToggle` (Expand all / Collapse all)
      over the list; open the first row by default. `marked` puts top-level keys (the input and the answer of a training
-     row) on `--highlight`. A JSON value a person reads but does not edit is a `JsonView`; one they copy whole stays a
+     row) on `--highlight`, and `summary` replaces the fields line when one field says more (an input and its label). An
+     open record drops its outer braces (`JsonView bare`). A JSON value a person reads but does not edit is a `JsonView`; one they copy whole stays a
      `CodeBlock`.
    - **Process output is a `LogViewer`, never a bare list of lines.** Each line is time, level and message in
      `text-sm` mono on the card; warnings and errors take `--warning` and `--destructive` ink, debug and the

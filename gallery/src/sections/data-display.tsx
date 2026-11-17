@@ -424,7 +424,11 @@ export function DataDisplaySection() {
                         },
                         {
                             name: "marked",
-                            note: "top-level keys drawn on --highlight, such as the input and the answer of a training row.",
+                            note: "top-level keys drawn on --highlight, such as the input and the answer of a training row. bare drops the outer braces, as RecordList does for an open row.",
+                        },
+                        {
+                            name: "RecordList summary",
+                            note: "replaces the line of fields a closed row shows, such as the input truncated and its label beside it.",
                         },
                         {
                             name: "RecordList records, open, onOpenChange",

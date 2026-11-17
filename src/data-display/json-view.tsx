@@ -87,6 +87,7 @@ function Line({
 }
 
 type NodeProps = {
+    root?: boolean;
     name: string | null;
     value: unknown;
     depth: number;
@@ -97,6 +98,7 @@ type NodeProps = {
 };
 
 function Branch({
+    root = false,
     name,
     value,
     depth,
@@ -153,24 +155,49 @@ function Branch({
     return (
         <>
             {head}
-            {entries.map(([key, item], index) => (
-                <JsonNode
-                    key={key ?? index}
-                    name={key}
-                    value={item}
-                    depth={depth + 1}
-                    comma={index < entries.length - 1}
-                    mark={mark || (depth === 0 && key !== null && marked.includes(key))}
-                    openDepth={openDepth}
-                    marked={marked}
-                />
-            ))}
+            <Entries
+                entries={entries}
+                depth={depth + 1}
+                mark={mark}
+                markKeys={root}
+                openDepth={openDepth}
+                marked={marked}
+            />
             <Line depth={depth} mark={mark}>
                 <span className={INK.punctuation}>{closer}</span>
                 <Comma show={comma} />
             </Line>
         </>
     );
+}
+
+function Entries({
+    entries,
+    depth,
+    mark,
+    markKeys,
+    openDepth,
+    marked,
+}: {
+    entries: Entry[];
+    depth: number;
+    mark: boolean;
+    markKeys: boolean;
+    openDepth: number;
+    marked: readonly string[];
+}) {
+    return entries.map(([key, item], index) => (
+        <JsonNode
+            key={key ?? index}
+            name={key}
+            value={item}
+            depth={depth}
+            comma={index < entries.length - 1}
+            mark={mark || (markKeys && key !== null && marked.includes(key))}
+            openDepth={openDepth}
+            marked={marked}
+        />
+    ));
 }
 
 function JsonNode(props: NodeProps) {
@@ -188,24 +215,38 @@ type JsonViewProps = {
     value: unknown;
     openDepth?: number;
     marked?: readonly string[];
+    bare?: boolean;
     className?: string;
 };
 
-function JsonView({ value, openDepth = 3, marked = [], className }: JsonViewProps) {
+function JsonView({ value, openDepth = 3, marked = [], bare = false, className }: JsonViewProps) {
+    const entries = bare && isBranch(value) ? entriesOf(value) : [];
     return (
         <div
             data-slot="json-view"
             className={cn("min-w-0 font-mono text-base leading-6", className)}
         >
-            <JsonNode
-                name={null}
-                value={value}
-                depth={0}
-                comma={false}
-                mark={false}
-                openDepth={openDepth}
-                marked={marked}
-            />
+            {entries.length > 0 ? (
+                <Entries
+                    entries={entries}
+                    depth={0}
+                    mark={false}
+                    markKeys
+                    openDepth={openDepth - 1}
+                    marked={marked}
+                />
+            ) : (
+                <JsonNode
+                    root
+                    name={null}
+                    value={value}
+                    depth={0}
+                    comma={false}
+                    mark={false}
+                    openDepth={openDepth}
+                    marked={marked}
+                />
+            )}
         </div>
     );
 }
@@ -221,7 +262,7 @@ function RecordSummary({ value }: { value: unknown }) {
     if (!isBranch(value) || Array.isArray(value)) return summaryValue(value);
     return entriesOf(value).map(([key, item], index) => (
         <span key={key ?? index}>
-            {index > 0 && "  "}
+            {index > 0 && <span className={INK.note}>{" · "}</span>}
             <span className={INK.key}>{key}</span>
             <span className={INK.punctuation}>{": "}</span>
             {summaryValue(item)}
@@ -237,6 +278,7 @@ type RecordListProps = {
     noun?: string;
     marked?: readonly string[];
     openDepth?: number;
+    summary?: (record: unknown, index: number) => ReactNode;
     empty?: ReactNode;
     className?: string;
 };
@@ -249,6 +291,7 @@ function RecordList({
     noun = "Row",
     marked,
     openDepth,
+    summary,
     empty = "No rows.",
     className,
 }: RecordListProps) {
@@ -287,21 +330,32 @@ function RecordList({
                                     isOpen && "rotate-90",
                                 )}
                             />
-                            <span className="w-10 shrink-0 text-sm text-muted-foreground tabular-nums">
+                            <span className="w-9 shrink-0 text-sm text-muted-foreground tabular-nums">
                                 {number}
                             </span>
                             <span
                                 className={cn(
-                                    "min-w-0 flex-1 truncate font-mono text-sm",
+                                    "flex min-w-0 flex-1 items-center gap-3",
                                     isOpen && "invisible",
                                 )}
                             >
-                                <RecordSummary value={record} />
+                                {summary ? (
+                                    summary(record, index)
+                                ) : (
+                                    <span className="min-w-0 flex-1 truncate font-mono text-sm">
+                                        <RecordSummary value={record} />
+                                    </span>
+                                )}
                             </span>
                         </button>
                         {isOpen && (
-                            <div className="pr-3 pb-3 pl-9">
-                                <JsonView value={record} marked={marked} openDepth={openDepth} />
+                            <div className="pr-3 pb-3 pl-16">
+                                <JsonView
+                                    value={record}
+                                    marked={marked}
+                                    openDepth={openDepth}
+                                    bare
+                                />
                             </div>
                         )}
                     </li>
