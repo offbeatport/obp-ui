@@ -202,6 +202,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      same `--syntax-*` colours. Each parser loads on first use from the app's own bundle and never from a network.
      Markdown fences render as a `CodeBlock` too (`codeLanguage` maps `sh`, `py`, `js`, `ts`, `yml`). An
      identifier inside a sentence stays a `font-mono` span.
+   - **Rows read as records are a `RecordList`; one JSON value is a `JsonView`.** A record is one 36px line (chevron, row
+     number, then its fields in `text-sm` mono, truncated) that opens to the row as JSON inked with the `--syntax-*`
+     tokens. Objects and arrays fold level by level from a chevron in the indent; a folded level reads `{…}` with its
+     key or item count. The page owns which rows are open and puts a `RecordListToggle` (Expand all / Collapse all)
+     over the list; open the first row by default. `marked` puts top-level keys (the input and the answer of a training
+     row) on `--highlight`. A JSON value a person reads but does not edit is a `JsonView`; one they copy whole stays a
+     `CodeBlock`.
    - **Process output is a `LogViewer`, never a bare list of lines.** Each line is time, level and message in
      `text-sm` mono on the card; warnings and errors take `--warning` and `--destructive` ink, debug and the
      `quietSource` (library output) stay muted, and the quiet source hides behind a switch while its errors still show.

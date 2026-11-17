@@ -17,6 +17,9 @@ import {
     ExpandableRowList,
     GradientMark,
     type GradientMarkBranding,
+    JsonView,
+    RecordList,
+    RecordListToggle,
     TaskCard,
     TaskStateChip,
     Timeline,
@@ -256,6 +259,53 @@ function InfiniteGrid() {
     );
 }
 
+const RECORDS = [
+    {
+        id: 4812,
+        messages: [
+            { role: "system", content: "Sort the ticket into one team." },
+            { role: "user", content: "My card was charged twice for the same order." },
+        ],
+        label: "billing",
+        urgent: true,
+        refunded: null,
+    },
+    {
+        id: 4813,
+        messages: [{ role: "user", content: "Where is my parcel?" }],
+        label: "shipping",
+        urgent: false,
+        refunded: null,
+    },
+    {
+        id: 4814,
+        messages: [{ role: "user", content: "Reset my password please" }],
+        label: "account",
+        urgent: false,
+        refunded: 12.5,
+    },
+];
+
+function RecordListDemo() {
+    const [open, setOpen] = useState<number[]>([0]);
+    return (
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-muted-foreground tabular-nums">{`Showing ${RECORDS.length} of 1,594`}</span>
+                <RecordListToggle total={RECORDS.length} open={open} onOpenChange={setOpen} />
+            </div>
+            <div className="rounded-lg border bg-card">
+                <RecordList
+                    records={RECORDS}
+                    open={open}
+                    onOpenChange={setOpen}
+                    marked={["label"]}
+                />
+            </div>
+        </div>
+    );
+}
+
 export function DataDisplaySection() {
     const [open, setOpen] = useState<string | null>("invoices");
     const [picked, setPicked] = useState<string | null>("invoices");
@@ -354,6 +404,31 @@ export function DataDisplaySection() {
                         {
                             name: "maxHeight, empty, label",
                             note: "the scroller's height cap (28rem by default), what an empty log says, and the log region's accessible name.",
+                        },
+                    ]}
+                />
+            </Spec>
+            <Spec
+                name="JsonView · RecordList"
+                note="Rows read as records. Each row is one line - its number and its fields - that opens to the row as highlighted JSON; objects and arrays inside fold level by level from their chevron. The marked key (the answer here) sits on the highlight."
+            >
+                <RecordListDemo />
+                <Frame>
+                    <JsonView value={RECORDS[0]} openDepth={1} />
+                </Frame>
+                <Api
+                    items={[
+                        {
+                            name: "JsonView value, openDepth",
+                            note: "any JSON value, inked with the --syntax-* tokens like a CodeBlock. Levels below openDepth (3 by default) start open; a folded level reads {…} with its key or item count. Long strings wrap.",
+                        },
+                        {
+                            name: "marked",
+                            note: "top-level keys drawn on --highlight, such as the input and the answer of a training row.",
+                        },
+                        {
+                            name: "RecordList records, open, onOpenChange",
+                            note: "open holds the indexes of the opened rows, so the page owns it; RecordListToggle is the Expand all / Collapse all button over the same state. start numbers the first row; noun names each row for screen readers.",
                         },
                     ]}
                 />

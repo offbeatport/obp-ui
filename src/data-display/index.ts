@@ -13,6 +13,13 @@ export {
     type CompareTableProps,
 } from "./compare-table";
 export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
+export {
+    JsonView,
+    type JsonViewProps,
+    RecordList,
+    type RecordListProps,
+    RecordListToggle,
+} from "./json-view";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./empty-state";
 export {
     type LogEntry,
