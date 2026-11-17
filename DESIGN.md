@@ -315,7 +315,10 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      on keyboard focus and while its menu is open, and always on touch. Its label is "Actions for <name>", every item
      carries an icon, destructive ones come last after a separator. Tab from the focused row reaches its button,
      Shift+F10, the context menu key and a right click open the menu from the row, and nothing pressed inside the
-     slot selects, drags or moves the row. Files show a `FileTypeIcon` (one `--file-*` token per format, at 3:1 or
+     slot selects, drags or moves the row. A node that is a page of its own carries an `href`: its whole row is then
+     a real link, so middle-click, Cmd/Ctrl-click and the browser's link menu ("Open in new tab") work, while a plain
+     left click still selects through `onSelect` and never follows the link. On such rows right click is the
+     browser's, and the row menu opens from the … button, Shift+F10 and the context menu key. Files show a `FileTypeIcon` (one `--file-*` token per format, at 3:1 or
      more on every palette's page, card, hover and selected fills) and a `FileName` with the extension at 50%
      opacity; pass the plain name as `textValue`.
    - **Borders, not shadows.** In-flow surfaces separate with `border` (1px `--border`); `shadow-e1`

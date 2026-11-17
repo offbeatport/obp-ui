@@ -49,6 +49,7 @@ export type TreeNode = {
     textValue?: string;
     icon?: ReactNode;
     meta?: ReactNode;
+    href?: string;
     children?: TreeNode[];
     draggable?: boolean;
     droppable?: boolean;
@@ -268,6 +269,14 @@ function keepInSlot(event: SyntheticEvent) {
     event.stopPropagation();
 }
 
+function opensElsewhere(event: MouseEvent): boolean {
+    return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+}
+
+function onLink(event: MouseEvent): boolean {
+    return (event.target as HTMLElement).closest("[data-slot='tree-item-link']") !== null;
+}
+
 export function TreeRowMenu({
     label,
     children,
@@ -417,14 +426,14 @@ function TreeRow({
                 onKeyDown(event);
             }}
             onContextMenu={(event) => {
-                if (openMenu()) {
+                if (row.node.href === undefined && openMenu()) {
                     event.preventDefault();
                 }
             }}
             onClick={onClick}
             onFocus={onFocus}
             className={cn(
-                "group/tree-row flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md text-base select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                "group/tree-row relative flex h-8 shrink-0 cursor-default items-center gap-1.5 rounded-md text-base select-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
                 hasActions ? "pr-1" : "pr-2",
                 selected
                     ? "bg-accent text-accent-foreground"
@@ -441,7 +450,7 @@ function TreeRow({
             <span
                 data-tree-toggle={row.expandable ? "" : undefined}
                 aria-hidden="true"
-                className="grid size-4 shrink-0 place-items-center text-muted-foreground"
+                className="relative z-1 grid size-4 shrink-0 place-items-center text-muted-foreground"
             >
                 {row.expandable && (
                     <IconChevronRight
@@ -463,9 +472,22 @@ function TreeRow({
                     {row.node.icon}
                 </span>
             )}
-            <span id={labelId} className="min-w-0 flex-1 truncate">
-                {row.node.label}
-            </span>
+            {row.node.href === undefined ? (
+                <span id={labelId} className="min-w-0 flex-1 truncate">
+                    {row.node.label}
+                </span>
+            ) : (
+                <a
+                    id={labelId}
+                    href={row.node.href}
+                    tabIndex={-1}
+                    draggable={draggable ? false : undefined}
+                    data-slot="tree-item-link"
+                    className="min-w-0 flex-1 cursor-default truncate after:absolute after:inset-0"
+                >
+                    {row.node.label}
+                </a>
+            )}
             {hasMeta && (
                 <span id={metaId} className="shrink-0 text-sm text-muted-foreground tabular-nums">
                     {row.node.meta}
@@ -475,7 +497,7 @@ function TreeRow({
                 <RowActionsContext.Provider value={slot}>
                     <span
                         data-slot="tree-row-actions"
-                        className={ROW_ACTIONS}
+                        className={cn("relative z-1", ROW_ACTIONS)}
                         onClick={keepInSlot}
                         onDoubleClick={keepInSlot}
                         onKeyDown={keepInSlot}
@@ -709,6 +731,13 @@ export function Tree({
     };
 
     const onClick = (event: MouseEvent<HTMLDivElement>, row: VisibleRow) => {
+        if (onLink(event)) {
+            if (opensElsewhere(event) && !dropped.current) {
+                return;
+            }
+            event.preventDefault();
+            event.currentTarget.focus({ preventScroll: true });
+        }
         if (dropped.current) {
             return;
         }
