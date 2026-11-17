@@ -323,7 +323,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      preset's `--radius`. A tab row is 36px (`h-9`, 12-14px side padding, `text-base`) - one step over a 32px
      control so a page's sections read above its toolbar; `size="sm"` drops `Tabs`, `TabNav` and
      `SegmentedTabs` back to 32px (`TabNav`, `TabsList`) or 34px (`SegmentedTabs`) for a dense toolbar or
-     a chart header. `TabbedSearchList` keeps its 40px row.
+     a chart header. `TabbedSearchList` keeps its 40px row. A `SegmentedTabs` segment whose label needs
+     explaining takes `tip`, a `Tooltip` on that segment alone.
    - **Status is coloured text in a 1px outline**, or a dot plus text - not a pastel pill. `-soft`
      fills are for callouts and selected rows. The dot is always `StatusDot`, never a hand-rolled
      `rounded-full` span, so one change restyles every product.

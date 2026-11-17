@@ -1,8 +1,22 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../primitives/tooltip";
 
-export type SegTab = { key: string; label: string; badge?: string | number };
+export type SegTab = { key: string; label: string; badge?: string | number; tip?: ReactNode };
+
+function withTip(tip: ReactNode, key: string, button: ReactNode) {
+    if (!tip) {
+        return button;
+    }
+    return (
+        <Tooltip key={key}>
+            <TooltipTrigger asChild>{button}</TooltipTrigger>
+            <TooltipContent className="max-w-xs whitespace-normal">{tip}</TooltipContent>
+        </Tooltip>
+    );
+}
 
 export function SegmentedTabs({
     tabs,
@@ -19,7 +33,9 @@ export function SegmentedTabs({
         <div className="inline-flex flex-nowrap items-center gap-0.5 rounded-none border border-border bg-tabs-background p-0.5">
             {tabs.map((t) => {
                 const on = t.key === active;
-                return (
+                return withTip(
+                    t.tip,
+                    t.key,
                     <button
                         key={t.key}
                         type="button"
@@ -39,7 +55,7 @@ export function SegmentedTabs({
                                 {t.badge}
                             </span>
                         )}
-                    </button>
+                    </button>,
                 );
             })}
         </div>
