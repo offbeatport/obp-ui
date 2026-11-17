@@ -1,5 +1,7 @@
 import {
     Link,
+    PageContents,
+    type PageContentsItem,
     type SegTab,
     SegmentedTabs,
     TabNav,
@@ -26,6 +28,31 @@ const SEG_TABS: SegTab[] = [
     { key: "run", label: "Run" },
     { key: "setup", label: "Setup" },
 ];
+
+const CONTENTS: PageContentsItem[] = [
+    { id: "contents-purpose", label: "Purpose" },
+    { id: "contents-data", label: "Training data" },
+    { id: "contents-evaluation", label: "Evaluation" },
+    { id: "contents-limits", label: "Limits" },
+];
+
+function ContentsDemo() {
+    return (
+        <div className="grid h-64 grid-cols-[1fr_12rem] gap-6 overflow-y-auto rounded-lg border p-4">
+            <div className="flex flex-col gap-6">
+                {CONTENTS.map((item) => (
+                    <section key={item.id} id={item.id} className="flex min-h-48 flex-col gap-1">
+                        <h3 className="text-base font-semibold">{item.label}</h3>
+                        <p className="text-sm text-muted-foreground">
+                            Scroll this box; the list on the right follows.
+                        </p>
+                    </section>
+                ))}
+            </div>
+            <PageContents items={CONTENTS} offset={24} className="sticky top-0 self-start" />
+        </div>
+    );
+}
 
 function NavReadout({ href }: { href: string }) {
     const { pathname, paths } = useNav();
@@ -127,6 +154,20 @@ export function NavSection() {
                     children. Each tab is a real link (middle-click, back button, deep links), the
                     active one carries <code>aria-current="page"</code>, and Tab shows the focus
                     ring.
+                </Note>
+            </Spec>
+
+            <Spec
+                name="PageContents"
+                note="A document's section list; the section in view is marked."
+            >
+                <ContentsDemo />
+                <Note>
+                    Follows the nearest scrolling ancestor, so it works inside an app shell's
+                    scrolling main. A section counts once its top passes <code>offset</code>
+                    pixels below the scroller's top; at the end of the page the last section is
+                    marked. A clicked entry stays marked until the reader scrolls. Put it in a{" "}
+                    <code>sticky</code> column.
                 </Note>
             </Spec>
 

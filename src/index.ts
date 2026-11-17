@@ -88,6 +88,7 @@ export {
 export * from "./primitives";
 
 export { Link } from "./nav/link";
+export { PageContents, type PageContentsItem } from "./nav/page-contents";
 export { SegmentedTabs, type SegTab } from "./nav/segmented-tabs";
 export { TabNav, type TabNavItem } from "./nav/tab-nav";
 export {
