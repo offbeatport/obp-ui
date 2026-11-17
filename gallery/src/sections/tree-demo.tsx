@@ -1,14 +1,14 @@
 import {
-    Database,
-    ExternalLink,
-    FileText,
-    Folder,
-    FolderPlus,
-    Layers,
-    Pencil,
-    Table2,
-    Trash2,
-} from "lucide-react";
+    IconDatabase,
+    IconExternalLink,
+    IconFileText,
+    IconFolder,
+    IconFolderPlus,
+    IconPencil,
+    IconStack2,
+    IconTable,
+    IconTrash,
+} from "@tabler/icons-react";
 import {
     DropdownMenuItem,
     DropdownMenuSeparator,
@@ -27,34 +27,39 @@ const FILES: TreeNode[] = [
     {
         id: "uploads",
         label: "Uploads",
-        icon: <Folder />,
+        icon: <IconFolder />,
         meta: 3,
         children: [
             {
                 id: "tickets.csv",
                 label: "tickets.csv",
-                icon: <FileText />,
+                icon: <IconFileText />,
                 meta: 2,
                 children: [
-                    { id: "triage", label: "Ticket triage", icon: <Table2 /> },
-                    { id: "routing", label: "Queue routing", icon: <Table2 /> },
+                    { id: "triage", label: "Ticket triage", icon: <IconTable /> },
+                    { id: "routing", label: "Queue routing", icon: <IconTable /> },
                 ],
             },
-            { id: "intents.jsonl", label: "intents.jsonl", icon: <FileText />, meta: 0 },
-            { id: "contracts.parquet", label: "contracts.parquet", icon: <FileText />, meta: 0 },
+            { id: "intents.jsonl", label: "intents.jsonl", icon: <IconFileText />, meta: 0 },
+            {
+                id: "contracts.parquet",
+                label: "contracts.parquet",
+                icon: <IconFileText />,
+                meta: 0,
+            },
         ],
     },
     {
         id: "warehouse",
         label: "Warehouse",
-        icon: <Database />,
+        icon: <IconDatabase />,
         meta: 2,
         children: [
-            { id: "orders", label: "public.orders", icon: <Table2 /> },
-            { id: "refunds", label: "public.refunds", icon: <Table2 /> },
+            { id: "orders", label: "public.orders", icon: <IconTable /> },
+            { id: "refunds", label: "public.refunds", icon: <IconTable /> },
         ],
     },
-    { id: "s3", label: "S3", icon: <Folder />, meta: 0 },
+    { id: "s3", label: "S3", icon: <IconFolder />, meta: 0 },
 ];
 
 type Entry = { id: string; name: string; parent: string; folder: boolean };
@@ -80,12 +85,12 @@ function branch(entries: Entry[], parent: string): TreeNode[] {
                 ? {
                       id: entry.id,
                       label: entry.name,
-                      icon: <Folder />,
+                      icon: <IconFolder />,
                       draggable: true,
                       droppable: true,
                       children: branch(entries, entry.id),
                   }
-                : { id: entry.id, label: entry.name, icon: <Table2 />, draggable: true },
+                : { id: entry.id, label: entry.name, icon: <IconTable />, draggable: true },
         );
 }
 
@@ -99,7 +104,7 @@ function MovableTreeDemo() {
             {
                 id: ROOT,
                 label: "Datasets",
-                icon: <Layers />,
+                icon: <IconStack2 />,
                 meta: entries.filter((entry) => !entry.folder).length,
                 droppable: true,
                 children: branch(entries, ROOT),
@@ -194,12 +199,12 @@ function ActionsTreeDemo() {
         {
             id: "uploads",
             label: "Uploads",
-            icon: <Folder />,
+            icon: <IconFolder />,
             meta: files.length,
             droppable: true,
             children: files.map(fileNode),
         },
-        { id: "empty", label: "Folders", icon: <Folder />, meta: 0, droppable: true },
+        { id: "empty", label: "Folders", icon: <IconFolder />, meta: 0, droppable: true },
     ];
     const nameOf = (node: TreeNode) => node.textValue ?? String(node.label);
     const actions = (node: TreeNode) => {
@@ -209,7 +214,7 @@ function ActionsTreeDemo() {
             return (
                 <TreeRowMenu label={`Actions for ${name}`}>
                     <DropdownMenuItem onSelect={done("add a file to")}>
-                        <FolderPlus />
+                        <IconFolderPlus />
                         Add file
                     </DropdownMenuItem>
                 </TreeRowMenu>
@@ -218,11 +223,11 @@ function ActionsTreeDemo() {
         return (
             <TreeRowMenu label={`Actions for ${name}`}>
                 <DropdownMenuItem onSelect={() => setSelected(node.id)}>
-                    <ExternalLink />
+                    <IconExternalLink />
                     Open
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={done("rename")}>
-                    <Pencil />
+                    <IconPencil />
                     Rename
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -233,7 +238,7 @@ function ActionsTreeDemo() {
                         setLast(`deleted ${name}`);
                     }}
                 >
-                    <Trash2 />
+                    <IconTrash />
                     Delete
                 </DropdownMenuItem>
             </TreeRowMenu>

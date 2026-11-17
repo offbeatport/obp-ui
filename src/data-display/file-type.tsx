@@ -1,16 +1,16 @@
 import {
-    File,
-    FileBox,
-    FileBraces,
-    FileBracesCorner,
-    FileCode,
-    FileDigit,
-    FileSpreadsheet,
-    FileText,
-    type LucideIcon,
-    Snowflake,
-    Triangle,
-} from "lucide-react";
+    IconFile,
+    IconFileCode,
+    IconFileCode2,
+    IconFileDatabase,
+    IconFileDigit,
+    IconFileSpreadsheet,
+    IconFileStack,
+    IconFileText,
+    IconSnowflake,
+    IconTriangle,
+} from "@tabler/icons-react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 
 export type FileType =
@@ -26,20 +26,20 @@ export type FileType =
     | "text"
     | "file";
 
-type FileTypeInfo = { label: string; icon: LucideIcon; tone: string };
+type FileTypeInfo = { label: string; icon: IconComponent; tone: string };
 
 export const FILE_TYPES: Record<FileType, FileTypeInfo> = {
-    csv: { label: "CSV", icon: FileSpreadsheet, tone: "text-file-csv" },
-    tsv: { label: "TSV", icon: FileSpreadsheet, tone: "text-file-tsv" },
-    json: { label: "JSON", icon: FileBraces, tone: "text-file-json" },
-    jsonl: { label: "JSON Lines", icon: FileBracesCorner, tone: "text-file-jsonl" },
-    parquet: { label: "Parquet", icon: FileBox, tone: "text-file-parquet" },
-    avro: { label: "Avro", icon: FileDigit, tone: "text-file-avro" },
-    iceberg: { label: "Iceberg", icon: Snowflake, tone: "text-file-iceberg" },
-    delta: { label: "Delta Lake", icon: Triangle, tone: "text-file-delta" },
-    sql: { label: "SQL", icon: FileCode, tone: "text-file-sql" },
-    text: { label: "Text", icon: FileText, tone: "text-file-text" },
-    file: { label: "File", icon: File, tone: "text-muted-foreground" },
+    csv: { label: "CSV", icon: IconFileSpreadsheet, tone: "text-file-csv" },
+    tsv: { label: "TSV", icon: IconFileSpreadsheet, tone: "text-file-tsv" },
+    json: { label: "JSON", icon: IconFileCode2, tone: "text-file-json" },
+    jsonl: { label: "JSON Lines", icon: IconFileStack, tone: "text-file-jsonl" },
+    parquet: { label: "Parquet", icon: IconFileDatabase, tone: "text-file-parquet" },
+    avro: { label: "Avro", icon: IconFileDigit, tone: "text-file-avro" },
+    iceberg: { label: "Iceberg", icon: IconSnowflake, tone: "text-file-iceberg" },
+    delta: { label: "Delta Lake", icon: IconTriangle, tone: "text-file-delta" },
+    sql: { label: "SQL", icon: IconFileCode, tone: "text-file-sql" },
+    text: { label: "Text", icon: IconFileText, tone: "text-file-text" },
+    file: { label: "File", icon: IconFile, tone: "text-muted-foreground" },
 };
 
 const EXTENSIONS: Record<string, FileType> = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
+import { IconChevronUp } from "@tabler/icons-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { railFade, useRailCollapsed } from "./rail-context";
@@ -38,7 +38,7 @@ export function AccountButton({
                 <span className="block truncate text-base font-semibold">{name}</span>
                 <span className="block truncate text-sm text-faint">{sub}</span>
             </span>
-            <ChevronUp className={cn("size-4 flex-none text-faint", railFade(collapsed))} />
+            <IconChevronUp className={cn("size-4 flex-none text-faint", railFade(collapsed))} />
         </button>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Autocomplete } from "@base-ui/react/autocomplete";
-import { Search, X } from "lucide-react";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
 
 import { cn } from "../lib/cn";
@@ -128,7 +128,7 @@ function TabbedSearchList<T>({
                 className={cn("flex min-h-0 flex-col gap-3", className)}
             >
                 <div className="relative">
-                    <Search
+                    <IconSearch
                         aria-hidden="true"
                         className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
                     />
@@ -161,7 +161,7 @@ function TabbedSearchList<T>({
                             }}
                             className="absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                         >
-                            <X className="size-3.5" />
+                            <IconX className="size-3.5" />
                         </button>
                     )}
                 </div>

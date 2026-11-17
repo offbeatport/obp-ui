@@ -3,7 +3,7 @@
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { useRender } from "@base-ui/react/use-render";
-import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+import { IconCheck, IconChevronRight, IconCircleFilled } from "@tabler/icons-react";
 import * as React from "react";
 
 import {
@@ -284,7 +284,7 @@ function DropdownMenuCheckboxItem({
         <>
             <span className="pointer-events-none absolute left-2.5 flex size-3.5 items-center justify-center">
                 <MenuPrimitive.CheckboxItemIndicator>
-                    <CheckIcon className="size-4" />
+                    <IconCheck className="size-4" />
                 </MenuPrimitive.CheckboxItemIndicator>
             </span>
             {inner}
@@ -346,7 +346,7 @@ function DropdownMenuRadioItem({
         <>
             <span className="pointer-events-none absolute left-2.5 flex size-3.5 items-center justify-center">
                 <MenuPrimitive.RadioItemIndicator>
-                    <CircleIcon className="size-2 fill-current" />
+                    <IconCircleFilled className="size-2 fill-current" />
                 </MenuPrimitive.RadioItemIndicator>
             </span>
             {inner}
@@ -490,7 +490,7 @@ function DropdownMenuSubTrigger({
     const content = (
         <>
             {inner}
-            <ChevronRightIcon className="ml-auto size-4" />
+            <IconChevronRight className="ml-auto size-4" />
         </>
     );
     return (

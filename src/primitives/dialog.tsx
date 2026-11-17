@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "lucide-react";
+import { IconX } from "@tabler/icons-react";
 import type * as React from "react";
 
 import {
@@ -126,7 +126,7 @@ function DialogContent({
                     data-slot="dialog-close"
                     className="absolute top-6.5 right-5 grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
                 >
-                    <XIcon />
+                    <IconX />
                     <span className="sr-only">Close</span>
                 </DialogPrimitive.Close>
             )}

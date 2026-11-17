@@ -23,7 +23,7 @@ import {
     sortableKeyboardCoordinates,
     useSortable,
 } from "@dnd-kit/sortable";
-import { GripHorizontal } from "lucide-react";
+import { IconGripHorizontal } from "@tabler/icons-react";
 import {
     type CSSProperties,
     Fragment,
@@ -291,7 +291,7 @@ function SortableHeader({
                     data-slot="compare-table-grip"
                     className="absolute top-0 left-1/2 flex h-3 w-8 -translate-x-1/2 cursor-grab items-center justify-center rounded-md text-faint outline-none hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                    <GripHorizontal aria-hidden="true" className="size-4" />
+                    <IconGripHorizontal aria-hidden="true" className="size-4" />
                 </TooltipTrigger>
                 <TooltipContent>Drag to reorder</TooltipContent>
             </Tooltip>

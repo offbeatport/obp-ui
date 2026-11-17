@@ -1,4 +1,4 @@
-import { Search, X } from "lucide-react";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import type * as React from "react";
 
 import { cn } from "../lib/cn";
@@ -20,7 +20,7 @@ function SearchInput({
 }: SearchInputProps) {
     return (
         <div data-slot="search-input" className={cn("relative", className)}>
-            <Search
+            <IconSearch
                 aria-hidden="true"
                 className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
             />
@@ -49,7 +49,7 @@ function SearchInput({
                     onClick={() => onValueChange("")}
                     className="absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                    <X className="size-3.5" />
+                    <IconX className="size-3.5" />
                 </button>
             )}
         </div>

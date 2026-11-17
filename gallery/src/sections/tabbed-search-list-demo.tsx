@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import {
     Badge,
     Button,
@@ -201,7 +201,7 @@ export function TabbedSearchListDemo() {
                             <span className="truncate">
                                 {pulled ?? (current ? `${current.name}:${current.tag}` : "Choose")}
                             </span>
-                            <ChevronDown className="text-muted-foreground" />
+                            <IconChevronDown className="text-muted-foreground" />
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="flex h-[min(40rem,calc(100%-2rem))] flex-col sm:max-w-2xl">

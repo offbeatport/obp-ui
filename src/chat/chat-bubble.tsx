@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { IconUser } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Markdown } from "../markdown";
@@ -107,7 +107,7 @@ export function ChatBubble({
             {me
                 ? (userAvatar ?? (
                       <span className={PANEL_USER_AVATAR}>
-                          <User className="size-[15px]" />
+                          <IconUser className="size-[15px]" />
                       </span>
                   ))
                 : avatar}

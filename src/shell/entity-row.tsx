@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { IconDots } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 import { GradientMark, type GradientMarkBranding } from "../data-display/gradient-mark";
 import { cn } from "../lib/cn";
@@ -135,7 +135,7 @@ export function EntityRow({
                             aria-label={actionsLabel ?? `${name} actions`}
                             className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-faint opacity-0 transition hover:bg-neutral/30 hover:text-foreground group-hover:opacity-100 data-popup-open:bg-primary/20 data-popup-open:opacity-100"
                         >
-                            <MoreHorizontal className="size-4" />
+                            <IconDots className="size-4" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">

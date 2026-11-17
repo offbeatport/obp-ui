@@ -1,5 +1,13 @@
+import {
+    IconAlertTriangle,
+    IconCheck,
+    IconFileCode,
+    IconHammer,
+    IconInbox,
+    IconPlus,
+    IconRocket,
+} from "@tabler/icons-react";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { Check, FileCode2, Hammer, Inbox, Plus, Rocket, TriangleAlert } from "lucide-react";
 import {
     Badge,
     Button,
@@ -57,7 +65,7 @@ const TASKS = [
         title: "Scaffold the repo",
         chip: "shipped",
         accent: "var(--success)",
-        icon: Check,
+        icon: IconCheck,
         sub: "TanStack Start + SQLite, deployed to a preview URL.",
         meta: "4h ago · 1 attempt · $0.31",
     },
@@ -66,7 +74,7 @@ const TASKS = [
         title: "Landing page + waitlist",
         chip: "shipped",
         accent: "var(--success)",
-        icon: Check,
+        icon: IconCheck,
         sub: "Copy from the spec, one CTA, email capture wired.",
         meta: "3h ago · 2 attempts · $0.68",
     },
@@ -75,7 +83,7 @@ const TASKS = [
         title: "Stripe checkout",
         chip: "needs you",
         accent: "var(--warning)",
-        icon: TriangleAlert,
+        icon: IconAlertTriangle,
         gated: true,
         sub: "The agent needs a live Stripe key before it can finish the slice.",
         meta: "in flight · 1 attempt · $0.44",
@@ -85,7 +93,7 @@ const TASKS = [
         title: "Invoice reminder cron",
         chip: "queued",
         accent: "var(--neutral)",
-        icon: Hammer,
+        icon: IconHammer,
         sub: "Blocked on slice 3.",
         meta: "queued",
     },
@@ -388,7 +396,7 @@ export function DataDisplaySection() {
                     onSelectedIdsChange={setSelectedReleases}
                     rowActions={(row) => (
                         <Button size="xs" onClick={() => setDeployed(row.name)}>
-                            <Rocket />
+                            <IconRocket />
                             Deploy
                         </Button>
                     )}
@@ -482,7 +490,7 @@ export function DataDisplaySection() {
                                 title="No companies yet"
                                 action={
                                     <Button size="sm" variant="outline" className="mt-4 w-full">
-                                        <Plus /> New company
+                                        <IconPlus /> New company
                                     </Button>
                                 }
                             >
@@ -494,11 +502,11 @@ export function DataDisplaySection() {
                         <p className="mb-2 font-mono text-base text-faint">variant="panel"</p>
                         <EmptyState
                             variant="panel"
-                            icon={Inbox}
+                            icon={IconInbox}
                             title="Your portfolio is empty"
                             action={
                                 <Button className="mt-4">
-                                    <Plus /> New company
+                                    <IconPlus /> New company
                                 </Button>
                             }
                         >
@@ -511,7 +519,7 @@ export function DataDisplaySection() {
                     <p className="mb-2 font-mono text-base text-faint">
                         variant="plate" (fills a tab)
                     </p>
-                    <EmptyState variant="plate" icon={FileCode2} title="No source yet">
+                    <EmptyState variant="plate" icon={IconFileCode} title="No source yet">
                         the agent writes into ~/companies/ledgerly
                     </EmptyState>
                 </div>
@@ -593,7 +601,7 @@ export function DataDisplaySection() {
                                     t.gated ? (
                                         <>
                                             <Button size="sm" variant="success">
-                                                <Check /> Approve
+                                                <IconCheck /> Approve
                                             </Button>
                                             <Button size="sm" variant="outline">
                                                 Ask for changes
@@ -606,7 +614,7 @@ export function DataDisplaySection() {
                     ))}
                 </Timeline>
                 <Row className="mt-6">
-                    <TimelineDot color="var(--primary)" icon={Rocket} />
+                    <TimelineDot color="var(--primary)" icon={IconRocket} />
                     <span className="font-mono text-base text-faint">
                         a dot on its own · spine={"{false}"} drops the hairline for a one-item list
                     </span>

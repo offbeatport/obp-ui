@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { IconX } from "@tabler/icons-react";
 import {
     Badge,
     Button,
@@ -212,7 +212,7 @@ export function CompareDemo() {
                         }
                     }}
                 >
-                    <X />
+                    <IconX />
                 </Button>
             </div>
         ),

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, PaletteIcon, RotateCcwIcon, SlidersHorizontalIcon } from "lucide-react";
+import { IconAdjustmentsHorizontal, IconCheck, IconPalette, IconRotate } from "@tabler/icons-react";
 import { type ReactNode, useEffect, useState } from "react";
 
 import { cn } from "./lib/cn";
@@ -116,7 +116,7 @@ export function ThemePicker({
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="ghost" size="sm" className={cn("gap-2", className)}>
-                        <PaletteIcon />
+                        <IconPalette />
                         <Chip preset={current} mode={mode} />
                         {!compact && <span>{current.name}</span>}
                     </Button>
@@ -153,7 +153,7 @@ export function ThemePicker({
                         onClick={startCustom}
                         className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-base font-medium hover:bg-accent hover:text-accent-foreground"
                     >
-                        <SlidersHorizontalIcon className="size-4" />
+                        <IconAdjustmentsHorizontal className="size-4" />
                         {custom ? "Compare presets, edit yours…" : "Compare presets, make one…"}
                     </button>
                 </PopoverContent>
@@ -221,7 +221,7 @@ function PresetRow({
                     {axisLine(p)}
                 </span>
             </span>
-            {selected && <CheckIcon className="mt-0.5 size-4 flex-none text-primary" />}
+            {selected && <IconCheck className="mt-0.5 size-4 flex-none text-primary" />}
         </button>
     );
 }
@@ -531,7 +531,7 @@ function CustomThemeDialog({
 
                 <DialogFooter>
                     <Button variant="ghost" size="sm" onClick={() => resetTo(THEME_PRESETS[0])}>
-                        <RotateCcwIcon />
+                        <IconRotate />
                         Reset to Instrument
                     </Button>
                     <Button size="sm" onClick={() => onOpenChange(false)}>

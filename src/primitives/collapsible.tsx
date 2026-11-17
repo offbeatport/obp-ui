@@ -1,7 +1,7 @@
 "use client";
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
-import { ChevronRightIcon } from "lucide-react";
+import { IconChevronRight } from "@tabler/icons-react";
 import type * as React from "react";
 
 import {
@@ -50,7 +50,7 @@ function CollapsibleTrigger({
     const content = (
         <>
             {chevron ? (
-                <ChevronRightIcon
+                <IconChevronRight
                     aria-hidden="true"
                     data-slot="collapsible-chevron"
                     className="size-4 shrink-0 text-muted-foreground transition-transform duration-100 in-data-panel-open:rotate-90 motion-reduce:transition-none"

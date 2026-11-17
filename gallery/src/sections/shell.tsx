@@ -1,14 +1,14 @@
 import {
-    Home,
-    Inbox,
-    LayoutGrid,
-    LogOut,
-    Plus,
-    Settings2,
-    ShieldCheck,
-    SunMoon,
-    Trash2,
-} from "lucide-react";
+    IconAdjustmentsHorizontal,
+    IconHome,
+    IconInbox,
+    IconLayoutGrid,
+    IconLogout,
+    IconPlus,
+    IconShieldCheck,
+    IconSunMoon,
+    IconTrash,
+} from "@tabler/icons-react";
 import { Badge, Button, GradientMark, type Tone } from "obp-ui";
 import {
     AccountButton,
@@ -39,10 +39,10 @@ const COMPANIES: { name: string; meta: string; tone: Tone; badge?: string }[] = 
 ];
 
 const ACCOUNT_ITEMS: AccountMenuItem[] = [
-    { icon: <Settings2 />, label: "Settings", href: "/settings" },
-    { icon: <ShieldCheck />, label: "Guardrails", href: "/guardrails" },
-    { kind: "theme", icon: <SunMoon />, label: "Theme" },
-    { icon: <LogOut />, label: "Sign out", separatorBefore: true, destructive: true },
+    { icon: <IconAdjustmentsHorizontal />, label: "Settings", href: "/settings" },
+    { icon: <IconShieldCheck />, label: "Guardrails", href: "/guardrails" },
+    { kind: "theme", icon: <IconSunMoon />, label: "Theme" },
+    { icon: <IconLogout />, label: "Sign out", separatorBefore: true, destructive: true },
 ];
 
 function RailReadout() {
@@ -114,12 +114,12 @@ export function ShellSection() {
                                     />
                                 }
                             >
-                                <NavItem icon={Plus} label="New company" href="#shell" tint />
-                                <NavItem icon={Home} label="Home" href="#shell" active />
-                                <NavItem icon={Inbox} label="Inbox" href="#shell" />
-                                <NavItem icon={LayoutGrid} label="Portfolio" href="#shell" />
+                                <NavItem icon={IconPlus} label="New company" href="#shell" tint />
+                                <NavItem icon={IconHome} label="Home" href="#shell" active />
+                                <NavItem icon={IconInbox} label="Inbox" href="#shell" />
+                                <NavItem icon={IconLayoutGrid} label="Portfolio" href="#shell" />
                                 <NavItem
-                                    icon={ShieldCheck}
+                                    icon={IconShieldCheck}
                                     label="Guardrails"
                                     locked
                                     title="Locked until a company ships"
@@ -137,12 +137,14 @@ export function ShellSection() {
                                         selected={selected === c.name}
                                         actions={[
                                             {
-                                                icon: <Settings2 className="size-4" />,
+                                                icon: (
+                                                    <IconAdjustmentsHorizontal className="size-4" />
+                                                ),
                                                 label: "Settings",
                                                 onSelect: () => setSelected(c.name),
                                             },
                                             {
-                                                icon: <Trash2 className="size-4" />,
+                                                icon: <IconTrash className="size-4" />,
                                                 label: "Kill",
                                                 destructive: true,
                                             },
@@ -189,7 +191,7 @@ export function ShellSection() {
                         title="No companies yet"
                         description="Start with a thought. The agent scopes it into a company."
                         actionLabel="New company"
-                        actionIcon={<Plus className="size-3.5" />}
+                        actionIcon={<IconPlus className="size-3.5" />}
                         actionHref="#shell"
                     />
                 </Frame>
@@ -237,7 +239,7 @@ export function ShellSection() {
                         },
                         {
                             name: "IconComponent",
-                            note: "any component taking a className - lucide satisfies it structurally, so the kit never depends on an icon set.",
+                            note: "any component taking a className and an optional strokeWidth - Tabler icons satisfy it structurally, so the kit never ties an app to an icon set.",
                         },
                         {
                             name: "EntityRowAction · AccountMenuItem",

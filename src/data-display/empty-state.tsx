@@ -1,7 +1,7 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 
 export type EmptyStateVariant = "rail" | "panel" | "plate";
@@ -38,7 +38,7 @@ const BODY: Record<EmptyStateVariant, string> = {
 
 export type EmptyStateProps = {
     variant?: EmptyStateVariant;
-    icon?: LucideIcon;
+    icon?: IconComponent;
     title?: ReactNode;
     children?: ReactNode;
     action?: ReactNode;

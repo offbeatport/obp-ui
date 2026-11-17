@@ -1,4 +1,4 @@
-import { XIcon } from "lucide-react";
+import { IconX } from "@tabler/icons-react";
 import {
     Button,
     CUSTOM_PRESET_ID,
@@ -824,7 +824,7 @@ export function ThemeBuilder({ onClose }: { onClose: () => void }) {
                         aria-label="Close theme builder"
                         onClick={onClose}
                     >
-                        <XIcon />
+                        <IconX />
                     </Button>
                 </div>
             </header>

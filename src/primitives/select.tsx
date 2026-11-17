@@ -2,8 +2,8 @@
 
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
+import { IconCheck, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { type VariantProps, cva } from "class-variance-authority";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Children, type ComponentProps, type ReactNode, isValidElement, useMemo } from "react";
 
 import {
@@ -160,7 +160,7 @@ function SelectTrigger({
     const content = (
         <>
             {inner}
-            <SelectPrimitive.Icon render={<ChevronDownIcon className="size-4 opacity-60" />}>
+            <SelectPrimitive.Icon render={<IconChevronDown className="size-4 opacity-60" />}>
                 {null}
             </SelectPrimitive.Icon>
         </>
@@ -330,7 +330,7 @@ function SelectItem({
                 )}
             >
                 <SelectPrimitive.ItemIndicator>
-                    <CheckIcon className="size-4 text-accent-foreground" strokeWidth={3} />
+                    <IconCheck className="size-4 text-accent-foreground" strokeWidth={3} />
                 </SelectPrimitive.ItemIndicator>
             </span>
             {icon ? (
@@ -412,7 +412,7 @@ function SelectScrollUpButton({
     const content = (
         <>
             {inner}
-            <ChevronUpIcon className="size-4" />
+            <IconChevronUp className="size-4" />
         </>
     );
     return (
@@ -445,7 +445,7 @@ function SelectScrollDownButton({
     const content = (
         <>
             {inner}
-            <ChevronDownIcon className="size-4" />
+            <IconChevronDown className="size-4" />
         </>
     );
     return (

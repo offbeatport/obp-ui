@@ -1,6 +1,6 @@
 "use client";
 
-import { SlidersHorizontalIcon } from "lucide-react";
+import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 import { cn } from "../lib/cn";
@@ -131,7 +131,7 @@ function FilterMenu({
                     data-active={active > 0 || undefined}
                     className={cn("data-active:border-primary", className)}
                 >
-                    <SlidersHorizontalIcon aria-hidden="true" />
+                    <IconAdjustmentsHorizontal aria-hidden="true" />
                     {label}
                     {active > 0 && (
                         <span className="flex h-5 min-w-5 items-center justify-center rounded-sm bg-primary px-1 text-sm leading-none text-primary-foreground tabular-nums">

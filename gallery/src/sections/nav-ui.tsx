@@ -1,4 +1,11 @@
-import { Hammer, LayoutGrid, type LucideIcon, Rocket, Settings2, TrendingUp } from "lucide-react";
+import {
+    IconAdjustmentsHorizontal,
+    IconHammer,
+    IconLayoutGrid,
+    IconRocket,
+    IconTrendingUp,
+} from "@tabler/icons-react";
+import type { IconComponent } from "obp-ui";
 import {
     CommandBar,
     FloatingDock,
@@ -21,12 +28,12 @@ import { Note, Spec } from "../kit";
 const TABS: [string, ...string[]] = ["Overview", "Build", "Grow", "Run", "Setup"];
 const BADGES: Record<string, string | number> = { Build: 3, Run: 1 };
 
-const TAB_ICONS: Record<string, LucideIcon> = {
-    Overview: LayoutGrid,
-    Build: Hammer,
-    Grow: TrendingUp,
-    Run: Rocket,
-    Setup: Settings2,
+const TAB_ICONS: Record<string, IconComponent> = {
+    Overview: IconLayoutGrid,
+    Build: IconHammer,
+    Grow: IconTrendingUp,
+    Run: IconRocket,
+    Setup: IconAdjustmentsHorizontal,
 };
 
 const NAMED: Record<string, (p: TabSelectorProps) => ReactNode> = {

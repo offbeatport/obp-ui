@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { type RefObject, useEffect, useState } from "react";
 
 import { Button } from "./button";
@@ -83,7 +83,7 @@ function CopyButton({
     className,
 }: CopyButtonProps) {
     const { state, copy } = useCopy(text, target);
-    const icon = state === "copied" ? <Check /> : <Copy />;
+    const icon = state === "copied" ? <IconCheck /> : <IconCopy />;
     const shown = copyText(state);
     const named = state === "idle" ? label : shown;
     const status = (

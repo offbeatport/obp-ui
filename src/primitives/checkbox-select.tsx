@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "lucide-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import type * as React from "react";
 
 import { cn } from "../lib/cn";
@@ -66,7 +66,7 @@ function CheckboxSelect({
                     className={cn(selectTriggerVariants({ size }), "w-auto min-w-40", className)}
                 >
                     <span className="truncate">{summary(options, value, allLabel, noun)}</span>
-                    <ChevronDownIcon className="size-4 opacity-60" />
+                    <IconChevronDown className="size-4 opacity-60" />
                 </button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-60 p-1">

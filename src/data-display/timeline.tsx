@@ -1,7 +1,7 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 
 export type TimelineProps = {
@@ -37,7 +37,7 @@ export function TimelineItem({ dot, children, className }: TimelineItemProps) {
 export type TimelineDotProps = {
     color: string;
     pulse?: boolean;
-    icon?: LucideIcon;
+    icon?: IconComponent;
     children?: ReactNode;
     className?: string;
 };

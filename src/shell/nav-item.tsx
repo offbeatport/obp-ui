@@ -1,13 +1,12 @@
 "use client";
 
-import { Lock } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import { IconLock } from "@tabler/icons-react";
+import type { ReactNode } from "react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
 import { useIsActive } from "../nav/ui-provider";
 import { railFade, useRailCollapsed } from "./rail-context";
-
-export type IconComponent = ComponentType<{ className?: string }>;
 
 export type NavItemProps = {
     icon: IconComponent;
@@ -53,7 +52,7 @@ export function NavItem({
                 <Icon className="size-4" />
             </span>
             <span className={cn("min-w-0 flex-1 truncate", railFade(collapsed))}>{label}</span>
-            {!collapsed && locked && <Lock className="size-3.5 flex-none text-faint" />}
+            {!collapsed && locked && <IconLock className="size-3.5 flex-none text-faint" />}
         </>
     );
     const cls = cn(

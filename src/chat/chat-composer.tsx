@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { IconLoader2 } from "@tabler/icons-react";
 import { type KeyboardEvent, type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "../lib/cn";
 
@@ -145,7 +145,7 @@ export function ChatComposer({
             disabled={blocked || !text.trim()}
             className={buttonClass}
         >
-            {sending && showSpinner ? <Loader2 className="size-4 animate-spin" /> : "↑"}
+            {sending && showSpinner ? <IconLoader2 className="size-4 animate-spin" /> : "↑"}
         </button>
     );
 

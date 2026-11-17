@@ -1,3 +1,4 @@
+import { IconChevronDown, IconChevronUp, IconColumns3, IconRotate } from "@tabler/icons-react";
 import {
     type Column,
     type ColumnDef,
@@ -11,7 +12,6 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { type Virtualizer, useVirtualizer, useWindowVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, ChevronUp, Columns3, RotateCcw } from "lucide-react";
 import {
     type ComponentProps,
     type KeyboardEvent,
@@ -191,7 +191,7 @@ function ColumnPicker({
                     title="Choose columns"
                     className="flex size-6 items-center justify-center rounded-sm text-muted-foreground hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                    <Columns3 className="size-4" />
+                    <IconColumns3 className="size-4" />
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
@@ -223,7 +223,7 @@ function ColumnPicker({
                 </DropdownMenuRadioGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={onReset}>
-                    <RotateCcw />
+                    <IconRotate />
                     Reset to default
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -1054,10 +1054,10 @@ export function DataGrid<T>({
                                             >
                                                 <span className="truncate">{title}</span>
                                                 {column.getIsSorted() === "asc" && (
-                                                    <ChevronUp className="size-3.5 shrink-0" />
+                                                    <IconChevronUp className="size-3.5 shrink-0" />
                                                 )}
                                                 {column.getIsSorted() === "desc" && (
-                                                    <ChevronDown className="size-3.5 shrink-0" />
+                                                    <IconChevronDown className="size-3.5 shrink-0" />
                                                 )}
                                             </button>
                                         ) : (

@@ -122,6 +122,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      keys - not whole tables, not headings, not labels. Number columns get `tabular-nums`
      (`<table>`, `<time>`, `<data>`, `<output>` and `TableCell` already have it). `font-serif`
      is for long-form reading only.
+   - **Icons are Tabler** (`@tabler/icons-react`, outline, stroke 2), sized by class (`size-4` in a control, or
+     the parent's `[&_svg]:size-*`), never by the `size` prop. A prop that takes an icon is typed `IconComponent`
+     (any component with `className` and `strokeWidth`), so an app passes Tabler icons or its own marks.
    - **Density.** Controls are 32px (`h-8`), tab rows 36px (`h-9`), menu rows 32px (`text-base`, `py-1.5`), cell padding 8-24px (`px-3
      py-1.5` in `TableCell`, `p-panel` (24px, `--panel-padding`) in `Card`; a table or list inside a card sits edge to edge, unpadded). No
      section padding above `py-12` inside an app, no `gap-6`+ between related controls, no centred hero inside a

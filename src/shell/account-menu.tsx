@@ -1,8 +1,9 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { type LucideIcon, Monitor, Moon, Sun } from "lucide-react";
+import { IconDeviceDesktop, IconMoon, IconSun } from "@tabler/icons-react";
 import { Fragment, type ReactNode, useEffect, useState } from "react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 import { type ThemePref, getThemePref, onThemeChange, setThemePref } from "../lib/theme";
 import { Link } from "../nav/link";
@@ -35,10 +36,10 @@ export type AccountMenuProps = {
     className?: string;
 };
 
-const THEME_PREFS: { value: ThemePref; label: string; Icon: LucideIcon }[] = [
-    { value: "light", label: "Light", Icon: Sun },
-    { value: "dark", label: "Dark", Icon: Moon },
-    { value: "system", label: "System", Icon: Monitor },
+const THEME_PREFS: { value: ThemePref; label: string; Icon: IconComponent }[] = [
+    { value: "light", label: "Light", Icon: IconSun },
+    { value: "dark", label: "Dark", Icon: IconMoon },
+    { value: "system", label: "System", Icon: IconDeviceDesktop },
 ];
 
 function isThemePref(value: unknown): value is ThemePref {

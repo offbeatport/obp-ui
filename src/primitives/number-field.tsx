@@ -1,7 +1,7 @@
 "use client";
 
 import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { type ComponentProps, type ReactNode, useId } from "react";
 
 import type { StringClassName } from "../lib/base-ui-compat";
@@ -135,7 +135,7 @@ function NumberFieldDecrement({
             className={cn(stepperClassName, "border-r", className)}
             {...props}
         >
-            {children ?? <MinusIcon aria-hidden="true" className="size-3.5" />}
+            {children ?? <IconMinus aria-hidden="true" className="size-3.5" />}
         </NumberFieldPrimitive.Decrement>
     );
 }
@@ -151,7 +151,7 @@ function NumberFieldIncrement({
             className={cn(stepperClassName, "border-l", className)}
             {...props}
         >
-            {children ?? <PlusIcon aria-hidden="true" className="size-3.5" />}
+            {children ?? <IconPlus aria-hidden="true" className="size-3.5" />}
         </NumberFieldPrimitive.Increment>
     );
 }

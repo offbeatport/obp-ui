@@ -17,7 +17,7 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import { ChevronRight, Ellipsis } from "lucide-react";
+import { IconChevronRight, IconDots } from "@tabler/icons-react";
 import {
     type KeyboardEvent,
     type MouseEvent,
@@ -314,7 +314,7 @@ export function TreeRowMenu({
                                 className,
                             )}
                         >
-                            <Ellipsis className="size-4" />
+                            <IconDots className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
@@ -444,7 +444,7 @@ function TreeRow({
                 className="grid size-4 shrink-0 place-items-center text-muted-foreground"
             >
                 {row.expandable && (
-                    <ChevronRight
+                    <IconChevronRight
                         className={cn(
                             "size-4 transition-transform duration-100 motion-reduce:transition-none",
                             row.expanded && "rotate-90",

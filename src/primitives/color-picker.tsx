@@ -1,6 +1,6 @@
 "use client";
 
-import { PipetteIcon } from "lucide-react";
+import { IconColorPicker } from "@tabler/icons-react";
 import {
     type ComponentProps,
     type ReactNode,
@@ -228,7 +228,7 @@ function EyeDropperButton({ onPick }: { onPick: (hex: string) => void }) {
                 } catch {}
             }}
         >
-            <PipetteIcon className="size-4" />
+            <IconColorPicker className="size-4" />
         </button>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type { NumberFieldRootChangeEventDetails } from "@base-ui/react/number-field";
-import { XIcon } from "lucide-react";
+import { IconX } from "@tabler/icons-react";
 import { type ReactNode, useRef } from "react";
 
 import { cn } from "../lib/cn";
@@ -137,7 +137,7 @@ function OptionalNumberField({
                                     onClick={clear}
                                     className="text-muted-foreground hover:text-foreground"
                                 >
-                                    <XIcon />
+                                    <IconX />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>Unset</TooltipContent>

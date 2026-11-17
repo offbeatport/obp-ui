@@ -1,7 +1,7 @@
 "use client";
 
 import { Combobox } from "@base-ui/react/combobox";
-import { CheckIcon, ChevronDownIcon, Search } from "lucide-react";
+import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react";
 import { type KeyboardEvent, type ReactNode, useMemo, useState } from "react";
 import { cn } from "../lib/cn";
 import { type ProviderId, ProviderLogo } from "../provider-logos";
@@ -155,7 +155,7 @@ export function ChatModelPicker({
                 ) : (
                     <span className="truncate">{placeholder}</span>
                 )}
-                <ChevronDownIcon aria-hidden="true" className="size-4 shrink-0 opacity-60" />
+                <IconChevronDown aria-hidden="true" className="size-4 shrink-0 opacity-60" />
             </Combobox.Trigger>
             <Combobox.Portal>
                 <Combobox.Positioner
@@ -175,7 +175,7 @@ export function ChatModelPicker({
                                 !searchable && "sr-only",
                             )}
                         >
-                            <Search
+                            <IconSearch
                                 aria-hidden="true"
                                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                             />
@@ -219,7 +219,7 @@ export function ChatModelPicker({
                                                     )}
                                                 </span>
                                                 <Combobox.ItemIndicator className="flex size-4 items-center justify-center">
-                                                    <CheckIcon className="size-4" strokeWidth={3} />
+                                                    <IconCheck className="size-4" strokeWidth={3} />
                                                 </Combobox.ItemIndicator>
                                             </Combobox.Item>
                                         )}

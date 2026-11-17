@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
-import { InfoIcon } from "lucide-react";
+import { IconInfoCircle } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 import { cn } from "../lib/cn";
@@ -27,7 +27,7 @@ function InfoTip({ label, children, side = "top", align = "center", className }:
                     className,
                 )}
             >
-                <InfoIcon aria-hidden="true" className="size-3.5" />
+                <IconInfoCircle aria-hidden="true" className="size-3.5" />
             </PopoverPrimitive.Trigger>
             <PopoverPrimitive.Portal>
                 <PopoverPrimitive.Positioner

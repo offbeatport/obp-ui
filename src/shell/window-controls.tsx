@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Square, X } from "lucide-react";
+import { IconMinus, IconSquare, IconX } from "@tabler/icons-react";
 import { cn } from "../lib/cn";
 import { useWindowControls } from "./window-controls-context";
 
@@ -26,7 +26,7 @@ export function WindowControls({ force, className, labels }: WindowControlsProps
                 aria-label={labels?.minimize ?? "Minimise"}
                 className={BTN}
             >
-                <Minus className="size-3.5" />
+                <IconMinus className="size-3.5" />
             </button>
             <button
                 type="button"
@@ -40,11 +40,11 @@ export function WindowControls({ force, className, labels }: WindowControlsProps
             >
                 {win.isMaximized ? (
                     <span className="relative block size-3.5">
-                        <Square className="absolute left-0 top-0 size-2.5" />
-                        <Square className="absolute bottom-0 right-0 size-2.5" />
+                        <IconSquare className="absolute left-0 top-0 size-2.5" />
+                        <IconSquare className="absolute bottom-0 right-0 size-2.5" />
                     </span>
                 ) : (
-                    <Square className="size-3" />
+                    <IconSquare className="size-3" />
                 )}
             </button>
             <button
@@ -53,7 +53,7 @@ export function WindowControls({ force, className, labels }: WindowControlsProps
                 aria-label={labels?.close ?? "Close"}
                 className={cn(BTN, "hover:bg-destructive hover:text-destructive-foreground")}
             >
-                <X className="size-3.5" />
+                <IconX className="size-3.5" />
             </button>
         </div>
     );

@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronDown, LayoutGrid, type LucideIcon } from "lucide-react";
+import { IconChevronDown, IconLayoutGrid } from "@tabler/icons-react";
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 import {
     DropdownMenu,
@@ -15,12 +16,12 @@ export type TabSelectorProps = {
     active: string;
     onSelect: (t: string) => void;
     badges?: Record<string, string | number>;
-    icons?: Record<string, LucideIcon>;
-    fallbackIcon?: LucideIcon;
+    icons?: Record<string, IconComponent>;
+    fallbackIcon?: IconComponent;
 };
 
-function iconFor(p: TabSelectorProps, t: string): LucideIcon {
-    return p.icons?.[t] ?? p.fallbackIcon ?? LayoutGrid;
+function iconFor(p: TabSelectorProps, t: string): IconComponent {
+    return p.icons?.[t] ?? p.fallbackIcon ?? IconLayoutGrid;
 }
 
 function useSlider(active: number) {
@@ -395,7 +396,7 @@ export function MorphDropdown(p: TabSelectorProps) {
                     </span>
                     <span className="text-sm font-semibold text-foreground">{active}</span>
                     <Badge v={badges?.[active]} />
-                    <ChevronDown className="size-4 text-faint" />
+                    <IconChevronDown className="size-4 text-faint" />
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56 p-1.5">
@@ -541,7 +542,7 @@ export const TAB_SELECTORS: TabSelectorDef[] = [
 ];
 
 export function withTabIcons(
-    icons: Record<string, LucideIcon>,
+    icons: Record<string, IconComponent>,
     defs: TabSelectorDef[] = TAB_SELECTORS,
 ): TabSelectorDef[] {
     return defs.map((d) => ({

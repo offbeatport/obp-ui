@@ -2,25 +2,25 @@
 
 import { Toast } from "@base-ui/react/toast";
 import {
-    CircleCheckIcon,
-    CircleXIcon,
-    InfoIcon,
-    type LucideIcon,
-    TriangleAlertIcon,
-    XIcon,
-} from "lucide-react";
+    IconAlertTriangle,
+    IconCircleCheck,
+    IconCircleX,
+    IconInfoCircle,
+    IconX,
+} from "@tabler/icons-react";
 import type { ReactNode } from "react";
+import type { IconComponent } from "../icons";
 
 import { cn } from "../lib/cn";
 import { buttonVariants } from "./button";
 
 type ToastTone = "neutral" | "success" | "warning" | "destructive";
 
-const TONE_ICON: Record<ToastTone, { Icon: LucideIcon; className: string }> = {
-    neutral: { Icon: InfoIcon, className: "text-muted-foreground" },
-    success: { Icon: CircleCheckIcon, className: "text-success" },
-    warning: { Icon: TriangleAlertIcon, className: "text-warning" },
-    destructive: { Icon: CircleXIcon, className: "text-destructive" },
+const TONE_ICON: Record<ToastTone, { Icon: IconComponent; className: string }> = {
+    neutral: { Icon: IconInfoCircle, className: "text-muted-foreground" },
+    success: { Icon: IconCircleCheck, className: "text-success" },
+    warning: { Icon: IconAlertTriangle, className: "text-warning" },
+    destructive: { Icon: IconCircleX, className: "text-destructive" },
 };
 
 function toneOf(type: string | undefined): ToastTone {
@@ -66,7 +66,7 @@ function ToastList() {
                     aria-label="Dismiss"
                     className="-mr-1 flex size-6 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                    <XIcon aria-hidden="true" className="size-4" />
+                    <IconX aria-hidden="true" className="size-4" />
                 </Toast.Close>
             </span>
         </Toast.Root>

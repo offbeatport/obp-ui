@@ -1,7 +1,7 @@
 "use client";
 
+import { IconChevronRight } from "@tabler/icons-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronRight } from "lucide-react";
 import {
     type ReactNode,
     type UIEvent,
@@ -201,7 +201,7 @@ function LogRow({
         <>
             <span className="flex h-[1.5em] items-center justify-center text-muted-foreground">
                 {expandable && (
-                    <ChevronRight
+                    <IconChevronRight
                         aria-hidden="true"
                         className={cn(
                             "size-3.5 transition-transform duration-100 motion-reduce:transition-none",

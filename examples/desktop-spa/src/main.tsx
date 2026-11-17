@@ -1,7 +1,13 @@
 import "./app.css";
 import "@xyflow/react/dist/base.css";
 
-import { Home, Inbox, LayoutGrid, Plus, SlidersHorizontal } from "lucide-react";
+import {
+    IconAdjustmentsHorizontal,
+    IconHome,
+    IconInbox,
+    IconLayoutGrid,
+    IconPlus,
+} from "@tabler/icons-react";
 import {
     Badge,
     Button,
@@ -83,12 +89,16 @@ function Probe() {
                                 />
                             }
                         >
-                            <NavItem icon={Plus} label="New company" href="/new" tint />
+                            <NavItem icon={IconPlus} label="New company" href="/new" tint />
                             <SectionLabel>Overview</SectionLabel>
-                            <NavItem icon={Home} label="Home" href="/" active />
-                            <NavItem icon={Inbox} label="Inbox" href="/inbox" />
-                            <NavItem icon={SlidersHorizontal} label="Guardrails" href="/g" />
-                            <NavItem icon={LayoutGrid} label="Portfolio" href="/companies" />
+                            <NavItem icon={IconHome} label="Home" href="/" active />
+                            <NavItem icon={IconInbox} label="Inbox" href="/inbox" />
+                            <NavItem
+                                icon={IconAdjustmentsHorizontal}
+                                label="Guardrails"
+                                href="/g"
+                            />
+                            <NavItem icon={IconLayoutGrid} label="Portfolio" href="/companies" />
                             <SectionLabel>Companies</SectionLabel>
                             {COMPANIES.map((c) => (
                                 <EntityRow

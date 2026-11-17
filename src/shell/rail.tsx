@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronLeft, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+    IconChevronLeft,
+    IconLayoutSidebarLeftCollapse,
+    IconLayoutSidebarLeftExpand,
+} from "@tabler/icons-react";
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
@@ -50,12 +54,14 @@ export function Rail({
     const glyph = (size: string) =>
         toggleIcon === "panel" ? (
             collapsed ? (
-                <PanelLeftOpen className={size} />
+                <IconLayoutSidebarLeftExpand className={size} />
             ) : (
-                <PanelLeftClose className={size} />
+                <IconLayoutSidebarLeftCollapse className={size} />
             )
         ) : (
-            <ChevronLeft className={cn(size, "transition-transform", collapsed && "rotate-180")} />
+            <IconChevronLeft
+                className={cn(size, "transition-transform", collapsed && "rotate-180")}
+            />
         );
     const label = collapsed ? expandLabel : collapseLabel;
     const brandLink =

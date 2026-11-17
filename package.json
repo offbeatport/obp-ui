@@ -3,8 +3,13 @@
     "version": "0.1.0",
     "type": "module",
     "description": "The Offbeatport design system: tokens, primitives and presentational components shared across every app.",
-    "sideEffects": ["**/*.css"],
-    "files": ["src", "DESIGN.md"],
+    "sideEffects": [
+        "**/*.css"
+    ],
+    "files": [
+        "src",
+        "DESIGN.md"
+    ],
     "style": "./src/styles/index.css",
     "exports": {
         ".": {
@@ -83,11 +88,11 @@
         "@lezer/json": "1.0.3",
         "@lezer/python": "1.1.19",
         "@lezer/yaml": "1.0.4",
+        "@tabler/icons-react": "3.50.0",
         "@tanstack/react-table": "^8.21.3",
         "@tanstack/react-virtual": "^3.14.25",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
-        "lucide-react": "^1.35.0",
         "tailwind-merge": "^3.3.1"
     },
     "peerDependencies": {

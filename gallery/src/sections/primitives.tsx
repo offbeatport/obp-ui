@@ -1,14 +1,14 @@
 import {
-    Bot,
-    Check,
-    Gauge,
-    Plus,
-    Rocket,
-    Settings2,
-    ShieldCheck,
-    Sparkles,
-    Trash2,
-} from "lucide-react";
+    IconAdjustmentsHorizontal,
+    IconCheck,
+    IconGauge,
+    IconPlus,
+    IconRobot,
+    IconRocket,
+    IconShieldCheck,
+    IconSparkles,
+    IconTrash,
+} from "@tabler/icons-react";
 import {
     Badge,
     Button,
@@ -275,11 +275,11 @@ export function PrimitivesSection() {
                         <Cell key={s} label={s}>
                             {s.startsWith("icon") ? (
                                 <Button size={s} aria-label={`New company (${s})`}>
-                                    <Plus />
+                                    <IconPlus />
                                 </Button>
                             ) : (
                                 <Button size={s}>
-                                    <Rocket /> Ship it
+                                    <IconRocket /> Ship it
                                 </Button>
                             )}
                         </Cell>
@@ -303,7 +303,7 @@ export function PrimitivesSection() {
                 </Row>
                 <Row className="mt-4">
                     <Badge variant="success">
-                        <Check /> with a glyph
+                        <IconCheck /> with a glyph
                     </Badge>
                     <Badge variant="link" asChild>
                         <a href="#primitives">asChild anchor</a>
@@ -521,15 +521,15 @@ export function PrimitivesSection() {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="anthropic" icon={<Sparkles />}>
+                                <SelectItem value="anthropic" icon={<IconSparkles />}>
                                     Claude
                                 </SelectItem>
-                                <SelectItem value="openrouter" icon={<Bot />}>
+                                <SelectItem value="openrouter" icon={<IconRobot />}>
                                     OpenRouter
                                 </SelectItem>
                                 <SelectItem
                                     value="local"
-                                    icon={<ShieldCheck />}
+                                    icon={<IconShieldCheck />}
                                     description="Never leaves the machine."
                                 >
                                     Local (Ollama)
@@ -545,21 +545,21 @@ export function PrimitivesSection() {
                             <SelectContent className="max-w-[22rem]">
                                 <SelectItem
                                     value="daily"
-                                    icon={<Gauge />}
+                                    icon={<IconGauge />}
                                     description="One mail a day, every day."
                                 >
                                     Daily burn
                                 </SelectItem>
                                 <SelectItem
                                     value="weekly"
-                                    icon={<Rocket />}
+                                    icon={<IconRocket />}
                                     description="Monday morning, everything at once."
                                 >
                                     Weekly digest
                                 </SelectItem>
                                 <SelectItem
                                     value="never"
-                                    icon={<Settings2 />}
+                                    icon={<IconAdjustmentsHorizontal />}
                                     description="You will have to come looking."
                                     disabled
                                 >
@@ -815,7 +815,7 @@ export function PrimitivesSection() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline">
-                                <Settings2 /> Company actions
+                                <IconAdjustmentsHorizontal /> Company actions
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" className="w-60">
@@ -850,7 +850,7 @@ export function PrimitivesSection() {
                             </DropdownMenuSub>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem variant="destructive">
-                                <Trash2 /> Kill company
+                                <IconTrash /> Kill company
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -995,7 +995,7 @@ export function PrimitivesSection() {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" aria-label="Settings">
-                                <Settings2 />
+                                <IconAdjustmentsHorizontal />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent side="right">Settings</TooltipContent>

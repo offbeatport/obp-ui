@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { IconMoon, IconSun } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { type ThemeController, theme as defaultTheme } from "./lib/theme";
 import { Button } from "./primitives";
@@ -21,7 +21,7 @@ export function ThemeToggle({ theme = defaultTheme }: { theme?: ThemeController 
             onClick={theme.toggleTheme}
             aria-label={`Switch to ${dark ? "light" : "dark"} theme`}
         >
-            {dark ? <Sun /> : <Moon />}
+            {dark ? <IconSun /> : <IconMoon />}
             {dark ? "Light" : "Dark"}
         </Button>
     );
