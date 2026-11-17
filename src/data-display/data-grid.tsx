@@ -22,6 +22,7 @@ import {
     useCallback,
     useEffect,
     useLayoutEffect,
+    useMemo,
     useRef,
     useState,
 } from "react";
@@ -308,6 +309,18 @@ function selectionColumn<T>(
             />
         ),
     };
+}
+
+function titled<T>(column: ColumnDef<T, unknown>): boolean {
+    const header = column.header;
+    return typeof header === "string" ? header.trim() !== "" : header !== undefined;
+}
+
+function withSortDefault<T>(column: ColumnDef<T, unknown>): ColumnDef<T, unknown> {
+    if (column.enableSorting !== undefined || titled(column)) {
+        return column;
+    }
+    return { ...column, enableSorting: false };
 }
 
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
@@ -779,9 +792,10 @@ export function DataGrid<T>({
     const [density, setDensity] = useState<Density>(() => readDensity(storageKey));
     useEffect(() => writeDensity(storageKey, density), [storageKey, density]);
     const selectable = selectedIds !== undefined && onSelectedIdsChange !== undefined;
+    const defaulted = useMemo(() => columns.map(withSortDefault), [columns]);
     const allColumns = selectable
-        ? [selectionColumn<T>(selectedIds, onSelectedIdsChange, rowLabel), ...columns]
-        : columns;
+        ? [selectionColumn<T>(selectedIds, onSelectedIdsChange, rowLabel), ...defaulted]
+        : defaulted;
     const table = useReactTable({
         data: rows,
         columns: allColumns,

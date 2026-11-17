@@ -250,7 +250,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **Sibling pages are a `TabNav`.** A page split into sub-pages with their own URLs puts underlined link tabs
      under its header, full width, rather than a side menu; `Tabs` is for state inside one page.
    - **Lists of records are a `DataGrid`.** Sorting and resizable columns are on by default, the
-     header sticks, and rows virtualise from 150. Give it `onOpen` and `rowLabel` when a row opens
+     header sticks, and rows virtualise from 150. Every column with an accessor sorts from its header
+     button (a chevron marks the order, `aria-sort` names it, Enter or Space toggles it); give each one
+     an accessor that sorts sensibly (numbers as numbers, times as timestamps, statuses by a rank) and
+     opt a column out with `enableSorting: false`. Display columns without an accessor, columns without
+     a header (icon-only cells), the selection checkboxes and `rowActions` never sort. Give it `onOpen` and `rowLabel` when a row opens
      something (a click anywhere on the row then opens it; once any row is selected, a click or Space toggles the row instead; keep the name a real link for new tabs), `storageKey` to keep a person's column widths and choices, `columnPicker` (with `hiddenColumns` for the
      defaults; show few enough by default that the grid fits, and let it scroll when people add more) when a
      list has more columns than most people need, `rowActions` for one or two buttons per row (pinned to the
