@@ -87,6 +87,9 @@ function naturalWidth(cell: HTMLElement, host: HTMLElement): number {
     const probe = document.createElement("div");
     probe.style.cssText = PROBE;
     probe.style.font = style.font;
+    probe.style.fontVariantNumeric = style.fontVariantNumeric;
+    probe.style.fontFeatureSettings = style.fontFeatureSettings;
+    probe.style.letterSpacing = style.letterSpacing;
     for (const child of cell.childNodes) {
         if (!(child instanceof HTMLElement && child.dataset.columnResizer !== undefined)) {
             probe.appendChild(child.cloneNode(true));
@@ -117,6 +120,25 @@ function measure(table: HTMLTableElement, id: string): number | null {
 
 function clampTo(column: ColumnSize, width: number, max = Number.POSITIVE_INFINITY): number {
     return Math.round(Math.min(max, Math.max(column.min ?? MIN_COLUMN, width)));
+}
+
+function sum(widths: Widths): number {
+    return Object.values(widths).reduce((total, width) => total + width, 0);
+}
+
+function fitInto(natural: Widths, base: Widths, room: number): Widths {
+    const over = sum(natural) - room;
+    const spare = sum(natural) - sum(base);
+    if (over <= 0 || spare <= 0) {
+        return natural;
+    }
+    const keep = Math.max(0, 1 - over / spare);
+    return Object.fromEntries(
+        Object.entries(natural).map(([id, width]) => {
+            const floor = base[id] ?? width;
+            return [id, Math.round(floor + (width - floor) * keep)];
+        }),
+    );
 }
 
 export function ColumnResizer({
@@ -179,21 +201,29 @@ export function useColumnSizing({
             if (!table) {
                 return;
             }
-            const next: Widths = {};
+            const natural: Widths = {};
+            const base: Widths = {};
+            let fixed = 0;
             for (const column of latest.current) {
-                if (column.flex || keep[column.id] !== undefined) {
-                    continue;
-                }
-                const natural = measure(table, column.id);
-                if (natural !== null) {
-                    next[column.id] = clampTo(
+                const kept = keep[column.id];
+                const found = column.flex || kept !== undefined ? null : measure(table, column.id);
+                if (column.flex) {
+                    fixed += column.min ?? column.width;
+                } else if (kept !== undefined) {
+                    fixed += kept;
+                } else if (found === null) {
+                    fixed += column.width;
+                } else {
+                    base[column.id] = clampTo(column, column.width);
+                    natural[column.id] = clampTo(
                         column,
-                        Math.max(natural, column.width),
+                        Math.max(found, column.width),
                         column.max ?? MAX_FIT,
                     );
                 }
             }
-            setFitted(next);
+            const room = (table.parentElement?.clientWidth ?? Number.POSITIVE_INFINITY) - fixed;
+            setFitted(fitInto(natural, base, room));
         },
         [table],
     );
@@ -204,6 +234,22 @@ export function useColumnSizing({
             fitAll(storedRef.current);
         }
     }, [fitAll, fitKey]);
+    const fitting = fitKey !== undefined;
+    useEffect(() => {
+        const box = table?.parentElement;
+        if (!box || !fitting) {
+            return;
+        }
+        let last = box.clientWidth;
+        const observer = new ResizeObserver(() => {
+            if (box.clientWidth !== last) {
+                last = box.clientWidth;
+                fitAll(storedRef.current);
+            }
+        });
+        observer.observe(box);
+        return () => observer.disconnect();
+    }, [table, fitting, fitAll]);
     const set = (id: string, next: number) => {
         const column = columnOf(id);
         if (column) {
