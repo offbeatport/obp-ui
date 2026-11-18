@@ -6,6 +6,7 @@ import type { IconComponent } from "../icons";
 import { cn } from "../lib/cn";
 import { Link } from "../nav/link";
 import { useIsActive } from "../nav/ui-provider";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../primitives/tooltip";
 import { railFade, useRailCollapsed } from "./rail-context";
 
 export type NavItemProps = {
@@ -64,23 +65,29 @@ export function NavItem({
         tint && "nav-newco mb-1.5",
         className,
     );
-    if (href) {
-        return (
-            <Link href={href} title={title} className={cls}>
-                {inner}
-            </Link>
-        );
-    }
-    return (
+    const item = href ? (
+        <Link href={href} title={collapsed ? undefined : title} className={cls}>
+            {inner}
+        </Link>
+    ) : (
         <button
             type="button"
             onClick={onClick}
             disabled={locked}
             aria-disabled={locked}
-            title={title}
+            title={collapsed ? undefined : title}
             className={cls}
         >
             {inner}
         </button>
+    );
+    if (!collapsed) {
+        return item;
+    }
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>{item}</TooltipTrigger>
+            <TooltipContent side="right">{title ?? label}</TooltipContent>
+        </Tooltip>
     );
 }
