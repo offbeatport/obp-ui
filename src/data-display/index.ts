@@ -14,6 +14,12 @@ export {
 } from "./compare-table";
 export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
 export {
+    SortButton,
+    type SortButtonProps,
+    type SortDirection,
+    sortAria,
+} from "./sort-button";
+export {
     JsonView,
     type JsonViewProps,
     RecordList,

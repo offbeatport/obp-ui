@@ -268,6 +268,9 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      that arrive above the view (live updates) leave what the reader is looking at in place. Keep
      filters and search on the server too; headers sort only through `sorting` and `onSortingChange`, since sorting
      the loaded rows alone would mislead. Plain `Table` is for short static tables (a spec sheet, a diff).
+     A hand-built table or grid that sorts from its headers uses `SortButton` (the DataGrid's own header button: a
+     chevron on the sorted column only, nothing on the others) and puts `aria-sort={sortAria(direction)}` on the
+     `th`; never a local sort header or another icon (arrows, selectors).
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
      grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned
      while columns scroll sideways, and a row that differs carries a 2px `--primary` edge on its label and a

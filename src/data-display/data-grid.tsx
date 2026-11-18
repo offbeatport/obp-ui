@@ -1,4 +1,4 @@
-import { IconChevronDown, IconChevronUp, IconColumns3, IconRotate } from "@tabler/icons-react";
+import { IconColumns3, IconRotate } from "@tabler/icons-react";
 import {
     type Column,
     type ColumnDef,
@@ -43,6 +43,7 @@ import {
 import { InfoTip } from "../primitives/info-tip";
 import { Skeleton } from "../primitives/skeleton";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
+import { SortButton, sortAria } from "./sort-button";
 
 declare module "@tanstack/react-table" {
     interface ColumnMeta<TData, TValue> {
@@ -330,14 +331,6 @@ function scrollParent(node: HTMLElement | null): HTMLElement | null {
         }
     }
     return null;
-}
-
-function ariaSort(column: Column<unknown, unknown>) {
-    const sorted = column.getIsSorted();
-    if (sorted === "asc") {
-        return "ascending" as const;
-    }
-    return sorted === "desc" ? ("descending" as const) : undefined;
 }
 
 function Resizer({
@@ -1054,26 +1047,19 @@ export function DataGrid<T>({
                                                 cells.current.delete(column.id);
                                             }
                                         }}
-                                        aria-sort={ariaSort(column as Column<unknown, unknown>)}
+                                        aria-sort={sortAria(column.getIsSorted())}
                                         className={cn(
                                             "sticky top-0 z-[1] overflow-visible",
                                             columnPicker && last && "pr-9",
                                         )}
                                     >
                                         {column.getCanSort() ? (
-                                            <button
-                                                type="button"
+                                            <SortButton
+                                                direction={column.getIsSorted()}
                                                 onClick={column.getToggleSortingHandler()}
-                                                className="inline-flex max-w-full items-center gap-1 rounded-sm font-medium hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
                                             >
-                                                <span className="truncate">{title}</span>
-                                                {column.getIsSorted() === "asc" && (
-                                                    <IconChevronUp className="size-3.5 shrink-0" />
-                                                )}
-                                                {column.getIsSorted() === "desc" && (
-                                                    <IconChevronDown className="size-3.5 shrink-0" />
-                                                )}
-                                            </button>
+                                                {title}
+                                            </SortButton>
                                         ) : (
                                             title
                                         )}
