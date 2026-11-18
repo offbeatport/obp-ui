@@ -137,7 +137,7 @@ type TooltipContentProps = StringClassName<React.ComponentProps<typeof TooltipPr
 
 function TooltipContent({
     className,
-    sideOffset = 0,
+    sideOffset = 6,
     side,
     align,
     alignOffset,

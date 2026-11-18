@@ -87,7 +87,9 @@ export function NavItem({
     return (
         <Tooltip>
             <TooltipTrigger asChild>{item}</TooltipTrigger>
-            <TooltipContent side="right">{title ?? label}</TooltipContent>
+            <TooltipContent side="right" sideOffset={12}>
+                {title ?? label}
+            </TooltipContent>
         </Tooltip>
     );
 }
