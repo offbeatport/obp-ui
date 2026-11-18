@@ -3,9 +3,24 @@ import { useState } from "react";
 import { Api, Note, Spec } from "../kit";
 
 const SCHEMA: SqlSchema = {
-    tickets: ["id", "text", "category", "created_at"],
+    tickets: [
+        { name: "id", type: "BIGINT", samples: ["1", "2", "3"] },
+        {
+            name: "text",
+            type: "VARCHAR",
+            samples: [
+                "My card was charged twice",
+                "Cannot log in after the update",
+                "Export to CSV?",
+            ],
+        },
+        { name: "category", type: "VARCHAR", samples: ["billing", "bug", "account"] },
+        { name: "created_at", type: "TIMESTAMP" },
+    ],
     customers: ["id", "name", "plan", "Signup Date"],
 };
+
+const STARTER = "SELECT text AS input, category AS label FROM tickets";
 
 const JOINED = `SELECT t.text AS input, t.category AS label
 FROM tickets t
@@ -24,14 +39,11 @@ export function SqlEditorDemo() {
     return (
         <Spec
             name="SqlEditor"
-            note="SQL is entered here, never in a Textarea. CodeMirror, loaded on first use, DuckDB highlighting from the tokens, table and column completion, Cmd/Ctrl+Enter runs, Escape then Tab leaves."
+            note="SQL is entered here, never in a Textarea. CodeMirror, loaded on first use, DuckDB highlighting from the tokens, table and column completion with types and sample values, Format (Shift+Alt+F), folding, Alt-click or Cmd/Ctrl+D for more cursors, Cmd/Ctrl+Enter runs, Escape then Tab leaves."
         >
             <div className="grid gap-x-8 gap-y-5 lg:grid-cols-2">
-                <Field id="sql-empty" label="Empty">
-                    <SqlEditor
-                        id="sql-empty"
-                        placeholder="SELECT text AS input, category AS label FROM tickets"
-                    />
+                <Field id="sql-empty" label="Empty, with a starter">
+                    <SqlEditor id="sql-empty" starter={STARTER} schema={SCHEMA} />
                 </Field>
                 <div className="flex flex-col gap-1.5">
                     <Field id="sql-schema" label="Schema autocomplete">
@@ -45,7 +57,7 @@ export function SqlEditorDemo() {
                     </Field>
                     <Note>
                         {ran === null
-                            ? "Type a table or column name, or tickets. for its columns. Cmd/Ctrl+Enter runs."
+                            ? "Type a table or column name, or tickets. for its columns; hover a column for its type and values. Cmd/Ctrl+Enter runs the selection, or everything."
                             : `Ran: ${ran}`}
                     </Note>
                 </div>
@@ -82,11 +94,19 @@ export function SqlEditorDemo() {
                         },
                         {
                             name: "schema",
-                            note: "{ table: columns[] } for table, column and table.column completion, plus DuckDB keywords.",
+                            note: "{ table: columns[] } for table, column and table.column completion, plus DuckDB keywords. A column is a name or { name, type?, samples? }: the type shows beside it in the list, and the list and a hover over the name show up to three sample values.",
                         },
                         {
                             name: "onRun",
-                            note: "Called with the text on Cmd/Ctrl+Enter.",
+                            note: "Called on Cmd/Ctrl+Enter with the selection, or the whole text when nothing is selected.",
+                        },
+                        {
+                            name: "starter",
+                            note: "A snippet shown as the placeholder of an empty editor, with a Tab key; Tab inserts it.",
+                        },
+                        {
+                            name: "Format",
+                            note: "The footer button or Shift+Alt+F formats with sql-formatter's DuckDB dialect, loaded on first use; the cursor stays on the same token. A parse error shows in the footer until the next edit.",
                         },
                         {
                             name: "diagnostics",
@@ -99,7 +119,7 @@ export function SqlEditorDemo() {
                         },
                         {
                             name: "readOnly, placeholder, id, aria-*",
-                            note: "An id pairs it with Field or Label; ref exposes focus() and insert(text).",
+                            note: "An id pairs it with Field or Label; ref exposes focus(), insert(text) and format().",
                         },
                     ]}
                 />

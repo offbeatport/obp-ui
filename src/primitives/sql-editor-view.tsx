@@ -7,13 +7,23 @@ import { useMemo } from "react";
 
 import { CodeEditorView } from "./code-editor-view";
 import type { SqlEditorProps, SqlSchema } from "./sql-editor";
-import { DuckDB, columnCompletion, completionKind, completionSchema } from "./sql-editor-setup";
+import {
+    DuckDB,
+    columnCompletion,
+    columnHover,
+    completionKind,
+    completionSchema,
+    foldByIndent,
+} from "./sql-editor-setup";
 
-const completion = autocompletion({
-    icons: false,
-    filterStrict: true,
-    addToOptions: [{ render: completionKind, position: 90 }],
-});
+const extensions: Extension = [
+    autocompletion({
+        icons: false,
+        filterStrict: true,
+        addToOptions: [{ render: completionKind, position: 90 }],
+    }),
+    foldByIndent,
+];
 
 function language(schema: SqlSchema | null): Extension {
     const support = sql({
@@ -22,8 +32,17 @@ function language(schema: SqlSchema | null): Extension {
         schema: schema ? completionSchema(schema) : undefined,
     });
     return schema
-        ? [support, support.language.data.of({ autocomplete: columnCompletion(schema) })]
+        ? [
+              support,
+              support.language.data.of({ autocomplete: columnCompletion(schema) }),
+              columnHover(schema),
+          ]
         : support;
+}
+
+async function formatSql(text: string) {
+    const { duckdb, formatDialect } = await import("sql-formatter");
+    return formatDialect(text, { dialect: duckdb, keywordCase: "upper", tabWidth: 2 });
 }
 
 function SqlEditorView({ schema, ...props }: SqlEditorProps) {
@@ -35,8 +54,9 @@ function SqlEditorView({ schema, ...props }: SqlEditorProps) {
             slot="sql-editor"
             language={support}
             languageKey={schemaKey}
-            extensions={completion}
+            extensions={extensions}
             keys={completionKeymap}
+            formatter={formatSql}
         />
     );
 }

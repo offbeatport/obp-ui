@@ -177,6 +177,12 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
    - **SQL is entered with `SqlEditor`, never a textarea.** Pass `schema` (`{ table: columns[] }`) for table
      and column completion, `onRun` for Cmd/Ctrl+Enter, and the server's error as `diagnostics` (line, column,
      message) when it carries a position; otherwise show it under the editor. It loads CodeMirror on first use.
+     A column can be `{ name, type, samples }`: the type sits beside it in the completion list, and the list and a
+     hover over the name show up to three sample values. Cmd/Ctrl+Enter runs the selection when there is one, else
+     everything. A footer under the text holds Format (also Shift+Alt+F; sql-formatter's DuckDB dialect, loaded on
+     first use, the cursor kept on its token) and a parse error until the next edit. `starter` is a snippet shown in an
+     empty editor beside a Tab key, which inserts it. The focused line takes a faint tint, the gutter folds clauses
+     and subqueries, and Alt-click, Cmd/Ctrl+D (next match) and Shift+Alt-drag add cursors.
    - **JSON is entered with `JsonEditor`, never a textarea.** The `SqlEditor` frame and props, with JSON highlighting,
      bracket matching, auto-closed brackets and quotes, indentation and the parse error marked where it falls; an empty
      editor is not an error. Parse the text yourself before sending it, and pass the server's complaint as

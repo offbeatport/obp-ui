@@ -13,6 +13,7 @@ type CodeDiagnostic = {
 type CodeEditorHandle = {
     focus: () => void;
     insert: (text: string) => void;
+    format: () => void;
 };
 
 type CodeEditorProps = {
@@ -24,6 +25,7 @@ type CodeEditorProps = {
     minLines?: number;
     maxLines?: number;
     placeholder?: string;
+    starter?: string;
     id?: string;
     className?: string;
     "aria-label"?: string;
@@ -36,6 +38,8 @@ type CodeEditorProps = {
 const CONTENT_PADDING = "0.75rem";
 
 const EDITOR_LINES = { min: 3, max: 16 };
+
+const FOOTER_HEIGHT = "2rem";
 
 function editorFrame(className?: string) {
     return cn(
@@ -56,13 +60,18 @@ function shownLines({ value, defaultValue, minLines, maxLines }: CodeEditorProps
     return Math.min(Math.max(lines, min), Math.max(min, maxLines ?? EDITOR_LINES.max));
 }
 
-function CodeEditorLoading({ slot, ...props }: CodeEditorProps & { slot: string }) {
+function CodeEditorLoading({
+    slot,
+    footer = false,
+    ...props
+}: CodeEditorProps & { slot: string; footer?: boolean }) {
+    const extra = footer ? ` + ${FOOTER_HEIGHT} + 1px` : "";
     return (
         <div
             data-slot={slot}
             aria-busy="true"
             className={editorFrame(props.className)}
-            style={{ height: `calc(${linesHeight(shownLines(props))} + 2px)` }}
+            style={{ height: `calc(${linesHeight(shownLines(props))} + 2px${extra})` }}
         />
     );
 }
@@ -75,5 +84,6 @@ export {
     type CodeEditorProps,
     EDITOR_LINES,
     editorFrame,
+    FOOTER_HEIGHT,
     linesHeight,
 };

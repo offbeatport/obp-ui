@@ -2,9 +2,15 @@
 
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { bracketMatching, syntaxHighlighting } from "@codemirror/language";
+import {
+    bracketMatching,
+    codeFolding,
+    foldGutter,
+    foldKeymap,
+    syntaxHighlighting,
+} from "@codemirror/language";
 import { type Diagnostic, forceLinting, lintGutter, lintKeymap, linter } from "@codemirror/lint";
-import { search, searchKeymap } from "@codemirror/search";
+import { highlightSelectionMatches, search, searchKeymap } from "@codemirror/search";
 import {
     Annotation,
     Compartment,
@@ -18,20 +24,39 @@ import {
 import {
     EditorView,
     type KeyBinding,
+    drawSelection,
+    highlightActiveLine,
+    highlightActiveLineGutter,
     keymap,
     lineNumbers,
     placeholder as placeholderText,
+    rectangularSelection,
 } from "@codemirror/view";
 import { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
+import { Button } from "./button";
+import {
+    type Formatter,
+    chevron,
+    foldedPlaceholder,
+    formatKeys,
+    isFormatKey,
+    mappedCursor,
+    runnableText,
+    shortError,
+    starterHint,
+    starterKeymap,
+} from "./code-editor-commands";
 import {
     type CodeDiagnostic,
     type CodeEditorProps,
     EDITOR_LINES,
+    FOOTER_HEIGHT,
     editorFrame,
 } from "./code-editor-frame";
 import { editorTheme, sizeTheme } from "./code-editor-theme";
 import { codeHighlighter } from "./code-highlight";
+import { Kbd } from "./kbd";
 
 type CodeEditorViewProps = CodeEditorProps & {
     slot: string;
@@ -40,6 +65,7 @@ type CodeEditorViewProps = CodeEditorProps & {
     extensions?: Extension;
     keys?: readonly KeyBinding[];
     onRun?: (value: string) => void;
+    formatter?: Formatter;
 };
 
 const external = Annotation.define<boolean>();
@@ -80,6 +106,7 @@ type Settings = {
     languageKey: string;
     readOnly: boolean;
     placeholder: string;
+    starter: string;
     minLines: number;
     maxLines: number;
     attributes: Attributes;
@@ -88,7 +115,11 @@ type Settings = {
 function configured(settings: Settings) {
     return {
         readOnly: EditorState.readOnly.of(settings.readOnly),
-        placeholder: settings.placeholder ? placeholderText(settings.placeholder) : [],
+        placeholder: settings.starter
+            ? placeholderText(starterHint(settings.starter))
+            : settings.placeholder
+              ? placeholderText(settings.placeholder)
+              : [],
         size: sizeTheme(settings.minLines, settings.maxLines),
         attributes: EditorView.contentAttributes.of(settings.attributes),
     };
@@ -144,6 +175,56 @@ function changedRange(before: string, after: string) {
     };
 }
 
+const multipleCursors: Extension = [
+    EditorState.allowMultipleSelections.of(true),
+    drawSelection(),
+    rectangularSelection({ eventFilter: (event) => event.altKey && event.shiftKey }),
+    EditorView.clickAddsSelectionRange.of(
+        (event) => event.altKey || event.metaKey || event.ctrlKey,
+    ),
+    highlightSelectionMatches(),
+];
+
+const folding: Extension = [
+    codeFolding({ placeholderDOM: foldedPlaceholder }),
+    foldGutter({ markerDOM: chevron }),
+];
+
+function EditorFooter({
+    error,
+    running,
+    onFormat,
+}: {
+    error: string | null;
+    running: boolean;
+    onFormat: () => void;
+}) {
+    return (
+        <div
+            className="flex shrink-0 items-center justify-between gap-3 border-t border-border-soft pr-1 pl-2.5 font-sans"
+            style={{ height: FOOTER_HEIGHT }}
+        >
+            <output
+                title={error ?? undefined}
+                className="min-w-0 truncate text-sm text-destructive"
+            >
+                {error ? `Could not format: ${error}` : ""}
+            </output>
+            <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={running}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={onFormat}
+            >
+                Format
+                <Kbd>{formatKeys()}</Kbd>
+            </Button>
+        </div>
+    );
+}
+
 function useLabelFor(id: string | undefined, focus: () => void) {
     const [labelId, setLabelId] = useState<string>();
     useEffect(() => {
@@ -169,6 +250,8 @@ function CodeEditorView(props: CodeEditorViewProps) {
         minLines = EDITOR_LINES.min,
         maxLines = EDITOR_LINES.max,
         placeholder = "",
+        starter = "",
+        formatter,
         className,
         slot,
         language,
@@ -180,6 +263,8 @@ function CodeEditorView(props: CodeEditorViewProps) {
     const host = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView | null>(null);
     const focus = useCallback(() => view.current?.focus(), []);
+    const [formatError, setFormatError] = useState<string | null>(null);
+    const [formatting, setFormatting] = useState(false);
     const labelId = useLabelFor(props.id, focus);
     const invalid =
         props["aria-invalid"] ?? (diagnostics ?? []).some((item) => item.severity !== "warning");
@@ -187,6 +272,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
         languageKey,
         readOnly,
         placeholder,
+        starter,
         minLines,
         maxLines,
         attributes: attributes(props, labelId, invalid),
@@ -196,6 +282,9 @@ function CodeEditorView(props: CodeEditorViewProps) {
     const latest = useRef({
         onValueChange,
         onRun,
+        formatter,
+        starter,
+        readOnly,
         language,
         doc: value ?? defaultValue ?? "",
         settingsKey,
@@ -203,10 +292,39 @@ function CodeEditorView(props: CodeEditorViewProps) {
     latest.current = {
         onValueChange,
         onRun,
+        formatter,
+        starter,
+        readOnly,
         language,
         doc: latest.current.doc,
         settingsKey,
     };
+
+    const format = useCallback(async () => {
+        const current = view.current;
+        const formatText = latest.current.formatter;
+        if (!current || !formatText || latest.current.readOnly) return;
+        const before = current.state.doc.toString();
+        if (!before.trim()) return;
+        setFormatting(true);
+        try {
+            const after = await formatText(before);
+            setFormatError(null);
+            if (current.state.doc.toString() !== before || after === before) return;
+            const head = mappedCursor(before, after, current.state.selection.main.head);
+            current.dispatch({
+                changes: changedRange(before, after),
+                selection: { anchor: head },
+                scrollIntoView: true,
+                userEvent: "input.format",
+            });
+        } catch (error) {
+            setFormatError(shortError(error));
+        } finally {
+            setFormatting(false);
+            current.focus();
+        }
+    }, []);
 
     useImperativeHandle(
         ref,
@@ -222,8 +340,11 @@ function CodeEditorView(props: CodeEditorViewProps) {
                 });
                 current.focus();
             },
+            format: () => {
+                void format();
+            },
         }),
-        [focus],
+        [focus, format],
     );
 
     useEffect(() => {
@@ -237,20 +358,37 @@ function CodeEditorView(props: CodeEditorViewProps) {
                     run: (target) => {
                         const handler = latest.current.onRun;
                         if (!handler) return false;
-                        handler(target.state.doc.toString());
+                        handler(runnableText(target.state));
                         return true;
                     },
                 },
             ]),
         );
+        const formatKey = Prec.highest(
+            EditorView.domEventHandlers({
+                keydown: (event) => {
+                    if (!isFormatKey(event) || !latest.current.formatter) return false;
+                    event.preventDefault();
+                    void format();
+                    return true;
+                },
+            }),
+        );
+        const starterKeys = Prec.highest(starterKeymap(() => latest.current.starter));
         const created = new EditorView({
             parent: host.current,
             state: EditorState.create({
                 doc: latest.current.doc,
                 extensions: [
                     run,
+                    formatKey,
+                    starterKeys,
                     lintGutter(),
                     lineNumbers(),
+                    folding,
+                    highlightActiveLine(),
+                    highlightActiveLineGutter(),
+                    multipleCursors,
                     history(),
                     closeBrackets(),
                     bracketMatching(),
@@ -261,6 +399,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
                         ...defaultKeymap,
                         ...historyKeymap,
                         ...searchKeymap,
+                        ...foldKeymap,
                         ...setup.current.keys,
                         ...lintKeymap,
                         indentWithTab,
@@ -278,6 +417,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
                         if (!update.docChanged) return;
                         const doc = update.state.doc.toString();
                         latest.current.doc = doc;
+                        setFormatError(null);
                         if (update.transactions.some((tr) => tr.annotation(external))) return;
                         latest.current.onValueChange?.(doc);
                     }),
@@ -289,7 +429,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
             created.destroy();
             view.current = null;
         };
-    }, []);
+    }, [format]);
 
     useEffect(() => {
         const current = view.current;
@@ -323,13 +463,22 @@ function CodeEditorView(props: CodeEditorViewProps) {
         forceLinting(current);
     }, [diagnosticsKey]);
 
+    const footer = Boolean(formatter) && !readOnly;
     return (
         <div
-            ref={host}
             data-slot={slot}
             data-invalid={invalid ? "" : undefined}
             className={editorFrame(className)}
-        />
+        >
+            <div ref={host} className="flex min-h-0 flex-1 flex-col rounded-[inherit]" />
+            {footer && (
+                <EditorFooter
+                    error={formatError}
+                    running={formatting}
+                    onFormat={() => void format()}
+                />
+            )}
+        </div>
     );
 }
 

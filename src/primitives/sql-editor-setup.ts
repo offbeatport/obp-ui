@@ -1,8 +1,10 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import { PostgreSQL, SQLDialect, type SQLNamespace } from "@codemirror/lang-sql";
-import { syntaxTree } from "@codemirror/language";
+import { foldService, syntaxTree } from "@codemirror/language";
+import type { EditorState } from "@codemirror/state";
+import { hoverTooltip } from "@codemirror/view";
 
-import type { SqlSchema } from "./sql-editor";
+import type { SqlColumn, SqlSchema } from "./sql-editor";
 
 const DUCKDB_KEYWORDS =
     "anti asof attach columns describe detach exclude glob ilike install load macro pivot pivot_longer pivot_wider positional pragma qualify replace sample semi summarize try_cast union_by_name unpivot using";
@@ -21,23 +23,66 @@ const DuckDB = SQLDialect.define({
     caseInsensitiveIdentifiers: true,
 });
 
+type Tables = [string, SqlColumn[]][];
+
 const PLAIN_NAME = /^[a-z_][a-z_\d]*$/i;
 
 function quoted(name: string): string | undefined {
     return PLAIN_NAME.test(name) ? undefined : `"${name.replaceAll('"', '""')}"`;
 }
 
+function tablesOf(schema: SqlSchema): Tables {
+    return Object.entries(schema).map(([table, columns]) => [
+        table,
+        columns.map((column) => (typeof column === "string" ? { name: column } : column)),
+    ]);
+}
+
+function element(tag: string, className: string, text?: string) {
+    const node = document.createElement(tag);
+    node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+function columnInfo(table: string, column: SqlColumn) {
+    const box = element("div", "cm-columnInfo");
+    const head = element("div", "cm-columnInfo-head");
+    head.append(element("span", "cm-columnInfo-name", column.name));
+    if (column.type) head.append(element("span", "cm-columnInfo-type", column.type));
+    box.append(head, element("div", "cm-columnInfo-table", `in ${table}`));
+    const samples = column.samples ?? [];
+    if (samples.length > 0) {
+        const list = element("ul", "cm-columnInfo-samples");
+        list.setAttribute("aria-label", "Sample values");
+        for (const sample of samples.slice(0, 3)) {
+            const item = element("li", "", sample);
+            item.title = sample;
+            list.append(item);
+        }
+        box.append(list);
+    }
+    return box;
+}
+
+function columnOption(table: string, column: SqlColumn, boost?: number): Completion {
+    return {
+        label: column.name,
+        type: "column",
+        detail: column.type,
+        info: () => columnInfo(table, column),
+        apply: quoted(column.name),
+        boost,
+    };
+}
+
 function completionSchema(schema: SqlSchema): SQLNamespace {
     return Object.fromEntries(
-        Object.entries(schema).map(([table, columns]) => [
+        tablesOf(schema).map(([table, columns]) => [
             table,
             {
                 self: { label: table, type: "table", apply: quoted(table), boost: 1 },
-                children: columns.map((column) => ({
-                    label: column,
-                    type: "column",
-                    apply: quoted(column),
-                })),
+                children: columns.map((column) => columnOption(table, column)),
             },
         ]),
     );
@@ -55,32 +100,86 @@ function statementBounds(text: string, position: number) {
     return { start, end: end === -1 ? text.length : end };
 }
 
+function namedIn(state: EditorState, position: number) {
+    const text = state.doc.toString();
+    const { start, end } = statementBounds(text, position);
+    const statement = text.slice(start, end).toLowerCase();
+    return (table: string) =>
+        new RegExp(`(^|[^\\w"])"?${escaped(table.toLowerCase())}"?($|[^\\w"])`).test(statement);
+}
+
 function columnCompletion(schema: SqlSchema) {
-    const tables = Object.entries(schema);
+    const tables = tablesOf(schema);
     return (context: CompletionContext): CompletionResult | null => {
         const word = context.matchBefore(/\w*/);
         if (!word || (word.from === word.to && !context.explicit)) return null;
         if (context.state.sliceDoc(word.from - 1, word.from) === ".") return null;
         const node = syntaxTree(context.state).resolveInner(context.pos, -1);
         if (SKIPPED_NODES.has(node.name)) return null;
-        const text = context.state.doc.toString();
-        const { start, end } = statementBounds(text, context.pos);
-        const statement = text.slice(start, end).toLowerCase();
-        const named = (table: string) =>
-            new RegExp(`(^|[^\\w"])"?${escaped(table.toLowerCase())}"?($|[^\\w"])`).test(statement);
+        const named = namedIn(context.state, context.pos);
         const options: Completion[] = tables.flatMap(([table, columns]) => {
             const boost = named(table) ? 2 : 0;
             return columns.map((column) => ({
-                label: column,
-                type: "column",
-                detail: table,
-                apply: quoted(column),
-                boost,
+                ...columnOption(table, column, boost),
+                detail: column.type ? `${column.type} · ${table}` : table,
             }));
         });
         return { from: word.from, options, validFor: /^\w*$/ };
     };
 }
+
+function identifierAt(state: EditorState, position: number, side: -1 | 1) {
+    const node = syntaxTree(state).resolveInner(position, side);
+    if (node.name === "Identifier") {
+        return { from: node.from, to: node.to, name: state.sliceDoc(node.from, node.to) };
+    }
+    if (node.name === "QuotedIdentifier") {
+        const text = state.sliceDoc(node.from + 1, node.to - 1).replaceAll('""', '"');
+        return { from: node.from, to: node.to, name: text };
+    }
+    return null;
+}
+
+function columnHover(schema: SqlSchema) {
+    const tables = tablesOf(schema);
+    return hoverTooltip((view, position, side) => {
+        const found = identifierAt(view.state, position, side);
+        if (!found) return null;
+        const wanted = found.name.toLowerCase();
+        const named = namedIn(view.state, position);
+        const matches = tables.flatMap(([table, columns]) =>
+            columns
+                .filter((column) => column.name.toLowerCase() === wanted)
+                .map((column) => ({ table, column })),
+        );
+        const match = matches.find((item) => named(item.table)) ?? matches[0];
+        if (!match) return null;
+        return {
+            pos: found.from,
+            end: found.to,
+            above: true,
+            create: () => ({ dom: columnInfo(match.table, match.column) }),
+        };
+    });
+}
+
+function indentOf(text: string) {
+    return text.length - text.trimStart().length;
+}
+
+const foldByIndent = foldService.of((state, lineStart) => {
+    const line = state.doc.lineAt(lineStart);
+    if (!line.text.trim()) return null;
+    const indent = indentOf(line.text);
+    let last = line;
+    for (let number = line.number + 1; number <= state.doc.lines; number++) {
+        const next = state.doc.line(number);
+        if (!next.text.trim()) continue;
+        if (indentOf(next.text) <= indent) break;
+        last = next;
+    }
+    return last.number > line.number ? { from: line.to, to: last.to } : null;
+});
 
 const KIND_LABEL: Record<string, string> = {
     table: "table",
@@ -98,4 +197,4 @@ function completionKind(completion: Completion) {
     return kind;
 }
 
-export { columnCompletion, completionKind, completionSchema, DuckDB };
+export { columnCompletion, columnHover, completionKind, completionSchema, DuckDB, foldByIndent };

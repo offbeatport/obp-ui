@@ -15,6 +15,25 @@ const field = {
     font: "inherit",
 };
 
+const ACTIVE_LINE = "color-mix(in srgb, var(--foreground) 5%, transparent)";
+
+const keycap = {
+    padding: "0 0.25rem",
+    border: "1px solid var(--border)",
+    borderRadius: RADIUS_CONTROL,
+    backgroundColor: "var(--muted)",
+    color: "var(--muted-foreground)",
+    fontFamily: "var(--font-sans)",
+    fontSize: "var(--type-sm)",
+    lineHeight: "var(--type-sm-leading)",
+};
+
+const smallSans = {
+    fontFamily: "var(--font-sans)",
+    fontSize: "var(--type-sm)",
+    lineHeight: "var(--type-sm-leading)",
+};
+
 const dot = {
     content: '""',
     display: "inline-block",
@@ -46,6 +65,78 @@ const editorTheme = EditorView.theme({
     ".cm-content ::selection, .cm-content::selection": {
         backgroundColor: "var(--primary)",
         color: "var(--primary-foreground)",
+    },
+    ".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--foreground)" },
+    ".cm-selectionBackground": { backgroundColor: "var(--secondary)" },
+    "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground": {
+        backgroundColor: "var(--highlight)",
+    },
+    ".cm-selectionMatch": { backgroundColor: "var(--secondary)" },
+    ".cm-activeLine": { backgroundColor: "transparent" },
+    "&.cm-focused .cm-activeLine": { backgroundColor: ACTIVE_LINE },
+    ".cm-activeLineGutter": { backgroundColor: "transparent" },
+    "&.cm-focused .cm-activeLineGutter": { color: "var(--muted-foreground)" },
+    ".cm-foldGutter .cm-gutterElement": {
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        padding: "0 0.125rem",
+        color: "var(--faint)",
+    },
+    ".cm-foldMarker": {
+        display: "inline-flex",
+        alignItems: "center",
+        height: "1lh",
+        cursor: "pointer",
+    },
+    ".cm-foldMarker svg": { width: "0.875rem", height: "0.875rem" },
+    ".cm-foldMarker:hover": { color: "var(--foreground)" },
+    ".cm-foldMarker-open": { opacity: "0" },
+    ".cm-gutters:hover .cm-foldMarker-open, &.cm-focused .cm-activeLineGutter .cm-foldMarker-open":
+        {
+            opacity: "1",
+        },
+    ".cm-foldPlaceholder": {
+        ...keycap,
+        margin: "0 0.25rem",
+        fontFamily: "inherit",
+        cursor: "pointer",
+    },
+    ".cm-foldPlaceholder:hover": { color: "var(--foreground)" },
+    ".cm-starter": { display: "inline-flex", alignItems: "baseline", gap: "0.5rem" },
+    ".cm-starterKey": { ...keycap, flexShrink: "0", whiteSpace: "nowrap" },
+    ".cm-tooltip-hover": { maxWidth: "min(24rem, 90vw)" },
+    ".cm-tooltip.cm-completionInfo": {
+        maxWidth: "min(20rem, 60vw)",
+        padding: "0",
+    },
+    ".cm-columnInfo": {
+        ...smallSans,
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.25rem",
+        padding: "0.375rem 0.625rem",
+    },
+    ".cm-columnInfo-head": { display: "flex", alignItems: "baseline", gap: "0.5rem" },
+    ".cm-columnInfo-name": {
+        fontFamily: "var(--font-mono)",
+        color: "var(--popover-foreground)",
+        fontWeight: "600",
+    },
+    ".cm-columnInfo-type, .cm-columnInfo-table": { color: "var(--muted-foreground)" },
+    ".cm-columnInfo-samples": {
+        display: "flex",
+        flexDirection: "column",
+        margin: "0",
+        padding: "0",
+        listStyle: "none",
+        color: "var(--muted-foreground)",
+    },
+    ".cm-columnInfo-samples li": {
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        fontFamily: "var(--font-mono)",
     },
     ".cm-line": { padding: "0 0.625rem 0 0.375rem" },
     ".cm-placeholder": { color: "var(--muted-foreground)" },
@@ -114,6 +205,7 @@ const editorTheme = EditorView.theme({
     ".cm-diagnostic-warning::before": { backgroundColor: "var(--warning)" },
     ".cm-diagnostic-info::before": { backgroundColor: "var(--info)" },
     ".cm-diagnostic + .cm-diagnostic": { borderTop: "1px solid var(--border-soft)" },
+    ".cm-tooltip.cm-tooltip-autocomplete": { overflow: "visible" },
     ".cm-tooltip.cm-tooltip-autocomplete > ul": {
         minWidth: "16rem",
         maxHeight: "16rem",

@@ -9,7 +9,13 @@ import {
     type CodeEditorProps,
 } from "./code-editor-frame";
 
-type SqlSchema = Readonly<Record<string, readonly string[]>>;
+type SqlColumn = {
+    name: string;
+    type?: string;
+    samples?: readonly string[];
+};
+
+type SqlSchema = Readonly<Record<string, readonly (string | SqlColumn)[]>>;
 
 type SqlDiagnostic = CodeDiagnostic;
 
@@ -26,10 +32,19 @@ const SqlEditorView = lazy(() =>
 
 function SqlEditor(props: SqlEditorProps) {
     return (
-        <Suspense fallback={<CodeEditorLoading slot="sql-editor" {...props} />}>
+        <Suspense
+            fallback={<CodeEditorLoading slot="sql-editor" footer={!props.readOnly} {...props} />}
+        >
             <SqlEditorView {...props} />
         </Suspense>
     );
 }
 
-export { SqlEditor, type SqlDiagnostic, type SqlEditorHandle, type SqlEditorProps, type SqlSchema };
+export {
+    SqlEditor,
+    type SqlColumn,
+    type SqlDiagnostic,
+    type SqlEditorHandle,
+    type SqlEditorProps,
+    type SqlSchema,
+};
