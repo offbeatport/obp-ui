@@ -17,6 +17,13 @@ type SqlColumn = {
 
 type SqlSchema = Readonly<Record<string, readonly (string | SqlColumn)[]>>;
 
+type SqlCompletion = {
+    label: string;
+    kind?: "function" | "keyword";
+    signature?: string;
+    description?: string;
+};
+
 type SqlDiagnostic = CodeDiagnostic;
 
 type SqlEditorHandle = CodeEditorHandle;
@@ -24,6 +31,7 @@ type SqlEditorHandle = CodeEditorHandle;
 type SqlEditorProps = CodeEditorProps & {
     onRun?: (value: string) => void;
     schema?: SqlSchema;
+    completions?: readonly SqlCompletion[];
 };
 
 const SqlEditorView = lazy(() =>
@@ -43,6 +51,7 @@ function SqlEditor(props: SqlEditorProps) {
 export {
     SqlEditor,
     type SqlColumn,
+    type SqlCompletion,
     type SqlDiagnostic,
     type SqlEditorHandle,
     type SqlEditorProps,

@@ -6,7 +6,7 @@ import type { Extension } from "@codemirror/state";
 import { useMemo } from "react";
 
 import { CodeEditorView } from "./code-editor-view";
-import type { SqlEditorProps, SqlSchema } from "./sql-editor";
+import type { SqlCompletion, SqlEditorProps, SqlSchema } from "./sql-editor";
 import {
     DuckDB,
     columnCompletion,
@@ -14,6 +14,7 @@ import {
     completionKind,
     completionSchema,
     foldByIndent,
+    wordCompletions,
 } from "./sql-editor-setup";
 
 const extensions: Extension = [
@@ -25,19 +26,24 @@ const extensions: Extension = [
     foldByIndent,
 ];
 
-function language(schema: SqlSchema | null): Extension {
+function language(schema: SqlSchema | null, completions: readonly SqlCompletion[]): Extension {
+    const words = wordCompletions(completions);
     const support = sql({
         dialect: DuckDB,
         upperCaseKeywords: true,
         schema: schema ? completionSchema(schema) : undefined,
+        keywordCompletion: words.build,
     });
-    return schema
-        ? [
-              support,
-              support.language.data.of({ autocomplete: columnCompletion(schema) }),
-              columnHover(schema),
-          ]
-        : support;
+    return [
+        support,
+        words.extra ? support.language.data.of({ autocomplete: words.extra }) : [],
+        schema
+            ? [
+                  support.language.data.of({ autocomplete: columnCompletion(schema) }),
+                  columnHover(schema),
+              ]
+            : [],
+    ];
 }
 
 async function formatSql(text: string) {
@@ -45,9 +51,12 @@ async function formatSql(text: string) {
     return formatDialect(text, { dialect: duckdb, keywordCase: "upper", tabWidth: 2 });
 }
 
-function SqlEditorView({ schema, ...props }: SqlEditorProps) {
-    const schemaKey = JSON.stringify(schema ?? null);
-    const support = useMemo(() => language(JSON.parse(schemaKey) as SqlSchema | null), [schemaKey]);
+function SqlEditorView({ schema, completions, ...props }: SqlEditorProps) {
+    const schemaKey = JSON.stringify([schema ?? null, completions ?? []]);
+    const support = useMemo(() => {
+        const [parsed, words] = JSON.parse(schemaKey) as [SqlSchema | null, SqlCompletion[]];
+        return language(parsed, words);
+    }, [schemaKey]);
     return (
         <CodeEditorView
             {...props}

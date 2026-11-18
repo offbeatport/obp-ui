@@ -123,7 +123,10 @@ const editorTheme = EditorView.theme({
         color: "var(--popover-foreground)",
         fontWeight: "600",
     },
-    ".cm-columnInfo-type, .cm-columnInfo-table": { color: "var(--muted-foreground)" },
+    ".cm-columnInfo-type, .cm-columnInfo-table, .cm-columnInfo-description": {
+        color: "var(--muted-foreground)",
+    },
+    ".cm-columnInfo-description": { whiteSpace: "normal" },
     ".cm-columnInfo-samples": {
         display: "flex",
         flexDirection: "column",

@@ -1,10 +1,17 @@
-import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
+import {
+    type Completion,
+    type CompletionContext,
+    type CompletionResult,
+    type CompletionSource,
+    ifNotIn,
+    snippetCompletion,
+} from "@codemirror/autocomplete";
 import { PostgreSQL, SQLDialect, type SQLNamespace } from "@codemirror/lang-sql";
 import { foldService, syntaxTree } from "@codemirror/language";
 import type { EditorState } from "@codemirror/state";
 import { hoverTooltip } from "@codemirror/view";
 
-import type { SqlColumn, SqlSchema } from "./sql-editor";
+import type { SqlColumn, SqlCompletion, SqlSchema } from "./sql-editor";
 
 const DUCKDB_KEYWORDS =
     "anti asof attach columns describe detach exclude glob ilike install load macro pivot pivot_longer pivot_wider positional pragma qualify replace sample semi summarize try_cast union_by_name unpivot using";
@@ -22,6 +29,16 @@ const DuckDB = SQLDialect.define({
     builtin: DUCKDB_FUNCTIONS,
     caseInsensitiveIdentifiers: true,
 });
+
+function wordsOf(...lists: (string | undefined)[]) {
+    return new Set(lists.join(" ").split(" ").filter(Boolean));
+}
+
+const KEYWORD_WORDS = wordsOf(DuckDB.spec.keywords, DuckDB.spec.types, "true false null unknown");
+
+const BUILTIN_WORDS = wordsOf(DuckDB.spec.builtin);
+
+const OUTSIDE_CODE = ["QuotedIdentifier", "String", "LineComment", "BlockComment", "."];
 
 type Tables = [string, SqlColumn[]][];
 
@@ -63,6 +80,48 @@ function columnInfo(table: string, column: SqlColumn) {
         box.append(list);
     }
     return box;
+}
+
+function wordInfo(word: SqlCompletion) {
+    const box = element("div", "cm-columnInfo");
+    if (word.signature) box.append(element("div", "cm-columnInfo-name", word.signature));
+    if (word.description) box.append(element("div", "cm-columnInfo-description", word.description));
+    return box;
+}
+
+function wordOption(word: SqlCompletion): Completion {
+    const info = word.signature || word.description ? () => wordInfo(word) : undefined;
+    if (word.kind === "function") {
+        const name = word.label.toLowerCase();
+        return snippetCompletion(`${name}(\${})`, { label: name, type: "function", info });
+    }
+    return { label: word.label.toUpperCase(), type: "keyword", info };
+}
+
+function wordKey(label: string, kind: SqlCompletion["kind"]) {
+    return `${kind ?? "keyword"}:${label.toLowerCase()}`;
+}
+
+function wordCompletions(words: readonly SqlCompletion[]) {
+    const known = new Map(words.map((word) => [wordKey(word.label, word.kind), wordOption(word)]));
+    const build = (label: string, type: string): Completion =>
+        known.get(wordKey(label, type === "variable" ? "function" : "keyword")) ?? {
+            label,
+            type,
+            boost: -1,
+        };
+    const extra = words
+        .filter((word) => {
+            const dialect = word.kind === "function" ? BUILTIN_WORDS : KEYWORD_WORDS;
+            return !dialect.has(word.label.toLowerCase());
+        })
+        .map(wordOption);
+    const complete: CompletionSource = (context) => {
+        const word = context.matchBefore(/\w*/);
+        if (!word || (word.from === word.to && !context.explicit)) return null;
+        return { from: word.from, options: extra, validFor: /^\w*$/ };
+    };
+    return { build, extra: extra.length > 0 ? ifNotIn(OUTSIDE_CODE, complete) : null };
 }
 
 function columnOption(table: string, column: SqlColumn, boost?: number): Completion {
@@ -187,6 +246,7 @@ const KIND_LABEL: Record<string, string> = {
     keyword: "keyword",
     type: "type",
     variable: "function",
+    function: "function",
     constant: "alias",
 };
 
@@ -197,4 +257,12 @@ function completionKind(completion: Completion) {
     return kind;
 }
 
-export { columnCompletion, columnHover, completionKind, completionSchema, DuckDB, foldByIndent };
+export {
+    columnCompletion,
+    columnHover,
+    completionKind,
+    completionSchema,
+    DuckDB,
+    foldByIndent,
+    wordCompletions,
+};

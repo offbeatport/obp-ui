@@ -1,4 +1,4 @@
-import { Field, SqlEditor, type SqlSchema } from "obp-ui";
+import { Field, type SqlCompletion, SqlEditor, type SqlSchema } from "obp-ui";
 import { useState } from "react";
 import { Api, Note, Spec } from "../kit";
 
@@ -19,6 +19,26 @@ const SCHEMA: SqlSchema = {
     ],
     customers: ["id", "name", "plan", "Signup Date"],
 };
+
+const WORDS: SqlCompletion[] = [
+    {
+        label: "regexp_replace",
+        kind: "function",
+        signature: "regexp_replace(text, pattern, replacement[, 'g'])",
+        description: "Replaces the first match of a pattern, or every match with 'g'.",
+    },
+    {
+        label: "lower",
+        kind: "function",
+        signature: "lower(text)",
+        description: "The text in lower case.",
+    },
+    {
+        label: "qualify",
+        kind: "keyword",
+        description: "Filters rows on a window function, as WHERE does on columns.",
+    },
+];
 
 const STARTER = "SELECT text AS input, category AS label FROM tickets";
 
@@ -53,11 +73,12 @@ export function SqlEditorDemo() {
                             onValueChange={setQuery}
                             onRun={(sql) => setRan(sql.trim())}
                             schema={SCHEMA}
+                            completions={WORDS}
                         />
                     </Field>
                     <Note>
                         {ran === null
-                            ? "Type a table or column name, or tickets. for its columns; hover a column for its type and values. Cmd/Ctrl+Enter runs the selection, or everything."
+                            ? "Type a table or column name, or tickets. for its columns, or reg for regexp_replace; hover a column for its type and values. Cmd/Ctrl+Enter runs the selection, or everything."
                             : `Ran: ${ran}`}
                     </Note>
                 </div>
@@ -95,6 +116,10 @@ export function SqlEditorDemo() {
                         {
                             name: "schema",
                             note: "{ table: columns[] } for table, column and table.column completion, plus DuckDB keywords. A column is a name or { name, type?, samples? }: the type shows beside it in the list, and the list and a hover over the name show up to three sample values.",
+                        },
+                        {
+                            name: "completions",
+                            note: "Functions and keywords with a signature and a one-line description, shown beside the completion list. A function inserts name() with the cursor between the brackets; the app owns the list.",
                         },
                         {
                             name: "onRun",
