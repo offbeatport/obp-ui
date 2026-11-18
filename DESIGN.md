@@ -279,7 +279,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      `th`; never a local sort header or another icon (arrows, selectors). Its columns resize with
      `useColumnSizing` (one `flex` column takes the leftover width, the others fit their content on load and
      when `fitKey` changes, a `storageKey` keeps what a person dragged) and a `ColumnResizer` in each `th`
-     (`relative`): drag, arrow keys, double-click to fit. Mark every cell of a column with `data-column`, and
+     (`relative`): drag, arrow keys, double-click to fit. Its 1px separator shows only while the header row is hovered
+     or the handle is focused or dragged, so a resting header reads clean. Mark every cell of a column with `data-column`, and
      offer `reset` as "Reset column widths" in the page's view menu.
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
      grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned

@@ -177,7 +177,7 @@ export function ColumnResizer({
                 }
             }}
             className={cn(
-                "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none after:absolute after:inset-y-1 after:right-0 after:w-px after:bg-input hover:after:w-0.5 hover:after:bg-primary focus-visible:after:w-0.5 focus-visible:after:bg-primary",
+                "absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none after:absolute after:inset-y-1 after:right-0 after:w-px after:bg-input after:opacity-0 hover:after:w-0.5 hover:after:bg-primary focus-visible:after:w-0.5 focus-visible:after:bg-primary focus-visible:after:opacity-100 active:after:opacity-100 [tr:hover_&]:after:opacity-100",
                 className,
             )}
         />
