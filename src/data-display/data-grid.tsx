@@ -43,6 +43,7 @@ import {
 import { InfoTip } from "../primitives/info-tip";
 import { Skeleton } from "../primitives/skeleton";
 import { TableCell, TableHead, TableRow } from "../primitives/table";
+import { ColumnResizer } from "./column-sizing";
 import { SortButton, sortAria } from "./sort-button";
 
 declare module "@tanstack/react-table" {
@@ -54,7 +55,6 @@ declare module "@tanstack/react-table" {
 const INTERACTIVE =
     "a, button, input, select, textarea, label, summary, [role='menuitem'], [role='checkbox'], [role='switch'], [role='tab'], [data-grid-ignore]";
 const MIN_COLUMN = 48;
-const RESIZE_STEP = 16;
 const VIRTUAL_FROM = 150;
 const ESTIMATED_ROW = 44;
 const PICKER_WIDTH = 36;
@@ -345,20 +345,12 @@ function Resizer({
     onReset: () => void;
 }) {
     return (
-        <button
-            type="button"
-            aria-label={`Resize ${label}`}
+        <ColumnResizer
+            label={label}
             title="Drag to resize, double-click to reset"
-            onPointerDown={onStart}
-            onMouseDown={(event) => event.preventDefault()}
+            onStart={onStart}
+            onStep={onStep}
             onDoubleClick={onReset}
-            onKeyDown={(event) => {
-                if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-                    event.preventDefault();
-                    onStep(event.key === "ArrowLeft" ? -RESIZE_STEP : RESIZE_STEP);
-                }
-            }}
-            className="absolute top-0 right-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none after:absolute after:inset-y-1 after:right-0 after:w-px after:bg-input hover:after:w-0.5 hover:after:bg-primary focus-visible:after:w-0.5 focus-visible:after:bg-primary"
         />
     );
 }

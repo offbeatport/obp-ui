@@ -12,6 +12,14 @@ export {
     CompareTable,
     type CompareTableProps,
 } from "./compare-table";
+export {
+    type ColumnHandle,
+    ColumnResizer,
+    type ColumnResizerProps,
+    type ColumnSize,
+    type ColumnSizing,
+    useColumnSizing,
+} from "./column-sizing";
 export { DataGrid, DataGridDetail, type DataGridProps, type Density } from "./data-grid";
 export {
     SortButton,

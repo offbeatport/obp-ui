@@ -270,7 +270,11 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      the loaded rows alone would mislead. Plain `Table` is for short static tables (a spec sheet, a diff).
      A hand-built table or grid that sorts from its headers uses `SortButton` (the DataGrid's own header button: a
      chevron on the sorted column only, nothing on the others) and puts `aria-sort={sortAria(direction)}` on the
-     `th`; never a local sort header or another icon (arrows, selectors).
+     `th`; never a local sort header or another icon (arrows, selectors). Its columns resize with
+     `useColumnSizing` (one `flex` column takes the leftover width, the others fit their content on load and
+     when `fitKey` changes, a `storageKey` keeps what a person dragged) and a `ColumnResizer` in each `th`
+     (`relative`): drag, arrow keys, double-click to fit. Mark every cell of a column with `data-column`, and
+     offer `reset` as "Reset column widths" in the page's view menu.
    - **Side-by-side comparisons are a `CompareTable`.** One column per thing compared, one row per attribute,
      grouped into titled sections. The header sticks to the page's scroller, the attribute column stays pinned
      while columns scroll sideways, and a row that differs carries a 2px `--primary` edge on its label and a
