@@ -119,7 +119,7 @@ export function SqlEditorDemo() {
                         },
                         {
                             name: "readOnly, placeholder, id, aria-*",
-                            note: "An id pairs it with Field or Label; ref exposes focus(), insert(text) and format().",
+                            note: "An id pairs it with Field or Label; ref exposes focus(), insert(text), replace(text, { format }) and format().",
                         },
                     ]}
                 />

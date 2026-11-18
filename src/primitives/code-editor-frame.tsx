@@ -13,6 +13,7 @@ type CodeDiagnostic = {
 type CodeEditorHandle = {
     focus: () => void;
     insert: (text: string) => void;
+    replace: (text: string, options?: { format?: boolean }) => Promise<string>;
     format: () => void;
 };
 

@@ -340,6 +340,30 @@ function CodeEditorView(props: CodeEditorViewProps) {
                 });
                 current.focus();
             },
+            replace: async (text: string, options?: { format?: boolean }) => {
+                const formatText = latest.current.formatter;
+                let next = text;
+                if (options?.format && formatText) {
+                    try {
+                        next = await formatText(text);
+                    } catch {
+                        next = text;
+                    }
+                }
+                const current = view.current;
+                if (!current || latest.current.readOnly) return next;
+                const before = current.state.doc.toString();
+                if (before !== next) {
+                    current.dispatch({
+                        changes: changedRange(before, next),
+                        selection: { anchor: 0 },
+                        scrollIntoView: true,
+                        userEvent: "input.replace",
+                    });
+                }
+                current.focus();
+                return next;
+            },
             format: () => {
                 void format();
             },

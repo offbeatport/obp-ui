@@ -181,7 +181,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      hover over the name show up to three sample values. Cmd/Ctrl+Enter runs the selection when there is one, else
      everything. A footer under the text holds Format (also Shift+Alt+F; sql-formatter's DuckDB dialect, loaded on
      first use, the cursor kept on its token) and a parse error until the next edit. `starter` is a snippet shown in an
-     empty editor beside a Tab key, which inserts it. The focused line takes a faint tint, the gutter folds clauses
+     empty editor beside a Tab key, which inserts it. The handle's `replace(text, { format })` swaps the whole text
+     (formatted first when asked) as one edit that Cmd/Ctrl+Z undoes, for actions that rewrite the query. The focused line takes a faint tint, the gutter folds clauses
      and subqueries, and Alt-click, Cmd/Ctrl+D (next match) and Shift+Alt-drag add cursors.
    - **JSON is entered with `JsonEditor`, never a textarea.** The `SqlEditor` frame and props, with JSON highlighting,
      bracket matching, auto-closed brackets and quotes, indentation and the parse error marked where it falls; an empty
