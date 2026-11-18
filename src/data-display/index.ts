@@ -22,6 +22,17 @@ export {
 } from "./json-view";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./empty-state";
 export {
+    type ErrorDetail,
+    ErrorDetailsList,
+    ErrorPanel,
+    type ErrorPanelProps,
+    type ErrorPanelVariant,
+    type ErrorTone,
+    errorDetailsText,
+    InlineError,
+    type InlineErrorProps,
+} from "./error-panel";
+export {
     type LogEntry,
     type LogLevel,
     LogViewer,

@@ -285,6 +285,13 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      warning and neutral close after 5 s; `destructive` stays until dismissed and interrupts a screen reader,
      because an error read halfway is worse than none. One `action` at most (Undo, Open), and it closes the
      toast. Never toast what the page already shows, and never put a decision in a toast - that is a `Dialog`.
+   - **A failure sits where the content would have been.** A page that could not load is an `ErrorPanel` (the
+     `plate`: card, centred, at least `min(28rem, 60vh)` tall) under the page's own header and crumbs; a section,
+     table body, sheet or dialog that could not load is an `inset` panel inside it, so the frame keeps its height.
+     A failed action under a form or in a dialog is an `InlineError` line. The headline is short, the message is
+     the server's sentence when it is one, and there is one next action (Try again, Retry, a link). `destructive`
+     tone is for real failures; not found and no access are `neutral`. Status, path and request id go in
+     `details` - a collapsed Details disclosure with a copy button - never in the headline.
    - **Picking one item from a long list is a `SearchList`.** A search field over the list it filters, in a dialog or
      inline: the first match is highlighted, arrows move, Enter or a click picks, Escape clears. Leave already-picked
      items out of `items` rather than disabling them.

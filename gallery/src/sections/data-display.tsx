@@ -13,10 +13,12 @@ import {
     Button,
     DataGrid,
     EmptyState,
+    ErrorPanel,
     ExpandableRow,
     ExpandableRowList,
     GradientMark,
     type GradientMarkBranding,
+    InlineError,
     JsonView,
     RecordList,
     RecordListToggle,
@@ -210,6 +212,12 @@ const SERVER_COLUMNS: ColumnDef<Request, unknown>[] = REQUEST_COLUMNS.map((colum
     ...column,
     enableSorting: "accessorKey" in column && column.accessorKey === "latency",
 }));
+
+const ERROR_DETAILS = [
+    { label: "Status", value: "500" },
+    { label: "Path", value: "/api/models" },
+    { label: "Request ID", value: "3f9c2a7be1d04c58a1f0b6e2d7c94a10" },
+];
 
 function serverPage(sorting: SortingState, offset: number): Request[] {
     const order = sorting[0];
@@ -601,6 +609,43 @@ export function DataDisplaySection() {
                     <EmptyState variant="plate" icon={IconFileCode} title="No source yet">
                         the agent writes into ~/companies/ledgerly
                     </EmptyState>
+                </div>
+            </Spec>
+
+            <Spec
+                name="ErrorPanel · InlineError"
+                note="A failure in place of a page, a section or a form result; the status, path and request id sit behind Details."
+            >
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <ErrorPanel
+                        title="Couldn't load this page"
+                        actions={<Button>Try again</Button>}
+                        details={ERROR_DETAILS}
+                    >
+                        Something went wrong on the server.
+                    </ErrorPanel>
+                    <Frame className="h-72">
+                        <ErrorPanel
+                            variant="inset"
+                            tone="neutral"
+                            title="You don't have access"
+                            details={[{ label: "Status", value: "403" }]}
+                        >
+                            This page needs the Builder role.
+                        </ErrorPanel>
+                    </Frame>
+                </div>
+                <div className="mt-6">
+                    <InlineError
+                        action={
+                            <Button size="sm" variant="outline">
+                                Retry
+                            </Button>
+                        }
+                        details={ERROR_DETAILS}
+                    >
+                        The name is already taken.
+                    </InlineError>
                 </div>
             </Spec>
 
