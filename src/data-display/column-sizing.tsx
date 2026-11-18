@@ -126,19 +126,30 @@ function sum(widths: Widths): number {
     return Object.values(widths).reduce((total, width) => total + width, 0);
 }
 
+function capped(natural: Widths, base: Widths, level: number): Widths {
+    return Object.fromEntries(
+        Object.entries(natural).map(([id, width]) => [
+            id,
+            Math.round(Math.min(width, Math.max(base[id] ?? width, level))),
+        ]),
+    );
+}
+
 function fitInto(natural: Widths, base: Widths, room: number): Widths {
-    const over = sum(natural) - room;
-    const spare = sum(natural) - sum(base);
-    if (over <= 0 || spare <= 0) {
+    if (sum(natural) <= room) {
         return natural;
     }
-    const keep = Math.max(0, 1 - over / spare);
-    return Object.fromEntries(
-        Object.entries(natural).map(([id, width]) => {
-            const floor = base[id] ?? width;
-            return [id, Math.round(floor + (width - floor) * keep)];
-        }),
-    );
+    let low = 0;
+    let high = Math.max(0, ...Object.values(natural));
+    for (let step = 0; step < 24; step += 1) {
+        const level = (low + high) / 2;
+        if (sum(capped(natural, base, level)) > room) {
+            high = level;
+        } else {
+            low = level;
+        }
+    }
+    return capped(natural, base, low);
 }
 
 export function ColumnResizer({
