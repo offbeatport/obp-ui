@@ -109,6 +109,7 @@ type Settings = {
     starter: string;
     minLines: number;
     maxLines: number;
+    fill: boolean;
     attributes: Attributes;
 };
 
@@ -120,7 +121,7 @@ function configured(settings: Settings) {
             : settings.placeholder
               ? placeholderText(settings.placeholder)
               : [],
-        size: sizeTheme(settings.minLines, settings.maxLines),
+        size: sizeTheme(settings.minLines, settings.maxLines, settings.fill),
         attributes: EditorView.contentAttributes.of(settings.attributes),
     };
 }
@@ -249,6 +250,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
         readOnly = false,
         minLines = EDITOR_LINES.min,
         maxLines = EDITOR_LINES.max,
+        fill = false,
         placeholder = "",
         starter = "",
         formatter,
@@ -275,6 +277,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
         starter,
         minLines,
         maxLines,
+        fill,
         attributes: attributes(props, labelId, invalid),
     } satisfies Settings);
     const diagnosticsKey = JSON.stringify(diagnostics ?? []);
@@ -492,7 +495,7 @@ function CodeEditorView(props: CodeEditorViewProps) {
         <div
             data-slot={slot}
             data-invalid={invalid ? "" : undefined}
-            className={editorFrame(className)}
+            className={editorFrame(className, fill)}
         >
             <div ref={host} className="flex min-h-0 flex-1 flex-col rounded-[inherit]" />
             {footer && (

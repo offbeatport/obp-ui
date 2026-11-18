@@ -313,9 +313,11 @@ const editorTheme = EditorView.theme({
         },
 });
 
-function sizeTheme(minLines: number, maxLines: number) {
+function sizeTheme(minLines: number, maxLines: number, fill = false) {
     return EditorView.theme({
-        "&": { maxHeight: linesHeight(Math.max(minLines, maxLines)) },
+        "&": fill
+            ? { flex: "1 1 auto", minHeight: "0", height: "100%" }
+            : { maxHeight: linesHeight(Math.max(minLines, maxLines)) },
         ".cm-content, .cm-gutter": { minHeight: linesHeight(minLines) },
     });
 }

@@ -183,7 +183,8 @@ Binding on everything the root barrel exports: `src/styles/*` · `src/lib/*` · 
      first use, the cursor kept on its token) and a parse error until the next edit. `starter` is a snippet shown in an
      empty editor beside a Tab key, which inserts it. `completions` lists functions and keywords (`{ label, kind, signature,
      description }`): the signature and description show beside the completion list, a function inserts `name()` with the
-     cursor inside, and the app owns the list (minibrain's DuckDB functions live in minibrain). The handle's
+     cursor inside, and the app owns the list (minibrain's DuckDB functions live in minibrain). `fill` makes the editor take its parent's height (a
+     pane of its own) instead of growing with the text. The handle's
      `replace(text, { format })` swaps the whole text
      (formatted first when asked) as one edit that Cmd/Ctrl+Z undoes, for actions that rewrite the query. The focused line takes a faint tint, the gutter folds clauses
      and subqueries, and Alt-click, Cmd/Ctrl+D (next match) and Shift+Alt-drag add cursors.

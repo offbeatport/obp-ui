@@ -25,6 +25,7 @@ type CodeEditorProps = {
     readOnly?: boolean;
     minLines?: number;
     maxLines?: number;
+    fill?: boolean;
     placeholder?: string;
     starter?: string;
     id?: string;
@@ -42,9 +43,10 @@ const EDITOR_LINES = { min: 3, max: 16 };
 
 const FOOTER_HEIGHT = "2rem";
 
-function editorFrame(className?: string) {
+function editorFrame(className?: string, fill = false) {
     return cn(
         "flex w-full min-w-0 flex-col rounded-md border border-input bg-input-background font-mono text-lg text-foreground md:text-base",
+        fill && "h-full min-h-0 flex-1",
         "focus-within:border-ring focus-within:ring-1 focus-within:ring-ring",
         "data-invalid:border-destructive data-invalid:ring-destructive",
         className,
@@ -71,8 +73,12 @@ function CodeEditorLoading({
         <div
             data-slot={slot}
             aria-busy="true"
-            className={editorFrame(props.className)}
-            style={{ height: `calc(${linesHeight(shownLines(props))} + 2px${extra})` }}
+            className={editorFrame(props.className, props.fill)}
+            style={
+                props.fill
+                    ? undefined
+                    : { height: `calc(${linesHeight(shownLines(props))} + 2px${extra})` }
+            }
         />
     );
 }

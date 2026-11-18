@@ -143,6 +143,10 @@ export function SqlEditorDemo() {
                             value: "3 / 16",
                         },
                         {
+                            name: "fill",
+                            note: "Takes the height of its parent (a flex column or a sized box) and scrolls inside it; minLines still sets the least height.",
+                        },
+                        {
                             name: "readOnly, placeholder, id, aria-*",
                             note: "An id pairs it with Field or Label; ref exposes focus(), insert(text), replace(text, { format }) and format().",
                         },
