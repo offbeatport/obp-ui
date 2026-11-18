@@ -23,11 +23,11 @@ function InfoTip({ label, children, side = "top", align = "center", className }:
                 delay={100}
                 aria-label={label}
                 className={cn(
-                    "inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-popup-open:text-foreground",
+                    "inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-popup-open:text-foreground",
                     className,
                 )}
             >
-                <IconInfoCircle aria-hidden="true" className="size-3.5" />
+                <IconInfoCircle aria-hidden="true" className="size-4" />
             </PopoverPrimitive.Trigger>
             <PopoverPrimitive.Portal>
                 <PopoverPrimitive.Positioner
