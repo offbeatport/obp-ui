@@ -10,6 +10,12 @@ export type AccountButtonProps = Omit<ComponentProps<"button">, "name" | "childr
     name?: ReactNode;
     sub?: ReactNode;
     collapsed?: boolean;
+    tone?: "primary" | "muted";
+};
+
+const TONES = {
+    primary: "bg-primary text-primary-foreground",
+    muted: "border border-border bg-secondary text-muted-foreground",
 };
 
 export function AccountButton({
@@ -17,6 +23,7 @@ export function AccountButton({
     name,
     sub,
     collapsed: collapsedProp,
+    tone = "primary",
     className,
     ...props
 }: AccountButtonProps) {
@@ -31,7 +38,12 @@ export function AccountButton({
             )}
             {...props}
         >
-            <span className="grid size-8 flex-none place-items-center rounded-[9px] bg-primary text-sm font-bold text-primary-foreground">
+            <span
+                className={cn(
+                    "grid size-8 flex-none place-items-center rounded-[9px] text-sm font-bold",
+                    TONES[tone],
+                )}
+            >
                 {initial}
             </span>
             <span className={cn("min-w-0 flex-1", railFade(collapsed))}>
