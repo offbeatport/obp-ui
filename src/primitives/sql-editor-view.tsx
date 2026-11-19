@@ -1,9 +1,10 @@
 "use client";
 
-import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import { autocompletion, completionKeymap, completionStatus } from "@codemirror/autocomplete";
 import { sql } from "@codemirror/lang-sql";
 import type { Extension } from "@codemirror/state";
-import { useMemo } from "react";
+import { EditorView } from "@codemirror/view";
+import { type RefObject, useMemo, useRef } from "react";
 
 import { CodeEditorView } from "./code-editor-view";
 import type { SqlCompletion, SqlEditorProps, SqlSchema } from "./sql-editor";
@@ -51,7 +52,19 @@ async function formatSql(text: string) {
     return formatDialect(text, { dialect: duckdb, keywordCase: "upper", tabWidth: 2 });
 }
 
-function SqlEditorView({ schema, completions, ...props }: SqlEditorProps) {
+type CompletingListener = ((open: boolean) => void) | undefined;
+
+function completing(notify: RefObject<CompletingListener>): Extension {
+    return EditorView.updateListener.of((update) => {
+        const open = completionStatus(update.state) !== null;
+        if (open !== (completionStatus(update.startState) !== null)) notify.current?.(open);
+    });
+}
+
+function SqlEditorView({ schema, completions, onCompletingChange, ...props }: SqlEditorProps) {
+    const notify = useRef<CompletingListener>(onCompletingChange);
+    notify.current = onCompletingChange;
+    const setup = useMemo(() => [extensions, completing(notify)], []);
     const schemaKey = JSON.stringify([schema ?? null, completions ?? []]);
     const support = useMemo(() => {
         const [parsed, words] = JSON.parse(schemaKey) as [SqlSchema | null, SqlCompletion[]];
@@ -63,7 +76,7 @@ function SqlEditorView({ schema, completions, ...props }: SqlEditorProps) {
             slot="sql-editor"
             language={support}
             languageKey={schemaKey}
-            extensions={extensions}
+            extensions={setup}
             keys={completionKeymap}
             formatter={formatSql}
         />

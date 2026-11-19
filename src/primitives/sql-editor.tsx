@@ -32,6 +32,7 @@ type SqlEditorProps = CodeEditorProps & {
     onRun?: (value: string) => void;
     schema?: SqlSchema;
     completions?: readonly SqlCompletion[];
+    onCompletingChange?: (open: boolean) => void;
 };
 
 const SqlEditorView = lazy(() =>
