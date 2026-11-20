@@ -247,8 +247,8 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             inputBackground: "#0f0f14",
             primary: "#346bf1",
             primaryForeground: "#ffffff",
-            accent: "#111216",
-            accentForeground: "#ffffff",
+            accent: "#132f66",
+            accentForeground: "#b6d3ff",
         },
     },
     brandPalette({

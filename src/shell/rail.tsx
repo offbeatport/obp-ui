@@ -117,9 +117,20 @@ export function Rail({
                         onClick={toggle}
                         aria-label={label}
                         title={label}
-                        className="grid size-7 flex-none place-items-center rounded-md text-muted-foreground outline-none hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                        className="group/toggle grid size-7 flex-none place-items-center rounded-md text-muted-foreground outline-none hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                        {glyph("size-4")}
+                        {collapsed && brandCollapsed !== undefined ? (
+                            <>
+                                <span className="col-start-1 row-start-1 grid place-items-center transition-opacity duration-150 group-hover/toggle:opacity-0 group-focus-visible/toggle:opacity-0 motion-reduce:transition-none">
+                                    {brandCollapsed}
+                                </span>
+                                <span className="col-start-1 row-start-1 opacity-0 transition-opacity duration-150 group-hover/toggle:opacity-100 group-focus-visible/toggle:opacity-100 motion-reduce:transition-none">
+                                    {glyph("size-4")}
+                                </span>
+                            </>
+                        ) : (
+                            glyph("size-4")
+                        )}
                     </button>
                 </div>
             )}
