@@ -18,6 +18,20 @@ import {
 import { Slider } from "./slider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
+const STEPPERS_AND_PADDING = "3.75rem";
+
+function fieldChars(
+    unsetLabel: string,
+    format: Intl.NumberFormatOptions | undefined,
+    bounds: (number | undefined)[],
+): number {
+    const formatter = new Intl.NumberFormat(undefined, format);
+    const widths = bounds
+        .filter((bound): bound is number => bound !== undefined && Number.isFinite(bound))
+        .map((bound) => formatter.format(bound).length);
+    return Math.max(unsetLabel.length, ...widths);
+}
+
 type OptionalNumberFieldProps = {
     id: string;
     label: ReactNode;
@@ -72,6 +86,7 @@ function OptionalNumberField({
     const resting = clamp(fallback ?? min ?? 0, min, max);
     const showSlider = slider ?? (Number.isFinite(min) && Number.isFinite(max));
     const unset = value === null;
+    const chars = fieldChars(unsetLabel, format, [min, max, fallback]);
 
     const typed = (next: number | null, details: NumberFieldRootChangeEventDetails) => {
         onValueChange(unset && next !== null && isStep(details) ? resting : next);
@@ -115,7 +130,10 @@ function OptionalNumberField({
                         format={format}
                         disabled={disabled}
                     >
-                        <NumberFieldGroup className="w-30 md:w-24">
+                        <NumberFieldGroup
+                            className="min-w-30 text-lg md:min-w-24 md:text-base"
+                            style={{ width: `calc(${chars}ch + ${STEPPERS_AND_PADDING})` }}
+                        >
                             <NumberFieldDecrement className="w-6" />
                             <NumberFieldInput
                                 ref={input}
