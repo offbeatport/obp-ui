@@ -17,7 +17,7 @@ import {
 
 export type AccountMenuItem = {
     key?: string;
-    kind?: "item" | "theme";
+    kind?: "item" | "theme" | "note";
     icon?: ReactNode;
     label: ReactNode;
     href?: string;
@@ -123,7 +123,18 @@ export function AccountMenu({
                                     className={comfortable ? "my-1.5" : undefined}
                                 />
                             )}
-                            {item.kind === "theme" ? (
+                            {item.kind === "note" ? (
+                                <div
+                                    data-slot="account-menu-note"
+                                    className={cn(
+                                        "flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0",
+                                        rowClass,
+                                    )}
+                                >
+                                    {item.icon}
+                                    {item.label}
+                                </div>
+                            ) : item.kind === "theme" ? (
                                 <ThemeRow
                                     icon={item.icon}
                                     label={item.label}
