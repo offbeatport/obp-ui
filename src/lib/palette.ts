@@ -217,7 +217,7 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
     {
         id: "cobalt",
         name: "Cobalt",
-        note: "Cool neutral paper under a clear blue, then a black page and a solid navy accent after dark.",
+        note: "Cool neutral paper under a clear blue, then a near-black page and a solid navy accent after dark.",
         light: {
             background: "#f4f5f5",
             card: "#feffff",
@@ -235,14 +235,14 @@ export const THEME_PALETTES: [ThemePalette, ...ThemePalette[]] = [
             shadowTint: "38, 39, 39",
         },
         dark: {
-            background: "#010101",
-            card: "#060606",
+            background: "#050506",
+            card: "#0b0c0d",
             secondary: "#191a20",
             foreground: "#e8e9ea",
             mutedForeground: "#a6a7a8",
             faint: "#7f8182",
-            border: "#131416",
-            borderSoft: "#060606",
+            border: "#1a1b1e",
+            borderSoft: "#111214",
             input: "#1e222c",
             inputBackground: "#0f0f14",
             primary: "#346bf1",
